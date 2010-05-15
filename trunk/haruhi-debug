@@ -1,0 +1,4 @@
+#!/bin/sh
+
+ulimit -c unlimited
+DIST=debug make -C src && QT_NO_GLIB=1 gdb src/dist/debug/haruhi.run -ex run

@@ -1,0 +1,42 @@
+You will need at least following packages (names are for Arch Linux):
+ • jack-audio-connection-kit
+ • alsa-lib
+ • glib2
+ • qt4
+ • fftw3
+ • boost
+ • util-linux-ng
+
+If you're using Ubuntu, packages are named as follows:
+ • libjack-dev
+ • libasound2-dev
+ • libglib2.0-dev
+ • fftw3-dev
+ • libboost-1.40-dev
+ • uuid-dev
+ • qt4-dev-tools
+ • libqt4-dev
+
+You will probably need GNU make to compile.
+
+Edit Makefile.conf, configure your CXXFLAGS and other features. You may need to also alter
+Makefile.conf, depending on your distibuton (LDFLAGS and maybe LIBS and PKGCONFIG_* variables).
+You may need to set QT_PREFIX according to where Qt3 stores its files in your distribution.
+On Archlinux it is /opt/qt, on Ubuntu /usr/share/qt3.
+
+On newer Ubuntu versions you'll have to modify Makefile.conf so that QT_PREFIX is /usr and
+PKG_CONFIG_FLAGS is concantenated with -I$(QT_PREFIX)/include/qt3 $(QT_FLAGS).
+
+In Makefile.conf there are different CXXFLAGS for different purposes: CXXFLAGS_i686, CXXFLAGS_debug, etc.
+Default build assumes variable DIST=debug, so CXXFLAGS_debug will be used. If you're not a developer
+you don't want this (debug version is very slow and big). If you want to build Haruhi for i686, use DIST=i686:
+
+ $ DIST=i686 make
+
+Executable will be created in dist/$DIST/haruhi (in this case: dist/i686/haruhi).
+
+You might need to adjust your system configuration to make it work with JACK.
+If you experience segmentation faults or Out-of-memory exceptions from Haruhi, you may have restrictions
+on maximum locked memory by JACK daemon and clients. Please try to enable "No memory lock" in Qjackctl
+or use --no-mlock option to jackd or otherwise check limits in /etc/security/limits.conf (Google for
+"jackd limits.conf").

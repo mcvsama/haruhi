@@ -1,0 +1,4 @@
+#!/bin/sh
+
+ulimit -c unlimited
+DIST=i686 make -C src && QT_NO_GLIB=1 src/dist/i686/haruhi.run

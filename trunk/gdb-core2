@@ -1,0 +1,3 @@
+#!/bin/sh
+
+gdb --core=core src/dist/core2/haruhi.run

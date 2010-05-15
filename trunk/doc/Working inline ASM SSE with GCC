@@ -1,0 +1,35 @@
+// Description: Working inline ASM SSE with GCC
+
+#include <iostream>
+ 
+using namespace std;
+ 
+int main() {
+	float* a = new float[4];
+	float* b = new float[4];
+	float* c = new float[4];
+ 
+	for(int i = 0; i<4; i++)
+	{
+		a[i] = 1.1f;
+		b[i] = 2.5f;
+		c[i] = 0.0f;
+	}
+ 
+	__asm__ __volatile__
+	(
+		"movups (%[a]), %%xmm0 \n\t"
+		"movups (%[b]), %%xmm1 \n\t"
+		"addps  %%xmm1, %%xmm0 \n\t"
+		"movups %%xmm0, %[c] \n\t"
+		: [c] "=m" (*c)
+		: [a] "r" (a), [b] "r" (b)
+		: "%xmm0", "%xmm1"
+	);
+ 
+	cout << a[0] << " " << a[1] << " " << a[2] << " " << a[3] << endl;
+	cout << b[0] << " " << b[1] << " " << b[2] << " " << b[3] << endl;
+	cout << c[0] << " " << c[1] << " " << c[2] << " " << c[3] << endl;
+ 
+	return 0;
+}

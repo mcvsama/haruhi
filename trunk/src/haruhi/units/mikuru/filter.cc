@@ -1,0 +1,305 @@
+/* vim:ts=4
+ *
+ * Copyleft 2008…2010  Michał Gawron
+ * Marduk Unix Labs, http://mulabs.org/
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
+ */
+
+// Standard:
+#include <cstddef>
+
+// Qt:
+#include <QtGui/QWhatsThis>
+#include <QtGui/QToolTip>
+
+// Haruhi:
+#include <haruhi/utility/numeric.h>
+
+// Local:
+#include "mikuru.h"
+#include "part.h"
+#include "filter.h"
+#include "event_dispatcher.h"
+#include "params.h"
+
+
+namespace MikuruPrivate {
+
+Filter::Filter (FilterID filter_id, Core::PortGroup* port_group, QString const& port_prefix, QString const& label, Part* part, Mikuru* mikuru, QWidget* parent):
+	QWidget (parent),
+	_mikuru (mikuru),
+	_loading_params (false),
+	_part (part),
+	_impulse_response (RBJImpulseResponse::LowPass, 0, 0, 0, 1.0),
+	_polyphonic_control (part != 0),
+	_filter_id (filter_id)
+{
+	Params::Filter p = _params;
+
+	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+
+	_filter_label = new StyledCheckBoxLabel (label, this);
+	_filter_label->checkbox()->setChecked (p.enabled);
+	QObject::connect (_filter_label->checkbox(), SIGNAL (clicked()), this, SLOT (update_params()));
+	QObject::connect (_filter_label->checkbox(), SIGNAL (clicked()), this, SLOT (update_widgets()));
+
+	_panel = new QWidget (this);
+	_panel->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+	// Plot:
+	QFrame* plot_frame = new QFrame (_panel);
+	plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
+	plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+	_response_plot = new FrequencyResponsePlot (plot_frame);
+	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::spacing);
+	plot_frame_layout->addWidget (_response_plot);
+
+	_mikuru->graph()->lock();
+	_port_frequency = new Core::EventPort (_mikuru, (port_prefix + " - Frequency").toStdString(), Core::Port::Input, port_group, _polyphonic_control ? Core::Port::Polyphonic : 0);
+	_port_resonance = new Core::EventPort (_mikuru, (port_prefix + " - Resonance").toStdString(), Core::Port::Input, port_group, _polyphonic_control ? Core::Port::Polyphonic : 0);
+	_port_gain = new Core::EventPort (_mikuru, (port_prefix + " - Gain").toStdString(), Core::Port::Input, port_group, _polyphonic_control ? Core::Port::Polyphonic : 0);
+	_port_attenuation = new Core::EventPort (_mikuru, (port_prefix + " - Attenuate").toStdString(), Core::Port::Input, port_group, _polyphonic_control ? Core::Port::Polyphonic : 0);
+	_mikuru->graph()->unlock();
+
+	_proxy_frequency = new ControllerProxy (_port_frequency, &_params.frequency, &_params.frequency_smoothing, HARUHI_MIKURU_MINMAX (Params::Filter::Frequency), p.frequency);
+	_proxy_frequency->config()->curve = 1.0;
+	_proxy_frequency->config()->user_limit_min = 0.04 * Params::Filter::FrequencyDenominator;
+	_proxy_frequency->config()->user_limit_max = 22.0 * Params::Filter::FrequencyDenominator;
+	_proxy_frequency->apply_config();
+	_proxy_resonance = new ControllerProxy (_port_resonance, &_params.resonance, &_params.resonance_smoothing, HARUHI_MIKURU_MINMAX (Params::Filter::Resonance), p.resonance);
+	_proxy_gain = new ControllerProxy (_port_gain, &_params.gain, &_params.gain_smoothing, HARUHI_MIKURU_MINMAX (Params::Filter::Gain), p.gain);
+	_proxy_attenuation = new ControllerProxy (_port_attenuation, &_params.attenuation, &_params.attenuation_smoothing, HARUHI_MIKURU_MINMAX (Params::Filter::Attenuation), p.attenuation);
+	_proxy_attenuation->config()->curve = 1.0;
+	_proxy_attenuation->apply_config();
+
+	_control_frequency = new Knob (_panel, _proxy_frequency, "Freq.", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Frequency, 2400), 2);
+	_control_frequency->set_unit_bay (_mikuru->unit_bay());
+	_control_resonance = new Knob (_panel, _proxy_resonance, "Q", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Resonance, 100), 2);
+	_control_resonance->set_unit_bay (_mikuru->unit_bay());
+	_control_gain = new Knob (_panel, _proxy_gain, "Gain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Gain, 100), 1);
+	_control_gain->set_unit_bay (_mikuru->unit_bay());
+	_control_attenuation = new Knob (_panel, _proxy_attenuation, "Attenuate", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Attenuation, 100), 2);
+	_control_attenuation->set_unit_bay (_mikuru->unit_bay());
+
+	QObject::connect (_control_frequency, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
+	QObject::connect (_control_resonance, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
+	QObject::connect (_control_gain, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
+	QObject::connect (_control_attenuation, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
+
+	if (_polyphonic_control)
+	{
+		VoiceManager* vm = _part->voice_manager();
+		EventDispatcher::VoiceFilterParamReceiver::FilterID fid = _filter_id == Filter1 ? EventDispatcher::VoiceFilterParamReceiver::Filter1 : EventDispatcher::VoiceFilterParamReceiver::Filter2;
+
+		_evdisp_frequency = new EventDispatcher (_port_frequency, _control_frequency, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::frequency));
+		_evdisp_resonance = new EventDispatcher (_port_resonance, _control_resonance, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::resonance));
+		_evdisp_gain = new EventDispatcher (_port_gain, _control_gain, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::gain));
+		_evdisp_attenuation = new EventDispatcher (_port_attenuation, _control_attenuation, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::attenuation));
+	}
+
+	// Widgets/knobs:
+	_filter_type = new QComboBox (_panel);
+	_filter_type->addItem ("Low pass", RBJImpulseResponse::LowPass);
+	_filter_type->addItem ("High pass", RBJImpulseResponse::HighPass);
+	_filter_type->addItem ("Band pass", RBJImpulseResponse::BandPass);
+	_filter_type->addItem ("Notch", RBJImpulseResponse::Notch);
+	_filter_type->addItem ("All pass", RBJImpulseResponse::AllPass);
+	_filter_type->addItem ("Peaking", RBJImpulseResponse::Peaking);
+	_filter_type->addItem ("Low shelf", RBJImpulseResponse::LowShelf);
+	_filter_type->addItem ("High shelf", RBJImpulseResponse::HighShelf);
+	_filter_type->setCurrentItem (p.type);
+	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_params()));
+	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_widgets()));
+	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_frequency_response()));
+
+	_passes = new QComboBox (_panel);
+	_passes->addItem ("1 pass");
+	_passes->addItem ("2 passes");
+	_passes->addItem ("3 passes");
+	_passes->addItem ("4 passes");
+	_passes->addItem ("5 passes");
+	_passes->setCurrentItem (bound (p.passes, 1, 5) - 1);
+	QObject::connect (_passes, SIGNAL (activated (int)), this, SLOT (update_params()));
+	QObject::connect (_passes, SIGNAL (activated (int)), this, SLOT (update_widgets()));
+
+	_limiter_enabled = new QCheckBox ("Q limiter", _panel);
+	_limiter_enabled->setChecked (_params.limiter_enabled);
+	QToolTip::add (_limiter_enabled, "Automatic attenuation limit");
+	QObject::connect (_limiter_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
+	QObject::connect (_limiter_enabled, SIGNAL (toggled (bool)), this, SLOT (update_frequency_response()));
+
+	// Layouts:
+
+	QVBoxLayout* layout = new QVBoxLayout (this, 0, Config::spacing);
+	layout->addWidget (_filter_label);
+	layout->addWidget (_panel);
+
+	QHBoxLayout* panel_layout = new QHBoxLayout (_panel, 0, Config::spacing);
+
+	QHBoxLayout* hor1_layout = new QHBoxLayout (panel_layout, Config::spacing);
+	hor1_layout->addWidget (plot_frame);
+
+	QVBoxLayout* ver1_layout = new QVBoxLayout (hor1_layout, Config::spacing);
+
+	QHBoxLayout* hor2_layout = new QHBoxLayout (ver1_layout, Config::spacing);
+	hor2_layout->addWidget (_filter_type);
+	hor2_layout->addWidget (_passes);
+	hor2_layout->addWidget (_limiter_enabled);
+
+	QHBoxLayout* hor3_layout = new QHBoxLayout (ver1_layout, Config::spacing);
+
+	QHBoxLayout* params_layout = new QHBoxLayout (hor3_layout, Config::spacing);
+	params_layout->addWidget (_control_frequency);
+	params_layout->addWidget (_control_resonance);
+	params_layout->addWidget (_control_gain);
+	params_layout->addWidget (_control_attenuation);
+
+	_response_plot->assign_impulse_response (&_impulse_response);
+
+	update_widgets();
+	update_frequency_response();
+}
+
+
+Filter::~Filter()
+{
+	// Deassign filter before deletion by Qt:
+	_response_plot->assign_impulse_response (0);
+
+	delete _proxy_frequency;
+	delete _proxy_resonance;
+	delete _proxy_gain;
+	delete _proxy_attenuation;
+
+	if (_polyphonic_control)
+	{
+		delete _evdisp_frequency;
+		delete _evdisp_resonance;
+		delete _evdisp_gain;
+		delete _evdisp_attenuation;
+	}
+
+	_mikuru->graph()->lock();
+	delete _port_frequency;
+	delete _port_resonance;
+	delete _port_gain;
+	delete _port_attenuation;
+	_mikuru->graph()->unlock();
+}
+
+
+void
+Filter::process_events()
+{
+	if (_polyphonic_control)
+	{
+		_evdisp_frequency->load_events();
+		_evdisp_resonance->load_events();
+		_evdisp_gain->load_events();
+		_evdisp_attenuation->load_events();
+	}
+	else
+	{
+		_proxy_frequency->process_events();
+		_proxy_resonance->process_events();
+		_proxy_gain->process_events();
+		_proxy_attenuation->process_events();
+	}
+}
+
+
+void
+Filter::unit_bay_assigned()
+{
+	_control_frequency->set_unit_bay (_mikuru->unit_bay());
+	_control_resonance->set_unit_bay (_mikuru->unit_bay());
+	_control_gain->set_unit_bay (_mikuru->unit_bay());
+	_control_attenuation->set_unit_bay (_mikuru->unit_bay());
+}
+
+
+void
+Filter::load_params()
+{
+	Params::Filter p = _params;
+	_loading_params = true;
+
+	_filter_label->checkbox()->setChecked (p.enabled);
+	_filter_type->setCurrentItem (p.type);
+	_passes->setCurrentItem (bound (p.passes, 1, 5) - 1);
+	_limiter_enabled->setChecked (p.limiter_enabled);
+	_proxy_frequency->set_value (p.frequency);
+	_proxy_resonance->set_value (p.resonance);
+	_proxy_gain->set_value (p.gain);
+	_proxy_attenuation->set_value (p.attenuation);
+
+	_loading_params = false;
+	update_widgets();
+}
+
+
+void
+Filter::load_params (Params::Filter& params)
+{
+	_params = params;
+	load_params();
+}
+
+
+void
+Filter::update_params()
+{
+	if (_loading_params)
+		return;
+
+	Params::Filter p;
+	p.enabled = _filter_label->checkbox()->isChecked();
+	p.type = _filter_type->currentItem();
+	p.passes = _passes->currentItem() + 1;
+	p.limiter_enabled = _limiter_enabled->isChecked();
+	p.frequency_smoothing = _params.frequency_smoothing;
+	p.resonance_smoothing = _params.resonance_smoothing;
+	p.gain_smoothing = _params.gain_smoothing;
+	p.attenuation_smoothing = _params.attenuation_smoothing;
+	_params.set_non_controller_params (p);
+
+	// Knob params are updated automatically using #assign_parameter.
+
+	params_updated();
+}
+
+
+void
+Filter::update_widgets()
+{
+	int ft = _filter_type->currentItem();
+	_control_gain->setEnabled (ft == RBJImpulseResponse::Peaking || ft == RBJImpulseResponse::LowShelf || ft == RBJImpulseResponse::HighShelf);
+	_panel->setEnabled (atomic (_params.enabled));
+	_limiter_enabled->setEnabled (ft == RBJImpulseResponse::LowPass || ft == RBJImpulseResponse::HighPass || ft == RBJImpulseResponse::BandPass ||
+								  ft == RBJImpulseResponse::LowShelf || ft == RBJImpulseResponse::HighShelf);
+	// TODO update freq.respones (grid dB) according to _params.passes
+}
+
+
+void
+Filter::update_frequency_response()
+{
+	params_updated();
+
+	_impulse_response.set_type (static_cast<RBJImpulseResponse::Type> (static_cast<int> (atomic (_params.type))));
+	_impulse_response.set_frequency (0.5f * atomic (_params.frequency) / Params::Filter::FrequencyMax);
+	_impulse_response.set_resonance (1.0f * atomic (_params.resonance) / Params::Filter::ResonanceDenominator);
+	_impulse_response.set_gain (1.0f * atomic (_params.gain) / Params::Filter::GainDenominator);
+	_impulse_response.set_attenuation (1.0f * atomic (_params.attenuation) / Params::Filter::AttenuationDenominator);
+	_impulse_response.set_limiter (_params.limiter_enabled);
+	_response_plot->replot();
+}
+
+} // namespace MikuruPrivate
+

@@ -1,0 +1,39 @@
+Use 4-character width tab characters.
+
+	function_call();
+	function_call (arguments); // Notice space before args list.
+
+	class Class: public OneClass
+	{
+	  public: // Notice 2 spaces instead of full tab.
+		Class();
+
+		/**
+		 * \param	p1 is ...
+		 */
+		void
+		method1 (int p1);
+
+		inline int
+		method2();
+	};
+
+	class Class:
+		public OneClass,
+		public TwoClass
+	{
+	}
+
+Write 'type const' rather than 'const type', where possible
+(exception is Qt macros SIGNAL/SLOT, which will fail if 'const' is after type name).
+
+	switch (value)
+	{
+		case CONST1:
+			break;
+
+		case CONST2:
+		{
+			break;
+		}
+	}
