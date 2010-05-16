@@ -118,7 +118,9 @@ class ControllerProxy:
 	set_widget (Widget* widget) { _widget = widget; }
 
 	/**
-	 * Tells proxy that config has been updated.
+	 * Tells proxy that config has been updated
+	 * and widget needs to be updated too.
+	 * \entry	Qt thread only.
 	 */
 	void
 	apply_config();

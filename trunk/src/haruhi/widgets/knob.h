@@ -151,6 +151,7 @@ class Knob:
 
 	/**
 	 * Reads ControllerProxy::Config and updates widgets.
+	 * \entry	Qt thread only.
 	 */
 	void
 	read_config();
@@ -165,19 +166,27 @@ class Knob:
   public slots:
 	/**
 	 * Reset Knob to default value.
+	 * \entry	Qt thread only.
 	 */
 	void
 	reset();
 
 	/**
 	 * Call configuration dialog.
+	 * \entry	Qt thread only.
 	 */
 	void
 	configure();
 
+	/**
+	 * \entry	Qt thread only.
+	 */
 	void
 	start_learning();
 
+	/**
+	 * \entry	Qt thread only.
+	 */
 	void
 	stop_learning();
 

@@ -20,6 +20,7 @@
 
 // Haruhi:
 #include <haruhi/exception.h>
+#include <haruhi/utility/atomic.h>
 
 // Local:
 #include "periodic_updater.h"
@@ -29,16 +30,16 @@ PeriodicUpdater* PeriodicUpdater::_singleton = 0;
 
 
 void
-PeriodicUpdater::Receiver::schedule_for_update()
+PeriodicUpdater::Receiver::schedule_for_update (Thread thread)
 {
-	PeriodicUpdater::singleton()->schedule (this);
+	PeriodicUpdater::singleton()->schedule (this, thread);
 }
 
 
 void
-PeriodicUpdater::Receiver::forget_about_update()
+PeriodicUpdater::Receiver::forget_about_update (Thread thread)
 {
-	PeriodicUpdater::singleton()->forget (this);
+	PeriodicUpdater::singleton()->forget (this, thread);
 }
 
 
@@ -47,6 +48,10 @@ PeriodicUpdater::PeriodicUpdater (int period_ms)
 	if (PeriodicUpdater::_singleton != 0)
 		throw Exception ("PeriodicUpdater is a signleton, and can be instantiated only once");
 	PeriodicUpdater::_singleton = this;
+
+	_current_sets[QtThread] = _sets[QtThread] + 0;
+	_current_sets[GraphThread] = _sets[GraphThread] + 0;
+
 	_timer = new QTimer (this);
 	QObject::connect (_timer, SIGNAL (timeout()), this, SLOT (timeout()));
 	_timer->start (period_ms);
@@ -61,35 +66,45 @@ PeriodicUpdater::~PeriodicUpdater()
 
 
 void
-PeriodicUpdater::schedule (Receiver* receiver)
+PeriodicUpdater::schedule (Receiver* receiver, Thread thread)
 {
-	_set_mutex.lock();
-	_set.insert (receiver);
-	_set_mutex.unlock();
+	Set* set = atomic (_current_sets[thread]);
+	set->insert (receiver);
 }
 
 
 void
-PeriodicUpdater::forget (Receiver* receiver)
+PeriodicUpdater::forget (Receiver* receiver, Thread thread)
 {
-	_set_mutex.lock();
-	_set.erase (receiver);
-	_set_mutex.unlock();
+	Set* set = atomic (_current_sets[thread]);
+	set->erase (receiver);
 }
 
 
 void
 PeriodicUpdater::timeout()
 {
-	_set_mutex.lock();
-	if (_set.empty())
+	Set (*s[_ThreadSize]);
+	for (int i = 0; i < _ThreadSize; ++i)
+		s[i] = atomic (_current_sets[i]);
+
+	for (int i = 0; i < _ThreadSize; ++i)
+		atomic (_current_sets[i]) = switch_set (s[i], _sets[i]);
+
+	for (int i = 0; i < _ThreadSize; ++i)
 	{
-		_set_mutex.unlock();
-		return;
+		for (Set::iterator r = s[i]->begin(); r != s[i]->end(); ++r)
+			(*r)->periodic_update();
+		s[i]->clear();
 	}
-	for (Set::iterator r = _set.begin(); r != _set.end(); ++r)
-		(*r)->periodic_update();
-	_set.clear();
-	_set_mutex.unlock();
+}
+
+
+PeriodicUpdater::Set*
+PeriodicUpdater::switch_set (Set* set, Set* sets)
+{
+	if (set == sets + 0)
+		return sets + 1;
+	return sets + 0;
 }
 

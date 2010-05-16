@@ -30,12 +30,23 @@
  * PeriodicUpdater calls periodically update() method
  * on all queued widgets. It's useful for UI updates
  * where no instant reaction is needed (knobs and other MIDI controls).
+ *
+ * For performance reasons it doesn't use mutexes for locking but instead has
+ * two queues to be used from within Qt thread and JACK thread
+ * (schedule_for_update_from_qt_thread() and schedule_for_update_from_graph_thread()).
  */
 class PeriodicUpdater: public QObject
 {
 	Q_OBJECT
 
   public:
+	enum Thread
+	{
+		QtThread	= 0,
+		GraphThread	= 1,
+		_ThreadSize	= 2, // Do not use, required internally
+	};
+
 	class Receiver
 	{
 	  public:
@@ -49,17 +60,17 @@ class PeriodicUpdater: public QObject
 
 		/**
 		 * Schedules this object to be updated by PeriodicUpdater.
-		 * \threadsafe
+		 * \entry	Qt thread only if queue == QtThread, graph thread only if queue == GraphThread.
 		 */
 		void
-		schedule_for_update();
+		schedule_for_update (Thread thread);
 
 		/**
 		 * Removes this object from PeriodicUpdater queue.
-		 * \threadsafe
+		 * \entry	Qt thread only if queue == QtThread, graph thread only if queue == GraphThread.
 		 */
 		void
-		forget_about_update();
+		forget_about_update (Thread thread);
 	};
 
   private:
@@ -77,28 +88,31 @@ class PeriodicUpdater: public QObject
 	singleton() { return _singleton; }
 
 	/**
-	 * Adds widget to set. After update
-	 * object is removed.
-	 * \threadsafe
+	 * Adds widget to set. After update object is removed.
+	 * \entry	Qt thread only if queue == QtThread, graph thread only if queue == GraphThread.
 	 */
 	void
-	schedule (Receiver* receiver);
+	schedule (Receiver* receiver, Thread thread);
 
 	/**
 	 * Removes widget from set.
-	 * \threadsafe
+	 * \entry	Qt thread only if queue == QtThread, graph thread only if queue == GraphThread.
 	 */
 	void
-	forget (Receiver* receiver);
+	forget (Receiver* receiver, Thread thread);
 
   private slots:
 	void
 	timeout();
 
   private:
+	Set*
+	switch_set (Set* set, Set* sets);
+
+  private:
 	static PeriodicUpdater*	_singleton;
-	Set						_set;
-	Mutex					_set_mutex;
+	Set						_sets[_ThreadSize][2];
+	Set*					_current_sets[_ThreadSize];
 	QTimer*					_timer;
 };
 
