@@ -79,7 +79,7 @@ class Knob:
 	class SpinBox: public QSpinBox
 	{
 	  public:
-		SpinBox (QWidget* parent, Knob* knob, int hard_limit_min, int hard_limit_max, float show_min, float show_max, int step, int decimals);
+		SpinBox (QWidget* parent, Knob* knob, int user_limit_min, int user_limit_max, float show_min, float show_max, int step, int decimals);
 
 		/*
 		 * QSpinBox API
@@ -119,8 +119,6 @@ class Knob:
 		Knob*				_knob;
 		float				_show_min;
 		float				_show_max;
-		int					_hard_limit_min;
-		int					_hard_limit_max;
 		int					_decimals;
 		QDoubleValidator*	_validator;
 	};

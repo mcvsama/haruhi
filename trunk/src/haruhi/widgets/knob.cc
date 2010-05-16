@@ -149,18 +149,16 @@ KnobProperties::limit_max_updated()
 }
 
 
-Knob::SpinBox::SpinBox (QWidget* parent, Knob* knob, int hard_limit_min, int hard_limit_max, float show_min, float show_max, int step, int decimals):
+Knob::SpinBox::SpinBox (QWidget* parent, Knob* knob, int user_limit_min, int user_limit_max, float show_min, float show_max, int step, int decimals):
 	QSpinBox (parent),
 	_knob (knob),
 	_show_min (show_min),
 	_show_max (show_max),
-	_hard_limit_min (hard_limit_min),
-	_hard_limit_max (hard_limit_max),
 	_decimals (decimals)
 {
 	_validator = new QDoubleValidator (show_min, show_max, decimals, this);
-	QSpinBox::setMinimum (_hard_limit_min);
-	QSpinBox::setMaximum (_hard_limit_max);
+	QSpinBox::setMinimum (user_limit_min);
+	QSpinBox::setMaximum (user_limit_max);
 	QSpinBox::setSingleStep (step);
 	setFixedWidth (55);
 }
@@ -190,7 +188,9 @@ Knob::SpinBox::valueFromText (QString const& string) const
 float
 Knob::SpinBox::int_to_float (int x) const
 {
-	float f = renormalize (x, _hard_limit_min, _hard_limit_max, _show_min, _show_max);
+	int const hard_limit_min = _knob->controller_proxy()->config()->hard_limit_min;
+	int const hard_limit_max = _knob->controller_proxy()->config()->hard_limit_max;
+	float f = renormalize (x, hard_limit_min, hard_limit_max, _show_min, _show_max);
 	if (f < 0.0 && f > 0.5 * -std::pow (0.1, _decimals))
 		f = 0.0;
 	return f;
@@ -200,7 +200,9 @@ Knob::SpinBox::int_to_float (int x) const
 int
 Knob::SpinBox::float_to_int (float y) const
 {
-	return renormalize (y, _show_min, _show_max, _hard_limit_min, _hard_limit_max);
+	int const hard_limit_min = _knob->controller_proxy()->config()->hard_limit_min;
+	int const hard_limit_max = _knob->controller_proxy()->config()->hard_limit_max;
+	return renormalize (y, _show_min, _show_max, hard_limit_min, hard_limit_max);
 }
 
 
