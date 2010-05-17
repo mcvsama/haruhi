@@ -243,7 +243,7 @@ AudioBackend::process()
 		}
 	}
 
-	for (InputsSet::iterator p = _inputs.begin();  p != _inputs.end();  ++p)
+	for (InputsSet::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
 		(*p)->transfer();
 
 	sync_inputs();
