@@ -38,7 +38,7 @@
 
 namespace Haruhi {
 
-JackAudioTransport::JackPort::JackPort (EventTransport* transport, Direction direction, jack_port_t* jack_port):
+JackAudioTransport::JackPort::JackPort (AudioTransport* transport, Direction direction, jack_port_t* jack_port):
 	Port (transport),
 	_direction (direction),
 	_jack_port (jack_port)
@@ -53,7 +53,7 @@ JackAudioTransport::JackPort::rename (std::string const& new_name)
 }
 
 
-JackAudioTransport::JackAudioTransport (AudioBackend* backend)
+JackAudioTransport::JackAudioTransport (AudioBackend* backend):
 	AudioTransport (backend),
 	_jack_client (0),
 	_active (false)
@@ -91,8 +91,8 @@ JackAudioTransport::connect (std::string const& client_name)
 
 		jack_on_shutdown (_jack_client, s_shutdown, vthis);
 
-		c_sample_rate_change (jack_get_sample_rate (_jack));
-		c_buffer_size_change (jack_get_buffer_size (_jack));
+		c_sample_rate_change (jack_get_sample_rate (_jack_client));
+		c_buffer_size_change (jack_get_buffer_size (_jack_client));
 
 		jack_activate (_jack_client);
 	}
@@ -104,7 +104,7 @@ JackAudioTransport::connect (std::string const& client_name)
 }
 
 
-bool
+void
 JackAudioTransport::disconnect()
 {
 	if (_jack_client)
@@ -215,15 +215,16 @@ JackAudioTransport::c_process (jack_nframes_t samples)
 	//		::memset (d, 0, sizeof (Core::Sample) * audio_buffer->size());
 	//}
 	// TODO send signal to engine to continue processing.
+	return 0;
 }
 
 
 int
 JackAudioTransport::c_sample_rate_change (jack_nframes_t sample_rate)
 {
-	_audio_backend->graph()->lock();
-	_audio_backend->graph()->set_sample_rate (sample_rate);
-	_audio_backend->graph()->unlock();
+	backend()->graph()->lock();
+	backend()->graph()->set_sample_rate (sample_rate);
+	backend()->graph()->unlock();
 	return 0;
 }
 
@@ -231,9 +232,9 @@ JackAudioTransport::c_sample_rate_change (jack_nframes_t sample_rate)
 int
 JackAudioTransport::c_buffer_size_change (jack_nframes_t buffer_size)
 {
-	_audio_backend->graph()->lock();
-	_audio_backend->graph()->set_buffer_size (buffer_size);
-	_audio_backend->graph()->unlock();
+	backend()->graph()->lock();
+	backend()->graph()->set_buffer_size (buffer_size);
+	backend()->graph()->unlock();
 	return 0;
 }
 

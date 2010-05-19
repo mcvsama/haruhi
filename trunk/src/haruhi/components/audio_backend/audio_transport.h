@@ -140,14 +140,6 @@ class AudioTransport
 	virtual void
 	destroy_port (Port*) = 0;
 
-	/**
-	 * Synchronizes ports (fills buffers, etc).
-	 * After synchronization transport must signal engine that
-	 * it can continue processing (using method signal()).
-	 */
-	virtual void
-	sync() = 0;
-
   private:
 	AudioBackend* _backend;
 };

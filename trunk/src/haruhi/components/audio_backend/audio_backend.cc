@@ -46,6 +46,8 @@ AudioBackend::AudioBackend (Session* session, QString const& client_name, int id
 	_client_name (client_name),
 	_panic_pressed (false)
 {
+	_transport = new JackAudioTransport (this);
+
 	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
 	QHBoxLayout* top_layout = new QHBoxLayout (layout, Config::spacing);
 	QHBoxLayout* lists_layout = new QHBoxLayout (layout, Config::spacing);

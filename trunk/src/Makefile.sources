@@ -38,9 +38,16 @@ TESTS += haruhi/tests/signal
 #SRC_SOURCES += tests/shared.cc
 #SRC_SOURCES += tests/signal.cc
 
+######## /components/audio_backend/transports ########
+
+SRC_HEADERS += haruhi/components/audio_backend/transports/jack_audio_transport.h
+
+SRC_SOURCES += haruhi/components/audio_backend/transports/jack_audio_transport.cc
+
 ######## /components/audio_backend ########
 
 SRC_HEADERS += haruhi/components/audio_backend/audio_backend.h
+SRC_HEADERS += haruhi/components/audio_backend/audio_transport.h
 SRC_HEADERS += haruhi/components/audio_backend/dummy_thread.h
 SRC_HEADERS += haruhi/components/audio_backend/input_dialog.h
 SRC_HEADERS += haruhi/components/audio_backend/input_item.h
