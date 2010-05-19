@@ -38,9 +38,6 @@
 #include <QtGui/QTreeWidgetItem>
 #include <QtXml/QDomNode>
 
-// Libs:
-#include <jack/jack.h>
-
 // Haruhi:
 #include <haruhi/config.h>
 #include <haruhi/haruhi.h>
@@ -51,6 +48,7 @@
 #include <haruhi/unit.h>
 
 // Local:
+#include "audio_transport.h"
 #include "ports_list_view.h"
 #include "port_item.h"
 #include "input_item.h"
@@ -58,7 +56,6 @@
 #include "port_dialog.h"
 #include "input_dialog.h"
 #include "output_dialog.h"
-#include "dummy_thread.h"
 
 
 namespace Haruhi {
@@ -83,13 +80,16 @@ class AudioBackend:
 	friend class AudioBackendPrivate::OutputItem;
 
   private:
-	typedef std::set<AudioBackendPrivate::InputItem*>	InputsSet;
-	typedef std::set<AudioBackendPrivate::OutputItem*>	OutputsSet;
+	typedef std::map<AudioTransport::Port*, AudioBackendPrivate::InputItem*>	InputsMap;
+	typedef std::map<AudioTransport::Port*, AudioBackendPrivate::OutputItem*>	OutputsMap;
 
   public:
 	AudioBackend (Session* session, QString const& client_name, int id, QWidget* parent);
 
-	virtual ~AudioBackend();
+	~AudioBackend();
+
+	AudioTransport*
+	transport() const { return _transport; }
 
 	/**
 	 * Starts processing.
@@ -104,26 +104,14 @@ class AudioBackend:
 	void
 	disable();
 
-	/**
-	 * \returns	backend sample rate.
-	 */
-	std::size_t
-	sample_rate();
-
-	/**
-	 * \returns	backend buffer size.
-	 */
-	std::size_t
-	buffer_size();
-
-	/**
+	/*
 	 * Haruhi::Unit methods:
 	 */
 
 	void
 	process();
 
-	/**
+	/*
 	 * SaveableState methods:
 	 */
 
@@ -133,19 +121,21 @@ class AudioBackend:
 	void
 	load_state (QDomElement const&);
 
-	/**
-	 * Backend methods:
-	 */
-
-	bool
-	connected() const;
-
   public slots:
 	void
 	connect();
 
 	void
 	disconnect();
+
+	bool
+	connected() const;
+
+	/**
+	 * \threadsafe
+	 */
+	void
+	notify_disconnected();
 
 	void
 	update_widgets();
@@ -193,10 +183,6 @@ class AudioBackend:
 	destroy_selected_output();
 
   private slots:
-	/**
-	 * Runs dummy graph iteration.
-	 * Should not be called when audio-backend is normally running.
-	 */
 	void
 	dummy_round();
 
@@ -208,75 +194,8 @@ class AudioBackend:
 	graph_updated();
 
   private:
-	void
-	update_graph();
-
-	void
-	ignore_sigpipe();
-
-	void
-	invalidate_ports();
-
-	void
-	offline_invalidate_ports();
-
-	void
-	jack_disconnected();
-
-	/**
-	 * Main process callback.
-	 */
-	int
-	cb_process (jack_nframes_t nframes);
-
-	/**
-	 * Called when changing sample rate.
-	 */
-	int
-	cb_sample_rate_change (jack_nframes_t nframes);
-
-	/**
-	 * Called when changing buffer sizes.
-	 */
-	int
-	cb_buffer_size_change (jack_nframes_t nframes);
-
-	/**
-	 * Called when JACKit daemon shuts down.
-	 */
-	void
-	cb_shutdown();
-
-	/**
-	 * Main process callback.
-	 */
-	static int
-	static_cb_process (jack_nframes_t nframes, void* klass);
-
-	/**
-	 * Called when changing sample rate.
-	 */
-	static int
-	static_cb_sample_rate_change (jack_nframes_t nframes, void* klass);
-
-	/**
-	 * Called when changing buffer sizes.
-	 */
-	static int
-	static_cb_buffer_size_change (jack_nframes_t nframes, void* klass);
-
-	/**
-	 * Called when JACKit daemon shuts down.
-	 */
-	static void
-	static_cb_shutdown (void* klass);
-
-  private:
-	// JACK:
 	QString				_client_name;
-	::jack_client_t*	_jack;
-	std::size_t			_sample_rate;
-	std::size_t			_buffer_size;
+	AudioTransport*		_transport;
 
 	// Views:
 	QPushButton*		_disconnect_button;
@@ -299,11 +218,8 @@ class AudioBackend:
 	QTimer*				_dummy_timer;
 
 	// Ports sets:
-	InputsSet			_inputs;
-	OutputsSet			_outputs;
-
-	// Other:
-	AudioBackendPrivate::DummyThread _dummy_thread;
+	InputsMap			_inputs;
+	OutputsMap			_outputs;
 };
 
 

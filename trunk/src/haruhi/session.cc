@@ -503,6 +503,7 @@ Session::stop_audio_backend()
 	if (_audio_backend)
 	{
 		_audio_backend->disable();
+		_audio_backend->hide();
 		_audio_backend->reparent (0, QPoint (0, 0), false);
 		delete _audio_backend;
 	}
@@ -516,6 +517,7 @@ Session::stop_event_backend()
 	if (_event_backend)
 	{
 		_event_backend->disable();
+		_event_backend->hide();
 		_event_backend->reparent (0, QPoint (0, 0), false);
 		delete _event_backend;
 	}

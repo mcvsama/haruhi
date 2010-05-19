@@ -19,17 +19,11 @@
 #include <algorithm>
 #include <cmath>
 
-// System:
-#include <signal.h>
-
 // Qt:
 #include <QtCore/QTimer>
 #include <QtGui/QApplication>
 #include <QtGui/QMessageBox>
 #include <QtGui/QToolTip>
-
-// Libs:
-#include <jack/jack.h>
 
 // Haruhi:
 #include <haruhi/haruhi.h>
@@ -37,9 +31,11 @@
 #include <haruhi/utility/numeric.h>
 
 // Local:
+#include "transports/jack_audio_transport.h"
 #include "audio_backend.h"
 
 
+// TODO handle dummy_timer and faked sample_rate+buffer_size when transport disconnects.
 namespace Haruhi {
 
 namespace Private = AudioBackendPrivate;
@@ -48,15 +44,8 @@ namespace Private = AudioBackendPrivate;
 AudioBackend::AudioBackend (Session* session, QString const& client_name, int id, QWidget* parent):
 	Unit (0, session, "urn://haruhi.mulabs.org/backend/jack-audio-backend/1", "• Audio", id, parent),
 	_client_name (client_name),
-	_jack (0),
-	_sample_rate (0),
-	_buffer_size (0),
-	_panic_pressed (false),
-	_dummy_thread (this)
+	_panic_pressed (false)
 {
-	// Block SIGPIPE to avoid terminating program due to failure on JACK read.
-	ignore_sigpipe();
-
 	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
 	QHBoxLayout* top_layout = new QHBoxLayout (layout, Config::spacing);
 	QHBoxLayout* lists_layout = new QHBoxLayout (layout, Config::spacing);
@@ -131,7 +120,6 @@ AudioBackend::AudioBackend (Session* session, QString const& client_name, int id
 	_panic_port = new Core::EventPort (this, "Panic", Core::Port::Input);
 
 	// Graph ticks emulator:
-	_dummy_thread.start();
 	_dummy_timer = new QTimer (this);
 	QObject::connect (_dummy_timer, SIGNAL (timeout()), this, SLOT (dummy_round()));
 	_dummy_timer->start (33);
@@ -143,25 +131,18 @@ AudioBackend::AudioBackend (Session* session, QString const& client_name, int id
 AudioBackend::~AudioBackend()
 {
 	_dummy_timer->stop();
-	_dummy_thread.quit();
-	// Wait for dummy_thread to be sure it's not executing
-	// processing rounds:
-	_dummy_thread.wait();
 
-	disconnect();
+	disable();
 
 	// Deallocate all ports:
 	_inputs_list->clear();
 	_outputs_list->clear();
 
+	if (connected())
+		disconnect();
+
 	delete _master_volume_port;
 	delete _panic_port;
-
-	if (_jack)
-	{
-		::jack_client_close (_jack);
-		_jack = 0;
-	}
 
 	unregister_unit();
 }
@@ -171,103 +152,87 @@ void
 AudioBackend::enable()
 {
 	Unit::enable();
-	if (connected())
-		::jack_activate (_jack);
+	_transport->activate();
 }
 
 
 void
 AudioBackend::disable()
 {
-	if (connected())
-		::jack_deactivate (_jack);
-	Unit::disable();
-}
-
-
-std::size_t
-AudioBackend::sample_rate()
-{
-	return _sample_rate;
-}
-
-
-std::size_t
-AudioBackend::buffer_size()
-{
-	return _buffer_size;
+	_transport->deactivate();
+	disable();
 }
 
 
 void
 AudioBackend::process()
 {
-	if (graph()->dummy())
-		return;
-
-	DialControl* master_volume = session()->meter_panel()->master_volume();
-
-	// Adjust Master Volume control:
-	{
-		Core::EventBuffer* buffer = _master_volume_port->event_buffer();
-		Core::EventBuffer::EventsMultiset const& events = buffer->events();
-		for (Core::EventBuffer::EventsMultiset::const_iterator e = events.begin(); e != events.end(); ++e)
-		{
-			if ((*e)->event_type() == Core::Event::ControllerEventType)
-			{
-				Core::ControllerEvent const* controller_event = static_cast<Core::ControllerEvent const*> (e->get());
-				// FIXME probably not secure: use QApplication::postEvent()...
-				// FIXME or rather use QApplication::postEvent?
-				master_volume->setValue (renormalize (controller_event->value(), 0.0, 1.0, Session::MeterPanel::MinVolume, Session::MeterPanel::MaxVolume));
-			}
-		}
-	}
-
-	// Check for Panic:
-	{
-		Core::EventBuffer* buffer = _panic_port->event_buffer();
-		Core::EventBuffer::EventsMultiset const& events = buffer->events();
-		for (Core::EventBuffer::EventsMultiset::const_iterator e = events.begin(); e != events.end(); ++e)
-		{
-			if ((*e)->event_type() == Core::Event::ControllerEventType)
-			{
-				Core::ControllerEvent const* controller_event = static_cast<Core::ControllerEvent const*> (e->get());
-				if (controller_event->value() >= 0.5 && _panic_pressed == false)
-				{
-					_panic_pressed = true;
-					graph()->panic();
-				}
-				else if (controller_event->value() < 0.5)
-					_panic_pressed = false;
-			}
-		}
-	}
-
-	for (InputsSet::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
-		(*p)->transfer();
-
-	sync_inputs();
-
-	// Use Master Volume control to adjust volume of outputs:
-	// FIXME probably non-secure, use exported int value (using Atomic).
-	Core::Sample v = std::pow (master_volume->value() / static_cast<float> (Session::MeterPanel::ZeroVolume), M_E);
-	for (OutputsSet::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
-		(*p)->attenuate (v);
-
-	for (OutputsSet::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
-		(*p)->transfer();
-
-	// Level meter:
-	{
-		std::vector<Private::OutputItem*> ovec;
-		std::copy (_outputs.begin(), _outputs.end(), std::back_inserter (ovec));
-		std::sort (ovec.begin(), ovec.end(), Private::PortItem::CompareByPortName());
-		for (unsigned int i = 0; i < std::min (ovec.size(), static_cast<std::vector<Private::OutputItem*>::size_type> (2u)); ++i)
-		{
-			Core::AudioBuffer* abuf = ovec[i]->port()->audio_buffer();
-			session()->meter_panel()->level_meters_group()->meter (i)->process (abuf->begin(), abuf->end());
-		}
-	}
+//	if (graph()->dummy())
+//		return;
+//
+//	DialControl* master_volume = session()->meter_panel()->master_volume();
+//
+//	// Adjust Master Volume control:
+//	{
+//		Core::EventBuffer* buffer = _master_volume_port->event_buffer();
+//		Core::EventBuffer::EventsMultiset const& events = buffer->events();
+//		for (Core::EventBuffer::EventsMultiset::const_iterator e = events.begin(); e != events.end(); ++e)
+//		{
+//			if ((*e)->event_type() == Core::Event::ControllerEventType)
+//			{
+//				Core::ControllerEvent const* controller_event = static_cast<Core::ControllerEvent const*> (e->get());
+//				// FIXME probably not secure: use QApplication::postEvent()...
+//				// FIXME or rather use QApplication::postEvent?
+//				master_volume->setValue (renormalize (controller_event->value(), 0.0, 1.0, Session::MeterPanel::MinVolume, Session::MeterPanel::MaxVolume));
+//			}
+//		}
+//	}
+//
+//	// Check for Panic:
+//	{
+//		Core::EventBuffer* buffer = _panic_port->event_buffer();
+//		Core::EventBuffer::EventsMultiset const& events = buffer->events();
+//		for (Core::EventBuffer::EventsMultiset::const_iterator e = events.begin(); e != events.end(); ++e)
+//		{
+//			if ((*e)->event_type() == Core::Event::ControllerEventType)
+//			{
+//				Core::ControllerEvent const* controller_event = static_cast<Core::ControllerEvent const*> (e->get());
+//				if (controller_event->value() >= 0.5 && _panic_pressed == false)
+//				{
+//					_panic_pressed = true;
+//					graph()->panic();
+//				}
+//				else if (controller_event->value() < 0.5)
+//					_panic_pressed = false;
+//			}
+//		}
+//	}
+//
+//	for (InputsSet::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
+//		(*p)->transfer();
+//
+//	sync_inputs();
+//
+//	// Use Master Volume control to adjust volume of outputs:
+//	// FIXME probably non-secure, use exported int value (using Atomic).
+//	Core::Sample v = std::pow (master_volume->value() / static_cast<float> (Session::MeterPanel::ZeroVolume), M_E);
+//	for (OutputsSet::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
+//		(*p)->attenuate (v);
+//
+//	for (OutputsSet::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
+//		(*p)->transfer();
+//
+//	// Level meter:
+//	{
+//		std::vector<Private::OutputItem*> ovec;
+//		std::copy (_outputs.begin(), _outputs.end(), std::back_inserter (ovec));
+//		std::sort (ovec.begin(), ovec.end(), Private::PortItem::CompareByPortName());
+//		for (unsigned int i = 0; i < std::min (ovec.size(), static_cast<std::vector<Private::OutputItem*>::size_type> (2u)); ++i)
+//		{
+//			Core::AudioBuffer* abuf = ovec[i]->port()->audio_buffer();
+//			session()->meter_panel()->level_meters_group()->meter (i)->process (abuf->begin(), abuf->end());
+//		}
+//	}
 }
 
 
@@ -288,9 +253,10 @@ AudioBackend::save_state (QDomElement& element) const
 void
 AudioBackend::load_state (QDomElement const& element)
 {
-	bool e = enabled();
-	if (e)
-		disable();
+	bool active = _transport->active();
+	if (active)
+		_transport->deactivate();
+
 	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
 	{
 		QDomElement e = n.toElement();
@@ -302,78 +268,48 @@ AudioBackend::load_state (QDomElement const& element)
 				_outputs_list->load_state (e);
 		}
 	}
-	if (e)
-		enable();
+
+	if (active)
+		_transport->activate();
 }
 
 
 void
 AudioBackend::connect()
 {
-	if (connected())
-		disconnect();
-
-	void* vthis = static_cast<void*> (this);
-
 	try {
 		_dummy_timer->stop();
-
-		if (!(_jack = ::jack_client_open (_client_name.toUtf8(), (jack_options_t)JackNoStartServer, 0)))
-			throw AudioBackendException ("could not connect to JACK server - is it running?", __func__);
-
-		if (::jack_set_process_callback (_jack, static_cb_process, vthis))
-			throw AudioBackendException ("could not setup process callback", __func__);
-
-		if (::jack_set_sample_rate_callback (_jack, static_cb_sample_rate_change, vthis))
-			throw AudioBackendException ("could not setup sample rate change callback", __func__);
-
-		if (::jack_set_buffer_size_callback (_jack, static_cb_buffer_size_change, vthis))
-			throw AudioBackendException ("could not setup buffer size change callback", __func__);
-
-		::jack_on_shutdown (_jack, static_cb_shutdown, vthis);
-
-		_sample_rate = ::jack_get_sample_rate (_jack);
-		_buffer_size = ::jack_get_buffer_size (_jack);
-
-		update_graph();
-
-		// Reconnect all ports:
-		for (InputsSet::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
-			(*p)->initialize();
-		for (OutputsSet::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
-			(*p)->initialize();
-
-		enable();
+		_transport->connect (_client_name.toStdString());
+		update_widgets();
 	}
 	catch (Exception const& e)
 	{
-		QMessageBox::warning (this, "Audio backend", QString ("Can't start audio backend: ") + e.what());
-		disconnect();
+		QMessageBox::warning (this, "Audio backend", QString ("Can't connect to audio backend: ") + e.what());
+		_dummy_timer->start();
 	}
-	update_widgets();
 }
 
 
 void
 AudioBackend::disconnect()
 {
-	if (_jack)
-	{
-		disable();
-		invalidate_ports();
-		// Close JACK client:
-		::jack_client_close (_jack);
-		_jack = 0;
-		update_widgets();
-	}
+	_transport->disconnect();
 	_dummy_timer->start();
+	update_widgets();
 }
 
 
 bool
 AudioBackend::connected() const
 {
-	return _jack != 0;
+	return _transport->connected();
+}
+
+
+void
+AudioBackend::notify_disconnected()
+{
+	QApplication::postEvent (this, new OfflineNotification());
 }
 
 
@@ -584,7 +520,7 @@ AudioBackend::destroy_selected_output()
 void
 AudioBackend::dummy_round()
 {
-	_dummy_thread.execute();
+	process();
 }
 
 
@@ -593,7 +529,12 @@ AudioBackend::customEvent (QEvent* event)
 {
 	OfflineNotification* offline_notification = dynamic_cast<OfflineNotification*> (event);
 	if (offline_notification)
-		jack_disconnected();
+	{
+		disable();
+		_dummy_timer->start();
+		// Show message to user:
+		QMessageBox::warning (this, "Audio backend", "Audio transport disconnected. :[\nUse \"Reconnect\" button on Audio backend tab (or press C-j) to reconnect.");
+	}
 }
 
 
@@ -602,136 +543,8 @@ AudioBackend::graph_updated()
 {
 	Unit::graph_updated();
 	// Update smoothers for all OutputItems:
-	for (OutputsSet::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
-		(*p)->graph_updated();
-}
-
-
-void
-AudioBackend::ignore_sigpipe()
-{
-	sigset_t set;
-	sigemptyset (&set);
-	sigaddset (&set, SIGPIPE);
-	sigprocmask (SIG_BLOCK, &set, 0);
-}
-
-
-void
-AudioBackend::update_graph()
-{
-	// Update graph parameters:
-	graph()->lock();
-	graph()->set_buffer_size (_buffer_size);
-	graph()->set_sample_rate (_sample_rate);
-	graph()->unlock();
-}
-
-
-void
-AudioBackend::invalidate_ports()
-{
-	// Invalidate all ports:
-	for (InputsSet::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
-		(*p)->invalidate();
-	for (OutputsSet::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
-		(*p)->invalidate();
-}
-
-
-void
-AudioBackend::offline_invalidate_ports()
-{
-	// Invalidate all ports:
-	for (InputsSet::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
-		(*p)->offline_invalidate();
-	for (OutputsSet::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
-		(*p)->offline_invalidate();
-}
-
-
-void
-AudioBackend::jack_disconnected()
-{
-	_jack = 0;
-	disable();
-	offline_invalidate_ports();
-	_dummy_timer->start();
-	// Show message to user:
-	QMessageBox::warning (this, "Audio backend", "JACK disconnected. :[\nUse 'Reconnect' button on Audio backend tab to reconnect to JACK.");
-}
-
-
-int
-AudioBackend::cb_process (jack_nframes_t)
-{
-	if (enabled())
-	{
-		session()->graph()->enter_processing_round();
-		if (enabled())
-			sync();
-		session()->graph()->leave_processing_round();
-	}
-	return 0;
-}
-
-
-int
-AudioBackend::cb_sample_rate_change (jack_nframes_t srate)
-{
-	_sample_rate = srate;
-	return 0;
-}
-
-
-int
-AudioBackend::cb_buffer_size_change (jack_nframes_t nframes)
-{
-	_buffer_size = nframes;
-	return 0;
-}
-
-
-/**
- * Warning: this function is ASYNC, and should use async-safe
- * functions only.
- */
-void
-AudioBackend::cb_shutdown()
-{
-	QApplication::postEvent (this, new OfflineNotification());
-}
-
-
-int
-AudioBackend::static_cb_process (jack_nframes_t nframes, void* klass)
-{
-	// Call appropiate backend instance member:
-	return reinterpret_cast<AudioBackend*> (klass)->cb_process (nframes);
-}
-
-
-int
-AudioBackend::static_cb_sample_rate_change (jack_nframes_t srate, void* klass)
-{
-	// Call appropiate backend instance member:
-	return reinterpret_cast<AudioBackend*> (klass)->cb_sample_rate_change (srate);
-}
-
-
-int
-AudioBackend::static_cb_buffer_size_change (jack_nframes_t nframes, void* klass)
-{
-	// Call appropiate backend instance member:
-	return reinterpret_cast<AudioBackend*> (klass)->cb_buffer_size_change (nframes);
-}
-
-
-void
-AudioBackend::static_cb_shutdown (void* klass)
-{
-	// Call appropiate backend instance member:
-	reinterpret_cast<AudioBackend*> (klass)->cb_shutdown();
+	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
+		p->second->graph_updated();
 }
 
 } // namespace Haruhi

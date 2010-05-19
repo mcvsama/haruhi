@@ -37,6 +37,9 @@
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/atomic.h>
 
+// Local:
+#include "audio_transport.h"
+
 
 namespace Haruhi {
 
@@ -68,14 +71,11 @@ class PortItem:
 	QString
 	name() const;
 
+	AudioTransport::Port*
+	transport_port() const { return _transport_port; }
+
 	Core::AudioPort*
 	port() const;
-
-	/**
-	 * Tells if output (JACK) port is valid.
-	 */
-	bool
-	valid() const { return _jack_port != 0; }
 
 	/**
 	 * Tells whether port has been fully constructed and
@@ -85,29 +85,10 @@ class PortItem:
 	ready() const { return _ready; }
 
 	/**
-	 * Invalidates port, ie destroys JACK port.
-	 */
-	void
-	invalidate();
-
-	/**
-	 * Invalidates port (drops JACK port info), but does not
-	 * try to destroy JACK port (use it if jack is already disconnected).
-	 */
-	void
-	offline_invalidate();
-
-	/**
 	 * Updates name of backend ports basing on GUI port name.
 	 */
 	void
 	update_name();
-
-	/**
-	 * Creates JACK port.
-	 */
-	virtual void
-	initialize() = 0;
 
 	/**
 	 * Creates a dialog for port configuration.
@@ -115,22 +96,18 @@ class PortItem:
 	virtual void
 	configure() = 0;
 
-	/**
-	 * Transfers data between JACK port and internal port, or vice versa.
-	 */
-	virtual void
-	transfer() = 0;
-
   protected:
 	void
 	set_ready (bool r) { atomic (_ready) = r; }
 
   protected:
-	AudioBackend*		_backend;
-	QString				_before_rename_text;
-	Core::AudioPort*	_port;
-	::jack_port_t*		_jack_port;
-	bool				_ready;
+	AudioBackend*			_backend;
+	Core::AudioPort*		_port;
+	AudioTransport::Port*	_transport_port;
+
+  private:
+	// Set when port is fully constructed:
+	bool					_ready;
 };
 
 } // namespace AudioBackendPrivate

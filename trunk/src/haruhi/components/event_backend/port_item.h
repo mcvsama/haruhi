@@ -49,9 +49,6 @@ class PortItem:
 
 	~PortItem();
 
-	void
-	update_minimum_size();
-
 	InternalInputs*
 	internal_inputs() { return &_internal_inputs; }
 
@@ -74,6 +71,10 @@ class PortItem:
 
 	PortItem*
 	port_item() const { return _port_item; }
+
+  private:
+	void
+	update_minimum_size();
 
   protected:
 	EventBackend*	_backend;

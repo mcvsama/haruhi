@@ -63,6 +63,10 @@ class EventBackend:
 	friend class EventBackendPrivate::InternalInputItem;
 
   public:
+	/**
+	 * Ports to listen for in start_learning()/stop_learning().
+	 * As transport type use EventTypes.
+	 */
 	enum {
 		Keyboard			= 1 << 0,
 		Controller			= 1 << 1,
@@ -103,14 +107,14 @@ class EventBackend:
 	EventTransport*
 	transport() const { return _transport; }
 
-	/**
+	/*
 	 * Haruhi::Unit methods:
 	 */
 
 	void
 	process();
 
-	/**
+	/*
 	 * Saveable methods:
 	 */
 
@@ -120,10 +124,7 @@ class EventBackend:
 	void
 	load_state (QDomElement const&);
 
-	/**
-	 * Backend methods:
-	 */
-
+  public slots:
 	void
 	connect();
 
@@ -154,7 +155,6 @@ class EventBackend:
 	void
 	stop_learning (Learnable*, EventTypes);
 
-  public slots:
 	void
 	update_widgets();
 
@@ -202,8 +202,7 @@ class EventBackend:
 	insert_template (int menu_item_id);
 
   private:
-	Session*		_session;
-	std::string		_client_name;
+	QString			_client_name;
 	EventTransport*	_transport;
 	InputsMap		_inputs;
 	Learnables		_learnables;

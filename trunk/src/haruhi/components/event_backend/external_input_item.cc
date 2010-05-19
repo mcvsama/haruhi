@@ -71,8 +71,11 @@ ExternalInputItem::update_name()
 {
 	_transport_port->rename (name().toStdString());
 	// Update group name:
+	_backend->graph()->lock();
 	_port_group->set_name (name().toStdString());
+	_backend->graph()->unlock();
 }
+
 
 QString
 ExternalInputItem::name() const

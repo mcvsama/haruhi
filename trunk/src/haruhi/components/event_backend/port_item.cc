@@ -48,6 +48,14 @@ PortItem::PortItem (PortItem* parent, QString const& name):
 }
 
 
+PortItem::~PortItem()
+{
+	// Remove itself from list view:
+	if (parent())
+		parent()->takeChild (parent()->indexOfChild (this));
+}
+
+
 void
 PortItem::update_minimum_size()
 {
@@ -57,14 +65,6 @@ PortItem::update_minimum_size()
 		s.setHeight (18);
 		setSizeHint (0, s);
 	}
-}
-
-
-PortItem::~PortItem()
-{
-	// Remove itself from list view:
-	if (parent())
-		parent()->takeChild (parent()->indexOfChild (this));
 }
 
 } // namespace EventBackendPrivate

@@ -31,6 +31,9 @@ class AudioBackend;
 /**
  * Parent class for audio transport implementations
  * (ALSA, JACK, OSS, etc.)
+ *
+ * AudioTransport should update graph parameters
+ * such like sample-rate or buffer-size (after proper graph lock).
  */
 class AudioTransport
 {
@@ -39,7 +42,8 @@ class AudioTransport
 	{
 	  public:
 		Port (AudioTransport* transport):
-			_transport (transport)
+			_transport (transport),
+			_buffer (1)
 		{ }
 
 		virtual ~Port() { }
@@ -97,6 +101,24 @@ class AudioTransport
 	connected() const = 0;
 
 	/**
+	 * Activates transport (enables periodic callbacks).
+	 */
+	virtual void
+	activate() = 0;
+
+	/**
+	 * Deactivates transport (disable periodic callbacks).
+	 */
+	virtual void
+	deactivate() = 0;
+
+	/**
+	 * Returns true if transport is active.
+	 */
+	virtual bool
+	active() const = 0;
+
+	/**
 	 * Creates input port with given name.
 	 * Should never return 0, instead it should throw
 	 * an exception.
@@ -120,6 +142,8 @@ class AudioTransport
 
 	/**
 	 * Synchronizes ports (fills buffers, etc).
+	 * After synchronization transport must signal engine that
+	 * it can continue processing (using method signal()).
 	 */
 	virtual void
 	sync() = 0;

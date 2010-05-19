@@ -30,12 +30,12 @@ namespace AudioBackendPrivate {
 OutputItem::OutputItem (PortsListView* parent, QString const& name):
 	PortItem (parent, name)
 {
-	initialize();
+	_transport_port = _backend->transport()->create_output (name.toStdString());
 	// Allocate new port:
 	_backend->graph()->lock();
 	_port = new Core::AudioPort (_backend, name.ascii(), Core::Port::Input);
 	_backend->graph()->unlock();
-	_backend->_outputs.insert (this);
+	_backend->_outputs[_transport_port] = this;
 	// Configure item:
 	setIcon (0, Config::Icons16::audio_output_port());
 	graph_updated();
@@ -46,17 +46,14 @@ OutputItem::OutputItem (PortsListView* parent, QString const& name):
 
 OutputItem::~OutputItem()
 {
-	_backend->_outputs.erase (this);
-}
-
-
-void
-OutputItem::initialize()
-{
-	// Create JACK output port:
-	if (_backend->_jack)
-		_jack_port = ::jack_port_register (_backend->_jack, text (0).ascii(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsTerminal | JackPortIsOutput, 0);
-	// Don't panic if creating failed. It will be a port without external representation (ie. not "valid", but still working).
+	_backend->_outputs.erase (_transport_port);
+	_backend->transport()->destroy_port (_transport_port);
+	_backend->graph()->lock();
+	delete _port;
+	_backend->graph()->unlock();
+	// Remove itself from External ports list view:
+	if (treeWidget())
+		treeWidget()->invisibleRootItem()->takeChild (treeWidget()->invisibleRootItem()->indexOfChild (this));
 }
 
 
@@ -67,25 +64,6 @@ OutputItem::configure()
 	dialog->from (this);
 	if (dialog->exec() == OutputDialog::Accepted)
 		dialog->apply (this);
-}
-
-
-void
-OutputItem::transfer()
-{
-	if (_jack_port)
-	{
-		Core::AudioBuffer* audio_buffer = _port->audio_buffer();
-		void* d = ::jack_port_get_buffer (_jack_port, audio_buffer->size());
-
-		if (_port->back_connections().size() > 0)
-		{
-			void* s = audio_buffer->begin();
-			::memcpy (d, s, sizeof (Core::Sample) * audio_buffer->size());
-		}
-		else
-			::memset (d, 0, sizeof (Core::Sample) * audio_buffer->size());
-	}
 }
 
 

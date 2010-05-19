@@ -33,7 +33,8 @@ namespace AudioBackendPrivate {
 PortItem::PortItem (PortsListView* parent, QString const& name):
 	QTreeWidgetItem (parent, QStringList (name)),
 	_backend (parent->backend()),
-	_jack_port (0),
+	_port (0),
+	_transport_port (0),
 	_ready (false)
 {
 	QSize s = sizeHint (0);
@@ -47,12 +48,7 @@ PortItem::PortItem (PortsListView* parent, QString const& name):
 
 PortItem::~PortItem()
 {
-	_backend->graph()->lock();
-	delete _port;
-	_backend->graph()->unlock();
-	if (_jack_port)
-		::jack_port_unregister (_backend->_jack, _jack_port);
-	// Remove itself from list view:
+	// Remove itself from TreeWidget:
 	if (parent())
 		parent()->takeChild (parent()->indexOfChild (this));
 }
@@ -75,27 +71,10 @@ PortItem::port() const
 void
 PortItem::update_name()
 {
+	_transport_port->rename (name().toStdString());
 	_backend->graph()->lock();
-	_port->set_name (text (0).ascii());
+	_port->set_name (name().toStdString());
 	_backend->graph()->unlock();
-	if (_jack_port)
-		::jack_port_set_name (_jack_port, text (0).ascii());
-}
-
-
-void
-PortItem::invalidate()
-{
-	if (_jack_port)
-		::jack_port_unregister (_backend->_jack, _jack_port);
-	_jack_port = 0;
-}
-
-
-void
-PortItem::offline_invalidate()
-{
-	_jack_port = 0;
 }
 
 } // namespace AudioBackendPrivate

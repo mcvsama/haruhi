@@ -22,12 +22,12 @@
 
 // Haruhi:
 #include <haruhi/core/event_buffer.h>
-#include <haruhi/components/event_backend/transports/alsa_event_transport.h>
 #include <haruhi/config.h>
 #include <haruhi/haruhi.h>
 #include <haruhi/session.h>
 
 // Local:
+#include "transports/alsa_event_transport.h"
 #include "event_backend.h"
 #include "external_input_dialog.h"
 #include "internal_input_dialog.h"
@@ -40,7 +40,6 @@ namespace Private = EventBackendPrivate;
 
 EventBackend::EventBackend (Session* session, QString const& client_name, int id, QWidget* parent):
 	Unit (0, session, "urn://haruhi.mulabs.org/backend/event-backend/1", "• Event", id, parent),
-	_session (session),
 	_client_name (client_name),
 	_inputs_list (0),
 	_templates_menu (0)
@@ -105,10 +104,11 @@ EventBackend::EventBackend (Session* session, QString const& client_name, int id
 EventBackend::~EventBackend()
 {
 	disable();
+
 	_inputs_list->clear();
+
 	if (connected())
 		disconnect();
-
 	unregister_unit();
 
 	delete _templates_menu;
@@ -178,7 +178,13 @@ EventBackend::load_state (QDomElement const& element)
 void
 EventBackend::connect()
 {
-	_transport->connect (_client_name);
+	try {
+		_transport->connect (_client_name.toStdString());
+	}
+	catch (Exception const& e)
+	{
+		QMessageBox::warning (this, "Event backend", QString ("Can't connect to event backend: ") + e.what());
+	}
 }
 
 
