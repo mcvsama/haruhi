@@ -118,6 +118,7 @@ class Thread
 	SchedType	_sched_type;
 	int			_priority;
 	std::size_t	_stack_size;
+	bool		_started;
 	bool		_finished;
 	Mutex		_wait;
 };
