@@ -126,7 +126,7 @@ Thread::wait()
 void
 Thread::set_sched()
 {
-	if (!finished())
+	if (atomic (_started) && !finished())
 	{
 		struct sched_param p;
 		p.sched_priority = _priority;
@@ -140,6 +140,7 @@ Thread::callback (void* arg)
 {
 	Thread *k = reinterpret_cast<Thread*> (arg);
 	k->_wait.lock();
+	atomic (k->_started) = true;
 	atomic (k->_finished) = false;
 	k->run();
 	atomic (k->_finished) = true;
