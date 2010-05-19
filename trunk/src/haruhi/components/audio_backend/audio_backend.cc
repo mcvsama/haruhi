@@ -43,8 +43,7 @@ namespace Private = AudioBackendPrivate;
 
 AudioBackend::AudioBackend (Session* session, QString const& client_name, int id, QWidget* parent):
 	Unit (0, session, "urn://haruhi.mulabs.org/backend/jack-audio-backend/1", "• Audio", id, parent),
-	_client_name (client_name),
-	_panic_pressed (false)
+	_client_name (client_name)
 {
 	_transport = new JackAudioTransport (this);
 
@@ -162,79 +161,70 @@ void
 AudioBackend::disable()
 {
 	_transport->deactivate();
-	disable();
+	Unit::disable();
+}
+
+
+void
+AudioBackend::transfer()
+{
+	session()->engine()->wait_for_data();
+
+	// Transport -> Haruhi:
+	for (InputsMap::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
+	{
+		Core::Sample* src_buffer = p->first->buffer();
+		Core::AudioBuffer* dst_buffer = p->second->port()->audio_buffer();
+		if (src_buffer)
+			memcpy (dst_buffer->begin(), src_buffer, sizeof (Core::Sample) * dst_buffer->size());
+		else
+			dst_buffer->clear();
+	}
+
+	// Use Master Volume control to adjust volume of outputs:
+	// FIXME not-secure, use exported int value (controller_proxy->value()):
+	DialControl* master_volume = session()->meter_panel()->master_volume();
+	Core::Sample v = std::pow (master_volume->value() / static_cast<float> (Session::MeterPanel::ZeroVolume), M_E);
+	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
+		p->second->attenuate (v);
+
+	// Haruhi -> Transport:
+	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
+	{
+		Core::AudioBuffer* src_buffer = p->second->port()->audio_buffer();
+		Core::Sample* dst_buffer = p->first->buffer();
+		if (dst_buffer)
+		{
+			if (p->second->port()->back_connections().empty())
+				memset (dst_buffer, 0, sizeof (Core::Sample) * src_buffer->size());
+			else
+				memcpy (dst_buffer, src_buffer->begin(), sizeof (Core::Sample) * src_buffer->size());
+		}
+	}
+
+	// Level meter:
+	std::vector<Private::OutputItem*> ovec;
+	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
+		ovec.push_back (p->second);
+	std::sort (ovec.begin(), ovec.end(), Private::PortItem::CompareByPortName());
+	for (unsigned int i = 0; i < std::min (ovec.size(), static_cast<std::vector<Private::OutputItem*>::size_type> (2u)); ++i)
+	{
+		Core::AudioBuffer* abuf = ovec[i]->port()->audio_buffer();
+		session()->meter_panel()->level_meters_group()->meter (i)->process (abuf->begin(), abuf->end());
+	}
+
+	// Tell engine to continue processing:
+	session()->engine()->signal();
 }
 
 
 void
 AudioBackend::process()
 {
-//	if (graph()->dummy())
-//		return;
-//
-//	DialControl* master_volume = session()->meter_panel()->master_volume();
-//
-//	// Adjust Master Volume control:
-//	{
-//		Core::EventBuffer* buffer = _master_volume_port->event_buffer();
-//		Core::EventBuffer::EventsMultiset const& events = buffer->events();
-//		for (Core::EventBuffer::EventsMultiset::const_iterator e = events.begin(); e != events.end(); ++e)
-//		{
-//			if ((*e)->event_type() == Core::Event::ControllerEventType)
-//			{
-//				Core::ControllerEvent const* controller_event = static_cast<Core::ControllerEvent const*> (e->get());
-//				// FIXME probably not secure: use QApplication::postEvent()...
-//				// FIXME or rather use QApplication::postEvent?
-//				master_volume->setValue (renormalize (controller_event->value(), 0.0, 1.0, Session::MeterPanel::MinVolume, Session::MeterPanel::MaxVolume));
-//			}
-//		}
-//	}
-//
-//	// Check for Panic:
-//	{
-//		Core::EventBuffer* buffer = _panic_port->event_buffer();
-//		Core::EventBuffer::EventsMultiset const& events = buffer->events();
-//		for (Core::EventBuffer::EventsMultiset::const_iterator e = events.begin(); e != events.end(); ++e)
-//		{
-//			if ((*e)->event_type() == Core::Event::ControllerEventType)
-//			{
-//				Core::ControllerEvent const* controller_event = static_cast<Core::ControllerEvent const*> (e->get());
-//				if (controller_event->value() >= 0.5 && _panic_pressed == false)
-//				{
-//					_panic_pressed = true;
-//					graph()->panic();
-//				}
-//				else if (controller_event->value() < 0.5)
-//					_panic_pressed = false;
-//			}
-//		}
-//	}
-//
-//	for (InputsSet::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
-//		(*p)->transfer();
-//
-//	sync_inputs();
-//
-//	// Use Master Volume control to adjust volume of outputs:
-//	// FIXME probably non-secure, use exported int value (using Atomic).
-//	Core::Sample v = std::pow (master_volume->value() / static_cast<float> (Session::MeterPanel::ZeroVolume), M_E);
-//	for (OutputsSet::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
-//		(*p)->attenuate (v);
-//
-//	for (OutputsSet::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
-//		(*p)->transfer();
-//
-//	// Level meter:
-//	{
-//		std::vector<Private::OutputItem*> ovec;
-//		std::copy (_outputs.begin(), _outputs.end(), std::back_inserter (ovec));
-//		std::sort (ovec.begin(), ovec.end(), Private::PortItem::CompareByPortName());
-//		for (unsigned int i = 0; i < std::min (ovec.size(), static_cast<std::vector<Private::OutputItem*>::size_type> (2u)); ++i)
-//		{
-//			Core::AudioBuffer* abuf = ovec[i]->port()->audio_buffer();
-//			session()->meter_panel()->level_meters_group()->meter (i)->process (abuf->begin(), abuf->end());
-//		}
-//	}
+	if (graph()->dummy())
+		return;
+
+	sync_inputs();
 }
 
 

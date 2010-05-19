@@ -42,6 +42,9 @@ class JackAudioTransport: public AudioTransport
 	  public:
 		JackPort (AudioTransport*, Direction, jack_port_t*);
 
+		Core::Sample*
+		buffer();
+
 		jack_port_t*
 		jack_port() const { return _jack_port; }
 

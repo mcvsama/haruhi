@@ -28,9 +28,11 @@ namespace Haruhi {
 Engine::Engine (Session* session):
 	_session (session),
 	_semaphore (0),
-	_quit (false)
+	_wait_semaphore (0),
+	_quit (false),
+	_panic_pressed (false)
 {
-	set_sched (Thread::FIFO, 50);
+	set_sched (Thread::SchedFIFO, 50);
 }
 
 
@@ -39,6 +41,13 @@ Engine::~Engine()
 	_quit = true;
 	_semaphore.post();
 	wait();
+}
+
+
+void
+Engine::wait_for_data()
+{
+	_wait_semaphore.wait();
 }
 
 
@@ -56,10 +65,55 @@ Engine::run()
 	{
 		_session->graph()->enter_processing_round();
 		_session->audio_backend()->sync();
+		adjust_master_volume();
+		check_panic_button();
 		_session->graph()->leave_processing_round();
+		_wait_semaphore.post();
 		_semaphore.wait();
 		if (_quit)
 			break;
+	}
+	while (!_wait_semaphore.try_wait())
+		_wait_semaphore.post();
+}
+
+
+void
+Engine::adjust_master_volume()
+{
+	DialControl* master_volume = _session->meter_panel()->master_volume();
+	Core::EventBuffer* buffer = _session->audio_backend()->master_volume_port()->event_buffer();
+	Core::EventBuffer::EventsMultiset const& events = buffer->events();
+	for (Core::EventBuffer::EventsMultiset::const_iterator e = events.begin(); e != events.end(); ++e)
+	{
+		if ((*e)->event_type() == Core::Event::ControllerEventType)
+		{
+			Core::ControllerEvent const* controller_event = static_cast<Core::ControllerEvent const*> (e->get());
+			// FIXME Use controller_proxy!
+			master_volume->setValue (renormalize (controller_event->value(), 0.0, 1.0, Session::MeterPanel::MinVolume, Session::MeterPanel::MaxVolume));
+		}
+	}
+}
+
+
+void
+Engine::check_panic_button()
+{
+	Core::EventBuffer* buffer = _session->audio_backend()->panic_port()->event_buffer();
+	Core::EventBuffer::EventsMultiset const& events = buffer->events();
+	for (Core::EventBuffer::EventsMultiset::const_iterator e = events.begin(); e != events.end(); ++e)
+	{
+		if ((*e)->event_type() == Core::Event::ControllerEventType)
+		{
+			Core::ControllerEvent const* controller_event = static_cast<Core::ControllerEvent const*> (e->get());
+			if (controller_event->value() >= 0.5 && _panic_pressed == false)
+			{
+				_panic_pressed = true;
+				_session->graph()->panic();
+			}
+			else if (controller_event->value() < 0.5)
+				_panic_pressed = false;
+		}
 	}
 }
 

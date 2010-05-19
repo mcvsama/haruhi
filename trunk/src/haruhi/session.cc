@@ -261,9 +261,11 @@ Session::Session (QWidget* parent):
 		_backends->addTab (_audio, Config::Icons22::show_audio(), "Audio");
 		_backends->addTab (_event, Config::Icons22::show_event(), "Event");
 
-		// Start backends before program is loaded:
+		// Start engine and backends before program is loaded:
+		_engine = new Engine (this);
 		start_event_backend();
 		start_audio_backend();
+		_engine->start();
 
 		_program = new Program (this, _stack);
 
@@ -287,6 +289,7 @@ Session::~Session()
 	stop_audio_backend();
 	stop_event_backend();
 
+	delete _engine;
 	delete _graph;
 }
 
@@ -531,6 +534,7 @@ Session::start_audio_backend()
 	try {
 		_audio_backend = new AudioBackend (this, "Haruhi", 1, _audio->_backend_parent);
 		_audio_backend->show();
+		_audio_backend->enable();
 	}
 	catch (Exception const& e)
 	{
@@ -545,6 +549,7 @@ Session::start_event_backend()
 	try {
 		_event_backend = new EventBackend (this, "Haruhi", 2, _event->_backend_parent);
 		_event_backend->show();
+		_event_backend->enable();
 	}
 	catch (Exception const& e)
 	{

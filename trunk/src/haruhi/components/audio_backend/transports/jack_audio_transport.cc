@@ -46,6 +46,14 @@ JackAudioTransport::JackPort::JackPort (AudioTransport* transport, Direction dir
 }
 
 
+Core::Sample*
+JackAudioTransport::JackPort::buffer()
+{
+	// TODO return 0 if jack is offline
+	return static_cast<Core::Sample*> (jack_port_get_buffer (_jack_port, transport()->backend()->graph()->buffer_size()));
+}
+
+
 void
 JackAudioTransport::JackPort::rename (std::string const& new_name)
 {
@@ -93,8 +101,6 @@ JackAudioTransport::connect (std::string const& client_name)
 
 		c_sample_rate_change (jack_get_sample_rate (_jack_client));
 		c_buffer_size_change (jack_get_buffer_size (_jack_client));
-
-		jack_activate (_jack_client);
 	}
 	catch (Exception const& e)
 	{
@@ -109,7 +115,6 @@ JackAudioTransport::disconnect()
 {
 	if (_jack_client)
 	{
-		jack_deactivate (_jack_client);
 		jack_client_close (_jack_client);
 		_jack_client = 0;
 	}
@@ -126,16 +131,22 @@ JackAudioTransport::connected() const
 void
 JackAudioTransport::activate()
 {
-	_active = true;
-	jack_activate (_jack_client);
+	if (connected())
+	{
+		_active = true;
+		jack_activate (_jack_client);
+	}
 }
 
 
 void
 JackAudioTransport::deactivate()
 {
-	jack_deactivate (_jack_client);
-	_active = false;
+	if (connected())
+	{
+		jack_deactivate (_jack_client);
+		_active = false;
+	}
 }
 
 
@@ -188,33 +199,7 @@ JackAudioTransport::ignore_sigpipe()
 int
 JackAudioTransport::c_process (jack_nframes_t samples)
 {
-	// TODO ensure buffer sizes are enough
-	// TODO copy data from Port buffers to Jack buffers.
-	//from InputItem:
-	//if (_jack_port)
-	//{
-	//	Core::AudioBuffer* audio_buffer = _port->audio_buffer();
-
-	//	void* s = ::jack_port_get_buffer (_jack_port, audio_buffer->size());
-	//	void* d = audio_buffer->begin();
-
-	//	::memcpy (d, s, sizeof (Core::Sample) * audio_buffer->size());
-	//}
-	//from OutputItem:
-	//if (_jack_port)
-	//{
-	//	Core::AudioBuffer* audio_buffer = _port->audio_buffer();
-	//	void* d = ::jack_port_get_buffer (_jack_port, audio_buffer->size());
-
-	//	if (_port->back_connections().size() > 0)
-	//	{
-	//		void* s = audio_buffer->begin();
-	//		::memcpy (d, s, sizeof (Core::Sample) * audio_buffer->size());
-	//	}
-	//	else
-	//		::memset (d, 0, sizeof (Core::Sample) * audio_buffer->size());
-	//}
-	// TODO send signal to engine to continue processing.
+	backend()->transfer();
 	return 0;
 }
 
@@ -242,7 +227,10 @@ JackAudioTransport::c_buffer_size_change (jack_nframes_t buffer_size)
 void
 JackAudioTransport::c_shutdown()
 {
-	// TODO
+	_jack_client = 0;
+	_active = false;
+	// TODO Invalidate ports
+	backend()->notify_disconnected();
 }
 
 } // namespace Haruhi

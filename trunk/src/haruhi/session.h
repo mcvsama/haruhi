@@ -37,6 +37,7 @@
 #include <haruhi/utility/mutex.h>
 #include <haruhi/widgets/level_meter.h>
 #include <haruhi/widgets/dial_control.h>
+#include <haruhi/engine.h>
 #include <haruhi/program.h>
 #include <haruhi/unit_loader.h>
 
@@ -152,6 +153,9 @@ class Session: public QWidget
 	EventBackend*
 	event_backend() const { return _event_backend; }
 
+	Engine*
+	engine() const { return _engine; }
+
 	QString const&
 	name() const
 	{
@@ -261,6 +265,7 @@ class Session: public QWidget
 	// Links to main session components:
 	AudioBackend*			_audio_backend;
 	EventBackend*			_event_backend;
+	Engine*					_engine;
 	UnitLoader*				_unit_loader;
 
 	QSpinBox*				_tempo_spinbox;

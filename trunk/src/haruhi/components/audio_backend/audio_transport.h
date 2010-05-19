@@ -55,14 +55,11 @@ class AudioTransport
 		transport() { return _transport; }
 
 		/**
-		 * Returns audio buffer to use
-		 * for transporting audio.
+		 * Returns audio buffer to use for transporting audio.
+		 * May return 0 if data is not available/port is disabled.
 		 */
-		Core::AudioBuffer&
-		buffer() { return _buffer; }
-
-		Core::AudioBuffer const&
-		buffer() const { return _buffer; }
+		virtual Core::Sample*
+		buffer() = 0;
 
 	  private:
 		AudioTransport*		_transport;

@@ -33,6 +33,12 @@ class Engine: public Thread
 	~Engine();
 
 	/**
+	 * Waits for processing round completion.
+	 */
+	void
+	wait_for_data();
+
+	/**
 	 * Tells engine that it should perform processing round
 	 * on graph.
 	 * \threadsafe
@@ -45,9 +51,18 @@ class Engine: public Thread
 	run();
 
   private:
+	void
+	adjust_master_volume();
+
+	void
+	check_panic_button();
+
+  private:
 	Session*	_session;
 	Semaphore	_semaphore;
+	Semaphore	_wait_semaphore;
 	bool		_quit;
+	bool		_panic_pressed;
 };
 
 } // namespace Haruhi

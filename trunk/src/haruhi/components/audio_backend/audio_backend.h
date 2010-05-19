@@ -91,6 +91,12 @@ class AudioBackend:
 	AudioTransport*
 	transport() const { return _transport; }
 
+	Core::EventPort*
+	master_volume_port() const { return _master_volume_port; }
+
+	Core::EventPort*
+	panic_port() const { return _panic_port; }
+
 	/**
 	 * Starts processing.
 	 */
@@ -103,6 +109,12 @@ class AudioBackend:
 	 */
 	void
 	disable();
+
+	/**
+	 * Transports data between graph's ports and AudioTransport's ports.
+	 */
+	void
+	transfer();
 
 	/*
 	 * Haruhi::Unit methods:
@@ -212,7 +224,6 @@ class AudioBackend:
 	// Master volume control port:
 	Core::EventPort*	_master_volume_port;
 	Core::EventPort*	_panic_port;
-	bool				_panic_pressed;
 
 	// Used for graph ticks when audio backend is not running:
 	QTimer*				_dummy_timer;

@@ -147,7 +147,7 @@ ALSAEventTransport::sync()
 	::snd_seq_event_t* e = 0;
 	Core::Timestamp t = backend()->graph()->timestamp();
 
-	// Clear all input buffers:
+	// Clear all buffers:
 	for (PortsMap::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
 		p->second->buffer().clear();
 
