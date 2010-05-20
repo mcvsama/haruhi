@@ -34,30 +34,58 @@ namespace Haruhi {
 class JackAudioTransport: public AudioTransport
 {
   public:
+	/**
+	 * JackPort can be online (when JACK is connected),
+	 * or offline (JACK not connected).
+	 */
 	class JackPort: public Port
 	{
+		friend class JackAudioTransport;
+
 	  public:
 		enum Direction { Input, Output };
 
 	  public:
-		JackPort (AudioTransport*, Direction, jack_port_t*);
+		/**
+		 * Creates JackPort. Also initializes JACK port with reinit().
+		 */
+		JackPort (AudioTransport*, Direction, std::string const& name);
+
+		/**
+		 * Destroys JACK port using destroy().
+		 */
+		virtual ~JackPort();
 
 		Core::Sample*
 		buffer();
-
-		jack_port_t*
-		jack_port() const { return _jack_port; }
 
 		void
 		rename (std::string const&);
 
 	  private:
+		/**
+		 * Creates actual JACK port.
+		 * Done in constructor.
+		 */
+		void
+		reinit();
+
+		/**
+		 * Destroys JACK port.
+		 */
+		void
+		destroy();
+
+	  private:
 		Direction		_direction;
+		std::string		_name;
 		jack_port_t*	_jack_port;
 	};
 
+	friend class JackPort;
+
   private:
-	typedef std::map<jack_port_t*, JackPort*> PortsMap;
+	typedef std::set<JackPort*> Ports;
 
   public:
 	JackAudioTransport (AudioBackend* backend);
@@ -92,6 +120,9 @@ class JackAudioTransport: public AudioTransport
 	destroy_port (Port*);
 
   private:
+	jack_client_t*
+	jack_client() const { return _jack_client; }
+
 	/**
 	 * Blocks SIGPIPE to avoid terminating program due to failure on JACK read.
 	 */
@@ -144,8 +175,7 @@ class JackAudioTransport: public AudioTransport
 
   private:
 	jack_client_t*	_jack_client;
-	PortsMap		_inputs;
-	PortsMap		_outputs;
+	Ports			_ports;
 	bool			_active;
 };
 

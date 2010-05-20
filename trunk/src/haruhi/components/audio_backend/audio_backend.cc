@@ -214,7 +214,7 @@ AudioBackend::transfer()
 	}
 
 	// Tell engine to continue processing:
-	session()->engine()->signal();
+	session()->engine()->continue_processing();
 }
 
 
@@ -272,6 +272,7 @@ AudioBackend::connect()
 	try {
 		_dummy_timer->stop();
 		_transport->connect (_client_name.toStdString());
+		_transport->activate();
 		update_widgets();
 	}
 	catch (Exception const& e)
@@ -285,6 +286,7 @@ AudioBackend::connect()
 void
 AudioBackend::disconnect()
 {
+	_transport->deactivate();
 	_transport->disconnect();
 	_dummy_timer->start();
 	update_widgets();

@@ -340,6 +340,7 @@ class Config
 		HARUHI_CONFIG_HAS_ICON_16 (colorpicker, "colorpicker.png");
 		HARUHI_CONFIG_HAS_ICON_16 (template_, "template.png");
 		HARUHI_CONFIG_HAS_ICON_16 (new_, "new.png");
+		HARUHI_CONFIG_HAS_ICON_16 (ok, "ok.png");
 		HARUHI_CONFIG_HAS_ICON_16 (keyboard, "keyboard.png");
 		HARUHI_CONFIG_HAS_ICON_16 (session_manager, "session-manager.png");
 		HARUHI_CONFIG_HAS_ICON_16 (insert, "insert.png");

@@ -52,7 +52,7 @@ Engine::wait_for_data()
 
 
 void
-Engine::signal()
+Engine::continue_processing()
 {
 	_semaphore.post();
 }

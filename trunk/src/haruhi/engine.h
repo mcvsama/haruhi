@@ -44,7 +44,7 @@ class Engine: public Thread
 	 * \threadsafe
 	 */
 	void
-	signal();
+	continue_processing();
 
   protected:
 	void

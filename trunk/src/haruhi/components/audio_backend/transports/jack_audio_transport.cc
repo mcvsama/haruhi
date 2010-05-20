@@ -38,26 +38,64 @@
 
 namespace Haruhi {
 
-JackAudioTransport::JackPort::JackPort (AudioTransport* transport, Direction direction, jack_port_t* jack_port):
+JackAudioTransport::JackPort::JackPort (AudioTransport* transport, Direction direction, std::string const& name):
 	Port (transport),
 	_direction (direction),
-	_jack_port (jack_port)
+	_name (name)
 {
+	reinit();
+}
+
+
+JackAudioTransport::JackPort::~JackPort()
+{
+	destroy();
 }
 
 
 Core::Sample*
 JackAudioTransport::JackPort::buffer()
 {
-	// TODO return 0 if jack is offline
-	return static_cast<Core::Sample*> (jack_port_get_buffer (_jack_port, transport()->backend()->graph()->buffer_size()));
+	if (transport()->connected())
+		return static_cast<Core::Sample*> (jack_port_get_buffer (_jack_port, transport()->backend()->graph()->buffer_size()));
+	return 0;
+}
+
+
+void
+JackAudioTransport::JackPort::reinit()
+{
+	if (transport()->connected())
+	{
+		switch (_direction)
+		{
+			case Input:
+				_jack_port = jack_port_register (static_cast<JackAudioTransport*> (transport())->jack_client(), _name.c_str(),
+												 JACK_DEFAULT_AUDIO_TYPE, JackPortIsTerminal | JackPortIsInput, 0);
+				break;
+			case Output:
+				_jack_port = jack_port_register (static_cast<JackAudioTransport*> (transport())->jack_client(), _name.c_str(),
+												 JACK_DEFAULT_AUDIO_TYPE, JackPortIsTerminal | JackPortIsOutput, 0);
+				break;
+		}
+	}
+}
+
+
+void
+JackAudioTransport::JackPort::destroy()
+{
+	if (transport()->connected())
+		jack_port_unregister (static_cast<JackAudioTransport*> (transport())->jack_client(), _jack_port);
 }
 
 
 void
 JackAudioTransport::JackPort::rename (std::string const& new_name)
 {
-	jack_port_set_name (_jack_port, new_name.c_str());
+	_name = new_name;
+	if (transport()->connected())
+		jack_port_set_name (_jack_port, new_name.c_str());
 }
 
 
@@ -101,6 +139,10 @@ JackAudioTransport::connect (std::string const& client_name)
 
 		c_sample_rate_change (jack_get_sample_rate (_jack_client));
 		c_buffer_size_change (jack_get_buffer_size (_jack_client));
+
+		// Switch all ports online:
+		for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
+			(*p)->reinit();
 	}
 	catch (Exception const& e)
 	{
@@ -115,8 +157,9 @@ JackAudioTransport::disconnect()
 {
 	if (_jack_client)
 	{
-		jack_client_close (_jack_client);
+		jack_client_t* c = _jack_client;
 		_jack_client = 0;
+		jack_client_close (c);
 	}
 }
 
@@ -153,11 +196,8 @@ JackAudioTransport::deactivate()
 JackAudioTransport::Port*
 JackAudioTransport::create_input (std::string const& port_name)
 {
-	jack_port_t* jack_port = jack_port_register (_jack_client, port_name.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsTerminal | JackPortIsInput, 0);
-	if (jack_port == 0)
-		throw AudioBackendPortException ("could not create Jack input port", __func__);
-	JackPort* port = new JackPort (this, JackPort::Input, jack_port);
-	_inputs[jack_port] = port;
+	JackPort* port = new JackPort (this, JackPort::Input, port_name);
+	_ports.insert (port);
 	return port;
 }
 
@@ -165,11 +205,8 @@ JackAudioTransport::create_input (std::string const& port_name)
 JackAudioTransport::Port*
 JackAudioTransport::create_output (std::string const& port_name)
 {
-	jack_port_t* jack_port = jack_port_register (_jack_client, port_name.c_str(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsTerminal | JackPortIsOutput, 0);
-	if (jack_port == 0)
-		throw AudioBackendPortException ("could not create Jack output port", __func__);
-	JackPort* port = new JackPort (this, JackPort::Output, jack_port);
-	_outputs[jack_port] = port;
+	JackPort* port = new JackPort (this, JackPort::Output, port_name);
+	_ports.insert (port);
 	return port;
 }
 
@@ -177,11 +214,7 @@ JackAudioTransport::create_output (std::string const& port_name)
 void
 JackAudioTransport::destroy_port (Port* port)
 {
-	JackPort* jack_port = static_cast<JackPort*> (port);
-	_inputs.erase (jack_port->jack_port());
-	_outputs.erase (jack_port->jack_port());
-	// Unregister Jack port:
-	jack_port_unregister (_jack_client, jack_port->jack_port());
+	_ports.erase (static_cast<JackPort*> (port));
 	delete port;
 }
 
@@ -229,7 +262,6 @@ JackAudioTransport::c_shutdown()
 {
 	_jack_client = 0;
 	_active = false;
-	// TODO Invalidate ports
 	backend()->notify_disconnected();
 }
 

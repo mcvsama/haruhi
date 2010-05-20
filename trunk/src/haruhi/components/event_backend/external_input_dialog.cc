@@ -53,7 +53,7 @@ ExternalInputDialog::ExternalInputDialog (QWidget* parent):
 
 		QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::spacing);
 
-			_save_button = new QPushButton ("&Apply", this);
+			_save_button = new QPushButton (Config::Icons16::ok(), "&Apply", this);
 			_save_button->setDefault (true);
 
 		buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
