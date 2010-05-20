@@ -524,7 +524,6 @@ AudioBackend::customEvent (QEvent* event)
 	OfflineNotification* offline_notification = dynamic_cast<OfflineNotification*> (event);
 	if (offline_notification)
 	{
-		disable();
 		_dummy_timer->start();
 		// Show message to user:
 		QMessageBox::warning (this, "Audio backend", "Audio transport disconnected. :[\nUse \"Reconnect\" button on Audio backend tab (or press C-j) to reconnect.");

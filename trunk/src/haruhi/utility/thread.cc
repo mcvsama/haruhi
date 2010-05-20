@@ -50,7 +50,8 @@ Thread::start()
 {
 	pthread_attr_t att;
 	pthread_attr_init (&att);
-	// Scheduling policy:
+	// Scheduling policy, doesn't work anyway.
+	// Will set_sched inside of callback(), before run().
 	pthread_attr_setschedpolicy (&att, _sched_type);
 	// Scheduling param:
 	struct sched_param p;
@@ -91,7 +92,6 @@ Thread::set_sched (SchedType type, int priority)
 {
 	_sched_type = type;
 	_priority = priority;
-	set_sched();
 }
 
 
@@ -127,7 +127,7 @@ Thread::wait()
 void
 Thread::set_sched()
 {
-	if (atomic (_started) && !finished())
+	if (!finished())
 	{
 		struct sched_param p;
 		p.sched_priority = _priority;
@@ -140,6 +140,7 @@ void*
 Thread::callback (void* arg)
 {
 	Thread *k = reinterpret_cast<Thread*> (arg);
+	k->set_sched();
 	k->_wait.lock();
 	atomic (k->_started) = true;
 	atomic (k->_finished) = false;

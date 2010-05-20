@@ -44,6 +44,7 @@ SynthThread::SynthThread (Mikuru* mikuru):
 	_mikuru->graph()->unlock();
 	// 512k stack will be sufficient:
 	set_stack_size (512 * 1024);
+	set_sched (Thread::SchedRR, 50);
 }
 
 

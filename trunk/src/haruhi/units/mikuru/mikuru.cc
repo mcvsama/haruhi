@@ -607,7 +607,6 @@ Mikuru::set_threads_number (int threads)
 	{
 		Private::SynthThreads::iterator s = _synth_threads.insert (new Private::SynthThread (this)).first;
 		(*s)->start();
-		(*s)->set_sched (Thread::SchedFIFO, 50);
 		// Temporarily unlock graph in case synth thread is waiting for it:
 		_synth_threads_mutex.unlock();
 		graph()->yield();
