@@ -303,7 +303,7 @@ PortsConnector::disconnect_all_from_selected()
 			else if (port_item->treeWidget() == _opanel->list())
 			{
 				while (!port_item->port()->forward_connections().empty())
-				x	port_item->port()->disconnect_from (*port_item->port()->forward_connections().begin());
+					port_item->port()->disconnect_from (*port_item->port()->forward_connections().begin());
 			}
 			_unit_bay->graph()->unlock();
 		}
