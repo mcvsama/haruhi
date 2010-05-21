@@ -257,6 +257,12 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 
 Waveform::~Waveform()
 {
+	// Delete knobs before ControllerProxies:
+	delete _control_wave_shape;
+	delete _control_modulator_amplitude;
+	delete _control_modulator_index;
+	delete _control_modulator_shape;
+
 	delete _proxy_wave_shape;
 	delete _proxy_modulator_amplitude;
 	delete _proxy_modulator_index;

@@ -172,6 +172,12 @@ Filter::~Filter()
 	// Deassign filter before deletion by Qt:
 	_response_plot->assign_impulse_response (0);
 
+	// Delete knobs before ControllerProxies:
+	delete _control_frequency;
+	delete _control_resonance;
+	delete _control_gain;
+	delete _control_attenuation;
+
 	delete _proxy_frequency;
 	delete _proxy_resonance;
 	delete _proxy_gain;

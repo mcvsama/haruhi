@@ -293,6 +293,19 @@ Oscillator::Oscillator (Part* part, Core::PortGroup* port_group, QString const& 
 
 Oscillator::~Oscillator()
 {
+	// Delete knobs before ControllerProxies:
+	delete _control_volume;
+	delete _control_panorama;
+	delete _control_detune;
+	delete _control_pitchbend;
+	delete _control_velocity_sens;
+	delete _control_unison_index;
+	delete _control_unison_spread;
+	delete _control_unison_init;
+	delete _control_unison_noise;
+	delete _control_portamento_time;
+	delete _control_phase;
+
 	delete _evdisp_amplitude;
 	delete _evdisp_frequency;
 	delete _evdisp_panorama;

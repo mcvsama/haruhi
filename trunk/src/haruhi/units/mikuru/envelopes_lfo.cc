@@ -280,6 +280,16 @@ LFO::LFO (int id, Mikuru* mikuru, QWidget* parent):
 
 LFO::~LFO()
 {
+	// Delete knobs before ControllerProxies:
+	delete _control_delay;
+	delete _control_fade_in;
+	delete _control_frequency;
+	delete _control_level;
+	delete _control_depth;
+	delete _control_phase;
+	delete _control_wave_shape;
+	delete _control_fade_out;
+
 	delete _proxy_delay;
 	delete _proxy_fade_in;
 	delete _proxy_frequency;

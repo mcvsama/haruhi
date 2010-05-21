@@ -118,6 +118,13 @@ General::~General()
 void
 General::delete_ports()
 {
+	// Delete knobs before ControllerProxies:
+	delete _control_volume;
+	delete _control_detune;
+	delete _control_panorama;
+	delete _control_stereo_width;
+	delete _control_input_volume;
+
 	delete _proxy_volume;
 	delete _proxy_detune;
 	delete _proxy_panorama;

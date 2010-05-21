@@ -184,6 +184,15 @@ ADSR::~ADSR()
 	_plot->assign_envelope (0);
 	_mikuru->free_id ("adsrs", _id);
 
+	// Delete knobs before ControllerProxies:
+	delete _control_delay;
+	delete _control_attack;
+	delete _control_attack_hold;
+	delete _control_decay;
+	delete _control_sustain;
+	delete _control_sustain_hold;
+	delete _control_release;
+
 	delete _proxy_delay;
 	delete _proxy_attack;
 	delete _proxy_attack_hold;
