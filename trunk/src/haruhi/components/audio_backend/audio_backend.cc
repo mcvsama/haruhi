@@ -125,7 +125,7 @@ AudioBackend::AudioBackend (Session* session, QString const& client_name, int id
 	QObject::connect (_dummy_timer, SIGNAL (timeout()), this, SLOT (dummy_round()));
 	_dummy_timer->start (33);
 
-	connect();
+	update_widgets();
 }
 
 
@@ -271,15 +271,17 @@ AudioBackend::connect()
 {
 	try {
 		_dummy_timer->stop();
+		if (connected())
+			disconnect();
 		_transport->connect (_client_name.toStdString());
 		_transport->activate();
-		update_widgets();
 	}
 	catch (Exception const& e)
 	{
 		QMessageBox::warning (this, "Audio backend", QString ("Can't connect to audio backend: ") + e.what());
 		_dummy_timer->start();
 	}
+	update_widgets();
 }
 
 
@@ -514,7 +516,7 @@ AudioBackend::destroy_selected_output()
 void
 AudioBackend::dummy_round()
 {
-	process();
+	session()->engine()->continue_processing();
 }
 
 
@@ -525,6 +527,7 @@ AudioBackend::customEvent (QEvent* event)
 	if (offline_notification)
 	{
 		_dummy_timer->start();
+		update_widgets();
 		// Show message to user:
 		QMessageBox::warning (this, "Audio backend", "Audio transport disconnected. :[\nUse \"Reconnect\" button on Audio backend tab (or press C-j) to reconnect.");
 	}

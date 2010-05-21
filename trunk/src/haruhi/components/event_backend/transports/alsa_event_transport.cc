@@ -28,35 +28,77 @@
 
 namespace Haruhi {
 
-ALSAEventTransport::ALSAPort::ALSAPort (EventTransport* transport, Direction direction, int alsa_port):
+ALSAEventTransport::ALSAPort::ALSAPort (EventTransport* transport, Direction direction, std::string const& name):
 	Port (transport),
 	_direction (direction),
-	_alsa_port (alsa_port)
+	_name (name),
+	_alsa_port (0)
 {
+	reinit();
+}
+
+
+ALSAEventTransport::ALSAPort::~ALSAPort()
+{
+	destroy();
 }
 
 
 void
 ALSAEventTransport::ALSAPort::rename (std::string const& new_name)
 {
-	ALSAEventTransport* alsa_transport = static_cast<ALSAEventTransport*> (transport());
-	snd_seq_port_info_t* info = 0;
-	try {
-		// Rename ALSA port:
-		if (snd_seq_port_info_malloc (&info) < 0)
-			throw;
-		if (snd_seq_get_port_info (alsa_transport->_seq, alsa_port(), info) < 0)
-			throw;
-		snd_seq_port_info_set_name (info, new_name.c_str());
-		if (snd_seq_set_port_info (alsa_transport->_seq, alsa_port(), info) < 0)
-			throw;
-		snd_seq_port_info_free (info);
-	}
-	catch (...)
+	_name = new_name;
+	if (transport()->connected())
 	{
-		if (info)
+		ALSAEventTransport* alsa_transport = static_cast<ALSAEventTransport*> (transport());
+		snd_seq_port_info_t* info = 0;
+		try {
+			// Rename ALSA port:
+			if (snd_seq_port_info_malloc (&info) < 0)
+				throw;
+			if (snd_seq_get_port_info (alsa_transport->seq(), _alsa_port, info) < 0)
+				throw;
+			snd_seq_port_info_set_name (info, new_name.c_str());
+			if (snd_seq_set_port_info (alsa_transport->seq(), _alsa_port, info) < 0)
+				throw;
 			snd_seq_port_info_free (info);
+		}
+		catch (...)
+		{
+			if (info)
+				snd_seq_port_info_free (info);
+		}
 	}
+}
+
+
+void
+ALSAEventTransport::ALSAPort::reinit()
+{
+	if (transport()->connected())
+	{
+		switch (_direction)
+		{
+			case Input:
+				_alsa_port = snd_seq_create_simple_port (static_cast<ALSAEventTransport*> (transport())->seq(), _name.c_str(),
+														 SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_WRITE,
+														 SND_SEQ_PORT_TYPE_SYNTHESIZER | SND_SEQ_PORT_TYPE_SOFTWARE);
+				break;
+			case Output:
+				_alsa_port = snd_seq_create_simple_port (static_cast<ALSAEventTransport*> (transport())->seq(), _name.c_str(),
+														 SND_SEQ_PORT_CAP_READ | SND_SEQ_PORT_CAP_SUBS_READ,
+														 SND_SEQ_PORT_TYPE_SYNTHESIZER | SND_SEQ_PORT_TYPE_SOFTWARE);
+				break;
+		}
+	}
+}
+
+
+void
+ALSAEventTransport::ALSAPort::destroy()
+{
+	if (transport()->connected())
+		snd_seq_delete_port (static_cast<ALSAEventTransport*> (transport())->seq(), _alsa_port);
 }
 
 
@@ -78,6 +120,9 @@ ALSAEventTransport::connect (std::string const& client_name)
 	if (snd_seq_open (&_seq, "default", SND_SEQ_OPEN_INPUT, SND_SEQ_NONBLOCK))
 		throw EventBackendException ("could not open default ALSA midi sequencer", __func__);
 	snd_seq_set_client_name (_seq, client_name.c_str());
+	// Switch all ports online:
+	for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
+		p->second->reinit();
 }
 
 
@@ -86,8 +131,11 @@ ALSAEventTransport::disconnect()
 {
 	if (_seq)
 	{
-		snd_seq_close (_seq);
+		for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
+			p->second->destroy();
+		snd_seq_t* c = _seq;
 		_seq = 0;
+		snd_seq_close (c);
 	}
 }
 
@@ -102,14 +150,8 @@ ALSAEventTransport::connected() const
 ALSAEventTransport::Port*
 ALSAEventTransport::create_input (std::string const& port_name)
 {
-	// Create ALSA sequencer port:
-	int alsa_port = snd_seq_create_simple_port (_seq, port_name.c_str(),
-												SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_WRITE,
-												SND_SEQ_PORT_TYPE_SYNTHESIZER | SND_SEQ_PORT_TYPE_SOFTWARE);
-	if (alsa_port < 0)
-		throw EventBackendPortException ("could not create ALSA input port", __func__);
-	ALSAPort* port = new ALSAPort (this, ALSAPort::Input, alsa_port);
-	_inputs[alsa_port] = port;
+	ALSAPort* port = new ALSAPort (this, ALSAPort::Input, port_name);
+	_ports[port->alsa_port()] = port;
 	return port;
 }
 
@@ -117,14 +159,8 @@ ALSAEventTransport::create_input (std::string const& port_name)
 ALSAEventTransport::Port*
 ALSAEventTransport::create_output (std::string const& port_name)
 {
-	// Create ALSA sequencer port:
-	int alsa_port = snd_seq_create_simple_port (_seq, port_name.c_str(),
-												SND_SEQ_PORT_CAP_READ | SND_SEQ_PORT_CAP_SUBS_READ,
-												SND_SEQ_PORT_TYPE_SYNTHESIZER | SND_SEQ_PORT_TYPE_SOFTWARE);
-	if (alsa_port < 0)
-		throw EventBackendPortException ("could not create ALSA input port", __func__);
-	ALSAPort* port = new ALSAPort (this, ALSAPort::Output, alsa_port);
-	_outputs[alsa_port] = port;
+	ALSAPort* port = new ALSAPort (this, ALSAPort::Output, port_name);
+	_ports[port->alsa_port()] = port;
 	return port;
 }
 
@@ -132,11 +168,7 @@ ALSAEventTransport::create_output (std::string const& port_name)
 void
 ALSAEventTransport::destroy_port (Port* port)
 {
-	ALSAPort* alsa_port = static_cast<ALSAPort*> (port);
-	_inputs.erase (alsa_port->alsa_port());
-	_outputs.erase (alsa_port->alsa_port());
-	// Unregister ALSA port:
-	snd_seq_delete_port (_seq, alsa_port->alsa_port());
+	_ports.erase (static_cast<ALSAPort*> (port)->alsa_port());
 	delete port;
 }
 
@@ -144,17 +176,20 @@ ALSAEventTransport::destroy_port (Port* port)
 void
 ALSAEventTransport::sync()
 {
+	if (!connected())
+		return;
+
 	::snd_seq_event_t* e = 0;
 	Core::Timestamp t = backend()->graph()->timestamp();
 
 	// Clear all buffers:
-	for (PortsMap::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
+	for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
 		p->second->buffer().clear();
 
 	while (::snd_seq_event_input (_seq, &e) >= 0)
 	{
-		PortsMap::iterator h = _inputs.find (e->dest.port);
-		if (h == _inputs.end())
+		Ports::iterator h = _ports.find (e->dest.port);
+		if (h == _ports.end())
 			std::cerr << "Warning: could not find port given by ALSA sequencer (" << static_cast<int> (e->dest.port) << ") — ignoring" << std::endl;
 		else
 		{
@@ -168,10 +203,6 @@ ALSAEventTransport::sync()
 		}
 		::snd_seq_free_event (e);
 	}
-
-	// Clear all output buffers:
-	for (PortsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
-		p->second->buffer().clear();
 }
 
 

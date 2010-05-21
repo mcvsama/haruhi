@@ -41,7 +41,8 @@ namespace Haruhi {
 JackAudioTransport::JackPort::JackPort (AudioTransport* transport, Direction direction, std::string const& name):
 	Port (transport),
 	_direction (direction),
-	_name (name)
+	_name (name),
+	_jack_port (0)
 {
 	reinit();
 }
@@ -59,6 +60,15 @@ JackAudioTransport::JackPort::buffer()
 	if (transport()->connected())
 		return static_cast<Core::Sample*> (jack_port_get_buffer (_jack_port, transport()->backend()->graph()->buffer_size()));
 	return 0;
+}
+
+
+void
+JackAudioTransport::JackPort::rename (std::string const& new_name)
+{
+	_name = new_name;
+	if (transport()->connected())
+		jack_port_set_name (_jack_port, new_name.c_str());
 }
 
 
@@ -87,15 +97,6 @@ JackAudioTransport::JackPort::destroy()
 {
 	if (transport()->connected())
 		jack_port_unregister (static_cast<JackAudioTransport*> (transport())->jack_client(), _jack_port);
-}
-
-
-void
-JackAudioTransport::JackPort::rename (std::string const& new_name)
-{
-	_name = new_name;
-	if (transport()->connected())
-		jack_port_set_name (_jack_port, new_name.c_str());
 }
 
 
@@ -157,6 +158,9 @@ JackAudioTransport::disconnect()
 {
 	if (_jack_client)
 	{
+		deactivate();
+		for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
+			(*p)->destroy();
 		jack_client_t* c = _jack_client;
 		_jack_client = 0;
 		jack_client_close (c);

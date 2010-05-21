@@ -37,11 +37,15 @@ class ALSAEventTransport: public EventTransport
   public:
 	class ALSAPort: public Port
 	{
+		friend class ALSAEventTransport;
+
 	  public:
 		enum Direction { Input, Output };
 
 	  public:
-		ALSAPort (EventTransport*, Direction, int alsa_port);
+		ALSAPort (EventTransport*, Direction, std::string const& name);
+
+		~ALSAPort();
 
 		int
 		alsa_port() const { return _alsa_port; }
@@ -50,12 +54,29 @@ class ALSAEventTransport: public EventTransport
 		rename (std::string const&);
 
 	  private:
+		/**
+		 * Creates actual ALSA port.
+		 * Done in constructor.
+		 */
+		void
+		reinit();
+
+		/**
+		 * Destroys ALSA port.
+		 */
+		void
+		destroy();
+
+	  private:
 		Direction	_direction;
+		std::string	_name;
 		int			_alsa_port;
 	};
 
+	friend class ALSAPort;
+
   private:
-	typedef std::map<int, ALSAPort*> PortsMap;
+	typedef std::map<int, ALSAPort*> Ports;
 
   public:
 	ALSAEventTransport (EventBackend* backend);
@@ -83,6 +104,9 @@ class ALSAEventTransport: public EventTransport
 	void
 	sync();
 
+	snd_seq_t*
+	seq() const { return _seq; }
+
   private:
 	/**
 	 * Returns true if event is recognised/supported,
@@ -94,8 +118,7 @@ class ALSAEventTransport: public EventTransport
   private:
 	// ALSA sequencer:
 	snd_seq_t*	_seq;
-	PortsMap	_inputs;
-	PortsMap	_outputs;
+	Ports		_ports;
 };
 
 } // namespace Haruhi

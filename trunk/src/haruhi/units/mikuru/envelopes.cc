@@ -245,7 +245,8 @@ Envelopes::destroy_all_envelopes()
 void
 Envelopes::show_first()
 {
-	_tabs->showPage (_envelopes.front());
+	if (!_envelopes.empty())
+		_tabs->showPage (_envelopes.front());
 }
 
 } // namespace MikuruPrivate

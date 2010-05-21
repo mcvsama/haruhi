@@ -303,8 +303,9 @@ PortsConnector::disconnect_all_from_selected()
 			else if (port_item->treeWidget() == _opanel->list())
 			{
 				while (!port_item->port()->forward_connections().empty())
-					port_item->port()->disconnect_from (*port_item->port()->forward_connections().begin());
+				x	port_item->port()->disconnect_from (*port_item->port()->forward_connections().begin());
 			}
+			_unit_bay->graph()->unlock();
 		}
 	}
 }
@@ -313,22 +314,26 @@ PortsConnector::disconnect_all_from_selected()
 void
 PortsConnector::insert_unit (Unit* unit)
 {
+	_unit_bay->graph()->lock();
 	unit_registered (unit);
 	for (Core::Ports::iterator p = unit->inputs().begin(); p != unit->inputs().end(); ++p)
 		port_registered (*p, unit);
 	for (Core::Ports::iterator p = unit->outputs().begin(); p != unit->outputs().end(); ++p)
 		port_registered (*p, unit);
+	_unit_bay->graph()->unlock();
 }
 
 
 void
 PortsConnector::remove_unit (Unit* unit)
 {
+	_unit_bay->graph()->lock();
 	for (Core::Ports::iterator p = unit->inputs().begin(); p != unit->inputs().end(); ++p)
 		port_unregistered (*p, unit);
 	for (Core::Ports::iterator p = unit->outputs().begin(); p != unit->outputs().end(); ++p)
 		port_unregistered (*p, unit);
 	unit_unregistered (unit);
+	_unit_bay->graph()->unlock();
 }
 
 
@@ -440,11 +445,13 @@ template<class Port>
 		if (oport && iport && typeid (*oport) != typeid (*iport))
 			return;
 
+		_unit_bay->graph()->lock();
 		switch (operation)
 		{
 			case Private::Connect:		oport->connect_to (iport); break;
 			case Private::Disconnect:	oport->disconnect_from (iport); break;
 		}
+		_unit_bay->graph()->unlock();
 	}
 
 

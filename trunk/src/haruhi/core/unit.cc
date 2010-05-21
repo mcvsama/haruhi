@@ -57,7 +57,10 @@ Unit::sync()
 {
 	// Prevent syncing when not in processing round:
 	if (!_graph->_inside_processing_round)
+	{
+		*reinterpret_cast<int*> (0) = 12;
 		throw OutsideProcessingRound ("tried to bump Sync outside processing round", __func__);
+	}
 
 	// Check if we can acquire processing lock. If not, unit
 	// is disabled - don't wait for it.

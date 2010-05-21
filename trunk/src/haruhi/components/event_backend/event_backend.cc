@@ -96,8 +96,8 @@ EventBackend::EventBackend (Session* session, QString const& client_name, int id
 
 	selection_changed();
 	register_unit();
-	connect();
-	enable();
+
+	update_widgets();
 }
 
 

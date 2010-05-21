@@ -119,10 +119,10 @@ class JackAudioTransport: public AudioTransport
 	void
 	destroy_port (Port*);
 
-  private:
 	jack_client_t*
 	jack_client() const { return _jack_client; }
 
+  private:
 	/**
 	 * Blocks SIGPIPE to avoid terminating program due to failure on JACK read.
 	 */

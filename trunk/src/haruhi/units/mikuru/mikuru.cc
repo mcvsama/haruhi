@@ -538,11 +538,8 @@ Mikuru::process_controller_events()
 {
 	sync_some_inputs();
 
-	// Other widgets:
 	_general->process_events();
 	_common_filters->process_events();
-
-	// Drive » Volume, unison, glide:
 	for (Parts::iterator part = _parts.begin(); part != _parts.end(); ++part)
 		(*part)->process_events();
 }

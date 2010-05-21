@@ -506,6 +506,7 @@ Session::stop_audio_backend()
 	if (_audio_backend)
 	{
 		_audio_backend->disable();
+		_audio_backend->disconnect();
 		_audio_backend->hide();
 		_audio_backend->reparent (0, QPoint (0, 0), false);
 		delete _audio_backend;
@@ -520,6 +521,7 @@ Session::stop_event_backend()
 	if (_event_backend)
 	{
 		_event_backend->disable();
+		_event_backend->disconnect();
 		_event_backend->hide();
 		_event_backend->reparent (0, QPoint (0, 0), false);
 		delete _event_backend;
@@ -534,6 +536,7 @@ Session::start_audio_backend()
 	try {
 		_audio_backend = new AudioBackend (this, "Haruhi", 1, _audio->_backend_parent);
 		_audio_backend->show();
+		_event_backend->connect();
 		_audio_backend->enable();
 	}
 	catch (Exception const& e)
@@ -549,6 +552,7 @@ Session::start_event_backend()
 	try {
 		_event_backend = new EventBackend (this, "Haruhi", 2, _event->_backend_parent);
 		_event_backend->show();
+		_event_backend->connect();
 		_event_backend->enable();
 	}
 	catch (Exception const& e)
