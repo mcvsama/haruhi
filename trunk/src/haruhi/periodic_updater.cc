@@ -14,6 +14,7 @@
 // Standard:
 #include <cstddef>
 #include <set>
+#include <iostream>//XXX
 
 // Qt:
 #include <QtCore/QTimer>
@@ -69,7 +70,7 @@ void
 PeriodicUpdater::schedule (Receiver* receiver, Thread thread)
 {
 	Set* set = atomic (_current_sets[thread]);
-	set->insert (receiver);
+	set->insert (std::make_pair (receiver, Shared<Backtrace> (new Backtrace())));
 }
 
 
@@ -77,7 +78,13 @@ void
 PeriodicUpdater::forget (Receiver* receiver, Thread thread)
 {
 	Set* set = atomic (_current_sets[thread]);
-	set->erase (receiver);
+	for (Set::iterator k = set->begin(); k != set->end(); ++k)
+		if (k->first == receiver)
+		{
+			set->erase (k);
+			return;
+		}
+//	set->erase (receiver);
 }
 
 
@@ -94,7 +101,10 @@ PeriodicUpdater::timeout()
 	for (int i = 0; i < _ThreadSize; ++i)
 	{
 		for (Set::iterator r = s[i]->begin(); r != s[i]->end(); ++r)
-			(*r)->periodic_update();
+		{
+			std::clog << *r->second << "\n";
+			r->first->periodic_update();
+		}
 		s[i]->clear();
 	}
 }

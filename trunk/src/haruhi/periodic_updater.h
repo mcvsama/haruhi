@@ -24,6 +24,8 @@
 
 // Haruhi:
 #include <haruhi/utility/mutex.h>
+#include <haruhi/utility/backtrace.h>//XXX
+#include <haruhi/utility/memory.h>//XXX
 
 
 /**
@@ -74,7 +76,7 @@ class PeriodicUpdater: public QObject
 	};
 
   private:
-	typedef std::set<Receiver*> Set;
+	typedef std::set<std::pair<Receiver*, Shared<Backtrace> > > Set;
 
   public:
 	/**
