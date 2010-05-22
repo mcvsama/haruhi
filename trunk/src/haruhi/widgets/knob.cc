@@ -254,6 +254,7 @@ Knob::Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& l
 
 Knob::~Knob()
 {
+	_controller_proxy->set_widget (0);
 	forget_about_update (PeriodicUpdater::QtThread);
 }
 
