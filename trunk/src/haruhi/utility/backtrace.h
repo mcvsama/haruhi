@@ -16,14 +16,9 @@
 
 // Standard:
 #include <cstddef>
-#include <cstdlib>
 #include <string>
-#include <iostream>
-#include <iomanip>
-#include <cxxabi.h>
-
-// System:
-#include <execinfo.h>
+#include <vector>
+#include <ostream>
 
 
 #define SANITY_CHECK(x) \
@@ -37,35 +32,34 @@
 class Backtrace
 {
   public:
-	static void
-	clog()
+	struct Symbol
 	{
-		std::clog << "Stacktrace:" << std::endl;
-		const int MAX = 64;
-		void* buffer[MAX];
-		int r = ::backtrace (buffer, MAX);
-		char** symbols = ::backtrace_symbols (buffer, r);
-		for (int i = 1; i < r; ++i)
-		{
-			std::string symbol (symbols[i]);
-			std::string::size_type a = symbol.find ('(') + 1;
-			std::string::size_type b = symbol.find ('+', a);
-			if (b == std::string::npos)
-				b = symbol.find (')');
-			std::string name (symbol.substr (a, b - a));
+		Symbol (std::string const& name, std::string const& location):
+			name (name), location (location)
+		{ }
 
-			// Demangle name:
-			int demangle_status = 0;
-			std::size_t demangled_max_size = 256;
-			char demangled_name[demangled_max_size];
-			abi::__cxa_demangle (name.c_str(), demangled_name, &demangled_max_size, &demangle_status);
+		std::string name;
+		std::string location;
+	};
 
-			std::clog << "  " << std::setw (4) << i << ". " << symbol.substr (0, a-1) << ": ";
-			std::clog << ((demangle_status == 0) ? demangled_name : name) << std::endl;
-		}
-		::free (symbols);
-	}
+	typedef std::vector<Symbol> Symbols;
+
+  public:
+	Backtrace();
+
+	Symbols const&
+	symbols() const { return _symbols; }
+
+	static void
+	clog();
+
+  private:
+	Symbols _symbols;
 };
+
+
+std::ostream&
+operator<< (std::ostream& os, Backtrace const& backtrace);
 
 #endif
 

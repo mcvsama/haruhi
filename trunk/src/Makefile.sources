@@ -235,6 +235,7 @@ SRC_HEADERS += haruhi/utility/signal.h
 SRC_HEADERS += haruhi/utility/thread.h
 SRC_HEADERS += haruhi/utility/timing.h
 
+SRC_SOURCES += haruhi/utility/backtrace.cc
 SRC_SOURCES += haruhi/utility/condition.cc
 SRC_SOURCES += haruhi/utility/mutex.cc
 SRC_SOURCES += haruhi/utility/semaphore.cc
