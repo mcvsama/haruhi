@@ -204,7 +204,6 @@ class Oscillator: public QWidget
 
 	// Pitchbend/transposition:
 	QCheckBox*			_const_portamento_time;
-	QCheckBox*			_drop_on_release;
 	QCheckBox*			_pitchbend_enabled;
 	QCheckBox*			_pitchbend_released;
 	QSpinBox*			_pitchbend_up_semitones;

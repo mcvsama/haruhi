@@ -204,9 +204,6 @@ class VoiceManager
 	void
 	notify_voice_dropped (Voice*);
 
-	bool
-	drop_on_release() const;
-
   private:
 	Mikuru*				_mikuru;
 	Part*				_part;

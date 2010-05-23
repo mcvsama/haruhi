@@ -408,7 +408,7 @@ VoiceManager::poly_sustain (Voice* voice)
 void
 VoiceManager::poly_release (Voice* voice)
 {
-	if (drop_on_release())
+	if (!voice->tracked())
 		poly_drop (voice);
 	else
 	{
@@ -489,7 +489,7 @@ VoiceManager::mono_release()
 {
 	if (_mono_voice)
 	{
-		if (drop_on_release())
+		if (!_mono_voice->tracked())
 			mono_drop();
 		else
 		{
@@ -632,14 +632,6 @@ void
 VoiceManager::notify_voice_dropped (Voice* voice)
 {
 	_mikuru->general()->envelopes()->notify_voice_dropped (this, voice);
-}
-
-
-bool
-VoiceManager::drop_on_release() const
-{
-	int const vdp_int = atomic (_part->oscillator()->oscillator_params()->voice_drop_policy);
-	return static_cast<Params::Oscillator::VoiceDropPolicy> (vdp_int) == Params::Oscillator::VoiceDropOnRelease;
 }
 
 } // namespace MikuruPrivate

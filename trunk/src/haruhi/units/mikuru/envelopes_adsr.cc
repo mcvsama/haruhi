@@ -214,7 +214,10 @@ ADSR::~ADSR()
 	sweep();
 	// Delete remaining ADSRs:
 	for (ADSRs::iterator x = _adsrs.begin(); x != _adsrs.end(); ++x)
+	{
+		x->first->set_tracked (false);
 		delete x->second;
+	}
 	_mikuru->graph()->unlock();
 }
 
@@ -222,6 +225,9 @@ ADSR::~ADSR()
 void
 ADSR::voice_created (VoiceManager* voice_manager, Voice* voice)
 {
+	if (!atomic (_params.enabled))
+		return;
+
 	uint64_t sr = _mikuru->graph()->sample_rate();
 	// Minimum attack/release time (ms), prevents clicking:
 	uint64_t min = 0.005f * sr;
@@ -236,6 +242,8 @@ ADSR::voice_created (VoiceManager* voice_manager, Voice* voice)
 		_params.sustain_enabled,
 		_params.forced_release
 	);
+	if (atomic (_params.direct_adsr))
+		voice->set_tracked (true);
 }
 
 
@@ -280,8 +288,7 @@ ADSR::process()
 	_proxy_sustain_hold->process_events();
 	_proxy_release->process_events();
 
-	// Skip if disabled or (not connected and not direct adsr):
-	if (!atomic (_params.enabled) || (_port_output->forward_connections().empty() && !_params.direct_adsr))
+	if (_adsrs.empty())
 		return;
 
 	Core::Timestamp t = _mikuru->graph()->timestamp();

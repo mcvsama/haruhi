@@ -227,7 +227,6 @@ Params::Oscillator::Oscillator():
 	monophonic_retrigger (0),
 	monophonic_key_priority (LastPressed),
 	const_portamento_time (1),
-	voice_drop_policy (VoiceDropOnRelease),
 	amplitude_smoothing (50),
 	frequency_smoothing (50),
 	pitchbend_smoothing (50),
@@ -258,7 +257,6 @@ Params::Oscillator::set_non_controller_params (Oscillator& other)
 	HARUHI_MIKURU_COPY_ATOMIC (monophonic_retrigger)
 	HARUHI_MIKURU_COPY_ATOMIC (monophonic_key_priority)
 	HARUHI_MIKURU_COPY_ATOMIC (const_portamento_time)
-	HARUHI_MIKURU_COPY_ATOMIC (voice_drop_policy)
 	HARUHI_MIKURU_COPY_ATOMIC (amplitude_smoothing)
 	HARUHI_MIKURU_COPY_ATOMIC (frequency_smoothing)
 	HARUHI_MIKURU_COPY_ATOMIC (pitchbend_smoothing)

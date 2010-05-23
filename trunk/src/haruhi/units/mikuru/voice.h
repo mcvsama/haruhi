@@ -104,6 +104,17 @@ class Voice
 	void
 	set_frequency (Core::Sample frequency);
 
+	/**
+	 * Sets voice to tracked state, that means VoiceManager should not
+	 * drop this voice upon Release event. Separate Drop event will be sent
+	 * to drop this voice.
+	 */
+	void
+	set_tracked (bool tracked) { _tracked = tracked; }
+
+	bool
+	tracked() const { return _tracked; }
+
 	Params::Voice*
 	params() { return &_params; }
 
@@ -209,6 +220,7 @@ class Voice
 	unsigned int				_drop_sample;
 	unsigned int				_drop_samples;
 	bool						_dropped;
+	bool						_tracked;
 };
 
 

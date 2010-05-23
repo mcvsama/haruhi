@@ -191,11 +191,7 @@ Oscillator::Oscillator (Part* part, Core::PortGroup* port_group, QString const& 
 	_const_portamento_time->setChecked (po.const_portamento_time);
 	QObject::connect (_const_portamento_time, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 
-	// Drop policy:
-	_drop_on_release = new QCheckBox ("Drop voice on release", grid1);
-	_drop_on_release->setChecked (po.voice_drop_policy == Params::Oscillator::VoiceDropOnRelease);
-	QObject::connect (_drop_on_release, SIGNAL (toggled (bool)), this, SLOT (update_params()));
-	QToolTip::add (_drop_on_release, "Uncheck when using ADSR for this part");
+	grid2->addSpace (0);
 
 	// Pitchbend down/up:
 	new QLabel ("Pitchbend down/up range:", grid2);
@@ -390,7 +386,6 @@ Oscillator::load_oscillator_params()
 	_monophonic_retrigger->setChecked (po.monophonic_retrigger);
 	_monophonic_key_priority->setCurrentItem (po.monophonic_key_priority);
 	_const_portamento_time->setChecked (po.const_portamento_time);
-	_drop_on_release->setChecked (po.voice_drop_policy == Params::Oscillator::VoiceDropOnRelease);
 	// Pitchbend/panorama smoothing are set by Knobs.
 	_amplitude_modulation_smoothing->setValue (po.amplitude_smoothing);
 	_frequency_modulation_smoothing->setValue (po.frequency_smoothing);
@@ -458,9 +453,6 @@ Oscillator::update_oscillator_params()
 	po.monophonic_retrigger = _monophonic_retrigger->isChecked();
 	po.monophonic_key_priority = _monophonic_key_priority->currentItem();
 	po.const_portamento_time = _const_portamento_time->isChecked();
-	po.voice_drop_policy = _drop_on_release->isChecked()
-		? Params::Oscillator::VoiceDropOnRelease
-		: Params::Oscillator::VoiceDropOnDrop;
 	po.amplitude_smoothing = _amplitude_modulation_smoothing->value();
 	po.frequency_smoothing = _frequency_modulation_smoothing->value();
 	po.panorama_smoothing = _oscillator_params.panorama_smoothing;

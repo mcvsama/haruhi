@@ -61,7 +61,8 @@ Voice::Voice (VoiceManager* voice_manager, SynthThread* thread, Core::KeyID key_
 	_released (false),
 	_drop_sample (0),
 	_drop_samples (0.005f * _mikuru->graph()->sample_rate()), // 5ms
-	_dropped (false)
+	_dropped (false),
+	_tracked (false)
 {
 	set_thread (thread);
 

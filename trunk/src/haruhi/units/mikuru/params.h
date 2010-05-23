@@ -211,11 +211,6 @@ struct Params
 			HighestPressed		= 3,
 		};
 
-		enum VoiceDropPolicy {
-			VoiceDropOnRelease	= 0,
-			VoiceDropOnDrop		= 1,
-		};
-
 		int volume;
 		int portamento_time;
 		int phase;
@@ -230,7 +225,6 @@ struct Params
 		int monophonic_retrigger;
 		int monophonic_key_priority;
 		int const_portamento_time;
-		int voice_drop_policy;
 		int amplitude_smoothing;
 		int frequency_smoothing;
 		int pitchbend_smoothing;
