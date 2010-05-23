@@ -42,6 +42,7 @@ namespace MikuruPrivate {
 
 LFO::Osc::Osc (float start_phase):
 	_wave (0),
+	_wave_is_random (false),
 	_phase (start_phase),
 	_current_delay_sample (0),
 	_current_fade_in_sample (0),
@@ -73,8 +74,12 @@ LFO::Osc::advance (unsigned int samples)
 	else
 	{
 		float dep = _depth;
+		float prev_phase = _phase;
 
 		_phase = mod1 (_phase + _frequency * samples);
+
+		if (_wave_is_random && prev_phase > _phase)
+			static_cast<RandomWave*> (_wave)->next_step();
 
 		// Fade in:
 		if (_current_fade_in_sample < _fade_in_samples)
@@ -92,6 +97,35 @@ LFO::Osc::advance (unsigned int samples)
 		// Osc:
 		float lev = _level * (1.0f - dep);
 		return ((lev + _inverter * (*_wave) (_phase, 0.0f) * dep) + 1.0f) / 2.0f;
+	}
+}
+
+
+LFO::RandomWave::RandomWave (Type type):
+	_type (type)
+{
+	_prev_value = noise_sample();
+	_curr_value = noise_sample();
+}
+
+
+void
+LFO::RandomWave::next_step()
+{
+	_prev_value = _curr_value;
+	_curr_value = noise_sample();
+}
+
+
+Core::Sample
+LFO::RandomWave::operator() (Core::Sample register phase, Core::Sample) const
+{
+	switch (_type)
+	{
+		case Square:
+			return _curr_value;
+		case Triangle:
+			return phase * (_curr_value - _prev_value) + _prev_value;
 	}
 }
 
@@ -115,6 +149,8 @@ LFO::LFO (int id, Mikuru* mikuru, QWidget* parent):
 	_waves[Params::LFO::Square] = new DSP::ParametricWaves::Square();
 	_waves[Params::LFO::Sawtooth] = new DSP::ParametricWaves::Sawtooth();
 	_waves[Params::LFO::Pulse] = new DSP::ParametricWaves::Pulse();
+	_waves[Params::LFO::RandomSquare] = new RandomWave (RandomWave::Square);
+	_waves[Params::LFO::RandomTriangle] = new RandomWave (RandomWave::Triangle);
 
 	_mikuru->graph()->lock();
 	_port_group = new Core::PortGroup (_mikuru->graph(), QString ("LFO %1").arg (this->id()).toStdString());
@@ -227,9 +263,12 @@ LFO::LFO (int id, Mikuru* mikuru, QWidget* parent):
 	_wave_type->insertItem (Config::Icons16::wave_square(), "Square", Params::LFO::Square);
 	_wave_type->insertItem (Config::Icons16::wave_sawtooth(), "Sawtooth", Params::LFO::Sawtooth);
 	_wave_type->insertItem (Config::Icons16::wave_pulse(), "Pulse", Params::LFO::Pulse);
+	_wave_type->insertItem (Config::Icons16::wave_random_square(), "Random square", Params::LFO::RandomSquare);
+	_wave_type->insertItem (Config::Icons16::wave_random_triangle(), "Random triangle", Params::LFO::RandomTriangle);
 	_wave_type->setCurrentItem (p.wave_type);
 	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (update_params()));
 	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (update_plot()));
+	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (update_widgets()));
 
 	new QLabel ("Function:", grid1);
 	_function = new QComboBox (grid1);
@@ -403,10 +442,11 @@ LFO::process()
 	if (!atomic (_params.enabled) || _port_output->forward_connections().empty())
 		return;
 
+	int wave_type = atomic (_params.wave_type);
 	Core::Timestamp t = _mikuru->graph()->timestamp();
 	unsigned int sample_rate = _mikuru->graph()->sample_rate();
 	unsigned int buffer_size = _mikuru->graph()->buffer_size();
-	DSP::ParametricWave* wave = _waves[atomic (_params.wave_type)];
+	DSP::ParametricWave* wave = _waves[wave_type];
 	update_wave_param();
 	float frequency = 1.0f * atomic (_params.frequency) / Params::LFO::FrequencyDenominator / sample_rate;
 	float level = 1.0f * atomic (_params.level) / Params::LFO::LevelDenominator;
@@ -421,7 +461,7 @@ LFO::process()
 	{
 		Voice* voice = a->first;
 		Osc* osc = a->second;
-		osc->set_wave (wave);
+		osc->set_wave (wave, wave_type == Params::LFO::RandomSquare || wave_type == Params::LFO::RandomTriangle);
 		osc->set_frequency (frequency);
 		osc->set_level (level);
 		osc->set_depth (depth);
@@ -430,9 +470,9 @@ LFO::process()
 	}
 
 	int mode = atomic (_params.mode);
-	if ((mode == Params::LFO::CommonKeySync  && _pressed_keys > 0) || mode == Params::LFO::CommonContinuous)
+	if ((mode == Params::LFO::CommonKeySync && _pressed_keys > 0) || mode == Params::LFO::CommonContinuous)
 	{
-		_common_osc.set_wave (wave);
+		_common_osc.set_wave (wave, wave_type == Params::LFO::RandomSquare || wave_type == Params::LFO::RandomTriangle);
 		_common_osc.set_frequency (frequency);
 		_common_osc.set_level (level);
 		_common_osc.set_depth (depth);
@@ -511,21 +551,28 @@ LFO::update_params()
 void
 LFO::update_plot()
 {
-	update_wave_param();
-	_plot->assign_wave (_waves[atomic (_params.wave_type)], true, true, atomic (_params.wave_invert));
-	_plot->set_phase_marker (true, 1.0f * atomic (_params.phase) / Params::LFO::PhaseDenominator);
-	_plot->plot_shape();
+	bool random = atomic (_params.wave_type) == Params::LFO::RandomSquare || atomic (_params.wave_type) == Params::LFO::RandomTriangle;
+	if (!random)
+	{
+		update_wave_param();
+		_plot->assign_wave (_waves[atomic (_params.wave_type)], true, true, atomic (_params.wave_invert));
+		_plot->set_phase_marker (true, 1.0f * atomic (_params.phase) / Params::LFO::PhaseDenominator);
+		_plot->plot_shape();
+	}
 }
 
 
 void
 LFO::update_widgets()
 {
+	bool random = atomic (_params.wave_type) == Params::LFO::RandomSquare || atomic (_params.wave_type) == Params::LFO::RandomTriangle;
 	bool continuous = atomic (_params.mode) == Params::LFO::CommonContinuous;
 	_control_delay->setEnabled (!continuous);
 	_control_fade_in->setEnabled (!continuous);
 	_control_fade_out->setEnabled (!continuous && _params.fade_out_enabled);
 	_control_phase->setEnabled (!continuous);
+	_control_wave_shape->setEnabled (!random);
+	_plot->setEnabled (!random);
 	_tempo_numerator->setEnabled (_tempo_sync->isChecked());
 	_tempo_denominator->setEnabled (_tempo_sync->isChecked());
 }

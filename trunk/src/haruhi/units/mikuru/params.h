@@ -331,7 +331,7 @@ struct Params
 			HARUHI_MIKURU_PARAM (FadeOut,				       0,	+1000000,	 +100000,	 +100000)
 		};
 
-		enum Wave { Sine, Triangle, Square, Sawtooth, Pulse };
+		enum Wave { Sine, Triangle, Square, Sawtooth, Pulse, RandomSquare, RandomTriangle };
 		enum Function { LogarithmicE, Logarithmic2, Linear, Expotential2, ExpotentialE };
 		enum Mode { Polyphonic, CommonKeySync, CommonContinuous };
 

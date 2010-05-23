@@ -63,7 +63,7 @@ class LFO: public Envelope
 		 * \param	wave is Wave object to use.
 		 */
 		void
-		set_wave (DSP::ParametricWave* wave) { _wave = wave; }
+		set_wave (DSP::ParametricWave* wave, bool is_random) { _wave = wave; _wave_is_random = is_random; }
 
 		/**
 		 * \param	delay is delay in samples.
@@ -119,6 +119,7 @@ class LFO: public Envelope
 
 	  private:
 		DSP::ParametricWave*	_wave;
+		bool					_wave_is_random;
 		float					_phase;
 		unsigned int			_delay_samples;
 		unsigned int			_fade_in_samples;
@@ -131,6 +132,40 @@ class LFO: public Envelope
 		unsigned int			_current_delay_sample;
 		unsigned int			_current_fade_in_sample;
 		unsigned int			_current_fade_out_sample;
+	};
+
+	class RandomWave: public DSP::ParametricWave
+	{
+	  public:
+		enum Type { Square, Triangle };
+
+	  public:
+		RandomWave (Type);
+
+		/**
+		 * Tells wave to switch to next step
+		 * in random flow.
+		 */
+		void
+		next_step();
+
+		/*
+		 * DSP::Wave API.
+		 */
+
+		Core::Sample
+		operator() (Core::Sample register phase, Core::Sample frequency) const;
+
+	  private:
+		float
+		noise_sample() { return _noise.get (_noise_state); }
+
+	  private:
+		Type				_type;
+		float				_prev_value;
+		float				_curr_value;
+		DSP::Noise			_noise;
+		DSP::Noise::State	_noise_state;
 	};
 
 	typedef std::map<Voice*, Osc*> Oscs;

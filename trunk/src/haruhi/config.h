@@ -379,6 +379,8 @@ class Config
 		HARUHI_CONFIG_HAS_ICON_16 (wave_gauss, "wave-gauss.png");
 		HARUHI_CONFIG_HAS_ICON_16 (wave_diode, "wave-diode.png");
 		HARUHI_CONFIG_HAS_ICON_16 (wave_chirp, "wave-chirp.png");
+		HARUHI_CONFIG_HAS_ICON_16 (wave_random_square, "wave-random-square.png");
+		HARUHI_CONFIG_HAS_ICON_16 (wave_random_triangle, "wave-random-triangle.png");
 		HARUHI_CONFIG_HAS_ICON_16 (modulator_ring, "modulator-ring.png");
 		HARUHI_CONFIG_HAS_ICON_16 (modulator_fm, "modulator-fm.png");
 		HARUHI_CONFIG_HAS_ICON_16 (adsr, "adsr.png");
