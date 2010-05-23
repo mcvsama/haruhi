@@ -551,10 +551,14 @@ LFO::update_params()
 void
 LFO::update_plot()
 {
-	update_wave_param();
-	_plot->assign_wave (_waves[atomic (_params.wave_type)], true, true, atomic (_params.wave_invert));
-	_plot->set_phase_marker (true, 1.0f * atomic (_params.phase) / Params::LFO::PhaseDenominator);
-	_plot->plot_shape();
+	bool random = atomic (_params.wave_type) == Params::LFO::RandomSquare || atomic (_params.wave_type) == Params::LFO::RandomTriangle;
+	if (!random)
+	{
+		update_wave_param();
+		_plot->assign_wave (_waves[atomic (_params.wave_type)], true, true, atomic (_params.wave_invert));
+		_plot->set_phase_marker (true, 1.0f * atomic (_params.phase) / Params::LFO::PhaseDenominator);
+		_plot->plot_shape();
+	}
 }
 
 
