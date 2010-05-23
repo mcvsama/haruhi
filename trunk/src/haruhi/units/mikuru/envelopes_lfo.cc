@@ -268,6 +268,7 @@ LFO::LFO (int id, Mikuru* mikuru, QWidget* parent):
 	_wave_type->setCurrentItem (p.wave_type);
 	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (update_params()));
 	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (update_plot()));
+	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (update_widgets()));
 
 	new QLabel ("Function:", grid1);
 	_function = new QComboBox (grid1);
@@ -560,11 +561,14 @@ LFO::update_plot()
 void
 LFO::update_widgets()
 {
+	bool random = atomic (_params.wave_type) == Params::LFO::RandomSquare || atomic (_params.wave_type) == Params::LFO::RandomTriangle;
 	bool continuous = atomic (_params.mode) == Params::LFO::CommonContinuous;
 	_control_delay->setEnabled (!continuous);
 	_control_fade_in->setEnabled (!continuous);
 	_control_fade_out->setEnabled (!continuous && _params.fade_out_enabled);
 	_control_phase->setEnabled (!continuous);
+	_control_wave_shape->setEnabled (!random);
+	_plot->setEnabled (!random);
 	_tempo_numerator->setEnabled (_tempo_sync->isChecked());
 	_tempo_denominator->setEnabled (_tempo_sync->isChecked());
 }
