@@ -245,6 +245,7 @@ struct Params
 		HARUHI_MIKURU_PARAMS_STANDARD_METHODS (Voice)
 
 		enum {
+			HARUHI_MIKURU_PARAM (Adsr,					       0,	+1000000,	+1000000,	+1000000)
 			HARUHI_MIKURU_PARAM (Amplitude,				       0,	+1000000,	+1000000,	+1000000)
 			HARUHI_MIKURU_PARAM (Frequency,				-1000000,	+1000000,	+1000000,	       0)
 			HARUHI_MIKURU_PARAM (Panorama,				-1000000,	+1000000,	+1000000,	       0)
@@ -257,6 +258,7 @@ struct Params
 			HARUHI_MIKURU_PARAM (UnisonNoise,			       0,	+1000000,	+1000000,	       0)
 		};
 
+		int adsr;
 		int amplitude;
 		int frequency;
 		int panorama;
@@ -306,7 +308,7 @@ struct Params
 		int release;
 
 		int enabled;
-		int auto_connect;
+		int direct_adsr;
 		int forced_release;
 		int sustain_enabled;
 		int function;

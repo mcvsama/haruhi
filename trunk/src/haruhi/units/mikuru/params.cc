@@ -268,6 +268,7 @@ Params::Oscillator::set_non_controller_params (Oscillator& other)
 
 Params::Voice::Voice():
 	// Controller:
+	adsr (AdsrDefault),
 	amplitude (AmplitudeDefault),
 	frequency (FrequencyDefault),
 	panorama (PanoramaDefault),
@@ -299,6 +300,7 @@ Params::Voice::set_controller_params (Voice& other)
 void
 Params::Voice::set_non_controller_params (Voice& other)
 {
+	HARUHI_MIKURU_COPY_ATOMIC (adsr)
 	HARUHI_MIKURU_COPY_ATOMIC (amplitude)
 	HARUHI_MIKURU_COPY_ATOMIC (frequency)
 }
@@ -332,7 +334,7 @@ Params::ADSR::ADSR():
 	release (ReleaseDefault),
 	// Non-controller:
 	enabled (1),
-	auto_connect (0),
+	direct_adsr (0),
 	forced_release (0),
 	sustain_enabled (1),
 	function (Linear),
@@ -358,7 +360,7 @@ void
 Params::ADSR::set_non_controller_params (ADSR& other)
 {
 	HARUHI_MIKURU_COPY_ATOMIC (enabled)
-	HARUHI_MIKURU_COPY_ATOMIC (auto_connect)
+	HARUHI_MIKURU_COPY_ATOMIC (direct_adsr)
 	HARUHI_MIKURU_COPY_ATOMIC (forced_release)
 	HARUHI_MIKURU_COPY_ATOMIC (sustain_enabled)
 	HARUHI_MIKURU_COPY_ATOMIC (function)

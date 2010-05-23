@@ -282,7 +282,7 @@ Patch::save_state (QDomElement& element) const
 			save_parameter (envelope_element, "release", params.release, adsr->_proxy_release);
 			// Other:
 			save_parameter (envelope_element, "enabled", params.enabled);
-			save_parameter (envelope_element, "auto-connect", params.auto_connect);
+			save_parameter (envelope_element, "direct-adsr", params.direct_adsr);
 			save_parameter (envelope_element, "forced-release", params.forced_release);
 			save_parameter (envelope_element, "sustain-enabled", params.sustain_enabled);
 			save_parameter (envelope_element, "function", params.function);
@@ -587,7 +587,7 @@ Patch::load_state (QDomElement const& element)
 			load_parameter (parameters, "release", params.release, adsr->_proxy_release);
 			// Other:
 			load_parameter (parameters, "enabled", params.enabled);
-			load_parameter (parameters, "auto-connect", params.auto_connect);
+			load_parameter (parameters, "direct-adsr", params.direct_adsr);
 			load_parameter (parameters, "forced-release", params.forced_release);
 			load_parameter (parameters, "sustain-enabled", params.sustain_enabled);
 			load_parameter (parameters, "function", params.function);

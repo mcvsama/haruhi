@@ -76,9 +76,6 @@ class ADSR: public Envelope
 	voice_dropped (VoiceManager*, Voice*);
 
 	void
-	new_part (Part* part);
-
-	void
 	process();
 
 	void
@@ -105,15 +102,6 @@ class ADSR: public Envelope
 	 */
 	void
 	update_plot();
-
-	/**
-	 * Autoconnects ADSR output to all Parts' amplitude inputs
-	 * if auto-connect is enabled.
-	 * \entry	Any thread
-	 * \threadsafe
-	 */
-	void
-	auto_connect (Part* part = 0);
 
   private:
 	/**
@@ -153,7 +141,7 @@ class ADSR: public Envelope
 	ControllerProxy*		_proxy_release;
 
 	QCheckBox*				_enabled;
-	QCheckBox*				_auto_connect;
+	QCheckBox*				_direct_adsr;
 	QCheckBox*				_forced_release;
 	QCheckBox*				_sustain_enabled;
 	Knob*					_control_delay;

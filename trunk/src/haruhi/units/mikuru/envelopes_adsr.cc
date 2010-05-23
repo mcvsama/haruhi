@@ -123,11 +123,10 @@ ADSR::ADSR (int id, Mikuru* mikuru, QWidget* parent):
 	_enabled->setChecked (p.enabled);
 	QObject::connect (_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 
-	_auto_connect = new QCheckBox ("Auto connect", grid1);
-	_auto_connect->setChecked (p.auto_connect);
-	QObject::connect (_auto_connect, SIGNAL (toggled (bool)), this, SLOT (update_params()));
-	QObject::connect (_auto_connect, SIGNAL (toggled (bool)), this, SLOT (auto_connect()));
-	QToolTip::add (_auto_connect, "Automatically connect to all parts' amplitude ports");
+	_direct_adsr = new QCheckBox ("Main ADSR", grid1);
+	_direct_adsr->setChecked (p.direct_adsr);
+	QObject::connect (_direct_adsr, SIGNAL (toggled (bool)), this, SLOT (update_params()));
+	QToolTip::add (_direct_adsr, "Act as all parts main ADSR");
 
 	_forced_release = new QCheckBox ("Forced Release", grid1);
 	_forced_release->setChecked (p.forced_release);
@@ -259,13 +258,6 @@ ADSR::voice_dropped (VoiceManager* voice_manager, Voice* voice)
 
 
 void
-ADSR::new_part (Part* part)
-{
-	auto_connect (part);
-}
-
-
-void
 ADSR::process()
 {
 	sweep();
@@ -288,8 +280,8 @@ ADSR::process()
 	_proxy_sustain_hold->process_events();
 	_proxy_release->process_events();
 
-	// Skip if disabled or not connected:
-	if (!atomic (_params.enabled) || _port_output->forward_connections().empty())
+	// Skip if disabled or (not connected and not direct adsr):
+	if (!atomic (_params.enabled) || (_port_output->forward_connections().empty() && !_params.direct_adsr))
 		return;
 
 	Core::Timestamp t = _mikuru->graph()->timestamp();
@@ -315,13 +307,22 @@ ADSR::process()
 
 		if (adsr->finished())
 		{
+			// All-parts direct adsr modulation:
+			if (atomic (_params.direct_adsr))
+				voice->voice_manager()->set_voice_param (voice->voice_id(), &Params::Voice::adsr, Params::Voice::AdsrMin);
 			// Mute sound completely:
 			_port_output->event_buffer()->push (new Core::VoiceControllerEvent (t, voice->voice_id(), 0.0f));
 			// Don't call VoiceManager#voice_event() directly, because it will callback our methods. Use buffer.
 			voice->voice_manager()->buffer_voice_event (new Core::VoiceEvent (t, Core::OmniKey, voice->voice_id(), Core::VoiceEvent::Drop));
 		}
 		else
+		{
+			// All-parts direct adsr modulation:
+			if (atomic (_params.direct_adsr))
+				voice->voice_manager()->set_voice_param (voice->voice_id(), &Params::Voice::adsr, Params::Voice::AdsrMax * v);
+			// Normal event on output:
 			_port_output->event_buffer()->push (new Core::VoiceControllerEvent (t, voice->voice_id(), v));
+		}
 	}
 }
 
@@ -349,7 +350,7 @@ ADSR::load_params()
 	_proxy_release->set_value (p.release);
 
 	_enabled->setChecked (p.enabled);
-	_auto_connect->setChecked (p.auto_connect);
+	_direct_adsr->setChecked (p.direct_adsr);
 	_forced_release->setChecked (p.forced_release);
 	_sustain_enabled->setChecked (p.sustain_enabled);
 	_function->setCurrentItem (p.function);
@@ -374,7 +375,7 @@ ADSR::update_params()
 		return;
 
 	atomic (_params.enabled) = _enabled->isChecked();
-	atomic (_params.auto_connect) = _auto_connect->isChecked();
+	atomic (_params.direct_adsr) = _direct_adsr->isChecked();
 	atomic (_params.forced_release) = _forced_release->isChecked();
 	atomic (_params.sustain_enabled) = _sustain_enabled->isChecked();
 	atomic (_params.function) = _function->currentItem();
@@ -404,23 +405,6 @@ ADSR::update_plot()
 	_plot->set_sample_rate (sr);
 	_plot->assign_envelope (&_envelope_for_plot);
 	_plot->plot_shape();
-}
-
-
-void
-ADSR::auto_connect (Part* part)
-{
-	if (atomic (_params.auto_connect))
-	{
-		_mikuru->graph()->lock();
-		// Parts vector has its own lock, but locking graph is enough to ensure consistency:
-		if (part == 0)
-			for (Mikuru::Parts::iterator part = _mikuru->parts().begin(); part != _mikuru->parts().end(); ++part)
-				_port_output->connect_to ((*part)->oscillator()->amplitude_port());
-		else
-			_port_output->connect_to (part->oscillator()->amplitude_port());
-		_mikuru->graph()->unlock();
-	}
 }
 
 

@@ -295,7 +295,8 @@ Voice::process_amplitude()
 
 	// Volume and amplitude modulation:
 	float v = (1.0f / Params::Oscillator::VolumeDenominator) * atomic (oscillator_params->volume);
-	_smoother_amplitude.set_value (v * (1.0f / Params::Voice::AmplitudeDenominator) * atomic (_params.amplitude));
+	_smoother_amplitude.set_value (v * (1.0f / Params::Voice::AmplitudeDenominator) * atomic (_params.amplitude) *
+								   (1.0f / Params::Voice::AdsrDenominator) * atomic (_params.adsr));
 	_smoother_amplitude.multiply (_commons->amplitude_buffer.begin(), _commons->amplitude_buffer.end());
 
 	for (Core::Sample *s = _commons->amplitude_buffer.begin(), *e = _commons->amplitude_buffer.end(); s != e; ++s)
