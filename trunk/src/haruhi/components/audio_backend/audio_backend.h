@@ -41,11 +41,12 @@
 // Haruhi:
 #include <haruhi/config.h>
 #include <haruhi/haruhi.h>
+#include <haruhi/backend.h>
+#include <haruhi/unit.h>
 #include <haruhi/core/audio.h>
 #include <haruhi/core/event_port.h>
 #include <haruhi/utility/saveable_state.h>
-#include <haruhi/backend.h>
-#include <haruhi/unit.h>
+#include <haruhi/utility/mutex.h>
 
 // Local:
 #include "audio_transport.h"
@@ -127,9 +128,15 @@ class AudioBackend:
 	 * SaveableState methods:
 	 */
 
+	/**
+	 * \entry	Qt thread only.
+	 */
 	void
 	save_state (QDomElement&) const;
 
+	/**
+	 * \entry	Qt thread only.
+	 */
 	void
 	load_state (QDomElement const&);
 
@@ -208,6 +215,7 @@ class AudioBackend:
   private:
 	QString				_client_name;
 	AudioTransport*		_transport;
+	RecursiveMutex		_transport_lock;
 
 	// Views:
 	QPushButton*		_disconnect_button;

@@ -30,7 +30,9 @@ namespace AudioBackendPrivate {
 OutputItem::OutputItem (PortsListView* parent, QString const& name):
 	PortItem (parent, name)
 {
+	_backend->_transport_lock.lock();
 	_transport_port = _backend->transport()->create_output (name.toStdString());
+	_backend->_transport_lock.unlock();
 	// Allocate new port:
 	_backend->graph()->lock();
 	_port = new Core::AudioPort (_backend, name.ascii(), Core::Port::Input);
@@ -47,7 +49,9 @@ OutputItem::OutputItem (PortsListView* parent, QString const& name):
 OutputItem::~OutputItem()
 {
 	_backend->_outputs.erase (_transport_port);
+	_backend->_transport_lock.lock();
 	_backend->transport()->destroy_port (_transport_port);
+	_backend->_transport_lock.unlock();
 	_backend->graph()->lock();
 	delete _port;
 	_backend->graph()->unlock();
