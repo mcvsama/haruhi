@@ -536,7 +536,7 @@ Session::start_audio_backend()
 	try {
 		_audio_backend = new AudioBackend (this, "Haruhi", 1, _audio->_backend_parent);
 		_audio_backend->show();
-		_event_backend->connect();
+		_audio_backend->connect();
 		_audio_backend->enable();
 	}
 	catch (Exception const& e)
