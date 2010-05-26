@@ -50,9 +50,6 @@ PeriodicUpdater::PeriodicUpdater (int period_ms)
 		throw Exception ("PeriodicUpdater is a signleton, and can be instantiated only once");
 	PeriodicUpdater::_singleton = this;
 
-	_current_sets[QtThread] = _sets[QtThread] + 0;
-	_current_sets[GraphThread] = _sets[GraphThread] + 0;
-
 	_timer = new QTimer (this);
 	QObject::connect (_timer, SIGNAL (timeout()), this, SLOT (timeout()));
 	_timer->start (period_ms);
@@ -69,52 +66,40 @@ PeriodicUpdater::~PeriodicUpdater()
 void
 PeriodicUpdater::schedule (Receiver* receiver, Thread thread)
 {
-	Set* set = atomic (_current_sets[thread]);
-	set->insert (std::make_pair (receiver, Shared<Backtrace> (new Backtrace())));
+	_set.insert (std::make_pair (receiver, Shared<Backtrace> (new Backtrace())));
 }
 
 
 void
 PeriodicUpdater::forget (Receiver* receiver, Thread thread)
 {
-	Set* set = atomic (_current_sets[thread]);
-	for (Set::iterator k = set->begin(); k != set->end(); ++k)
-		if (k->first == receiver)
+	_set_mutex.lock();
+	for (Set::iterator i = _set.begin(); i != _set.end(); )
+		if (i->first == receiver)
 		{
-			set->erase (k);
-			return;
+			Set::iterator k = i;
+			++k;
+			_set.erase (i);
+			i = k;
 		}
-//	set->erase (receiver);
+		else
+			++i;
+//	_set.erase (receiver);
+	_set_mutex.unlock();
 }
 
 
 void
 PeriodicUpdater::timeout()
 {
-	Set (*s[_ThreadSize]);
-	for (int i = 0; i < _ThreadSize; ++i)
-		s[i] = atomic (_current_sets[i]);
-
-	for (int i = 0; i < _ThreadSize; ++i)
-		atomic (_current_sets[i]) = switch_set (s[i], _sets[i]);
-
-	for (int i = 0; i < _ThreadSize; ++i)
+	if (_set_mutex.try_lock())
 	{
-		for (Set::iterator r = s[i]->begin(); r != s[i]->end(); ++r)
+		for (Set::iterator i = _set.begin(); i != _set.end(); ++i)
 		{
-			std::clog << *r->second << "\n";
-			r->first->periodic_update();
+			i->first->periodic_update();
 		}
-		s[i]->clear();
+		_set.clear();
+		_set_mutex.unlock();
 	}
-}
-
-
-PeriodicUpdater::Set*
-PeriodicUpdater::switch_set (Set* set, Set* sets)
-{
-	if (set == sets + 0)
-		return sets + 1;
-	return sets + 0;
 }
 

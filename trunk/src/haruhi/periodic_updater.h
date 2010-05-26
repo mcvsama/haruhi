@@ -108,13 +108,9 @@ class PeriodicUpdater: public QObject
 	timeout();
 
   private:
-	Set*
-	switch_set (Set* set, Set* sets);
-
-  private:
 	static PeriodicUpdater*	_singleton;
-	Set						_sets[_ThreadSize][2];
-	Set*					_current_sets[_ThreadSize];
+	Set						_set;
+	Mutex					_set_mutex;
 	QTimer*					_timer;
 };
 
