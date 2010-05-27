@@ -85,7 +85,7 @@ void
 ControllerProxy::apply_config()
 {
 	if (_widget)
-		_widget->schedule_for_update (PeriodicUpdater::QtThread);
+		_widget->schedule_for_update();
 }
 
 
@@ -119,7 +119,7 @@ ControllerProxy::process_event (Core::ControllerEvent const* event)
 	atomic (*_parameter) = _config.forward (renormalize (event->value(), 0.0f, 1.0f, 1.0f * _config.hard_limit_min, 1.0f * _config.hard_limit_max));
 	// Schedule update for paired Widget:
 	if (_widget)
-		_widget->schedule_for_update (PeriodicUpdater::GraphThread);
+		_widget->schedule_for_update();
 }
 
 
