@@ -332,7 +332,7 @@ Params::ADSR::ADSR():
 	release (ReleaseDefault),
 	// Non-controller:
 	enabled (1),
-	direct_adsr (0),
+	direct_adsr (1),
 	forced_release (0),
 	sustain_enabled (1),
 	function (Linear),
