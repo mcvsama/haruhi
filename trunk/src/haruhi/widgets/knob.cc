@@ -248,14 +248,14 @@ Knob::Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& l
 	QObject::connect (_spin_box, SIGNAL (valueChanged (int)), this, SLOT (spin_changed (int)));
 
 	_controller_proxy->set_widget (this);
-	schedule_for_update (PeriodicUpdater::QtThread);
+	schedule_for_update();
 }
 
 
 Knob::~Knob()
 {
 	_controller_proxy->set_widget (0);
-	forget_about_update (PeriodicUpdater::QtThread);
+	forget_about_update();
 }
 
 
@@ -264,7 +264,7 @@ Knob::read_config()
 {
 	_spin_box->setMinimum (_controller_proxy->config()->user_limit_min);
 	_spin_box->setMaximum (_controller_proxy->config()->user_limit_max);
-	schedule_for_update (PeriodicUpdater::QtThread);
+	schedule_for_update();
 }
 
 
@@ -285,7 +285,7 @@ void
 Knob::reset()
 {
 	_controller_proxy->reset();
-	schedule_for_update (PeriodicUpdater::QtThread);
+	schedule_for_update();
 }
 
 
@@ -471,7 +471,7 @@ Knob::learned_port (Haruhi::EventBackend::EventTypes, Core::EventPort* event_por
 		_unit_bay->graph()->lock();
 		event_port->connect_to (_controller_proxy->event_port());
 		_unit_bay->graph()->unlock();
-		schedule_for_update (PeriodicUpdater::GraphThread);
+		schedule_for_update();
 	}
 }
 
@@ -509,7 +509,7 @@ Knob::dial_changed (int value)
 	if (_prevent_recursion)
 		return;
 	_controller_proxy->set_value (_controller_proxy->config()->forward (value));
-	schedule_for_update (PeriodicUpdater::QtThread);
+	schedule_for_update();
 }
 
 
@@ -519,7 +519,7 @@ Knob::spin_changed (int value)
 	if (_prevent_recursion)
 		return;
 	_controller_proxy->set_value (value);
-	schedule_for_update (PeriodicUpdater::QtThread);
+	schedule_for_update();
 }
 
 

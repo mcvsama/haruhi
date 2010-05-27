@@ -14,7 +14,6 @@
 // Standard:
 #include <cstddef>
 #include <set>
-#include <iostream>//XXX
 
 // Qt:
 #include <QtCore/QTimer>
@@ -31,16 +30,16 @@ PeriodicUpdater* PeriodicUpdater::_singleton = 0;
 
 
 void
-PeriodicUpdater::Receiver::schedule_for_update (Thread thread)
+PeriodicUpdater::Receiver::schedule_for_update()
 {
-	PeriodicUpdater::singleton()->schedule (this, thread);
+	PeriodicUpdater::singleton()->schedule (this);
 }
 
 
 void
-PeriodicUpdater::Receiver::forget_about_update (Thread thread)
+PeriodicUpdater::Receiver::forget_about_update()
 {
-	PeriodicUpdater::singleton()->forget (this, thread);
+	PeriodicUpdater::singleton()->forget (this);
 }
 
 
@@ -64,27 +63,19 @@ PeriodicUpdater::~PeriodicUpdater()
 
 
 void
-PeriodicUpdater::schedule (Receiver* receiver, Thread thread)
+PeriodicUpdater::schedule (Receiver* receiver)
 {
-	_set.insert (std::make_pair (receiver, Shared<Backtrace> (new Backtrace())));
+	_set_mutex.lock();
+	_set.insert (receiver);
+	_set_mutex.unlock();
 }
 
 
 void
-PeriodicUpdater::forget (Receiver* receiver, Thread thread)
+PeriodicUpdater::forget (Receiver* receiver)
 {
 	_set_mutex.lock();
-	for (Set::iterator i = _set.begin(); i != _set.end(); )
-		if (i->first == receiver)
-		{
-			Set::iterator k = i;
-			++k;
-			_set.erase (i);
-			i = k;
-		}
-		else
-			++i;
-//	_set.erase (receiver);
+	_set.erase (receiver);
 	_set_mutex.unlock();
 }
 
@@ -95,10 +86,7 @@ PeriodicUpdater::timeout()
 	if (_set_mutex.try_lock())
 	{
 		for (Set::iterator i = _set.begin(); i != _set.end(); ++i)
-		{
-			i->first->periodic_update();
-		}
-		_set.clear();
+			(*i)->periodic_update();
 		_set_mutex.unlock();
 	}
 }

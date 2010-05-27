@@ -24,8 +24,6 @@
 
 // Haruhi:
 #include <haruhi/utility/mutex.h>
-#include <haruhi/utility/backtrace.h>//XXX
-#include <haruhi/utility/memory.h>//XXX
 
 
 /**
@@ -42,13 +40,6 @@ class PeriodicUpdater: public QObject
 	Q_OBJECT
 
   public:
-	enum Thread
-	{
-		QtThread	= 0,
-		GraphThread	= 1,
-		_ThreadSize	= 2, // Do not use, required internally
-	};
-
 	class Receiver
 	{
 	  public:
@@ -62,21 +53,21 @@ class PeriodicUpdater: public QObject
 
 		/**
 		 * Schedules this object to be updated by PeriodicUpdater.
-		 * \entry	Qt thread only if queue == QtThread, graph thread only if queue == GraphThread.
+		 * \threadsafe
 		 */
 		void
-		schedule_for_update (Thread thread);
+		schedule_for_update();
 
 		/**
 		 * Removes this object from PeriodicUpdater queue.
-		 * \entry	Qt thread only if queue == QtThread, graph thread only if queue == GraphThread.
+		 * \threadsafe
 		 */
 		void
-		forget_about_update (Thread thread);
+		forget_about_update();
 	};
 
   private:
-	typedef std::set<std::pair<Receiver*, Shared<Backtrace> > > Set;
+	typedef std::set<Receiver*> Set;
 
   public:
 	/**
@@ -91,17 +82,17 @@ class PeriodicUpdater: public QObject
 
 	/**
 	 * Adds widget to set. After update object is removed.
-	 * \entry	Qt thread only if queue == QtThread, graph thread only if queue == GraphThread.
+	 * \threadsafe
 	 */
 	void
-	schedule (Receiver* receiver, Thread thread);
+	schedule (Receiver* receiver);
 
 	/**
 	 * Removes widget from set.
-	 * \entry	Qt thread only if queue == QtThread, graph thread only if queue == GraphThread.
+	 * \threadsafe
 	 */
 	void
-	forget (Receiver* receiver, Thread thread);
+	forget (Receiver* receiver);
 
   private slots:
 	void
