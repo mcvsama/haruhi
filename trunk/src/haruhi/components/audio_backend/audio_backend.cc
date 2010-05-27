@@ -153,18 +153,14 @@ void
 AudioBackend::enable()
 {
 	Unit::enable();
-	_transport_lock.lock();
 	_transport->activate();
-	_transport_lock.unlock();
 }
 
 
 void
 AudioBackend::disable()
 {
-	_transport_lock.lock();
 	_transport->deactivate();
-	_transport_lock.unlock();
 	Unit::disable();
 }
 
@@ -251,11 +247,9 @@ AudioBackend::save_state (QDomElement& element) const
 void
 AudioBackend::load_state (QDomElement const& element)
 {
-	_transport_lock.lock();
 	bool active = _transport->active();
 	if (active)
 		_transport->deactivate();
-	_transport_lock.unlock();
 
 	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
 	{
@@ -270,27 +264,20 @@ AudioBackend::load_state (QDomElement const& element)
 	}
 
 	if (active)
-	{
-		_transport_lock.lock();
 		_transport->activate();
-		_transport_lock.unlock();
-	}
 }
 
 
 void
 AudioBackend::connect()
 {
-	_transport_lock.lock();
 	try {
 		_dummy_timer->stop();
 		_transport->connect (_client_name.toStdString());
 		_transport->activate();
-		_transport_lock.unlock();
 	}
 	catch (Exception const& e)
 	{
-		_transport_lock.unlock();
 		QMessageBox::warning (this, "Audio backend", QString ("Can't connect to audio backend: ") + e.what());
 		_dummy_timer->start();
 	}
@@ -301,10 +288,8 @@ AudioBackend::connect()
 void
 AudioBackend::disconnect()
 {
-	_transport_lock.lock();
 	_transport->deactivate();
 	_transport->disconnect();
-	_transport_lock.unlock();
 	_dummy_timer->start();
 	update_widgets();
 }
