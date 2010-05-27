@@ -1,2 +1,4 @@
 .*.swp
 *.moc.cc
+*.haruhi-session
+core
