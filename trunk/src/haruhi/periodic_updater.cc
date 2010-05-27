@@ -87,6 +87,7 @@ PeriodicUpdater::timeout()
 	{
 		for (Set::iterator i = _set.begin(); i != _set.end(); ++i)
 			(*i)->periodic_update();
+		_set.clear();
 		_set_mutex.unlock();
 	}
 }
