@@ -82,8 +82,6 @@ PartFilters::reset()
 void
 PartFilters::delete_ports()
 {
-	_filter1->reparent (0, QPoint());
-	_filter2->reparent (0, QPoint());
 	delete _filter1;
 	delete _filter2;
 }

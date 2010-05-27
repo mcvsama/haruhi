@@ -85,8 +85,6 @@ CommonFilters::reset()
 void
 CommonFilters::delete_ports()
 {
-	_filter1->reparent (0, QPoint());
-	_filter2->reparent (0, QPoint());
 	delete _filter1;
 	delete _filter2;
 	delete _filter_ports;

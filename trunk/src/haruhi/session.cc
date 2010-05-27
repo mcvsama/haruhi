@@ -282,8 +282,6 @@ Session::Session (QWidget* parent):
 Session::~Session()
 {
 	delete _unit_loader;
-
-	_program->reparent (0, QPoint (0, 0), false);
 	delete _program;
 
 	stop_audio_backend();
@@ -508,7 +506,6 @@ Session::stop_audio_backend()
 		_audio_backend->disable();
 		_audio_backend->disconnect();
 		_audio_backend->hide();
-		_audio_backend->reparent (0, QPoint (0, 0), false);
 		delete _audio_backend;
 	}
 	_audio_backend = 0;
@@ -523,7 +520,6 @@ Session::stop_event_backend()
 		_event_backend->disable();
 		_event_backend->disconnect();
 		_event_backend->hide();
-		_event_backend->reparent (0, QPoint (0, 0), false);
 		delete _event_backend;
 	}
 	_event_backend = 0;

@@ -59,7 +59,6 @@ ConnectionsTab::ConnectionsTab (Patch* patch, QWidget* parent):
 
 ConnectionsTab::~ConnectionsTab()
 {
-	_ports_connector->reparent (0, QPoint (0, 0), false);
 	delete _ports_connector;
 }
 
@@ -158,13 +157,6 @@ UnitTab::~UnitTab()
 
 
 void
-UnitTab::unparent_unit()
-{
-	_unit->reparent (0, QPoint (0, 0), false);
-}
-
-
-void
 UnitTab::unload()
 {
 	_patch->unload_unit (_unit);
@@ -255,7 +247,6 @@ Patch::Patch (Session* session, std::string const& title, QWidget* parent):
 Patch::~Patch()
 {
 	// Delete _connections_tab manually, to early delete PortsConnector:
-	_connections_tab->ports_connector()->reparent (0, QPoint (0, 0), false);
 	delete _connections_tab;
 	delete _units_menu;
 
@@ -263,7 +254,6 @@ Patch::~Patch()
 	{
 		Units::iterator u = units().begin();
 		(*u)->hide();
-		(*u)->reparent (0, QPoint (0, 0), false);
 		// TODO use unloader for deleting objects:
 		delete *u; // Deleting unit will automatically remove it from units list (via graph notification).
 	}
@@ -306,7 +296,6 @@ Patch::unload_unit (Unit* unit)
 	if (u != _units_to_frames_map.end())
 	{
 		Private::UnitTab* unit_tab = u->second;
-		unit_tab->unparent_unit();
 		// Remove unit from ports connector:
 		_connections_tab->ports_connector()->remove_unit (unit);
 		// Remove unit from unit bay:
@@ -314,7 +303,6 @@ Patch::unload_unit (Unit* unit)
 		// Unload unit:
 		session()->unit_loader()->unload (unit);
 		// Dispose of tab:
-		unit_tab->reparent (0, QPoint (0, 0), false);
 		delete unit_tab;
 		_units_to_frames_map.erase (u);
 	}

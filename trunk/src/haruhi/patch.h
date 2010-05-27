@@ -70,9 +70,6 @@ namespace PatchPrivate {
 
 		~UnitTab();
 
-		void
-		unparent_unit();
-
 		QString
 		preset_uuid() const { return _preset_uuid; }
 

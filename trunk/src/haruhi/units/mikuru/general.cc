@@ -148,7 +148,6 @@ void
 General::delete_envelopes()
 {
 	_envelopes->hide();
-	_envelopes->reparent (0, QPoint());
 	delete _envelopes;
 }
 
