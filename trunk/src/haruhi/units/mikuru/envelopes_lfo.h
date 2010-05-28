@@ -195,7 +195,7 @@ class LFO: public Envelope
 	process();
 
 	void
-	resize_buffers (std::size_t size) { }
+	resize_buffers (std::size_t size);
 
   public slots:
 	/**
@@ -234,6 +234,9 @@ class LFO: public Envelope
   private:
 	void
 	reset_common_osc();
+
+	void
+	set_common_osc();
 
 	Core::Sample
 	apply_function (Core::Sample v) const;

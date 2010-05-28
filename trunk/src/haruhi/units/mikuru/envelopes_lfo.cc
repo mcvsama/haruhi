@@ -372,11 +372,7 @@ LFO::voice_created (VoiceManager*, Voice* voice)
 	if (_pressed_keys == 0 && mode == Params::LFO::CommonKeySync)
 	{
 		reset_common_osc();
-		// CommonKeySync supports all delay/fadeins:
-		_common_osc.set_delay (1.0f * atomic (_params.delay) / Params::LFO::DelayDenominator * sample_rate);
-		_common_osc.set_fade_in (1.0f * atomic (_params.fade_in) / Params::LFO::FadeInDenominator * sample_rate);
-		_common_osc.set_fade_out (1.0f * atomic (_params.fade_out) / Params::LFO::FadeOutDenominator * sample_rate);
-		_common_osc.set_fade_out_enabled (atomic (_params.fade_out_enabled));
+		set_common_osc();
 	}
 
 	// If mode is Polyphonic:
@@ -479,6 +475,15 @@ LFO::process()
 		_common_osc.set_invert (invert);
 		_port_output->event_buffer()->push (new Core::ControllerEvent (t, apply_function (_common_osc.advance (buffer_size))));
 	}
+}
+
+
+void
+LFO::resize_buffers (std::size_t)
+{
+	// Update LFO if sample rate changed:
+	reset_common_osc();
+	set_common_osc();
 }
 
 
@@ -593,6 +598,18 @@ LFO::reset_common_osc()
 	_common_osc.set_fade_in (0);
 	_common_osc.set_fade_out (0);
 	_common_osc.set_fade_out_enabled (false);
+}
+
+
+void
+LFO::set_common_osc()
+{
+	unsigned int sample_rate = _mikuru->graph()->sample_rate();
+	// CommonKeySync supports all delay/fadeins:
+	_common_osc.set_delay (1.0f * atomic (_params.delay) / Params::LFO::DelayDenominator * sample_rate);
+	_common_osc.set_fade_in (1.0f * atomic (_params.fade_in) / Params::LFO::FadeInDenominator * sample_rate);
+	_common_osc.set_fade_out (1.0f * atomic (_params.fade_out) / Params::LFO::FadeOutDenominator * sample_rate);
+	_common_osc.set_fade_out_enabled (atomic (_params.fade_out_enabled));
 }
 
 
