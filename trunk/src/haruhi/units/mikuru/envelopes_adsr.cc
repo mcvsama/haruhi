@@ -293,6 +293,7 @@ ADSR::process()
 
 	Core::Timestamp t = _mikuru->graph()->timestamp();
 	Core::Sample v;
+	const bool direct_adsr = atomic (_params.direct_adsr);
 
 	// Assuming that output ports are cleared by Mikuru on beginnig of each
 	// processing round.
@@ -315,17 +316,18 @@ ADSR::process()
 		if (adsr->finished())
 		{
 			// All-parts direct adsr modulation:
-			if (atomic (_params.direct_adsr))
+			if (direct_adsr)
 				voice->voice_manager()->set_voice_param (voice->voice_id(), &Params::Voice::adsr, Params::Voice::AdsrMin);
 			// Mute sound completely:
 			_port_output->event_buffer()->push (new Core::VoiceControllerEvent (t, voice->voice_id(), 0.0f));
 			// Don't call VoiceManager#voice_event() directly, because it will callback our methods. Use buffer.
-			voice->voice_manager()->buffer_voice_event (new Core::VoiceEvent (t, Core::OmniKey, voice->voice_id(), Core::VoiceEvent::Drop));
+			if (direct_adsr)
+				voice->voice_manager()->buffer_voice_event (new Core::VoiceEvent (t, Core::OmniKey, voice->voice_id(), Core::VoiceEvent::Drop));
 		}
 		else
 		{
 			// All-parts direct adsr modulation:
-			if (atomic (_params.direct_adsr))
+			if (direct_adsr)
 				voice->voice_manager()->set_voice_param (voice->voice_id(), &Params::Voice::adsr, Params::Voice::AdsrMax * v);
 			// Normal event on output:
 			_port_output->event_buffer()->push (new Core::VoiceControllerEvent (t, voice->voice_id(), v));
