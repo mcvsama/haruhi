@@ -123,7 +123,7 @@ AudioBackend::AudioBackend (Session* session, QString const& client_name, int id
 	// Graph ticks emulator:
 	_dummy_timer = new QTimer (this);
 	QObject::connect (_dummy_timer, SIGNAL (timeout()), this, SLOT (dummy_round()));
-	_dummy_timer->start (33);
+	dummy_start();
 
 	update_widgets();
 }
@@ -131,8 +131,7 @@ AudioBackend::AudioBackend (Session* session, QString const& client_name, int id
 
 AudioBackend::~AudioBackend()
 {
-	_dummy_timer->stop();
-
+	dummy_stop();
 	disable();
 
 	// Deallocate all ports:
@@ -263,14 +262,14 @@ void
 AudioBackend::connect()
 {
 	try {
-		_dummy_timer->stop();
+		dummy_stop();
 		_transport->connect (_client_name.toStdString());
 		_transport->activate();
 	}
 	catch (Exception const& e)
 	{
 		QMessageBox::warning (this, "Audio backend", QString ("Can't connect to audio backend: ") + e.what());
-		_dummy_timer->start();
+		dummy_start();
 	}
 	update_widgets();
 }
@@ -281,7 +280,7 @@ AudioBackend::disconnect()
 {
 	_transport->deactivate();
 	_transport->disconnect();
-	_dummy_timer->start();
+	dummy_start();
 	update_widgets();
 }
 
@@ -505,8 +504,31 @@ AudioBackend::destroy_selected_output()
 
 
 void
+AudioBackend::dummy_start()
+{
+	const int DummyPeriodTime = 33; // ms
+	const int DummySampleRate = 48000;
+	const int DummyBufferSize = DummySampleRate / (1000.0 / DummyPeriodTime);
+	graph()->lock();
+	graph()->set_sample_rate (DummySampleRate);
+	graph()->set_buffer_size (DummyBufferSize);
+	graph()->unlock();
+	_dummy_timer->start (DummyPeriodTime);
+}
+
+
+void
+AudioBackend::dummy_stop()
+{
+	_dummy_timer->stop();
+}
+
+
+void
 AudioBackend::dummy_round()
 {
+	session()->engine()->wait_for_data();
+	update_level_meter();
 	session()->engine()->continue_processing();
 }
 
@@ -533,7 +555,7 @@ AudioBackend::customEvent (QEvent* event)
 	OfflineNotification* offline_notification = dynamic_cast<OfflineNotification*> (event);
 	if (offline_notification)
 	{
-		_dummy_timer->start();
+		dummy_start();
 		update_widgets();
 		// Show message to user:
 		QMessageBox::warning (this, "Audio backend", "Audio transport disconnected. :[\nUse \"Reconnect\" button on Audio backend tab (or press C-j) to reconnect.");

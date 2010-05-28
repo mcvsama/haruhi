@@ -203,6 +203,12 @@ class AudioBackend:
 
   private slots:
 	void
+	dummy_start();
+
+	void
+	dummy_stop();
+
+	void
 	dummy_round();
 
 	void
