@@ -205,6 +205,9 @@ class AudioBackend:
 	void
 	dummy_round();
 
+	void
+	update_level_meter();
+
   protected:
 	void
 	customEvent (QEvent* event);
@@ -215,7 +218,7 @@ class AudioBackend:
   private:
 	QString				_client_name;
 	AudioTransport*		_transport;
-	RecursiveMutex		_transport_lock;
+	RecursiveMutex		_ports_lock;
 
 	// Views:
 	QPushButton*		_disconnect_button;

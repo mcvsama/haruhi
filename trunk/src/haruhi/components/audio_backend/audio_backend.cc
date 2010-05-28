@@ -170,7 +170,7 @@ AudioBackend::transfer()
 {
 	session()->engine()->wait_for_data();
 
-	_transport_lock.lock();
+	_ports_lock.lock();
 	// Transport -> Haruhi:
 	for (InputsMap::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
 	{
@@ -203,20 +203,11 @@ AudioBackend::transfer()
 		}
 	}
 
-	// Level meter:
-	std::vector<Private::OutputItem*> ovec;
-	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
-		ovec.push_back (p->second);
-	std::sort (ovec.begin(), ovec.end(), Private::PortItem::CompareByPortName());
-	for (unsigned int i = 0; i < std::min (ovec.size(), static_cast<std::vector<Private::OutputItem*>::size_type> (2u)); ++i)
-	{
-		Core::AudioBuffer* abuf = ovec[i]->port()->audio_buffer();
-		session()->meter_panel()->level_meters_group()->meter (i)->process (abuf->begin(), abuf->end());
-	}
+	update_level_meter();
+	_ports_lock.unlock();
 
 	// Tell engine to continue processing:
 	session()->engine()->continue_processing();
-	_transport_lock.unlock();
 }
 
 
@@ -517,6 +508,22 @@ void
 AudioBackend::dummy_round()
 {
 	session()->engine()->continue_processing();
+}
+
+
+void
+AudioBackend::update_level_meter()
+{
+	// Level meter:
+	std::vector<Private::OutputItem*> ovec;
+	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
+		ovec.push_back (p->second);
+	std::sort (ovec.begin(), ovec.end(), Private::PortItem::CompareByPortName());
+	for (unsigned int i = 0; i < std::min (ovec.size(), static_cast<std::vector<Private::OutputItem*>::size_type> (2u)); ++i)
+	{
+		Core::AudioBuffer* abuf = ovec[i]->port()->audio_buffer();
+		session()->meter_panel()->level_meters_group()->meter (i)->process (abuf->begin(), abuf->end());
+	}
 }
 
 
