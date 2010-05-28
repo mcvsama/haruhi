@@ -453,7 +453,7 @@ VoiceManager::mono_update (Core::VoiceEvent const* voice_event)
 			{
 				Core::KeyID key_id = key->key_id;
 				Core::VoiceID voice_id = voice_event ? voice_event->voice_id() : _mono_voice->voice_id();
-				Core::VoiceEvent::Frequency frequency = Core::VoiceEvent::frequency_from_key_id (key_id) / _mikuru->graph()->sample_rate();
+				Core::VoiceEvent::Frequency frequency = Core::VoiceEvent::frequency_from_key_id (key_id, _mikuru->graph()->master_tune()) / _mikuru->graph()->sample_rate();
 				Core::Timestamp timestamp = key->timestamp;
 				Core::Sample value = key->value;
 

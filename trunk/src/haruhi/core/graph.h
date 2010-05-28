@@ -108,14 +108,26 @@ class Graph: public RecursiveMutex
 	/**
 	 * Returns current graph tempo.
 	 */
-	unsigned int
+	float
 	tempo() const { return _tempo; }
 
 	/**
 	 * Sets new tempo.
 	 */
 	void
-	set_tempo (unsigned int tempo);
+	set_tempo (float tempo);
+
+	/**
+	 * Returns current master tune in Hz. Default value is 440.0.
+	 */
+	float
+	master_tune() const { return _master_tune; }
+
+	/**
+	 * Sets new master tune in Hz.
+	 */
+	void
+	set_master_tune (float master_tune);
 
 	/**
 	 * Sends notification to all registered units
@@ -174,7 +186,8 @@ class Graph: public RecursiveMutex
 	// Graph parameters:
 	std::size_t		_buffer_size;
 	std::size_t		_sample_rate;
-	unsigned int	_tempo;
+	float			_tempo;
+	float			_master_tune;
 };
 
 } // namespace Core

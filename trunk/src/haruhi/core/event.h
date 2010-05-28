@@ -156,7 +156,7 @@ class VoiceEvent: public Event
 	typedef ControllerEvent::Value Value;
 
   public:
-	VoiceEvent (Timestamp, KeyID, VoiceID, Type, Frequency = 0.0, Value = 0.0);
+	VoiceEvent (Timestamp, KeyID, VoiceID, Type, Frequency, Value);
 
   protected:
 	VoiceEvent (VoiceEvent const& other):
@@ -188,7 +188,7 @@ class VoiceEvent: public Event
 	clone() const { return new VoiceEvent (*this); }
 
 	static Frequency
-	frequency_from_key_id (KeyID);
+	frequency_from_key_id (KeyID, float master_tune);
 
 	EventType
 	event_type() const { return VoiceEventType; }

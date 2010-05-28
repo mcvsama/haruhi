@@ -322,7 +322,7 @@ ADSR::process()
 			_port_output->event_buffer()->push (new Core::VoiceControllerEvent (t, voice->voice_id(), 0.0f));
 			// Don't call VoiceManager#voice_event() directly, because it will callback our methods. Use buffer.
 			if (direct_adsr)
-				voice->voice_manager()->buffer_voice_event (new Core::VoiceEvent (t, Core::OmniKey, voice->voice_id(), Core::VoiceEvent::Drop));
+				voice->voice_manager()->buffer_voice_event (new Core::VoiceEvent (t, Core::OmniKey, voice->voice_id(), Core::VoiceEvent::Drop, 0.0, 0.0));
 		}
 		else
 		{
