@@ -77,6 +77,28 @@ namespace SessionPrivate {
 		QPushButton*	_reject_button;
 	};
 
+	class Global: public QWidget
+	{
+		Q_OBJECT
+
+		friend class Session;
+
+	  public:
+		Global (Session*, QWidget* parent);
+
+	  private slots:
+		void
+		update_widgtes();
+
+	  private:
+		Session*	_session;
+		QSpinBox*	_tuning;
+		QLabel*		_tuning_hz;
+		QSpinBox*	_transpose;
+		QSpinBox*	_engine_thread_priority;
+		QComboBox*	_level_meter_fps;
+	};
+
 } // namespace SessionPrivate
 
 
@@ -259,6 +281,7 @@ class Session: public QWidget
 	Program*				_program;
 	QTabWidget*				_backends;
 
+	SessionPrivate::Global*	_global;
 	AudioTab*				_audio;
 	EventTab*				_event;
 

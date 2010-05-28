@@ -27,6 +27,8 @@
 #include <QtGui/QSlider>
 #include <QtGui/QFileDialog>
 #include <QtGui/QCloseEvent>
+#include <QtGui/QGridLayout>
+#include <QtGui/QGroupBox>
 
 // Haruhi:
 #include <haruhi/config.h>
@@ -120,6 +122,38 @@ Private::SettingsDialog::validate_and_accept()
 }
 
 
+Private::Global::Global (Session* session, QWidget* parent):
+	QWidget (parent),
+	_session (session)
+{
+	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+
+	_tuning_hz = new QLabel (this);
+
+	_tuning = new QSpinBox (this);
+	_tuning->setRange (-50, +50);
+	_tuning->setSuffix (" cents");
+	_tuning->setValue (0);
+	QObject::connect (_tuning, SIGNAL (valueChanged (int)), this, SLOT (update_widgtes()));
+
+	QGridLayout* group_layout = new QGridLayout (this);
+	group_layout->addWidget (new QLabel ("Master tuning:", this), 0, 0);
+	group_layout->addWidget (_tuning, 0, 1);
+	group_layout->addWidget (_tuning_hz, 0, 2);
+
+	update_widgtes();
+}
+
+
+void
+Private::Global::update_widgtes()
+{
+	const float master_tune = 440.0f * std::pow (2.0f, (1.0f / 12.0f) * (_tuning->value() / 100.0f));
+	_tuning_hz->setText (QString::number (master_tune, 'f', 2) + "Hz");
+	_session->graph()->set_master_tune (master_tune);
+}
+
+
 Session::MeterPanel::MeterPanel (Session* session, QWidget* parent):
 	QFrame (parent),
 	_session (session)
@@ -144,14 +178,12 @@ Session::AudioTab::AudioTab (Session* session, QWidget* parent):
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, 0, 0);
-
 	_backend_parent = new QWidget (this);
 	_backend_parent->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
+	QVBoxLayout* layout = new QVBoxLayout (this, 0, 0);
 	QVBoxLayout* backend_parent_layout = new QVBoxLayout (_backend_parent, 0, 0);
 	backend_parent_layout->setAutoAdd (true);
-
 	layout->addWidget (_backend_parent);
 }
 
@@ -162,14 +194,12 @@ Session::EventTab::EventTab (Session* session, QWidget* parent):
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, 0, 0);
-
 	_backend_parent = new QWidget (this);
 	_backend_parent->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
+	QVBoxLayout* layout = new QVBoxLayout (this, 0, 0);
 	QVBoxLayout* backend_parent_layout = new QVBoxLayout (_backend_parent, 0, 0);
 	backend_parent_layout->setAutoAdd (true);
-
 	layout->addWidget (_backend_parent);
 }
 
@@ -255,9 +285,11 @@ Session::Session (QWidget* parent):
 		_backends->setTabPosition (QTabWidget::South);
 		_backends->setIconSize (QSize (32, 22));
 
+		_global = new Private::Global (this, _backends);
 		_audio = new AudioTab (this, _backends);
 		_event = new EventTab (this, _backends);
 
+		_backends->addTab (_global, Config::Icons22::configure(), "Global");
 		_backends->addTab (_audio, Config::Icons22::show_audio(), "Audio");
 		_backends->addTab (_event, Config::Icons22::show_event(), "Event");
 
