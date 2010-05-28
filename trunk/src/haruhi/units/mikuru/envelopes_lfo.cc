@@ -482,7 +482,6 @@ void
 LFO::resize_buffers (std::size_t)
 {
 	// Update LFO if sample rate changed:
-	reset_common_osc();
 	set_common_osc();
 }
 
