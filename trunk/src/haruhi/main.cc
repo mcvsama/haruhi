@@ -13,6 +13,7 @@
 
 // System:
 #include <signal.h>
+#include <locale.h>
 
 // Qt:
 #include <QtCore/QTextCodec>
@@ -28,6 +29,9 @@ int main (int argc, char** argv, char** envp)
 	signal (SIGILL, Haruhi::fail);
 	signal (SIGFPE, Haruhi::fail);
 	signal (SIGSEGV, Haruhi::fail);
+
+	setenv ("LC_ALL", "POSIX", 1);
+	setlocale (LC_ALL, "POSIX");
 
 	// Qt preparations:
 	QTextCodec::setCodecForCStrings (QTextCodec::codecForName ("UTF-8"));
