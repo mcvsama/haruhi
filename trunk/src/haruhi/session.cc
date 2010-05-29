@@ -36,6 +36,7 @@
 #include <haruhi/components/audio_backend/audio_backend.h>
 #include <haruhi/components/event_backend/event_backend.h>
 #include <haruhi/widgets/clickable_label.h>
+#include <haruhi/utility/numeric.h>
 #include <haruhi/periodic_updater.h>
 
 // Local:
@@ -124,7 +125,8 @@ Private::SettingsDialog::validate_and_accept()
 
 Private::Global::Global (Session* session, QWidget* parent):
 	QWidget (parent),
-	_session (session)
+	_session (session),
+	_loading_params (false)
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
@@ -134,23 +136,143 @@ Private::Global::Global (Session* session, QWidget* parent):
 	_tuning->setRange (-50, +50);
 	_tuning->setSuffix (" cents");
 	_tuning->setValue (0);
-	QObject::connect (_tuning, SIGNAL (valueChanged (int)), this, SLOT (update_widgtes()));
+	QObject::connect (_tuning, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
+
+	_transpose = new QSpinBox (this);
+	_transpose->setRange (-60, 60);
+	_transpose->setSuffix (" semitones");
+	_transpose->setValue (0);
+	QObject::connect (_transpose, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
+
+	_engine_thread_priority = new QSpinBox (this);
+	_engine_thread_priority->setRange (1, 99);
+	_engine_thread_priority->setValue (50);
+	QToolTip::add (_engine_thread_priority, "Higher values mean higher priority");
+	QObject::connect (_engine_thread_priority, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
+
+	_level_meter_fps = new QSpinBox (this);
+	_level_meter_fps->setRange (10, 50);
+	_level_meter_fps->setValue (30);
+	QObject::connect (_level_meter_fps, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 
 	QGridLayout* group_layout = new QGridLayout (this);
 	group_layout->addWidget (new QLabel ("Master tuning:", this), 0, 0);
 	group_layout->addWidget (_tuning, 0, 1);
 	group_layout->addWidget (_tuning_hz, 0, 2);
-
-	update_widgtes();
+	group_layout->addWidget (new QLabel ("Transpose:", this), 1, 0);
+	group_layout->addWidget (_transpose, 1, 1);
+	group_layout->addWidget (new QLabel ("Engine thread priority:", this), 2, 0);
+	group_layout->addWidget (_engine_thread_priority, 2, 1);
+	group_layout->addWidget (new QLabel ("Level Meter FPS:", this), 3, 0);
+	group_layout->addWidget (_level_meter_fps, 3, 1);
+	group_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed), 0, 3);
+	group_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 4, 0);
 }
 
 
 void
-Private::Global::update_widgtes()
+Private::Global::load_params()
 {
-	const float master_tune = 440.0f * std::pow (2.0f, (1.0f / 12.0f) * (_tuning->value() / 100.0f));
-	_tuning_hz->setText (QString::number (master_tune, 'f', 2) + "Hz");
-	_session->graph()->set_master_tune (master_tune);
+	_loading_params = true;
+	_tuning->setValue (_session->parameters().tuning);
+	_transpose->setValue (_session->parameters().transpose);
+	_engine_thread_priority->setValue (_session->parameters().engine_thread_priority);
+	_level_meter_fps->setValue (_session->parameters().level_meter_fps);
+	_loading_params = false;
+	update_widgets();
+}
+
+
+void
+Private::Global::update_params()
+{
+	if (_loading_params)
+		return;
+	_session->parameters().tuning = _tuning->value();
+	_session->parameters().transpose = _transpose->value();
+	_session->parameters().engine_thread_priority = _engine_thread_priority->value();
+	_session->parameters().level_meter_fps = _level_meter_fps->value();
+	update_widgets();
+	_session->apply_parameters();
+}
+
+
+void
+Private::Global::update_widgets()
+{
+	_tuning_hz->setText (QString::number (_session->master_tune(), 'f', 2) + "Hz");
+}
+
+
+Session::Parameters::Parameters():
+	tuning (0),
+	transpose (0),
+	engine_thread_priority (50),
+	level_meter_fps (30),
+	tempo (120.0)
+{
+	limit_values();
+}
+
+
+void
+Session::Parameters::load_state (QDomElement const& element)
+{
+	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	{
+		QDomElement e = n.toElement();
+		if (!e.isNull())
+		{
+			if (e.tagName() == "tuning")
+				tuning = e.text().toInt();
+			else if (e.tagName() == "transpose")
+				transpose = e.text().toInt();
+			else if (e.tagName() == "engine-thread-priority")
+				engine_thread_priority = e.text().toInt();
+			else if (e.tagName() == "level-meter-fps")
+				level_meter_fps = e.text().toInt();
+			else if (e.tagName() == "tempo")
+				tempo = e.text().toFloat();
+		}
+	}
+	limit_values();
+}
+
+
+void
+Session::Parameters::limit_values()
+{
+	limit_value (tuning, -50, 50);
+	limit_value (transpose, -60, 60);
+	limit_value (engine_thread_priority, 1, 99);
+	limit_value (level_meter_fps, 10, 50);
+	limit_value (tempo, 20.0f, 400.0f);
+}
+
+
+void
+Session::Parameters::save_state (QDomElement& element) const
+{
+	QDomElement par_tuning = element.ownerDocument().createElement ("tuning");
+	par_tuning.appendChild (element.ownerDocument().createTextNode (QString::number (tuning)));
+
+	QDomElement par_transpose = element.ownerDocument().createElement ("transpose");
+	par_transpose.appendChild (element.ownerDocument().createTextNode (QString::number (transpose)));
+
+	QDomElement par_engine_thread_priority = element.ownerDocument().createElement ("engine-thread-priority");
+	par_engine_thread_priority.appendChild (element.ownerDocument().createTextNode (QString::number (engine_thread_priority)));
+
+	QDomElement par_level_meter_fps = element.ownerDocument().createElement ("level-meter-fps");
+	par_level_meter_fps.appendChild (element.ownerDocument().createTextNode (QString::number (level_meter_fps)));
+
+	QDomElement par_tempo = element.ownerDocument().createElement ("tempo");
+	par_tempo.appendChild (element.ownerDocument().createTextNode (QString::number (tempo)));
+
+	element.appendChild (par_tuning);
+	element.appendChild (par_transpose);
+	element.appendChild (par_engine_thread_priority);
+	element.appendChild (par_level_meter_fps);
+	element.appendChild (par_tempo);
 }
 
 
@@ -247,12 +369,14 @@ Session::Session (QWidget* parent):
 		tempo_note->setFont (f);
 		tempo_note->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-		_tempo_spinbox = new QSpinBox (20, 400, 1, inner_header);
+		_tempo_spinbox = new QDoubleSpinBox (inner_header);
 		_tempo_spinbox->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+		_tempo_spinbox->setRange (20.0, 400.0);
+		_tempo_spinbox->setDecimals (2);
 		_tempo_spinbox->setWrapping (true);
-		_tempo_spinbox->setValue (120);
+		_tempo_spinbox->setValue (120.0);
 		QToolTip::add (_tempo_spinbox, "Master tempo");
-		QObject::connect (_tempo_spinbox, SIGNAL (valueChanged (int)), this, SLOT (tempo_value_changed (int)));
+		QObject::connect (_tempo_spinbox, SIGNAL (valueChanged (double)), this, SLOT (tempo_value_changed (double)));
 
 		_panic_button = new QPushButton ("Panic!", inner_header);
 		_panic_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -325,6 +449,15 @@ Session::~Session()
 
 
 void
+Session::apply_parameters()
+{
+	graph()->set_master_tune (master_tune());
+	engine()->set_sched (Thread::SchedRR, _parameters.engine_thread_priority);
+	meter_panel()->level_meters_group()->set_fps (_parameters.level_meter_fps);
+}
+
+
+void
 Session::load_session (QString const& file_name)
 {
 	try {
@@ -391,20 +524,25 @@ Session::save_state (QDomElement& element) const
 {
 	element.setAttribute ("name", name());
 
+	// Save parameters:
+	QDomElement parameters = element.ownerDocument().createElement ("parameters");
+	_parameters.save_state (parameters);
+
 	// Save audio-backend:
 	QDomElement audio_backend = element.ownerDocument().createElement ("audio-backend");
-	this->audio_backend()->save_state (audio_backend);
+	_audio_backend->save_state (audio_backend);
 	audio_backend.setAttribute ("id", this->audio_backend()->id());
 
 	// Save event-backend:
 	QDomElement event_backend = element.ownerDocument().createElement ("event-backend");
-	this->event_backend()->save_state (event_backend);
+	_event_backend->save_state (event_backend);
 	event_backend.setAttribute ("id", this->event_backend()->id());
 
 	// Save programs:
 	QDomElement program = element.ownerDocument().createElement ("program");
 	_program->save_state (program);
 
+	element.appendChild (parameters);
 	element.appendChild (audio_backend);
 	element.appendChild (event_backend);
 	element.appendChild (program);
@@ -416,6 +554,7 @@ Session::load_state (QDomElement const& element)
 {
 	set_name (element.attribute ("name", "").ascii());
 
+	QDomElement parameters_element;
 	QDomElement audio_backend_element;
 	QDomElement event_backend_element;
 	QDomElement program_element;
@@ -425,13 +564,22 @@ Session::load_state (QDomElement const& element)
 		QDomElement e = n.toElement();
 		if (!e.isNull())
 		{
-			if (e.tagName() == "audio-backend")
+			if (e.tagName() == "parameters")
+				parameters_element = e;
+			else if (e.tagName() == "audio-backend")
 				audio_backend_element = e;
 			else if (e.tagName() == "event-backend")
 				event_backend_element = e;
 			else if (e.tagName() == "program")
 				program_element = e;
 		}
+	}
+
+	if (!parameters_element.isNull())
+	{
+		parameters().load_state (parameters_element);
+		_global->load_params();
+		apply_parameters();
 	}
 
 	if (!audio_backend_element.isNull() && !event_backend_element.isNull() && !program_element.isNull())
@@ -449,6 +597,13 @@ Session::load_state (QDomElement const& element)
 	}
 	else
 		QMessageBox::warning (this, "Error while loading session", "Could not load session due to missing information in session file.");
+}
+
+
+float
+Session::master_tune() const
+{
+	return 440.0f * std::pow (2.0f, (1.0f / 12.0f) * (_parameters.tuning / 100.0f + _parameters.transpose));
 }
 
 
@@ -495,7 +650,7 @@ Session::rename_session()
 
 
 void
-Session::tempo_value_changed (int new_tempo)
+Session::tempo_value_changed (double new_tempo)
 {
 	graph()->lock();
 	graph()->set_tempo (new_tempo);
