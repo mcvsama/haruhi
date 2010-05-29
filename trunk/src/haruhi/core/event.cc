@@ -44,15 +44,13 @@ VoiceEvent::VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Typ
 {
 	if (_voice_id == VoiceAuto)
 		_voice_id = ++_last_voice_id;
-	if (_frequency == 0.0)
-		_frequency = VoiceEvent::frequency_from_key_id (key_id);
 }
 
 
 VoiceEvent::Frequency
-VoiceEvent::frequency_from_key_id (KeyID key_id)
+VoiceEvent::frequency_from_key_id (KeyID key_id, float master_tune)
 {
-	return 440 * std::pow (2.0f, ((static_cast<float> (key_id) - 69.0f) / 12.0f));
+	return master_tune * std::pow (2.0f, ((static_cast<float> (key_id) - 69.0f) / 12.0f));
 }
 
 } // namespace Core

@@ -398,6 +398,7 @@ class Config
 		HARUHI_CONFIG_HAS_ICON_22 (show_audio, "show-audio.png");
 		HARUHI_CONFIG_HAS_ICON_22 (show_event, "show-event.png");
 		HARUHI_CONFIG_HAS_ICON_22 (connections, "connections.png");
+		HARUHI_CONFIG_HAS_ICON_22 (configure, "configure.png");
 
 #undef HARUHI_CONFIG_HAS_ICON_22
 	};

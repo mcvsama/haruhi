@@ -136,7 +136,10 @@ InternalInputItem::handle_event (EventTransport::MidiEvent const& event)
 			}
 			if (_note_filter && (_note_channel == 0 || _note_channel == event.note_on.channel + 1))
 			{
-				buffer->push (new Core::VoiceEvent (t, event.note_on.note, Core::VoiceAuto, (event.note_on.velocity == 0)? Core::VoiceEvent::Release : Core::VoiceEvent::Create, 0.0f, event.note_on.velocity / 127.0));
+				buffer->push (new Core::VoiceEvent (t, event.note_on.note, Core::VoiceAuto,
+													(event.note_on.velocity == 0)? Core::VoiceEvent::Release : Core::VoiceEvent::Create,
+													Core::VoiceEvent::frequency_from_key_id (event.note_on.note, _backend->graph()->master_tune()),
+													event.note_on.velocity / 127.0));
 				buffer->push (new Core::VoiceControllerEvent (t, event.note_on.note, event.note_on.velocity / 127.0));
 				handled = true;
 			}
@@ -146,7 +149,9 @@ InternalInputItem::handle_event (EventTransport::MidiEvent const& event)
 			if (_note_filter && (_note_channel == 0 || _note_channel == event.note_off.channel + 1))
 			{
 				buffer->push (new Core::VoiceControllerEvent (t, event.note_off.note, event.note_off.velocity / 127.0));
-				buffer->push (new Core::VoiceEvent (t, event.note_off.note, Core::VoiceAuto, Core::VoiceEvent::Release, 0.0f, event.note_off.velocity / 127.0));
+				buffer->push (new Core::VoiceEvent (t, event.note_off.note, Core::VoiceAuto, Core::VoiceEvent::Release,
+													Core::VoiceEvent::frequency_from_key_id (event.note_off.note, _backend->graph()->master_tune()),
+													event.note_off.velocity / 127.0));
 				handled = true;
 			}
 			break;

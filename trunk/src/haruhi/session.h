@@ -77,6 +77,36 @@ namespace SessionPrivate {
 		QPushButton*	_reject_button;
 	};
 
+	class Global: public QWidget
+	{
+		Q_OBJECT
+
+		friend class Session;
+
+	  public:
+		Global (Session*, QWidget* parent);
+
+		void
+		load_params();
+
+	  private slots:
+		void
+		update_params();
+
+		void
+		update_widgets();
+
+	  private:
+		Session*	_session;
+		bool		_loading_params;
+
+		QSpinBox*	_tuning;
+		QLabel*		_tuning_hz;
+		QSpinBox*	_transpose;
+		QSpinBox*	_engine_thread_priority;
+		QSpinBox*	_level_meter_fps;
+	};
+
 } // namespace SessionPrivate
 
 
@@ -85,6 +115,32 @@ class Session: public QWidget
 	Q_OBJECT
 
   public:
+	/**
+	 * Session parameters. Will be saved to session file.
+	 */
+	class Parameters: public SaveableState
+	{
+	  public:
+		Parameters();
+
+		void
+		load_state (QDomElement const& element);
+
+		void
+		save_state (QDomElement&) const;
+
+	  private:
+		void
+		limit_values();
+
+	  public:
+		int		tuning; // -50…50 cents
+		int		transpose;
+		int		engine_thread_priority;
+		int		level_meter_fps;
+		float	tempo;
+	};
+
 	class MeterPanel: public QFrame
 	{
 	  public:
@@ -102,6 +158,9 @@ class Session: public QWidget
 
 		DialControl*
 		master_volume() const { return _master_volume; }
+
+		void
+		set_fps (int fps);
 
 	  private:
 		Session*			_session;
@@ -184,6 +243,15 @@ class Session: public QWidget
 	MeterPanel*
 	meter_panel() const { return _meter_panel; }
 
+	Parameters&
+	parameters() { return _parameters; }
+
+	/**
+	 * Applies _parameters to system.
+	 */
+	void
+	apply_parameters();
+
 	void
 	load_session (QString const& file_name);
 
@@ -195,6 +263,9 @@ class Session: public QWidget
 
 	void
 	load_state (QDomElement const&);
+
+	float
+	master_tune() const;
 
   private slots:
 	void
@@ -210,7 +281,7 @@ class Session: public QWidget
 	rename_session();
 
 	void
-	tempo_value_changed (int);
+	tempo_value_changed (double);
 
 	void
 	panic_button_clicked();
@@ -246,6 +317,7 @@ class Session: public QWidget
   private:
 	QString					_name;
 	QString					_file_name;
+	Parameters				_parameters;
 
 	Core::Graph*			_graph;
 
@@ -259,6 +331,7 @@ class Session: public QWidget
 	Program*				_program;
 	QTabWidget*				_backends;
 
+	SessionPrivate::Global*	_global;
 	AudioTab*				_audio;
 	EventTab*				_event;
 
@@ -268,7 +341,7 @@ class Session: public QWidget
 	Engine*					_engine;
 	UnitLoader*				_unit_loader;
 
-	QSpinBox*				_tempo_spinbox;
+	QDoubleSpinBox*			_tempo_spinbox;
 	QMenu*					_main_menu;
 };
 

@@ -32,7 +32,7 @@ Engine::Engine (Session* session):
 	_quit (false),
 	_panic_pressed (false)
 {
-	set_sched (Thread::SchedFIFO, 50);
+	set_sched (Thread::SchedRR, 50);
 }
 
 

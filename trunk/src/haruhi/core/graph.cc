@@ -31,7 +31,9 @@ Graph::Graph():
 	RecursiveMutex(),
 	_inside_processing_round (false),
 	_buffer_size (0),
-	_sample_rate (0)
+	_sample_rate (0),
+	_tempo (120.0),
+	_master_tune (440.0)
 {
 	set_buffer_size (1);
 }
@@ -130,9 +132,18 @@ Graph::set_sample_rate (std::size_t sample_rate)
 
 
 void
-Graph::set_tempo (unsigned int tempo)
+Graph::set_tempo (float tempo)
 {
 	_tempo = tempo;
+	for (Units::iterator k = _units.begin();  k != _units.end();  ++k)
+		(*k)->graph_updated();
+}
+
+
+void
+Graph::set_master_tune (float master_tune)
+{
+	_master_tune = master_tune;
 	for (Units::iterator k = _units.begin();  k != _units.end();  ++k)
 		(*k)->graph_updated();
 }

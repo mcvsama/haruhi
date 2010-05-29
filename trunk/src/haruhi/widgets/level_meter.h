@@ -134,6 +134,9 @@ class LevelMetersGroup: public QWidget
 	void
 	update_peak (Core::Sample sample);
 
+	void
+	set_fps (int fps) { _timer->setInterval (1000.0 / fps); }
+
   public slots:
 	void
 	reset_peak();

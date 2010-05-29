@@ -51,6 +51,14 @@ template<class Value>
 
 
 template<class Value>
+	inline void
+	limit_value (Value& value, Value min, Value max)
+	{
+		value = bound (value, min, max);
+	}
+
+
+template<class Value>
 	inline Value
 	pow2 (Value value)
 	{
