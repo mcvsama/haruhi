@@ -334,6 +334,7 @@ SRC_SOURCES += haruhi/widgets/wave_plot.cc
 
 SRC_MOCHDRS += haruhi/widgets/clickable_label.h
 SRC_MOCHDRS += haruhi/widgets/dial_control.h
+SRC_MOCHDRS += haruhi/widgets/envelope_plot.h
 SRC_MOCHDRS += haruhi/widgets/frequency_response_plot.h
 SRC_MOCHDRS += haruhi/widgets/knob.h
 SRC_MOCHDRS += haruhi/widgets/level_meter.h

@@ -39,7 +39,9 @@ EnvelopePlot::EnvelopePlot (QWidget* parent, const char* name):
 	_last_enabled_state (isEnabled()),
 	_envelope (0),
 	_editable (false),
-	_hovered (false)
+	_hovered (false),
+	_current_point_index (-1),
+	_dragging (false)
 {
 	configure_widget();
 }
@@ -51,7 +53,9 @@ EnvelopePlot::EnvelopePlot (DSP::Envelope* envelope, QWidget* parent, const char
 	_last_enabled_state (isEnabled()),
 	_envelope (0),
 	_editable (false),
-	_hovered (false)
+	_hovered (false),
+	_current_point_index (-1),
+	_dragging (false)
 {
 	configure_widget();
 	assign_envelope (envelope);
@@ -204,20 +208,29 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 			if (_editable)
 			{
 				QColor rect_color = _hovered ? QColor (0x00, 0x00, 0x00, 0xff) : QColor (0xaa, 0xaa, 0xaa, 0xff);
-				painter.setPen (QPen (rect_color, 1, Qt::SolidLine));
-				painter.setRenderHint (QPainter::Antialiasing, false);
 				for (std::vector<QPointF>::size_type i = 0; i < envelope_points.size(); ++i)
 				{
+					painter.setPen (QPen (rect_color, 1, Qt::SolidLine));
+					painter.setRenderHint (QPainter::Antialiasing, false);
 					QRect rect (envelope_points[i].x() - 4, envelope_points[i].y() - 4, 8, 8);
-					if (_hovered && rect.contains (_mouse_pos) && hovered_point_index == -1)
+					if ((_dragging && _current_point_index == static_cast<int> (i)) || (!_dragging && _hovered && rect.contains (_mouse_pos) && hovered_point_index == -1))
 					{
 						hovered_point_index = i;
 						painter.fillRect (rect.adjusted (0, 0, 1, 1), rect_color);
+						// Bold line to previous point:
+						if (i > 0)
+						{
+							painter.setPen (QPen (QColor (0x00, 0x00, 0x00), 2, Qt::SolidLine));
+							painter.setRenderHint (QPainter::Antialiasing, true);
+							painter.drawLine (envelope_points[i-1], envelope_points[i]);
+						}
 					}
 					else
 						painter.drawRect (rect);
 				}
 			}
+			if (!_dragging)
+				_current_point_index = hovered_point_index;
 		}
 	}
 	QPainter (this).drawPixmap (paint_event->rect().topLeft(), _double_buffer, paint_event->rect());
@@ -229,8 +242,9 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 
 
 void
-EnvelopePlot::enterEvent (QEvent*)
+EnvelopePlot::enterEvent (QEvent* event)
 {
+	event->accept();
 	_hovered = true;
 	if (_editable)
 	{
@@ -241,8 +255,9 @@ EnvelopePlot::enterEvent (QEvent*)
 
 
 void
-EnvelopePlot::leaveEvent (QEvent*)
+EnvelopePlot::leaveEvent (QEvent* event)
 {
+	event->accept();
 	_hovered = false;
 	if (_editable)
 	{
@@ -255,12 +270,52 @@ EnvelopePlot::leaveEvent (QEvent*)
 void
 EnvelopePlot::mouseMoveEvent (QMouseEvent* event)
 {
-	_mouse_pos = event->pos() + QPoint (-2, -2); // frame margin
+	event->accept();
+	_mouse_pos = event->pos() - QPoint (2, 2);
 	if (_editable)
 	{
+		if (_dragging && _current_point_index != -1)
+		{
+			const int samples_per_pixel = _sample_rate / 240;
+			const int max_samples = _max_segment_time * _sample_rate;
+			const int samples_diff = samples_per_pixel * (_drag_start_pos - _mouse_pos).x();
+			const unsigned int new_samples = std::max (0, std::min (max_samples, _current_point_samples - samples_diff));
+			const float new_value = std::max (0.0f, std::min (1.0f, _current_point_value + 1.0f * (_drag_start_pos - _mouse_pos).y() / height()));
+			// Don't allow moving first point horizontally:
+			if (_current_point_index > 0)
+				_envelope->points()[_current_point_index - 1].samples = new_samples;
+			_envelope->points()[_current_point_index].value = new_value;
+			// Emit signal:
+			emit envelope_updated();
+		}
 		_force_repaint = true;
 		update();
 	}
+}
+
+
+void
+EnvelopePlot::mousePressEvent (QMouseEvent* event)
+{
+	if (_editable && event->button() == Qt::LeftButton && _current_point_index != -1)
+	{
+		event->accept();
+		_dragging = true;
+		_drag_start_pos = event->pos() - QPoint (2, 2);
+		// We'll be altering length of previous point and value of the current:
+		_current_point_samples = _envelope->points()[_current_point_index - 1].samples;
+		_current_point_value = _envelope->points()[_current_point_index].value;
+	}
+}
+
+
+void
+EnvelopePlot::mouseReleaseEvent (QMouseEvent*)
+{
+	_dragging = false;
+	_current_point_index = -1;
+	_force_repaint = true;
+	update();
 }
 
 

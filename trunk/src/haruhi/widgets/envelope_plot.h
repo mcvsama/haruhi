@@ -30,6 +30,8 @@
 
 class EnvelopePlot: public QWidget
 {
+	Q_OBJECT
+
 	class UpdateRequest: public QEvent
 	{
 	  public:
@@ -84,10 +86,11 @@ class EnvelopePlot: public QWidget
 
 	/**
 	 * Sets editable mode of the plot.
+	 * \param	max_segment_time is maximum time in seconds for one env. segment.
 	 * \entry	Qt thread only.
 	 */
 	void
-	set_editable (bool editable) { _editable = editable; }
+	set_editable (bool editable, float max_segment_time = 0.0f) { _editable = editable; _max_segment_time = max_segment_time; }
 
 	/**
 	 * Replots the envelope.
@@ -103,6 +106,10 @@ class EnvelopePlot: public QWidget
 	 */
 	void
 	post_plot_shape();
+
+  signals:
+	void
+	envelope_updated();
 
   protected:
 	void
@@ -120,6 +127,12 @@ class EnvelopePlot: public QWidget
 	void
 	mouseMoveEvent (QMouseEvent*);
 
+	void
+	mousePressEvent (QMouseEvent*);
+
+	void
+	mouseReleaseEvent (QMouseEvent*);
+
   private:
 	void
 	configure_widget();
@@ -135,8 +148,18 @@ class EnvelopePlot: public QWidget
 	DSP::Envelope*		_envelope;
 	QSize				_prev_size;
 	bool				_editable;
+	float				_max_segment_time; // in seconds
+	// True when mouse is over the plot:
 	bool				_hovered;
+	// Mouse position over the plot:
 	QPoint				_mouse_pos;
+	// Index of dragged point or -1 if none:
+	int					_current_point_index;
+	// Samples number for current point in envelope:
+	int					_current_point_samples;
+	float				_current_point_value;
+	bool				_dragging;
+	QPoint				_drag_start_pos;
 };
 
 #endif
