@@ -35,9 +35,11 @@
 EnvelopePlot::EnvelopePlot (QWidget* parent, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
 	_sample_rate (1),
-	_to_repaint_buffer (false),
+	_force_repaint (false),
 	_last_enabled_state (isEnabled()),
-	_envelope (0)
+	_envelope (0),
+	_editable (false),
+	_hovered (false)
 {
 	configure_widget();
 }
@@ -45,9 +47,11 @@ EnvelopePlot::EnvelopePlot (QWidget* parent, const char* name):
 
 EnvelopePlot::EnvelopePlot (DSP::Envelope* envelope, QWidget* parent, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
-	_to_repaint_buffer (false),
+	_force_repaint (false),
 	_last_enabled_state (isEnabled()),
-	_envelope (0)
+	_envelope (0),
+	_editable (false),
+	_hovered (false)
 {
 	configure_widget();
 	assign_envelope (envelope);
@@ -67,18 +71,18 @@ EnvelopePlot::assign_envelope (DSP::Envelope* envelope)
 
 
 void
-EnvelopePlot::post_plot_shape()
+EnvelopePlot::plot_shape()
 {
-	_to_repaint_buffer = true;
-	QApplication::postEvent (this, new UpdateRequest(), Qt::LowEventPriority);
+	_force_repaint = true;
+	update();
 }
 
 
 void
-EnvelopePlot::plot_shape()
+EnvelopePlot::post_plot_shape()
 {
-	_to_repaint_buffer = true;
-	update();
+	_force_repaint = true;
+	QApplication::postEvent (this, new UpdateRequest(), Qt::LowEventPriority);
 }
 
 
@@ -96,7 +100,7 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 	if (_prev_size != size())
 		plot_shape();
 
-	if (_to_repaint_buffer || _last_enabled_state != isEnabled())
+	if (_force_repaint || _last_enabled_state != isEnabled())
 	{
 		int w = width();
 		int h = height();
@@ -105,6 +109,8 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 		QPainter painter (&_double_buffer);
 		painter.fillRect (rect(), isEnabled() ? QColor (0xff, 0xff, 0xff) : QColor (0xfa, 0xfa, 0xfa));
 		painter.setFont (Config::small_font);
+		// Collect envelope points on canvas:
+		std::vector<QPointF> envelope_points;
 
 		if (w > 1 && h > 1)
 		{
@@ -133,6 +139,7 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 				for (DSP::Envelope::Points::iterator p = points.begin(); p != points.end(); ++p)
 				{
 					point = QPointF (1.0f * s * w / sum_samples, h - 1 - p->value * (h - 1));
+					envelope_points.push_back (point);
 					shape_line << point;
 					shape_polygon << point;
 					s += p->samples;
@@ -191,10 +198,30 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 			painter.setBrush (Qt::NoBrush);
 			int xpos = std::min (static_cast<int> (1.0f * sustain_sample / sum_samples * w), w - 1);
 			painter.drawLine (xpos, h - sustain_value * h, xpos, h);
+
+			// Draw rectangles around envelope points:
+			int hovered_point_index = -1;
+			if (_editable)
+			{
+				QColor rect_color = _hovered ? QColor (0x00, 0x00, 0x00, 0xff) : QColor (0xaa, 0xaa, 0xaa, 0xff);
+				painter.setPen (QPen (rect_color, 1, Qt::SolidLine));
+				painter.setRenderHint (QPainter::Antialiasing, false);
+				for (std::vector<QPointF>::size_type i = 0; i < envelope_points.size(); ++i)
+				{
+					QRect rect (envelope_points[i].x() - 4, envelope_points[i].y() - 4, 8, 8);
+					if (_hovered && rect.contains (_mouse_pos) && hovered_point_index == -1)
+					{
+						hovered_point_index = i;
+						painter.fillRect (rect.adjusted (0, 0, 1, 1), rect_color);
+					}
+					else
+						painter.drawRect (rect);
+				}
+			}
 		}
 	}
 	QPainter (this).drawPixmap (paint_event->rect().topLeft(), _double_buffer, paint_event->rect());
-	_to_repaint_buffer = false;
+	_force_repaint = false;
 	_last_enabled_state = isEnabled();
 
 	_prev_size = size();
@@ -202,8 +229,45 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 
 
 void
+EnvelopePlot::enterEvent (QEvent*)
+{
+	_hovered = true;
+	if (_editable)
+	{
+		_force_repaint = true;
+		update();
+	}
+}
+
+
+void
+EnvelopePlot::leaveEvent (QEvent*)
+{
+	_hovered = false;
+	if (_editable)
+	{
+		_force_repaint = true;
+		update();
+	}
+}
+
+
+void
+EnvelopePlot::mouseMoveEvent (QMouseEvent* event)
+{
+	_mouse_pos = event->pos() + QPoint (-2, -2); // frame margin
+	if (_editable)
+	{
+		_force_repaint = true;
+		update();
+	}
+}
+
+
+void
 EnvelopePlot::configure_widget()
 {
+	setMouseTracking (true);
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	setBackgroundColor (QColor (0xff, 0xff, 0xff));
 }

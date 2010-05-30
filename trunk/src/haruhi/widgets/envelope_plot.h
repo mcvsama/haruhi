@@ -83,8 +83,15 @@ class EnvelopePlot: public QWidget
 	envelope() const { return atomic (_envelope); }
 
 	/**
+	 * Sets editable mode of the plot.
+	 * \entry	Qt thread only.
+	 */
+	void
+	set_editable (bool editable) { _editable = editable; }
+
+	/**
 	 * Replots the envelope.
-	 * \entry	Only from UI thread.
+	 * \entry	Qt thread only.
 	 */
 	void
 	plot_shape();
@@ -104,6 +111,15 @@ class EnvelopePlot: public QWidget
 	void
 	paintEvent (QPaintEvent*);
 
+	void
+	enterEvent (QEvent*);
+
+	void
+	leaveEvent (QEvent*);
+
+	void
+	mouseMoveEvent (QMouseEvent*);
+
   private:
 	void
 	configure_widget();
@@ -114,10 +130,13 @@ class EnvelopePlot: public QWidget
   private:
 	unsigned int		_sample_rate;
 	QPixmap				_double_buffer;
-	bool				_to_repaint_buffer;
+	bool				_force_repaint;
 	bool				_last_enabled_state;
 	DSP::Envelope*		_envelope;
 	QSize				_prev_size;
+	bool				_editable;
+	bool				_hovered;
+	QPoint				_mouse_pos;
 };
 
 #endif
