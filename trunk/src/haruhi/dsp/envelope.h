@@ -25,7 +25,6 @@
 
 namespace DSP {
 
-// TODO make multi-sustaining (many points may be sustain points)
 class Envelope
 {
   public:
@@ -55,10 +54,10 @@ class Envelope
 	Envelope();
 
 	Points::size_type
-	release_point() const { return _release_point; }
+	sustain_point() const { return _sustain_point; }
 
 	void
-	set_release_point (Points::size_type i) { _release_point = i; points()[i].sustain = true; }
+	set_sustain_point (Points::size_type i) { _sustain_point = i; points()[i].sustain = true; }
 
 	/**
 	 * If forced release is enabled, envelope will jump directly to
@@ -92,7 +91,7 @@ class Envelope
 	Points				_points;
 	unsigned int		_phase;
 	unsigned int		_p;
-	Points::size_type	_release_point;
+	Points::size_type	_sustain_point;
 	bool				_sustain;
 	bool				_forced_release;
 };
