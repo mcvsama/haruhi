@@ -35,19 +35,30 @@
 EnvelopePlot::EnvelopePlot (QWidget* parent, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
 	_sample_rate (1),
-	_to_repaint_buffer (false),
+	_force_repaint (false),
 	_last_enabled_state (isEnabled()),
-	_envelope (0)
+	_envelope (0),
+	_editable (false),
+	_hovered (false),
+	_active_point_index (-1),
+	_hovered_point_index (-1),
+	_dragging (false)
 {
 	configure_widget();
+	set_editable (true, 10.0);//XXX
 }
 
 
 EnvelopePlot::EnvelopePlot (DSP::Envelope* envelope, QWidget* parent, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
-	_to_repaint_buffer (false),
+	_force_repaint (false),
 	_last_enabled_state (isEnabled()),
-	_envelope (0)
+	_envelope (0),
+	_editable (false),
+	_hovered (false),
+	_active_point_index (-1),
+	_hovered_point_index (-1),
+	_dragging (false)
 {
 	configure_widget();
 	assign_envelope (envelope);
@@ -67,18 +78,36 @@ EnvelopePlot::assign_envelope (DSP::Envelope* envelope)
 
 
 void
-EnvelopePlot::post_plot_shape()
+EnvelopePlot::set_active_point (int index)
 {
-	_to_repaint_buffer = true;
-	QApplication::postEvent (this, new UpdateRequest(), Qt::LowEventPriority);
+	if (index >= 0 && index < _envelope->points().size())
+	{
+		_active_point_index = index;
+		// We'll be altering length of previous point and value of the current:
+		_active_point_samples = _envelope->points()[index - 1].samples;
+		_active_point_value = _envelope->points()[index].value;
+
+		_force_repaint = true;
+		update();
+
+		emit active_point_changed (index);
+	}
 }
 
 
 void
 EnvelopePlot::plot_shape()
 {
-	_to_repaint_buffer = true;
+	_force_repaint = true;
 	update();
+}
+
+
+void
+EnvelopePlot::post_plot_shape()
+{
+	_force_repaint = true;
+	QApplication::postEvent (this, new UpdateRequest(), Qt::LowEventPriority);
 }
 
 
@@ -96,7 +125,7 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 	if (_prev_size != size())
 		plot_shape();
 
-	if (_to_repaint_buffer || _last_enabled_state != isEnabled())
+	if (_force_repaint || _last_enabled_state != isEnabled())
 	{
 		int w = width();
 		int h = height();
@@ -105,6 +134,8 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 		QPainter painter (&_double_buffer);
 		painter.fillRect (rect(), isEnabled() ? QColor (0xff, 0xff, 0xff) : QColor (0xfa, 0xfa, 0xfa));
 		painter.setFont (Config::small_font);
+		// Collect envelope points on canvas:
+		std::vector<QPointF> envelope_points;
 
 		if (w > 1 && h > 1)
 		{
@@ -133,6 +164,7 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 				for (DSP::Envelope::Points::iterator p = points.begin(); p != points.end(); ++p)
 				{
 					point = QPointF (1.0f * s * w / sum_samples, h - 1 - p->value * (h - 1));
+					envelope_points.push_back (point);
 					shape_line << point;
 					shape_polygon << point;
 					s += p->samples;
@@ -191,10 +223,81 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 			painter.setBrush (Qt::NoBrush);
 			int xpos = std::min (static_cast<int> (1.0f * sustain_sample / sum_samples * w), w - 1);
 			painter.drawLine (xpos, h - sustain_value * h, xpos, h);
+
+			// Draw rectangles around envelope points:
+			_hovered_point_index = -1;
+			if (_editable)
+			{
+				QLineF active_line;
+				QLineF hovered_line;
+				std::vector<QRect> normal_rects;
+				QRect active_rect;
+				QRect hovered_rect;
+
+				// Go backwards so if two rects are overlapping, the latter has priority to become hovered:
+				for (std::vector<QPointF>::difference_type i = envelope_points.size() - 1; i >= 0; --i)
+				{
+					QRect rect = QRect (envelope_points[i].x() - 4, envelope_points[i].y() - 4, 8, 8);
+					QLineF line;
+					if (i > 0)
+						line = QLineF (envelope_points[i-1], envelope_points[i]);
+					// Point [i] hovered?
+					if ((_dragging && _hovered_point_index == i) || (!_dragging && _hovered && rect.contains (_mouse_pos) && _hovered_point_index == -1))
+					{
+						_hovered_point_index = i;
+						hovered_rect = rect;
+						if (i > 0)
+							hovered_line = line;
+					}
+					// Point [i] active?
+					if (_active_point_index == i)
+					{
+						active_rect = rect;
+						if (i > 0)
+							active_line = line;
+					}
+					// Not hovered and not active?
+					if (i != _hovered_point_index && i != _active_point_index)
+						normal_rects.push_back (rect);
+				}
+
+				painter.setRenderHint (QPainter::Antialiasing, true);
+				// Active line:
+				if (_active_point_index != -1 && _active_point_index != _hovered_point_index)
+				{
+					painter.setPen (QPen (QColor (0x00, 0x00, 0xff), 1.5, Qt::SolidLine));
+					painter.drawLine (active_line);
+				}
+				// Hovered line:
+				if (_hovered_point_index != -1)
+				{
+					painter.setPen (QPen (QColor (0xff, 0x00, 0x00), 1.5, Qt::SolidLine));
+					painter.drawLine (hovered_line);
+				}
+				// Normal points:
+				painter.setRenderHint (QPainter::Antialiasing, false);
+				painter.setPen (QPen (_hovered ? QColor (0x00, 0x00, 0x00) : QColor (0xaa, 0xaa, 0xaa), 1, Qt::SolidLine));
+				for (std::vector<QRect>::iterator rect = normal_rects.begin(); rect != normal_rects.end(); ++rect)
+					painter.drawRect (*rect);
+				// Active point:
+				if (_active_point_index != -1 && _active_point_index != _hovered_point_index)
+				{
+					painter.setPen (QPen (QColor (0x00, 0x00, 0xbb), 1, Qt::SolidLine));
+					painter.fillRect (active_rect.adjusted (0, 0, 1, 1), QColor (0x00, 0x00, 0xff));
+					painter.drawRect (active_rect);
+				}
+				// Hovered point:
+				if (_hovered_point_index != -1)
+				{
+					painter.setPen (QPen (QColor (0xcc, 0x00, 0x00), 1, Qt::SolidLine));
+					painter.fillRect (hovered_rect.adjusted (0, 0, 1, 1), QColor (0xff, 0x00, 0x00));
+					painter.drawRect (hovered_rect);
+				}
+			}
 		}
 	}
 	QPainter (this).drawPixmap (paint_event->rect().topLeft(), _double_buffer, paint_event->rect());
-	_to_repaint_buffer = false;
+	_force_repaint = false;
 	_last_enabled_state = isEnabled();
 
 	_prev_size = size();
@@ -202,8 +305,84 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 
 
 void
+EnvelopePlot::enterEvent (QEvent* event)
+{
+	event->accept();
+	_hovered = true;
+	if (_editable)
+	{
+		_force_repaint = true;
+		update();
+	}
+}
+
+
+void
+EnvelopePlot::leaveEvent (QEvent* event)
+{
+	event->accept();
+	_hovered = false;
+	if (_editable)
+	{
+		_force_repaint = true;
+		update();
+	}
+}
+
+
+void
+EnvelopePlot::mouseMoveEvent (QMouseEvent* event)
+{
+	event->accept();
+	_mouse_pos = event->pos() - QPoint (2, 2);
+	if (_editable)
+	{
+		if (_dragging && _active_point_index != -1)
+		{
+			const int samples_per_pixel = _sample_rate / 240;
+			const int max_samples = _max_segment_time * _sample_rate;
+			const int samples_diff = samples_per_pixel * (_drag_start_pos - _mouse_pos).x();
+			const unsigned int new_samples = std::max (0, std::min (max_samples, _active_point_samples - samples_diff));
+			const float new_value = std::max (0.0f, std::min (1.0f, _active_point_value + 1.0f * (_drag_start_pos - _mouse_pos).y() / height()));
+			// Don't allow moving first point horizontally:
+			if (_active_point_index > 0)
+				_envelope->points()[_active_point_index - 1].samples = new_samples;
+			_envelope->points()[_active_point_index].value = new_value;
+			// Emit signal:
+			emit envelope_updated();
+		}
+		_force_repaint = true;
+		update();
+	}
+}
+
+
+void
+EnvelopePlot::mousePressEvent (QMouseEvent* event)
+{
+	if (_editable && event->button() == Qt::LeftButton && _hovered_point_index != -1)
+	{
+		event->accept();
+		_dragging = true;
+		_drag_start_pos = event->pos() - QPoint (2, 2);
+		set_active_point (_hovered_point_index);
+	}
+}
+
+
+void
+EnvelopePlot::mouseReleaseEvent (QMouseEvent*)
+{
+	_dragging = false;
+	_force_repaint = true;
+	update();
+}
+
+
+void
 EnvelopePlot::configure_widget()
 {
+	setMouseTracking (true);
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	setBackgroundColor (QColor (0xff, 0xff, 0xff));
 }

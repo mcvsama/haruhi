@@ -30,6 +30,8 @@
 
 class EnvelopePlot: public QWidget
 {
+	Q_OBJECT
+
 	class UpdateRequest: public QEvent
 	{
 	  public:
@@ -83,8 +85,30 @@ class EnvelopePlot: public QWidget
 	envelope() const { return atomic (_envelope); }
 
 	/**
+	 * Sets editable mode of the plot.
+	 * \param	max_segment_time is maximum time in seconds for one env. segment.
+	 * \entry	Qt thread only.
+	 */
+	void
+	set_editable (bool editable, float max_segment_time = 0.0f) { _editable = editable; _max_segment_time = max_segment_time; }
+
+	/**
+	 * \returns	Currently edited point or -1 if no point is active.
+	 * \entry	Any thread.
+	 */
+	int
+	active_point() const { return _active_point_index; }
+
+	/**
+	 * Sets current edited point.
+	 * \entry	Qt thread only.
+	 */
+	void
+	set_active_point (int index);
+
+	/**
 	 * Replots the envelope.
-	 * \entry	Only from UI thread.
+	 * \entry	Qt thread only.
 	 */
 	void
 	plot_shape();
@@ -97,12 +121,34 @@ class EnvelopePlot: public QWidget
 	void
 	post_plot_shape();
 
+  signals:
+	void
+	active_point_changed (unsigned int index);
+
+	void
+	envelope_updated();
+
   protected:
 	void
 	resizeEvent (QResizeEvent*);
 
 	void
 	paintEvent (QPaintEvent*);
+
+	void
+	enterEvent (QEvent*);
+
+	void
+	leaveEvent (QEvent*);
+
+	void
+	mouseMoveEvent (QMouseEvent*);
+
+	void
+	mousePressEvent (QMouseEvent*);
+
+	void
+	mouseReleaseEvent (QMouseEvent*);
 
   private:
 	void
@@ -114,10 +160,24 @@ class EnvelopePlot: public QWidget
   private:
 	unsigned int		_sample_rate;
 	QPixmap				_double_buffer;
-	bool				_to_repaint_buffer;
+	bool				_force_repaint;
 	bool				_last_enabled_state;
 	DSP::Envelope*		_envelope;
 	QSize				_prev_size;
+	bool				_editable;
+	float				_max_segment_time; // in seconds
+	// True when mouse is over the plot:
+	bool				_hovered;
+	// Mouse position over the plot:
+	QPoint				_mouse_pos;
+	// Index of active/dragged point or -1 if none:
+	int					_active_point_index;
+	int					_hovered_point_index;
+	// Samples number for active point in envelope:
+	int					_active_point_samples;
+	float				_active_point_value;
+	bool				_dragging;
+	QPoint				_drag_start_pos;
 };
 
 #endif

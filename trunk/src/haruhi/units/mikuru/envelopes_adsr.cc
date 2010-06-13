@@ -410,7 +410,7 @@ ADSR::update_plot()
 	points.push_back (DSP::Envelope::Point (sustain_value, sr * atomic (_params.sustain_hold) / Params::ADSR::SustainHoldDenominator));
 	points.push_back (DSP::Envelope::Point (sustain_value, sr * atomic (_params.release) / Params::ADSR::ReleaseDenominator));
 	points.push_back (DSP::Envelope::Point (0.0f, 0));
-	_envelope_for_plot.set_release_point (4);
+	_envelope_for_plot.set_sustain_point (4);
 	_plot->set_sample_rate (sr);
 	_plot->assign_envelope (&_envelope_for_plot);
 	_plot->plot_shape();

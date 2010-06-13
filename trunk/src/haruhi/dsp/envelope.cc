@@ -26,7 +26,7 @@ namespace DSP {
 Envelope::Envelope():
 	_phase (0),
 	_p (0),
-	_release_point (0),
+	_sustain_point (0),
 	_sustain (false),
 	_forced_release (false)
 {
@@ -38,16 +38,16 @@ Envelope::prepare()
 {
 	_phase = 0;
 	_p = 0;
-	_sustain = _phase == _release_point;
+	_sustain = _phase == _sustain_point;
 }
 
 
 void
 Envelope::release()
 {
-	_points[_release_point].value = renormalize (1.0f * _p, 0.0f, 1.0f * _points[_phase].samples, _points[_phase].value, _points[_phase+1].value);
+	_points[_sustain_point].value = renormalize (1.0f * _p, 0.0f, 1.0f * _points[_phase].samples, _points[_phase].value, _points[_phase+1].value);
 	_p = 0;
-	_phase = _release_point;
+	_phase = _sustain_point;
 	_sustain = false;
 }
 
@@ -55,7 +55,7 @@ Envelope::release()
 bool
 Envelope::released() const
 {
-	return _phase >= _release_point && !_sustain;
+	return _phase >= _sustain_point && !_sustain;
 }
 
 
@@ -92,7 +92,7 @@ Envelope::fill (Core::Sample* begin, Core::Sample* end)
 				{
 					_p = 0;
 					_phase = std::min (static_cast<Points::size_type> (_phase + 1), _points.size()-1);
-					if (_phase == _release_point)
+					if (_phase == _sustain_point)
 						_sustain = true;
 				}
 			}
