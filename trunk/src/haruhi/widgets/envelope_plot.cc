@@ -45,7 +45,6 @@ EnvelopePlot::EnvelopePlot (QWidget* parent, const char* name):
 	_dragging (false)
 {
 	configure_widget();
-	set_editable (true, 10.0);//XXX
 }
 
 
