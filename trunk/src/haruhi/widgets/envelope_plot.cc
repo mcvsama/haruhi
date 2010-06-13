@@ -78,6 +78,24 @@ EnvelopePlot::assign_envelope (DSP::Envelope* envelope)
 
 
 void
+EnvelopePlot::set_active_point (int index)
+{
+	if (index >= 0 && index < _envelope->points().size())
+	{
+		_active_point_index = index;
+		// We'll be altering length of previous point and value of the current:
+		_active_point_samples = _envelope->points()[index - 1].samples;
+		_active_point_value = _envelope->points()[index].value;
+
+		_force_repaint = true;
+		update();
+
+		emit active_point_changed (index);
+	}
+}
+
+
+void
 EnvelopePlot::plot_shape()
 {
 	_force_repaint = true;
@@ -347,13 +365,7 @@ EnvelopePlot::mousePressEvent (QMouseEvent* event)
 		event->accept();
 		_dragging = true;
 		_drag_start_pos = event->pos() - QPoint (2, 2);
-		_active_point_index = _hovered_point_index;
-		// We'll be altering length of previous point and value of the current:
-		_active_point_samples = _envelope->points()[_active_point_index - 1].samples;
-		_active_point_value = _envelope->points()[_active_point_index].value;
-
-		_force_repaint = true;
-		update();
+		set_active_point (_hovered_point_index);
 	}
 }
 

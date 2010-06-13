@@ -93,11 +93,18 @@ class EnvelopePlot: public QWidget
 	set_editable (bool editable, float max_segment_time = 0.0f) { _editable = editable; _max_segment_time = max_segment_time; }
 
 	/**
+	 * \returns	Currently edited point or -1 if no point is active.
+	 * \entry	Any thread.
+	 */
+	int
+	active_point() const { return _active_point_index; }
+
+	/**
 	 * Sets current edited point.
 	 * \entry	Qt thread only.
 	 */
 	void
-	set_edit_point (unsigned int index);
+	set_active_point (int index);
 
 	/**
 	 * Replots the envelope.
@@ -115,6 +122,9 @@ class EnvelopePlot: public QWidget
 	post_plot_shape();
 
   signals:
+	void
+	active_point_changed (unsigned int index);
+
 	void
 	envelope_updated();
 
