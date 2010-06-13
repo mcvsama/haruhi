@@ -82,7 +82,6 @@ namespace detail {
 				std::string convert (Stream& interpreter)
 				  { return interpreter.str(); }
 		};
-
 }
 
 
