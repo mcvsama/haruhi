@@ -93,6 +93,13 @@ class EnvelopePlot: public QWidget
 	set_editable (bool editable, float max_segment_time = 0.0f) { _editable = editable; _max_segment_time = max_segment_time; }
 
 	/**
+	 * Sets current edited point.
+	 * \entry	Qt thread only.
+	 */
+	void
+	set_edit_point (unsigned int index);
+
+	/**
 	 * Replots the envelope.
 	 * \entry	Qt thread only.
 	 */
@@ -153,11 +160,12 @@ class EnvelopePlot: public QWidget
 	bool				_hovered;
 	// Mouse position over the plot:
 	QPoint				_mouse_pos;
-	// Index of dragged point or -1 if none:
-	int					_current_point_index;
-	// Samples number for current point in envelope:
-	int					_current_point_samples;
-	float				_current_point_value;
+	// Index of active/dragged point or -1 if none:
+	int					_active_point_index;
+	int					_hovered_point_index;
+	// Samples number for active point in envelope:
+	int					_active_point_samples;
+	float				_active_point_value;
 	bool				_dragging;
 	QPoint				_drag_start_pos;
 };
