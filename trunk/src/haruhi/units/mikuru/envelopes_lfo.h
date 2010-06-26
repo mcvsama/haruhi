@@ -176,6 +176,20 @@ class LFO: public Envelope
 
 	~LFO();
 
+  private:
+	void
+	create_ports();
+
+	void
+	create_proxies();
+
+	void
+	create_knobs (QWidget* parent);
+
+	void
+	create_widgets (QWidget* knobs_panel);
+
+  public:
 	Params::LFO*
 	params() { return &_params; }
 
