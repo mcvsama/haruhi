@@ -79,7 +79,7 @@ EnvelopePlot::assign_envelope (DSP::Envelope* envelope)
 void
 EnvelopePlot::set_active_point (unsigned int index)
 {
-	if (index >= 0 && index < _envelope->points().size())
+	if (index >= 0 && index < static_cast<int> (_envelope->points().size()))
 	{
 		_active_point_index = index;
 		// We'll be altering length of previous point and value of the current:
@@ -144,9 +144,10 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 			int sum_samples = 0;
 			int sustain_sample = 0;
 			float sustain_value = 0.0f;
-			for (DSP::Envelope::Points::iterator p = points.begin(); p != points.end(); ++p)
+			unsigned int i = 0;
+			for (DSP::Envelope::Points::iterator p = points.begin(); p != points.end(); ++p, ++i)
 			{
-				if (p->sustain)
+				if (_envelope->sustain_point() == i)
 				{
 					sustain_sample = sum_samples;
 					sustain_value = p->value;

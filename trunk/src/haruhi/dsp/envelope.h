@@ -36,16 +36,14 @@ class Envelope
 			samples (0)
 		{ }
 
-		Point (float value, unsigned int samples, bool sustain = false):
+		Point (float value, unsigned int samples):
 			value (value),
-			samples (samples),
-			sustain (sustain)
+			samples (samples)
 		{ }
 
 	  public:
 		float			value;
 		unsigned int	samples;
-		bool			sustain;
 	};
 
 	typedef std::vector<Point>  Points;
@@ -57,7 +55,7 @@ class Envelope
 	sustain_point() const { return _sustain_point; }
 
 	void
-	set_sustain_point (Points::size_type i) { _sustain_point = i; points()[i].sustain = true; }
+	set_sustain_point (Points::size_type i) { _sustain_point = i; }
 
 	/**
 	 * If forced release is enabled, envelope will jump directly to
