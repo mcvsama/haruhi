@@ -35,6 +35,7 @@
 #include "part.h"
 #include "envelopes.h"
 #include "envelopes_adsr.h"
+#include "envelopes_eg.h"
 #include "envelopes_lfo.h"
 
 
@@ -63,7 +64,7 @@ Envelopes::Envelopes (Mikuru* mikuru, QWidget* parent):
 	_add_adsr = new QPushButton (Config::Icons16::adsr(), "Add ADSR", this);
 	QObject::connect (_add_adsr, SIGNAL (clicked()), this, SLOT (add_adsr()));
 	_add_envelope = new QPushButton (Config::Icons16::adsr(), "Add envelope", this);
-	QObject::connect (_add_envelope, SIGNAL (clicked()), this, SLOT (add_envelope()));
+	QObject::connect (_add_envelope, SIGNAL (clicked()), this, SLOT (add_eg()));
 	_add_lfo = new QPushButton (Config::Icons16::lfo(), "Add LFO", this);
 	QObject::connect (_add_lfo, SIGNAL (clicked()), this, SLOT (add_lfo()));
 
@@ -177,6 +178,20 @@ Envelopes::add_adsr (int id)
 	_envelopes.push_back (envelope);
 	_envelopes_mutex.unlock();
 	_tabs->addTab (envelope, QString ("ADSR %1").arg (envelope->id()));
+	_tabs->showPage (envelope);
+	update_widgets();
+	return envelope;
+}
+
+
+EG*
+Envelopes::add_eg (int id)
+{
+	EG* envelope = new EG (id, _mikuru, this);
+	_envelopes_mutex.lock();
+	_envelopes.push_back (envelope);
+	_envelopes_mutex.unlock();
+	_tabs->addTab (envelope, QString ("EG %1").arg (envelope->id()));
 	_tabs->showPage (envelope);
 	update_widgets();
 	return envelope;

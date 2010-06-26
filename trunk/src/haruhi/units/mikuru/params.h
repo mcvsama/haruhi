@@ -351,6 +351,22 @@ struct Params
 		int random_start_phase;
 		int fade_out_enabled;
 	};
+
+	/**
+	 * Envelope: EG
+	 */
+	struct EG
+	{
+		HARUHI_MIKURU_PARAMS_STANDARD_METHODS (EG)
+
+		enum {
+			HARUHI_MIKURU_PARAM (SegmentDuration,		       0,	+1000000,	 +100000,	       0)
+		};
+
+		int enabled;
+		int points;
+		int sustain_point;
+	};
 };
 
 } // namespace MikuruPrivate

@@ -41,6 +41,7 @@ class Voice;
 class VoiceManager;
 class Part;
 class ADSR;
+class EG;
 class LFO;
 
 
@@ -120,6 +121,9 @@ class Envelopes: public QWidget
   public slots:
 	ADSR*
 	add_adsr (int id = 0);
+
+	EG*
+	add_eg (int id = 0);
 
 	LFO*
 	add_lfo (int id = 0);

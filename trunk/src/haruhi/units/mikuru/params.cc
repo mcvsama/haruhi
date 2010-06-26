@@ -420,6 +420,31 @@ Params::LFO::set_non_controller_params (LFO& other)
 	HARUHI_MIKURU_COPY_ATOMIC (fade_out_enabled)
 }
 
+
+Params::EG::EG():
+	// Controller:
+	// Non-controller:
+	enabled (1),
+	points (1),
+	sustain_point (0)
+{
+}
+
+
+void
+Params::EG::set_controller_params (EG& other)
+{
+}
+
+
+void
+Params::EG::set_non_controller_params (EG& other)
+{
+	HARUHI_MIKURU_COPY_ATOMIC (enabled)
+	HARUHI_MIKURU_COPY_ATOMIC (points)
+	HARUHI_MIKURU_COPY_ATOMIC (sustain_point)
+}
+
 } // namespace MikuruPrivate
 
 #undef HARUHI_MIKURU_COPY_ATOMIC
