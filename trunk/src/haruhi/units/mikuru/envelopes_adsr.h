@@ -16,7 +16,6 @@
 
 // Standard:
 #include <cstddef>
-#include <set>
 #include <map>
 #include <list>
 
@@ -60,6 +59,20 @@ class ADSR: public Envelope
 
 	~ADSR();
 
+  private:
+	void
+	create_ports();
+
+	void
+	create_proxies();
+
+	void
+	create_knobs (QWidget* parent);
+
+	void
+	create_widgets (QWidget* knobs_panel);
+
+  public:
 	Params::ADSR*
 	params() { return &_params; }
 
@@ -98,7 +111,7 @@ class ADSR: public Envelope
 	update_params();
 
 	/**
-	 * Updates wave plot.
+	 * Updates envelope plot.
 	 */
 	void
 	update_plot();
@@ -116,6 +129,10 @@ class ADSR: public Envelope
 	bool					_loading_params;
 	int						_id;
 	DSP::Envelope			_envelope_for_plot;
+	ADSRs					_adsrs;
+	Core::AudioBuffer		_buffer;
+	// List of Voices which has been dropped and need ADSRs to be deleted also:
+	std::list<Voice*>		_dropped_voices;
 
 	Core::PortGroup*		_port_group;
 	Core::EventPort*		_port_delay;
@@ -126,11 +143,6 @@ class ADSR: public Envelope
 	Core::EventPort*		_port_sustain_hold;
 	Core::EventPort*		_port_release;
 	Core::EventPort*		_port_output;
-
-	ADSRs					_adsrs;
-	Core::AudioBuffer		_buffer;
-	// List of Voices which has been dropped and need ADSRs to be deleted also:
-	std::list<Voice*>		_dropped_voices;
 
 	ControllerProxy*		_proxy_delay;
 	ControllerProxy*		_proxy_attack;

@@ -46,11 +46,64 @@ ADSR::ADSR (int id, Mikuru* mikuru, QWidget* parent):
 {
 	_id = (id == 0) ? _mikuru->allocate_id ("adsrs") : _mikuru->reserve_id ("adsrs", id);
 
-	Params::ADSR p = _params;
-
 	QWidget* knobs_panel = new QWidget (this);
 	knobs_panel->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
 
+	create_ports();
+	create_proxies();
+	create_knobs (knobs_panel);
+	create_widgets (knobs_panel);
+	update_plot();
+}
+
+
+ADSR::~ADSR()
+{
+	_plot->assign_envelope (0);
+	_mikuru->free_id ("adsrs", _id);
+
+	// Delete knobs before ControllerProxies:
+	delete _control_delay;
+	delete _control_attack;
+	delete _control_attack_hold;
+	delete _control_decay;
+	delete _control_sustain;
+	delete _control_sustain_hold;
+	delete _control_release;
+
+	delete _proxy_delay;
+	delete _proxy_attack;
+	delete _proxy_attack_hold;
+	delete _proxy_decay;
+	delete _proxy_sustain;
+	delete _proxy_sustain_hold;
+	delete _proxy_release;
+
+	_mikuru->graph()->lock();
+	delete _port_output;
+	delete _port_delay;
+	delete _port_attack;
+	delete _port_attack_hold;
+	delete _port_decay;
+	delete _port_sustain;
+	delete _port_sustain_hold;
+	delete _port_release;
+	delete _port_group;
+
+	sweep();
+	// Delete remaining ADSRs:
+	for (ADSRs::iterator x = _adsrs.begin(); x != _adsrs.end(); ++x)
+	{
+		x->first->set_tracked (false);
+		delete x->second;
+	}
+	_mikuru->graph()->unlock();
+}
+
+
+void
+ADSR::create_ports()
+{
 	_mikuru->graph()->lock();
 	_port_group = new Core::PortGroup (_mikuru->graph(), QString ("ADSR %1").arg (this->id()).toStdString());
 	// Inputs:
@@ -64,6 +117,13 @@ ADSR::ADSR (int id, Mikuru* mikuru, QWidget* parent):
 	// Outputs:
 	_port_output = new Core::EventPort (_mikuru, QString ("ADSR %1").arg (this->id()).toStdString(), Core::Port::Output, 0, Core::Port::Polyphonic);
 	_mikuru->graph()->unlock();
+}
+
+
+void
+ADSR::create_proxies()
+{
+	Params::ADSR p = _params;
 
 	_proxy_delay = new ControllerProxy (_port_delay, &_params.delay, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::Delay), p.delay);
 	_proxy_delay->config()->curve = 1.0;
@@ -84,20 +144,25 @@ ADSR::ADSR (int id, Mikuru* mikuru, QWidget* parent):
 	_proxy_release = new ControllerProxy (_port_release, &_params.release, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::Release), p.release);
 	_proxy_release->config()->curve = 1.0;
 	_proxy_release->apply_config();
+}
 
-	_control_delay = new Knob (knobs_panel, _proxy_delay, "Delay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Delay, 100), 2);
+
+void
+ADSR::create_knobs (QWidget* parent)
+{
+	_control_delay = new Knob (parent, _proxy_delay, "Delay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Delay, 100), 2);
 	_control_delay->set_unit_bay (_mikuru->unit_bay());
-	_control_attack = new Knob (knobs_panel, _proxy_attack, "Attack", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Attack, 100), 2);
+	_control_attack = new Knob (parent, _proxy_attack, "Attack", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Attack, 100), 2);
 	_control_attack->set_unit_bay (_mikuru->unit_bay());
-	_control_attack_hold = new Knob (knobs_panel, _proxy_attack_hold, "Att.hold", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::AttackHold, 100), 2);
+	_control_attack_hold = new Knob (parent, _proxy_attack_hold, "Att.hold", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::AttackHold, 100), 2);
 	_control_attack_hold->set_unit_bay (_mikuru->unit_bay());
-	_control_decay = new Knob (knobs_panel, _proxy_decay, "Decay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Decay, 100), 2);
+	_control_decay = new Knob (parent, _proxy_decay, "Decay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Decay, 100), 2);
 	_control_decay->set_unit_bay (_mikuru->unit_bay());
-	_control_sustain = new Knob (knobs_panel, _proxy_sustain, "Sustain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Sustain, 100), 2);
+	_control_sustain = new Knob (parent, _proxy_sustain, "Sustain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Sustain, 100), 2);
 	_control_sustain->set_unit_bay (_mikuru->unit_bay());
-	_control_sustain_hold = new Knob (knobs_panel, _proxy_sustain_hold, "Sus.hold", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::SustainHold, 100), 2);
+	_control_sustain_hold = new Knob (parent, _proxy_sustain_hold, "Sus.hold", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::SustainHold, 100), 2);
 	_control_sustain_hold->set_unit_bay (_mikuru->unit_bay());
-	_control_release = new Knob (knobs_panel, _proxy_release, "Release", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Release, 100), 2);
+	_control_release = new Knob (parent, _proxy_release, "Release", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Release, 100), 2);
 	_control_release->set_unit_bay (_mikuru->unit_bay());
 
 	QObject::connect (_control_delay, SIGNAL (changed (int)), this, SLOT (update_plot()));
@@ -107,8 +172,15 @@ ADSR::ADSR (int id, Mikuru* mikuru, QWidget* parent):
 	QObject::connect (_control_sustain, SIGNAL (changed (int)), this, SLOT (update_plot()));
 	QObject::connect (_control_sustain_hold, SIGNAL (changed (int)), this, SLOT (update_plot()));
 	QObject::connect (_control_release, SIGNAL (changed (int)), this, SLOT (update_plot()));
+}
 
-	QFrame* plot_frame = new QFrame (knobs_panel);
+
+void
+ADSR::create_widgets (QWidget* plot_parent)
+{
+	Params::ADSR p = _params;
+
+	QFrame* plot_frame = new QFrame (plot_parent);
 	plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_plot = new EnvelopePlot (plot_frame);
@@ -173,55 +245,7 @@ ADSR::ADSR (int id, Mikuru* mikuru, QWidget* parent):
 	QVBoxLayout* v2 = new QVBoxLayout (h3, Config::spacing);
 	v2->addWidget (grid1);
 	v2->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
-
-	update_plot();
 }
-
-
-ADSR::~ADSR()
-{
-	_plot->assign_envelope (0);
-	_mikuru->free_id ("adsrs", _id);
-
-	// Delete knobs before ControllerProxies:
-	delete _control_delay;
-	delete _control_attack;
-	delete _control_attack_hold;
-	delete _control_decay;
-	delete _control_sustain;
-	delete _control_sustain_hold;
-	delete _control_release;
-
-	delete _proxy_delay;
-	delete _proxy_attack;
-	delete _proxy_attack_hold;
-	delete _proxy_decay;
-	delete _proxy_sustain;
-	delete _proxy_sustain_hold;
-	delete _proxy_release;
-
-	_mikuru->graph()->lock();
-	delete _port_output;
-	delete _port_delay;
-	delete _port_attack;
-	delete _port_attack_hold;
-	delete _port_decay;
-	delete _port_sustain;
-	delete _port_sustain_hold;
-	delete _port_release;
-	delete _port_group;
-
-	sweep();
-	// Delete remaining ADSRs:
-	for (ADSRs::iterator x = _adsrs.begin(); x != _adsrs.end(); ++x)
-	{
-		x->first->set_tracked (false);
-		delete x->second;
-	}
-	_mikuru->graph()->unlock();
-}
-
-
 void
 ADSR::voice_created (VoiceManager* voice_manager, Voice* voice)
 {
