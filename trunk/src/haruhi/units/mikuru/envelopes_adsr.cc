@@ -246,6 +246,8 @@ ADSR::create_widgets (QWidget* knobs_panel)
 	v2->addWidget (grid1);
 	v2->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }
+
+
 void
 ADSR::voice_created (VoiceManager* voice_manager, Voice* voice)
 {
