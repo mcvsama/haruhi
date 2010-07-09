@@ -167,6 +167,8 @@ Private::Global::Global (Session* session, QWidget* parent):
 	group_layout->addWidget (_level_meter_fps, 3, 1);
 	group_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed), 0, 3);
 	group_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 4, 0);
+
+	update_widgets();
 }
 
 
