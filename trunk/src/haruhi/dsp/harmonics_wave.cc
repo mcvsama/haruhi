@@ -15,6 +15,7 @@
 #include <cstddef>
 
 // Haruhi:
+#include <haruhi/config/system.h>
 #include <haruhi/utility/numeric.h>
 
 // Local:
@@ -48,15 +49,19 @@ HarmonicsWave::set_wave (Wave* wave)
 
 
 void
-HarmonicsWave::set_harmonic (int index, Harmonic const& harmonic)
+HarmonicsWave::set_harmonic (unsigned int index, Harmonic const& harmonic)
 {
+	assert (index < HarmonicsNumber);
+
 	_harmonics[index] = harmonic;
 }
 
 
 void
-HarmonicsWave::set_harmonic (int index, Core::Sample value, Core::Sample phase)
+HarmonicsWave::set_harmonic (unsigned int index, Core::Sample value, Core::Sample phase)
 {
+	assert (index < HarmonicsNumber);
+
 	_harmonics[index].value = value;
 	_harmonics[index].phase = phase;
 }

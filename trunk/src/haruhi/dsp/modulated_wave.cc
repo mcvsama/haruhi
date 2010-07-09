@@ -15,6 +15,7 @@
 #include <cstddef>
 
 // Haruhi:
+#include <haruhi/config/system.h>
 #include <haruhi/utility/numeric.h>
 
 // Local:
@@ -23,7 +24,7 @@
 
 namespace DSP {
 
-ModulatedWave::ModulatedWave (Wave* wave, Wave* modulator, Type mod_type, Core::Sample mod_amplitude, int mod_index, bool auto_delete_wave, bool auto_delete_modulator):
+ModulatedWave::ModulatedWave (Wave* wave, Wave* modulator, Type mod_type, Core::Sample mod_amplitude, unsigned int mod_index, bool auto_delete_wave, bool auto_delete_modulator):
 	_wave (wave),
 	_modulator (modulator),
 	_mod_type (mod_type),
@@ -32,6 +33,8 @@ ModulatedWave::ModulatedWave (Wave* wave, Wave* modulator, Type mod_type, Core::
 	_auto_delete_wave (auto_delete_wave),
 	_auto_delete_modulator (auto_delete_modulator)
 {
+	assert (mod_index >= 1);
+
 	switch (_mod_type)
 	{
 		case Ring:		_value_function = &ModulatedWave::value_for_ring;		break;
@@ -42,9 +45,9 @@ ModulatedWave::ModulatedWave (Wave* wave, Wave* modulator, Type mod_type, Core::
 
 ModulatedWave::~ModulatedWave()
 {
-	if (_auto_delete_wave && _wave)
+	if (_auto_delete_wave)
 		delete _wave;
-	if (_auto_delete_modulator && _modulator)
+	if (_auto_delete_modulator)
 		delete _modulator;
 }
 
@@ -59,7 +62,7 @@ ModulatedWave::operator() (Core::Sample phase, Core::Sample frequency) const
 void
 ModulatedWave::set_wave (Wave* wave)
 {
-	if (_auto_delete_wave && _wave)
+	if (_auto_delete_wave)
 		delete _wave;
 	_wave = wave;
 }
@@ -68,7 +71,7 @@ ModulatedWave::set_wave (Wave* wave)
 void
 ModulatedWave::set_modulator (Wave* modulator)
 {
-	if (_auto_delete_modulator && _modulator)
+	if (_auto_delete_modulator)
 		delete _modulator;
 	_modulator = modulator;
 }

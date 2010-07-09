@@ -77,7 +77,7 @@ EnvelopePlot::assign_envelope (DSP::Envelope* envelope)
 
 
 void
-EnvelopePlot::set_active_point (int index)
+EnvelopePlot::set_active_point (unsigned int index)
 {
 	if (index >= 0 && index < _envelope->points().size())
 	{

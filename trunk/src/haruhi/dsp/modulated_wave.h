@@ -43,7 +43,7 @@ class ModulatedWave: public Wave
 	/**
 	 * \param	mod_index indicates number of times modulator frequency is greater than wave's.
 	 */
-	ModulatedWave (Wave* wave = 0, Wave* modulator = 0, Type mod_type = Ring, float mod_amplitude = 0.0f, int mod_index = 1, bool auto_delete_wave = false, bool auto_delete_modulator = false);
+	ModulatedWave (Wave* wave = 0, Wave* modulator = 0, Type mod_type = Ring, float mod_amplitude = 0.0f, unsigned int mod_index = 1, bool auto_delete_wave = false, bool auto_delete_modulator = false);
 
 	~ModulatedWave();
 
@@ -106,7 +106,7 @@ class ModulatedWave: public Wave
 	Wave*			_modulator;
 	Type			_mod_type;
 	Core::Sample	_mod_amplitude;
-	int				_mod_index;
+	unsigned int	_mod_index;
 	bool			_auto_delete_wave;
 	bool			_auto_delete_modulator;
 	ValueFunction	_value_function;

@@ -20,6 +20,7 @@
 #include <vector>
 
 // Haruhi:
+#include <haruhi/config/system.h>
 #include <haruhi/core/audio.h>
 #include <haruhi/core/audio_buffer.h>
 #include <haruhi/dsp/wavetable.h>
@@ -89,7 +90,7 @@ class Oscillator
 	 * Argument: [1…MaxUnison]
 	 */
 	void
-	set_unison_number (int number);
+	set_unison_number (unsigned int number);
 
 	/**
 	 * Argument: [0…1.0]
@@ -116,6 +117,8 @@ class Oscillator
 	void
 	fill (Core::Sample* begin, Core::Sample* end)
 	{
+		assert (begin <= end);
+
 		std::fill (begin, end, 0.0f);
 
 		if (_unison_noise > 0.0f)
@@ -140,6 +143,9 @@ class Oscillator
 	void
 	update_unison_coefficients()
 	{
+		assert (_unison_number >= 1);
+		assert (_wavetable);
+
 		_unison_relative_spread = _unison_spread / _unison_number;
 		_half_unison_number = (_unison_number - 1) / 2.0f;
 		_1_div_unison_number = 1.0f / _unison_number;
@@ -150,9 +156,9 @@ class Oscillator
 			_distribution_lookup[0] = _distribution_lookup[1] = 1.0f;
 		else
 		{
-			for (int i = 0; i <= _unison_number / 2; ++i)
+			for (unsigned int i = 0; i <= _unison_number / 2; ++i)
 				_distribution_lookup[i] = 1.0f * (i + 1) / (_unison_number / 2 + 1);
-			for (int i = 0; i <= _unison_number / 2; ++i)
+			for (unsigned int i = 0; i <= _unison_number / 2; ++i)
 				_distribution_lookup[_unison_number - i - 1] = _distribution_lookup[i];
 		}
 	}
@@ -243,7 +249,7 @@ class Oscillator
 	Core::Sample		_frequency;
 	Core::Sample		_value;
 	Core::Sample		_initial_phase_spread;
-	int					_unison_number;
+	unsigned int		_unison_number;
 	Core::Sample		_1_div_unison_number;
 	Core::Sample		_unison_spread;
 	// Cached _unison_spread / _unson_number:

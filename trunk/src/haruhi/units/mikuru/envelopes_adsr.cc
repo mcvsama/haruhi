@@ -176,11 +176,11 @@ ADSR::create_knobs (QWidget* parent)
 
 
 void
-ADSR::create_widgets (QWidget* plot_parent)
+ADSR::create_widgets (QWidget* knobs_panel)
 {
 	Params::ADSR p = _params;
 
-	QFrame* plot_frame = new QFrame (plot_parent);
+	QFrame* plot_frame = new QFrame (knobs_panel);
 	plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_plot = new EnvelopePlot (plot_frame);

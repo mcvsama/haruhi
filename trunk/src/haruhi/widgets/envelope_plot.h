@@ -104,7 +104,7 @@ class EnvelopePlot: public QWidget
 	 * \entry	Qt thread only.
 	 */
 	void
-	set_active_point (int index);
+	set_active_point (unsigned int index);
 
 	/**
 	 * Replots the envelope.

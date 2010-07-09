@@ -43,7 +43,7 @@ class Smoother
 	current() const { return _current; }
 
 	float
-	advance (int samples = 1)
+	advance (unsigned int samples = 1)
 	{
 		_current += samples * _vector;
 		_samples_from_last_setup += samples;
@@ -59,7 +59,7 @@ class Smoother
 		void
 		fill (ForwardIterator begin, ForwardIterator end)
 		{
-			for (ForwardIterator current = begin;  current != end; ++current)
+			for (ForwardIterator current = begin; current != end; ++current)
 				*current = advance (1);
 		}
 
@@ -67,7 +67,7 @@ class Smoother
 		void
 		multiply (ForwardIterator begin, ForwardIterator end)
 		{
-			for (ForwardIterator current = begin;  current != end; ++current)
+			for (ForwardIterator current = begin; current != end; ++current)
 				*current *= advance (1);
 		}
 

@@ -15,6 +15,7 @@
 #include <cstddef>
 
 // Haruhi:
+#include <haruhi/config/system.h>
 #include <haruhi/dsp/functions.h>
 
 // Local:
@@ -26,12 +27,16 @@ namespace DSP {
 FourierSeriesFiller::FourierSeriesFiller (Function function):
 	_function (function)
 {
+	assert (function != 0);
 }
 
 
 void
 FourierSeriesFiller::fill (Wavetable::Tables& tables, int number, int samples)
 {
+	assert (number > 0);
+	assert (samples > 0);
+
 	// Create wavetables:
 	for (int i = 0; i < number; ++i)
 	{

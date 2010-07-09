@@ -15,6 +15,7 @@
 #include <cstddef>
 
 // Haruhi:
+#include <haruhi/config/system.h>
 #include <haruhi/exception.h>
 #include <haruhi/utility/mutex.h>
 
@@ -65,8 +66,7 @@ FFT::Forward::Forward (Vector& source, Vector& target):
 	_source (source),
 	_target (target)
 {
-	if (source.size() != target.size())
-		throw Exception ("source and target vector sizes are different");
+	assert (source.size() == target.size());
 
 	FFT::_plan_mutex.lock();
 	_plan = fftw_plan_dft_1d (source.size(),
@@ -109,8 +109,7 @@ FFT::Inverse::Inverse (Vector& source, Vector& target):
 	_source (source),
 	_target (target)
 {
-	if (source.size() != target.size())
-		throw Exception ("source and target vector sizes are different");
+	assert (source.size() == target.size());
 
 	FFT::_plan_mutex.lock();
 	_plan = fftw_plan_dft_1d (source.size(),

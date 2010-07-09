@@ -49,10 +49,8 @@ Filter::Filter (ImpulseResponse* impulse_response):
 
 Filter::~Filter()
 {
-	if (_px)
-		delete[] _px;
-	if (_py)
-		delete[] _py;
+	delete[] _px;
+	delete[] _py;
 }
 
 
@@ -67,10 +65,8 @@ Filter::reset()
 void
 Filter::assign_impulse_response (ImpulseResponse* impulse_response)
 {
-	if (_px)
-		delete[] _px;
-	if (_py)
-		delete[] _py;
+	delete[] _px;
+	delete[] _py;
 
 	_impulse_response = impulse_response;
 

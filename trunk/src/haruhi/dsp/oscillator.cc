@@ -43,6 +43,8 @@ Oscillator::Oscillator (Wavetable* wavetable):
 void
 Oscillator::set_phase (Sample phase)
 {
+	assert (_unison_number >= 1);
+
 	for (int i = 0; i < _unison_number; ++i)
 	{
 		_phases[i] = phase;
@@ -52,15 +54,13 @@ Oscillator::set_phase (Sample phase)
 
 
 void
-Oscillator::set_unison_number (int number)
+Oscillator::set_unison_number (unsigned int number)
 {
+	assert (number >= 1);
+	assert (number < MaxUnison);
+
 	if (_unison_number != number)
 	{
-		if (number < 1)
-			number = 1;
-		if (number > MaxUnison)
-			number = MaxUnison;
-
 		if (number > _unison_number && _unison_number > 0)
 		{
 			Sample p = _phases[_unison_number-1];

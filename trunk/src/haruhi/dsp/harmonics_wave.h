@@ -93,10 +93,10 @@ class HarmonicsWave: public Wave
 	 * \param	index is harmonic number, must be less that HarmonicNumber.
 	 */
 	void
-	set_harmonic (int index, Harmonic const& harmonic);
+	set_harmonic (unsigned int index, Harmonic const& harmonic);
 
 	void
-	set_harmonic (int index, Core::Sample value, Core::Sample phase);
+	set_harmonic (unsigned int index, Core::Sample value, Core::Sample phase);
 
 	/**
 	 * Gets given harmonic.

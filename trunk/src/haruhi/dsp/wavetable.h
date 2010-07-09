@@ -68,14 +68,8 @@ class Wavetable
 	};
 
   public:
-	/**
-	 * Passed Filler object will be deleted on destroy.
-	 */
 	Wavetable();
 
-	/**
-	 * Destroys filler object.
-	 */
 	~Wavetable();
 
 	Tables&
