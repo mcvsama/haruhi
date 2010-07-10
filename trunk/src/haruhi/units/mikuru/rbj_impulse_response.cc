@@ -28,6 +28,7 @@ RBJImpulseResponse::RBJImpulseResponse (Type type, Sample frequency, Sample reso
 	_resonance (resonance),
 	_gain (0),
 	_attenuation (attenuation),
+	_limiter (false),
 	_dont_update (true)
 {
 	set_frequency (frequency);
