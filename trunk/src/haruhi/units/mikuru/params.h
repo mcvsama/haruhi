@@ -55,7 +55,8 @@
 		return *this;															\
 	}																			\
 	void set_controller_params (klass& other);									\
-	void set_non_controller_params (klass& other);
+	void set_non_controller_params (klass& other);								\
+	void sanitize();
 
 #define HARUHI_MIKURU_PARAM(name, min, max, denominator, deflt)					\
 	name##Min = min,															\
@@ -360,12 +361,13 @@ struct Params
 		HARUHI_MIKURU_PARAMS_STANDARD_METHODS (EG)
 
 		enum {
+			HARUHI_MIKURU_PARAM (PointValue,			       0,	+1000000,	+1000000,	 +500000)
 			HARUHI_MIKURU_PARAM (SegmentDuration,		       0,	+1000000,	 +100000,	       0)
 		};
 
 		int enabled;
-		int points;
-		int sustain_point;
+		unsigned int segments;
+		unsigned int sustain_point;
 	};
 };
 

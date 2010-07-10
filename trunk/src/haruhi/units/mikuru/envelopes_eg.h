@@ -53,8 +53,6 @@ class EG: public Envelope
 
 	typedef std::map<Voice*, DSP::Envelope*> EGs;
 
-	enum { SR_FOR_TEMPLATE = 100000 };
-
   public:
 	EG (int id, Mikuru* mikuru, QWidget* parent);
 
@@ -117,6 +115,22 @@ class EG: public Envelope
 	void
 	update_plot();
 
+  private slots:
+	/**
+	 * Updates widgets dependencies.
+	 */
+	void
+	update_widgets();
+
+	void
+	changed_active_point();
+
+	void
+	changed_segment_value();
+
+	void
+	changed_segment_duration();
+
   private:
 	/**
 	 * Delete EGs for Voices registered as dropped.
@@ -128,26 +142,31 @@ class EG: public Envelope
 	Mikuru*					_mikuru;
 	Params::EG				_params;
 	bool					_loading_params;
+	bool					_updating_widgets;
 	int						_id;
-	// It's assumed that sample rate for _envelope_template is SR_FOR_TEMPLATE.
-	// Envelopes created from this template require segment lengths adjustment
-	// according to real current sample rate.
 	DSP::Envelope			_envelope_template;
 	EGs						_egs;
 	Core::AudioBuffer		_buffer;
 	// List of Voices which has been dropped and need ADSRs to be deleted also:
 	std::list<Voice*>		_dropped_voices;
 
+	int						_segment_duration;
+	int						_point_value;
+
 	Core::PortGroup*		_port_group;
+	Core::EventPort*		_port_point_value;
 	Core::EventPort*		_port_segment_duration;
 
+	ControllerProxy*		_proxy_point_value;
 	ControllerProxy*		_proxy_segment_duration;
 
 	QCheckBox*				_enabled;
+	Knob*					_control_point_value;
 	Knob*					_control_segment_duration;
+	QSpinBox*				_active_point;
 	EnvelopePlot*			_plot;
 	QSpinBox*				_sustain_point;
-	QSpinBox*				_total_points;
+	QSpinBox*				_segments;
 };
 
 } // namespace MikuruPrivate

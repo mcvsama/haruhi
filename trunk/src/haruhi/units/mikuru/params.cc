@@ -425,7 +425,7 @@ Params::EG::EG():
 	// Controller:
 	// Non-controller:
 	enabled (1),
-	points (1),
+	segments (1),
 	sustain_point (0)
 {
 }
@@ -441,8 +441,27 @@ void
 Params::EG::set_non_controller_params (EG& other)
 {
 	HARUHI_MIKURU_COPY_ATOMIC (enabled)
-	HARUHI_MIKURU_COPY_ATOMIC (points)
+	HARUHI_MIKURU_COPY_ATOMIC (segments)
 	HARUHI_MIKURU_COPY_ATOMIC (sustain_point)
+}
+
+
+void
+Params::EG::sanitize()
+{
+	int p = atomic (segments);
+	if (p < 2)
+	{
+		p = 2;
+		atomic (segments) = p;
+	}
+
+	int s = atomic (sustain_point);
+	if (s >= p)
+	{
+		s = p;
+		atomic (sustain_point) = s;
+	}
 }
 
 } // namespace MikuruPrivate
