@@ -181,6 +181,7 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 		QPushButton* reset = new QPushButton ("R", harmonics_grid);
 		reset->setFixedWidth (23);
 		reset->setFixedHeight (18);
+		QToolTip::add (reset, "Reset");
 		QObject::connect (reset, SIGNAL (clicked()), slider, SLOT (reset()));
 		harmonics_layout->addWidget (reset, 2, i);
 
@@ -214,6 +215,7 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 		QPushButton* reset = new QPushButton ("R", phases_grid);
 		reset->setFixedWidth (23);
 		reset->setFixedHeight (18);
+		QToolTip::add (reset, "Reset");
 		phases_layout->addWidget (reset, 2, i);
 
 		QObject::connect (reset, SIGNAL (clicked()), slider, SLOT (reset()));
