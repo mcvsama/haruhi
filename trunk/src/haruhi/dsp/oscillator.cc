@@ -45,7 +45,7 @@ Oscillator::set_phase (Sample phase)
 {
 	assert (_unison_number >= 1);
 
-	for (int i = 0; i < _unison_number; ++i)
+	for (unsigned int i = 0; i < _unison_number; ++i)
 	{
 		_phases[i] = phase;
 		phase += _initial_phase_spread;
@@ -64,7 +64,7 @@ Oscillator::set_unison_number (unsigned int number)
 		if (number > _unison_number && _unison_number > 0)
 		{
 			Sample p = _phases[_unison_number-1];
-			for (int i = _unison_number; i < number; ++i)
+			for (unsigned int i = _unison_number; i < number; ++i)
 				_phases[i] = p += _initial_phase_spread;
 		}
 

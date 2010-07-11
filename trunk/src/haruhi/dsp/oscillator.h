@@ -186,7 +186,7 @@ class Oscillator
 			if (f > 0.5f)
 				f = 0.5f;
 			// Add unisons:
-			for (int i = 0; i < _unison_number; ++i)
+			for (unsigned int i = 0; i < _unison_number; ++i)
 			{
 				// Multiply freq by 4, because frequency is in range [0…0.5], and phase is in [0…1.0]:
 				_phases[i] = mod1 (_phases[i] + f);
@@ -221,7 +221,7 @@ class Oscillator
 			if (f > 0.5f)
 				f = 0.5f;
 			// Add unisons:
-			for (int i = 0; i < _unison_number; ++i)
+			for (unsigned int i = 0; i < _unison_number; ++i)
 			{
 				_z = f + _e * noise_sample() * _distribution_lookup[i];
 				// Multiply freq by 4, because frequency is in range [0…0.5], and phase is in [0…1.0]:
