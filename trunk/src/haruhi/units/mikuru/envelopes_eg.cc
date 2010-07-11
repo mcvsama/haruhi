@@ -288,6 +288,8 @@ EG::update_plot()
 	// Init value of new points to 0.5:
 	for (unsigned int i = o; i < _envelope_template.points().size(); ++i)
 		_envelope_template.points()[i].value = 0.5f;
+	// Set length of the last segment to 0:
+	_envelope_template.points().back().samples = 0;
 
 	_plot->post_plot_shape();
 }
