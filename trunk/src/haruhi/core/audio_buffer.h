@@ -47,6 +47,7 @@ class AudioBuffer: public Core::Buffer
 	clear() { std::fill (begin(), end(), 0.0); }
 
 	/**
+	 * Fills this buffer from other buffer.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
@@ -59,6 +60,7 @@ class AudioBuffer: public Core::Buffer
 	}
 
 	/**
+	 * Mixins other buffer to this.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
