@@ -26,7 +26,7 @@
 
 // Factories:
 #include <haruhi/units/mikuru/mikuru.h>
-//#include <haruhi/units/vanhalen/vanhalen.h>
+#include <haruhi/units/vanhalen/vanhalen.h>
 
 
 namespace Haruhi {
@@ -35,7 +35,7 @@ UnitLoader::UnitLoader (Session* session):
 	_session (session)
 {
 	_unit_factories.push_back (new MikuruFactory());
-//	_unit_factories.push_back (new VanHalenFactory());
+	_unit_factories.push_back (new VanHalenFactory());
 }
 
 

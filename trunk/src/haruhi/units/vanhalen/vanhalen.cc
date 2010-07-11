@@ -13,19 +13,28 @@
 
 // Standard:
 #include <cstddef>
+#include <memory>
 
 // Qt:
-#include <qwidget.h>
+#include <QtGui/QWidget>
+#include <QtGui/QLayout>
 
 // Local:
-#include <core/event_buffer.h>
-#include <core/audio_buffer.h>
+#include <haruhi/config/system.h>
+#include <haruhi/core/event_buffer.h>
+#include <haruhi/core/audio_buffer.h>
+#include <haruhi/dsp/delay_line.h>
+#include <haruhi/session.h>
 
 #include "vanhalen.h"
 
 
 VanHalen::VanHalen (Haruhi::UnitFactory* factory, Haruhi::Session* session, std::string const& urn, std::string const& title, int id, QWidget* parent):
-	Haruhi::Unit (factory, session, urn, title, id, parent)
+	Haruhi::Unit (factory, session, urn, title, id, parent),
+	_buf1 (session->graph()->buffer_size()),
+	_buf2 (session->graph()->buffer_size()),
+	_delay1 (16, 100000, session->graph()->buffer_size()),
+	_delay2 (16, 100000, session->graph()->buffer_size())
 {
 	register_unit();
 
@@ -37,6 +46,16 @@ VanHalen::VanHalen (Haruhi::UnitFactory* factory, Haruhi::Session* session, std:
 
 	_audio_output_1 = new Core::AudioPort (this, "Audio L", Core::Port::Output);
 	_audio_output_2 = new Core::AudioPort (this, "Audio R", Core::Port::Output);
+
+	_proxy_comb_index = new ControllerProxy (0, &_comb_index, 0, 0, 1000, 0);
+	_proxy_comb_alpha = new ControllerProxy (0, &_comb_alpha, 0, -1000, 1000, 0);
+
+	_knob_comb_index = new Knob (this, _proxy_comb_index, "Index", 0, 1000, 1, 0);
+	_knob_comb_alpha = new Knob (this, _proxy_comb_alpha, "Alpha", -1.0, 1.0, 10, 2);
+
+	QHBoxLayout* layout = new QHBoxLayout (this, Config::spacing);
+	layout->addWidget (_knob_comb_index);
+	layout->addWidget (_knob_comb_alpha);
 
 	enable();
 }
@@ -71,6 +90,7 @@ VanHalen::process()
 	sync_inputs();
 	clear_outputs();
 
+#if 0
 	Core::EventBuffer* buffer = _input->event_buffer();
 
 	// Keyboard events:
@@ -89,18 +109,62 @@ VanHalen::process()
 			}
 		}
 	}
+#endif
 
-	// Audio quantization effect:
 	Core::AudioBuffer* i1 = _audio_input_1->audio_buffer();
-	Core::AudioBuffer* i2 = _audio_input_1->audio_buffer();
+	Core::AudioBuffer* i2 = _audio_input_2->audio_buffer();
 	Core::AudioBuffer* o1 = _audio_output_1->audio_buffer();
-	Core::AudioBuffer* o2 = _audio_output_1->audio_buffer();
+	Core::AudioBuffer* o2 = _audio_output_2->audio_buffer();
+
+#if 0
+	// Audio quantization effect:
 	int keep_bits = 8;
 	for (unsigned int i = 0; i < i1->size(); ++i)
 	{
 		(*o1)[i] = (static_cast<int> (32768.0 * (*i1)[i]) & (-1 << (16 - keep_bits))) / 32768.0f;
 		(*o2)[i] = (static_cast<int> (32768.0 * (*i2)[i]) & (-1 << (16 - keep_bits))) / 32768.0f;
 	}
+#endif
+
+#if 1
+	// Feed-forward:
+	_delay1.set_delay (_comb_index);
+	_delay2.set_delay (_comb_index);
+
+	o1->fill (i1);
+	o2->fill (i2);
+
+	_delay1.write (i1->begin());
+	_delay2.write (i2->begin());
+
+	_delay1.read (_buf1.begin());
+	_delay2.read (_buf2.begin());
+
+	for (unsigned int i = 0; i < _buf1.size(); ++i)
+	{
+		(*o1)[i] += _buf1[i] * 10.0f * _comb_alpha / 1000.0f;
+		(*o2)[i] += _buf2[i] * 10.0f * _comb_alpha / 1000.0f;
+	}
+#else
+	// Feed-back:
+	_delay1.set_delay (_comb_index);
+	_delay2.set_delay (_comb_index);
+
+	_delay1.read (o1->begin());
+	_delay2.read (o2->begin());
+
+	for (unsigned int i = 0; i < _buf1.size(); ++i)
+	{
+		(*o1)[i] *= 1.0f * _comb_alpha / 1000.0f;
+		(*o2)[i] *= 1.0f * _comb_alpha / 1000.0f;
+	}
+
+	o1->mixin (i1);
+	o2->mixin (i2);
+
+	_delay1.write (o1->begin());
+	_delay2.write (o2->begin());
+#endif
 }
 
 

@@ -18,13 +18,16 @@
 #include <cstddef>
 
 // Qt:
-#include <qwidget.h>
+#include <QtGui/QWidget>
 
 // Local:
-#include <core/event.h>
-#include <core/event_port.h>
-#include <core/audio_port.h>
-#include <unit.h>
+#include <haruhi/core/event.h>
+#include <haruhi/core/event_port.h>
+#include <haruhi/core/audio_port.h>
+#include <haruhi/dsp/delay_line.h>
+#include <haruhi/widgets/knob.h>
+#include <haruhi/controller_proxy.h>
+#include <haruhi/unit.h>
 
 
 class VanHalen:
@@ -55,7 +58,20 @@ class VanHalen:
 	Core::AudioPort*	_audio_output_1;
 	Core::AudioPort*	_audio_output_2;
 
-	int					_delay;
+	Core::AudioBuffer	_buf1;
+	Core::AudioBuffer	_buf2;
+
+	DSP::DelayLine		_delay1;
+	DSP::DelayLine		_delay2;
+
+	ControllerProxy*	_proxy_comb_index;
+	ControllerProxy*	_proxy_comb_alpha;
+
+	Knob*				_knob_comb_index;
+	Knob*				_knob_comb_alpha;
+
+	int					_comb_index;
+	int					_comb_alpha;
 };
 
 

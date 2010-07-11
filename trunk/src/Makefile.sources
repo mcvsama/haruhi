@@ -309,13 +309,13 @@ SRC_MOCHDRS += haruhi/units/mikuru/waveform.h
 SRC_MOCHDRS += haruhi/units/mikuru/waveshaper.h
 
 ######### /units/vanhalen ########
-#
-#SRC_HEADERS += units/vanhalen/vanhalen.h
-#
-#SRC_SOURCES += units/vanhalen/vanhalen.cc
-#
-#SRC_MOCHDRS += units/vanhalen/vanhalen.h
-#
+
+SRC_HEADERS += haruhi/units/vanhalen/vanhalen.h
+
+SRC_SOURCES += haruhi/units/vanhalen/vanhalen.cc
+
+SRC_MOCHDRS += haruhi/units/vanhalen/vanhalen.h
+
 ######### /widgets ########
 
 SRC_HEADERS += haruhi/widgets/clickable_label.h
