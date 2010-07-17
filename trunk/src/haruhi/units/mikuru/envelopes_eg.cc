@@ -224,6 +224,14 @@ EG::process()
 {
 	sweep();
 
+	// Sync input ports by hand, since we're before Mikuru's autosync:
+	_port_point_value->sync();
+	_port_segment_duration->sync();
+
+	// Process ports events:
+	_proxy_point_value->process_events();
+	_proxy_segment_duration->process_events();
+
 	// TODO
 }
 
@@ -313,7 +321,17 @@ EG::update_widgets()
 void
 EG::changed_active_point()
 {
-	changed_segment_duration();
+	unsigned int p = _active_point->value();
+	unsigned int sr = _mikuru->graph()->sample_rate();
+
+	_proxy_point_value->set_value (_envelope_template.points()[p].value * Params::EG::PointValueDenominator);
+	_proxy_segment_duration->set_value (p > 0 ? (1.0f * _envelope_template.points()[p-1].samples / sr * Params::EG::SegmentDurationDenominator) : 0);
+
+	_control_point_value->schedule_for_update();
+	_control_segment_duration->schedule_for_update();
+
+	// Show active point change:
+	update_plot();
 	update_widgets();
 }
 
@@ -321,7 +339,8 @@ EG::changed_active_point()
 void
 EG::changed_segment_value()
 {
-	changed_segment_duration();
+	_envelope_template.points()[_active_point->value()].value = 1.0f * _point_value / Params::EG::PointValueDenominator;
+	update_plot();
 }
 
 
@@ -330,10 +349,9 @@ EG::changed_segment_duration()
 {
 	unsigned int p = _active_point->value();
 	unsigned int sr = _mikuru->graph()->sample_rate();
-	_envelope_template.points()[p].value = 1.0f * _point_value / Params::EG::PointValueDenominator;
-	if (p > 0)
-		_envelope_template.points()[p-1].samples = 1.0f * _segment_duration / Params::EG::SegmentDurationDenominator * sr;
 
+	if (p > 0)
+		_envelope_template.points()[p-1].samples = 1.0f * _segment_duration * sr / Params::EG::SegmentDurationDenominator;
 	update_plot();
 }
 
