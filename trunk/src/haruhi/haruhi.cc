@@ -108,14 +108,12 @@ Haruhi::session_loader()
 	SessionLoader* loader = new SessionLoader (SessionLoader::NewTab, _session ? SessionLoader::CancelButton : SessionLoader::QuitButton, 0);
 	if (loader->exec() == SessionLoader::Accepted)
 	{
-		delete _session;
+		_session->deleteLater();
 		_session = new Session (0);
 		_session->resize (600, 500);
 		_session->show();
 		loader->apply (_session);
 	}
-	else
-		_session = 0;
 	delete loader;
 }
 
