@@ -26,6 +26,7 @@
 #include <haruhi/config.h>
 #include <haruhi/controller_proxy.h>
 #include <haruhi/widgets/envelope_plot.h>
+#include <haruhi/utility/timing.h>//XXX
 
 // Local: TODO sprawdź które include'y faktycznie potrzebne.
 #include "mikuru.h"
@@ -43,6 +44,7 @@ EG::EG (int id, Mikuru* mikuru, QWidget* parent):
 	_mikuru (mikuru),
 	_loading_params (false),
 	_updating_widgets (false),
+	_mute_point_controls (false),
 	_buffer (mikuru->graph()->buffer_size())
 {
 	_id = (id == 0) ? _mikuru->allocate_id ("envs") : _mikuru->reserve_id ("envs", id);
@@ -55,6 +57,7 @@ EG::EG (int id, Mikuru* mikuru, QWidget* parent):
 	update_params();
 	update_plot();
 	update_widgets();
+	update_point_knobs();
 }
 
 
@@ -143,6 +146,8 @@ EG::create_widgets()
 	_plot->set_editable (true, 1.0f * Params::EG::SegmentDurationMax / Params::EG::SegmentDurationDenominator);
 	_plot->set_sample_rate (_mikuru->graph()->sample_rate());
 	_plot->assign_envelope (&_envelope_template);
+	QObject::connect (_plot, SIGNAL (envelope_updated()), this, SLOT (changed_envelope()));
+	QObject::connect (_plot, SIGNAL (active_point_changed()), this, SLOT (changed_envelope()));
 	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::spacing);
 	plot_frame_layout->addWidget (_plot);
 
@@ -312,7 +317,6 @@ EG::update_widgets()
 
 	_sustain_point->setMaximum (_segments->value() + 1);
 	_active_point->setMaximum (_segments->value());
-	_control_segment_duration->setEnabled (_active_point->value() > 0);
 
 	_updating_widgets = false;
 }
@@ -321,24 +325,19 @@ EG::update_widgets()
 void
 EG::changed_active_point()
 {
-	unsigned int p = _active_point->value();
-	unsigned int sr = _mikuru->graph()->sample_rate();
-
-	_proxy_point_value->set_value (_envelope_template.points()[p].value * Params::EG::PointValueDenominator);
-	_proxy_segment_duration->set_value (p > 0 ? (1.0f * _envelope_template.points()[p-1].samples / sr * Params::EG::SegmentDurationDenominator) : 0);
-
-	_control_point_value->schedule_for_update();
-	_control_segment_duration->schedule_for_update();
-
-	// Show active point change:
+	_mute_point_controls = true;
+	update_point_knobs();
 	update_plot();
-	update_widgets();
+	_mute_point_controls = false;
 }
 
 
 void
 EG::changed_segment_value()
 {
+	if (_mute_point_controls)
+		return;
+
 	_envelope_template.points()[_active_point->value()].value = 1.0f * _point_value / Params::EG::PointValueDenominator;
 	update_plot();
 }
@@ -347,12 +346,41 @@ EG::changed_segment_value()
 void
 EG::changed_segment_duration()
 {
+	if (_mute_point_controls)
+		return;
+
 	unsigned int p = _active_point->value();
 	unsigned int sr = _mikuru->graph()->sample_rate();
 
 	if (p > 0)
 		_envelope_template.points()[p-1].samples = 1.0f * _segment_duration * sr / Params::EG::SegmentDurationDenominator;
 	update_plot();
+}
+
+
+void
+EG::changed_envelope()
+{
+	_mute_point_controls = true;
+	update_point_knobs();
+	_mute_point_controls = false;
+	if (_active_point->value() != _plot->active_point())
+		_active_point->setValue (_plot->active_point());
+}
+
+
+void
+EG::update_point_knobs()
+{
+	unsigned int p = _active_point->value();
+	unsigned int sr = _mikuru->graph()->sample_rate();
+
+	_proxy_point_value->set_value (_envelope_template.points()[p].value * Params::EG::PointValueDenominator);
+	_proxy_segment_duration->set_value (p > 0 ? (1.0f * _envelope_template.points()[p-1].samples / sr * Params::EG::SegmentDurationDenominator) : 0);
+
+	_control_point_value->read();
+	_control_segment_duration->read();
+	_control_segment_duration->setEnabled (p > 0);
 }
 
 

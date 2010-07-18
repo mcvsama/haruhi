@@ -131,6 +131,9 @@ class EG: public Envelope
 	void
 	changed_segment_duration();
 
+	void
+	changed_envelope();
+
   private:
 	/**
 	 * Delete EGs for Voices registered as dropped.
@@ -138,11 +141,20 @@ class EG: public Envelope
 	void
 	sweep();
 
+	/**
+	 * Updates value/duration knobs from current envelope settings
+	 * and active point index.
+	 */
+	void
+	update_point_knobs();
+
   private:
 	Mikuru*					_mikuru;
 	Params::EG				_params;
 	bool					_loading_params;
 	bool					_updating_widgets;
+	// Set to true to stop point controls changing envelope:
+	bool					_mute_point_controls;
 	int						_id;
 	DSP::Envelope			_envelope_template;
 	EGs						_egs;
