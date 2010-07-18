@@ -269,7 +269,7 @@ Knob::read_config()
 
 
 void
-Knob::periodic_update()
+Knob::read()
 {
 	int value = _controller_proxy->value();
 	_prevent_recursion = true;
@@ -278,6 +278,13 @@ Knob::periodic_update()
 	emit changed (value);
 	_prevent_recursion = false;
 	update_widgets();
+}
+
+
+void
+Knob::periodic_update()
+{
+	read();
 }
 
 
