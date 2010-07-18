@@ -173,6 +173,12 @@ class JackAudioTransport: public AudioTransport
 	s_shutdown (void* klass)
 	 	{ reinterpret_cast<JackAudioTransport*> (klass)->c_shutdown(); }
 
+	static void
+	s_log_error (const char*);
+
+	static void
+	s_log_info (const char*);
+
   private:
 	jack_client_t*	_jack_client;
 	Ports			_ports;
