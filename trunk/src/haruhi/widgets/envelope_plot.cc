@@ -228,7 +228,7 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 
 			// Draw rectangles around envelope points:
 			_hovered_point_index = -1;
-			if (_editable)
+			if (_editable && !envelope_points.empty())
 			{
 				QLineF active_line;
 				QLineF hovered_line;
@@ -277,21 +277,41 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 					painter.drawLine (hovered_line);
 				}
 				// Normal points:
-				painter.setRenderHint (QPainter::Antialiasing, false);
-				painter.setPen (QPen (_hovered ? QColor (0x00, 0x00, 0x00) : QColor (0xaa, 0xaa, 0xaa), 1, Qt::SolidLine));
-				for (std::vector<QRect>::iterator rect = normal_rects.begin(); rect != normal_rects.end(); ++rect)
-					painter.drawRect (*rect);
-				// Active point:
-				if (_active_point_index != -1 && _active_point_index != _hovered_point_index)
+				if (_hovered)
 				{
-					painter.setPen (QPen (QColor (0x00, 0x00, 0xbb), 1, Qt::SolidLine));
-					painter.fillRect (active_rect.adjusted (0, 0, 1, 1), QColor (0x00, 0x00, 0xff));
-					painter.drawRect (active_rect);
+					painter.setRenderHint (QPainter::Antialiasing, false);
+					painter.setPen (QPen (QColor (0x00, 0x00, 0x00), 1, Qt::SolidLine));
+					for (std::vector<QRect>::iterator rect = normal_rects.begin(); rect != normal_rects.end(); ++rect)
+						painter.drawRect (*rect);
+					// Active point:
+					painter.setRenderHint (QPainter::Antialiasing, false);
+					if (_active_point_index != -1 && _active_point_index != _hovered_point_index)
+					{
+						painter.setPen (QPen (QColor (0x00, 0x00, 0xbb), 1, Qt::SolidLine));
+						painter.fillRect (active_rect.adjusted (0, 0, 1, 1), QColor (0x00, 0x00, 0xff));
+						painter.drawRect (active_rect);
+					}
+				}
+				else
+				{
+					painter.setRenderHint (QPainter::Antialiasing, true);
+					painter.setPen (QPen (QColor (0x00, 0x00, 0x00), 1, Qt::SolidLine));
+					painter.setBrush (QBrush (QColor (0xca, 0xca, 0xca)));
+					for (std::vector<QRect>::iterator rect = normal_rects.begin(); rect != normal_rects.end(); ++rect)
+						painter.drawEllipse (rect->adjusted (2, 2, -1, -1));
+					// Active point:
+					if (_active_point_index != -1 && _active_point_index != _hovered_point_index)
+					{
+						painter.setPen (QPen (QColor (0x00, 0x00, 0xbb), 1, Qt::SolidLine));
+						painter.setBrush (QBrush (QColor (0x00, 0x00, 0xff)));
+						painter.drawEllipse (active_rect.adjusted (2, 2, -1, -1));
+					}
 				}
 				// Hovered point:
 				if (_hovered_point_index != -1)
 				{
 					painter.setPen (QPen (QColor (0xcc, 0x00, 0x00), 1, Qt::SolidLine));
+					painter.setBrush (Qt::NoBrush);
 					painter.fillRect (hovered_rect.adjusted (0, 0, 1, 1), QColor (0xff, 0x00, 0x00));
 					painter.drawRect (hovered_rect);
 				}
