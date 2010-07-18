@@ -129,6 +129,9 @@ class EnvelopePlot: public QWidget
 	void
 	envelope_updated();
 
+	void
+	active_point_changed();
+
   protected:
 	void
 	resizeEvent (QResizeEvent*);

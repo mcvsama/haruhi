@@ -368,6 +368,7 @@ EnvelopePlot::mousePressEvent (QMouseEvent* event)
 		_dragging = true;
 		_drag_start_pos = event->pos() - QPoint (2, 2);
 		set_active_point (_hovered_point_index);
+		emit active_point_changed();
 	}
 }
 
