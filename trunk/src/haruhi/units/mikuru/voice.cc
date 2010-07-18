@@ -57,10 +57,10 @@ Voice::Voice (VoiceManager* voice_manager, SynthThread* thread, Core::KeyID key_
 	_double_filter (_mikuru),
 	_last_pitchbend_value (1.0f),
 	_attack_sample (0),
-	_attack_samples (0.005f * _mikuru->graph()->sample_rate()), // 5ms
+	_attack_samples (0.0025f * _mikuru->graph()->sample_rate()), // 2.5ms
 	_released (false),
 	_drop_sample (0),
-	_drop_samples (0.005f * _mikuru->graph()->sample_rate()), // 5ms
+	_drop_samples (0.0025f * _mikuru->graph()->sample_rate()), // 2.5ms
 	_dropped (false),
 	_tracked (false)
 {
