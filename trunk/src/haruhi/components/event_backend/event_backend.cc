@@ -112,6 +112,11 @@ EventBackend::~EventBackend()
 	unregister_unit();
 
 	delete _templates_menu;
+
+	_inputs_list->disconnect();
+	_create_external_input_button->disconnect();
+	_create_internal_input_button->disconnect();
+	_destroy_input_button->disconnect();
 }
 
 
