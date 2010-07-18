@@ -31,8 +31,8 @@ template<class Type>
  *
  * No two Shared object can be created from the same C-pointer,
  * otherwise behavior will be undefined. The only valid way to create
- * second Shared object is to copy existing Shraed (use assignment operator
- * or copy constructor).
+ * second Shared object is to copy existing Shared (by use of assignment
+ * operator or copy constructor).
  *
  * This class is not thread safe.
  */
