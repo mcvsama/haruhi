@@ -29,6 +29,7 @@
 #include "patch.h"
 #include "envelopes.h"
 #include "envelopes_adsr.h"
+#include "envelopes_eg.h"
 #include "envelopes_lfo.h"
 #include "common_filters.h"
 #include "part_filters.h"
@@ -265,6 +266,7 @@ Patch::save_state (QDomElement& element) const
 	{
 		QDomElement envelope_element = element.ownerDocument().createElement ("envelope");
 		ADSR* adsr;
+		EG* eg;
 		LFO* lfo;
 
 		if ((adsr = dynamic_cast<ADSR*> (*en)))
@@ -286,6 +288,27 @@ Patch::save_state (QDomElement& element) const
 			save_parameter (envelope_element, "sustain-enabled", params.sustain_enabled);
 			save_parameter (envelope_element, "function", params.function);
 			save_parameter (envelope_element, "mode", params.mode);
+		}
+		else if ((eg = dynamic_cast<EG*> (*en)))
+		{
+			Params::EG params (*eg->params());
+
+			envelope_element.setAttribute ("type", "eg");
+			envelope_element.setAttribute ("id", eg->id());
+			// Other:
+			save_parameter (envelope_element, "enabled", params.enabled);
+			save_parameter (envelope_element, "segments", params.segments);
+			save_parameter (envelope_element, "sustain-point", params.sustain_point);
+			// Save envelope points:
+			QDomElement points_element = envelope_element.ownerDocument().createElement ("points");
+			envelope_element.appendChild (points_element);
+			for (size_t i = 0; i < params.segments + 1; ++i)
+			{
+				QDomElement point_element = points_element.ownerDocument().createElement ("point");
+				point_element.setAttribute ("value", params.values[i]);
+				point_element.setAttribute ("duration", params.durations[i]);
+				points_element.appendChild (point_element);
+			}
 		}
 		else if ((lfo = dynamic_cast<LFO*> (*en)))
 		{
@@ -592,6 +615,41 @@ Patch::load_state (QDomElement const& element)
 			load_parameter (parameters, "mode", params.mode);
 
 			adsr->load_params (params);
+		}
+		else if (en->attribute ("type") == "eg")
+		{
+			EG* eg = _mikuru->general()->envelopes()->add_eg (en->attribute ("id").toInt());
+			Params::EG params;
+
+			create_parameters (*en, parameters);
+
+			// Other:
+			load_parameter (parameters, "enabled", params.enabled);
+			load_parameter (parameters, "segments", params.segments);
+			load_parameter (parameters, "sustain-point", params.sustain_point);
+			// Load envelope points:
+			DSP::Envelope::Points& points = eg->envelope_template()->points();
+			points.clear();
+			for (QDomNode n = en->firstChild(); !n.isNull(); n = n.nextSibling())
+			{
+				QDomElement e = n.toElement();
+				if (!e.isNull() && e.tagName() == "points")
+				{
+					int i = 0;
+					for (QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling())
+					{
+						QDomElement e = n.toElement();
+						if (!e.isNull() && e.tagName() == "point")
+						{
+							params.values[i] = e.attribute ("value").toInt();
+							params.durations[i] = e.attribute ("duration").toInt();
+							i += 1;
+						}
+					}
+				}
+			}
+
+			eg->load_params (params);
 		}
 		else if (en->attribute ("type") == "lfo")
 		{

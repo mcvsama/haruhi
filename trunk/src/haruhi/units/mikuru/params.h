@@ -365,9 +365,13 @@ struct Params
 			HARUHI_MIKURU_PARAM (SegmentDuration,		       0,	+1000000,	 +100000,	       0)
 		};
 
+		enum { MaxPoints = 64 };
+
 		int enabled;
 		unsigned int segments;
 		unsigned int sustain_point;
+		unsigned int values[MaxPoints];
+		unsigned int durations[MaxPoints];
 	};
 };
 

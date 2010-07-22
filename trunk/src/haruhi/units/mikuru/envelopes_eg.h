@@ -51,6 +51,8 @@ class EG: public Envelope
 
 	friend class Patch;
 
+	enum { ARTIFICIAL_SAMPLE_RATE = 1000000 };
+
 	typedef std::map<Voice*, DSP::Envelope*> EGs;
 
   public:
@@ -92,6 +94,9 @@ class EG: public Envelope
 
 	void
 	resize_buffers (std::size_t size);
+
+	DSP::Envelope*
+	envelope_template() { return &_envelope_template; }
 
   public slots:
 	/**
@@ -156,6 +161,9 @@ class EG: public Envelope
 	// Set to true to stop point controls changing envelope:
 	bool					_mute_point_controls;
 	int						_id;
+	// Segment lengths in template envelope are measured for artificial
+	// sample-rate: ARTIFICIAL_SAMPLE_RATE samples/sec. Therefore when creating real envelope
+	// all segment lengths must be recomputed to match current sample-rate.
 	DSP::Envelope			_envelope_template;
 	EGs						_egs;
 	Core::AudioBuffer		_buffer;

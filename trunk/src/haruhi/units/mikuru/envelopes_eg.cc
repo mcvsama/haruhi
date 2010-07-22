@@ -47,8 +47,10 @@ EG::EG (int id, Mikuru* mikuru, QWidget* parent):
 	_mute_point_controls (false),
 	_buffer (mikuru->graph()->buffer_size())
 {
-	_id = (id == 0) ? _mikuru->allocate_id ("envs") : _mikuru->reserve_id ("envs", id);
+	_id = (id == 0) ? _mikuru->allocate_id ("egs") : _mikuru->reserve_id ("egs", id);
 
+	_envelope_template.points().push_back (DSP::Envelope::Point (0.5, 0.5 * ARTIFICIAL_SAMPLE_RATE));
+	_envelope_template.points().push_back (DSP::Envelope::Point (0.5, 0.5 * ARTIFICIAL_SAMPLE_RATE));
 	_envelope_template.points().push_back (DSP::Envelope::Point (0.5, 0));
 
 	create_ports();
@@ -64,7 +66,7 @@ EG::EG (int id, Mikuru* mikuru, QWidget* parent):
 EG::~EG()
 {
 	_plot->assign_envelope (0);
-	_mikuru->free_id ("envs", _id);
+	_mikuru->free_id ("egs", _id);
 
 	// Delete knobs before ControllerProxies:
 	delete _control_point_value;
@@ -144,7 +146,7 @@ EG::create_widgets()
 	plot_frame->setFixedHeight (100);
 	_plot = new EnvelopePlot (plot_frame);
 	_plot->set_editable (true, 1.0f * Params::EG::SegmentDurationMax / Params::EG::SegmentDurationDenominator);
-	_plot->set_sample_rate (_mikuru->graph()->sample_rate());
+	_plot->set_sample_rate (ARTIFICIAL_SAMPLE_RATE);
 	_plot->assign_envelope (&_envelope_template);
 	QObject::connect (_plot, SIGNAL (envelope_updated()), this, SLOT (changed_envelope()));
 	QObject::connect (_plot, SIGNAL (active_point_changed()), this, SLOT (changed_envelope()));
@@ -170,13 +172,15 @@ EG::create_widgets()
 	_sustain_point->setMinimum (1);
 	QObject::connect (_sustain_point, SIGNAL (valueChanged (int)), this, SLOT (update_widgets()));
 	QObject::connect (_sustain_point, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
+	QObject::connect (_sustain_point, SIGNAL (valueChanged (int)), this, SLOT (update_plot()));
 
 	new QLabel ("Segments:", grid1);
 	_segments = new QSpinBox (grid1);
 	_segments->setMinimum (2);
-	_segments->setMaximum (64);
+	_segments->setMaximum (Params::EG::MaxPoints - 1);
 	QObject::connect (_segments, SIGNAL (valueChanged (int)), this, SLOT (update_widgets()));
 	QObject::connect (_segments, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
+	QObject::connect (_segments, SIGNAL (valueChanged (int)), this, SLOT (update_plot()));
 
 	QVBoxLayout* v1 = new QVBoxLayout (knobs_panel, 0, Config::spacing);
 	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::spacing);
@@ -245,7 +249,6 @@ void
 EG::resize_buffers (std::size_t size)
 {
 	_buffer.resize (size);
-	_plot->set_sample_rate (_mikuru->graph()->sample_rate());
 }
 
 
@@ -259,8 +262,18 @@ EG::load_params()
 	_enabled->setChecked (p.enabled);
 	_sustain_point->setValue (p.sustain_point + 1);
 	_segments->setValue (p.segments);
+	// Load points:
+	_envelope_template.points().clear();
+	for (size_t i = 0; i < p.segments + 1; ++i)
+	{
+		_envelope_template.points().push_back (
+			DSP::Envelope::Point (1.0 * p.values[i] / Params::EG::PointValueDenominator, p.durations[i])
+		);
+	}
 
 	_loading_params = false;
+
+	update_plot();
 }
 
 
@@ -282,10 +295,18 @@ EG::update_params()
 	atomic (_params.segments) = _segments->value();
 	atomic (_params.sustain_point) = _sustain_point->value() - 1;
 
+	// Update points:
+	DSP::Envelope::Points& points = _envelope_template.points();
+	size_t s = atomic (_params.segments) + 1;
+	for (size_t i = 0; i < s; ++i)
+	{
+		atomic (_params.values[i]) = points[i].value * Params::EG::PointValueDenominator;
+		atomic (_params.durations[i]) = points[i].samples;
+	}
+
 	// Knob params are updated automatically using #assign_parameter.
 
 	_params.sanitize();
-	update_plot();
 }
 
 
@@ -338,7 +359,10 @@ EG::changed_segment_value()
 	if (_mute_point_controls)
 		return;
 
-	_envelope_template.points()[_active_point->value()].value = 1.0f * _point_value / Params::EG::PointValueDenominator;
+	unsigned int p = _active_point->value();
+	_envelope_template.points()[p].value = 1.0f * _point_value / Params::EG::PointValueDenominator;
+
+	update_params();
 	update_plot();
 }
 
@@ -350,10 +374,10 @@ EG::changed_segment_duration()
 		return;
 
 	unsigned int p = _active_point->value();
-	unsigned int sr = _mikuru->graph()->sample_rate();
-
 	if (p > 0)
-		_envelope_template.points()[p-1].samples = 1.0f * _segment_duration * sr / Params::EG::SegmentDurationDenominator;
+		_envelope_template.points()[p-1].samples = 1.0f * _segment_duration / Params::EG::SegmentDurationDenominator * ARTIFICIAL_SAMPLE_RATE;
+
+	update_params();
 	update_plot();
 }
 
@@ -373,14 +397,16 @@ void
 EG::update_point_knobs()
 {
 	unsigned int p = _active_point->value();
-	unsigned int sr = _mikuru->graph()->sample_rate();
 
 	_proxy_point_value->set_value (_envelope_template.points()[p].value * Params::EG::PointValueDenominator);
-	_proxy_segment_duration->set_value (p > 0 ? (1.0f * _envelope_template.points()[p-1].samples / sr * Params::EG::SegmentDurationDenominator) : 0);
+	_proxy_segment_duration->set_value (p > 0 ? (1.0f * _envelope_template.points()[p-1].samples / ARTIFICIAL_SAMPLE_RATE * Params::EG::SegmentDurationDenominator) : 0);
 
+	// TODO update params? or will it be updated by changed_segment_*() methods?
 	_control_point_value->read();
 	_control_segment_duration->read();
 	_control_segment_duration->setEnabled (p > 0);
+
+	update_params();
 }
 
 

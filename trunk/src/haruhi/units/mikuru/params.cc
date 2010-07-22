@@ -428,6 +428,11 @@ Params::EG::EG():
 	segments (1),
 	sustain_point (0)
 {
+	for (int i = 0; i < MaxPoints; ++i)
+	{
+		values[i] = 0;
+		durations[i] = 0;
+	}
 }
 
 
@@ -443,6 +448,12 @@ Params::EG::set_non_controller_params (EG& other)
 	HARUHI_MIKURU_COPY_ATOMIC (enabled)
 	HARUHI_MIKURU_COPY_ATOMIC (segments)
 	HARUHI_MIKURU_COPY_ATOMIC (sustain_point)
+	// Copy tables:
+	for (int i = 0; i < MaxPoints; ++i)
+	{
+		values[i] = atomic (other.values[i]);
+		durations[i] = atomic (other.durations[i]);
+	}
 }
 
 
@@ -462,6 +473,8 @@ Params::EG::sanitize()
 		s = p;
 		atomic (sustain_point) = s;
 	}
+
+	// TODO sanitize values[]/durations[] values.
 }
 
 } // namespace MikuruPrivate
