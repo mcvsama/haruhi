@@ -191,8 +191,6 @@ Oscillator::Oscillator (Part* part, Core::PortGroup* port_group, QString const& 
 	_const_portamento_time->setChecked (po.const_portamento_time);
 	QObject::connect (_const_portamento_time, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 
-	grid2->addSpace (0);
-
 	// Pitchbend down/up:
 	new QLabel ("Pitchbend down/up range:", grid2);
 	QWidget* pitchbends_panel = new QWidget (grid2);
