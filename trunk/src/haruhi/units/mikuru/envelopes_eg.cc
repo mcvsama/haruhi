@@ -78,6 +78,7 @@ EG::~EG()
 	_mikuru->graph()->lock();
 	delete _port_point_value;
 	delete _port_segment_duration;
+	delete _port_output;
 
 	sweep();
 	// Delete remaining EGs:
@@ -99,7 +100,7 @@ EG::create_ports()
 	_port_point_value = new Core::EventPort (_mikuru, "Value", Core::Port::Input, _port_group);
 	_port_segment_duration = new Core::EventPort (_mikuru, "Duration", Core::Port::Input, _port_group);
 	// Outputs:
-	// TODO
+	_port_output = new Core::EventPort (_mikuru, QString ("EG %1").arg (this->id()).toStdString(), Core::Port::Output, 0, Core::Port::Polyphonic);
 	_mikuru->graph()->unlock();
 }
 
@@ -205,8 +206,11 @@ EG::voice_created (VoiceManager* voice_manager, Voice* voice)
 	if (!atomic (_params.enabled))
 		return;
 
-	// Minimum attack/release time (ms), prevents clicking:
-	_egs[voice] = new DSP::Envelope (_envelope_template);
+	unsigned int sample_rate = _mikuru->graph()->sample_rate();
+	DSP::Envelope* env = _egs[voice] = new DSP::Envelope (_envelope_template);
+	// Convert durations from ARTIFICIAL_SAMPLE_RATE to real sample rate:
+	for (DSP::Envelope::Points::iterator p = env->points().begin(); p != env->points().end(); ++p)
+		p->samples = 1.0f * p->samples / ARTIFICIAL_SAMPLE_RATE * sample_rate;
 }
 
 
@@ -241,7 +245,33 @@ EG::process()
 	_proxy_point_value->process_events();
 	_proxy_segment_duration->process_events();
 
-	// TODO
+	// Nothing to process?
+	if (_egs.empty())
+		return;
+
+	Core::Timestamp t = _mikuru->graph()->timestamp();
+	Core::Sample v;
+
+	// Assuming that output ports are cleared by Mikuru on beginnig of each
+	// processing round.
+
+	for (EGs::iterator e = _egs.begin(); e != _egs.end(); ++e)
+	{
+		Voice* voice = e->first;
+		DSP::Envelope* eg = e->second;
+		eg->fill (_buffer.begin(), _buffer.end());
+		v = *(_buffer.end() - 1);
+
+		if (eg->finished())
+		{
+			// TODO ?
+		}
+		else
+		{
+			// Normal event on output:
+			_port_output->event_buffer()->push (new Core::VoiceControllerEvent (t, voice->voice_id(), v));
+		}
+	}
 }
 
 
@@ -273,6 +303,8 @@ EG::load_params()
 
 	_loading_params = false;
 
+	// No knob is updated that would cause plot update,
+	// do so manually:
 	update_plot();
 }
 
@@ -401,7 +433,6 @@ EG::update_point_knobs()
 	_proxy_point_value->set_value (_envelope_template.points()[p].value * Params::EG::PointValueDenominator);
 	_proxy_segment_duration->set_value (p > 0 ? (1.0f * _envelope_template.points()[p-1].samples / ARTIFICIAL_SAMPLE_RATE * Params::EG::SegmentDurationDenominator) : 0);
 
-	// TODO update params? or will it be updated by changed_segment_*() methods?
 	_control_point_value->read();
 	_control_segment_duration->read();
 	_control_segment_duration->setEnabled (p > 0);

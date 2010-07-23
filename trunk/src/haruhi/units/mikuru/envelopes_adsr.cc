@@ -314,6 +314,7 @@ ADSR::process()
 	_proxy_sustain_hold->process_events();
 	_proxy_release->process_events();
 
+	// Nothing to process?
 	if (_adsrs.empty())
 		return;
 

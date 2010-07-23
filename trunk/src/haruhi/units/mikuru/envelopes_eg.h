@@ -176,6 +176,7 @@ class EG: public Envelope
 	Core::PortGroup*		_port_group;
 	Core::EventPort*		_port_point_value;
 	Core::EventPort*		_port_segment_duration;
+	Core::EventPort*		_port_output;
 
 	ControllerProxy*		_proxy_point_value;
 	ControllerProxy*		_proxy_segment_duration;
