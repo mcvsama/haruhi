@@ -55,7 +55,8 @@
 		return *this;															\
 	}																			\
 	void set_controller_params (klass& other);									\
-	void set_non_controller_params (klass& other);
+	void set_non_controller_params (klass& other);								\
+	void sanitize();
 
 #define HARUHI_MIKURU_PARAM(name, min, max, denominator, deflt)					\
 	name##Min = min,															\
@@ -350,6 +351,27 @@ struct Params
 		int tempo_denominator;
 		int random_start_phase;
 		int fade_out_enabled;
+	};
+
+	/**
+	 * Envelope: EG
+	 */
+	struct EG
+	{
+		HARUHI_MIKURU_PARAMS_STANDARD_METHODS (EG)
+
+		enum {
+			HARUHI_MIKURU_PARAM (PointValue,			       0,	+1000000,	+1000000,	 +500000)
+			HARUHI_MIKURU_PARAM (SegmentDuration,		       0,	+1000000,	 +100000,	       0)
+		};
+
+		enum { MaxPoints = 64 };
+
+		int enabled;
+		unsigned int segments;
+		unsigned int sustain_point;
+		unsigned int values[MaxPoints];
+		unsigned int durations[MaxPoints];
 	};
 };
 

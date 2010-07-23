@@ -38,6 +38,8 @@ JackAudioTransport::JackPort::JackPort (AudioTransport* transport, Direction dir
 	_name (name),
 	_jack_port (0)
 {
+	jack_set_error_function (JackAudioTransport::s_log_error);
+	jack_set_info_function (JackAudioTransport::s_log_info);
 	reinit();
 }
 
@@ -261,6 +263,20 @@ JackAudioTransport::c_shutdown()
 	_jack_client = 0;
 	_active = false;
 	backend()->notify_disconnected();
+}
+
+
+void
+JackAudioTransport::s_log_error (const char* message)
+{
+	std::clog << "ERROR[JACK] " << message << std::endl;
+}
+
+
+void
+JackAudioTransport::s_log_info (const char* message)
+{
+	std::clog << "INFO[JACK] " << message << std::endl;
 }
 
 } // namespace Haruhi

@@ -246,6 +246,8 @@ ADSR::create_widgets (QWidget* knobs_panel)
 	v2->addWidget (grid1);
 	v2->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }
+
+
 void
 ADSR::voice_created (VoiceManager* voice_manager, Voice* voice)
 {
@@ -312,6 +314,7 @@ ADSR::process()
 	_proxy_sustain_hold->process_events();
 	_proxy_release->process_events();
 
+	// Nothing to process?
 	if (_adsrs.empty())
 		return;
 

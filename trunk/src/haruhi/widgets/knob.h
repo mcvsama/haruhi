@@ -158,10 +158,20 @@ class Knob:
 	void
 	read_config();
 
+	/**
+	 * Forces Knob to read parameter value and update itself.
+	 * Also sends changed() signal.
+	 */
+	void
+	read();
+
 	/*
 	 * PeriodicUpdater::Receiver API
 	 */
 
+	/**
+	 * Calls read().
+	 */
 	void
 	periodic_update();
 

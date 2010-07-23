@@ -25,7 +25,9 @@ namespace DSP {
 
 DelayLine::DelayLine (std::size_t delay, std::size_t max_delay, std::size_t size):
 	_data (0),
+	_max_delay (max_delay),
 	_size (size),
+	_delay (delay),
 	_wpos (0)
 {
 	assert (size > 0);

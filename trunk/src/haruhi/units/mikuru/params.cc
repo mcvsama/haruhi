@@ -420,6 +420,63 @@ Params::LFO::set_non_controller_params (LFO& other)
 	HARUHI_MIKURU_COPY_ATOMIC (fade_out_enabled)
 }
 
+
+Params::EG::EG():
+	// Controller:
+	// Non-controller:
+	enabled (1),
+	segments (1),
+	sustain_point (0)
+{
+	for (int i = 0; i < MaxPoints; ++i)
+	{
+		values[i] = 0;
+		durations[i] = 0;
+	}
+}
+
+
+void
+Params::EG::set_controller_params (EG& other)
+{
+}
+
+
+void
+Params::EG::set_non_controller_params (EG& other)
+{
+	HARUHI_MIKURU_COPY_ATOMIC (enabled)
+	HARUHI_MIKURU_COPY_ATOMIC (segments)
+	HARUHI_MIKURU_COPY_ATOMIC (sustain_point)
+	// Copy tables:
+	for (int i = 0; i < MaxPoints; ++i)
+	{
+		values[i] = atomic (other.values[i]);
+		durations[i] = atomic (other.durations[i]);
+	}
+}
+
+
+void
+Params::EG::sanitize()
+{
+	int p = atomic (segments);
+	if (p < 2)
+	{
+		p = 2;
+		atomic (segments) = p;
+	}
+
+	int s = atomic (sustain_point);
+	if (s >= p)
+	{
+		s = p;
+		atomic (sustain_point) = s;
+	}
+
+	// TODO sanitize values[]/durations[] values.
+}
+
 } // namespace MikuruPrivate
 
 #undef HARUHI_MIKURU_COPY_ATOMIC
