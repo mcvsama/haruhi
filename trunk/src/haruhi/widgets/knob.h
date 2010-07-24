@@ -99,6 +99,13 @@ class Knob:
 		int
 		decimals() const { return _decimals; }
 
+		/**
+		 * Detached knob works like a simple QDoubleSpinBox.
+		 * Set as deatched when spin box is not main Knob's spin box.
+		 */
+		void
+		set_detached (bool setting);
+
 	  protected:
 		/*
 		 * QSpinBox API
@@ -123,6 +130,7 @@ class Knob:
 		float				_show_max;
 		int					_decimals;
 		QDoubleValidator*	_validator;
+		bool				_detached;
 	};
 
 	typedef std::map<int, Core::Port*> ContextMenuPortMap;

@@ -95,7 +95,7 @@ Oscillator::Oscillator (Part* part, Core::PortGroup* port_group, QString const& 
 	_proxy_velocity_sens = new ControllerProxy (_port_velocity_sens, &_voice_params.velocity_sens, 0, HARUHI_MIKURU_MINMAX (Params::Voice::VelocitySens), pv.velocity_sens);
 	_proxy_portamento_time = new ControllerProxy (_port_portamento_time, &_oscillator_params.portamento_time, 0, HARUHI_MIKURU_MINMAX (Params::Oscillator::PortamentoTime), po.portamento_time);
 	_proxy_portamento_time->config()->curve = 1.0;
-	_proxy_portamento_time->config()->user_limit_max = 0.05f * Params::Oscillator::PortamentoTimeDenominator;
+	_proxy_portamento_time->config()->user_limit_max = 0.5f * Params::Oscillator::PortamentoTimeDenominator;
 	_proxy_portamento_time->apply_config();
 	_proxy_phase = new ControllerProxy (_port_phase, &_oscillator_params.phase, 0, HARUHI_MIKURU_MINMAX (Params::Oscillator::Phase), po.phase);
 

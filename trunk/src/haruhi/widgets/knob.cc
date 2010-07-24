@@ -60,21 +60,27 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::spacing);
 
 	QLabel* curve_label = new QLabel ("Response curve:", this);
-	_curve_spinbox = new Knob::SpinBox (this, _knob, -1000, 1000, -1.0, 1.0, 100, 1);
-	_curve_spinbox->setValue (c->curve * 1000.0);
-	_curve_spinbox->setFixedWidth (80);
+	Knob::SpinBox* curve_spinbox = new Knob::SpinBox (this, _knob, -1000, 1000, -1.0, 1.0, 100, 1);
+	curve_spinbox->set_detached (true);
+	curve_spinbox->setValue (c->curve * 1000.0);
+	curve_spinbox->setFixedWidth (80);
+	_curve_spinbox = curve_spinbox;
 
 	QLabel* range_min_label = new QLabel ("Range minimum:", this);
-	_user_limit_min_spinbox = new Knob::SpinBox (this, _knob, c->hard_limit_min, c->hard_limit_max, s->show_min(), s->show_max(), s->singleStep(), s->decimals());
-	_user_limit_min_spinbox->setValue (c->user_limit_min);
-	_user_limit_min_spinbox->setFixedWidth (80);
-	QObject::connect (_user_limit_min_spinbox, SIGNAL (valueChanged (int)), this, SLOT (limit_min_updated()));
+	Knob::SpinBox* user_limit_min_spinbox = new Knob::SpinBox (this, _knob, c->hard_limit_min, c->hard_limit_max, s->show_min(), s->show_max(), s->singleStep(), s->decimals());
+	user_limit_min_spinbox->set_detached (true);
+	user_limit_min_spinbox->setValue (c->user_limit_min);
+	user_limit_min_spinbox->setFixedWidth (80);
+	QObject::connect (user_limit_min_spinbox, SIGNAL (valueChanged (int)), this, SLOT (limit_min_updated()));
+	_user_limit_min_spinbox = user_limit_min_spinbox;
 
 	QLabel* range_max_label = new QLabel ("Range maximum:", this);
-	_user_limit_max_spinbox = new Knob::SpinBox (this, _knob, c->hard_limit_min, c->hard_limit_max, s->show_min(), s->show_max(), s->singleStep(), s->decimals());
-	_user_limit_max_spinbox->setValue (c->user_limit_max);
-	_user_limit_max_spinbox->setFixedWidth (80);
-	QObject::connect (_user_limit_max_spinbox, SIGNAL (valueChanged (int)), this, SLOT (limit_max_updated()));
+	Knob::SpinBox* user_limit_max_spinbox = new Knob::SpinBox (this, _knob, c->hard_limit_min, c->hard_limit_max, s->show_min(), s->show_max(), s->singleStep(), s->decimals());
+	user_limit_max_spinbox->set_detached (true);
+	user_limit_max_spinbox->setValue (c->user_limit_max);
+	user_limit_max_spinbox->setFixedWidth (80);
+	QObject::connect (user_limit_max_spinbox, SIGNAL (valueChanged (int)), this, SLOT (limit_max_updated()));
+	_user_limit_max_spinbox = user_limit_max_spinbox;
 
 	QLabel* smoothing_label = 0;
 	if (_knob->controller_proxy()->smoothing_parameter())
@@ -115,8 +121,8 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	buttons_layout->addWidget (reject_button);
 
 	// Range spinboxes: min must be strictly less than max
-	_user_limit_min_spinbox->setMaximum (_user_limit_max_spinbox->maximum() - _user_limit_max_spinbox->singleStep());
-	_user_limit_max_spinbox->setMinimum (_user_limit_min_spinbox->minimum() + _user_limit_min_spinbox->singleStep());
+	_user_limit_min_spinbox->setMaximum (_user_limit_max_spinbox->maximum() - 1);
+	_user_limit_max_spinbox->setMinimum (_user_limit_min_spinbox->minimum() + 1);
 }
 
 
@@ -154,7 +160,8 @@ Knob::SpinBox::SpinBox (QWidget* parent, Knob* knob, int user_limit_min, int use
 	_knob (knob),
 	_show_min (show_min),
 	_show_max (show_max),
-	_decimals (decimals)
+	_decimals (decimals),
+	_detached (false)
 {
 	_validator = new QDoubleValidator (show_min, show_max, decimals, this);
 	QSpinBox::setMinimum (user_limit_min);
@@ -168,6 +175,13 @@ QValidator::State
 Knob::SpinBox::validate (QString& input, int& pos) const
 {
 	return _validator->validate (input, pos);
+}
+
+
+void
+Knob::SpinBox::set_detached (bool setting)
+{
+	_detached = setting;
 }
 
 
@@ -188,8 +202,8 @@ Knob::SpinBox::valueFromText (QString const& string) const
 float
 Knob::SpinBox::int_to_float (int x) const
 {
-	int const hard_limit_min = _knob->controller_proxy()->config()->hard_limit_min;
-	int const hard_limit_max = _knob->controller_proxy()->config()->hard_limit_max;
+	int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy()->config()->hard_limit_min;
+	int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy()->config()->hard_limit_max;
 	float f = renormalize (x, hard_limit_min, hard_limit_max, _show_min, _show_max);
 	if (f < 0.0 && f > 0.5 * -std::pow (0.1, _decimals))
 		f = 0.0;
@@ -200,8 +214,8 @@ Knob::SpinBox::int_to_float (int x) const
 int
 Knob::SpinBox::float_to_int (float y) const
 {
-	int const hard_limit_min = _knob->controller_proxy()->config()->hard_limit_min;
-	int const hard_limit_max = _knob->controller_proxy()->config()->hard_limit_max;
+	int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy()->config()->hard_limit_min;
+	int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy()->config()->hard_limit_max;
 	return renormalize (y, _show_min, _show_max, hard_limit_min, hard_limit_max);
 }
 
