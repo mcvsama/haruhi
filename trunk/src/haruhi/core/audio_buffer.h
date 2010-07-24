@@ -16,8 +16,10 @@
 
 // Standard:
 #include <cstddef>
+#include <cstdlib>
 
 // Haruhi:
+#include <haruhi/config/system.h>
 #include <haruhi/utility/pool_allocator.h>
 
 // Local:
@@ -43,8 +45,14 @@ class AudioBuffer: public Core::Buffer
 	TypeID
 	type() const { return AudioBuffer::TYPE; }
 
+	/**
+	 * Clears (zeroes) buffer.
+	 */
 	void
-	clear() { std::fill (begin(), end(), 0.0); }
+	clear()
+	{
+		std::fill (begin(), end(), 0.0);
+	}
 
 	/**
 	 * Fills this buffer from other buffer.
@@ -53,23 +61,62 @@ class AudioBuffer: public Core::Buffer
 	void
 	fill (Buffer* other)
 	{
-		if (other->type() != AudioBuffer::TYPE)
-			throw Exception ("incompatible buffers");
+		assert (other->type() == AudioBuffer::TYPE);
 		AudioBuffer* buf = static_cast<AudioBuffer*> (other);
 		std::copy (buf->begin(), buf->end(), begin());
 	}
 
 	/**
-	 * Mixins other buffer to this.
-	 * Other buffer must be static_castable to AudioBuffer.
+	 * Calls add().
 	 */
 	void
 	mixin (Buffer* other)
 	{
-		if (other->type() != AudioBuffer::TYPE)
-			throw Exception ("incompatible buffers");
-		AudioBuffer* buf = static_cast<AudioBuffer*> (other);
+		add (other);
+	}
+
+	/**
+	 * Adds (mixes) other buffer to this.
+	 * Other buffer must be static_castable to AudioBuffer.
+	 */
+	void
+	add (Buffer* other)
+	{
+		assert (other->type() == AudioBuffer::TYPE);
+		AudioBuffer const* buf = static_cast<AudioBuffer*> (other);
 		std::transform (buf->begin(), buf->end(), begin(), begin(), std::plus<Sample>());
+	}
+
+	/**
+	 * Substracts other buffer from this.
+	 * Other buffer must be static_castable to AudioBuffer.
+	 */
+	void
+	sub (Buffer* other)
+	{
+		assert (other->type() == AudioBuffer::TYPE);
+		AudioBuffer const* buf = static_cast<AudioBuffer*> (other);
+		std::transform (buf->begin(), buf->end(), begin(), begin(), std::minus<Sample>());
+	}
+
+	/**
+	 * Attenuates this buffer by scalar.
+	 * Other buffer must be static_castable to AudioBuffer.
+	 */
+	void
+	attenuate (Sample value)
+	{
+		for (Sample* s = begin(); s != end(); ++s)
+			*s *= value;
+	}
+
+	/**
+	 * Negates this buffer.
+	 */
+	void
+	negate()
+	{
+		std::transform (begin(), end(), begin(), std::negate<Sample>());
 	}
 
 	void
@@ -90,7 +137,7 @@ class AudioBuffer: public Core::Buffer
 	Sample*
 	end() const
 	{
-		return _data + _size;
+		return _end;
 	}
 
 	Sample&
@@ -106,8 +153,33 @@ class AudioBuffer: public Core::Buffer
 	}
 
   public:
+	/**
+	 * Allocates buffer for given number of samples.
+	 * Buffer is aligned to 32-byte boundary so SIMD
+	 * instructions can be used on it.
+	 */
+	static Sample*
+	allocate (std::size_t samples)
+	{
+		void* ret;
+		if (posix_memalign (&ret, 32, sizeof (Sample) * samples) != 0)
+			return 0;
+		return static_cast<Sample*> (ret);
+	}
+
+	/**
+	 * Deallocates memory allocated with allocate().
+	 */
+	static void
+	deallocate (Sample* buffer)
+	{
+		free (buffer);
+	}
+
+  public:
 	Sample*		_data;
 	std::size_t	_size;
+	Sample*		_end;
 };
 
 } // namespace Core

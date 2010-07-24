@@ -31,9 +31,11 @@ POOL_ALLOCATOR_FOR (AudioBuffer)
 Buffer::TypeID AudioBuffer::TYPE = "Core::AudioBuffer";
 
 
-AudioBuffer::AudioBuffer (std::size_t size):
-	_data (new Sample[size]),
-	_size (size)
+AudioBuffer::AudioBuffer (std::size_t samples):
+	// Allocate aligned memory for SIMD instructions:
+	_data (allocate (samples)),
+	_size (samples),
+	_end (_data + _size)
 {
 	clear();
 }
@@ -41,18 +43,19 @@ AudioBuffer::AudioBuffer (std::size_t size):
 
 AudioBuffer::~AudioBuffer()
 {
-	delete[] _data;
+	deallocate (_data);
 }
 
 
 void
-AudioBuffer::resize (std::size_t size)
+AudioBuffer::resize (std::size_t samples)
 {
-	if (size != _size)
+	if (_size != samples)
 	{
-		delete[] _data;
-		_size = size;
-		_data = new Sample[_size];
+		deallocate (_data);
+		_size = samples;
+		_data = allocate (_size);
+		_end = _data + _size;
 		clear();
 	}
 }
