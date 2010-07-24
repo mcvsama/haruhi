@@ -20,6 +20,8 @@
 
 #include <signal.h>
 
+#undef assert
+
 inline void
 assert (bool expression)
 {
@@ -33,6 +35,7 @@ assert (bool expression)
 
 #else // HARUHI_ENABLE_ASSERT
 
+#undef assert
 #define assert
 
 #endif // HARUHI_ENABLE_ASSERT
