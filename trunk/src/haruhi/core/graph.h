@@ -165,6 +165,7 @@ class Graph: public RecursiveMutex
 	Signal::Signal1<Unit*>			unit_registered;
 	Signal::Signal1<Unit*>			unit_unregistered;
 	Signal::Signal1<Unit*>			unit_retitled;
+	// Called also when port's comment is changed:
 	Signal::Signal1<Port*>			port_renamed;
 	Signal::Signal2<Port*, Port*>	port_connected_to;
 	Signal::Signal2<Port*, Port*>	port_disconnected_from;
