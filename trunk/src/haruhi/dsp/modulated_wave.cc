@@ -25,6 +25,7 @@
 namespace DSP {
 
 ModulatedWave::ModulatedWave (Wave* wave, Wave* modulator, Type mod_type, Core::Sample mod_amplitude, unsigned int mod_index, bool auto_delete_wave, bool auto_delete_modulator):
+	Wave (wave ? wave->immutable() : false),
 	_wave (wave),
 	_modulator (modulator),
 	_mod_type (mod_type),
@@ -65,6 +66,7 @@ ModulatedWave::set_wave (Wave* wave)
 	if (_auto_delete_wave)
 		delete _wave;
 	_wave = wave;
+	set_immutable (_wave ? _wave->immutable() : false);
 }
 
 

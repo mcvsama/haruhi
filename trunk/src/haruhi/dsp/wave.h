@@ -27,9 +27,23 @@ namespace DSP {
 class Wave
 {
   public:
-	Wave();
+	/**
+	 * \param	immutable should be true if function does not change shape
+	 * 			between calls to operator() without changing wave's parameters.
+	 * 			Typically true, but noise functions will set this to false.
+	 */
+	Wave (bool immutable);
 
-	virtual ~Wave();
+	virtual ~Wave() { }
+
+	/**
+	 * Returns true if function is immutable.
+	 */
+	bool
+	immutable() const { return _immutable; }
+
+	void
+	set_immutable (bool immutable) { _immutable = immutable; }
 
 	/**
 	 * Returns function's sample.
@@ -39,6 +53,9 @@ class Wave
 	 */
 	virtual Core::Sample
 	operator() (Core::Sample register phase, Core::Sample frequency) const = 0;
+
+  private:
+	bool _immutable;
 };
 
 } // namespace DSP

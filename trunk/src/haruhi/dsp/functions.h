@@ -77,6 +77,10 @@ namespace ParametricWaves {
 	class Sine: public ParametricWave
 	{
 	  public:
+		Sine():
+			ParametricWave (true)
+		{ }
+
 		Core::Sample
 		operator() (Core::Sample x, Core::Sample) const
 		{
@@ -94,6 +98,10 @@ namespace ParametricWaves {
 	class Triangle: public ParametricWave
 	{
 	  public:
+		Triangle():
+			ParametricWave (true)
+		{ }
+
 		Core::Sample
 		operator() (Core::Sample x, Core::Sample) const
 		{
@@ -120,6 +128,10 @@ namespace ParametricWaves {
 	class Square: public ParametricWave
 	{
 	  public:
+		Square():
+			ParametricWave (true)
+		{ }
+
 		Core::Sample
 		operator() (Core::Sample x, Core::Sample) const
 		{
@@ -142,6 +154,10 @@ namespace ParametricWaves {
 	class Sawtooth: public ParametricWave
 	{
 	  public:
+		Sawtooth():
+			ParametricWave (true)
+		{ }
+
 		Core::Sample
 		operator() (Core::Sample x, Core::Sample) const
 		{
@@ -165,6 +181,10 @@ namespace ParametricWaves {
 	class Pulse: public ParametricWave
 	{
 	  public:
+		Pulse():
+			ParametricWave (true)
+		{ }
+
 		Core::Sample
 		operator() (Core::Sample x, Core::Sample) const
 		{
@@ -184,6 +204,10 @@ namespace ParametricWaves {
 	class Power: public ParametricWave
 	{
 	  public:
+		Power():
+			ParametricWave (true)
+		{ }
+
 		Core::Sample
 		operator() (Core::Sample x, Core::Sample) const
 		{
@@ -200,6 +224,10 @@ namespace ParametricWaves {
 	class Gauss: public ParametricWave
 	{
 	  public:
+		Gauss():
+			ParametricWave (true)
+		{ }
+
 		Core::Sample
 		operator() (Core::Sample x, Core::Sample) const
 		{
@@ -218,6 +246,10 @@ namespace ParametricWaves {
 	class Diode: public ParametricWave
 	{
 	  public:
+		Diode():
+			ParametricWave (true)
+		{ }
+
 		Core::Sample
 		operator() (Core::Sample x, Core::Sample) const
 		{
@@ -241,6 +273,10 @@ namespace ParametricWaves {
 	class Chirp: public ParametricWave
 	{
 	  public:
+		Chirp():
+			ParametricWave (true)
+		{ }
+
 		Core::Sample
 		operator() (Core::Sample x, Core::Sample) const
 		{

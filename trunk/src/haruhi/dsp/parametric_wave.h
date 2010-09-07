@@ -24,10 +24,13 @@
 
 namespace DSP {
 
+/**
+ * A Wave that has one parameter to be controlled (shape modifier).
+ */
 class ParametricWave: public Wave
 {
   public:
-	ParametricWave();
+	ParametricWave (bool immutable);
 
 	void
 	set_param (float param) { _param = param; }

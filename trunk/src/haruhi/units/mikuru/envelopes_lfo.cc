@@ -102,6 +102,7 @@ LFO::Osc::advance (unsigned int samples)
 
 
 LFO::RandomWave::RandomWave (Type type):
+	ParametricWave (false),
 	_type (type)
 {
 	_prev_value = noise_sample();

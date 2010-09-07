@@ -54,6 +54,7 @@ class Wavetable
 	{
 	  public:
 		WaveAdapter (Wavetable* wavetable):
+			Wave (true),
 			_wavetable (wavetable)
 		{ }
 

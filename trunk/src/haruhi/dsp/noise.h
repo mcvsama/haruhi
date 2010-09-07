@@ -47,7 +47,9 @@ class Noise: public Wave
 	typedef std::map<Thread::ID, State> States;
 
   public:
-	Noise() { }
+	Noise():
+		Wave (false)
+	{ }
 
 	/**
 	 * Returns sample from base function with added harmonics.

@@ -23,12 +23,8 @@
 
 namespace DSP {
 
-Wave::Wave()
-{
-}
-
-
-Wave::~Wave()
+Wave::Wave (bool immutable):
+	_immutable (immutable)
 {
 }
 

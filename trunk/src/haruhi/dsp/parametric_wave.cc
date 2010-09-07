@@ -23,7 +23,8 @@
 
 namespace DSP {
 
-ParametricWave::ParametricWave():
+ParametricWave::ParametricWave (bool immutable):
+	Wave (immutable),
 	_param (0.0)
 {
 }

@@ -25,6 +25,7 @@
 namespace DSP {
 
 HarmonicsWave::HarmonicsWave (Wave* wave, bool auto_delete):
+	Wave (wave ? wave->immutable() : false),
 	_wave (wave),
 	_auto_delete (auto_delete)
 {
@@ -45,6 +46,7 @@ HarmonicsWave::set_wave (Wave* wave)
 	if (_auto_delete)
 		delete _wave;
 	_wave = wave;
+	set_immutable (_wave ? _wave->immutable() : false);
 }
 
 
