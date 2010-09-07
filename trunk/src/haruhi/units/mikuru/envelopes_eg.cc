@@ -26,7 +26,6 @@
 #include <haruhi/config.h>
 #include <haruhi/controller_proxy.h>
 #include <haruhi/widgets/envelope_plot.h>
-#include <haruhi/utility/timing.h>//XXX
 
 // Local: TODO sprawdź które include'y faktycznie potrzebne.
 #include "mikuru.h"
