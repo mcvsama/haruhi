@@ -72,6 +72,7 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 	_waves.push_back (WaveInfo (Config::Icons16::wave_gauss(),		"Gauss",	new DSP::ParametricWaves::Gauss()));
 	_waves.push_back (WaveInfo (Config::Icons16::wave_diode(),		"Diode",	new DSP::ParametricWaves::Diode()));
 	_waves.push_back (WaveInfo (Config::Icons16::wave_chirp(),		"Chirp",	new DSP::ParametricWaves::Chirp()));
+	_waves.push_back (WaveInfo (Config::Icons16::wave_noise(),		"Noise",	new ParametricNoise()));
 
 	// Modulator waves:
 
@@ -111,6 +112,7 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 		_wave_type->insertItem (_waves[i].icon, _waves[i].name, i);
 	_wave_type->setCurrentItem (p.wave_type);
 	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (update_params()));
+	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (update_widgets()));
 	QToolTip::add (_wave_type, "Oscillator wave type");
 
 	// Modulator type:
@@ -158,9 +160,9 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 
 	// Harmonics:
 
-	QWidget* harmonics_tab = new QWidget (harmonics_and_phases_tabs);
-	harmonics_tab->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	QWidget* harmonics_grid = new QWidget (harmonics_tab);
+	_harmonics_tab = new QWidget (harmonics_and_phases_tabs);
+	_harmonics_tab->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+	QWidget* harmonics_grid = new QWidget (_harmonics_tab);
 	QGridLayout* harmonics_layout = new QGridLayout (harmonics_grid);
 	harmonics_layout->setSpacing (0);
 	for (Sliders::size_type i = 0; i < Params::Waveform::HarmonicsNumber; ++i)
@@ -188,14 +190,14 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 		_harmonics_sliders.push_back (slider);
 		_harmonics_resets.push_back (reset);
 	}
-	QHBoxLayout* harmonics_tab_layout = new QHBoxLayout (harmonics_tab, 0, 0);
+	QHBoxLayout* harmonics_tab_layout = new QHBoxLayout (_harmonics_tab, 0, 0);
 	harmonics_tab_layout->addWidget (harmonics_grid);
 
 	// Phases:
 
-	QWidget* phases_tab = new QWidget (harmonics_and_phases_tabs);
-	phases_tab->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	QWidget* phases_grid = new QWidget (phases_tab);
+	_phases_tab = new QWidget (harmonics_and_phases_tabs);
+	_phases_tab->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+	QWidget* phases_grid = new QWidget (_phases_tab);
 	QGridLayout* phases_layout = new QGridLayout (phases_grid);
 	phases_layout->setSpacing (0);
 	for (Sliders::size_type i = 0; i < Params::Waveform::HarmonicsNumber; ++i)
@@ -223,11 +225,11 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 		_phases_sliders.push_back (slider);
 		_phases_resets.push_back (reset);
 	}
-	QHBoxLayout* phases_tab_layout = new QHBoxLayout (phases_tab, 0, 0);
+	QHBoxLayout* phases_tab_layout = new QHBoxLayout (_phases_tab, 0, 0);
 	phases_tab_layout->addWidget (phases_grid);
 
-	harmonics_and_phases_tabs->addTab (harmonics_tab, "Harmonics");
-	harmonics_and_phases_tabs->addTab (phases_tab, "Phases");
+	harmonics_and_phases_tabs->addTab (_harmonics_tab, "Harmonics");
+	harmonics_and_phases_tabs->addTab (_phases_tab, "Phases");
 
 	// Layouts:
 
@@ -361,6 +363,29 @@ Waveform::update_params()
 void
 Waveform::update_widgets()
 {
+	bool not_noise = !dynamic_cast<DSP::Noise*> (active_wave().wave.get());
+	_control_wave_shape->setEnabled (not_noise);
+	_control_modulator_amplitude->setEnabled (not_noise);
+	_control_modulator_index->setEnabled (not_noise);
+	_control_modulator_shape->setEnabled (not_noise);
+	_modulator_type->setEnabled (not_noise);
+	_modulator_wave_type->setEnabled (not_noise);
+	_harmonics_tab->setEnabled (not_noise);
+	_phases_tab->setEnabled (not_noise);
+}
+
+
+Waveform::WaveInfo&
+Waveform::active_wave()
+{
+	return _waves[std::min (_params.wave_type, static_cast<unsigned int> (_waves.size() - 1))];
+}
+
+
+Waveform::WaveInfo&
+Waveform::active_modulator_wave()
+{
+	return _modulator_waves[std::min (_params.modulator_wave_type, static_cast<unsigned int> (_modulator_waves.size() - 1))];
 }
 
 
@@ -400,8 +425,8 @@ Waveform::update_wave_plot (Shared<DSP::Wave> const& wave)
 void
 Waveform::recompute_wave()
 {
-	DSP::ParametricWave* pw = _waves[std::min (_params.wave_type, static_cast<unsigned int> (_waves.size() - 1))].wave.get();
-	DSP::ParametricWave* mw = _modulator_waves[std::min (_params.modulator_wave_type, static_cast<unsigned int> (_modulator_waves.size() - 1))].wave.get();
+	DSP::ParametricWave* pw = active_wave().wave.get();
+	DSP::ParametricWave* mw = active_modulator_wave().wave.get();
 	pw->set_param (1.0f * atomic (_params.wave_shape) / Params::Waveform::WaveShapeDenominator);
 	mw->set_param (1.0f * atomic (_params.modulator_shape) / Params::Waveform::ModulatorShapeDenominator);
 	// Add harmonics to pw:

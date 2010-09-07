@@ -35,6 +35,8 @@
 #include <haruhi/dsp/functions.h>
 #include <haruhi/dsp/harmonics_wave.h>
 #include <haruhi/dsp/modulated_wave.h>
+#include <haruhi/dsp/parametric_wave.h>
+#include <haruhi/dsp/noise.h>
 #include <haruhi/utility/signal.h>
 #include <haruhi/utility/memory.h>
 
@@ -114,6 +116,24 @@ class Waveform:
 		QPixmap						icon;
 		QString						name;
 		Shared<DSP::ParametricWave>	wave;
+	};
+
+	/**
+	 * Wrapper/mixin for DSP::Noise. Parameter does not change anything.
+	 */
+	struct ParametricNoise:
+		public DSP::Noise,
+		public DSP::ParametricWave
+	{
+		ParametricNoise():
+			ParametricWave (false)
+		{ }
+
+		Core::Sample
+		operator() (Core::Sample phase, Core::Sample frequency) const
+		{
+			return Noise::operator() (phase, frequency);
+		}
 	};
 
 	typedef std::vector<WaveInfo>		Waves;
@@ -196,6 +216,18 @@ class Waveform:
 
   private:
 	/**
+	 * Returns WaveInfo for currently selected wave in UI.
+	 */
+	WaveInfo&
+	active_wave();
+
+	/**
+	 * Returns WaveInfo for currently selected modulator wave in UI.
+	 */
+	WaveInfo&
+	active_modulator_wave();
+
+	/**
 	 * Redraws wave plot.
 	 * \entry	Only from WaveComputer thread.
 	 */
@@ -255,14 +287,14 @@ class Waveform:
 	QComboBox*					_wave_type;
 	QComboBox*					_modulator_type;
 	QComboBox*					_modulator_wave_type;
-	Q3ScrollView*				_harmonics_scrollview;
-	Q3ScrollView*				_phases_scrollview;
 	Sliders						_harmonics_sliders;
 	Buttons						_harmonics_resets;
 	Sliders						_phases_sliders;
 	Buttons						_phases_resets;
 	QColor						_std_button_bg;
 	QColor						_std_button_fg;
+	QWidget*					_harmonics_tab;
+	QWidget*					_phases_tab;
 };
 
 } // namespace MikuruPrivate

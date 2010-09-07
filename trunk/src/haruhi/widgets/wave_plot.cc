@@ -128,7 +128,7 @@ WavePlot::paintEvent (QPaintEvent* paint_event)
 		float wave_denominator = _dont_scale_wave ? 1.0f : _denominator;
 		float grid_denominator = _dont_scale_grid ? 1.0f : _denominator;
 
-		if (w > 1 && h > 1 && _samples.size() > 1)
+		if (_wave->immutable() && w > 1 && h > 1 && _samples.size() > 1)
 		{
 			QColor grid_color = isEnabled() ? QColor (0xd7, 0xd7, 0xd7) : QColor (0xe0, 0xe0, 0xe0);
 
@@ -181,14 +181,26 @@ WavePlot::paintEvent (QPaintEvent* paint_event)
 		else
 			_samples_mutex.unlock();
 
-		// Phase marker:
-		if (_phase_enabled)
+		if (_wave->immutable())
 		{
-			painter.setRenderHint (QPainter::Antialiasing, false);
-			painter.setPen (QPen (QColor (0x00, 0x00, 0xdd), 1, Qt::DotLine));
+			// Phase marker:
+			if (_phase_enabled)
+			{
+				painter.setRenderHint (QPainter::Antialiasing, false);
+				painter.setPen (QPen (QColor (0x00, 0x00, 0xdd), 1, Qt::DotLine));
+				painter.setBrush (Qt::NoBrush);
+				int xpos = std::min (static_cast<int> (_phase_position * w), w - 1);
+				painter.drawLine (xpos, 0, xpos, h);
+			}
+		}
+		// Not immutable wave?
+		else
+		{
+			painter.setRenderHint (QPainter::Antialiasing, true);
+			painter.setPen (QPen (isEnabled() ? QColor (0xaa, 0xaa, 0xaa) : QColor (0xee, 0xee, 0xee), 0.5, Qt::SolidLine));
 			painter.setBrush (Qt::NoBrush);
-			int xpos = std::min (static_cast<int> (_phase_position * w), w - 1);
-			painter.drawLine (xpos, 0, xpos, h);
+			painter.drawLine (0, 0, w, h);
+			painter.drawLine (0, h, w, 0);
 		}
 	}
 	QPainter (this).drawPixmap (paint_event->rect().topLeft(), _double_buffer, paint_event->rect());
@@ -205,18 +217,22 @@ WavePlot::resample_wave()
 	_samples_mutex.lock();
 	if (_wave)
 	{
-		_samples.resize (std::max (1, Oversampling * width()));
-		_denominator = 1.0;
-		int n = _samples.size();
-		float inverter = _invert ? -1.0f : 1.0f;
-		for (int x = 0; x < n - 1; ++x)
+		// Don't bother if wave is not immutable.
+		if (_wave->immutable())
 		{
-			_samples[x] = inverter * (*_wave)(1.0f * x / n, 0);
-			_denominator = std::max (_denominator, std::abs (_samples[x]));
+			_samples.resize (std::max (1, Oversampling * width()));
+			_denominator = 1.0;
+			int n = _samples.size();
+			float inverter = _invert ? -1.0f : 1.0f;
+			for (int x = 0; x < n - 1; ++x)
+			{
+				_samples[x] = inverter * (*_wave)(1.0f * x / n, 0);
+				_denominator = std::max (_denominator, std::abs (_samples[x]));
+			}
+			// Since wave(0.0) should be the same as wave(1.0), we'll use wave(0.0)
+			// for the last sample:
+			_samples[n-1] = inverter * (*_wave)(0.0f, 0);
 		}
-		// Since wave(0.0) should be the same as wave(1.0), we'll use wave(0.0)
-		// for the last sample:
-		_samples[n-1] = inverter * (*_wave)(0.0f, 0);
 		_to_repaint_buffer = true;
 	}
 	_samples_mutex.unlock();
