@@ -14,6 +14,7 @@ AR				= ar
 MOC				= $(QT_PREFIX)/bin/moc
 
 .PHONY: first all dep help dist clean distclean
+.DEFAULT: all
 MAKEFLAGS = --silent
 
 HEADERS =
@@ -22,9 +23,7 @@ OBJECTS =
 MOCSRCS =
 TARGETS =
 
-first: all
-
-######## FUNCS ########
+#### Helpers ####
 
 distdir		= dist/$(DIST)
 prepdir		= $(shell mkdir -p "$$(dirname "$(strip $(1))")")
@@ -40,13 +39,37 @@ else
 	_l = "[0m"
 endif
 
-######## MKFLS ########
+#### Makefiles ####
 
 include Makefile.sources
 
-######## RULES ########
+#### Commit ID support ####
 
-DEPFILES = $(call mkdeps, $(SOURCES))
+ifneq ($(VERSION_FILE),)
+COMMIT			:= $(shell cat .commit 2>/dev/null)
+COMMIT_REAL		:= $(shell git rev-parse HEAD)
+BRANCH			:= $(shell cat .branch 2>/dev/null)
+BRANCH_REAL		:= $(shell git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
+
+.PHONY: $(VERSION_FILE)
+
+$(VERSION_FILE):
+ifneq ($(COMMIT),$(COMMIT_REAL))
+	@echo "$(COMMIT_REAL)" >.commit
+	@echo "$(BRANCH_REAL)" >.branch
+	@echo "// Do not edit - automatically generated." >$@
+	@echo "namespace Haruhi { namespace Version {" >>$@
+	@echo "	const char* commit = \"$(COMMIT_REAL)\";" >>$@
+	@echo "	const char* branch = \"$(BRANCH_REAL)\";" >>$@
+	@echo "} }" >>$@
+endif
+
+$(LINKEDS): $(VERSION_FILE)
+endif
+
+#### Rules ####
+
+DEPFILES := $(call mkdeps, $(subst $(VERSION_FILE),,$(SOURCES)))
 
 all: $(distdir)/Makefile.dep $(DEPFILES) $(TARGETS)
 
@@ -116,7 +139,7 @@ $(distdir)/%.dep: %.h
 $(LINKEDS):
 	$(call prepdir, $@)
 	@echo $(_s) "LD      " $(_l) $@
-	$(LD) -o $@ $^ $(LDFLAGS)
+	$(LD) -o $@ $(OBJECTS) $(MOCOBJS) $(LDFLAGS)
 
 -include $(distdir)/Makefile.dep
 
