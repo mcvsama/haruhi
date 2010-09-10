@@ -136,6 +136,7 @@ class WavePlot: public QWidget
 	bool				_to_repaint_buffer;
 	bool				_last_enabled_state;
 	DSP::Wave*			_wave;
+	bool				_wave_is_immutable;
 	std::vector<float>	_samples;
 	Mutex				_samples_mutex;
 	QSize				_prev_size;

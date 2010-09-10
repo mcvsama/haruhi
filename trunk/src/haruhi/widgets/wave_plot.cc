@@ -36,6 +36,7 @@ WavePlot::WavePlot (QWidget* parent, const char* name):
 	_to_repaint_buffer (false),
 	_last_enabled_state (isEnabled()),
 	_wave (0),
+	_wave_is_immutable (false),
 	_denominator (1.0),
 	_dont_scale_wave (false),
 	_dont_scale_grid (false),
@@ -52,6 +53,7 @@ WavePlot::WavePlot (DSP::Wave* wave, QWidget* parent, const char* name):
 	_to_repaint_buffer (false),
 	_last_enabled_state (isEnabled()),
 	_wave (0),
+	_wave_is_immutable (false),
 	_denominator (1.0),
 	_dont_scale_wave (false),
 	_dont_scale_grid (false),
@@ -74,6 +76,7 @@ WavePlot::assign_wave (DSP::Wave* wave, bool dont_scale_wave, bool dont_scale_gr
 {
 	_samples_mutex.lock();
 	_wave = wave;
+	_wave_is_immutable = wave && wave->immutable();
 	_dont_scale_wave = dont_scale_wave;
 	_dont_scale_grid = dont_scale_grid;
 	_invert = invert;
@@ -128,7 +131,7 @@ WavePlot::paintEvent (QPaintEvent* paint_event)
 		float wave_denominator = _dont_scale_wave ? 1.0f : _denominator;
 		float grid_denominator = _dont_scale_grid ? 1.0f : _denominator;
 
-		if (_wave->immutable() && w > 1 && h > 1 && _samples.size() > 1)
+		if (_wave_is_immutable && w > 1 && h > 1 && _samples.size() > 1)
 		{
 			QColor grid_color = isEnabled() ? QColor (0xd7, 0xd7, 0xd7) : QColor (0xe0, 0xe0, 0xe0);
 
@@ -181,7 +184,7 @@ WavePlot::paintEvent (QPaintEvent* paint_event)
 		else
 			_samples_mutex.unlock();
 
-		if (_wave->immutable())
+		if (_wave_is_immutable)
 		{
 			// Phase marker:
 			if (_phase_enabled)
