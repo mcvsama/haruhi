@@ -119,20 +119,19 @@ class Waveform:
 	};
 
 	/**
-	 * Wrapper/mixin for DSP::Noise. Parameter does not change anything.
+	 * Dummy non-immutable wave class.
+	 * Used as noise wave.
 	 */
-	struct ParametricNoise:
-		public DSP::Noise,
-		public DSP::ParametricWave
+	struct DummyNoiseWave: public DSP::ParametricWave
 	{
-		ParametricNoise():
+		DummyNoiseWave():
 			ParametricWave (false)
 		{ }
 
 		Core::Sample
 		operator() (Core::Sample phase, Core::Sample frequency) const
 		{
-			return Noise::operator() (phase, frequency);
+			return 0.0f;
 		}
 	};
 

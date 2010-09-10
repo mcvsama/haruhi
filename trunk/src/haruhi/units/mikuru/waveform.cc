@@ -72,7 +72,7 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 	_waves.push_back (WaveInfo (Config::Icons16::wave_gauss(),		"Gauss",	new DSP::ParametricWaves::Gauss()));
 	_waves.push_back (WaveInfo (Config::Icons16::wave_diode(),		"Diode",	new DSP::ParametricWaves::Diode()));
 	_waves.push_back (WaveInfo (Config::Icons16::wave_chirp(),		"Chirp",	new DSP::ParametricWaves::Chirp()));
-	_waves.push_back (WaveInfo (Config::Icons16::wave_noise(),		"Noise",	new ParametricNoise()));
+	_waves.push_back (WaveInfo (Config::Icons16::wave_noise(),		"Noise",	new DummyNoiseWave()));
 
 	// Modulator waves:
 
@@ -363,15 +363,15 @@ Waveform::update_params()
 void
 Waveform::update_widgets()
 {
-	bool not_noise = !dynamic_cast<DSP::Noise*> (active_wave().wave.get());
-	_control_wave_shape->setEnabled (not_noise);
-	_control_modulator_amplitude->setEnabled (not_noise);
-	_control_modulator_index->setEnabled (not_noise);
-	_control_modulator_shape->setEnabled (not_noise);
-	_modulator_type->setEnabled (not_noise);
-	_modulator_wave_type->setEnabled (not_noise);
-	_harmonics_tab->setEnabled (not_noise);
-	_phases_tab->setEnabled (not_noise);
+	bool immutable = active_wave().wave.get()->immutable();
+	_control_wave_shape->setEnabled (immutable);
+	_control_modulator_amplitude->setEnabled (immutable);
+	_control_modulator_index->setEnabled (immutable);
+	_control_modulator_shape->setEnabled (immutable);
+	_modulator_type->setEnabled (immutable);
+	_modulator_wave_type->setEnabled (immutable);
+	_harmonics_tab->setEnabled (immutable);
+	_phases_tab->setEnabled (immutable);
 }
 
 
@@ -426,30 +426,42 @@ void
 Waveform::recompute_wave()
 {
 	DSP::ParametricWave* pw = active_wave().wave.get();
-	DSP::ParametricWave* mw = active_modulator_wave().wave.get();
-	pw->set_param (1.0f * atomic (_params.wave_shape) / Params::Waveform::WaveShapeDenominator);
-	mw->set_param (1.0f * atomic (_params.modulator_shape) / Params::Waveform::ModulatorShapeDenominator);
-	// Add harmonics to pw:
-	DSP::HarmonicsWave* hw = new DSP::HarmonicsWave (pw);
-	for (DSP::HarmonicsWave::Harmonics::size_type i = 0; i < hw->harmonics().size(); ++i)
+	// Continue only if wave is immutable:
+	if (pw->immutable())
 	{
-		int hv = _harmonics_sliders[i]->value();
-		int pv = _phases_sliders[i]->value();
-		float h = 1.0f * hv / Params::Waveform::HarmonicDenominator;
-		float p = 1.0f * pv / Params::Waveform::PhaseDenominator;
-		// Apply exponential curve to harmonic value:
-		h = h > 0 ? std::pow (h, M_E) : -std::pow (-h, M_E);
-		hw->set_harmonic (i, h, p);
-		set_button_highlighted (_harmonics_resets[i], hv != 0);
-		set_button_highlighted (_phases_resets[i], pv != 0);
+		DSP::ParametricWave* mw = active_modulator_wave().wave.get();
+		pw->set_param (1.0f * atomic (_params.wave_shape) / Params::Waveform::WaveShapeDenominator);
+		mw->set_param (1.0f * atomic (_params.modulator_shape) / Params::Waveform::ModulatorShapeDenominator);
+		// Add harmonics to pw:
+		DSP::HarmonicsWave* hw = new DSP::HarmonicsWave (pw);
+		for (DSP::HarmonicsWave::Harmonics::size_type i = 0; i < hw->harmonics().size(); ++i)
+		{
+			int hv = _harmonics_sliders[i]->value();
+			int pv = _phases_sliders[i]->value();
+			float h = 1.0f * hv / Params::Waveform::HarmonicDenominator;
+			float p = 1.0f * pv / Params::Waveform::PhaseDenominator;
+			// Apply exponential curve to harmonic value:
+			h = h > 0 ? std::pow (h, M_E) : -std::pow (-h, M_E);
+			hw->set_harmonic (i, h, p);
+			set_button_highlighted (_harmonics_resets[i], hv != 0);
+			set_button_highlighted (_phases_resets[i], pv != 0);
+		}
+		// Modulate wave:
+		int xt = atomic (_params.modulator_type);
+		DSP::ModulatedWave* xw = new DSP::ModulatedWave (hw, mw, static_cast<DSP::ModulatedWave::Type> (xt),
+														 1.0f * atomic (_params.modulator_amplitude) / Params::Waveform::ModulatorAmplitudeMax,
+														 atomic (_params.modulator_index), true);
+		// Recompute:
+		_wave_computer->update (xw);
 	}
-	// Modulate wave:
-	int xt = atomic (_params.modulator_type);
-	DSP::ModulatedWave* xw = new DSP::ModulatedWave (hw, mw, static_cast<DSP::ModulatedWave::Type> (xt),
-													 1.0f * atomic (_params.modulator_amplitude) / Params::Waveform::ModulatorAmplitudeMax,
-													 atomic (_params.modulator_index), true);
-	// Recompute:
-	_wave_computer->update (xw);
+	else
+	{
+		_base_wave_plot->assign_wave (pw, false, true);
+		_base_wave_plot->post_plot_shape();
+
+		_final_wave_plot->assign_wave (pw, false, true);
+		_final_wave_plot->post_plot_shape();
+	}
 }
 
 

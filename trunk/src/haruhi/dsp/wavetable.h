@@ -95,10 +95,6 @@ class Wavetable
 		_size = size;
 	}
 
-	/*
-	 * Inherited from Wave.
-	 */
-
 	Core::Sample
 	operator() (Core::Sample register phase, Core::Sample frequency) const
 	{
