@@ -63,6 +63,9 @@ $(VERSION_FILE):
 	@echo "	const char* commit = \"$(COMMIT_REAL)\";" >>$@
 	@echo "	const char* branch = \"$(BRANCH_REAL)\";" >>$@
 	@echo "} }" >>$@
+	$(call prepdir, $@)
+	@echo $(_s) "C++     " $(_l) $@
+	$(CXX) $(CXXFLAGS) $@ -o $(call mkobjs,$(VERSION_FILE))
 
 $(LINKEDS): $(VERSION_FILE)
 endif
