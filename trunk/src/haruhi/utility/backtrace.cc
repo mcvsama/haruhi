@@ -61,7 +61,6 @@ Backtrace::clog()
 std::ostream&
 operator<< (std::ostream& os, Backtrace const& backtrace)
 {
-	os << "Backtrace:" << std::endl;
 	for (Backtrace::Symbols::size_type i = 0, n = backtrace.symbols().size(); i < n; ++i)
 		os << "  " << std::setw (4) << i << ". " << backtrace.symbols()[i].location << ": " << backtrace.symbols()[i].name << std::endl;
 	return os;

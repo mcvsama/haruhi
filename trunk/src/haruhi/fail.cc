@@ -23,6 +23,7 @@
 #include <string>
 
 // Local:
+#include <haruhi/config/version.h>
 #include <haruhi/utility/backtrace.h>
 
 #include "fail.h"
@@ -41,12 +42,17 @@ fail (int signum)
 	features.push_back ("HARUHI_IEEE754");
 #endif
 
+	std::clog << "------------------------------------------------------------------------------------------------" << std::endl;
 	std::clog << "Haruhi died by signal. Please submit following bug report to http://haruhi.mulabs.org/report-bug" << std::endl << std::endl;
-	std::clog << "Signal: " << signum << std::endl;
-	std::clog << "Features: ";
+	std::clog << "  signal: " << signum << std::endl;
+	std::clog << "  source info: " << std::endl;
+	std::cout << "    commit: " << Haruhi::Version::commit << std::endl;
+	std::cout << "    branch: " << Haruhi::Version::branch << std::endl;
+	std::clog << "  features: ";
 	std::copy (features.begin(), features.end(), std::ostream_iterator<const char*> (std::clog, " "));
 	std::clog << std::endl;
-	std::clog << "CXXFLAGS: " << CXXFLAGS << std::endl;
+	std::clog << "  CXXFLAGS: " << CXXFLAGS << std::endl;
+	std::clog << "  backtrace:" << std::endl;
 
 	Backtrace::clog();
 	// Force coredump if enabled:
