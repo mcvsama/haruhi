@@ -46,15 +46,16 @@ include Makefile.sources
 #### Commit ID support ####
 
 ifneq ($(VERSION_FILE),)
-COMMIT			:= $(shell cat .commit 2>/dev/null)
-COMMIT_REAL		:= $(shell git rev-parse HEAD)
-BRANCH			:= $(shell cat .branch 2>/dev/null)
-BRANCH_REAL		:= $(shell git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
+COMMIT			= $(shell cat .commit 2>/dev/null)
+COMMIT_REAL		= $(shell git rev-parse HEAD)
+BRANCH			= $(shell cat .branch 2>/dev/null)
+BRANCH_REAL		= $(shell git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
 
+ifneq ($(COMMIT),$(COMMIT_REAL))
 .PHONY: $(VERSION_FILE)
 
 $(VERSION_FILE):
-ifneq ($(COMMIT),$(COMMIT_REAL))
+	@echo " Saving commit ID and branch name"
 	@echo "$(COMMIT_REAL)" >.commit
 	@echo "$(BRANCH_REAL)" >.branch
 	@echo "// Do not edit - automatically generated." >$@
@@ -62,9 +63,10 @@ ifneq ($(COMMIT),$(COMMIT_REAL))
 	@echo "	const char* commit = \"$(COMMIT_REAL)\";" >>$@
 	@echo "	const char* branch = \"$(BRANCH_REAL)\";" >>$@
 	@echo "} }" >>$@
-endif
 
 $(LINKEDS): $(VERSION_FILE)
+endif
+
 endif
 
 #### Rules ####
