@@ -19,6 +19,7 @@
 #include <QtCore/QTextCodec>
 
 // Haruhi:
+#include <haruhi/config/version.h>
 #include <haruhi/haruhi.h>
 #include <haruhi/fail.h>
 #include <haruhi/utility/backtrace.h>
@@ -39,7 +40,10 @@ int main (int argc, char** argv, char** envp)
 	// Also std::strings and const chars* are expected to be encoded in UTF-8.
 
 	try {
-		Haruhi::Haruhi haruhi (argc, argv, envp);
+		if (argc == 2 && (strcmp (argv[1], "-v") == 0 || strcmp (argv[1], "--version") == 0))
+			std::cout << "Haruhi  commit: " << Haruhi::Version::commit << "  branch: " << Haruhi::Version::branch << std::endl;
+		else
+			Haruhi::Haruhi haruhi (argc, argv, envp);
 	}
 	catch (...)
 	{
