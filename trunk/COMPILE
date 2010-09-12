@@ -27,9 +27,7 @@ On Archlinux it is /opt/qt, on Ubuntu /usr/share/qt3.
 On newer Ubuntu versions you'll have to modify Makefile.conf so that QT_PREFIX is /usr and
 PKG_CONFIG_FLAGS is concantenated with -I$(QT_PREFIX)/include/qt3 $(QT_FLAGS).
 
-In Makefile.conf there are different CXXFLAGS for different purposes: CXXFLAGS_i686, CXXFLAGS_debug, etc.
-Default build assumes variable DIST=debug, so CXXFLAGS_debug will be used. If you're not a developer
-you don't want this (debug version is very slow and big). If you want to build Haruhi for i686, use DIST=i686:
+There are several targets in Makefile.conf. Use DIST variable to select target and something like:
 
  $ DIST=i686 make
 

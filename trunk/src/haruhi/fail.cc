@@ -51,10 +51,9 @@ fail (int signum)
 	std::clog << "  features: ";
 	std::copy (features.begin(), features.end(), std::ostream_iterator<const char*> (std::clog, " "));
 	std::clog << std::endl;
-	std::clog << "  CXXFLAGS: " << CXXFLAGS << std::endl;
 	std::clog << "  backtrace:" << std::endl;
-
 	Backtrace::clog();
+	std::clog << "  CXXFLAGS: " << CXXFLAGS << std::endl << std::endl;
 	// Force coredump if enabled:
 	signal (signum, SIG_DFL);
 	kill (getpid(), signum);
