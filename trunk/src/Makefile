@@ -46,6 +46,9 @@ include Makefile.sources
 #### Commit ID support ####
 
 ifneq ($(VERSION_FILE),)
+GIT_AVAILABLE := $(shell which git 1>/dev/null && echo OK)
+
+ifeq ($(GIT_AVAILABLE),OK)
 COMMIT			= $(shell cat .commit 2>/dev/null)
 COMMIT_REAL		= $(shell git rev-parse HEAD)
 BRANCH			= $(shell cat .branch 2>/dev/null)
@@ -68,9 +71,9 @@ $(VERSION_FILE):
 	$(CXX) $(CXXFLAGS) $@ -o $(call mkobjs,$(VERSION_FILE))
 
 $(LINKEDS): $(VERSION_FILE)
-endif
-
-endif
+endif # COMMIT != COMMIT_REAL
+endif # GIT_AVAILABLE == OK
+endif # VERSION_FILE != ""
 
 #### Rules ####
 
