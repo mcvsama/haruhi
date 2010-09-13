@@ -203,6 +203,7 @@ struct Params
 			HARUHI_MIKURU_PARAM (Volume,				       0,	+1000000,	+1000000,	 +750000)
 			HARUHI_MIKURU_PARAM (PortamentoTime,		       0,	+1000000,	 +100000,	       0)
 			HARUHI_MIKURU_PARAM (Phase,					-1000000,	+1000000,	+1000000,	       0)
+			HARUHI_MIKURU_PARAM (NoiseLevel,			       0,	+1000000,	+1000000,	       0)
 		};
 
 		enum KeyPriority {
@@ -215,7 +216,10 @@ struct Params
 		int volume;
 		int portamento_time;
 		int phase;
+		int noise_level;
 
+		int wave_enabled;
+		int noise_enabled;
 		int frequency_mod_range;
 		int pitchbend_enabled;
 		int pitchbend_released;

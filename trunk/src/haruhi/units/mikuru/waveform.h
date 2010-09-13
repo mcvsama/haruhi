@@ -35,8 +35,6 @@
 #include <haruhi/dsp/functions.h>
 #include <haruhi/dsp/harmonics_wave.h>
 #include <haruhi/dsp/modulated_wave.h>
-#include <haruhi/dsp/parametric_wave.h>
-#include <haruhi/dsp/noise.h>
 #include <haruhi/utility/signal.h>
 #include <haruhi/utility/memory.h>
 
@@ -116,23 +114,6 @@ class Waveform:
 		QPixmap						icon;
 		QString						name;
 		Shared<DSP::ParametricWave>	wave;
-	};
-
-	/**
-	 * Dummy non-immutable wave class.
-	 * Used as noise wave.
-	 */
-	struct DummyNoiseWave: public DSP::ParametricWave
-	{
-		DummyNoiseWave():
-			ParametricWave (false)
-		{ }
-
-		Core::Sample
-		operator() (Core::Sample phase, Core::Sample frequency) const
-		{
-			return 0.0f;
-		}
 	};
 
 	typedef std::vector<WaveInfo>		Waves;

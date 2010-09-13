@@ -159,6 +159,7 @@ class Oscillator: public QWidget
 	Core::EventPort*	_port_unison_spread;
 	Core::EventPort*	_port_unison_init;
 	Core::EventPort*	_port_unison_noise;
+	Core::EventPort*	_port_noise_level;
 
 	// Proxies:
 	ControllerProxy*	_proxy_volume;
@@ -172,6 +173,7 @@ class Oscillator: public QWidget
 	ControllerProxy*	_proxy_unison_spread;
 	ControllerProxy*	_proxy_unison_init;
 	ControllerProxy*	_proxy_unison_noise;
+	ControllerProxy*	_proxy_noise_level;
 
 	// Event dispatchers for polyphonic-input ports:
 	EventDispatcher*	_evdisp_amplitude;
@@ -201,6 +203,7 @@ class Oscillator: public QWidget
 	// Other knobs:
 	Knob*				_control_portamento_time;
 	Knob*				_control_phase;
+	Knob*				_control_noise_level;
 
 	// Pitchbend/transposition:
 	QCheckBox*			_const_portamento_time;
@@ -217,6 +220,10 @@ class Oscillator: public QWidget
 	QCheckBox*			_monophonic;
 	QCheckBox*			_monophonic_retrigger;
 	QComboBox*			_monophonic_key_priority;
+
+	// Other:
+	QCheckBox*			_wave_enabled;
+	QCheckBox*			_noise_enabled;
 };
 
 } // namespace MikuruPrivate

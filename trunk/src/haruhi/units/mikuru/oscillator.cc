@@ -82,6 +82,7 @@ Oscillator::Oscillator (Part* part, Core::PortGroup* port_group, QString const& 
 	_port_unison_noise = new Core::EventPort (_mikuru, port_prefix + " - Unison noise", Core::Port::Input, port_group, Core::Port::Polyphonic);
 	_port_portamento_time = new Core::EventPort (_mikuru, port_prefix + " - Portamento time", Core::Port::Input, port_group);
 	_port_phase = new Core::EventPort (_mikuru, port_prefix + " - Phase", Core::Port::Input, port_group);
+	_port_noise_level = new Core::EventPort (_mikuru, port_prefix + " - Noise level", Core::Port::Input, port_group);
 	_mikuru->graph()->unlock();
 
 	_proxy_volume = new ControllerProxy (_port_volume, &_oscillator_params.volume, 0, HARUHI_MIKURU_MINMAX (Params::Oscillator::Volume), po.volume);
@@ -98,6 +99,7 @@ Oscillator::Oscillator (Part* part, Core::PortGroup* port_group, QString const& 
 	_proxy_portamento_time->config()->user_limit_max = 0.5f * Params::Oscillator::PortamentoTimeDenominator;
 	_proxy_portamento_time->apply_config();
 	_proxy_phase = new ControllerProxy (_port_phase, &_oscillator_params.phase, 0, HARUHI_MIKURU_MINMAX (Params::Oscillator::Phase), po.phase);
+	_proxy_noise_level = new ControllerProxy (_port_noise_level, &_oscillator_params.noise_level, 0, HARUHI_MIKURU_MINMAX (Params::Oscillator::NoiseLevel), po.noise_level);
 
 	_control_volume = new Knob (_panel, _proxy_volume, "Volume", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Oscillator::Volume, 100), 2);
 	_control_volume->set_unit_bay (_mikuru->unit_bay());
@@ -121,6 +123,8 @@ Oscillator::Oscillator (Part* part, Core::PortGroup* port_group, QString const& 
 	_control_portamento_time->set_unit_bay (_mikuru->unit_bay());
 	_control_phase = new Knob (_panel, _proxy_phase, "Phase", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Oscillator::Phase, 200), 2);
 	_control_phase->set_unit_bay (_mikuru->unit_bay());
+	_control_noise_level = new Knob (_panel, _proxy_noise_level, "Noise lvl", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Oscillator::NoiseLevel, 200), 2);
+	_control_noise_level->set_unit_bay (_mikuru->unit_bay());
 
 	QObject::connect (_control_panorama, SIGNAL (changed (int)), this, SLOT (update_voice_panorama()));
 	QObject::connect (_control_detune, SIGNAL (changed (int)), this, SLOT (update_voice_detune()));
@@ -242,6 +246,16 @@ Oscillator::Oscillator (Part* part, Core::PortGroup* port_group, QString const& 
 	_frequency_modulation_smoothing->setValue (po.frequency_smoothing);
 	QObject::connect (_frequency_modulation_smoothing, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 
+	// Wave enabled:
+	_wave_enabled = new QCheckBox ("Wave enabled", grid4);
+	_wave_enabled->setChecked (po.wave_enabled);
+	QObject::connect (_wave_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
+
+	// Noise enabled:
+	_noise_enabled = new QCheckBox ("Noise enabled", grid4);
+	_noise_enabled->setChecked (po.noise_enabled);
+	QObject::connect (_noise_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
+
 	// Layouts:
 
 	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
@@ -271,7 +285,7 @@ Oscillator::Oscillator (Part* part, Core::PortGroup* port_group, QString const& 
 	third_h_layout->addWidget (_control_velocity_sens);
 	third_h_layout->addWidget (_control_portamento_time);
 	third_h_layout->addWidget (_control_phase);
-	third_layout->addWidget (new Q3GroupBox (2, Qt::Horizontal, "", _panel));
+	third_h_layout->addWidget (_control_noise_level);
 	third_v_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
 	controls_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
@@ -299,6 +313,7 @@ Oscillator::~Oscillator()
 	delete _control_unison_noise;
 	delete _control_portamento_time;
 	delete _control_phase;
+	delete _control_noise_level;
 
 	delete _evdisp_amplitude;
 	delete _evdisp_frequency;
@@ -322,6 +337,7 @@ Oscillator::~Oscillator()
 	delete _proxy_unison_spread;
 	delete _proxy_unison_init;
 	delete _proxy_unison_noise;
+	delete _proxy_noise_level;
 
 	_mikuru->graph()->lock();
 	delete _port_volume;
@@ -337,6 +353,7 @@ Oscillator::~Oscillator()
 	delete _port_unison_noise;
 	delete _port_portamento_time;
 	delete _port_phase;
+	delete _port_noise_level;
 	_mikuru->graph()->unlock();
 }
 
@@ -348,6 +365,7 @@ Oscillator::process_events()
 	_proxy_volume->process_events();
 	_proxy_portamento_time->process_events();
 	_proxy_phase->process_events();
+	_proxy_noise_level->process_events();
 	// Voice:
 	_evdisp_amplitude->load_events();
 	_evdisp_frequency->load_events();
@@ -374,6 +392,8 @@ Oscillator::load_oscillator_params()
 	_proxy_portamento_time->set_value (po.portamento_time);
 	_proxy_phase->set_value (po.phase);
 	// Other:
+	_wave_enabled->setChecked (po.wave_enabled);
+	_noise_enabled->setChecked (po.noise_enabled);
 	_frequency_modulation_range->setValue (po.frequency_mod_range);
 	_pitchbend_enabled->setChecked (po.pitchbend_enabled);
 	_pitchbend_released->setChecked (po.pitchbend_released);
@@ -441,6 +461,8 @@ Oscillator::update_oscillator_params()
 
 	Params::Oscillator po;
 
+	po.wave_enabled = _wave_enabled->isChecked();
+	po.noise_enabled = _noise_enabled->isChecked();
 	po.frequency_mod_range = _frequency_modulation_range->value();
 	po.pitchbend_enabled = _pitchbend_enabled->isChecked();
 	po.pitchbend_released = _pitchbend_released->isChecked();

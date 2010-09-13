@@ -216,7 +216,10 @@ Params::Oscillator::Oscillator():
 	volume (VolumeDefault),
 	portamento_time (PortamentoTimeDefault),
 	phase (PhaseDefault),
+	noise_level (NoiseLevelDefault),
 	// Non-controller:
+	wave_enabled (1),
+	noise_enabled (0),
 	frequency_mod_range (60),
 	pitchbend_enabled (1),
 	pitchbend_released (0),
@@ -241,12 +244,15 @@ Params::Oscillator::set_controller_params (Oscillator& other)
 	HARUHI_MIKURU_COPY_ATOMIC (volume)
 	HARUHI_MIKURU_COPY_ATOMIC (portamento_time)
 	HARUHI_MIKURU_COPY_ATOMIC (phase)
+	HARUHI_MIKURU_COPY_ATOMIC (noise_level)
 }
 
 
 void
 Params::Oscillator::set_non_controller_params (Oscillator& other)
 {
+	HARUHI_MIKURU_COPY_ATOMIC (wave_enabled)
+	HARUHI_MIKURU_COPY_ATOMIC (noise_enabled)
 	HARUHI_MIKURU_COPY_ATOMIC (frequency_mod_range)
 	HARUHI_MIKURU_COPY_ATOMIC (pitchbend_enabled)
 	HARUHI_MIKURU_COPY_ATOMIC (pitchbend_released)

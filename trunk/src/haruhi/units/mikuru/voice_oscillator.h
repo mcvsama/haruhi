@@ -43,6 +43,12 @@ class VoiceOscillator
 	VoiceOscillator (DSP::Wavetable* wavetable = 0);
 
 	/**
+	 * Enables/disables wavetable generator.
+	 */
+	void
+	set_wavetable_enabled (bool enabled) { _wavetable_enabled = enabled; }
+
+	/**
 	 * Sets new wavetable. May be 0.
 	 */
 	void
@@ -55,16 +61,28 @@ class VoiceOscillator
 	wavetable() const { return _wavetable; }
 
 	/**
-	 * Returns frequency source buffer.
+	 * Sets frequency source buffer.
 	 */
 	void
 	set_frequency_source (Core::AudioBuffer* source) { _frequency_source = source; }
 
 	/**
-	 * Returns amplitude source buffer.
+	 * Sets amplitude source buffer.
 	 */
 	void
 	set_amplitude_source (Core::AudioBuffer* source) { _amplitude_source = source; }
+
+	/**
+	 * Enables/disables noise generator.
+	 */
+	void
+	set_noise_enabled (bool enabled) { _noise_enabled = enabled; }
+
+	/**
+	 * Sets noise amplitude.
+	 */
+	void
+	set_noise_amplitude (Core::Sample amplitude) { _noise_amplitude = amplitude; }
 
 	/**
 	 * Argument: [-1.0…1.0]
@@ -109,7 +127,10 @@ class VoiceOscillator
 	void
 	fill (Core::AudioBuffer* output)
 	{
-		if (_wavetable == 0)
+		Core::Sample* const o = output->begin();
+		bool mul = false;
+
+		if (_wavetable == 0 || !_wavetable_enabled)
 			std::fill (output->begin(), output->end(), 0.0f);
 		else
 		{
@@ -117,12 +138,22 @@ class VoiceOscillator
 				fill_with_noised_unison (output);
 			else
 				fill_without_noised_unison (output);
+			mul = true;
+		}
 
+		// Add noise:
+		if (_noise_enabled && _noise_amplitude > 0.0f)
+		{
+			for (std::size_t i = 0, n = output->size(); i < n; ++i)
+				o[i] += _noise_amplitude * _noise.get (_noise_state);
+			mul = true;
+		}
+
+		if (mul)
+		{
 			// Multiply samples by _volume and divide samples by _unison_number:
 			float amp = std::pow (_1_div_unison_number, 0.75f);
-			Core::Sample* const o = output->begin();
 
-			// TODO might be optimized by using SIMD instructions:
 			for (std::size_t i = 0, n = output->size(); i < n; ++i)
 				o[i] *= amp * (*_amplitude_source)[i];
 		}
@@ -215,7 +246,7 @@ class VoiceOscillator
 				_z = f + _e * noise_sample() * _distribution_lookup[p];
 				_phases[p] = mod1 (_phases[p] + _z);
 				// Don't take _z as wave's frequency, because this might result in frequent jumping
-				// between two wavetables and unwanted audible white-noise:
+				// between two wavetables and unwanted audible noise on some notes:
 				_sum += (*_wavetable)(_phases[p], f);
 				f += _d;
 			}
@@ -233,6 +264,7 @@ class VoiceOscillator
 	}
 
   private:
+	bool				_wavetable_enabled;
 	DSP::Wavetable*		_wavetable;
 	Core::AudioBuffer*	_frequency_source;
 	Core::AudioBuffer*	_amplitude_source;
@@ -248,8 +280,11 @@ class VoiceOscillator
 	Core::Sample		_unison_relative_spread;	// Cached _unison_spread / _unson_number.
 	Core::Sample		_half_unison_number;		// Cached (_unison_number - 1) / 2.0f.
 
+	// Used for both white noise and unison noise:
 	DSP::Noise			_noise;
 	DSP::Noise::State	_noise_state;
+	bool				_noise_enabled;
+	Core::Sample		_noise_amplitude;
 
 	// Helpers:
 	Core::Sample		_sum;	// Unison waves sum (multiphases sum)

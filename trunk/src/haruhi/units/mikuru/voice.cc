@@ -129,11 +129,16 @@ Voice::mixin (Core::AudioBuffer* output1, Core::AudioBuffer* output2)
 	process_frequency();
 	process_amplitude();
 
+	Params::Oscillator* oscillator_params = _part->oscillator()->oscillator_params();
+
 	// Main oscillator:
 	_oscillator.set_wavetable (_part->waveform()->wavetable());
 	_oscillator.set_unison_spread ((2.0f / Params::Voice::UnisonSpreadDenominator) * atomic (_params.unison_spread));
 	_oscillator.set_unison_number (atomic (_params.unison_index));
 	_oscillator.set_unison_noise ((1.0f / Params::Voice::UnisonNoiseDenominator) * atomic (_params.unison_noise));
+	_oscillator.set_noise_amplitude (1.0f * atomic (oscillator_params->noise_level) / Params::Oscillator::NoiseLevelDenominator);
+	_oscillator.set_wavetable_enabled (atomic (oscillator_params->wave_enabled));
+	_oscillator.set_noise_enabled (atomic (oscillator_params->noise_enabled));
 	_oscillator.fill (&_commons->oscillator_buffer);
 
 	_double_filter.configure (static_cast<DoubleFilter::Configuration> (static_cast<int> (atomic (_part->filters()->params()->filter_configuration))), &_filter1_params, &_filter2_params);

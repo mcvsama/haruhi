@@ -152,7 +152,10 @@ Patch::save_state (QDomElement& element) const
 			save_parameter (oscillator_element, "volume", oscillator_params.volume, oscillator->_proxy_volume);
 			save_parameter (oscillator_element, "portamento-time", oscillator_params.portamento_time, oscillator->_proxy_portamento_time);
 			save_parameter (oscillator_element, "phase", oscillator_params.phase, oscillator->_proxy_phase);
+			save_parameter (oscillator_element, "noise-level", oscillator_params.noise_level, oscillator->_proxy_noise_level);
 			// Other:
+			save_parameter (oscillator_element, "wave-enabled", oscillator_params.wave_enabled);
+			save_parameter (oscillator_element, "noise-enabled", oscillator_params.noise_enabled);
 			save_parameter (oscillator_element, "frequency-modulation-range", oscillator_params.frequency_mod_range);
 			save_parameter (oscillator_element, "pitchbend-enabled", oscillator_params.pitchbend_enabled);
 			save_parameter (oscillator_element, "pitchbend-released", oscillator_params.pitchbend_released);
@@ -491,7 +494,10 @@ Patch::load_state (QDomElement const& element)
 					load_parameter (parameters, "volume", oscillator_params.volume, oscillator->_proxy_volume);
 					load_parameter (parameters, "portamento-time", oscillator_params.portamento_time, oscillator->_proxy_portamento_time);
 					load_parameter (parameters, "phase", oscillator_params.phase, oscillator->_proxy_phase);
+					load_parameter (parameters, "noise-level", oscillator_params.noise_level, oscillator->_proxy_noise_level);
 					// Other:
+					load_parameter (parameters, "wave-enabled", oscillator_params.wave_enabled);
+					load_parameter (parameters, "noise-enabled", oscillator_params.noise_enabled);
 					load_parameter (parameters, "frequency-modulation-range", oscillator_params.frequency_mod_range);
 					load_parameter (parameters, "pitchbend-enabled", oscillator_params.pitchbend_enabled);
 					load_parameter (parameters, "pitchbend-released", oscillator_params.pitchbend_released);

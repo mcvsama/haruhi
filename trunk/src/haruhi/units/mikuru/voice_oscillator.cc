@@ -23,6 +23,7 @@ using Core::Sample;
 namespace MikuruPrivate {
 
 VoiceOscillator::VoiceOscillator (DSP::Wavetable* wavetable):
+	_wavetable_enabled (true),
 	_wavetable (wavetable),
 	_frequency_source (0),
 	_amplitude_source (0),
@@ -32,7 +33,9 @@ VoiceOscillator::VoiceOscillator (DSP::Wavetable* wavetable):
 	_unison_spread (0),
 	_unison_noise (0.0),
 	_noise(),
-	_noise_state (_noise.state())
+	_noise_state (_noise.state()),
+	_noise_enabled (false),
+	_noise_amplitude (0.0f)
 {
 	set_unison_number (1);
 	set_phase (0);

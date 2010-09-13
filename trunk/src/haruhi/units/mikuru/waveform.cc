@@ -72,7 +72,6 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 	_waves.push_back (WaveInfo (Config::Icons16::wave_gauss(),		"Gauss",	new DSP::ParametricWaves::Gauss()));
 	_waves.push_back (WaveInfo (Config::Icons16::wave_diode(),		"Diode",	new DSP::ParametricWaves::Diode()));
 	_waves.push_back (WaveInfo (Config::Icons16::wave_chirp(),		"Chirp",	new DSP::ParametricWaves::Chirp()));
-	_waves.push_back (WaveInfo (Config::Icons16::wave_noise(),		"Noise",	new DummyNoiseWave()));
 
 	// Modulator waves:
 
