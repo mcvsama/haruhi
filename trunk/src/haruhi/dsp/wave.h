@@ -49,7 +49,9 @@ class Wave
 	 * Returns function's sample.
 	 * \param	phase is the phase in range [0, 1].
 	 * \param	frequency is the base frequency of the signal this sample will
-	 * 			be used in (this is for limiting bandwidth).
+	 * 			be used in (this is for limiting bandwidth). This is absolute
+	 * 			frequency (in range [0..1]). If you want to get highest possible
+	 * 			bandwidth, pass 0.0.
 	 */
 	virtual Core::Sample
 	operator() (Core::Sample register phase, Core::Sample frequency) const = 0;

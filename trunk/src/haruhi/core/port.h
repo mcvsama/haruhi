@@ -101,6 +101,12 @@ class Port: private Noncopyable
 	name() const;
 
 	/**
+	 * \returns	comment for this port.
+	 */
+	std::string
+	comment() const;
+
+	/**
 	 * \returns	fully qualified name (ie. group-name:port-name)
 	 */
 	std::string
@@ -126,10 +132,17 @@ class Port: private Noncopyable
 
 	/**
 	 * Sets new name for port.
-	 * Triggers notification in graph.
+	 * Triggers 'renamed' notification in graph.
 	 */
 	void
 	set_name (std::string const& name);
+
+	/**
+	 * Sets new comment for the port.
+	 * Triggers 'renamed' notification in graph.
+	 */
+	void
+	set_comment (std::string const& comment);
 
 	/**
 	 * \returns	buffer for port, either port's own or by cascade to nearest buffer.
@@ -207,6 +220,7 @@ class Port: private Noncopyable
   private:
 	Unit*			_unit;
 	std::string		_name;
+	std::string		_comment;
 	Direction		_direction;
 	Buffer*			_buffer;
 	PortGroup*		_group;

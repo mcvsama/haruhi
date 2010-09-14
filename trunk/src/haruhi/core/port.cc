@@ -55,6 +55,13 @@ Port::name() const
 
 
 std::string
+Port::comment() const
+{
+	return _comment;
+}
+
+
+std::string
 Port::full_name() const
 {
 	return (_group ? _group->name() + ":" : "") + _name;
@@ -72,6 +79,15 @@ void
 Port::set_name (std::string const& name)
 {
 	_name = name;
+	if (graph())
+		graph()->port_renamed (this);
+}
+
+
+void
+Port::set_comment (std::string const& comment)
+{
+	_comment = comment;
 	if (graph())
 		graph()->port_renamed (this);
 }

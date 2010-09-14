@@ -3,7 +3,7 @@ Use 4-character width tab characters.
 	function_call();
 	function_call (arguments); // Notice space before args list.
 
-	class Class: public OneClass
+	class Class: public ClassOne
 	{
 	  public: // Notice 2 spaces instead of full tab.
 		Class();
@@ -19,8 +19,8 @@ Use 4-character width tab characters.
 	};
 
 	class Class:
-		public OneClass,
-		public TwoClass
+		public ClassOne,
+		public ClassTwo
 	{
 	}
 
