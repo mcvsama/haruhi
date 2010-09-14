@@ -34,7 +34,7 @@ class ControllerProxy:
   public:
 	/**
 	 * Client class. Knobs and other controls
-	 * must derive this class to be able to be paired
+	 * must derive this class in order to be able to be paired
 	 * with ControllerProxy.
 	 */
 	class Widget: public PeriodicUpdater::Receiver
