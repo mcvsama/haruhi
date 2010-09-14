@@ -56,6 +56,9 @@ class UnitBayAware
 };
 
 
+/**
+ * UnitBay is an Unit that contains other Units inside.
+ */
 class UnitBay:
 	public Unit,
 	public Signal::Receiver
