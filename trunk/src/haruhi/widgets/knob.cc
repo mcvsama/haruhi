@@ -220,25 +220,23 @@ Knob::SpinBox::float_to_int (float y) const
 }
 
 
-Knob::Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& label, float show_min, float show_max, int step, int decimals):
+Knob::Knob (QWidget* parent, ControllerProxy* controller_proxy_, QString const& label, float show_min, float show_max, int step, int decimals):
 	QFrame (parent),
-	_controller_proxy (controller_proxy),
-	_unit_bay (0),
+	Controller (controller_proxy_),
 	_prevent_recursion (false),
 	_connect_signal_mapper (0),
-	_disconnect_signal_mapper (0),
-	_learning (false)
+	_disconnect_signal_mapper (0)
 {
-	int const hard_limit_min = _controller_proxy->config()->hard_limit_min;
-	int const hard_limit_max = _controller_proxy->config()->hard_limit_max;
-	int const user_limit_min = _controller_proxy->config()->user_limit_min;
-	int const user_limit_max = _controller_proxy->config()->user_limit_max;
+	int const hard_limit_min = controller_proxy()->config()->hard_limit_min;
+	int const hard_limit_max = controller_proxy()->config()->hard_limit_max;
+	int const user_limit_min = controller_proxy()->config()->user_limit_min;
+	int const user_limit_max = controller_proxy()->config()->user_limit_max;
 
 	setFrameStyle (QFrame::StyledPanel | QFrame::Raised);
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 	_label = new QLabel (label, this);
-	_dial_control = new DialControl (this, hard_limit_min, hard_limit_max, _controller_proxy->config()->reverse (_controller_proxy->value()));
+	_dial_control = new DialControl (this, hard_limit_min, hard_limit_max, controller_proxy()->config()->reverse (controller_proxy()->value()));
 	_spin_box = new SpinBox (this, this, user_limit_min, user_limit_max, show_min, show_max, step, decimals);
 	_label->setBuddy (_spin_box);
 	_context_menu = new QMenu (this);
@@ -261,14 +259,14 @@ Knob::Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& l
 	QObject::connect (_dial_control, SIGNAL (valueChanged (int)), this, SLOT (dial_changed (int)));
 	QObject::connect (_spin_box, SIGNAL (valueChanged (int)), this, SLOT (spin_changed (int)));
 
-	_controller_proxy->set_widget (this);
+	controller_proxy()->set_widget (this);
 	schedule_for_update();
 }
 
 
 Knob::~Knob()
 {
-	_controller_proxy->set_widget (0);
+	controller_proxy()->set_widget (0);
 	forget_about_update();
 }
 
@@ -276,8 +274,8 @@ Knob::~Knob()
 void
 Knob::read_config()
 {
-	_spin_box->setMinimum (_controller_proxy->config()->user_limit_min);
-	_spin_box->setMaximum (_controller_proxy->config()->user_limit_max);
+	_spin_box->setMinimum (controller_proxy()->config()->user_limit_min);
+	_spin_box->setMaximum (controller_proxy()->config()->user_limit_max);
 	schedule_for_update();
 }
 
@@ -285,9 +283,9 @@ Knob::read_config()
 void
 Knob::read()
 {
-	int value = _controller_proxy->value();
+	int value = controller_proxy()->value();
 	_prevent_recursion = true;
-	_dial_control->setValue (_controller_proxy->config()->reverse (value));
+	_dial_control->setValue (controller_proxy()->config()->reverse (value));
 	_spin_box->setValue (value);
 	emit changed (value);
 	_prevent_recursion = false;
@@ -305,7 +303,7 @@ Knob::periodic_update()
 void
 Knob::reset()
 {
-	_controller_proxy->reset();
+	controller_proxy()->reset();
 	schedule_for_update();
 }
 
@@ -323,29 +321,11 @@ Knob::configure()
 
 
 void
-Knob::start_learning()
-{
-	_learning = true;
-	_unit_bay->session()->event_backend()->start_learning (this, Haruhi::EventBackend::Controller | Haruhi::EventBackend::Pitchbend);
-	update_widgets();
-}
-
-
-void
-Knob::stop_learning()
-{
-	_learning = false;
-	_unit_bay->session()->event_backend()->stop_learning (this, Haruhi::EventBackend::Controller | Haruhi::EventBackend::Pitchbend);
-	update_widgets();
-}
-
-
-void
 Knob::update_widgets()
 {
 	QPalette palette = _label->palette();
-	palette.setColor (QPalette::Active, QPalette::WindowText, _learning ? QColor (0x00, 0x11, 0xff) : _std_text_color);
-	palette.setColor (QPalette::Inactive, QPalette::WindowText, _learning ? QColor (0x00, 0x11, 0xff) : _std_text_color);
+	palette.setColor (QPalette::Active, QPalette::WindowText, learning() ? QColor (0x00, 0x11, 0xff) : _std_text_color);
+	palette.setColor (QPalette::Inactive, QPalette::WindowText, learning() ? QColor (0x00, 0x11, 0xff) : _std_text_color);
 	_label->setPalette (palette);
 	update();
 }
@@ -373,38 +353,38 @@ Knob::create_context_menu()
 	QPixmap pixmap_for_port_group (Config::Icons16::port_group());
 
 	_context_menu->addAction ("&Reset", this, SLOT (reset()));
-	if (_learning)
-		_context_menu->addAction (Config::Icons16::colorpicker(), "Stop learning", this, SLOT (stop_learning()));
+	if (learning())
+		_context_menu->addAction (Config::Icons16::colorpicker(), "Stop learning", this, SLOT (stop_learning_slot()));
 	else
-		_context_menu->addAction (Config::Icons16::colorpicker(), "&Learn", this, SLOT (start_learning()));
+		_context_menu->addAction (Config::Icons16::colorpicker(), "&Learn", this, SLOT (start_learning_slot()));
 	_context_menu->addAction (Config::Icons16::configure(), "Con&figure", this, SLOT (configure()));
 
 	// Add Connect/Disconnect menu items:
-	if (_unit_bay)
+	if (unit_bay())
 	{
 		_context_menu->addSeparator();
 		_connect_menu = _context_menu->addMenu (Config::Icons16::connect(), "&Connect");
 		_disconnect_menu = _context_menu->addMenu (Config::Icons16::disconnect(), "&Disconnect");
 
-		_unit_bay->graph()->lock();
+		unit_bay()->graph()->lock();
 
 		// Connect AudioBackend:
-		QMenu* audio_backend_menu = _connect_menu->addMenu (pixmap_for_unit, QString::fromStdString (_unit_bay->session()->audio_backend()->title()));
-		create_connect_menu (audio_backend_menu, _unit_bay->session()->audio_backend(), pixmap_for_port_group, pixmap_for_port);
+		QMenu* audio_backend_menu = _connect_menu->addMenu (pixmap_for_unit, QString::fromStdString (unit_bay()->session()->audio_backend()->title()));
+		create_connect_menu (audio_backend_menu, unit_bay()->session()->audio_backend(), pixmap_for_port_group, pixmap_for_port);
 
 		// Connect EventBackend:
-		QMenu* event_backend_menu = _connect_menu->addMenu (pixmap_for_unit, QString::fromStdString (_unit_bay->session()->event_backend()->title()));
-		create_connect_menu (event_backend_menu, _unit_bay->session()->event_backend(), pixmap_for_port_group, pixmap_for_port);
+		QMenu* event_backend_menu = _connect_menu->addMenu (pixmap_for_unit, QString::fromStdString (unit_bay()->session()->event_backend()->title()));
+		create_connect_menu (event_backend_menu, unit_bay()->session()->event_backend(), pixmap_for_port_group, pixmap_for_port);
 
 		// Iterate over all Units from UnitBay and create PopupMenus for their EventPorts:
-		for (Haruhi::UnitBay::Units::iterator u = _unit_bay->units().begin(); u != _unit_bay->units().end(); ++u)
+		for (Haruhi::UnitBay::Units::iterator u = unit_bay()->units().begin(); u != unit_bay()->units().end(); ++u)
 		{
 			QMenu* unit_menu = _connect_menu->addMenu (pixmap_for_unit, QString::fromStdString ((*u)->title()));
 			create_connect_menu (unit_menu, *u, pixmap_for_port_group, pixmap_for_port);
 		}
 
 		// Iterate over all connected ports and create Disconnect menu:
-		Core::Ports const& back_connections = _controller_proxy->event_port()->back_connections();
+		Core::Ports const& back_connections = controller_proxy()->event_port()->back_connections();
 		if (!back_connections.empty())
 		{
 			_context_menu->addSeparator();
@@ -423,7 +403,7 @@ Knob::create_context_menu()
 		_connect_menu->setEnabled (!_connect_menu->isEmpty());
 		_disconnect_menu->setEnabled (!_disconnect_menu->isEmpty());
 
-		_unit_bay->graph()->unlock();
+		unit_bay()->graph()->unlock();
 	}
 
 	return _context_menu;
@@ -462,7 +442,7 @@ Knob::create_connect_menu (QMenu* unit_menu, Core::Unit* unit, QPixmap const& pi
 		{
 			_action_id += 1;
 			QAction* action = group_menu->addAction (pixmap_for_port, QString::fromStdString ((*p)->name()), _connect_signal_mapper, SLOT (map()));
-			action->setEnabled (!(*p)->connected_to (_controller_proxy->event_port()));
+			action->setEnabled (!(*p)->connected_to (controller_proxy()->event_port()));
 			_connect_signal_mapper->setMapping (action, _action_id);
 			_context_menu_port_map[_action_id] = *p;
 		}
@@ -474,7 +454,7 @@ Knob::create_connect_menu (QMenu* unit_menu, Core::Unit* unit, QPixmap const& pi
 	{
 		_action_id += 1;
 		QAction* action = unit_menu->addAction (pixmap_for_port, QString::fromStdString ((*p)->name()), _connect_signal_mapper, SLOT (map()));
-		action->setEnabled (!(*p)->connected_to (_controller_proxy->event_port()));
+		action->setEnabled (!(*p)->connected_to (controller_proxy()->event_port()));
 		_connect_signal_mapper->setMapping (action, _action_id);
 		_context_menu_port_map[_action_id] = *p;
 	}
@@ -484,16 +464,10 @@ Knob::create_connect_menu (QMenu* unit_menu, Core::Unit* unit, QPixmap const& pi
 
 
 void
-Knob::learned_port (Haruhi::EventBackend::EventTypes, Core::EventPort* event_port)
+Knob::learning_state_changed()
 {
-	if (_unit_bay)
-	{
-		_learning = false;
-		_unit_bay->graph()->lock();
-		event_port->connect_to (_controller_proxy->event_port());
-		_unit_bay->graph()->unlock();
-		schedule_for_update();
-	}
+	schedule_for_update();
+	update_widgets();
 }
 
 
@@ -529,7 +503,7 @@ Knob::dial_changed (int value)
 {
 	if (_prevent_recursion)
 		return;
-	_controller_proxy->set_value (_controller_proxy->config()->forward (value));
+	controller_proxy()->set_value (controller_proxy()->config()->forward (value));
 	schedule_for_update();
 }
 
@@ -539,7 +513,7 @@ Knob::spin_changed (int value)
 {
 	if (_prevent_recursion)
 		return;
-	_controller_proxy->set_value (value);
+	controller_proxy()->set_value (value);
 	schedule_for_update();
 }
 
@@ -547,14 +521,14 @@ Knob::spin_changed (int value)
 void
 Knob::connect_port (int action_id)
 {
-	if (_unit_bay)
+	if (unit_bay())
 	{
-		_unit_bay->graph()->lock();
+		unit_bay()->graph()->lock();
 		ContextMenuPortMap::iterator a = _context_menu_port_map.find (action_id);
 		// FIXME If port is deleted between menu popup and action exec, connect_to() will be executed on singular object.
 		if (a != _context_menu_port_map.end())
-			a->second->connect_to (_controller_proxy->event_port());
-		_unit_bay->graph()->unlock();
+			a->second->connect_to (controller_proxy()->event_port());
+		unit_bay()->graph()->unlock();
 	}
 }
 
@@ -562,14 +536,14 @@ Knob::connect_port (int action_id)
 void
 Knob::disconnect_port (int action_id)
 {
-	if (_unit_bay)
+	if (unit_bay())
 	{
-		_unit_bay->graph()->lock();
+		unit_bay()->graph()->lock();
 		ContextMenuPortMap::iterator a = _context_menu_port_map.find (action_id);
 		// FIXME If port is deleted between menu popup and action exec, connect_to() will be executed on singular object.
 		if (a != _context_menu_port_map.end())
-			a->second->disconnect_from (_controller_proxy->event_port());
-		_unit_bay->graph()->unlock();
+			a->second->disconnect_from (controller_proxy()->event_port());
+		unit_bay()->graph()->unlock();
 	}
 }
 
@@ -577,11 +551,11 @@ Knob::disconnect_port (int action_id)
 void
 Knob::disconnect_from_all()
 {
-	if (_unit_bay)
+	if (unit_bay())
 	{
-		_unit_bay->graph()->lock();
-		_controller_proxy->event_port()->disconnect();
-		_unit_bay->graph()->unlock();
+		unit_bay()->graph()->lock();
+		controller_proxy()->event_port()->disconnect();
+		unit_bay()->graph()->unlock();
 	}
 }
 

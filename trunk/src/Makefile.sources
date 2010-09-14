@@ -327,6 +327,7 @@ SRC_MOCHDRS += haruhi/units/vanhalen/vanhalen.h
 ######### /widgets ########
 
 SRC_HEADERS += haruhi/widgets/clickable_label.h
+SRC_HEADERS += haruhi/widgets/controller.h
 SRC_HEADERS += haruhi/widgets/dial_control.h
 SRC_HEADERS += haruhi/widgets/envelope_plot.h
 SRC_HEADERS += haruhi/widgets/frequency_response_plot.h
@@ -335,6 +336,7 @@ SRC_HEADERS += haruhi/widgets/level_meter.h
 SRC_HEADERS += haruhi/widgets/wave_plot.h
 
 SRC_SOURCES += haruhi/widgets/clickable_label.cc
+SRC_SOURCES += haruhi/widgets/controller.cc
 SRC_SOURCES += haruhi/widgets/dial_control.cc
 SRC_SOURCES += haruhi/widgets/envelope_plot.cc
 SRC_SOURCES += haruhi/widgets/frequency_response_plot.cc

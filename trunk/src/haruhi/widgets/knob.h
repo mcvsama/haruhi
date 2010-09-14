@@ -26,10 +26,9 @@
 #include <QtGui/QDialog>
 
 // Haruhi:
-#include <haruhi/unit_bay.h>
 #include <haruhi/controller_proxy.h>
+#include <haruhi/widgets/controller.h>
 #include <haruhi/widgets/dial_control.h>
-#include <haruhi/components/event_backend/event_backend.h>
 
 
 class Knob;
@@ -68,8 +67,7 @@ class KnobProperties: public QDialog
  */
 class Knob:
 	public QFrame,
-	public ControllerProxy::Widget,
-	public Haruhi::EventBackend::Learnable
+	public Haruhi::Controller
 {
 	Q_OBJECT
 
@@ -140,7 +138,7 @@ class Knob:
 	 * Creates Knob.
 	 *
 	 * \param	parent: Parent widget.
-	 * \param	controller_proxy: ControllerProxy object, must not be 0.
+	 * \param	controller_proxy: ControllerProxy object, must be present.
 	 * \param	label: Displayed label.
 	 * \param	show_min, show_max: Values range shown in spinbox.
 	 * \param	step: Change step.
@@ -149,15 +147,6 @@ class Knob:
 	Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& label, float show_min, float show_max, int step, int decimals);
 
 	~Knob();
-
-	ControllerProxy*
-	controller_proxy() const { return _controller_proxy; }
-
-	/**
-	 * Sets unit bay so Knob can display in popup menu list of ports it can connect to.
-	 */
-	void
-	set_unit_bay (Haruhi::UnitBay* unit_bay) { _unit_bay = unit_bay; }
 
 	/**
 	 * Reads ControllerProxy::Config and updates widgets.
@@ -198,18 +187,6 @@ class Knob:
 	void
 	configure();
 
-	/**
-	 * \entry	Qt thread only.
-	 */
-	void
-	start_learning();
-
-	/**
-	 * \entry	Qt thread only.
-	 */
-	void
-	stop_learning();
-
   private:
 	void
 	update_widgets();
@@ -226,9 +203,9 @@ class Knob:
 	void
 	create_connect_menu (QMenu*, Core::Unit*, QPixmap const& pixmap_for_port_group, QPixmap const& pixmap_for_port);
 
-	// EventBackend::Learnable API:
+	// Controller API:
 	void
-	learned_port (Haruhi::EventBackend::EventTypes, Core::EventPort*);
+	learning_state_changed();
 
   protected:
 	void
@@ -253,19 +230,22 @@ class Knob:
 	void
 	disconnect_from_all();
 
+	void
+	start_learning_slot() { start_learning(); }
+
+	void
+	stop_learning_slot() { stop_learning(); }
+
   signals:
 	void
 	changed (int);
 
   private:
-	ControllerProxy*	_controller_proxy;
-	Haruhi::UnitBay*	_unit_bay;
 	bool				_prevent_recursion;
 	QSignalMapper*		_connect_signal_mapper;
 	QSignalMapper*		_disconnect_signal_mapper;
 	ContextMenuPortMap	_context_menu_port_map;
 	int					_action_id; // Helper for generating new IDs for _signal_mapper.
-	bool				_learning;
 	QColor				_std_text_color;
 
 	// Widgets:
