@@ -26,6 +26,8 @@
 #include <haruhi/utility/mutex.h>
 
 
+namespace Haruhi {
+
 /**
  * PeriodicUpdater calls periodically update() method
  * on all queued widgets. It's useful for UI updates
@@ -104,6 +106,8 @@ class PeriodicUpdater: public QObject
 	Mutex					_set_mutex;
 	QTimer*					_timer;
 };
+
+} // namespace Haruhi
 
 #endif
 

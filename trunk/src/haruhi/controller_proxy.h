@@ -24,6 +24,8 @@
 #include <haruhi/utility/saveable_state.h>
 
 
+namespace Haruhi {
+
 /**
  * Proxy between event port and int parameter.
  * Also handles UI widget.
@@ -156,6 +158,8 @@ class ControllerProxy:
 	Core::EventPort*	_event_port;
 	Widget*				_widget;
 };
+
+} // namespace Haruhi
 
 #endif
 

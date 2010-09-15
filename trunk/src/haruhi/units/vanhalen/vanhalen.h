@@ -51,27 +51,27 @@ class VanHalen:
 
   private:
 	// Drive:
-	Core::EventPort*	_input;
-	Core::EventPort*	_output;
-	Core::AudioPort*	_audio_input_1;
-	Core::AudioPort*	_audio_input_2;
-	Core::AudioPort*	_audio_output_1;
-	Core::AudioPort*	_audio_output_2;
+	Core::EventPort*			_input;
+	Core::EventPort*			_output;
+	Core::AudioPort*			_audio_input_1;
+	Core::AudioPort*			_audio_input_2;
+	Core::AudioPort*			_audio_output_1;
+	Core::AudioPort*			_audio_output_2;
 
-	Core::AudioBuffer	_buf1;
-	Core::AudioBuffer	_buf2;
+	Core::AudioBuffer			_buf1;
+	Core::AudioBuffer			_buf2;
 
-	DSP::DelayLine		_delay1;
-	DSP::DelayLine		_delay2;
+	DSP::DelayLine				_delay1;
+	DSP::DelayLine				_delay2;
 
-	ControllerProxy*	_proxy_comb_index;
-	ControllerProxy*	_proxy_comb_alpha;
+	Haruhi::ControllerProxy*	_proxy_comb_index;
+	Haruhi::ControllerProxy*	_proxy_comb_alpha;
 
-	Knob*				_knob_comb_index;
-	Knob*				_knob_comb_alpha;
+	Haruhi::Knob*				_knob_comb_index;
+	Haruhi::Knob*				_knob_comb_alpha;
 
-	int					_comb_index;
-	int					_comb_alpha;
+	int							_comb_index;
+	int							_comb_alpha;
 };
 
 

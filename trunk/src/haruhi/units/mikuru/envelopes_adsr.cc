@@ -125,23 +125,23 @@ ADSR::create_proxies()
 {
 	Params::ADSR p = _params;
 
-	_proxy_delay = new ControllerProxy (_port_delay, &_params.delay, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::Delay), p.delay);
+	_proxy_delay = new Haruhi::ControllerProxy (_port_delay, &_params.delay, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::Delay), p.delay);
 	_proxy_delay->config()->curve = 1.0;
 	_proxy_delay->apply_config();
-	_proxy_attack = new ControllerProxy (_port_attack, &_params.attack, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::Attack), p.attack);
+	_proxy_attack = new Haruhi::ControllerProxy (_port_attack, &_params.attack, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::Attack), p.attack);
 	_proxy_attack->config()->curve = 1.0;
 	_proxy_attack->apply_config();
-	_proxy_attack_hold = new ControllerProxy (_port_attack_hold, &_params.attack_hold, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::AttackHold), p.attack_hold);
+	_proxy_attack_hold = new Haruhi::ControllerProxy (_port_attack_hold, &_params.attack_hold, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::AttackHold), p.attack_hold);
 	_proxy_attack_hold->config()->curve = 1.0;
 	_proxy_attack_hold->apply_config();
-	_proxy_decay = new ControllerProxy (_port_decay, &_params.decay, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::Decay), p.decay);
+	_proxy_decay = new Haruhi::ControllerProxy (_port_decay, &_params.decay, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::Decay), p.decay);
 	_proxy_decay->config()->curve = 1.0;
 	_proxy_decay->apply_config();
-	_proxy_sustain = new ControllerProxy (_port_sustain, &_params.sustain, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::Sustain), p.sustain);
-	_proxy_sustain_hold = new ControllerProxy (_port_sustain_hold, &_params.sustain_hold, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::SustainHold), p.sustain_hold);
+	_proxy_sustain = new Haruhi::ControllerProxy (_port_sustain, &_params.sustain, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::Sustain), p.sustain);
+	_proxy_sustain_hold = new Haruhi::ControllerProxy (_port_sustain_hold, &_params.sustain_hold, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::SustainHold), p.sustain_hold);
 	_proxy_sustain_hold->config()->curve = 1.0;
 	_proxy_sustain_hold->apply_config();
-	_proxy_release = new ControllerProxy (_port_release, &_params.release, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::Release), p.release);
+	_proxy_release = new Haruhi::ControllerProxy (_port_release, &_params.release, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::Release), p.release);
 	_proxy_release->config()->curve = 1.0;
 	_proxy_release->apply_config();
 }
@@ -150,19 +150,19 @@ ADSR::create_proxies()
 void
 ADSR::create_knobs (QWidget* parent)
 {
-	_control_delay = new Knob (parent, _proxy_delay, "Delay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Delay, 100), 2);
+	_control_delay = new Haruhi::Knob (parent, _proxy_delay, "Delay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Delay, 100), 2);
 	_control_delay->set_unit_bay (_mikuru->unit_bay());
-	_control_attack = new Knob (parent, _proxy_attack, "Attack", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Attack, 100), 2);
+	_control_attack = new Haruhi::Knob (parent, _proxy_attack, "Attack", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Attack, 100), 2);
 	_control_attack->set_unit_bay (_mikuru->unit_bay());
-	_control_attack_hold = new Knob (parent, _proxy_attack_hold, "Att.hold", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::AttackHold, 100), 2);
+	_control_attack_hold = new Haruhi::Knob (parent, _proxy_attack_hold, "Att.hold", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::AttackHold, 100), 2);
 	_control_attack_hold->set_unit_bay (_mikuru->unit_bay());
-	_control_decay = new Knob (parent, _proxy_decay, "Decay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Decay, 100), 2);
+	_control_decay = new Haruhi::Knob (parent, _proxy_decay, "Decay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Decay, 100), 2);
 	_control_decay->set_unit_bay (_mikuru->unit_bay());
-	_control_sustain = new Knob (parent, _proxy_sustain, "Sustain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Sustain, 100), 2);
+	_control_sustain = new Haruhi::Knob (parent, _proxy_sustain, "Sustain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Sustain, 100), 2);
 	_control_sustain->set_unit_bay (_mikuru->unit_bay());
-	_control_sustain_hold = new Knob (parent, _proxy_sustain_hold, "Sus.hold", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::SustainHold, 100), 2);
+	_control_sustain_hold = new Haruhi::Knob (parent, _proxy_sustain_hold, "Sus.hold", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::SustainHold, 100), 2);
 	_control_sustain_hold->set_unit_bay (_mikuru->unit_bay());
-	_control_release = new Knob (parent, _proxy_release, "Release", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Release, 100), 2);
+	_control_release = new Haruhi::Knob (parent, _proxy_release, "Release", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Release, 100), 2);
 	_control_release->set_unit_bay (_mikuru->unit_bay());
 
 	QObject::connect (_control_delay, SIGNAL (changed (int)), this, SLOT (update_plot()));
@@ -183,7 +183,7 @@ ADSR::create_widgets (QWidget* knobs_panel)
 	QFrame* plot_frame = new QFrame (knobs_panel);
 	plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	_plot = new EnvelopePlot (plot_frame);
+	_plot = new Haruhi::EnvelopePlot (plot_frame);
 	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::spacing);
 	plot_frame_layout->addWidget (_plot);
 

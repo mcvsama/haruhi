@@ -231,20 +231,20 @@ LFO::create_proxies()
 {
 	Params::LFO p = _params;
 
-	_proxy_delay = new ControllerProxy (_port_delay, &_params.delay, 0, HARUHI_MIKURU_MINMAX (Params::LFO::Delay), p.delay);
+	_proxy_delay = new Haruhi::ControllerProxy (_port_delay, &_params.delay, 0, HARUHI_MIKURU_MINMAX (Params::LFO::Delay), p.delay);
 	_proxy_delay->config()->curve = 1.0;
 	_proxy_delay->apply_config();
-	_proxy_fade_in = new ControllerProxy (_port_fade_in, &_params.fade_in, 0, HARUHI_MIKURU_MINMAX (Params::LFO::FadeIn), p.fade_in);
+	_proxy_fade_in = new Haruhi::ControllerProxy (_port_fade_in, &_params.fade_in, 0, HARUHI_MIKURU_MINMAX (Params::LFO::FadeIn), p.fade_in);
 	_proxy_fade_in->config()->curve = 1.0;
 	_proxy_fade_in->apply_config();
-	_proxy_frequency = new ControllerProxy (_port_frequency, &_params.frequency, 0, HARUHI_MIKURU_MINMAX (Params::LFO::Frequency), p.frequency);
+	_proxy_frequency = new Haruhi::ControllerProxy (_port_frequency, &_params.frequency, 0, HARUHI_MIKURU_MINMAX (Params::LFO::Frequency), p.frequency);
 	_proxy_frequency->config()->curve = 0.5;
 	_proxy_frequency->apply_config();
-	_proxy_level = new ControllerProxy (_port_level, &_params.level, 0, HARUHI_MIKURU_MINMAX (Params::LFO::Level), p.level);
-	_proxy_depth = new ControllerProxy (_port_depth, &_params.depth, 0, HARUHI_MIKURU_MINMAX (Params::LFO::Depth), p.depth);
-	_proxy_phase = new ControllerProxy (_port_phase, &_params.phase, 0, HARUHI_MIKURU_MINMAX (Params::LFO::Phase), p.phase);
-	_proxy_wave_shape = new ControllerProxy (_port_wave_shape, &_params.wave_shape, 0, HARUHI_MIKURU_MINMAX (Params::LFO::WaveShape), p.wave_shape);
-	_proxy_fade_out = new ControllerProxy (_port_fade_out, &_params.fade_out, 0, HARUHI_MIKURU_MINMAX (Params::LFO::FadeOut), p.fade_out);
+	_proxy_level = new Haruhi::ControllerProxy (_port_level, &_params.level, 0, HARUHI_MIKURU_MINMAX (Params::LFO::Level), p.level);
+	_proxy_depth = new Haruhi::ControllerProxy (_port_depth, &_params.depth, 0, HARUHI_MIKURU_MINMAX (Params::LFO::Depth), p.depth);
+	_proxy_phase = new Haruhi::ControllerProxy (_port_phase, &_params.phase, 0, HARUHI_MIKURU_MINMAX (Params::LFO::Phase), p.phase);
+	_proxy_wave_shape = new Haruhi::ControllerProxy (_port_wave_shape, &_params.wave_shape, 0, HARUHI_MIKURU_MINMAX (Params::LFO::WaveShape), p.wave_shape);
+	_proxy_fade_out = new Haruhi::ControllerProxy (_port_fade_out, &_params.fade_out, 0, HARUHI_MIKURU_MINMAX (Params::LFO::FadeOut), p.fade_out);
 	_proxy_fade_out->config()->curve = 1.0;
 	_proxy_fade_out->apply_config();
 }
@@ -253,21 +253,21 @@ LFO::create_proxies()
 void
 LFO::create_knobs (QWidget* parent)
 {
-	_control_delay = new Knob (parent, _proxy_delay, "Delay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Delay, 1000), 2);
+	_control_delay = new Haruhi::Knob (parent, _proxy_delay, "Delay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Delay, 1000), 2);
 	_control_delay->set_unit_bay (_mikuru->unit_bay());
-	_control_fade_in = new Knob (parent, _proxy_fade_in, "Fade in", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::FadeIn, 1000), 2);
+	_control_fade_in = new Haruhi::Knob (parent, _proxy_fade_in, "Fade in", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::FadeIn, 1000), 2);
 	_control_fade_in->set_unit_bay (_mikuru->unit_bay());
-	_control_frequency = new Knob (parent, _proxy_frequency, "Frequency", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Frequency, 3000), 3);
+	_control_frequency = new Haruhi::Knob (parent, _proxy_frequency, "Frequency", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Frequency, 3000), 3);
 	_control_frequency->set_unit_bay (_mikuru->unit_bay());
-	_control_level = new Knob (parent, _proxy_level, "Level", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Level, 100), 2);
+	_control_level = new Haruhi::Knob (parent, _proxy_level, "Level", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Level, 100), 2);
 	_control_level->set_unit_bay (_mikuru->unit_bay());
-	_control_depth = new Knob (parent, _proxy_depth, "Depth", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Depth, 100), 2);
+	_control_depth = new Haruhi::Knob (parent, _proxy_depth, "Depth", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Depth, 100), 2);
 	_control_depth->set_unit_bay (_mikuru->unit_bay());
-	_control_phase = new Knob (parent, _proxy_phase, "Phase", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Phase, 1000), 3);
+	_control_phase = new Haruhi::Knob (parent, _proxy_phase, "Phase", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Phase, 1000), 3);
 	_control_phase->set_unit_bay (_mikuru->unit_bay());
-	_control_wave_shape = new Knob (parent, _proxy_wave_shape, "W.shape", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::WaveShape, 1000), 3);
+	_control_wave_shape = new Haruhi::Knob (parent, _proxy_wave_shape, "W.shape", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::WaveShape, 1000), 3);
 	_control_wave_shape->set_unit_bay (_mikuru->unit_bay());
-	_control_fade_out = new Knob (parent, _proxy_fade_out, "Fade out", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::FadeOut, 100), 2);
+	_control_fade_out = new Haruhi::Knob (parent, _proxy_fade_out, "Fade out", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::FadeOut, 100), 2);
 	_control_fade_out->set_unit_bay (_mikuru->unit_bay());
 
 	QObject::connect (_control_fade_out, SIGNAL (changed (int)), this, SLOT (update_plot()));
@@ -287,7 +287,7 @@ LFO::create_widgets (QWidget* knobs_panel)
 	QFrame* plot_frame = new QFrame (knobs_panel);
 	plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	_plot = new WavePlot (plot_frame);
+	_plot = new Haruhi::WavePlot (plot_frame);
 	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::spacing);
 	plot_frame_layout->addWidget (_plot);
 

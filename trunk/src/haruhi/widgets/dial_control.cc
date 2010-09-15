@@ -29,6 +29,8 @@
 #include "dial_control.h"
 
 
+namespace Haruhi {
+
 DialControl::DialControl (QWidget* parent, int value_min, int value_max, int value):
 	QWidget (parent, 0, Qt::WRepaintNoErase),
 	Q3RangeControl (value_min, value_max, 1, 1, value),
@@ -134,4 +136,6 @@ DialControl::rangeChange()
 	_to_update = true;
 	update();
 }
+
+} // namespace Haruhi
 

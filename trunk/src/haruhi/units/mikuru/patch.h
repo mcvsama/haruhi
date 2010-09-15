@@ -80,7 +80,7 @@ class Patch: public SaveableState
 	 */
 	template<class Value>
 		void
-		save_parameter (QDomElement& parameters, QString const& name, Value value, ControllerProxy* proxy) const
+		save_parameter (QDomElement& parameters, QString const& name, Value value, Haruhi::ControllerProxy* proxy) const
 		{
 			QDomElement param = parameters.ownerDocument().createElement (name);
 			param.setAttribute ("user-limit-min", proxy->config()->user_limit_min);
@@ -115,7 +115,7 @@ class Patch: public SaveableState
 	 */
 	template<class Value>
 		void
-		load_parameter (Parameters const& parameters, QString const& name, Value& value, ControllerProxy* proxy) const
+		load_parameter (Parameters const& parameters, QString const& name, Value& value, Haruhi::ControllerProxy* proxy) const
 		{
 			Parameters::const_iterator p = parameters.find (name);
 			if (p != parameters.end())

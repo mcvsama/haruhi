@@ -23,6 +23,8 @@
 #include "controller_proxy.h"
 
 
+namespace Haruhi {
+
 ControllerProxy::Config::Config (int limit_min, int limit_max):
 	curve (0.0f),
 	hard_limit_min (limit_min),
@@ -141,3 +143,4 @@ ControllerProxy::load_state (QDomElement const& element)
 	apply_config();
 }
 
+} // namespace Haruhi

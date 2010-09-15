@@ -79,7 +79,7 @@ class Waveshaper: public QWidget
 	bool				_loading_params;
 
 	// Knobs:
-	Knob*				_control;
+	Haruhi::Knob*		_control;
 	int					_i;// TODO temporary
 };
 

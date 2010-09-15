@@ -28,6 +28,8 @@
 #include <haruhi/dsp/envelope.h>
 
 
+namespace Haruhi {
+
 class EnvelopePlot: public QWidget
 {
 	Q_OBJECT
@@ -183,6 +185,8 @@ class EnvelopePlot: public QWidget
 	bool				_dragging;
 	QPoint				_drag_start_pos;
 };
+
+} // namespace Haruhi
 
 #endif
 

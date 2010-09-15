@@ -99,40 +99,40 @@ class General: public QWidget
 	update_threads (int threads);
 
   private:
-	Mikuru*				_mikuru;
-	Params::General		_params;
-	bool				_loading_params;
+	Mikuru*						_mikuru;
+	Params::General				_params;
+	bool						_loading_params;
 
-	bool				_dont_notify_threads_number;
-	QSpinBox*			_threads_number;
-	QSpinBox*			_polyphony;
-	QCheckBox*			_enable_audio_input;
+	bool						_dont_notify_threads_number;
+	QSpinBox*					_threads_number;
+	QSpinBox*					_polyphony;
+	QCheckBox*					_enable_audio_input;
 
 	// Ports:
-	Core::EventPort*	_port_volume;
-	Core::EventPort*	_port_detune;
-	Core::EventPort*	_port_panorama;
-	Core::EventPort*	_port_stereo_width;
-	Core::EventPort*	_port_input_volume;
-	Core::EventPort*	_port_pitchbend;
-	Core::EventPort*	_port_amplitude;
-	Core::EventPort*	_port_frequency;
+	Core::EventPort*			_port_volume;
+	Core::EventPort*			_port_detune;
+	Core::EventPort*			_port_panorama;
+	Core::EventPort*			_port_stereo_width;
+	Core::EventPort*			_port_input_volume;
+	Core::EventPort*			_port_pitchbend;
+	Core::EventPort*			_port_amplitude;
+	Core::EventPort*			_port_frequency;
 
 	// Controller proxies:
-	ControllerProxy*	_proxy_volume;
-	ControllerProxy*	_proxy_detune;
-	ControllerProxy*	_proxy_panorama;
-	ControllerProxy*	_proxy_stereo_width;
-	ControllerProxy*	_proxy_input_volume;
+	Haruhi::ControllerProxy*	_proxy_volume;
+	Haruhi::ControllerProxy*	_proxy_detune;
+	Haruhi::ControllerProxy*	_proxy_panorama;
+	Haruhi::ControllerProxy*	_proxy_stereo_width;
+	Haruhi::ControllerProxy*	_proxy_input_volume;
 
 	// Knobs:
-	Knob*				_control_volume;
-	Knob*				_control_detune;
-	Knob*				_control_panorama;
-	Knob*				_control_stereo_width;
-	Knob*				_control_input_volume;
+	Haruhi::Knob*				_control_volume;
+	Haruhi::Knob*				_control_detune;
+	Haruhi::Knob*				_control_panorama;
+	Haruhi::Knob*				_control_stereo_width;
+	Haruhi::Knob*				_control_input_volume;
 
-	Envelopes*			_envelopes;
+	Envelopes*					_envelopes;
 };
 
 } // namespace MikuruPrivate

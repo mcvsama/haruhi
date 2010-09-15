@@ -21,6 +21,8 @@
 #include <QtGui/QLabel>
 
 
+namespace Haruhi {
+
 class ClickableLabel: public QLabel
 {
 	Q_OBJECT
@@ -42,6 +44,8 @@ class ClickableLabel: public QLabel
   private:
 	Qt::ButtonState _button_state;
 };
+
+} // namespace Haruhi
 
 #endif
 

@@ -154,40 +154,40 @@ class EG: public Envelope
 	update_point_knobs();
 
   private:
-	Mikuru*					_mikuru;
-	Params::EG				_params;
-	bool					_loading_params;
-	bool					_updating_widgets;
+	Mikuru*						_mikuru;
+	Params::EG					_params;
+	bool						_loading_params;
+	bool						_updating_widgets;
 	// Set to true to stop point controls changing envelope:
-	bool					_mute_point_controls;
-	int						_id;
+	bool						_mute_point_controls;
+	int							_id;
 	// Segment lengths in template envelope are measured for artificial
 	// sample-rate: ARTIFICIAL_SAMPLE_RATE samples/sec. Therefore when creating real envelope
 	// all segment lengths must be recomputed to match current sample-rate.
-	DSP::Envelope			_envelope_template;
-	EGs						_egs;
-	Core::AudioBuffer		_buffer;
+	DSP::Envelope				_envelope_template;
+	EGs							_egs;
+	Core::AudioBuffer			_buffer;
 	// List of Voices which has been dropped and need ADSRs to be deleted also:
-	std::list<Voice*>		_dropped_voices;
+	std::list<Voice*>			_dropped_voices;
 
-	int						_segment_duration;
-	int						_point_value;
+	int							_segment_duration;
+	int							_point_value;
 
-	Core::PortGroup*		_port_group;
-	Core::EventPort*		_port_point_value;
-	Core::EventPort*		_port_segment_duration;
-	Core::EventPort*		_port_output;
+	Core::PortGroup*			_port_group;
+	Core::EventPort*			_port_point_value;
+	Core::EventPort*			_port_segment_duration;
+	Core::EventPort*			_port_output;
 
-	ControllerProxy*		_proxy_point_value;
-	ControllerProxy*		_proxy_segment_duration;
+	Haruhi::ControllerProxy*	_proxy_point_value;
+	Haruhi::ControllerProxy*	_proxy_segment_duration;
 
-	QCheckBox*				_enabled;
-	Knob*					_control_point_value;
-	Knob*					_control_segment_duration;
-	QSpinBox*				_active_point;
-	EnvelopePlot*			_plot;
-	QSpinBox*				_sustain_point;
-	QSpinBox*				_segments;
+	QCheckBox*					_enabled;
+	Haruhi::Knob*				_control_point_value;
+	Haruhi::Knob*				_control_segment_duration;
+	QSpinBox*					_active_point;
+	Haruhi::EnvelopePlot*		_plot;
+	QSpinBox*					_sustain_point;
+	QSpinBox*					_segments;
 };
 
 } // namespace MikuruPrivate

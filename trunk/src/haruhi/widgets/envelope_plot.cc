@@ -32,6 +32,8 @@
 #include "envelope_plot.h"
 
 
+namespace Haruhi {
+
 EnvelopePlot::EnvelopePlot (QWidget* parent, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
 	_sample_rate (1),
@@ -417,4 +419,6 @@ EnvelopePlot::customEvent (QEvent* event)
 	if (dynamic_cast<UpdateRequest*> (event))
 		update();
 }
+
+} // namespace Haruhi
 

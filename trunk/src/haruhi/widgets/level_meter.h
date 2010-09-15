@@ -30,6 +30,8 @@
 #include <haruhi/utility/numeric.h>
 
 
+namespace Haruhi {
+
 class LevelMetersGroup;
 
 
@@ -162,6 +164,8 @@ class LevelMetersGroup: public QWidget
 	// Timer for decaying meters:
 	QTimer*				_timer;
 };
+
+} // namespace Haruhi
 
 #endif
 

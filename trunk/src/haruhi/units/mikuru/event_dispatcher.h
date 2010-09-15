@@ -106,7 +106,7 @@ class EventDispatcher
 	/**
 	 * Takes ownership of Receiver and deletes it upon destruction.
 	 */
-	EventDispatcher (Core::EventPort* port, Knob* knob, Receiver* receiver);
+	EventDispatcher (Core::EventPort* port, Haruhi::Knob* knob, Receiver* receiver);
 
 	/**
 	 * Takes ownership of Receiver and deletes it upon destruction.
@@ -126,12 +126,12 @@ class EventDispatcher
 	load_events();
 
   public:
-	Core::EventPort*		_port;
-	Knob*					_knob;
-	Receiver*				_receiver;
-	VCEMap					_vcemap;
-	int						_min;
-	int						_max;
+	Core::EventPort*	_port;
+	Haruhi::Knob*		_knob;
+	Receiver*			_receiver;
+	VCEMap				_vcemap;
+	int					_min;
+	int					_max;
 };
 
 } // namespace MikuruPrivate

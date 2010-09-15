@@ -31,6 +31,8 @@
 #include "level_meter.h"
 
 
+namespace Haruhi {
+
 LevelMeter::LevelMeter (QWidget* parent, LevelMetersGroup* group, float lower_db, float upper_db, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
 	_group (group),
@@ -321,4 +323,6 @@ LevelMetersGroup::update_meters()
 		(*m)->update();
 	}
 }
+
+} // namespace Haruhi
 

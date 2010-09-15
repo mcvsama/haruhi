@@ -31,6 +31,8 @@
 #include "wave_plot.h"
 
 
+namespace Haruhi {
+
 WavePlot::WavePlot (QWidget* parent, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
 	_to_repaint_buffer (false),
@@ -256,4 +258,6 @@ WavePlot::customEvent (QEvent* event)
 	if (dynamic_cast<UpdateRequest*> (event))
 		update();
 }
+
+} // namespace Haruhi
 

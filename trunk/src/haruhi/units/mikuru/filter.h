@@ -107,48 +107,48 @@ class Filter: public QWidget
 	update_frequency_response();
 
   public:
-	Signal::Signal0			params_updated;
+	Signal::Signal0					params_updated;
 
   private:
-	Mikuru*					_mikuru;
-	Params::Filter			_params;
-	bool					_loading_params;
-	Part*					_part;
-	RBJImpulseResponse		_impulse_response;
-	bool					_polyphonic_control;
+	Mikuru*							_mikuru;
+	Params::Filter					_params;
+	bool							_loading_params;
+	Part*							_part;
+	RBJImpulseResponse				_impulse_response;
+	bool							_polyphonic_control;
 
 	// Proxies:
-	ControllerProxy*		_proxy_frequency;
-	ControllerProxy*		_proxy_resonance;
-	ControllerProxy*		_proxy_gain;
-	ControllerProxy*		_proxy_attenuation;
+	Haruhi::ControllerProxy*		_proxy_frequency;
+	Haruhi::ControllerProxy*		_proxy_resonance;
+	Haruhi::ControllerProxy*		_proxy_gain;
+	Haruhi::ControllerProxy*		_proxy_attenuation;
 
 	// Ports:
-	Core::EventPort*		_port_frequency;
-	Core::EventPort*		_port_resonance;
-	Core::EventPort*		_port_gain;
-	Core::EventPort*		_port_attenuation;
+	Core::EventPort*				_port_frequency;
+	Core::EventPort*				_port_resonance;
+	Core::EventPort*				_port_gain;
+	Core::EventPort*				_port_attenuation;
 
 	// Event dispatchers for polyphonic-input ports:
-	EventDispatcher*		_evdisp_frequency;
-	EventDispatcher*		_evdisp_resonance;
-	EventDispatcher*		_evdisp_gain;
-	EventDispatcher*		_evdisp_attenuation;
-	FilterID				_filter_id;
+	EventDispatcher*				_evdisp_frequency;
+	EventDispatcher*				_evdisp_resonance;
+	EventDispatcher*				_evdisp_gain;
+	EventDispatcher*				_evdisp_attenuation;
+	FilterID						_filter_id;
 
 	// Enabled:
-	StyledCheckBoxLabel*	_filter_label;
+	StyledCheckBoxLabel*			_filter_label;
 
 	// Widgets and knobs:
-	QWidget*				_panel;
-	FrequencyResponsePlot*	_response_plot;
-	QComboBox*				_filter_type;
-	QComboBox*				_passes;
-	QCheckBox*				_limiter_enabled;
-	Knob*					_control_frequency;
-	Knob*					_control_resonance;
-	Knob*					_control_gain;
-	Knob*					_control_attenuation;
+	QWidget*						_panel;
+	Haruhi::FrequencyResponsePlot*	_response_plot;
+	QComboBox*						_filter_type;
+	QComboBox*						_passes;
+	QCheckBox*						_limiter_enabled;
+	Haruhi::Knob*					_control_frequency;
+	Haruhi::Knob*					_control_resonance;
+	Haruhi::Knob*					_control_gain;
+	Haruhi::Knob*					_control_attenuation;
 };
 
 } // namespace MikuruPrivate

@@ -56,7 +56,7 @@ Filter::Filter (FilterID filter_id, Core::PortGroup* port_group, QString const& 
 	QFrame* plot_frame = new QFrame (_panel);
 	plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	_response_plot = new FrequencyResponsePlot (plot_frame);
+	_response_plot = new Haruhi::FrequencyResponsePlot (plot_frame);
 	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::spacing);
 	plot_frame_layout->addWidget (_response_plot);
 
@@ -67,24 +67,24 @@ Filter::Filter (FilterID filter_id, Core::PortGroup* port_group, QString const& 
 	_port_attenuation = new Core::EventPort (_mikuru, (port_prefix + " - Attenuate").toStdString(), Core::Port::Input, port_group, _polyphonic_control ? Core::Port::Polyphonic : 0);
 	_mikuru->graph()->unlock();
 
-	_proxy_frequency = new ControllerProxy (_port_frequency, &_params.frequency, &_params.frequency_smoothing, HARUHI_MIKURU_MINMAX (Params::Filter::Frequency), p.frequency);
+	_proxy_frequency = new Haruhi::ControllerProxy (_port_frequency, &_params.frequency, &_params.frequency_smoothing, HARUHI_MIKURU_MINMAX (Params::Filter::Frequency), p.frequency);
 	_proxy_frequency->config()->curve = 1.0;
 	_proxy_frequency->config()->user_limit_min = 0.04 * Params::Filter::FrequencyDenominator;
 	_proxy_frequency->config()->user_limit_max = 22.0 * Params::Filter::FrequencyDenominator;
 	_proxy_frequency->apply_config();
-	_proxy_resonance = new ControllerProxy (_port_resonance, &_params.resonance, &_params.resonance_smoothing, HARUHI_MIKURU_MINMAX (Params::Filter::Resonance), p.resonance);
-	_proxy_gain = new ControllerProxy (_port_gain, &_params.gain, &_params.gain_smoothing, HARUHI_MIKURU_MINMAX (Params::Filter::Gain), p.gain);
-	_proxy_attenuation = new ControllerProxy (_port_attenuation, &_params.attenuation, &_params.attenuation_smoothing, HARUHI_MIKURU_MINMAX (Params::Filter::Attenuation), p.attenuation);
+	_proxy_resonance = new Haruhi::ControllerProxy (_port_resonance, &_params.resonance, &_params.resonance_smoothing, HARUHI_MIKURU_MINMAX (Params::Filter::Resonance), p.resonance);
+	_proxy_gain = new Haruhi::ControllerProxy (_port_gain, &_params.gain, &_params.gain_smoothing, HARUHI_MIKURU_MINMAX (Params::Filter::Gain), p.gain);
+	_proxy_attenuation = new Haruhi::ControllerProxy (_port_attenuation, &_params.attenuation, &_params.attenuation_smoothing, HARUHI_MIKURU_MINMAX (Params::Filter::Attenuation), p.attenuation);
 	_proxy_attenuation->config()->curve = 1.0;
 	_proxy_attenuation->apply_config();
 
-	_control_frequency = new Knob (_panel, _proxy_frequency, "Freq.", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Frequency, 2400), 2);
+	_control_frequency = new Haruhi::Knob (_panel, _proxy_frequency, "Freq.", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Frequency, 2400), 2);
 	_control_frequency->set_unit_bay (_mikuru->unit_bay());
-	_control_resonance = new Knob (_panel, _proxy_resonance, "Q", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Resonance, 100), 2);
+	_control_resonance = new Haruhi::Knob (_panel, _proxy_resonance, "Q", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Resonance, 100), 2);
 	_control_resonance->set_unit_bay (_mikuru->unit_bay());
-	_control_gain = new Knob (_panel, _proxy_gain, "Gain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Gain, 100), 1);
+	_control_gain = new Haruhi::Knob (_panel, _proxy_gain, "Gain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Gain, 100), 1);
 	_control_gain->set_unit_bay (_mikuru->unit_bay());
-	_control_attenuation = new Knob (_panel, _proxy_attenuation, "Attenuate", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Attenuation, 100), 2);
+	_control_attenuation = new Haruhi::Knob (_panel, _proxy_attenuation, "Attenuate", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Attenuation, 100), 2);
 	_control_attenuation->set_unit_bay (_mikuru->unit_bay());
 
 	QObject::connect (_control_frequency, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));

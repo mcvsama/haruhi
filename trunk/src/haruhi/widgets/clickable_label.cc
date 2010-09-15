@@ -21,6 +21,8 @@
 #include "clickable_label.h"
 
 
+namespace Haruhi {
+
 ClickableLabel::ClickableLabel (QString const& text, QWidget* parent, const char* name, Qt::WFlags f):
 	QLabel (text, parent, name, f),
 	_button_state (Qt::NoButton)
@@ -47,3 +49,5 @@ ClickableLabel::mouseReleaseEvent (QMouseEvent* event)
 	}
 	_button_state = Qt::NoButton;
 }
+
+} // namespace Haruhi

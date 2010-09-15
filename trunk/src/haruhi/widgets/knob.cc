@@ -41,6 +41,8 @@
 #include "knob.h"
 
 
+namespace Haruhi {
+
 KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	QDialog (parent),
 	_knob (knob),
@@ -377,7 +379,7 @@ Knob::create_context_menu()
 		create_connect_menu (event_backend_menu, unit_bay()->session()->event_backend(), pixmap_for_port_group, pixmap_for_port);
 
 		// Iterate over all Units from UnitBay and create PopupMenus for their EventPorts:
-		for (Haruhi::UnitBay::Units::iterator u = unit_bay()->units().begin(); u != unit_bay()->units().end(); ++u)
+		for (UnitBay::Units::iterator u = unit_bay()->units().begin(); u != unit_bay()->units().end(); ++u)
 		{
 			QMenu* unit_menu = _connect_menu->addMenu (pixmap_for_unit, QString::fromStdString ((*u)->title()));
 			create_connect_menu (unit_menu, *u, pixmap_for_port_group, pixmap_for_port);
@@ -558,4 +560,6 @@ Knob::disconnect_from_all()
 		unit_bay()->graph()->unlock();
 	}
 }
+
+} // namespace Haruhi
 

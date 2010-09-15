@@ -37,6 +37,7 @@
 #include <haruhi/dsp/modulated_wave.h>
 #include <haruhi/utility/signal.h>
 #include <haruhi/utility/memory.h>
+#include <haruhi/widgets/knob.h>
 
 // Local:
 #include "widgets.h"
@@ -44,8 +45,10 @@
 
 
 class Mikuru;
-class Knob;
-class WavePlot;
+
+namespace Haruhi {
+	class WavePlot;
+}
 
 
 namespace MikuruPrivate {
@@ -251,19 +254,19 @@ class Waveform:
 	Core::EventPort*			_port_modulator_shape;
 
 	// Proxies:
-	ControllerProxy*			_proxy_wave_shape;
-	ControllerProxy*			_proxy_modulator_amplitude;
-	ControllerProxy*			_proxy_modulator_index;
-	ControllerProxy*			_proxy_modulator_shape;
+	Haruhi::ControllerProxy*	_proxy_wave_shape;
+	Haruhi::ControllerProxy*	_proxy_modulator_amplitude;
+	Haruhi::ControllerProxy*	_proxy_modulator_index;
+	Haruhi::ControllerProxy*	_proxy_modulator_shape;
 
 	// Widgets and knobs:
-	Knob*						_control_wave_shape;
-	Knob*						_control_modulator_amplitude;
-	Knob*						_control_modulator_index;
-	Knob*						_control_modulator_shape;
+	Haruhi::Knob*				_control_wave_shape;
+	Haruhi::Knob*				_control_modulator_amplitude;
+	Haruhi::Knob*				_control_modulator_index;
+	Haruhi::Knob*				_control_modulator_shape;
 	QWidget*					_panel;
-	WavePlot*					_base_wave_plot;
-	WavePlot*					_final_wave_plot;
+	Haruhi::WavePlot*			_base_wave_plot;
+	Haruhi::WavePlot*			_final_wave_plot;
 	QComboBox*					_wave_type;
 	QComboBox*					_modulator_type;
 	QComboBox*					_modulator_wave_type;

@@ -26,6 +26,8 @@
 #include <haruhi/dsp/impulse_response.h>
 
 
+namespace Haruhi {
+
 class FrequencyResponsePlot: public QWidget
 {
 	Q_OBJECT
@@ -96,6 +98,8 @@ class FrequencyResponsePlot: public QWidget
 	std::vector<float>		_values;
 	QSize					_prev_size;
 };
+
+} // namespace Haruhi
 
 #endif
 

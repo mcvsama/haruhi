@@ -259,57 +259,57 @@ class LFO: public Envelope
 	get_phase() const;
 
   private:
-	Mikuru*					_mikuru;
-	Params::LFO				_params;
-	bool					_loading_params;
-	int						_id;
-	int						_pressed_keys;
+	Mikuru*						_mikuru;
+	Params::LFO					_params;
+	bool						_loading_params;
+	int							_id;
+	int							_pressed_keys;
 
-	Core::PortGroup*		_port_group;
-	Core::EventPort*		_port_delay;
-	Core::EventPort*		_port_fade_in;
-	Core::EventPort*		_port_frequency;
-	Core::EventPort*		_port_level;
-	Core::EventPort*		_port_depth;
-	Core::EventPort*		_port_phase;
-	Core::EventPort*		_port_output;
-	Core::EventPort*		_port_wave_shape;
-	Core::EventPort*		_port_fade_out;
+	Core::PortGroup*			_port_group;
+	Core::EventPort*			_port_delay;
+	Core::EventPort*			_port_fade_in;
+	Core::EventPort*			_port_frequency;
+	Core::EventPort*			_port_level;
+	Core::EventPort*			_port_depth;
+	Core::EventPort*			_port_phase;
+	Core::EventPort*			_port_output;
+	Core::EventPort*			_port_wave_shape;
+	Core::EventPort*			_port_fade_out;
 
-	Oscs					_oscs;
-	Osc						_common_osc;
-	Waves					_waves;
-	DSP::Noise				_noise;
+	Oscs						_oscs;
+	Osc							_common_osc;
+	Waves						_waves;
+	DSP::Noise					_noise;
 
-	ControllerProxy*		_proxy_delay;
-	ControllerProxy*		_proxy_fade_in;
-	ControllerProxy*		_proxy_frequency;
-	ControllerProxy*		_proxy_level;
-	ControllerProxy*		_proxy_depth;
-	ControllerProxy*		_proxy_phase;
-	ControllerProxy*		_proxy_wave_shape;
-	ControllerProxy*		_proxy_fade_out;
+	Haruhi::ControllerProxy*	_proxy_delay;
+	Haruhi::ControllerProxy*	_proxy_fade_in;
+	Haruhi::ControllerProxy*	_proxy_frequency;
+	Haruhi::ControllerProxy*	_proxy_level;
+	Haruhi::ControllerProxy*	_proxy_depth;
+	Haruhi::ControllerProxy*	_proxy_phase;
+	Haruhi::ControllerProxy*	_proxy_wave_shape;
+	Haruhi::ControllerProxy*	_proxy_fade_out;
 
-	Knob*					_control_delay;
-	Knob*					_control_fade_in;
-	Knob*					_control_frequency;
-	Knob*					_control_level;
-	Knob*					_control_depth;
-	Knob*					_control_phase;
-	Knob*					_control_wave_shape;
-	Knob*					_control_fade_out;
+	Haruhi::Knob*				_control_delay;
+	Haruhi::Knob*				_control_fade_in;
+	Haruhi::Knob*				_control_frequency;
+	Haruhi::Knob*				_control_level;
+	Haruhi::Knob*				_control_depth;
+	Haruhi::Knob*				_control_phase;
+	Haruhi::Knob*				_control_wave_shape;
+	Haruhi::Knob*				_control_fade_out;
 
-	QCheckBox*				_enabled;
-	QComboBox*				_wave_type;
-	QCheckBox*				_wave_invert;
-	QComboBox*				_function;
-	QComboBox*				_mode;
-	QCheckBox*				_tempo_sync;
-	QSpinBox*				_tempo_numerator;
-	QSpinBox*				_tempo_denominator;
-	QCheckBox*				_random_start_phase;
-	QCheckBox*				_fade_out_enabled;
-	WavePlot*				_plot;
+	QCheckBox*					_enabled;
+	QComboBox*					_wave_type;
+	QCheckBox*					_wave_invert;
+	QComboBox*					_function;
+	QComboBox*					_mode;
+	QCheckBox*					_tempo_sync;
+	QSpinBox*					_tempo_numerator;
+	QSpinBox*					_tempo_denominator;
+	QCheckBox*					_random_start_phase;
+	QCheckBox*					_fade_out_enabled;
+	Haruhi::WavePlot*			_plot;
 };
 
 } // namespace MikuruPrivate

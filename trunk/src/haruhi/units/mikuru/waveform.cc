@@ -91,7 +91,7 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 	QFrame* base_plot_frame = new QFrame (top_frame);
 	base_plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	base_plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	_base_wave_plot = new WavePlot (base_plot_frame);
+	_base_wave_plot = new Haruhi::WavePlot (base_plot_frame);
 	QToolTip::add (_base_wave_plot, "Base wave");
 	QVBoxLayout* base_plot_frame_layout = new QVBoxLayout (base_plot_frame, 0, Config::spacing);
 	base_plot_frame_layout->addWidget (_base_wave_plot);
@@ -99,7 +99,7 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 	QFrame* harmonics_plot_frame = new QFrame (top_frame);
 	harmonics_plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	harmonics_plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	_final_wave_plot = new WavePlot (harmonics_plot_frame);
+	_final_wave_plot = new Haruhi::WavePlot (harmonics_plot_frame);
 	QToolTip::add (_final_wave_plot, "Wave with harmonics and modulation");
 	QVBoxLayout* harmonics_plot_frame_layout = new QVBoxLayout (harmonics_plot_frame, 0, Config::spacing);
 	harmonics_plot_frame_layout->addWidget (_final_wave_plot);
@@ -134,18 +134,18 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 
 	// Wave parameters:
 
-	_proxy_wave_shape = new ControllerProxy (_port_wave_shape, &_params.wave_shape, 0, HARUHI_MIKURU_MINMAX (Params::Waveform::WaveShape), p.wave_shape);
-	_proxy_modulator_amplitude = new ControllerProxy (_port_modulator_amplitude, &_params.modulator_amplitude, 0, HARUHI_MIKURU_MINMAX (Params::Waveform::ModulatorAmplitude), p.modulator_amplitude);
-	_proxy_modulator_index = new ControllerProxy (_port_modulator_index, &_params.modulator_index, 0, HARUHI_MIKURU_MINMAX (Params::Waveform::ModulatorIndex), p.modulator_index);
-	_proxy_modulator_shape = new ControllerProxy (_port_modulator_shape, &_params.modulator_shape, 0, HARUHI_MIKURU_MINMAX (Params::Waveform::ModulatorShape), p.modulator_shape);
+	_proxy_wave_shape = new Haruhi::ControllerProxy (_port_wave_shape, &_params.wave_shape, 0, HARUHI_MIKURU_MINMAX (Params::Waveform::WaveShape), p.wave_shape);
+	_proxy_modulator_amplitude = new Haruhi::ControllerProxy (_port_modulator_amplitude, &_params.modulator_amplitude, 0, HARUHI_MIKURU_MINMAX (Params::Waveform::ModulatorAmplitude), p.modulator_amplitude);
+	_proxy_modulator_index = new Haruhi::ControllerProxy (_port_modulator_index, &_params.modulator_index, 0, HARUHI_MIKURU_MINMAX (Params::Waveform::ModulatorIndex), p.modulator_index);
+	_proxy_modulator_shape = new Haruhi::ControllerProxy (_port_modulator_shape, &_params.modulator_shape, 0, HARUHI_MIKURU_MINMAX (Params::Waveform::ModulatorShape), p.modulator_shape);
 
-	_control_wave_shape = new Knob (top_frame, _proxy_wave_shape, "Shape", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::WaveShape, 100), 2);
+	_control_wave_shape = new Haruhi::Knob (top_frame, _proxy_wave_shape, "Shape", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::WaveShape, 100), 2);
 	_control_wave_shape->set_unit_bay (_mikuru->unit_bay());
-	_control_modulator_amplitude = new Knob (top_frame, _proxy_modulator_amplitude, "Mod.amp.", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::ModulatorAmplitude, 100), 2);
+	_control_modulator_amplitude = new Haruhi::Knob (top_frame, _proxy_modulator_amplitude, "Mod.amp.", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::ModulatorAmplitude, 100), 2);
 	_control_modulator_amplitude->set_unit_bay (_mikuru->unit_bay());
-	_control_modulator_index = new Knob (top_frame, _proxy_modulator_index, "Mod.index", HARUHI_MIKURU_PARAMS_FOR_KNOB (Params::Waveform::ModulatorIndex), 1, 0);
+	_control_modulator_index = new Haruhi::Knob (top_frame, _proxy_modulator_index, "Mod.index", HARUHI_MIKURU_PARAMS_FOR_KNOB (Params::Waveform::ModulatorIndex), 1, 0);
 	_control_modulator_index->set_unit_bay (_mikuru->unit_bay());
-	_control_modulator_shape = new Knob (top_frame, _proxy_modulator_shape, "Mod.shape", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::ModulatorShape, 100), 2);
+	_control_modulator_shape = new Haruhi::Knob (top_frame, _proxy_modulator_shape, "Mod.shape", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::ModulatorShape, 100), 2);
 	_control_modulator_shape->set_unit_bay (_mikuru->unit_bay());
 
 	QObject::connect (_control_wave_shape, SIGNAL (changed (int)), this, SLOT (recompute_wave()));

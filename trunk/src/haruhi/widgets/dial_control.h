@@ -23,6 +23,8 @@
 #include <Qt3Support/Q3RangeControl>
 
 
+namespace Haruhi {
+
 class DialControl:
 	public QWidget,
 	public Q3RangeControl
@@ -72,6 +74,8 @@ class DialControl:
 	bool		_to_update;
 	bool		_last_enabled_state;
 };
+
+} // namespace Haruhi
 
 #endif
 

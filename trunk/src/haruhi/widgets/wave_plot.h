@@ -29,6 +29,8 @@
 #include <haruhi/utility/mutex.h>
 
 
+namespace Haruhi {
+
 class WavePlot: public QWidget
 {
 	enum {
@@ -147,6 +149,8 @@ class WavePlot: public QWidget
 	bool				_phase_enabled;
 	float				_phase_position;
 };
+
+} // namespace Haruhi
 
 #endif
 

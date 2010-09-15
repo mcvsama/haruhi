@@ -51,17 +51,17 @@ General::General (Mikuru* mikuru, QWidget* parent):
 	_port_frequency = new Core::EventPort (_mikuru, "Frequency (global)", Core::Port::Input, 0, Core::Port::ControlPitchbend | Core::Port::Polyphonic);
 	_mikuru->graph()->unlock();
 
-	_proxy_volume = new ControllerProxy (_port_volume, &_params.volume, 0, HARUHI_MIKURU_MINMAX (Params::General::Volume), p.volume);
-	_proxy_detune = new ControllerProxy (_port_detune, &_params.detune, 0, HARUHI_MIKURU_MINMAX (Params::General::Detune), p.detune);
-	_proxy_panorama = new ControllerProxy (_port_panorama, &_params.panorama, &_params.panorama_smoothing, HARUHI_MIKURU_MINMAX (Params::General::Panorama), p.panorama);
-	_proxy_stereo_width = new ControllerProxy (_port_stereo_width, &_params.stereo_width, 0, HARUHI_MIKURU_MINMAX (Params::General::StereoWidth), p.stereo_width);
-	_proxy_input_volume = new ControllerProxy (_port_input_volume, &_params.input_volume, 0, HARUHI_MIKURU_MINMAX (Params::General::InputVolume), p.input_volume);
+	_proxy_volume = new Haruhi::ControllerProxy (_port_volume, &_params.volume, 0, HARUHI_MIKURU_MINMAX (Params::General::Volume), p.volume);
+	_proxy_detune = new Haruhi::ControllerProxy (_port_detune, &_params.detune, 0, HARUHI_MIKURU_MINMAX (Params::General::Detune), p.detune);
+	_proxy_panorama = new Haruhi::ControllerProxy (_port_panorama, &_params.panorama, &_params.panorama_smoothing, HARUHI_MIKURU_MINMAX (Params::General::Panorama), p.panorama);
+	_proxy_stereo_width = new Haruhi::ControllerProxy (_port_stereo_width, &_params.stereo_width, 0, HARUHI_MIKURU_MINMAX (Params::General::StereoWidth), p.stereo_width);
+	_proxy_input_volume = new Haruhi::ControllerProxy (_port_input_volume, &_params.input_volume, 0, HARUHI_MIKURU_MINMAX (Params::General::InputVolume), p.input_volume);
 
-	_control_volume = new Knob (this, _proxy_volume, "Volume", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::Volume, 100), 2);
-	_control_detune = new Knob (this, _proxy_detune, "Detune", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::Detune, 100), 2);
-	_control_panorama = new Knob (this, _proxy_panorama, "Panorama", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::Panorama, 100), 2);
-	_control_stereo_width = new Knob (this, _proxy_stereo_width, "St.width", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::StereoWidth, 100), 2);
-	_control_input_volume = new Knob (this, _proxy_input_volume, "Input vol.", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::InputVolume, 100), 2);
+	_control_volume = new Haruhi::Knob (this, _proxy_volume, "Volume", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::Volume, 100), 2);
+	_control_detune = new Haruhi::Knob (this, _proxy_detune, "Detune", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::Detune, 100), 2);
+	_control_panorama = new Haruhi::Knob (this, _proxy_panorama, "Panorama", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::Panorama, 100), 2);
+	_control_stereo_width = new Haruhi::Knob (this, _proxy_stereo_width, "St.width", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::StereoWidth, 100), 2);
+	_control_input_volume = new Haruhi::Knob (this, _proxy_input_volume, "Input vol.", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::InputVolume, 100), 2);
 	QToolTip::add (_control_stereo_width, "Stereo width");
 
 	Q3GroupBox* grid1 = new Q3GroupBox (2, Qt::Horizontal, "", this);

@@ -26,6 +26,8 @@
 #include "periodic_updater.h"
 
 
+namespace Haruhi {
+
 PeriodicUpdater* PeriodicUpdater::_singleton = 0;
 
 
@@ -91,4 +93,6 @@ PeriodicUpdater::timeout()
 		_set_mutex.unlock();
 	}
 }
+
+} // namespace Haruhi
 

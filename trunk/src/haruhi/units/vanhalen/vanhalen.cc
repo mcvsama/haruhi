@@ -47,11 +47,11 @@ VanHalen::VanHalen (Haruhi::UnitFactory* factory, Haruhi::Session* session, std:
 	_audio_output_1 = new Core::AudioPort (this, "Audio L", Core::Port::Output);
 	_audio_output_2 = new Core::AudioPort (this, "Audio R", Core::Port::Output);
 
-	_proxy_comb_index = new ControllerProxy (0, &_comb_index, 0, 0, 1000, 0);
-	_proxy_comb_alpha = new ControllerProxy (0, &_comb_alpha, 0, -1000, 1000, 0);
+	_proxy_comb_index = new Haruhi::ControllerProxy (0, &_comb_index, 0, 0, 1000, 0);
+	_proxy_comb_alpha = new Haruhi::ControllerProxy (0, &_comb_alpha, 0, -1000, 1000, 0);
 
-	_knob_comb_index = new Knob (this, _proxy_comb_index, "Index", 0, 1000, 1, 0);
-	_knob_comb_alpha = new Knob (this, _proxy_comb_alpha, "Alpha", -1.0, 1.0, 10, 2);
+	_knob_comb_index = new Haruhi::Knob (this, _proxy_comb_index, "Index", 0, 1000, 1, 0);
+	_knob_comb_alpha = new Haruhi::Knob (this, _proxy_comb_alpha, "Alpha", -1.0, 1.0, 10, 2);
 
 	QHBoxLayout* layout = new QHBoxLayout (this, Config::spacing);
 	layout->addWidget (_knob_comb_index);

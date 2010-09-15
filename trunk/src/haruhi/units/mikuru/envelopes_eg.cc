@@ -107,21 +107,21 @@ EG::create_ports()
 void
 EG::create_proxies()
 {
-	_proxy_segment_duration = new ControllerProxy (_port_segment_duration, &_segment_duration, 0, HARUHI_MIKURU_MINMAX (Params::EG::SegmentDuration), Params::EG::SegmentDurationDefault);
+	_proxy_segment_duration = new Haruhi::ControllerProxy (_port_segment_duration, &_segment_duration, 0, HARUHI_MIKURU_MINMAX (Params::EG::SegmentDuration), Params::EG::SegmentDurationDefault);
 	_proxy_segment_duration->config()->curve = 1.0;
 	_proxy_segment_duration->apply_config();
 
-	_proxy_point_value = new ControllerProxy (_port_point_value, &_point_value, 0, HARUHI_MIKURU_MINMAX (Params::EG::PointValue), Params::EG::PointValueDefault);
+	_proxy_point_value = new Haruhi::ControllerProxy (_port_point_value, &_point_value, 0, HARUHI_MIKURU_MINMAX (Params::EG::PointValue), Params::EG::PointValueDefault);
 }
 
 
 void
 EG::create_knobs (QWidget* parent)
 {
-	_control_point_value = new Knob (parent, _proxy_point_value, "Value", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::EG::PointValue, 100), 2);
+	_control_point_value = new Haruhi::Knob (parent, _proxy_point_value, "Value", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::EG::PointValue, 100), 2);
 	_control_point_value->set_unit_bay (_mikuru->unit_bay());
 
-	_control_segment_duration = new Knob (parent, _proxy_segment_duration, "Duration", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::EG::SegmentDuration, 100), 2);
+	_control_segment_duration = new Haruhi::Knob (parent, _proxy_segment_duration, "Duration", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::EG::SegmentDuration, 100), 2);
 	_control_segment_duration->set_unit_bay (_mikuru->unit_bay());
 
 	QObject::connect (_control_point_value, SIGNAL (changed (int)), this, SLOT (changed_segment_value()));
@@ -144,7 +144,7 @@ EG::create_widgets()
 	plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	plot_frame->setFixedWidth (200);
 	plot_frame->setFixedHeight (100);
-	_plot = new EnvelopePlot (plot_frame);
+	_plot = new Haruhi::EnvelopePlot (plot_frame);
 	_plot->set_editable (true, 1.0f * Params::EG::SegmentDurationMax / Params::EG::SegmentDurationDenominator);
 	_plot->set_sample_rate (ARTIFICIAL_SAMPLE_RATE);
 	_plot->assign_envelope (&_envelope_template);

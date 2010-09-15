@@ -31,6 +31,8 @@
 #include <haruhi/widgets/dial_control.h>
 
 
+namespace Haruhi {
+
 class Knob;
 
 
@@ -67,7 +69,7 @@ class KnobProperties: public QDialog
  */
 class Knob:
 	public QFrame,
-	public Haruhi::Controller
+	public Controller
 {
 	Q_OBJECT
 
@@ -256,6 +258,8 @@ class Knob:
 	QMenu*				_connect_menu;
 	QMenu*				_disconnect_menu;
 };
+
+} // namespace Haruhi
 
 #endif
 

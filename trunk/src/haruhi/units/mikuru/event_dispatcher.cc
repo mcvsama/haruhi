@@ -51,7 +51,7 @@ EventDispatcher::VoiceFilterParamReceiver::receive (Core::VoiceID voice_id, int 
 }
 
 
-EventDispatcher::EventDispatcher (Core::EventPort* port, Knob* knob, Receiver* receiver):
+EventDispatcher::EventDispatcher (Core::EventPort* port, Haruhi::Knob* knob, Receiver* receiver):
 	_port (port),
 	_knob (knob),
 	_receiver (receiver),

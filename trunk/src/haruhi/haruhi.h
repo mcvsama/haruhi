@@ -35,14 +35,13 @@
 #include <haruhi/utility/backtrace.h>
 
 
-class PeriodicUpdater;
-
 namespace Haruhi {
 
 class UnitManager;
 class AudioBackend;
 class EventBackend;
 class Session;
+class PeriodicUpdater;
 
 using Core::Sample;
 

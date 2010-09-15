@@ -27,6 +27,8 @@
 #include "frequency_response_plot.h"
 
 
+namespace Haruhi {
+
 FrequencyResponsePlot::FrequencyResponsePlot (QWidget* parent, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
 	_double_scale (false),
@@ -236,4 +238,6 @@ FrequencyResponsePlot::configure_widget()
 	setBackgroundColor (QColor (0xff, 0xff, 0xff));
 	setAutoFillBackground (true);
 }
+
+} // namespace Haruhi
 
