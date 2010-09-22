@@ -123,25 +123,23 @@ ADSR::create_ports()
 void
 ADSR::create_proxies()
 {
-	Params::ADSR p = _params;
-
-	_proxy_delay = new Haruhi::ControllerProxy (_port_delay, &_params.delay, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::Delay), p.delay);
+	_proxy_delay = new Haruhi::ControllerProxy (_port_delay, &_params.delay);
 	_proxy_delay->config()->curve = 1.0;
 	_proxy_delay->apply_config();
-	_proxy_attack = new Haruhi::ControllerProxy (_port_attack, &_params.attack, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::Attack), p.attack);
+	_proxy_attack = new Haruhi::ControllerProxy (_port_attack, &_params.attack);
 	_proxy_attack->config()->curve = 1.0;
 	_proxy_attack->apply_config();
-	_proxy_attack_hold = new Haruhi::ControllerProxy (_port_attack_hold, &_params.attack_hold, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::AttackHold), p.attack_hold);
+	_proxy_attack_hold = new Haruhi::ControllerProxy (_port_attack_hold, &_params.attack_hold);
 	_proxy_attack_hold->config()->curve = 1.0;
 	_proxy_attack_hold->apply_config();
-	_proxy_decay = new Haruhi::ControllerProxy (_port_decay, &_params.decay, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::Decay), p.decay);
+	_proxy_decay = new Haruhi::ControllerProxy (_port_decay, &_params.decay);
 	_proxy_decay->config()->curve = 1.0;
 	_proxy_decay->apply_config();
-	_proxy_sustain = new Haruhi::ControllerProxy (_port_sustain, &_params.sustain, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::Sustain), p.sustain);
-	_proxy_sustain_hold = new Haruhi::ControllerProxy (_port_sustain_hold, &_params.sustain_hold, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::SustainHold), p.sustain_hold);
+	_proxy_sustain = new Haruhi::ControllerProxy (_port_sustain, &_params.sustain);
+	_proxy_sustain_hold = new Haruhi::ControllerProxy (_port_sustain_hold, &_params.sustain_hold);
 	_proxy_sustain_hold->config()->curve = 1.0;
 	_proxy_sustain_hold->apply_config();
-	_proxy_release = new Haruhi::ControllerProxy (_port_release, &_params.release, 0, HARUHI_MIKURU_MINMAX (Params::ADSR::Release), p.release);
+	_proxy_release = new Haruhi::ControllerProxy (_port_release, &_params.release);
 	_proxy_release->config()->curve = 1.0;
 	_proxy_release->apply_config();
 }
@@ -258,13 +256,13 @@ ADSR::voice_created (VoiceManager* voice_manager, Voice* voice)
 	// Minimum attack/release time (ms), prevents clicking:
 	uint64_t min = 0.005f * sr;
 	_adsrs[voice] = new DSP::ADSR (
-		sr * atomic (_params.delay) / Params::ADSR::DelayDenominator,
-		std::max (sr * atomic (_params.attack) / Params::ADSR::AttackDenominator, min),
-		sr * atomic (_params.attack_hold) / Params::ADSR::AttackHoldDenominator,
-		sr * atomic (_params.decay) / Params::ADSR::DecayDenominator,
-		1.0f * atomic (_params.sustain) / Params::ADSR::SustainDenominator,
-		sr * atomic (_params.sustain_hold) / Params::ADSR::SustainHoldDenominator,
-		std::max (sr * atomic (_params.release) / Params::ADSR::ReleaseDenominator, min),
+		sr * _params.delay.to_f(),
+		std::max (static_cast<uint64_t> (sr * _params.attack.to_f()), min),
+		sr * _params.attack_hold.to_f(),
+		sr * _params.decay.to_f(),
+		_params.sustain.to_f(),
+		sr * _params.sustain_hold.to_f(),
+		std::max (static_cast<uint64_t> (sr * _params.release.to_f()), min),
 		_params.sustain_enabled,
 		_params.forced_release
 	);
@@ -377,14 +375,6 @@ ADSR::load_params()
 	Params::ADSR p (_params);
 	_loading_params = true;
 
-	_proxy_delay->set_value (p.delay);
-	_proxy_attack->set_value (p.attack);
-	_proxy_attack_hold->set_value (p.attack_hold);
-	_proxy_decay->set_value (p.decay);
-	_proxy_sustain->set_value (p.sustain);
-	_proxy_sustain_hold->set_value (p.sustain_hold);
-	_proxy_release->set_value (p.release);
-
 	_enabled->setChecked (p.enabled);
 	_direct_adsr->setChecked (p.direct_adsr);
 	_forced_release->setChecked (p.forced_release);
@@ -427,15 +417,15 @@ ADSR::update_plot()
 	// If graph was not connected, sample rate would be 0 which would cause plotting problems.
 	uint64_t sr = std::max (1000u, _mikuru->graph()->sample_rate());
 
-	float sustain_value = 1.0f * atomic (_params.sustain) / Params::ADSR::SustainDenominator;
+	float sustain_value = _params.sustain.to_f();
 	DSP::Envelope::Points& points = _envelope_for_plot.points();
 	points.clear();
-	points.push_back (DSP::Envelope::Point (0.0f, sr * atomic (_params.delay) / Params::ADSR::DelayDenominator));
-	points.push_back (DSP::Envelope::Point (0.0f, sr * atomic (_params.attack) / Params::ADSR::AttackDenominator));
-	points.push_back (DSP::Envelope::Point (1.0f, sr * atomic (_params.attack_hold) / Params::ADSR::AttackHoldDenominator));
-	points.push_back (DSP::Envelope::Point (1.0f, sr * atomic (_params.decay) / Params::ADSR::DecayDenominator));
-	points.push_back (DSP::Envelope::Point (sustain_value, sr * atomic (_params.sustain_hold) / Params::ADSR::SustainHoldDenominator));
-	points.push_back (DSP::Envelope::Point (sustain_value, sr * atomic (_params.release) / Params::ADSR::ReleaseDenominator));
+	points.push_back (DSP::Envelope::Point (0.0f, sr * _params.delay.to_f()));
+	points.push_back (DSP::Envelope::Point (0.0f, sr * _params.attack.to_f()));
+	points.push_back (DSP::Envelope::Point (1.0f, sr * _params.attack_hold.to_f()));
+	points.push_back (DSP::Envelope::Point (1.0f, sr * _params.decay.to_f()));
+	points.push_back (DSP::Envelope::Point (sustain_value, sr * _params.sustain_hold.to_f()));
+	points.push_back (DSP::Envelope::Point (sustain_value, sr * _params.release.to_f()));
 	points.push_back (DSP::Envelope::Point (0.0f, 0));
 	_envelope_for_plot.set_sustain_point (4);
 	_plot->set_sample_rate (sr);

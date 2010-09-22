@@ -229,22 +229,20 @@ LFO::create_ports()
 void
 LFO::create_proxies()
 {
-	Params::LFO p = _params;
-
-	_proxy_delay = new Haruhi::ControllerProxy (_port_delay, &_params.delay, 0, HARUHI_MIKURU_MINMAX (Params::LFO::Delay), p.delay);
+	_proxy_delay = new Haruhi::ControllerProxy (_port_delay, &_params.delay);
 	_proxy_delay->config()->curve = 1.0;
 	_proxy_delay->apply_config();
-	_proxy_fade_in = new Haruhi::ControllerProxy (_port_fade_in, &_params.fade_in, 0, HARUHI_MIKURU_MINMAX (Params::LFO::FadeIn), p.fade_in);
+	_proxy_fade_in = new Haruhi::ControllerProxy (_port_fade_in, &_params.fade_in);
 	_proxy_fade_in->config()->curve = 1.0;
 	_proxy_fade_in->apply_config();
-	_proxy_frequency = new Haruhi::ControllerProxy (_port_frequency, &_params.frequency, 0, HARUHI_MIKURU_MINMAX (Params::LFO::Frequency), p.frequency);
+	_proxy_frequency = new Haruhi::ControllerProxy (_port_frequency, &_params.frequency);
 	_proxy_frequency->config()->curve = 0.5;
 	_proxy_frequency->apply_config();
-	_proxy_level = new Haruhi::ControllerProxy (_port_level, &_params.level, 0, HARUHI_MIKURU_MINMAX (Params::LFO::Level), p.level);
-	_proxy_depth = new Haruhi::ControllerProxy (_port_depth, &_params.depth, 0, HARUHI_MIKURU_MINMAX (Params::LFO::Depth), p.depth);
-	_proxy_phase = new Haruhi::ControllerProxy (_port_phase, &_params.phase, 0, HARUHI_MIKURU_MINMAX (Params::LFO::Phase), p.phase);
-	_proxy_wave_shape = new Haruhi::ControllerProxy (_port_wave_shape, &_params.wave_shape, 0, HARUHI_MIKURU_MINMAX (Params::LFO::WaveShape), p.wave_shape);
-	_proxy_fade_out = new Haruhi::ControllerProxy (_port_fade_out, &_params.fade_out, 0, HARUHI_MIKURU_MINMAX (Params::LFO::FadeOut), p.fade_out);
+	_proxy_level = new Haruhi::ControllerProxy (_port_level, &_params.level);
+	_proxy_depth = new Haruhi::ControllerProxy (_port_depth, &_params.depth);
+	_proxy_phase = new Haruhi::ControllerProxy (_port_phase, &_params.phase);
+	_proxy_wave_shape = new Haruhi::ControllerProxy (_port_wave_shape, &_params.wave_shape);
+	_proxy_fade_out = new Haruhi::ControllerProxy (_port_fade_out, &_params.fade_out);
 	_proxy_fade_out->config()->curve = 1.0;
 	_proxy_fade_out->apply_config();
 }
@@ -406,9 +404,9 @@ LFO::voice_created (VoiceManager*, Voice* voice)
 	if (mode == Params::LFO::Polyphonic)
 	{
 		Osc* osc = new Osc (get_phase());
-		osc->set_delay (1.0f * atomic (_params.delay) / Params::LFO::DelayDenominator * sample_rate);
-		osc->set_fade_in (1.0f * atomic (_params.fade_in) / Params::LFO::FadeInDenominator * sample_rate);
-		osc->set_fade_out (1.0f * atomic (_params.fade_out) / Params::LFO::FadeOutDenominator * sample_rate);
+		osc->set_delay (_params.delay.to_f() * sample_rate);
+		osc->set_fade_in (_params.fade_in.to_f() * sample_rate);
+		osc->set_fade_out (_params.fade_out.to_f() * sample_rate);
 		osc->set_fade_out_enabled (atomic (_params.fade_out_enabled));
 		// Add osc to set:
 		_oscs[voice] = osc;
@@ -471,9 +469,9 @@ LFO::process()
 	unsigned int buffer_size = _mikuru->graph()->buffer_size();
 	DSP::ParametricWave* wave = _waves[wave_type];
 	update_wave_param();
-	float frequency = 1.0f * atomic (_params.frequency) / Params::LFO::FrequencyDenominator / sample_rate;
-	float level = 1.0f * atomic (_params.level) / Params::LFO::LevelDenominator;
-	float depth = 1.0f * atomic (_params.depth) / Params::LFO::DepthDenominator;
+	float frequency = _params.frequency.to_f() / sample_rate;
+	float level = _params.level.to_f();
+	float depth = _params.depth.to_f();
 	bool invert = atomic (_params.wave_invert);
 
 	// Assuming that output ports are cleared by Mikuru on beginnig of each
@@ -519,15 +517,6 @@ LFO::load_params()
 	// Copy params:
 	Params::LFO p (_params);
 	_loading_params = true;
-
-	_proxy_delay->set_value (p.delay);
-	_proxy_fade_in->set_value (p.fade_in);
-	_proxy_frequency->set_value (p.frequency);
-	_proxy_level->set_value (p.level);
-	_proxy_depth->set_value (p.depth);
-	_proxy_phase->set_value (p.phase);
-	_proxy_wave_shape->set_value (p.wave_shape);
-	_proxy_fade_out->set_value (p.fade_out);
 
 	_enabled->setChecked (p.enabled);
 	_wave_type->setCurrentItem (p.wave_type);
@@ -587,7 +576,7 @@ LFO::update_plot()
 	{
 		update_wave_param();
 		_plot->assign_wave (_waves[atomic (_params.wave_type)], true, true, atomic (_params.wave_invert));
-		_plot->set_phase_marker (true, 1.0f * atomic (_params.phase) / Params::LFO::PhaseDenominator);
+		_plot->set_phase_marker (true, _params.phase.to_f());
 		_plot->plot_shape();
 	}
 }
@@ -612,7 +601,7 @@ LFO::update_widgets()
 void
 LFO::update_wave_param()
 {
-	_waves[atomic (_params.wave_type)]->set_param (1.0f * atomic (_params.wave_shape) / Params::LFO::WaveShapeDenominator);
+	_waves[atomic (_params.wave_type)]->set_param (_params.wave_shape.to_f());
 }
 
 
@@ -632,9 +621,9 @@ LFO::set_common_osc()
 {
 	unsigned int sample_rate = _mikuru->graph()->sample_rate();
 	// CommonKeySync supports all delay/fadeins:
-	_common_osc.set_delay (1.0f * atomic (_params.delay) / Params::LFO::DelayDenominator * sample_rate);
-	_common_osc.set_fade_in (1.0f * atomic (_params.fade_in) / Params::LFO::FadeInDenominator * sample_rate);
-	_common_osc.set_fade_out (1.0f * atomic (_params.fade_out) / Params::LFO::FadeOutDenominator * sample_rate);
+	_common_osc.set_delay (_params.delay.to_f() * sample_rate);
+	_common_osc.set_fade_in (_params.fade_in.to_f() * sample_rate);
+	_common_osc.set_fade_out (_params.fade_out.to_f() * sample_rate);
 	_common_osc.set_fade_out_enabled (atomic (_params.fade_out_enabled));
 }
 
@@ -659,7 +648,7 @@ LFO::get_phase() const
 {
 	return atomic (_params.random_start_phase)
 		? _noise.get()
-		: 1.0f * atomic (_params.phase) / Params::LFO::PhaseDenominator;
+		: _params.phase.to_f();
 }
 
 } // namespace MikuruPrivate

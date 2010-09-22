@@ -170,8 +170,8 @@ class EG: public Envelope
 	// List of Voices which has been dropped and need ADSRs to be deleted also:
 	std::list<Voice*>			_dropped_voices;
 
-	int							_segment_duration;
-	int							_point_value;
+	Haruhi::ControllerParam		_segment_duration;
+	Haruhi::ControllerParam		_point_value;
 
 	Core::PortGroup*			_port_group;
 	Core::EventPort*			_port_point_value;

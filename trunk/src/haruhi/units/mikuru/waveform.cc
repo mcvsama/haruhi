@@ -134,10 +134,10 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 
 	// Wave parameters:
 
-	_proxy_wave_shape = new Haruhi::ControllerProxy (_port_wave_shape, &_params.wave_shape, 0, HARUHI_MIKURU_MINMAX (Params::Waveform::WaveShape), p.wave_shape);
-	_proxy_modulator_amplitude = new Haruhi::ControllerProxy (_port_modulator_amplitude, &_params.modulator_amplitude, 0, HARUHI_MIKURU_MINMAX (Params::Waveform::ModulatorAmplitude), p.modulator_amplitude);
-	_proxy_modulator_index = new Haruhi::ControllerProxy (_port_modulator_index, &_params.modulator_index, 0, HARUHI_MIKURU_MINMAX (Params::Waveform::ModulatorIndex), p.modulator_index);
-	_proxy_modulator_shape = new Haruhi::ControllerProxy (_port_modulator_shape, &_params.modulator_shape, 0, HARUHI_MIKURU_MINMAX (Params::Waveform::ModulatorShape), p.modulator_shape);
+	_proxy_wave_shape = new Haruhi::ControllerProxy (_port_wave_shape, &_params.wave_shape);
+	_proxy_modulator_amplitude = new Haruhi::ControllerProxy (_port_modulator_amplitude, &_params.modulator_amplitude);
+	_proxy_modulator_index = new Haruhi::ControllerProxy (_port_modulator_index, &_params.modulator_index);
+	_proxy_modulator_shape = new Haruhi::ControllerProxy (_port_modulator_shape, &_params.modulator_shape);
 
 	_control_wave_shape = new Haruhi::Knob (top_frame, _proxy_wave_shape, "Shape", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::WaveShape, 100), 2);
 	_control_wave_shape->set_unit_bay (_mikuru->unit_bay());
@@ -315,10 +315,6 @@ Waveform::load_params()
 	_wave_type->setCurrentItem (p.wave_type);
 	_modulator_type->setCurrentItem (p.modulator_type);
 	_modulator_wave_type->setCurrentItem (p.modulator_wave_type);
-	_proxy_wave_shape->set_value (p.wave_shape);
-	_proxy_modulator_amplitude->set_value (p.modulator_amplitude);
-	_proxy_modulator_index->set_value (p.modulator_index);
-	_proxy_modulator_shape->set_value (p.modulator_shape);
 	for (Sliders::size_type i = 0; i < _harmonics_sliders.size(); ++i)
 		_harmonics_sliders[i]->setValue (p.harmonics[i]);
 	for (Sliders::size_type i = 0; i < _phases_sliders.size(); ++i)
@@ -429,8 +425,8 @@ Waveform::recompute_wave()
 	if (pw->immutable())
 	{
 		DSP::ParametricWave* mw = active_modulator_wave().wave.get();
-		pw->set_param (1.0f * atomic (_params.wave_shape) / Params::Waveform::WaveShapeDenominator);
-		mw->set_param (1.0f * atomic (_params.modulator_shape) / Params::Waveform::ModulatorShapeDenominator);
+		pw->set_param (_params.wave_shape.to_f());
+		mw->set_param (_params.modulator_shape.to_f());
 		// Add harmonics to pw:
 		DSP::HarmonicsWave* hw = new DSP::HarmonicsWave (pw);
 		for (DSP::HarmonicsWave::Harmonics::size_type i = 0; i < hw->harmonics().size(); ++i)
@@ -448,8 +444,8 @@ Waveform::recompute_wave()
 		// Modulate wave:
 		int xt = atomic (_params.modulator_type);
 		DSP::ModulatedWave* xw = new DSP::ModulatedWave (hw, mw, static_cast<DSP::ModulatedWave::Type> (xt),
-														 1.0f * atomic (_params.modulator_amplitude) / Params::Waveform::ModulatorAmplitudeMax,
-														 atomic (_params.modulator_index), true);
+														 1.0f * _params.modulator_amplitude.get() / Params::Waveform::ModulatorAmplitudeMax,
+														 _params.modulator_index.get(), true);
 		// Recompute:
 		_wave_computer->update (xw);
 	}

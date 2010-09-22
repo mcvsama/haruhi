@@ -19,6 +19,7 @@
 
 // Haruhi:
 #include <haruhi/dsp/harmonics_wave.h>
+#include <haruhi/controller_param.h>
 
 
 /*
@@ -84,11 +85,11 @@ struct Params
 			HARUHI_MIKURU_PARAM (InputVolume,			       0,	+1000000,	+1000000,	+1000000)
 		};
 
-		int volume;
-		int detune;
-		int panorama;
-		int stereo_width;
-		int input_volume;
+		Haruhi::ControllerParam volume;
+		Haruhi::ControllerParam detune;
+		Haruhi::ControllerParam panorama;
+		Haruhi::ControllerParam stereo_width;
+		Haruhi::ControllerParam input_volume;
 
 		unsigned int polyphony;
 		int enable_audio_input;
@@ -106,10 +107,10 @@ struct Params
 			HARUHI_MIKURU_PARAM (Attenuation,			       0,	+1000000,	+1000000,	+1000000)
 		};
 
-		int frequency;
-		int resonance;
-		int gain;
-		int attenuation;
+		Haruhi::ControllerParam frequency;
+		Haruhi::ControllerParam resonance;
+		Haruhi::ControllerParam gain;
+		Haruhi::ControllerParam attenuation;
 
 		int enabled;
 		int type;
@@ -170,20 +171,20 @@ struct Params
 		HARUHI_MIKURU_PARAMS_STANDARD_METHODS (Waveform)
 
 		enum {
-			HARUHI_MIKURU_PARAM (Harmonic,				-1000000,	+1000000,	+1000000,	       0)
-			HARUHI_MIKURU_PARAM (Phase,					-1000000,	+1000000,	+1000000,	       0)
 			HARUHI_MIKURU_PARAM (WaveShape,				       0,	+1000000,	+1000000,	       0)
 			HARUHI_MIKURU_PARAM (ModulatorAmplitude,	       0,	+1000000,	+1000000,	       0)
 			HARUHI_MIKURU_PARAM (ModulatorIndex,		      +1,	     +32,	      +1,	      +1)
 			HARUHI_MIKURU_PARAM (ModulatorShape,		       0,	+1000000,	+1000000,	       0)
+			HARUHI_MIKURU_PARAM (Harmonic,				-1000000,	+1000000,	+1000000,	       0)
+			HARUHI_MIKURU_PARAM (Phase,					-1000000,	+1000000,	+1000000,	       0)
 
 			HarmonicsNumber = DSP::HarmonicsWave::HarmonicsNumber,
 		};
 
-		int wave_shape;
-		int modulator_amplitude;
-		int modulator_index;
-		int modulator_shape;
+		Haruhi::ControllerParam wave_shape;
+		Haruhi::ControllerParam modulator_amplitude;
+		Haruhi::ControllerParam modulator_index;
+		Haruhi::ControllerParam modulator_shape;
 
 		unsigned int wave_type;
 		unsigned int modulator_type;
@@ -213,10 +214,10 @@ struct Params
 			HighestPressed		= 3,
 		};
 
-		int volume;
-		int portamento_time;
-		int phase;
-		int noise_level;
+		Haruhi::ControllerParam volume;
+		Haruhi::ControllerParam portamento_time;
+		Haruhi::ControllerParam phase;
+		Haruhi::ControllerParam noise_level;
 
 		int wave_enabled;
 		int noise_enabled;
@@ -257,17 +258,17 @@ struct Params
 			HARUHI_MIKURU_PARAM (UnisonNoise,			       0,	+1000000,	+1000000,	       0)
 		};
 
-		int adsr;
-		int amplitude;
-		int frequency;
-		int panorama;
-		int detune;
-		int pitchbend;
-		int velocity_sens;
-		int unison_index;
-		int unison_spread;
-		int unison_init;
-		int unison_noise;
+		Haruhi::ControllerParam adsr;
+		Haruhi::ControllerParam amplitude;
+		Haruhi::ControllerParam frequency;
+		Haruhi::ControllerParam panorama;
+		Haruhi::ControllerParam detune;
+		Haruhi::ControllerParam pitchbend;
+		Haruhi::ControllerParam velocity_sens;
+		Haruhi::ControllerParam unison_index;
+		Haruhi::ControllerParam unison_spread;
+		Haruhi::ControllerParam unison_init;
+		Haruhi::ControllerParam unison_noise;
 	};
 
 	/**
@@ -298,13 +299,13 @@ struct Params
 		enum Function { LogarithmicE, Logarithmic2, Linear, Expotential2, ExpotentialE };
 		enum Mode { Polyphonic, CommonKeySync };
 
-		int delay;
-		int attack;
-		int attack_hold;
-		int decay;
-		int sustain;
-		int sustain_hold;
-		int release;
+		Haruhi::ControllerParam delay;
+		Haruhi::ControllerParam attack;
+		Haruhi::ControllerParam attack_hold;
+		Haruhi::ControllerParam decay;
+		Haruhi::ControllerParam sustain;
+		Haruhi::ControllerParam sustain_hold;
+		Haruhi::ControllerParam release;
 
 		int enabled;
 		int direct_adsr;
@@ -336,14 +337,14 @@ struct Params
 		enum Function { LogarithmicE, Logarithmic2, Linear, Expotential2, ExpotentialE };
 		enum Mode { Polyphonic, CommonKeySync, CommonContinuous };
 
-		int delay;
-		int fade_in;
-		int frequency;
-		int level;
-		int depth;
-		int phase;
-		int wave_shape;
-		int fade_out;
+		Haruhi::ControllerParam delay;
+		Haruhi::ControllerParam fade_in;
+		Haruhi::ControllerParam frequency;
+		Haruhi::ControllerParam level;
+		Haruhi::ControllerParam depth;
+		Haruhi::ControllerParam phase;
+		Haruhi::ControllerParam wave_shape;
+		Haruhi::ControllerParam fade_out;
 
 		int enabled;
 		int wave_type;

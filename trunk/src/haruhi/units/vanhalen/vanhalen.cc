@@ -34,7 +34,9 @@ VanHalen::VanHalen (Haruhi::UnitFactory* factory, Haruhi::Session* session, std:
 	_buf1 (session->graph()->buffer_size()),
 	_buf2 (session->graph()->buffer_size()),
 	_delay1 (16, 100000, session->graph()->buffer_size()),
-	_delay2 (16, 100000, session->graph()->buffer_size())
+	_delay2 (16, 100000, session->graph()->buffer_size()),
+	_comb_index (0, 0, 1000, 0),
+	_comb_alpha (0, -1000, 1000, 0)
 {
 	register_unit();
 
@@ -47,8 +49,8 @@ VanHalen::VanHalen (Haruhi::UnitFactory* factory, Haruhi::Session* session, std:
 	_audio_output_1 = new Core::AudioPort (this, "Audio L", Core::Port::Output);
 	_audio_output_2 = new Core::AudioPort (this, "Audio R", Core::Port::Output);
 
-	_proxy_comb_index = new Haruhi::ControllerProxy (0, &_comb_index, 0, 0, 1000, 0);
-	_proxy_comb_alpha = new Haruhi::ControllerProxy (0, &_comb_alpha, 0, -1000, 1000, 0);
+	_proxy_comb_index = new Haruhi::ControllerProxy (0, &_comb_index);
+	_proxy_comb_alpha = new Haruhi::ControllerProxy (0, &_comb_alpha);
 
 	_knob_comb_index = new Haruhi::Knob (this, _proxy_comb_index, "Index", 0, 1000, 1, 0);
 	_knob_comb_alpha = new Haruhi::Knob (this, _proxy_comb_alpha, "Alpha", -1.0, 1.0, 10, 2);
@@ -128,8 +130,8 @@ VanHalen::process()
 
 #if 1
 	// Feed-forward:
-	_delay1.set_delay (_comb_index);
-	_delay2.set_delay (_comb_index);
+	_delay1.set_delay (_comb_index.get());
+	_delay2.set_delay (_comb_index.get());
 
 	o1->fill (i1);
 	o2->fill (i2);
@@ -142,13 +144,13 @@ VanHalen::process()
 
 	for (unsigned int i = 0; i < _buf1.size(); ++i)
 	{
-		(*o1)[i] += _buf1[i] * 10.0f * _comb_alpha / 1000.0f;
-		(*o2)[i] += _buf2[i] * 10.0f * _comb_alpha / 1000.0f;
+		(*o1)[i] += _buf1[i] * 10.0f * _comb_alpha.get() / 1000.0f;
+		(*o2)[i] += _buf2[i] * 10.0f * _comb_alpha.get() / 1000.0f;
 	}
 #else
 	// Feed-back:
-	_delay1.set_delay (_comb_index);
-	_delay2.set_delay (_comb_index);
+	_delay1.set_delay (_comb_index.get());
+	_delay2.set_delay (_comb_index.get());
 
 	_delay1.read (o1->begin());
 	_delay2.read (o2->begin());

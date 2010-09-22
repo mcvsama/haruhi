@@ -116,7 +116,7 @@ SynthThread::run()
 
 		// Stereo width:
 		// TODO smoothing
-		float w = std::pow (1.0f - 1.0f * atomic (_mikuru->general()->params()->stereo_width) / Params::General::StereoWidthDenominator, M_E);
+		float w = std::pow (1.0f - _mikuru->general()->params()->stereo_width.to_f(), M_E);
 		Core::Sample o1, o2;
 		for (Core::Sample *s1 = _buffer_1->begin(), *s2 = _buffer_2->begin(); s1 != _buffer_1->end(); ++s1, ++s2)
 		{
@@ -136,12 +136,12 @@ SynthThread::run()
 		}
 
 		float f = 0.0;
-		f = 1.0f - 1.0f * atomic (_mikuru->general()->params()->panorama) / Params::General::PanoramaMax;
+		f = 1.0f - 1.0f * _mikuru->general()->params()->panorama.get() / Params::General::PanoramaMax;
 		f = f > 1.0f ? 1.0 : f;
 		_panorama_smoother_1.set_value (f);
 		_panorama_smoother_1.multiply (_buffer_1->begin(), _buffer_1->end());
 
-		f = 1.0f - 1.0f * atomic (_mikuru->general()->params()->panorama) / Params::General::PanoramaMin;
+		f = 1.0f - 1.0f * _mikuru->general()->params()->panorama.get() / Params::General::PanoramaMin;
 		f = f > 1.0f ? 1.0 : f;
 		_panorama_smoother_2.set_value (f);
 		_panorama_smoother_2.multiply (_buffer_2->begin(), _buffer_2->end());

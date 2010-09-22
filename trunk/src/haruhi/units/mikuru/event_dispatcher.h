@@ -55,7 +55,7 @@ class EventDispatcher
 	class VoiceParamReceiver: public Receiver
 	{
 	  public:
-		typedef int (Params::Voice::* VoiceParam);
+		typedef Haruhi::ControllerParam (Params::Voice::* VoiceParam);
 
 	  public:
 		VoiceParamReceiver (VoiceManager* voice_manager, VoiceParam voice_param):
@@ -80,7 +80,7 @@ class EventDispatcher
 	class VoiceFilterParamReceiver: public Receiver
 	{
 	  public:
-		typedef int (Params::Filter::* FilterParam);
+		typedef Haruhi::ControllerParam (Params::Filter::* FilterParam);
 		enum FilterID { Filter1, Filter2 };
 
 	  public:

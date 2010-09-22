@@ -71,15 +71,12 @@ ControllerProxy::Config::decurve (int in) const
 }
 
 
-ControllerProxy::ControllerProxy (Core::EventPort* event_port, int volatile* parameter, int volatile* smoothing_parameter, int limit_min, int limit_max, int value):
-	_config (limit_min, limit_max),
-	_default_value (value),
-	_parameter (parameter),
-	_smoothing_parameter (smoothing_parameter),
+ControllerProxy::ControllerProxy (Core::EventPort* event_port, ControllerParam* param):
+	_config (param->minimum(), param->maximum()),
+	_param (param),
 	_event_port (event_port),
 	_widget (0)
 {
-	set_value (value);
 }
 
 
@@ -118,7 +115,7 @@ void
 ControllerProxy::process_event (Core::ControllerEvent const* event)
 {
 	// Update parameter:
-	atomic (*_parameter) = _config.forward (renormalize (event->value(), 0.0f, 1.0f, 1.0f * _config.hard_limit_min, 1.0f * _config.hard_limit_max));
+	param()->set (_config.forward (renormalize (event->value(), 0.0f, 1.0f, 1.0f * _config.hard_limit_min, 1.0f * _config.hard_limit_max)));
 	// Schedule update for paired Widget:
 	if (_widget)
 		_widget->schedule_for_update();

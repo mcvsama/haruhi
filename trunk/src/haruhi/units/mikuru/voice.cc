@@ -70,8 +70,8 @@ Voice::Voice (VoiceManager* voice_manager, SynthThread* thread, Core::KeyID key_
 
 	_oscillator.set_frequency_source (&_commons->frequency_buffer);
 	_oscillator.set_amplitude_source (&_commons->amplitude_buffer);
-	_oscillator.set_phase (1.0f * atomic (op->phase) / Params::Oscillator::PhaseDenominator);
-	_oscillator.set_initial_phases_spread (1.0f * atomic (_params.unison_init) / Params::Voice::UnisonInitDenominator);
+	_oscillator.set_phase (op->phase.to_f());
+	_oscillator.set_initial_phases_spread (_params.unison_init.to_f());
 
 	// Copy current filter parameters:
 	_filter1_params = *_part->filters()->filter1()->params();
@@ -133,10 +133,10 @@ Voice::mixin (Core::AudioBuffer* output1, Core::AudioBuffer* output2)
 
 	// Main oscillator:
 	_oscillator.set_wavetable (_part->waveform()->wavetable());
-	_oscillator.set_unison_spread ((2.0f / Params::Voice::UnisonSpreadDenominator) * atomic (_params.unison_spread));
-	_oscillator.set_unison_number (atomic (_params.unison_index));
-	_oscillator.set_unison_noise ((1.0f / Params::Voice::UnisonNoiseDenominator) * atomic (_params.unison_noise));
-	_oscillator.set_noise_amplitude (1.0f * atomic (oscillator_params->noise_level) / Params::Oscillator::NoiseLevelDenominator);
+	_oscillator.set_unison_spread (2.0f * _params.unison_spread.to_f());
+	_oscillator.set_unison_number (_params.unison_index.get());
+	_oscillator.set_unison_noise (_params.unison_noise.to_f());
+	_oscillator.set_noise_amplitude (oscillator_params->noise_level.to_f());
 	_oscillator.set_wavetable_enabled (atomic (oscillator_params->wave_enabled));
 	_oscillator.set_noise_enabled (atomic (oscillator_params->noise_enabled));
 	_oscillator.fill (&_commons->oscillator_buffer);
@@ -174,13 +174,13 @@ Voice::mixin (Core::AudioBuffer* output1, Core::AudioBuffer* output2)
 
 		// Panorama:
 		i = 0;
-		f = 1.0f - 1.0f * atomic (_params.panorama) / Params::Voice::PanoramaMax;
+		f = 1.0f - 1.0f * _params.panorama.get() / Params::Voice::PanoramaMax;
 		f = f > 1.0f ? 1.0 : f;
 		_smoother_panorama_1.set_value (f);
 		_smoother_panorama_1.multiply (_commons->output_buffer1.begin(), _commons->output_buffer1.end());
 
 		i = 0;
-		f = 1.0f - 1.0f * atomic (_params.panorama) / Params::Voice::PanoramaMin;
+		f = 1.0f - 1.0f * _params.panorama.get() / Params::Voice::PanoramaMin;
 		f = f > 1.0f ? 1.0 : f;
 		_smoother_panorama_2.set_value (f);
 		_smoother_panorama_2.multiply (_commons->output_buffer2.begin(), _commons->output_buffer2.end());
@@ -254,7 +254,7 @@ Voice::process_frequency()
 				pitchbend = _last_pitchbend_value;
 			else
 			{
-				pitchbend = (1.0f / Params::Voice::PitchbendDenominator) * atomic (_params.pitchbend);
+				pitchbend = _params.pitchbend.to_f();
 				float range = std::pow (2.0f, (1.0f / 12.0f) * (pitchbend >= 0 ? atomic (oscillator_params->pitchbend_up_semitones) : atomic (oscillator_params->pitchbend_down_semitones)));
 				pitchbend = std::pow (range, pitchbend + 1.0f) / range;
 				_last_pitchbend_value = pitchbend;
@@ -266,9 +266,8 @@ Voice::process_frequency()
 
 	// Frequency modulation and detune:
 	{
-		float const frq_mod = (1.0f / Params::Voice::FrequencyDenominator) * atomic (_params.frequency);
-		float const frq_det = (1.0f / Params::Voice::DetuneDenominator) * atomic (_params.detune) +
-							  (1.0f / Params::General::DetuneDenominator) * atomic (_mikuru->general()->params()->detune);
+		float const frq_mod = _params.frequency.to_f();
+		float const frq_det = _params.detune.to_f() + _mikuru->general()->params()->detune.to_f();
 		_smoother_frequency.set_value (frq_mod);
 		_smoother_frequency.fill (_commons->temp1.begin(), _commons->temp1.end());
 
@@ -296,13 +295,12 @@ Voice::process_amplitude()
 	std::fill (_commons->amplitude_buffer.begin(), _commons->amplitude_buffer.end(), 1.0f);
 
 	// Amplitude velocity sensing:
-	float s = (1.0f / Params::Voice::VelocitySensDenominator) * atomic (_params.velocity_sens);
+	float s = _params.velocity_sens.to_f();
 	amplitude *= (s >= 0.0 ? 1 - s + _amplitude * s : s * _amplitude + 1.0f);
 
 	// Volume and amplitude modulation:
-	float v = (1.0f / Params::Oscillator::VolumeDenominator) * atomic (oscillator_params->volume);
-	_smoother_amplitude.set_value (v * (1.0f / Params::Voice::AmplitudeDenominator) * atomic (_params.amplitude) *
-								   (1.0f / Params::Voice::AdsrDenominator) * atomic (_params.adsr));
+	float v = oscillator_params->volume.to_f();
+	_smoother_amplitude.set_value (v * _params.amplitude.to_f() * _params.adsr.to_f());
 	_smoother_amplitude.multiply (_commons->amplitude_buffer.begin(), _commons->amplitude_buffer.end());
 
 	for (Core::Sample *s = _commons->amplitude_buffer.begin(), *e = _commons->amplitude_buffer.end(); s != e; ++s)
@@ -315,7 +313,7 @@ Voice::update_glide_parameters()
 {
 	float source_frequency = _frequency;
 
-	int portamento_time = atomic (_part->oscillator()->oscillator_params()->portamento_time);
+	int portamento_time = _part->oscillator()->oscillator_params()->portamento_time.get();
 	if (portamento_time > 0)
 	{
 		if (atomic (_part->oscillator()->oscillator_params()->const_portamento_time))

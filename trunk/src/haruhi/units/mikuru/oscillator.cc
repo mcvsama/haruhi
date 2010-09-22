@@ -39,7 +39,7 @@ namespace MikuruPrivate {
 	{ \
 		if (_loading_params) \
 			return; \
-		_part->voice_manager()->set_voice_param (Core::OmniVoice, &Params::Voice::param_name, _voice_params.param_name); \
+		_part->voice_manager()->set_voice_param (Core::OmniVoice, &Params::Voice::param_name, _voice_params.param_name.get()); \
 	}
 
 UPDATE_VOICE (panorama)
@@ -85,21 +85,21 @@ Oscillator::Oscillator (Part* part, Core::PortGroup* port_group, QString const& 
 	_port_noise_level = new Core::EventPort (_mikuru, port_prefix + " - Noise level", Core::Port::Input, port_group);
 	_mikuru->graph()->unlock();
 
-	_proxy_volume = new Haruhi::ControllerProxy (_port_volume, &_oscillator_params.volume, 0, HARUHI_MIKURU_MINMAX (Params::Oscillator::Volume), po.volume);
-	_proxy_panorama = new Haruhi::ControllerProxy (_port_panorama, &_voice_params.panorama, &_oscillator_params.panorama_smoothing, HARUHI_MIKURU_MINMAX (Params::Voice::Panorama), pv.panorama);
-	_proxy_detune = new Haruhi::ControllerProxy (_port_detune, &_voice_params.detune, 0, HARUHI_MIKURU_MINMAX (Params::Voice::Detune), pv.detune);
-	_proxy_pitchbend = new Haruhi::ControllerProxy (_port_pitchbend, &_voice_params.pitchbend, &_oscillator_params.pitchbend_smoothing, HARUHI_MIKURU_MINMAX (Params::Voice::Pitchbend), pv.pitchbend);
-	_proxy_unison_index = new Haruhi::ControllerProxy (_port_unison_index, &_voice_params.unison_index, 0, HARUHI_MIKURU_MINMAX (Params::Voice::UnisonIndex), pv.unison_index);
-	_proxy_unison_spread = new Haruhi::ControllerProxy (_port_unison_spread, &_voice_params.unison_spread, 0, HARUHI_MIKURU_MINMAX (Params::Voice::UnisonSpread), pv.unison_spread);
-	_proxy_unison_init = new Haruhi::ControllerProxy (_port_unison_init, &_voice_params.unison_init, 0, HARUHI_MIKURU_MINMAX (Params::Voice::UnisonInit), pv.unison_init);
-	_proxy_unison_noise = new Haruhi::ControllerProxy (_port_unison_noise, &_voice_params.unison_noise, 0, HARUHI_MIKURU_MINMAX (Params::Voice::UnisonNoise), pv.unison_noise);
-	_proxy_velocity_sens = new Haruhi::ControllerProxy (_port_velocity_sens, &_voice_params.velocity_sens, 0, HARUHI_MIKURU_MINMAX (Params::Voice::VelocitySens), pv.velocity_sens);
-	_proxy_portamento_time = new Haruhi::ControllerProxy (_port_portamento_time, &_oscillator_params.portamento_time, 0, HARUHI_MIKURU_MINMAX (Params::Oscillator::PortamentoTime), po.portamento_time);
+	_proxy_volume = new Haruhi::ControllerProxy (_port_volume, &_oscillator_params.volume);
+	_proxy_panorama = new Haruhi::ControllerProxy (_port_panorama, &_voice_params.panorama);
+	_proxy_detune = new Haruhi::ControllerProxy (_port_detune, &_voice_params.detune);
+	_proxy_pitchbend = new Haruhi::ControllerProxy (_port_pitchbend, &_voice_params.pitchbend);
+	_proxy_unison_index = new Haruhi::ControllerProxy (_port_unison_index, &_voice_params.unison_index);
+	_proxy_unison_spread = new Haruhi::ControllerProxy (_port_unison_spread, &_voice_params.unison_spread);
+	_proxy_unison_init = new Haruhi::ControllerProxy (_port_unison_init, &_voice_params.unison_init);
+	_proxy_unison_noise = new Haruhi::ControllerProxy (_port_unison_noise, &_voice_params.unison_noise);
+	_proxy_velocity_sens = new Haruhi::ControllerProxy (_port_velocity_sens, &_voice_params.velocity_sens);
+	_proxy_portamento_time = new Haruhi::ControllerProxy (_port_portamento_time, &_oscillator_params.portamento_time);
 	_proxy_portamento_time->config()->curve = 1.0;
 	_proxy_portamento_time->config()->user_limit_max = 0.5f * Params::Oscillator::PortamentoTimeDenominator;
 	_proxy_portamento_time->apply_config();
-	_proxy_phase = new Haruhi::ControllerProxy (_port_phase, &_oscillator_params.phase, 0, HARUHI_MIKURU_MINMAX (Params::Oscillator::Phase), po.phase);
-	_proxy_noise_level = new Haruhi::ControllerProxy (_port_noise_level, &_oscillator_params.noise_level, 0, HARUHI_MIKURU_MINMAX (Params::Oscillator::NoiseLevel), po.noise_level);
+	_proxy_phase = new Haruhi::ControllerProxy (_port_phase, &_oscillator_params.phase);
+	_proxy_noise_level = new Haruhi::ControllerProxy (_port_noise_level, &_oscillator_params.noise_level);
 
 	_control_volume = new Haruhi::Knob (_panel, _proxy_volume, "Volume", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Oscillator::Volume, 100), 2);
 	_control_volume->set_unit_bay (_mikuru->unit_bay());
@@ -387,10 +387,6 @@ Oscillator::load_oscillator_params()
 
 	Params::Oscillator po = _oscillator_params;
 
-	// Knobs:
-	_proxy_volume->set_value (po.volume);
-	_proxy_portamento_time->set_value (po.portamento_time);
-	_proxy_phase->set_value (po.phase);
 	// Other:
 	_wave_enabled->setChecked (po.wave_enabled);
 	_noise_enabled->setChecked (po.noise_enabled);
@@ -416,24 +412,6 @@ Oscillator::load_oscillator_params()
 void
 Oscillator::load_voice_params()
 {
-	if (_loading_params)
-		return;
-	_loading_params = true;
-
-	Params::Voice pv = _voice_params;
-
-	// Knobs:
-	_proxy_panorama->set_value (pv.panorama);
-	_proxy_detune->set_value (pv.detune);
-	_proxy_pitchbend->set_value (pv.pitchbend);
-	_proxy_velocity_sens->set_value (pv.velocity_sens);
-	_proxy_unison_index->set_value (pv.unison_index);
-	_proxy_unison_spread->set_value (pv.unison_spread);
-	_proxy_unison_init->set_value (pv.unison_init);
-	_proxy_unison_noise->set_value (pv.unison_noise);
-
-	_loading_params = false;
-	update_widgets();
 }
 
 

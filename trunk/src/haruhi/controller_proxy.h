@@ -19,6 +19,7 @@
 
 // Haruhi:
 #include <haruhi/periodic_updater.h>
+#include <haruhi/controller_param.h>
 #include <haruhi/core/event.h>
 #include <haruhi/core/event_port.h>
 #include <haruhi/utility/saveable_state.h>
@@ -30,8 +31,7 @@ namespace Haruhi {
  * Proxy between event port and int parameter.
  * Also handles UI widget.
  */
-class ControllerProxy:
-	public SaveableState
+class ControllerProxy: public SaveableState
 {
   public:
 	/**
@@ -75,43 +75,21 @@ class ControllerProxy:
 
   public:
 	/**
-	 * \param	value: Current value. Becomes also default value for this ControllerProxy.
+	 * \param	event_port is event port connected to this proxy.
+	 * 			Proxy does not take ownership of the port.
+	 * \param	param is controller param controlled by this proxy.
+	 * 			Proxy does not take ownership of the param.
 	 */
-	ControllerProxy (Core::EventPort* event_port, int volatile* parameter, int volatile* smoothing_parameter, int limit_min, int limit_max, int value);
-
-	Config*
-	config() { return &_config; }
+	ControllerProxy (Core::EventPort* event_port, ControllerParam* param);
 
 	Core::EventPort*
 	event_port() const { return _event_port; }
 
-	int volatile*
-	parameter() const { return _parameter; }
+	ControllerParam*
+	param() const { return _param; }
 
-	int volatile*
-	smoothing_parameter() const { return _smoothing_parameter; }
-
-	int
-	value() const { return atomic (*_parameter); }
-
-	void
-	set_value (int value) { atomic (*_parameter) = value; }
-
-	int
-	smoothing_value() const { return atomic (*_smoothing_parameter); }
-
-	void
-	set_smoothing_value (int value)
-	{
-		if (_smoothing_parameter)
-			atomic (*_smoothing_parameter) = value;
-	}
-
-	/**
-	 * Resets to default value.
-	 */
-	void
-	reset() { set_value (_default_value); }
+	Config*
+	config() { return &_config; }
 
 	/**
 	 * Assigns Widget to be notified of parameter updates.
@@ -142,6 +120,7 @@ class ControllerProxy:
 
 	/*
 	 * SaveableState API
+	 * Saves ControllerProxy configuration (curves, etc.)
 	 */
 
 	void
@@ -152,9 +131,7 @@ class ControllerProxy:
 
   private:
 	Config				_config;
-	int					_default_value;
-	int volatile*		_parameter;
-	int volatile*		_smoothing_parameter;
+	ControllerParam*	_param;
 	Core::EventPort*	_event_port;
 	Widget*				_widget;
 };

@@ -67,14 +67,14 @@ Filter::Filter (FilterID filter_id, Core::PortGroup* port_group, QString const& 
 	_port_attenuation = new Core::EventPort (_mikuru, (port_prefix + " - Attenuate").toStdString(), Core::Port::Input, port_group, _polyphonic_control ? Core::Port::Polyphonic : 0);
 	_mikuru->graph()->unlock();
 
-	_proxy_frequency = new Haruhi::ControllerProxy (_port_frequency, &_params.frequency, &_params.frequency_smoothing, HARUHI_MIKURU_MINMAX (Params::Filter::Frequency), p.frequency);
+	_proxy_frequency = new Haruhi::ControllerProxy (_port_frequency, &_params.frequency);
 	_proxy_frequency->config()->curve = 1.0;
 	_proxy_frequency->config()->user_limit_min = 0.04 * Params::Filter::FrequencyDenominator;
 	_proxy_frequency->config()->user_limit_max = 22.0 * Params::Filter::FrequencyDenominator;
 	_proxy_frequency->apply_config();
-	_proxy_resonance = new Haruhi::ControllerProxy (_port_resonance, &_params.resonance, &_params.resonance_smoothing, HARUHI_MIKURU_MINMAX (Params::Filter::Resonance), p.resonance);
-	_proxy_gain = new Haruhi::ControllerProxy (_port_gain, &_params.gain, &_params.gain_smoothing, HARUHI_MIKURU_MINMAX (Params::Filter::Gain), p.gain);
-	_proxy_attenuation = new Haruhi::ControllerProxy (_port_attenuation, &_params.attenuation, &_params.attenuation_smoothing, HARUHI_MIKURU_MINMAX (Params::Filter::Attenuation), p.attenuation);
+	_proxy_resonance = new Haruhi::ControllerProxy (_port_resonance, &_params.resonance);
+	_proxy_gain = new Haruhi::ControllerProxy (_port_gain, &_params.gain);
+	_proxy_attenuation = new Haruhi::ControllerProxy (_port_attenuation, &_params.attenuation);
 	_proxy_attenuation->config()->curve = 1.0;
 	_proxy_attenuation->apply_config();
 
@@ -233,17 +233,13 @@ Filter::unit_bay_assigned()
 void
 Filter::load_params()
 {
-	Params::Filter p = _params;
+	Params::Filter p (_params);
 	_loading_params = true;
 
 	_filter_label->checkbox()->setChecked (p.enabled);
 	_filter_type->setCurrentItem (p.type);
 	_passes->setCurrentItem (bound (p.passes, 1, 5) - 1);
 	_limiter_enabled->setChecked (p.limiter_enabled);
-	_proxy_frequency->set_value (p.frequency);
-	_proxy_resonance->set_value (p.resonance);
-	_proxy_gain->set_value (p.gain);
-	_proxy_attenuation->set_value (p.attenuation);
 
 	_loading_params = false;
 	update_widgets();
@@ -299,11 +295,11 @@ Filter::update_frequency_response()
 	params_updated();
 
 	_impulse_response.set_type (static_cast<RBJImpulseResponse::Type> (static_cast<int> (atomic (_params.type))));
-	_impulse_response.set_frequency (0.5f * atomic (_params.frequency) / Params::Filter::FrequencyMax);
-	_impulse_response.set_resonance (1.0f * atomic (_params.resonance) / Params::Filter::ResonanceDenominator);
-	_impulse_response.set_gain (1.0f * atomic (_params.gain) / Params::Filter::GainDenominator);
-	_impulse_response.set_attenuation (1.0f * atomic (_params.attenuation) / Params::Filter::AttenuationDenominator);
-	_impulse_response.set_limiter (_params.limiter_enabled);
+	_impulse_response.set_frequency (0.5f * _params.frequency.get() / Params::Filter::FrequencyMax);
+	_impulse_response.set_resonance (_params.resonance.to_f());
+	_impulse_response.set_gain (_params.gain.to_f());
+	_impulse_response.set_attenuation (_params.attenuation.to_f());
+	_impulse_response.set_limiter (atomic (_params.limiter_enabled));
 	_response_plot->replot();
 }
 

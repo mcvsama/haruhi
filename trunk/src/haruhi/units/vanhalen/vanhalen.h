@@ -70,8 +70,8 @@ class VanHalen:
 	Haruhi::Knob*				_knob_comb_index;
 	Haruhi::Knob*				_knob_comb_alpha;
 
-	int							_comb_index;
-	int							_comb_alpha;
+	Haruhi::ControllerParam		_comb_index;
+	Haruhi::ControllerParam		_comb_alpha;
 };
 
 

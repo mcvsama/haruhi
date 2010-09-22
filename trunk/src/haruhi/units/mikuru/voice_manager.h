@@ -21,6 +21,7 @@
 // Haruhi:
 #include <haruhi/haruhi.h>
 #include <haruhi/core/event_buffer.h>
+#include <haruhi/controller_param.h>
 
 // Local:
 #include "voice.h"
@@ -129,13 +130,13 @@ class VoiceManager
 	set_sustain (bool enabled);
 
 	void
-	set_voice_param (Core::VoiceID, int (Params::Voice::* param), int value);
+	set_voice_param (Core::VoiceID, Haruhi::ControllerParam (Params::Voice::* param), int value);
 
 	void
-	set_filter1_param (Core::VoiceID, int (Params::Filter::* param), int value);
+	set_filter1_param (Core::VoiceID, Haruhi::ControllerParam (Params::Filter::* param), int value);
 
 	void
-	set_filter2_param (Core::VoiceID, int (Params::Filter::* param), int value);
+	set_filter2_param (Core::VoiceID, Haruhi::ControllerParam (Params::Filter::* param), int value);
 
 	void
 	set_all_voices_params (Params::Voice& params);

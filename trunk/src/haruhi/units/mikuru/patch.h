@@ -63,6 +63,12 @@ class Patch: public SaveableState
 		return QString::number (value);
 	}
 
+	QString
+	to_string (Haruhi::ControllerParam const& param) const
+	{
+		return QString::number (param.get());
+	}
+
 	/**
 	 * Saves parameters as sub-element of element parameters.
 	 */
@@ -147,6 +153,12 @@ class Patch: public SaveableState
 	convert_string (QString const& string, QString& value) const
 	{
 		value = string;
+	}
+
+	void
+	convert_string (QString const& string, Haruhi::ControllerParam& param) const
+	{
+		param.set (string.toInt());
 	}
 
 	/**

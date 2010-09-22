@@ -216,7 +216,7 @@ Mikuru::process()
 		_input_buffer_L.fill (_audio_input_L->audio_buffer());
 		_input_buffer_R.fill (_audio_input_R->audio_buffer());
 		// Adjust volume:
-		float v = std::pow (1.0f * atomic (_general->params()->input_volume) / Private::Params::General::InputVolumeDenominator, M_E);
+		float v = std::pow (_general->params()->input_volume.to_f(), M_E);
 		_audio_input_smoother_L.set_value (v);
 		_audio_input_smoother_L.multiply (_input_buffer_L.begin(), _input_buffer_L.end());
 		_audio_input_smoother_R.set_value (v);
@@ -241,7 +241,7 @@ Mikuru::process()
 	}
 
 	// Master volume:
-	Core::Sample v = std::pow (1.0f * atomic (general()->params()->volume) / Private::Params::General::VolumeDenominator, M_E);
+	Core::Sample v = std::pow (general()->params()->volume.to_f(), M_E);
 	_master_volume_smoother_L.set_value (v);
 	_master_volume_smoother_L.multiply (_audio_output_L->audio_buffer()->begin(), _audio_output_L->audio_buffer()->end());
 	_master_volume_smoother_R.set_value (v);

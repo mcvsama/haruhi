@@ -85,7 +85,7 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	_user_limit_max_spinbox = user_limit_max_spinbox;
 
 	QLabel* smoothing_label = 0;
-	if (_knob->controller_proxy()->smoothing_parameter())
+	if (_knob->controller_proxy()->param()->smoothing_enabled())
 	{
 		smoothing_label = new QLabel ("Smoothing:", this);
 		_smoothing_spinbox = new QSpinBox (this);
@@ -95,7 +95,7 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 		_smoothing_spinbox->setSuffix (" ms");
 		_smoothing_spinbox->setSpecialValueText ("Off");
 		_smoothing_spinbox->setMinimumWidth (65);
-		_smoothing_spinbox->setValue (_knob->controller_proxy()->smoothing_value());
+		_smoothing_spinbox->setValue (_knob->controller_proxy()->param()->smoothing());
 		_smoothing_spinbox->setFixedWidth (80);
 	}
 
@@ -105,7 +105,7 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	grid_layout->addWidget (_curve_spinbox, 0, 1, Qt::AlignRight);
 	grid_layout->addWidget (_user_limit_min_spinbox, 1, 1, Qt::AlignRight);
 	grid_layout->addWidget (_user_limit_max_spinbox, 2, 1, Qt::AlignRight);
-	if (_knob->controller_proxy()->smoothing_parameter())
+	if (_knob->controller_proxy()->param()->smoothing_enabled())
 	{
 		grid_layout->addWidget (smoothing_label, 3, 0, Qt::AlignLeft);
 		grid_layout->addWidget (_smoothing_spinbox, 3, 1, Qt::AlignRight);
@@ -131,13 +131,13 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 void
 KnobProperties::apply()
 {
-	int value = _knob->controller_proxy()->value();
+	int value = _knob->controller_proxy()->param()->get();
 	_knob->controller_proxy()->config()->curve = _curve_spinbox->value() / 1000.0;
 	_knob->controller_proxy()->config()->user_limit_min = _user_limit_min_spinbox->value();
 	_knob->controller_proxy()->config()->user_limit_max = _user_limit_max_spinbox->value();
-	_knob->controller_proxy()->set_value (value);
+	_knob->controller_proxy()->param()->set (value);
 	if (_smoothing_spinbox)
-		_knob->controller_proxy()->set_smoothing_value (_smoothing_spinbox->value());
+		_knob->controller_proxy()->param()->set_smoothing (_smoothing_spinbox->value());
 }
 
 
@@ -238,7 +238,7 @@ Knob::Knob (QWidget* parent, ControllerProxy* controller_proxy_, QString const& 
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 	_label = new QLabel (label, this);
-	_dial_control = new DialControl (this, hard_limit_min, hard_limit_max, controller_proxy()->config()->reverse (controller_proxy()->value()));
+	_dial_control = new DialControl (this, hard_limit_min, hard_limit_max, controller_proxy()->config()->reverse (controller_proxy()->param()->get()));
 	_spin_box = new SpinBox (this, this, user_limit_min, user_limit_max, show_min, show_max, step, decimals);
 	_label->setBuddy (_spin_box);
 	_context_menu = new QMenu (this);
@@ -285,7 +285,7 @@ Knob::read_config()
 void
 Knob::read()
 {
-	int value = controller_proxy()->value();
+	int value = controller_proxy()->param()->get();
 	_prevent_recursion = true;
 	_dial_control->setValue (controller_proxy()->config()->reverse (value));
 	_spin_box->setValue (value);
@@ -305,7 +305,7 @@ Knob::periodic_update()
 void
 Knob::reset()
 {
-	controller_proxy()->reset();
+	controller_proxy()->param()->reset();
 	schedule_for_update();
 }
 
@@ -505,7 +505,7 @@ Knob::dial_changed (int value)
 {
 	if (_prevent_recursion)
 		return;
-	controller_proxy()->set_value (controller_proxy()->config()->forward (value));
+	controller_proxy()->param()->set (controller_proxy()->config()->forward (value));
 	schedule_for_update();
 }
 
@@ -515,7 +515,7 @@ Knob::spin_changed (int value)
 {
 	if (_prevent_recursion)
 		return;
-	controller_proxy()->set_value (value);
+	controller_proxy()->param()->set (value);
 	schedule_for_update();
 }
 

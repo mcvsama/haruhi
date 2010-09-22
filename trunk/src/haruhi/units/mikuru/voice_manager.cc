@@ -245,97 +245,97 @@ VoiceManager::set_sustain (bool enabled)
 
 
 void
-VoiceManager::set_voice_param (Core::VoiceID voice_id, int (Params::Voice::* param), int value)
+VoiceManager::set_voice_param (Core::VoiceID voice_id, Haruhi::ControllerParam (Params::Voice::* param), int value)
 {
 	if (voice_id == Core::OmniVoice)
 	{
 		Voices::iterator v;
 		for (v = _pressed_voices.begin(); v != _pressed_voices.end(); ++v)
-			atomic ((*v)->params()->*param) = value;
+			((*v)->params()->*param).set (value);
 		for (v = _sustained_voices.begin(); v != _sustained_voices.end(); ++v)
-			atomic ((*v)->params()->*param) = value;
+			((*v)->params()->*param).set (value);
 		for (v = _released_voices.begin(); v != _released_voices.end(); ++v)
-			atomic ((*v)->params()->*param) = value;
+			((*v)->params()->*param).set (value);
 		if (_mono_voice)
-			atomic (_mono_voice->params()->*param) = value;
+			(_mono_voice->params()->*param).set (value);
 	}
 	else
 	{
 		Voice* voice = find_voice_by_id (_pressed_voices, voice_id);
 		if (voice)
-			atomic (voice->params()->*param) = value;
+			(voice->params()->*param).set (value);
 		voice = find_voice_by_id (_sustained_voices, voice_id);
 		if (voice)
-			atomic (voice->params()->*param) = value;
+			(voice->params()->*param).set (value);
 		voice = find_voice_by_id (_released_voices, voice_id);
 		if (voice)
-			atomic (voice->params()->*param) = value;
+			(voice->params()->*param).set (value);
 		if (_mono_voice && _mono_voice->voice_id() == voice_id)
-			atomic (_mono_voice->params()->*param) = value;
+			(_mono_voice->params()->*param).set (value);
 	}
 }
 
 
 void
-VoiceManager::set_filter1_param (Core::VoiceID voice_id, int (Params::Filter::* param), int value)
+VoiceManager::set_filter1_param (Core::VoiceID voice_id, Haruhi::ControllerParam (Params::Filter::* param), int value)
 {
 	if (voice_id == Core::OmniVoice)
 	{
 		Voices::iterator v;
 		for (v = _pressed_voices.begin(); v != _pressed_voices.end(); ++v)
-			atomic ((*v)->filter1_params()->*param) = value;
+			((*v)->filter1_params()->*param).set (value);
 		for (v = _sustained_voices.begin(); v != _sustained_voices.end(); ++v)
-			atomic ((*v)->filter1_params()->*param) = value;
+			((*v)->filter1_params()->*param).set (value);
 		for (v = _released_voices.begin(); v != _released_voices.end(); ++v)
-			atomic ((*v)->filter1_params()->*param) = value;
+			((*v)->filter1_params()->*param).set (value);
 		if (_mono_voice)
-			atomic (_mono_voice->filter1_params()->*param) = value;
+			(_mono_voice->filter1_params()->*param).set (value);
 	}
 	else
 	{
 		Voice* voice = find_voice_by_id (_pressed_voices, voice_id);
 		if (voice)
-			atomic (voice->filter1_params()->*param) = value;
+			(voice->filter1_params()->*param).set (value);
 		voice = find_voice_by_id (_sustained_voices, voice_id);
 		if (voice)
-			atomic (voice->filter1_params()->*param) = value;
+			(voice->filter1_params()->*param).set (value);
 		voice = find_voice_by_id (_released_voices, voice_id);
 		if (voice)
-			atomic (voice->filter1_params()->*param) = value;
+			(voice->filter1_params()->*param).set (value);
 		if (_mono_voice && _mono_voice->voice_id() == voice_id)
-			atomic (_mono_voice->filter1_params()->*param) = value;
+			(_mono_voice->filter1_params()->*param).set (value);
 	}
 }
 
 
 void
-VoiceManager::set_filter2_param (Core::VoiceID voice_id, int (Params::Filter::* param), int value)
+VoiceManager::set_filter2_param (Core::VoiceID voice_id, Haruhi::ControllerParam (Params::Filter::* param), int value)
 {
 	if (voice_id == Core::OmniVoice)
 	{
 		Voices::iterator v;
 		for (v = _pressed_voices.begin(); v != _pressed_voices.end(); ++v)
-			atomic ((*v)->filter2_params()->*param) = value;
+			((*v)->filter2_params()->*param).set (value);
 		for (v = _sustained_voices.begin(); v != _sustained_voices.end(); ++v)
-			atomic ((*v)->filter2_params()->*param) = value;
+			((*v)->filter2_params()->*param).set (value);
 		for (v = _released_voices.begin(); v != _released_voices.end(); ++v)
-			atomic ((*v)->filter2_params()->*param) = value;
+			((*v)->filter2_params()->*param).set (value);
 		if (_mono_voice)
-			atomic (_mono_voice->filter2_params()->*param) = value;
+			(_mono_voice->filter2_params()->*param).set (value);
 	}
 	else
 	{
 		Voice* voice = find_voice_by_id (_pressed_voices, voice_id);
 		if (voice)
-			atomic (voice->filter2_params()->*param) = value;
+			(voice->filter2_params()->*param).set (value);
 		voice = find_voice_by_id (_sustained_voices, voice_id);
 		if (voice)
-			atomic (voice->filter2_params()->*param) = value;
+			(voice->filter2_params()->*param).set (value);
 		voice = find_voice_by_id (_released_voices, voice_id);
 		if (voice)
-			atomic (voice->filter2_params()->*param) = value;
+			(voice->filter2_params()->*param).set (value);
 		if (_mono_voice && _mono_voice->voice_id() == voice_id)
-			atomic (_mono_voice->filter2_params()->*param) = value;
+			(_mono_voice->filter2_params()->*param).set (value);
 	}
 }
 

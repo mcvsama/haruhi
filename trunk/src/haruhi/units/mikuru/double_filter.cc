@@ -67,18 +67,18 @@ DoubleFilter::configure (Configuration configuration, Params::Filter* params1, P
 
 	if (_params1.enabled)
 	{
-		_smoother_filter1_frequency.set_value (0.5f * _params1.frequency / Params::Filter::FrequencyMax);
-		_smoother_filter1_resonance.set_value (1.0f * _params1.resonance / Params::Filter::ResonanceDenominator);
-		_smoother_filter1_gain.set_value (1.0f * _params1.gain / Params::Filter::GainDenominator);
-		_smoother_filter1_attenuation.set_value (1.0f * _params1.attenuation / Params::Filter::AttenuationDenominator);
+		_smoother_filter1_frequency.set_value (0.5f * _params1.frequency.get() / Params::Filter::FrequencyMax);
+		_smoother_filter1_resonance.set_value (_params1.resonance.to_f());
+		_smoother_filter1_gain.set_value (_params1.gain.to_f());
+		_smoother_filter1_attenuation.set_value (_params1.attenuation.to_f());
 	}
 
 	if (_params2.enabled)
 	{
-		_smoother_filter2_frequency.set_value (0.5f * _params2.frequency / Params::Filter::FrequencyMax);
-		_smoother_filter2_resonance.set_value (1.0f * _params2.resonance / Params::Filter::ResonanceDenominator);
-		_smoother_filter2_gain.set_value (1.0f * _params2.gain / Params::Filter::GainDenominator);
-		_smoother_filter2_attenuation.set_value (1.0f * _params2.attenuation / Params::Filter::AttenuationDenominator);
+		_smoother_filter2_frequency.set_value (0.5f * _params2.frequency.get() / Params::Filter::FrequencyMax);
+		_smoother_filter2_resonance.set_value (_params2.resonance.to_f());
+		_smoother_filter2_gain.set_value (_params2.gain.to_f());
+		_smoother_filter2_attenuation.set_value (_params2.attenuation.to_f());
 	}
 }
 

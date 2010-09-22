@@ -44,7 +44,11 @@ EG::EG (int id, Mikuru* mikuru, QWidget* parent):
 	_loading_params (false),
 	_updating_widgets (false),
 	_mute_point_controls (false),
-	_buffer (mikuru->graph()->buffer_size())
+	_buffer (mikuru->graph()->buffer_size()),
+	_segment_duration (Params::EG::SegmentDurationMin, Params::EG::SegmentDurationMax,
+					   Params::EG::SegmentDurationDenominator, Params::EG::SegmentDurationDefault),
+	_point_value (Params::EG::PointValueMin, Params::EG::PointValueMax,
+				  Params::EG::PointValueDenominator, Params::EG::PointValueDefault)
 {
 	_id = (id == 0) ? _mikuru->allocate_id ("egs") : _mikuru->reserve_id ("egs", id);
 
@@ -107,11 +111,11 @@ EG::create_ports()
 void
 EG::create_proxies()
 {
-	_proxy_segment_duration = new Haruhi::ControllerProxy (_port_segment_duration, &_segment_duration, 0, HARUHI_MIKURU_MINMAX (Params::EG::SegmentDuration), Params::EG::SegmentDurationDefault);
+	_proxy_segment_duration = new Haruhi::ControllerProxy (_port_segment_duration, &_segment_duration);
 	_proxy_segment_duration->config()->curve = 1.0;
 	_proxy_segment_duration->apply_config();
 
-	_proxy_point_value = new Haruhi::ControllerProxy (_port_point_value, &_point_value, 0, HARUHI_MIKURU_MINMAX (Params::EG::PointValue), Params::EG::PointValueDefault);
+	_proxy_point_value = new Haruhi::ControllerProxy (_port_point_value, &_point_value);
 }
 
 
@@ -391,7 +395,7 @@ EG::changed_segment_value()
 		return;
 
 	unsigned int p = _active_point->value();
-	_envelope_template.points()[p].value = 1.0f * _point_value / Params::EG::PointValueDenominator;
+	_envelope_template.points()[p].value = _point_value.to_f();
 
 	update_params();
 	update_plot();
@@ -406,7 +410,7 @@ EG::changed_segment_duration()
 
 	unsigned int p = _active_point->value();
 	if (p > 0)
-		_envelope_template.points()[p-1].samples = 1.0f * _segment_duration / Params::EG::SegmentDurationDenominator * ARTIFICIAL_SAMPLE_RATE;
+		_envelope_template.points()[p-1].samples = _segment_duration.to_f() * ARTIFICIAL_SAMPLE_RATE;
 
 	update_params();
 	update_plot();
@@ -429,8 +433,8 @@ EG::update_point_knobs()
 {
 	unsigned int p = _active_point->value();
 
-	_proxy_point_value->set_value (_envelope_template.points()[p].value * Params::EG::PointValueDenominator);
-	_proxy_segment_duration->set_value (p > 0 ? (1.0f * _envelope_template.points()[p-1].samples / ARTIFICIAL_SAMPLE_RATE * Params::EG::SegmentDurationDenominator) : 0);
+	_proxy_point_value->param()->set (_envelope_template.points()[p].value * Params::EG::PointValueDenominator);
+	_proxy_segment_duration->param()->set (p > 0 ? (1.0f * _envelope_template.points()[p-1].samples / ARTIFICIAL_SAMPLE_RATE * Params::EG::SegmentDurationDenominator) : 0);
 
 	_control_point_value->read();
 	_control_segment_duration->read();
