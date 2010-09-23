@@ -71,15 +71,20 @@ ControllerParam::save_state (QDomElement& element) const
 	element.setAttribute ("value", QString ("%1").arg (get()));
 	element.setAttribute ("smoothing-value", QString ("%1").arg (smoothing()));
 	element.setAttribute ("smoothing-enabled", smoothing_enabled() ? "true" : "false");
+	element.appendChild (element.ownerDocument().createTextNode (QString::number (get())));
 }
 
 
 void
 ControllerParam::load_state (QDomElement const& element)
 {
-	set (bound (element.attribute ("value").toInt(), minimum(), maximum()));
-	set_smoothing (bound (element.attribute ("smoothing-value").toInt(), 0, 10000));
-	set_smoothing_enabled (element.attribute ("smoothing-enabled") == "true");
+	set_smoothing (0);
+	set_smoothing_enabled (false);
+	if (element.hasAttribute ("smoothing-value"))
+		set_smoothing (bound (element.attribute ("smoothing-value").toInt(), 0, 10000));
+	if (element.hasAttribute ("smoothing-enabled"))
+		set_smoothing_enabled (element.attribute ("smoothing-enabled") == "true");
+	set (bound (element.text().toInt(), minimum(), maximum()));
 }
 
 } // namespace Haruhi

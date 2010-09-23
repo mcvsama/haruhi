@@ -61,11 +61,11 @@ Patch::save_state (QDomElement& element) const
 		save_parameter (general_element, "polyphony", params.polyphony);
 		save_parameter (general_element, "enable-audio-input", params.enable_audio_input);
 		save_parameter (general_element, "panorama-smoothing", params.panorama_smoothing);
-		save_parameter (general_element, "volume", params.volume, general->_proxy_volume);
-		save_parameter (general_element, "detune", params.detune, general->_proxy_detune);
-		save_parameter (general_element, "panorama", params.panorama, general->_proxy_panorama);
-		save_parameter (general_element, "stereo-width", params.stereo_width, general->_proxy_stereo_width);
-		save_parameter (general_element, "input-volume", params.input_volume, general->_proxy_input_volume);
+		save_parameter (general_element, "volume", general->_proxy_volume);
+		save_parameter (general_element, "detune", general->_proxy_detune);
+		save_parameter (general_element, "panorama", general->_proxy_panorama);
+		save_parameter (general_element, "stereo-width", general->_proxy_stereo_width);
+		save_parameter (general_element, "input-volume", general->_proxy_input_volume);
 
 		element.appendChild (general_element);
 	}
@@ -92,10 +92,10 @@ Patch::save_state (QDomElement& element) const
 			save_parameter (filter1_element, "type", params.type);
 			save_parameter (filter1_element, "passes", params.passes);
 			save_parameter (filter1_element, "limiter-enabled", params.limiter_enabled);
-			save_parameter (filter1_element, "frequency", params.frequency, filter->_proxy_frequency);
-			save_parameter (filter1_element, "resonance", params.resonance, filter->_proxy_resonance);
-			save_parameter (filter1_element, "gain", params.gain, filter->_proxy_gain);
-			save_parameter (filter1_element, "attenuation", params.attenuation, filter->_proxy_attenuation);
+			save_parameter (filter1_element, "frequency", filter->_proxy_frequency);
+			save_parameter (filter1_element, "resonance", filter->_proxy_resonance);
+			save_parameter (filter1_element, "gain", filter->_proxy_gain);
+			save_parameter (filter1_element, "attenuation", filter->_proxy_attenuation);
 			save_parameter (filter1_element, "frequency-smoothing", params.frequency_smoothing);
 			save_parameter (filter1_element, "resonance-smoothing", params.resonance_smoothing);
 			save_parameter (filter1_element, "gain-smoothing", params.gain_smoothing);
@@ -111,10 +111,10 @@ Patch::save_state (QDomElement& element) const
 			save_parameter (filter2_element, "type", params.type);
 			save_parameter (filter2_element, "passes", params.passes);
 			save_parameter (filter2_element, "limiter-enabled", params.limiter_enabled);
-			save_parameter (filter2_element, "frequency", params.frequency, filter->_proxy_frequency);
-			save_parameter (filter2_element, "resonance", params.resonance, filter->_proxy_resonance);
-			save_parameter (filter2_element, "gain", params.gain, filter->_proxy_gain);
-			save_parameter (filter2_element, "attenuation", params.attenuation, filter->_proxy_attenuation);
+			save_parameter (filter2_element, "frequency", filter->_proxy_frequency);
+			save_parameter (filter2_element, "resonance", filter->_proxy_resonance);
+			save_parameter (filter2_element, "gain", filter->_proxy_gain);
+			save_parameter (filter2_element, "attenuation", filter->_proxy_attenuation);
 			save_parameter (filter2_element, "frequency-smoothing", params.frequency_smoothing);
 			save_parameter (filter2_element, "resonance-smoothing", params.resonance_smoothing);
 			save_parameter (filter2_element, "gain-smoothing", params.gain_smoothing);
@@ -149,10 +149,10 @@ Patch::save_state (QDomElement& element) const
 			Params::Voice voice_params (*oscillator->voice_params());
 
 			// Knobs:
-			save_parameter (oscillator_element, "volume", oscillator_params.volume, oscillator->_proxy_volume);
-			save_parameter (oscillator_element, "portamento-time", oscillator_params.portamento_time, oscillator->_proxy_portamento_time);
-			save_parameter (oscillator_element, "phase", oscillator_params.phase, oscillator->_proxy_phase);
-			save_parameter (oscillator_element, "noise-level", oscillator_params.noise_level, oscillator->_proxy_noise_level);
+			save_parameter (oscillator_element, "volume", oscillator->_proxy_volume);
+			save_parameter (oscillator_element, "portamento-time", oscillator->_proxy_portamento_time);
+			save_parameter (oscillator_element, "phase", oscillator->_proxy_phase);
+			save_parameter (oscillator_element, "noise-level", oscillator->_proxy_noise_level);
 			// Other:
 			save_parameter (oscillator_element, "wave-enabled", oscillator_params.wave_enabled);
 			save_parameter (oscillator_element, "noise-enabled", oscillator_params.noise_enabled);
@@ -174,14 +174,14 @@ Patch::save_state (QDomElement& element) const
 			// Knobs:
 			save_parameter (oscillator_element, "amplitude", voice_params.amplitude);
 			save_parameter (oscillator_element, "frequency", voice_params.frequency);
-			save_parameter (oscillator_element, "panorama", voice_params.panorama, oscillator->_proxy_panorama);
-			save_parameter (oscillator_element, "detune", voice_params.detune, oscillator->_proxy_detune);
-			save_parameter (oscillator_element, "pitchbend", voice_params.pitchbend, oscillator->_proxy_pitchbend);
-			save_parameter (oscillator_element, "velocity-sens", voice_params.velocity_sens, oscillator->_proxy_velocity_sens);
-			save_parameter (oscillator_element, "unison-index", voice_params.unison_index, oscillator->_proxy_unison_index);
-			save_parameter (oscillator_element, "unison-spread", voice_params.unison_spread, oscillator->_proxy_unison_spread);
-			save_parameter (oscillator_element, "unison-init", voice_params.unison_init, oscillator->_proxy_unison_init);
-			save_parameter (oscillator_element, "unison-noise", voice_params.unison_noise, oscillator->_proxy_unison_noise);
+			save_parameter (oscillator_element, "panorama", oscillator->_proxy_panorama);
+			save_parameter (oscillator_element, "detune", oscillator->_proxy_detune);
+			save_parameter (oscillator_element, "pitchbend", oscillator->_proxy_pitchbend);
+			save_parameter (oscillator_element, "velocity-sens", oscillator->_proxy_velocity_sens);
+			save_parameter (oscillator_element, "unison-index", oscillator->_proxy_unison_index);
+			save_parameter (oscillator_element, "unison-spread", oscillator->_proxy_unison_spread);
+			save_parameter (oscillator_element, "unison-init", oscillator->_proxy_unison_init);
+			save_parameter (oscillator_element, "unison-noise", oscillator->_proxy_unison_noise);
 		}
 
 		// Part filters:
@@ -203,10 +203,10 @@ Patch::save_state (QDomElement& element) const
 				save_parameter (filter1_element, "type", params.type);
 				save_parameter (filter1_element, "passes", params.passes);
 				save_parameter (filter1_element, "limiter-enabled", params.limiter_enabled);
-				save_parameter (filter1_element, "frequency", params.frequency, filter->_proxy_frequency);
-				save_parameter (filter1_element, "resonance", params.resonance, filter->_proxy_resonance);
-				save_parameter (filter1_element, "gain", params.gain, filter->_proxy_gain);
-				save_parameter (filter1_element, "attenuation", params.attenuation, filter->_proxy_attenuation);
+				save_parameter (filter1_element, "frequency", filter->_proxy_frequency);
+				save_parameter (filter1_element, "resonance", filter->_proxy_resonance);
+				save_parameter (filter1_element, "gain", filter->_proxy_gain);
+				save_parameter (filter1_element, "attenuation", filter->_proxy_attenuation);
 				save_parameter (filter1_element, "frequency-smoothing", params.frequency_smoothing);
 				save_parameter (filter1_element, "resonance-smoothing", params.resonance_smoothing);
 				save_parameter (filter1_element, "gain-smoothing", params.gain_smoothing);
@@ -222,10 +222,10 @@ Patch::save_state (QDomElement& element) const
 				save_parameter (filter2_element, "type", params.type);
 				save_parameter (filter2_element, "passes", params.passes);
 				save_parameter (filter2_element, "limiter-enabled", params.limiter_enabled);
-				save_parameter (filter2_element, "frequency", params.frequency, filter->_proxy_frequency);
-				save_parameter (filter2_element, "resonance", params.resonance, filter->_proxy_resonance);
-				save_parameter (filter2_element, "gain", params.gain, filter->_proxy_gain);
-				save_parameter (filter2_element, "attenuation", params.attenuation, filter->_proxy_attenuation);
+				save_parameter (filter2_element, "frequency", filter->_proxy_frequency);
+				save_parameter (filter2_element, "resonance", filter->_proxy_resonance);
+				save_parameter (filter2_element, "gain", filter->_proxy_gain);
+				save_parameter (filter2_element, "attenuation", filter->_proxy_attenuation);
 				save_parameter (filter2_element, "frequency-smoothing", params.frequency_smoothing);
 				save_parameter (filter2_element, "resonance-smoothing", params.resonance_smoothing);
 				save_parameter (filter2_element, "gain-smoothing", params.gain_smoothing);
@@ -279,11 +279,11 @@ Patch::save_state (QDomElement& element) const
 			envelope_element.setAttribute ("type", "adsr");
 			envelope_element.setAttribute ("id", adsr->id());
 			// Knobs:
-			save_parameter (envelope_element, "delay", params.delay, adsr->_proxy_delay);
-			save_parameter (envelope_element, "attack", params.attack, adsr->_proxy_attack);
-			save_parameter (envelope_element, "decay", params.decay, adsr->_proxy_decay);
-			save_parameter (envelope_element, "sustain", params.sustain, adsr->_proxy_sustain);
-			save_parameter (envelope_element, "release", params.release, adsr->_proxy_release);
+			save_parameter (envelope_element, "delay", adsr->_proxy_delay);
+			save_parameter (envelope_element, "attack", adsr->_proxy_attack);
+			save_parameter (envelope_element, "decay", adsr->_proxy_decay);
+			save_parameter (envelope_element, "sustain", adsr->_proxy_sustain);
+			save_parameter (envelope_element, "release", adsr->_proxy_release);
 			// Other:
 			save_parameter (envelope_element, "enabled", params.enabled);
 			save_parameter (envelope_element, "direct-adsr", params.direct_adsr);
@@ -320,14 +320,14 @@ Patch::save_state (QDomElement& element) const
 			envelope_element.setAttribute ("type", "lfo");
 			envelope_element.setAttribute ("id", lfo->id());
 			// Knobs:
-			save_parameter (envelope_element, "delay", params.delay, lfo->_proxy_delay);
-			save_parameter (envelope_element, "fade-in", params.fade_in, lfo->_proxy_fade_in);
-			save_parameter (envelope_element, "frequency", params.frequency, lfo->_proxy_frequency);
-			save_parameter (envelope_element, "level", params.level, lfo->_proxy_level);
-			save_parameter (envelope_element, "depth", params.depth, lfo->_proxy_depth);
-			save_parameter (envelope_element, "phase", params.phase, lfo->_proxy_phase);
-			save_parameter (envelope_element, "wave-shape", params.wave_shape, lfo->_proxy_wave_shape);
-			save_parameter (envelope_element, "fade-out", params.fade_out, lfo->_proxy_fade_out);
+			save_parameter (envelope_element, "delay", lfo->_proxy_delay);
+			save_parameter (envelope_element, "fade-in", lfo->_proxy_fade_in);
+			save_parameter (envelope_element, "frequency", lfo->_proxy_frequency);
+			save_parameter (envelope_element, "level", lfo->_proxy_level);
+			save_parameter (envelope_element, "depth", lfo->_proxy_depth);
+			save_parameter (envelope_element, "phase", lfo->_proxy_phase);
+			save_parameter (envelope_element, "wave-shape", lfo->_proxy_wave_shape);
+			save_parameter (envelope_element, "fade-out", lfo->_proxy_fade_out);
 			// Other:
 			save_parameter (envelope_element, "enabled", params.enabled);
 			save_parameter (envelope_element, "wave-type", params.wave_type);
@@ -408,11 +408,11 @@ Patch::load_state (QDomElement const& element)
 		load_parameter (parameters, "polyphony", params.polyphony);
 		load_parameter (parameters, "enable-audio-input", params.enable_audio_input);
 		load_parameter (parameters, "panorama-smoothing", params.panorama_smoothing);
-		load_parameter (parameters, "volume", params.volume, general->_proxy_volume);
-		load_parameter (parameters, "detune", params.detune, general->_proxy_detune);
-		load_parameter (parameters, "panorama", params.panorama, general->_proxy_panorama);
-		load_parameter (parameters, "stereo-width", params.stereo_width, general->_proxy_stereo_width);
-		load_parameter (parameters, "input-volume", params.input_volume, general->_proxy_input_volume);
+		load_parameter (parameters, "volume", general->_proxy_volume);
+		load_parameter (parameters, "detune", general->_proxy_detune);
+		load_parameter (parameters, "panorama", general->_proxy_panorama);
+		load_parameter (parameters, "stereo-width", general->_proxy_stereo_width);
+		load_parameter (parameters, "input-volume", general->_proxy_input_volume);
 
 		general->load_params (params);
 	}
@@ -444,10 +444,10 @@ Patch::load_state (QDomElement const& element)
 					load_parameter (parameters, "type", params.type);
 					load_parameter (parameters, "passes", params.passes);
 					load_parameter (parameters, "limiter-enabled", params.limiter_enabled);
-					load_parameter (parameters, "frequency", params.frequency, filter->_proxy_frequency);
-					load_parameter (parameters, "resonance", params.resonance, filter->_proxy_resonance);
-					load_parameter (parameters, "gain", params.gain, filter->_proxy_gain);
-					load_parameter (parameters, "attenuation", params.attenuation, filter->_proxy_attenuation);
+					load_parameter (parameters, "frequency", filter->_proxy_frequency);
+					load_parameter (parameters, "resonance", filter->_proxy_resonance);
+					load_parameter (parameters, "gain", filter->_proxy_gain);
+					load_parameter (parameters, "attenuation", filter->_proxy_attenuation);
 					load_parameter (parameters, "frequency-smoothing", params.frequency_smoothing);
 					load_parameter (parameters, "resonance-smoothing", params.resonance_smoothing);
 					load_parameter (parameters, "gain-smoothing", params.gain_smoothing);
@@ -491,10 +491,10 @@ Patch::load_state (QDomElement const& element)
 					create_parameters (e, parameters);
 
 					// Knobs:
-					load_parameter (parameters, "volume", oscillator_params.volume, oscillator->_proxy_volume);
-					load_parameter (parameters, "portamento-time", oscillator_params.portamento_time, oscillator->_proxy_portamento_time);
-					load_parameter (parameters, "phase", oscillator_params.phase, oscillator->_proxy_phase);
-					load_parameter (parameters, "noise-level", oscillator_params.noise_level, oscillator->_proxy_noise_level);
+					load_parameter (parameters, "volume", oscillator->_proxy_volume);
+					load_parameter (parameters, "portamento-time", oscillator->_proxy_portamento_time);
+					load_parameter (parameters, "phase", oscillator->_proxy_phase);
+					load_parameter (parameters, "noise-level", oscillator->_proxy_noise_level);
 					// Other:
 					load_parameter (parameters, "wave-enabled", oscillator_params.wave_enabled);
 					load_parameter (parameters, "noise-enabled", oscillator_params.noise_enabled);
@@ -516,14 +516,14 @@ Patch::load_state (QDomElement const& element)
 					// Knobs:
 					load_parameter (parameters, "amplitude", voice_params.amplitude);
 					load_parameter (parameters, "frequency", voice_params.frequency);
-					load_parameter (parameters, "panorama", voice_params.panorama, oscillator->_proxy_panorama);
-					load_parameter (parameters, "detune", voice_params.detune, oscillator->_proxy_detune);
-					load_parameter (parameters, "pitchbend", voice_params.pitchbend, oscillator->_proxy_pitchbend);
-					load_parameter (parameters, "velocity-sens", voice_params.velocity_sens, oscillator->_proxy_velocity_sens);
-					load_parameter (parameters, "unison-index", voice_params.unison_index, oscillator->_proxy_unison_index);
-					load_parameter (parameters, "unison-spread", voice_params.unison_spread, oscillator->_proxy_unison_spread);
-					load_parameter (parameters, "unison-init", voice_params.unison_init, oscillator->_proxy_unison_init);
-					load_parameter (parameters, "unison-noise", voice_params.unison_noise, oscillator->_proxy_unison_noise);
+					load_parameter (parameters, "panorama", oscillator->_proxy_panorama);
+					load_parameter (parameters, "detune", oscillator->_proxy_detune);
+					load_parameter (parameters, "pitchbend", oscillator->_proxy_pitchbend);
+					load_parameter (parameters, "velocity-sens", oscillator->_proxy_velocity_sens);
+					load_parameter (parameters, "unison-index", oscillator->_proxy_unison_index);
+					load_parameter (parameters, "unison-spread", oscillator->_proxy_unison_spread);
+					load_parameter (parameters, "unison-init", oscillator->_proxy_unison_init);
+					load_parameter (parameters, "unison-noise", oscillator->_proxy_unison_noise);
 
 					oscillator->load_oscillator_params (oscillator_params);
 					oscillator->load_voice_params (voice_params);
@@ -553,10 +553,10 @@ Patch::load_state (QDomElement const& element)
 								load_parameter (parameters, "type", params.type);
 								load_parameter (parameters, "passes", params.passes);
 								load_parameter (parameters, "limiter-enabled", params.limiter_enabled);
-								load_parameter (parameters, "frequency", params.frequency, filter->_proxy_frequency);
-								load_parameter (parameters, "resonance", params.resonance, filter->_proxy_resonance);
-								load_parameter (parameters, "gain", params.gain, filter->_proxy_gain);
-								load_parameter (parameters, "attenuation", params.attenuation, filter->_proxy_attenuation);
+								load_parameter (parameters, "frequency", filter->_proxy_frequency);
+								load_parameter (parameters, "resonance", filter->_proxy_resonance);
+								load_parameter (parameters, "gain", filter->_proxy_gain);
+								load_parameter (parameters, "attenuation", filter->_proxy_attenuation);
 								load_parameter (parameters, "frequency-smoothing", params.frequency_smoothing);
 								load_parameter (parameters, "resonance-smoothing", params.resonance_smoothing);
 								load_parameter (parameters, "gain-smoothing", params.gain_smoothing);
@@ -605,13 +605,13 @@ Patch::load_state (QDomElement const& element)
 			create_parameters (*en, parameters);
 
 			// Knobs:
-			load_parameter (parameters, "delay", params.delay, adsr->_proxy_delay);
-			load_parameter (parameters, "attack", params.attack, adsr->_proxy_attack);
-			load_parameter (parameters, "attack-hold", params.attack_hold, adsr->_proxy_attack_hold);
-			load_parameter (parameters, "decay", params.decay, adsr->_proxy_decay);
-			load_parameter (parameters, "sustain", params.sustain, adsr->_proxy_sustain);
-			load_parameter (parameters, "sustain-hold", params.sustain_hold, adsr->_proxy_sustain_hold);
-			load_parameter (parameters, "release", params.release, adsr->_proxy_release);
+			load_parameter (parameters, "delay", adsr->_proxy_delay);
+			load_parameter (parameters, "attack", adsr->_proxy_attack);
+			load_parameter (parameters, "attack-hold", adsr->_proxy_attack_hold);
+			load_parameter (parameters, "decay", adsr->_proxy_decay);
+			load_parameter (parameters, "sustain", adsr->_proxy_sustain);
+			load_parameter (parameters, "sustain-hold", adsr->_proxy_sustain_hold);
+			load_parameter (parameters, "release", adsr->_proxy_release);
 			// Other:
 			load_parameter (parameters, "enabled", params.enabled);
 			load_parameter (parameters, "direct-adsr", params.direct_adsr);
@@ -665,14 +665,14 @@ Patch::load_state (QDomElement const& element)
 			create_parameters (*en, parameters);
 
 			// Knobs:
-			load_parameter (parameters, "delay", params.delay, lfo->_proxy_delay);
-			load_parameter (parameters, "fade-in", params.fade_in, lfo->_proxy_fade_in);
-			load_parameter (parameters, "frequency", params.frequency, lfo->_proxy_frequency);
-			load_parameter (parameters, "level", params.level, lfo->_proxy_level);
-			load_parameter (parameters, "depth", params.depth, lfo->_proxy_depth);
-			load_parameter (parameters, "phase", params.phase, lfo->_proxy_phase);
-			load_parameter (parameters, "wave-shape", params.wave_shape, lfo->_proxy_wave_shape);
-			load_parameter (parameters, "fade-out", params.fade_out, lfo->_proxy_fade_out);
+			load_parameter (parameters, "delay", lfo->_proxy_delay);
+			load_parameter (parameters, "fade-in", lfo->_proxy_fade_in);
+			load_parameter (parameters, "frequency", lfo->_proxy_frequency);
+			load_parameter (parameters, "level", lfo->_proxy_level);
+			load_parameter (parameters, "depth", lfo->_proxy_depth);
+			load_parameter (parameters, "phase", lfo->_proxy_phase);
+			load_parameter (parameters, "wave-shape", lfo->_proxy_wave_shape);
+			load_parameter (parameters, "fade-out", lfo->_proxy_fade_out);
 			// Other:
 			load_parameter (parameters, "enabled", params.enabled);
 			load_parameter (parameters, "wave-type", params.wave_type);

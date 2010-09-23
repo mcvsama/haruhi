@@ -128,15 +128,23 @@ ControllerProxy::save_state (QDomElement& element) const
 	element.setAttribute ("curve", QString ("%1").arg (_config.curve, 0, 'f', 1));
 	element.setAttribute ("user-limit-min", QString ("%1").arg (_config.user_limit_min));
 	element.setAttribute ("user-limit-max", QString ("%1").arg (_config.user_limit_max));
+	param()->save_state (element);
 }
 
 
 void
 ControllerProxy::load_state (QDomElement const& element)
 {
-	_config.curve = bound (element.attribute ("curve").toFloat(), -1.0f, 1.0f);
-	_config.user_limit_min = bound (element.attribute ("user-limit-min").toInt(), _config.hard_limit_min, _config.hard_limit_max);
-	_config.user_limit_max = bound (element.attribute ("user-limit-max").toInt(), _config.hard_limit_min, _config.hard_limit_max);
+	_config.curve = 0.0;
+	_config.user_limit_min = 0;
+	_config.user_limit_max = 1;
+	if (element.hasAttribute ("curve"))
+		_config.curve = bound (element.attribute ("curve").toFloat(), -1.0f, 1.0f);
+	if (element.hasAttribute ("user-limit-min"))
+		_config.user_limit_min = bound (element.attribute ("user-limit-min").toInt(), _config.hard_limit_min, _config.hard_limit_max);
+	if (element.hasAttribute ("user-limit-max"))
+		_config.user_limit_max = bound (element.attribute ("user-limit-max").toInt(), _config.hard_limit_min, _config.hard_limit_max);
+	param()->load_state (element);
 	apply_config();
 }
 

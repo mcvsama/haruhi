@@ -70,6 +70,17 @@ class Patch: public SaveableState
 	}
 
 	/**
+	 * Saves parameters like save_parameter adding Knob config. parameters.
+	 */
+	void
+	save_parameter (QDomElement& parameters, QString const& name, Haruhi::ControllerProxy* proxy) const
+	{
+		QDomElement param = parameters.ownerDocument().createElement (name);
+		proxy->save_state (param);
+		parameters.appendChild (param);
+	}
+
+	/**
 	 * Saves parameters as sub-element of element parameters.
 	 */
 	template<class Value>
@@ -82,19 +93,15 @@ class Patch: public SaveableState
 		}
 
 	/**
-	 * Saves parameters like save_parameter adding Knob config. parameters.
+	 * Loads value from parameters map and sets up Knob configuration.
 	 */
-	template<class Value>
-		void
-		save_parameter (QDomElement& parameters, QString const& name, Value value, Haruhi::ControllerProxy* proxy) const
-		{
-			QDomElement param = parameters.ownerDocument().createElement (name);
-			param.setAttribute ("user-limit-min", proxy->config()->user_limit_min);
-			param.setAttribute ("user-limit-max", proxy->config()->user_limit_max);
-			param.setAttribute ("curve", proxy->config()->curve);
-			param.appendChild (parameters.ownerDocument().createTextNode (to_string (value)));
-			parameters.appendChild (param);
-		}
+	void
+	load_parameter (Parameters const& parameters, QString const& name, Haruhi::ControllerProxy* proxy) const
+	{
+		Parameters::const_iterator p = parameters.find (name);
+		if (p != parameters.end())
+			proxy->load_state (p->second);
+	}
 
 	/**
 	 * Loads value from given parameters map.
@@ -114,27 +121,6 @@ class Patch: public SaveableState
 			Parameters::const_iterator p = parameters.find (name);
 			if (p != parameters.end())
 				convert_string (p->second.text(), value);
-		}
-
-	/**
-	 * Loads value from parameters map and sets up Knob configuration.
-	 */
-	template<class Value>
-		void
-		load_parameter (Parameters const& parameters, QString const& name, Value& value, Haruhi::ControllerProxy* proxy) const
-		{
-			Parameters::const_iterator p = parameters.find (name);
-			if (p != parameters.end())
-			{
-				if (p->second.hasAttribute ("user-limit-min"))
-					proxy->config()->user_limit_min = p->second.attribute ("user-limit-min").toInt();
-				if (p->second.hasAttribute ("user-limit-max"))
-					proxy->config()->user_limit_max = p->second.attribute ("user-limit-max").toInt();
-				if (p->second.hasAttribute ("curve"))
-					proxy->config()->curve = p->second.attribute ("curve").toFloat();
-				convert_string (p->second.text(), value);
-				proxy->apply_config();
-			}
 		}
 
 	void
