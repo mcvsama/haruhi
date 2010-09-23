@@ -24,6 +24,9 @@
 #include "rbj_impulse_response.h"
 
 
+#define HARUHI_MIKURU_CONSTRUCT(var, name) \
+	var (name##Min, name##Max, name##Denominator, name##Default)
+
 #define HARUHI_MIKURU_COPY(name) \
 	name = other.name;
 
@@ -35,11 +38,11 @@ namespace MikuruPrivate {
 
 Params::General::General():
 	// Controller:
-	volume (VolumeMin, VolumeMax, VolumeDenominator, VolumeDefault),
-	detune (DetuneMin, DetuneMax, DetuneDenominator, DetuneDefault),
-	panorama (PanoramaMin, PanoramaMax, PanoramaDenominator, PanoramaDefault),
-	stereo_width (StereoWidthMin, StereoWidthMax, StereoWidthDenominator, StereoWidthDefault),
-	input_volume (InputVolumeMin, InputVolumeMax, InputVolumeDenominator, InputVolumeDefault),
+	HARUHI_MIKURU_CONSTRUCT (volume, Volume),
+	HARUHI_MIKURU_CONSTRUCT (detune, Detune),
+	HARUHI_MIKURU_CONSTRUCT (panorama, Panorama),
+	HARUHI_MIKURU_CONSTRUCT (stereo_width, StereoWidth),
+	HARUHI_MIKURU_CONSTRUCT (input_volume, InputVolume),
 	// Non-controller:
 	polyphony (32),
 	enable_audio_input (0),
@@ -70,10 +73,10 @@ Params::General::set_non_controller_params (General& other)
 
 Params::Filter::Filter():
 	// Controller:
-	frequency (FrequencyMin, FrequencyMax, FrequencyDenominator, FrequencyDefault),
-	resonance (ResonanceMin, ResonanceMax, ResonanceDenominator, ResonanceDefault),
-	gain (GainMin, GainMax, GainDenominator, GainDefault),
-	attenuation (AttenuationMin, AttenuationMax, AttenuationDenominator, AttenuationDefault),
+	HARUHI_MIKURU_CONSTRUCT (frequency, Frequency),
+	HARUHI_MIKURU_CONSTRUCT (resonance, Resonance),
+	HARUHI_MIKURU_CONSTRUCT (gain, Gain),
+	HARUHI_MIKURU_CONSTRUCT (attenuation, Attenuation),
 	// Non-controller:
 	enabled (0),
 	type (RBJImpulseResponse::LowPass),
@@ -175,10 +178,10 @@ Params::PartFilters::set_non_controller_params (PartFilters& other)
 
 Params::Waveform::Waveform():
 	// Controller:
-	wave_shape (WaveShapeMin, WaveShapeMax, WaveShapeDenominator, WaveShapeDefault),
-	modulator_amplitude (ModulatorAmplitudeMin, ModulatorAmplitudeMax, ModulatorAmplitudeDenominator, ModulatorAmplitudeDefault),
-	modulator_index (ModulatorIndexMin, ModulatorIndexMax, ModulatorIndexDenominator, ModulatorIndexDefault),
-	modulator_shape (ModulatorShapeMin, ModulatorShapeMax, ModulatorShapeDenominator, ModulatorShapeDefault),
+	HARUHI_MIKURU_CONSTRUCT (wave_shape, WaveShape),
+	HARUHI_MIKURU_CONSTRUCT (modulator_amplitude, ModulatorAmplitude),
+	HARUHI_MIKURU_CONSTRUCT (modulator_index, ModulatorIndex),
+	HARUHI_MIKURU_CONSTRUCT (modulator_shape, ModulatorShape),
 	// Non-controller:
 	wave_type (0),
 	modulator_type (DSP::ModulatedWave::Ring),
@@ -216,10 +219,10 @@ Params::Waveform::set_non_controller_params (Waveform& other)
 
 Params::Oscillator::Oscillator():
 	// Contoller:
-	volume (VolumeMin, VolumeMax, VolumeDenominator, VolumeDefault),
-	portamento_time (PortamentoTimeMin, PortamentoTimeMax, PortamentoTimeDenominator, PortamentoTimeDefault),
-	phase (PhaseMin, PhaseMax, PhaseDenominator, PhaseDefault),
-	noise_level (NoiseLevelMin, NoiseLevelMax, NoiseLevelDenominator, NoiseLevelDefault),
+	HARUHI_MIKURU_CONSTRUCT (volume, Volume),
+	HARUHI_MIKURU_CONSTRUCT (portamento_time, PortamentoTime),
+	HARUHI_MIKURU_CONSTRUCT (phase, Phase),
+	HARUHI_MIKURU_CONSTRUCT (noise_level, NoiseLevel),
 	// Non-controller:
 	wave_enabled (1),
 	noise_enabled (0),
@@ -275,17 +278,17 @@ Params::Oscillator::set_non_controller_params (Oscillator& other)
 
 Params::Voice::Voice():
 	// Controller:
-	adsr (AdsrMin, AdsrMax, AdsrDenominator, AdsrDefault),
-	amplitude (AmplitudeMin, AmplitudeMax, AmplitudeDenominator, AmplitudeDefault),
-	frequency (FrequencyMin, FrequencyMax, FrequencyDenominator, FrequencyDefault),
-	panorama (PanoramaMin, PanoramaMax, PanoramaDenominator, PanoramaDefault),
-	detune (DetuneMin, DetuneMax, DetuneDenominator, DetuneDefault),
-	pitchbend (PitchbendMin, PitchbendMax, PitchbendDenominator, PitchbendDefault),
-	velocity_sens (VelocitySensMin, VelocitySensMax, VelocitySensDenominator, VelocitySensDefault),
-	unison_index (UnisonIndexMin, UnisonIndexMax, UnisonIndexDenominator, UnisonIndexDefault),
-	unison_spread (UnisonSpreadMin, UnisonSpreadMax, UnisonSpreadDenominator, UnisonSpreadDefault),
-	unison_init (UnisonInitMin, UnisonInitMax, UnisonInitDenominator, UnisonInitDefault),
-	unison_noise (UnisonNoiseMin, UnisonNoiseMax, UnisonNoiseDenominator, UnisonNoiseDefault)
+	HARUHI_MIKURU_CONSTRUCT (adsr, Adsr),
+	HARUHI_MIKURU_CONSTRUCT (amplitude, Amplitude),
+	HARUHI_MIKURU_CONSTRUCT (frequency, Frequency),
+	HARUHI_MIKURU_CONSTRUCT (panorama, Panorama),
+	HARUHI_MIKURU_CONSTRUCT (detune, Detune),
+	HARUHI_MIKURU_CONSTRUCT (pitchbend, Pitchbend),
+	HARUHI_MIKURU_CONSTRUCT (velocity_sens, VelocitySens),
+	HARUHI_MIKURU_CONSTRUCT (unison_index, UnisonIndex),
+	HARUHI_MIKURU_CONSTRUCT (unison_spread, UnisonSpread),
+	HARUHI_MIKURU_CONSTRUCT (unison_init, UnisonInit),
+	HARUHI_MIKURU_CONSTRUCT (unison_noise, UnisonNoise)
 {
 }
 
@@ -332,13 +335,13 @@ Params::Waveshaper::set_non_controller_params (Waveshaper& other)
 
 Params::ADSR::ADSR():
 	// Controller:
-	delay (DelayMin, DelayMax, DelayDenominator, DelayDefault),
-	attack (AttackMin, AttackMax, AttackDenominator, AttackDefault),
-	attack_hold (AttackHoldMin, AttackHoldMax, AttackHoldDenominator, AttackHoldDefault),
-	decay (DecayMin, DecayMax, DecayDenominator, DecayDefault),
-	sustain (SustainMin, SustainMax, SustainDenominator, SustainDefault),
-	sustain_hold (SustainHoldMin, SustainHoldMax, SustainHoldDenominator, SustainHoldDefault),
-	release (ReleaseMin, ReleaseMax, ReleaseDenominator, ReleaseDefault),
+	HARUHI_MIKURU_CONSTRUCT (delay, Delay),
+	HARUHI_MIKURU_CONSTRUCT (attack, Attack),
+	HARUHI_MIKURU_CONSTRUCT (attack_hold, AttackHold),
+	HARUHI_MIKURU_CONSTRUCT (decay, Decay),
+	HARUHI_MIKURU_CONSTRUCT (sustain, Sustain),
+	HARUHI_MIKURU_CONSTRUCT (sustain_hold, SustainHold),
+	HARUHI_MIKURU_CONSTRUCT (release, Release),
 	// Non-controller:
 	enabled (1),
 	direct_adsr (1),
@@ -377,14 +380,14 @@ Params::ADSR::set_non_controller_params (ADSR& other)
 
 Params::LFO::LFO():
 	// Controller:
-	delay (DelayMin, DelayMax, DelayDenominator, DelayDefault),
-	fade_in (FadeInMin, FadeInMax, FadeInDenominator, FadeInDefault),
-	frequency (FrequencyMin, FrequencyMax, FrequencyDenominator, FrequencyDefault),
-	level (LevelMin, LevelMax, LevelDenominator, LevelDefault),
-	depth (DepthMin, DepthMax, DepthDenominator, DepthDefault),
-	phase (PhaseMin, PhaseMax, PhaseDenominator, PhaseDefault),
-	wave_shape (WaveShapeMin, WaveShapeMax, WaveShapeDenominator, WaveShapeDefault),
-	fade_out (FadeOutMin, FadeOutMax, FadeOutDenominator, FadeOutDefault),
+	HARUHI_MIKURU_CONSTRUCT (delay, Delay),
+	HARUHI_MIKURU_CONSTRUCT (fade_in, FadeIn),
+	HARUHI_MIKURU_CONSTRUCT (frequency, Frequency),
+	HARUHI_MIKURU_CONSTRUCT (level, Level),
+	HARUHI_MIKURU_CONSTRUCT (depth, Depth),
+	HARUHI_MIKURU_CONSTRUCT (phase, Phase),
+	HARUHI_MIKURU_CONSTRUCT (wave_shape, WaveShape),
+	HARUHI_MIKURU_CONSTRUCT (fade_out, FadeOut),
 	// Non-controller:
 	enabled (1),
 	wave_type (Sine),
@@ -490,4 +493,5 @@ Params::EG::sanitize()
 
 #undef HARUHI_MIKURU_COPY_ATOMIC
 #undef HARUHI_MIKURU_COPY
+#undef HARUHI_MIKURU_CONSTRUCT
 
