@@ -53,12 +53,6 @@ class ControllerParam: public SaveableState
 	int
 	default_value() const { return _default_value; }
 
-	bool
-	smoothing_enabled() const { return _smoothing_enabled; }
-
-	void
-	set_smoothing_enabled (bool enabled) { _smoothing_enabled = enabled; }
-
 	int
 	get() const { return atomic (_parameter); }
 
@@ -69,7 +63,17 @@ class ControllerParam: public SaveableState
 	smoothing() const { return atomic (_smoothing_parameter); }
 
 	void
-	set_smoothing (int smoothing_ms) { atomic (_smoothing_parameter) = smoothing_ms; }
+	set_smoothing (int smoothing_ms)
+	{
+		_smoothing_enabled = true;
+		atomic (_smoothing_parameter) = smoothing_ms;
+	}
+
+	bool
+	smoothing_enabled() const { return _smoothing_enabled; }
+
+	void
+	set_smoothing_enabled (bool setting) { _smoothing_enabled = setting; }
 
 	/**
 	 * Returns value divided by denominator and casted to float.

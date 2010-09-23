@@ -45,9 +45,9 @@ Params::General::General():
 	HARUHI_MIKURU_CONSTRUCT (input_volume, InputVolume),
 	// Non-controller:
 	polyphony (32),
-	enable_audio_input (0),
-	panorama_smoothing (50)
+	enable_audio_input (0)
 {
+	panorama.set_smoothing (50);
 }
 
 
@@ -67,7 +67,6 @@ Params::General::set_non_controller_params (General& other)
 {
 	HARUHI_MIKURU_COPY_ATOMIC (polyphony)
 	HARUHI_MIKURU_COPY_ATOMIC (enable_audio_input)
-	HARUHI_MIKURU_COPY_ATOMIC (panorama_smoothing)
 }
 
 
@@ -81,12 +80,12 @@ Params::Filter::Filter():
 	enabled (0),
 	type (RBJImpulseResponse::LowPass),
 	passes (1),
-	limiter_enabled (true),
-	frequency_smoothing (50),
-	resonance_smoothing (50),
-	gain_smoothing (50),
-	attenuation_smoothing (50)
+	limiter_enabled (true)
 {
+	frequency.set_smoothing (50);
+	resonance.set_smoothing (50);
+	gain.set_smoothing (50);
+	attenuation.set_smoothing (50);
 }
 
 
@@ -107,10 +106,6 @@ Params::Filter::set_non_controller_params (Filter& other)
 	HARUHI_MIKURU_COPY_ATOMIC (type)
 	HARUHI_MIKURU_COPY_ATOMIC (passes)
 	HARUHI_MIKURU_COPY_ATOMIC (limiter_enabled)
-	HARUHI_MIKURU_COPY_ATOMIC (frequency_smoothing)
-	HARUHI_MIKURU_COPY_ATOMIC (resonance_smoothing)
-	HARUHI_MIKURU_COPY_ATOMIC (gain_smoothing)
-	HARUHI_MIKURU_COPY_ATOMIC (attenuation_smoothing)
 }
 
 

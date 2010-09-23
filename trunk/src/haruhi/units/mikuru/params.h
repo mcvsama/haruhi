@@ -93,7 +93,6 @@ struct Params
 
 		unsigned int polyphony;
 		int enable_audio_input;
-		int panorama_smoothing;
 	};
 
 	struct Filter
@@ -116,10 +115,6 @@ struct Params
 		int type;
 		int passes;
 		int limiter_enabled;
-		int frequency_smoothing;
-		int resonance_smoothing;
-		int gain_smoothing;
-		int attenuation_smoothing;
 	};
 
 	/**

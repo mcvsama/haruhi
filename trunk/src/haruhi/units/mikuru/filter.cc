@@ -265,10 +265,6 @@ Filter::update_params()
 	p.type = _filter_type->currentItem();
 	p.passes = _passes->currentItem() + 1;
 	p.limiter_enabled = _limiter_enabled->isChecked();
-	p.frequency_smoothing = _params.frequency_smoothing;
-	p.resonance_smoothing = _params.resonance_smoothing;
-	p.gain_smoothing = _params.gain_smoothing;
-	p.attenuation_smoothing = _params.attenuation_smoothing;
 	_params.set_non_controller_params (p);
 
 	// Knob params are updated automatically using #assign_parameter.

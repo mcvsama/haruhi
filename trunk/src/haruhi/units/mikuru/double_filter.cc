@@ -55,15 +55,15 @@ DoubleFilter::configure (Configuration configuration, Params::Filter* params1, P
 	int sr = _mikuru->graph()->sample_rate();
 
 	// Setup smoothers:
-	_smoother_filter1_frequency.set_smoothing_samples (0.001f * atomic (_params1.frequency_smoothing) * sr);
-	_smoother_filter1_resonance.set_smoothing_samples (0.001f * atomic (_params1.resonance_smoothing) * sr);
-	_smoother_filter1_gain.set_smoothing_samples (0.001f * atomic (_params1.gain_smoothing) * sr);
-	_smoother_filter1_attenuation.set_smoothing_samples (0.001f * atomic (_params1.attenuation_smoothing) * sr);
+	_smoother_filter1_frequency.set_smoothing_samples (0.001f * _params1.frequency.smoothing() * sr);
+	_smoother_filter1_resonance.set_smoothing_samples (0.001f * _params1.resonance.smoothing() * sr);
+	_smoother_filter1_gain.set_smoothing_samples (0.001f * _params1.gain.smoothing() * sr);
+	_smoother_filter1_attenuation.set_smoothing_samples (0.001f * _params1.attenuation.smoothing() * sr);
 
-	_smoother_filter2_frequency.set_smoothing_samples (0.001f * atomic (_params2.frequency_smoothing) * sr);
-	_smoother_filter2_resonance.set_smoothing_samples (0.001f * atomic (_params2.resonance_smoothing) * sr);
-	_smoother_filter2_gain.set_smoothing_samples (0.001f * atomic (_params2.gain_smoothing) * sr);
-	_smoother_filter2_attenuation.set_smoothing_samples (0.001f * atomic (_params2.attenuation_smoothing) * sr);
+	_smoother_filter2_frequency.set_smoothing_samples (0.001f * _params2.frequency.smoothing() * sr);
+	_smoother_filter2_resonance.set_smoothing_samples (0.001f * _params2.resonance.smoothing() * sr);
+	_smoother_filter2_gain.set_smoothing_samples (0.001f * _params2.gain.smoothing() * sr);
+	_smoother_filter2_attenuation.set_smoothing_samples (0.001f * _params2.attenuation.smoothing() * sr);
 
 	if (_params1.enabled)
 	{

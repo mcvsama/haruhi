@@ -127,7 +127,7 @@ SynthThread::run()
 		}
 
 		// Panorama:
-		int k = 0.001f * atomic (_mikuru->general()->params()->panorama_smoothing) * _mikuru->graph()->sample_rate();
+		int k = 0.001f * _mikuru->general()->params()->panorama.smoothing() * _mikuru->graph()->sample_rate();
 		if (smoothing_samples != k)
 		{
 			smoothing_samples = k;

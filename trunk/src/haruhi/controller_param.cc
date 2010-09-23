@@ -52,14 +52,14 @@ ControllerParam::ControllerParam (int minimum, int maximum, int denominator, int
 ControllerParam&
 ControllerParam::operator= (ControllerParam const& other)
 {
-	atomic (_parameter) = atomic (other._parameter);
-	atomic (_smoothing_enabled) = atomic (other._smoothing_enabled);
-
 	_minimum = other._minimum;
 	_maximum = other._maximum;
 	_denominator = other._denominator;
 	_default_value = other._default_value;
 	_smoothing_enabled = other._smoothing_enabled;
+
+	atomic (_parameter) = atomic (other._parameter);
+	atomic (_smoothing_parameter) = atomic (other._smoothing_parameter);
 
 	return *this;
 }

@@ -60,7 +60,6 @@ Patch::save_state (QDomElement& element) const
 
 		save_parameter (general_element, "polyphony", params.polyphony);
 		save_parameter (general_element, "enable-audio-input", params.enable_audio_input);
-		save_parameter (general_element, "panorama-smoothing", params.panorama_smoothing);
 		save_parameter (general_element, "volume", general->_proxy_volume);
 		save_parameter (general_element, "detune", general->_proxy_detune);
 		save_parameter (general_element, "panorama", general->_proxy_panorama);
@@ -96,10 +95,6 @@ Patch::save_state (QDomElement& element) const
 			save_parameter (filter1_element, "resonance", filter->_proxy_resonance);
 			save_parameter (filter1_element, "gain", filter->_proxy_gain);
 			save_parameter (filter1_element, "attenuation", filter->_proxy_attenuation);
-			save_parameter (filter1_element, "frequency-smoothing", params.frequency_smoothing);
-			save_parameter (filter1_element, "resonance-smoothing", params.resonance_smoothing);
-			save_parameter (filter1_element, "gain-smoothing", params.gain_smoothing);
-			save_parameter (filter1_element, "attenuation-smoothing", params.attenuation_smoothing);
 		}
 
 		// Filter 2:
@@ -115,10 +110,6 @@ Patch::save_state (QDomElement& element) const
 			save_parameter (filter2_element, "resonance", filter->_proxy_resonance);
 			save_parameter (filter2_element, "gain", filter->_proxy_gain);
 			save_parameter (filter2_element, "attenuation", filter->_proxy_attenuation);
-			save_parameter (filter2_element, "frequency-smoothing", params.frequency_smoothing);
-			save_parameter (filter2_element, "resonance-smoothing", params.resonance_smoothing);
-			save_parameter (filter2_element, "gain-smoothing", params.gain_smoothing);
-			save_parameter (filter2_element, "attenuation-smoothing", params.attenuation_smoothing);
 		}
 
 		common_filters_element.appendChild (filter1_element);
@@ -207,10 +198,6 @@ Patch::save_state (QDomElement& element) const
 				save_parameter (filter1_element, "resonance", filter->_proxy_resonance);
 				save_parameter (filter1_element, "gain", filter->_proxy_gain);
 				save_parameter (filter1_element, "attenuation", filter->_proxy_attenuation);
-				save_parameter (filter1_element, "frequency-smoothing", params.frequency_smoothing);
-				save_parameter (filter1_element, "resonance-smoothing", params.resonance_smoothing);
-				save_parameter (filter1_element, "gain-smoothing", params.gain_smoothing);
-				save_parameter (filter1_element, "attenuation-smoothing", params.attenuation_smoothing);
 			}
 
 			// Filter 2:
@@ -226,10 +213,6 @@ Patch::save_state (QDomElement& element) const
 				save_parameter (filter2_element, "resonance", filter->_proxy_resonance);
 				save_parameter (filter2_element, "gain", filter->_proxy_gain);
 				save_parameter (filter2_element, "attenuation", filter->_proxy_attenuation);
-				save_parameter (filter2_element, "frequency-smoothing", params.frequency_smoothing);
-				save_parameter (filter2_element, "resonance-smoothing", params.resonance_smoothing);
-				save_parameter (filter2_element, "gain-smoothing", params.gain_smoothing);
-				save_parameter (filter2_element, "attenuation-smoothing", params.attenuation_smoothing);
 			}
 
 			filters_element.appendChild (filter1_element);
@@ -407,7 +390,6 @@ Patch::load_state (QDomElement const& element)
 
 		load_parameter (parameters, "polyphony", params.polyphony);
 		load_parameter (parameters, "enable-audio-input", params.enable_audio_input);
-		load_parameter (parameters, "panorama-smoothing", params.panorama_smoothing);
 		load_parameter (parameters, "volume", general->_proxy_volume);
 		load_parameter (parameters, "detune", general->_proxy_detune);
 		load_parameter (parameters, "panorama", general->_proxy_panorama);
@@ -448,10 +430,6 @@ Patch::load_state (QDomElement const& element)
 					load_parameter (parameters, "resonance", filter->_proxy_resonance);
 					load_parameter (parameters, "gain", filter->_proxy_gain);
 					load_parameter (parameters, "attenuation", filter->_proxy_attenuation);
-					load_parameter (parameters, "frequency-smoothing", params.frequency_smoothing);
-					load_parameter (parameters, "resonance-smoothing", params.resonance_smoothing);
-					load_parameter (parameters, "gain-smoothing", params.gain_smoothing);
-					load_parameter (parameters, "attenuation-smoothing", params.attenuation_smoothing);
 
 					filter->load_params (params);
 				}
@@ -557,10 +535,6 @@ Patch::load_state (QDomElement const& element)
 								load_parameter (parameters, "resonance", filter->_proxy_resonance);
 								load_parameter (parameters, "gain", filter->_proxy_gain);
 								load_parameter (parameters, "attenuation", filter->_proxy_attenuation);
-								load_parameter (parameters, "frequency-smoothing", params.frequency_smoothing);
-								load_parameter (parameters, "resonance-smoothing", params.resonance_smoothing);
-								load_parameter (parameters, "gain-smoothing", params.gain_smoothing);
-								load_parameter (parameters, "attenuation-smoothing", params.attenuation_smoothing);
 
 								filter->load_params (params);
 							}
