@@ -13,6 +13,7 @@
 
 // Standard:
 #include <cstddef>
+#include <numeric>
 
 // Qt:
 #include <QtGui/QToolTip>
@@ -57,11 +58,15 @@ General::General (Mikuru* mikuru, QWidget* parent):
 	_proxy_stereo_width = new Haruhi::ControllerProxy (_port_stereo_width, &_params.stereo_width);
 	_proxy_input_volume = new Haruhi::ControllerProxy (_port_input_volume, &_params.input_volume);
 
-	_control_volume = new Haruhi::Knob (this, _proxy_volume, "Volume", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::Volume, 100), 2);
+	_control_volume = new Haruhi::Knob (this, _proxy_volume, "Volume dB",
+										-std::numeric_limits<float>::infinity(), 0.0f, (Params::General::VolumeMax - Params::General::VolumeMin) / 500, 2);
+	_control_volume->set_volume_scale (true, M_E);
 	_control_detune = new Haruhi::Knob (this, _proxy_detune, "Detune", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::Detune, 100), 2);
 	_control_panorama = new Haruhi::Knob (this, _proxy_panorama, "Panorama", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::Panorama, 100), 2);
 	_control_stereo_width = new Haruhi::Knob (this, _proxy_stereo_width, "St.width", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::StereoWidth, 100), 2);
-	_control_input_volume = new Haruhi::Knob (this, _proxy_input_volume, "Input vol.", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::InputVolume, 100), 2);
+	_control_input_volume = new Haruhi::Knob (this, _proxy_input_volume, "Input dB",
+											  -std::numeric_limits<float>::infinity(), 0.0f, (Params::General::InputVolumeMax - Params::General::InputVolumeMin) / 500, 2);
+	_control_input_volume->set_volume_scale (true, M_E);
 	QToolTip::add (_control_stereo_width, "Stereo width");
 
 	Q3GroupBox* grid1 = new Q3GroupBox (2, Qt::Horizontal, "", this);

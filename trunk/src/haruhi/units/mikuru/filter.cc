@@ -84,8 +84,10 @@ Filter::Filter (FilterID filter_id, Core::PortGroup* port_group, QString const& 
 	_control_resonance->set_unit_bay (_mikuru->unit_bay());
 	_control_gain = new Haruhi::Knob (_panel, _proxy_gain, "Gain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Gain, 100), 1);
 	_control_gain->set_unit_bay (_mikuru->unit_bay());
-	_control_attenuation = new Haruhi::Knob (_panel, _proxy_attenuation, "Attenuate", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Attenuation, 100), 2);
+	_control_attenuation = new Haruhi::Knob (_panel, _proxy_attenuation, "Attenuate",
+											 -std::numeric_limits<float>::infinity(), 0.0f, (Params::Filter::AttenuationMax - Params::Filter::AttenuationMin) / 500, 2);
 	_control_attenuation->set_unit_bay (_mikuru->unit_bay());
+	_control_attenuation->set_volume_scale (true, 1.0);
 
 	QObject::connect (_control_frequency, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
 	QObject::connect (_control_resonance, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));

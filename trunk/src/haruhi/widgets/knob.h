@@ -99,12 +99,18 @@ class Knob:
 		int
 		decimals() const { return _decimals; }
 
+		bool
+		volume_scale() const { return _volume_scale; }
+
+		void
+		set_volume_scale (bool setting, float exp = 1.0f);
+
 		/**
 		 * Detached knob works like a simple QDoubleSpinBox.
 		 * Set as deatched when spin box is not main Knob's spin box.
 		 */
 		void
-		set_detached (bool setting);
+		set_detached (bool setting) { _detached = setting; }
 
 	  protected:
 		/*
@@ -131,6 +137,8 @@ class Knob:
 		int					_decimals;
 		QDoubleValidator*	_validator;
 		bool				_detached;
+		bool				_volume_scale;
+		float				_volume_scale_exp;
 	};
 
 	typedef std::map<int, Core::Port*> ContextMenuPortMap;
@@ -149,6 +157,9 @@ class Knob:
 	Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& label, float show_min, float show_max, int step, int decimals);
 
 	~Knob();
+
+	void
+	set_volume_scale (bool setting, float exp = 1.0f) { _spin_box->set_volume_scale (setting, exp); }
 
 	/**
 	 * Reads ControllerProxy::Config and updates widgets.

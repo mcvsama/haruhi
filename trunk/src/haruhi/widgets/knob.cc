@@ -163,7 +163,8 @@ Knob::SpinBox::SpinBox (QWidget* parent, Knob* knob, int user_limit_min, int use
 	_show_min (show_min),
 	_show_max (show_max),
 	_decimals (decimals),
-	_detached (false)
+	_detached (false),
+	_volume_scale (false)
 {
 	_validator = new QDoubleValidator (show_min, show_max, decimals, this);
 	QSpinBox::setMinimum (user_limit_min);
@@ -181,23 +182,40 @@ Knob::SpinBox::validate (QString& input, int& pos) const
 
 
 void
-Knob::SpinBox::set_detached (bool setting)
+Knob::SpinBox::set_volume_scale (bool setting, float exp)
 {
-	_detached = setting;
+	_volume_scale = setting;
+	_volume_scale_exp = exp;
+	update();
 }
 
 
 QString
 Knob::SpinBox::textFromValue (int value) const
 {
-	return QString ("%1").arg (int_to_float (value), 0, 'f', _decimals);
+	if (_volume_scale)
+	{
+		int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy()->config()->hard_limit_min;
+		int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy()->config()->hard_limit_max;
+		double x = static_cast<double> (value - hard_limit_min) / static_cast<double> (hard_limit_max - hard_limit_min);
+		return QString ("%1").arg (20.0 * std::log10 (std::pow (x, _volume_scale_exp)), 0, 'f', 1);
+	}
+	else
+		return QString ("%1").arg (int_to_float (value), 0, 'f', _decimals);
 }
 
 
 int
 Knob::SpinBox::valueFromText (QString const& string) const
 {
-	return float_to_int (string.toFloat());
+	if (_volume_scale)
+	{
+		int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy()->config()->hard_limit_min;
+		int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy()->config()->hard_limit_max;
+		return std::pow (std::pow (10.0, string.toFloat() / 20.0), 1.0 / _volume_scale_exp) * static_cast<double> (hard_limit_max - hard_limit_min);
+	}
+	else
+		return float_to_int (string.toFloat());
 }
 
 

@@ -14,6 +14,7 @@
 // Standard:
 #include <cstddef>
 #include <string>
+#include <numeric>
 
 // Qt:
 #include <QtGui/QToolTip>
@@ -101,7 +102,8 @@ Oscillator::Oscillator (Part* part, Core::PortGroup* port_group, QString const& 
 	_proxy_phase = new Haruhi::ControllerProxy (_port_phase, &_oscillator_params.phase);
 	_proxy_noise_level = new Haruhi::ControllerProxy (_port_noise_level, &_oscillator_params.noise_level);
 
-	_control_volume = new Haruhi::Knob (_panel, _proxy_volume, "Volume", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Oscillator::Volume, 100), 2);
+	_control_volume = new Haruhi::Knob (_panel, _proxy_volume, "Volume dB", -std::numeric_limits<float>::infinity(), 0.0f, (Params::Oscillator::VolumeMax - Params::Oscillator::VolumeMin) / 500, 2);
+	_control_volume->set_volume_scale (true, M_E);
 	_control_volume->set_unit_bay (_mikuru->unit_bay());
 	_control_panorama = new Haruhi::Knob (_panel, _proxy_panorama, "Panorama", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Voice::Panorama, 100), 2);
 	_control_panorama->set_unit_bay (_mikuru->unit_bay());
