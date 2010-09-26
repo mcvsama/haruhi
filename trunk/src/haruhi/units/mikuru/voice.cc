@@ -299,8 +299,7 @@ Voice::process_amplitude()
 	amplitude *= (s >= 0.0 ? 1 - s + _amplitude * s : s * _amplitude + 1.0f);
 
 	// Volume and amplitude modulation:
-	float v = oscillator_params->volume.to_f();
-	_smoother_amplitude.set_value (v * _params.amplitude.to_f() * _params.adsr.to_f());
+	_smoother_amplitude.set_value (oscillator_params->volume.to_f() * _params.amplitude.to_f() * _params.adsr.to_f());
 	_smoother_amplitude.multiply (_commons->amplitude_buffer.begin(), _commons->amplitude_buffer.end());
 
 	for (Core::Sample *s = _commons->amplitude_buffer.begin(), *e = _commons->amplitude_buffer.end(); s != e; ++s)

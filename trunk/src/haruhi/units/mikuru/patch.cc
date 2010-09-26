@@ -384,31 +384,31 @@ Patch::load_state (QDomElement const& element)
 	// General:
 	{
 		General* general = _mikuru->general();
-		Params::General params;
+		Params::General* params = general->params();
 
 		create_parameters (general_element, parameters);
 
-		load_parameter (parameters, "polyphony", params.polyphony);
-		load_parameter (parameters, "enable-audio-input", params.enable_audio_input);
+		load_parameter (parameters, "polyphony", params->polyphony);
+		load_parameter (parameters, "enable-audio-input", params->enable_audio_input);
 		load_parameter (parameters, "volume", general->_proxy_volume);
 		load_parameter (parameters, "detune", general->_proxy_detune);
 		load_parameter (parameters, "panorama", general->_proxy_panorama);
 		load_parameter (parameters, "stereo-width", general->_proxy_stereo_width);
 		load_parameter (parameters, "input-volume", general->_proxy_input_volume);
 
-		general->load_params (params);
+		general->load_params();
 	}
 
 	// Common filters:
 	if (!common_filters_element.isNull())
 	{
 		CommonFilters* common_filters = _mikuru->common_filters();
-		Params::CommonFilters params;
+		Params::CommonFilters* params = common_filters->params();
 
 		create_parameters (common_filters_element, parameters);
 
-		load_parameter (parameters, "filter-configuration", params.filter_configuration);
-		load_parameter (parameters, "route-audio-input", params.route_audio_input);
+		load_parameter (parameters, "filter-configuration", params->filter_configuration);
+		load_parameter (parameters, "route-audio-input", params->route_audio_input);
 
 		for (QDomNode n = common_filters_element.firstChild(); !n.isNull(); n = n.nextSibling())
 		{
@@ -418,25 +418,25 @@ Patch::load_state (QDomElement const& element)
 				if (e.tagName() == "filter1" || e.tagName() == "filter2")
 				{
 					Filter* filter = e.tagName() == "filter1" ? common_filters->filter1() : common_filters->filter2();
-					Params::Filter params;
+					Params::Filter* params = filter->params();
 
 					create_parameters (e, parameters);
 
-					load_parameter (parameters, "enabled", params.enabled);
-					load_parameter (parameters, "type", params.type);
-					load_parameter (parameters, "passes", params.passes);
-					load_parameter (parameters, "limiter-enabled", params.limiter_enabled);
+					load_parameter (parameters, "enabled", params->enabled);
+					load_parameter (parameters, "type", params->type);
+					load_parameter (parameters, "passes", params->passes);
+					load_parameter (parameters, "limiter-enabled", params->limiter_enabled);
 					load_parameter (parameters, "frequency", filter->_proxy_frequency);
 					load_parameter (parameters, "resonance", filter->_proxy_resonance);
 					load_parameter (parameters, "gain", filter->_proxy_gain);
 					load_parameter (parameters, "attenuation", filter->_proxy_attenuation);
 
-					filter->load_params (params);
+					filter->load_params();
 				}
 			}
 		}
 
-		common_filters->load_params (params);
+		common_filters->load_params();
 	}
 
 	// For each <part> element:
@@ -446,13 +446,10 @@ Patch::load_state (QDomElement const& element)
 
 		// Load general params:
 		{
-			Params::Part params;
-
+			Params::Part* params = part->params();
 			create_parameters (*p, parameters);
-
-			load_parameter (parameters, "enabled", params.enabled);
-
-			part->load_params (params);
+			load_parameter (parameters, "enabled", params->enabled);
+			part->load_params();
 		}
 
 		for (QDomNode n = p->firstChild(); !n.isNull(); n = n.nextSibling())
@@ -463,8 +460,8 @@ Patch::load_state (QDomElement const& element)
 				if (e.tagName() == "oscillator")
 				{
 					Oscillator* oscillator = part->oscillator();
-					Params::Oscillator oscillator_params;
-					Params::Voice voice_params;
+					Params::Oscillator* oscillator_params = oscillator->oscillator_params();
+					Params::Voice* voice_params = oscillator->voice_params();
 
 					create_parameters (e, parameters);
 
@@ -474,26 +471,26 @@ Patch::load_state (QDomElement const& element)
 					load_parameter (parameters, "phase", oscillator->_proxy_phase);
 					load_parameter (parameters, "noise-level", oscillator->_proxy_noise_level);
 					// Other:
-					load_parameter (parameters, "wave-enabled", oscillator_params.wave_enabled);
-					load_parameter (parameters, "noise-enabled", oscillator_params.noise_enabled);
-					load_parameter (parameters, "frequency-modulation-range", oscillator_params.frequency_mod_range);
-					load_parameter (parameters, "pitchbend-enabled", oscillator_params.pitchbend_enabled);
-					load_parameter (parameters, "pitchbend-released", oscillator_params.pitchbend_released);
-					load_parameter (parameters, "pitchbend-up-semitones", oscillator_params.pitchbend_up_semitones);
-					load_parameter (parameters, "pitchbend-down-semitones", oscillator_params.pitchbend_down_semitones);
-					load_parameter (parameters, "transposition-semitones", oscillator_params.transposition_semitones);
-					load_parameter (parameters, "monophonic", oscillator_params.monophonic);
-					load_parameter (parameters, "monophonic-retrigger", oscillator_params.monophonic_retrigger);
-					load_parameter (parameters, "monophonic-key-priority", oscillator_params.monophonic_key_priority);
-					load_parameter (parameters, "const-portamento-time", oscillator_params.const_portamento_time);
-					load_parameter (parameters, "amplitude-smoothing", oscillator_params.amplitude_smoothing);
-					load_parameter (parameters, "frequency-smoothing", oscillator_params.frequency_smoothing);
-					load_parameter (parameters, "pitchbend-smoothing", oscillator_params.pitchbend_smoothing);
-					load_parameter (parameters, "panorama-smoothing", oscillator_params.panorama_smoothing);
+					load_parameter (parameters, "wave-enabled", oscillator_params->wave_enabled);
+					load_parameter (parameters, "noise-enabled", oscillator_params->noise_enabled);
+					load_parameter (parameters, "frequency-modulation-range", oscillator_params->frequency_mod_range);
+					load_parameter (parameters, "pitchbend-enabled", oscillator_params->pitchbend_enabled);
+					load_parameter (parameters, "pitchbend-released", oscillator_params->pitchbend_released);
+					load_parameter (parameters, "pitchbend-up-semitones", oscillator_params->pitchbend_up_semitones);
+					load_parameter (parameters, "pitchbend-down-semitones", oscillator_params->pitchbend_down_semitones);
+					load_parameter (parameters, "transposition-semitones", oscillator_params->transposition_semitones);
+					load_parameter (parameters, "monophonic", oscillator_params->monophonic);
+					load_parameter (parameters, "monophonic-retrigger", oscillator_params->monophonic_retrigger);
+					load_parameter (parameters, "monophonic-key-priority", oscillator_params->monophonic_key_priority);
+					load_parameter (parameters, "const-portamento-time", oscillator_params->const_portamento_time);
+					load_parameter (parameters, "amplitude-smoothing", oscillator_params->amplitude_smoothing);
+					load_parameter (parameters, "frequency-smoothing", oscillator_params->frequency_smoothing);
+					load_parameter (parameters, "pitchbend-smoothing", oscillator_params->pitchbend_smoothing);
+					load_parameter (parameters, "panorama-smoothing", oscillator_params->panorama_smoothing);
 
 					// Knobs:
-					load_parameter (parameters, "amplitude", voice_params.amplitude);
-					load_parameter (parameters, "frequency", voice_params.frequency);
+					load_parameter (parameters, "amplitude", voice_params->amplitude);
+					load_parameter (parameters, "frequency", voice_params->frequency);
 					load_parameter (parameters, "panorama", oscillator->_proxy_panorama);
 					load_parameter (parameters, "detune", oscillator->_proxy_detune);
 					load_parameter (parameters, "pitchbend", oscillator->_proxy_pitchbend);
@@ -503,17 +500,17 @@ Patch::load_state (QDomElement const& element)
 					load_parameter (parameters, "unison-init", oscillator->_proxy_unison_init);
 					load_parameter (parameters, "unison-noise", oscillator->_proxy_unison_noise);
 
-					oscillator->load_oscillator_params (oscillator_params);
-					oscillator->load_voice_params (voice_params);
+					oscillator->load_oscillator_params();
+					oscillator->load_voice_params();
 				}
 				else if (e.tagName() == "filters")
 				{
 					PartFilters* part_filters = part->filters();
-					Params::PartFilters params;
+					Params::PartFilters* params = part_filters->params();
 
 					create_parameters (e, parameters);
 
-					load_parameter (parameters, "filter-configuration", params.filter_configuration);
+					load_parameter (parameters, "filter-configuration", params->filter_configuration);
 
 					for (QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling())
 					{
@@ -523,46 +520,46 @@ Patch::load_state (QDomElement const& element)
 							if (e.tagName() == "filter1" || e.tagName() == "filter2")
 							{
 								Filter* filter = e.tagName() == "filter1" ? part_filters->filter1() : part_filters->filter2();
-								Params::Filter params;
+								Params::Filter* params = filter->params();
 
 								create_parameters (e, parameters);
 
-								load_parameter (parameters, "enabled", params.enabled);
-								load_parameter (parameters, "type", params.type);
-								load_parameter (parameters, "passes", params.passes);
-								load_parameter (parameters, "limiter-enabled", params.limiter_enabled);
+								load_parameter (parameters, "enabled", params->enabled);
+								load_parameter (parameters, "type", params->type);
+								load_parameter (parameters, "passes", params->passes);
+								load_parameter (parameters, "limiter-enabled", params->limiter_enabled);
 								load_parameter (parameters, "frequency", filter->_proxy_frequency);
 								load_parameter (parameters, "resonance", filter->_proxy_resonance);
 								load_parameter (parameters, "gain", filter->_proxy_gain);
 								load_parameter (parameters, "attenuation", filter->_proxy_attenuation);
 
-								filter->load_params (params);
+								filter->load_params();
 							}
 						}
 					}
 
-					part_filters->load_params (params);
+					part_filters->load_params();
 				}
 				else if (e.tagName() == "waveform")
 				{
 					Waveform* waveform = part->waveform();
-					Params::Waveform params;
+					Params::Waveform* params = waveform->params();
 
 					create_parameters (e, parameters);
 
-					load_parameter (parameters, "wave-type", params.wave_type);
-					load_parameter (parameters, "wave-shape", params.wave_shape);
-					load_parameter (parameters, "modulator-type", params.modulator_type);
-					load_parameter (parameters, "modulator-wave-type", params.modulator_wave_type);
-					load_parameter (parameters, "modulator-amplitude", params.modulator_amplitude);
-					load_parameter (parameters, "modulator-index", params.modulator_index);
-					load_parameter (parameters, "modulator-shape", params.modulator_shape);
+					load_parameter (parameters, "wave-type", params->wave_type);
+					load_parameter (parameters, "wave-shape", params->wave_shape);
+					load_parameter (parameters, "modulator-type", params->modulator_type);
+					load_parameter (parameters, "modulator-wave-type", params->modulator_wave_type);
+					load_parameter (parameters, "modulator-amplitude", params->modulator_amplitude);
+					load_parameter (parameters, "modulator-index", params->modulator_index);
+					load_parameter (parameters, "modulator-shape", params->modulator_shape);
 					for (Waveform::Sliders::size_type i = 0; i < Params::Waveform::HarmonicsNumber; ++i)
-						load_parameter (parameters, QString ("harmonic-%1").arg (i), params.harmonics[i]);
+						load_parameter (parameters, QString ("harmonic-%1").arg (i), params->harmonics[i]);
 					for (Waveform::Sliders::size_type i = 0; i < Params::Waveform::HarmonicsNumber; ++i)
-						load_parameter (parameters, QString ("phase-%1").arg (i), params.phases[i]);
+						load_parameter (parameters, QString ("phase-%1").arg (i), params->phases[i]);
 
-					waveform->load_params (params);
+					waveform->load_params();
 				}
 			}
 		}
@@ -574,7 +571,7 @@ Patch::load_state (QDomElement const& element)
 		if (en->attribute ("type") == "adsr")
 		{
 			ADSR* adsr = _mikuru->general()->envelopes()->add_adsr (en->attribute ("id").toInt());
-			Params::ADSR params;
+			Params::ADSR* params = adsr->params();
 
 			create_parameters (*en, parameters);
 
@@ -587,26 +584,26 @@ Patch::load_state (QDomElement const& element)
 			load_parameter (parameters, "sustain-hold", adsr->_proxy_sustain_hold);
 			load_parameter (parameters, "release", adsr->_proxy_release);
 			// Other:
-			load_parameter (parameters, "enabled", params.enabled);
-			load_parameter (parameters, "direct-adsr", params.direct_adsr);
-			load_parameter (parameters, "forced-release", params.forced_release);
-			load_parameter (parameters, "sustain-enabled", params.sustain_enabled);
-			load_parameter (parameters, "function", params.function);
-			load_parameter (parameters, "mode", params.mode);
+			load_parameter (parameters, "enabled", params->enabled);
+			load_parameter (parameters, "direct-adsr", params->direct_adsr);
+			load_parameter (parameters, "forced-release", params->forced_release);
+			load_parameter (parameters, "sustain-enabled", params->sustain_enabled);
+			load_parameter (parameters, "function", params->function);
+			load_parameter (parameters, "mode", params->mode);
 
-			adsr->load_params (params);
+			adsr->load_params();
 		}
 		else if (en->attribute ("type") == "eg")
 		{
 			EG* eg = _mikuru->general()->envelopes()->add_eg (en->attribute ("id").toInt());
-			Params::EG params;
+			Params::EG* params = eg->params();
 
 			create_parameters (*en, parameters);
 
 			// Other:
-			load_parameter (parameters, "enabled", params.enabled);
-			load_parameter (parameters, "segments", params.segments);
-			load_parameter (parameters, "sustain-point", params.sustain_point);
+			load_parameter (parameters, "enabled", params->enabled);
+			load_parameter (parameters, "segments", params->segments);
+			load_parameter (parameters, "sustain-point", params->sustain_point);
 			// Load envelope points:
 			DSP::Envelope::Points& points = eg->envelope_template()->points();
 			points.clear();
@@ -621,20 +618,20 @@ Patch::load_state (QDomElement const& element)
 						QDomElement e = n.toElement();
 						if (!e.isNull() && e.tagName() == "point")
 						{
-							params.values[i] = e.attribute ("value").toInt();
-							params.durations[i] = e.attribute ("duration").toInt();
+							params->values[i] = e.attribute ("value").toInt();
+							params->durations[i] = e.attribute ("duration").toInt();
 							i += 1;
 						}
 					}
 				}
 			}
 
-			eg->load_params (params);
+			eg->load_params();
 		}
 		else if (en->attribute ("type") == "lfo")
 		{
 			LFO* lfo = _mikuru->general()->envelopes()->add_lfo (en->attribute ("id").toInt());
-			Params::LFO params;
+			Params::LFO* params = lfo->params();
 
 			create_parameters (*en, parameters);
 
@@ -648,18 +645,18 @@ Patch::load_state (QDomElement const& element)
 			load_parameter (parameters, "wave-shape", lfo->_proxy_wave_shape);
 			load_parameter (parameters, "fade-out", lfo->_proxy_fade_out);
 			// Other:
-			load_parameter (parameters, "enabled", params.enabled);
-			load_parameter (parameters, "wave-type", params.wave_type);
-			load_parameter (parameters, "wave-invert", params.wave_invert);
-			load_parameter (parameters, "function", params.function);
-			load_parameter (parameters, "mode", params.mode);
-			load_parameter (parameters, "tempo-sync", params.tempo_sync);
-			load_parameter (parameters, "tempo-numerator", params.tempo_numerator);
-			load_parameter (parameters, "tempo-denominator", params.tempo_denominator);
-			load_parameter (parameters, "random-start-phase", params.random_start_phase);
-			load_parameter (parameters, "fade-out-enabled", params.fade_out_enabled);
+			load_parameter (parameters, "enabled", params->enabled);
+			load_parameter (parameters, "wave-type", params->wave_type);
+			load_parameter (parameters, "wave-invert", params->wave_invert);
+			load_parameter (parameters, "function", params->function);
+			load_parameter (parameters, "mode", params->mode);
+			load_parameter (parameters, "tempo-sync", params->tempo_sync);
+			load_parameter (parameters, "tempo-numerator", params->tempo_numerator);
+			load_parameter (parameters, "tempo-denominator", params->tempo_denominator);
+			load_parameter (parameters, "random-start-phase", params->random_start_phase);
+			load_parameter (parameters, "fade-out-enabled", params->fade_out_enabled);
 
-			lfo->load_params (params);
+			lfo->load_params();
 		}
 	}
 
