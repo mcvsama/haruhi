@@ -19,9 +19,9 @@
 
 // Haruhi:
 #include <haruhi/periodic_updater.h>
-#include <haruhi/controller_param.h>
 #include <haruhi/core/event.h>
 #include <haruhi/core/event_port.h>
+#include <haruhi/lib/controller_param.h>
 #include <haruhi/utility/saveable_state.h>
 
 

@@ -224,6 +224,15 @@ SRC_SOURCES += haruhi/dsp/smoother.cc
 SRC_SOURCES += haruhi/dsp/wavetable.cc
 SRC_SOURCES += haruhi/dsp/wave.cc
 
+######## /lib ########
+
+SRC_HEADERS += haruhi/lib/controller_param.h
+SRC_HEADERS += haruhi/lib/controller_proxy.h
+SRC_HEADERS += haruhi/lib/param.h
+
+SRC_SOURCES += haruhi/lib/controller_param.cc
+SRC_SOURCES += haruhi/lib/controller_proxy.cc
+
 ######## /utility ########
 
 SRC_HEADERS += haruhi/utility/atomic.h
@@ -356,8 +365,6 @@ SRC_MOCHDRS += haruhi/widgets/level_meter.h
 SRC_HEADERS += haruhi/backend.h
 SRC_HEADERS += haruhi/config.h
 SRC_HEADERS += haruhi/connections_dump.h
-SRC_HEADERS += haruhi/controller_param.h
-SRC_HEADERS += haruhi/controller_proxy.h
 SRC_HEADERS += haruhi/engine.h
 SRC_HEADERS += haruhi/fail.h
 SRC_HEADERS += haruhi/haruhi.h
@@ -373,8 +380,6 @@ SRC_HEADERS += haruhi/unit_loader.h
 
 SRC_SOURCES += haruhi/config.cc
 SRC_SOURCES += haruhi/connections_dump.cc
-SRC_SOURCES += haruhi/controller_param.cc
-SRC_SOURCES += haruhi/controller_proxy.cc
 SRC_SOURCES += haruhi/engine.cc
 SRC_SOURCES += haruhi/fail.cc
 SRC_SOURCES += haruhi/haruhi.cc

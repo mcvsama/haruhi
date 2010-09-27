@@ -28,13 +28,13 @@
 
 // Haruhi:
 #include <haruhi/haruhi.h>
-#include <haruhi/controller_proxy.h>
 #include <haruhi/core/port_group.h>
 #include <haruhi/core/event_port.h>
 #include <haruhi/dsp/wavetable.h>
 #include <haruhi/dsp/functions.h>
 #include <haruhi/dsp/harmonics_wave.h>
 #include <haruhi/dsp/modulated_wave.h>
+#include <haruhi/lib/controller_proxy.h>
 #include <haruhi/utility/signal.h>
 #include <haruhi/utility/memory.h>
 #include <haruhi/widgets/knob.h>

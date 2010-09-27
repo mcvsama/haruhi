@@ -18,7 +18,7 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/controller_proxy.h>
+#include <haruhi/lib/controller_proxy.h>
 #include <haruhi/components/event_backend/event_backend.h>
 
 

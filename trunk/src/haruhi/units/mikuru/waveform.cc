@@ -25,11 +25,11 @@
 #include <Qt3Support/Q3Grid>
 
 // Haruhi:
-#include <haruhi/controller_proxy.h>
 #include <haruhi/dsp/functions.h>
 #include <haruhi/dsp/wavetable.h>
 #include <haruhi/dsp/harmonics_wave.h>
 #include <haruhi/dsp/modulated_wave.h>
+#include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/knob.h>
 #include <haruhi/widgets/wave_plot.h>
 #include <haruhi/utility/memory.h>

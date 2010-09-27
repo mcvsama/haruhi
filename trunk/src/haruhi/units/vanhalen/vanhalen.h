@@ -25,8 +25,8 @@
 #include <haruhi/core/event_port.h>
 #include <haruhi/core/audio_port.h>
 #include <haruhi/dsp/delay_line.h>
+#include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/knob.h>
-#include <haruhi/controller_proxy.h>
 #include <haruhi/unit.h>
 
 

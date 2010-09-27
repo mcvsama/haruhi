@@ -25,10 +25,10 @@
 
 // Haruhi:
 #include <haruhi/haruhi.h>
-#include <haruhi/controller_proxy.h>
 #include <haruhi/core/event.h>
 #include <haruhi/dsp/adsr.h>
 #include <haruhi/dsp/wave.h>
+#include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/knob.h>
 #include <haruhi/widgets/envelope_plot.h>
 

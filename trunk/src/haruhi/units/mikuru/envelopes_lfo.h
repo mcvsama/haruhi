@@ -25,9 +25,9 @@
 
 // Haruhi:
 #include <haruhi/haruhi.h>
-#include <haruhi/controller_proxy.h>
 #include <haruhi/dsp/parametric_wave.h>
 #include <haruhi/dsp/noise.h>
+#include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/knob.h>
 #include <haruhi/widgets/wave_plot.h>
 

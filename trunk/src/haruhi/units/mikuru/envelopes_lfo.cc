@@ -25,8 +25,8 @@
 
 // Haruhi:
 #include <haruhi/config.h>
-#include <haruhi/controller_proxy.h>
 #include <haruhi/dsp/functions.h>
+#include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/wave_plot.h>
 
 // Local:

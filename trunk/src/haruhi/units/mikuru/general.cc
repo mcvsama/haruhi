@@ -20,7 +20,7 @@
 #include <Qt3Support/Q3GroupBox>
 
 // Haruhi:
-#include <haruhi/controller_proxy.h>
+#include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/knob.h>
 
 // Local:

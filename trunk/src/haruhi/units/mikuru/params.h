@@ -19,8 +19,8 @@
 
 // Haruhi:
 #include <haruhi/dsp/harmonics_wave.h>
-#include <haruhi/controller_param.h>
-#include <haruhi/param.h>
+#include <haruhi/lib/controller_param.h>
+#include <haruhi/lib/param.h>
 
 
 /*

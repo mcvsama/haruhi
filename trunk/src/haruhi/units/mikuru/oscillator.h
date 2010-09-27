@@ -23,8 +23,8 @@
 
 // Haruhi:
 #include <haruhi/haruhi.h>
-#include <haruhi/controller_proxy.h>
 #include <haruhi/dsp/wave.h>
+#include <haruhi/lib/controller_proxy.h>
 #include <haruhi/core/port_group.h>
 #include <haruhi/widgets/knob.h>
 

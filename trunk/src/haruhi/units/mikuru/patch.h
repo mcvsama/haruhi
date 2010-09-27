@@ -21,7 +21,7 @@
 
 // Haruhi:
 #include <haruhi/haruhi.h>
-#include <haruhi/param.h>
+#include <haruhi/lib/param.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/widgets/knob.h>
 

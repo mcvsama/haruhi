@@ -24,7 +24,7 @@
 
 // Haruhi:
 #include <haruhi/config.h>
-#include <haruhi/controller_proxy.h>
+#include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/envelope_plot.h>
 
 // Local:

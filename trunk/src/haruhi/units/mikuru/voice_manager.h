@@ -21,7 +21,7 @@
 // Haruhi:
 #include <haruhi/haruhi.h>
 #include <haruhi/core/event_buffer.h>
-#include <haruhi/controller_param.h>
+#include <haruhi/lib/controller_param.h>
 
 // Local:
 #include "voice.h"
