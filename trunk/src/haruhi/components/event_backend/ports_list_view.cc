@@ -99,9 +99,15 @@ PortsListView::load_state (QDomElement const& element)
 void
 PortsListView::customEvent (QEvent* event)
 {
-	ResetIconEvent* rie = dynamic_cast<ResetIconEvent*> (event);
-	if (rie)
-		rie->port_item->setIcon (0, Config::Icons16::event_output_port());
+	LearnedParams* lp = dynamic_cast<LearnedParams*> (event);
+	if (lp)
+	{
+		// Force update of editor dialog:
+		lp->port_item->setSelected (false);
+		lp->port_item->setSelected (true);
+		// Reset icon:
+		lp->port_item->setIcon (0, Config::Icons16::event_output_port());
+	}
 }
 
 } // namespace EventBackendPrivate

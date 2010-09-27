@@ -44,10 +44,10 @@ class PortsListView:
 	 * therefore we can't send events to PortItems directly. We must
 	 * do it in PortsListView.
 	 */
-	class ResetIconEvent: public QEvent
+	class LearnedParams: public QEvent
 	{
 	  public:
-		ResetIconEvent (PortItem* port_item):
+		LearnedParams (PortItem* port_item):
 			QEvent (QEvent::User),
 			port_item (port_item)
 		{ }

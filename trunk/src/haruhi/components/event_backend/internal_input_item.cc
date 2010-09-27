@@ -85,11 +85,7 @@ void
 InternalInputItem::stop_learning()
 {
 	_learning = false;
-	// Force update of editor dialog:
-	setSelected (false);
-	setSelected (true);
-	// Reset icon:
-	QApplication::postEvent (treeWidget(), new PortsListView::ResetIconEvent (this));
+	QApplication::postEvent (treeWidget(), new PortsListView::LearnedParams (this));
 }
 
 
