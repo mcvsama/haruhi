@@ -66,6 +66,14 @@ ControllerParam::operator= (ControllerParam const& other)
 
 
 void
+ControllerParam::sanitize()
+{
+	set (bound (get(), _minimum, _maximum));
+	set_smoothing (bound (smoothing(), 0, 1000)); // 0…1000ms
+}
+
+
+void
 ControllerParam::save_state (QDomElement& element) const
 {
 	element.setAttribute ("value", QString ("%1").arg (get()));

@@ -20,6 +20,7 @@
 // Haruhi:
 #include <haruhi/dsp/harmonics_wave.h>
 #include <haruhi/controller_param.h>
+#include <haruhi/param.h>
 
 
 /*
@@ -91,8 +92,8 @@ struct Params
 		Haruhi::ControllerParam stereo_width;
 		Haruhi::ControllerParam input_volume;
 
-		unsigned int polyphony;
-		int enable_audio_input;
+		Haruhi::Param<unsigned int> polyphony;
+		Haruhi::Param<int> enable_audio_input;
 	};
 
 	struct Filter
@@ -111,10 +112,10 @@ struct Params
 		Haruhi::ControllerParam gain;
 		Haruhi::ControllerParam attenuation;
 
-		int enabled;
-		int type;
-		int passes;
-		int limiter_enabled;
+		Haruhi::Param<int> enabled;
+		Haruhi::Param<int> type;
+		Haruhi::Param<int> passes;
+		Haruhi::Param<int> limiter_enabled;
 	};
 
 	/**
@@ -129,8 +130,8 @@ struct Params
 			FilterConfigurationParallel	= 1,
 		};
 
-		int filter_configuration;
-		int route_audio_input;
+		Haruhi::Param<int> filter_configuration;
+		Haruhi::Param<int> route_audio_input;
 	};
 
 	/**
@@ -140,7 +141,7 @@ struct Params
 	{
 		HARUHI_MIKURU_PARAMS_STANDARD_METHODS (Part)
 
-		int enabled;
+		Haruhi::Param<int> enabled;
 	};
 
 	/**
@@ -155,7 +156,7 @@ struct Params
 			FilterConfigurationParallel	= 1,
 		};
 
-		int filter_configuration;
+		Haruhi::Param<int> filter_configuration;
 	};
 
 	/**
@@ -181,11 +182,11 @@ struct Params
 		Haruhi::ControllerParam modulator_index;
 		Haruhi::ControllerParam modulator_shape;
 
-		unsigned int wave_type;
-		unsigned int modulator_type;
-		unsigned int modulator_wave_type;
-		int harmonics[HarmonicsNumber];
-		int phases[HarmonicsNumber];
+		Haruhi::Param<unsigned int> wave_type;
+		Haruhi::Param<unsigned int> modulator_type;
+		Haruhi::Param<unsigned int> modulator_wave_type;
+		Haruhi::Param<int> harmonics[HarmonicsNumber];
+		Haruhi::Param<int> phases[HarmonicsNumber];
 	};
 
 	/**
@@ -214,22 +215,22 @@ struct Params
 		Haruhi::ControllerParam phase;
 		Haruhi::ControllerParam noise_level;
 
-		int wave_enabled;
-		int noise_enabled;
-		int frequency_mod_range;
-		int pitchbend_enabled;
-		int pitchbend_released;
-		int pitchbend_up_semitones;
-		int pitchbend_down_semitones;
-		int transposition_semitones;
-		int monophonic;
-		int monophonic_retrigger;
-		int monophonic_key_priority;
-		int const_portamento_time;
-		int amplitude_smoothing;
-		int frequency_smoothing;
-		int pitchbend_smoothing;
-		int panorama_smoothing;
+		Haruhi::Param<int> wave_enabled;
+		Haruhi::Param<int> noise_enabled;
+		Haruhi::Param<int> frequency_mod_range;
+		Haruhi::Param<int> pitchbend_enabled;
+		Haruhi::Param<int> pitchbend_released;
+		Haruhi::Param<int> pitchbend_up_semitones;
+		Haruhi::Param<int> pitchbend_down_semitones;
+		Haruhi::Param<int> transposition_semitones;
+		Haruhi::Param<int> monophonic;
+		Haruhi::Param<int> monophonic_retrigger;
+		Haruhi::Param<int> monophonic_key_priority;
+		Haruhi::Param<int> const_portamento_time;
+		Haruhi::Param<int> amplitude_smoothing;
+		Haruhi::Param<int> frequency_smoothing;
+		Haruhi::Param<int> pitchbend_smoothing;
+		Haruhi::Param<int> panorama_smoothing;
 	};
 
 	/**
@@ -302,12 +303,12 @@ struct Params
 		Haruhi::ControllerParam sustain_hold;
 		Haruhi::ControllerParam release;
 
-		int enabled;
-		int direct_adsr;
-		int forced_release;
-		int sustain_enabled;
-		int function;
-		int mode;
+		Haruhi::Param<int> enabled;
+		Haruhi::Param<int> direct_adsr;
+		Haruhi::Param<int> forced_release;
+		Haruhi::Param<int> sustain_enabled;
+		Haruhi::Param<int> function;
+		Haruhi::Param<int> mode;
 	};
 
 	/**
@@ -341,16 +342,16 @@ struct Params
 		Haruhi::ControllerParam wave_shape;
 		Haruhi::ControllerParam fade_out;
 
-		int enabled;
-		int wave_type;
-		int wave_invert;
-		int function;
-		int mode;
-		int tempo_sync;
-		int tempo_numerator;
-		int tempo_denominator;
-		int random_start_phase;
-		int fade_out_enabled;
+		Haruhi::Param<int> enabled;
+		Haruhi::Param<int> wave_type;
+		Haruhi::Param<int> wave_invert;
+		Haruhi::Param<int> function;
+		Haruhi::Param<int> mode;
+		Haruhi::Param<int> tempo_sync;
+		Haruhi::Param<int> tempo_numerator;
+		Haruhi::Param<int> tempo_denominator;
+		Haruhi::Param<int> random_start_phase;
+		Haruhi::Param<int> fade_out_enabled;
 	};
 
 	/**
@@ -367,11 +368,11 @@ struct Params
 
 		enum { MaxPoints = 64 };
 
-		int enabled;
-		unsigned int segments;
-		unsigned int sustain_point;
-		unsigned int values[MaxPoints];
-		unsigned int durations[MaxPoints];
+		Haruhi::Param<int> enabled;
+		Haruhi::Param<unsigned int> segments;
+		Haruhi::Param<unsigned int> sustain_point;
+		Haruhi::Param<unsigned int> values[MaxPoints];
+		Haruhi::Param<unsigned int> durations[MaxPoints];
 	};
 };
 

@@ -98,7 +98,7 @@ PartFilters::process_events()
 void
 PartFilters::process_filters (Core::AudioBuffer& input, Core::AudioBuffer& buffer1, Core::AudioBuffer& buffer2, Core::AudioBuffer& output)
 {
-	_double_filter.configure (static_cast<DoubleFilter::Configuration> (static_cast<int> (atomic (_params.filter_configuration))), _filter1->params(), _filter2->params());
+	_double_filter.configure (static_cast<DoubleFilter::Configuration> (_params.filter_configuration.get()), _filter1->params(), _filter2->params());
 
 	if (!_double_filter.process (input, buffer1, buffer2, output))
 		output.fill (&input);

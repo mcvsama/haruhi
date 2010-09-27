@@ -85,7 +85,7 @@ General::General (Mikuru* mikuru, QWidget* parent):
 	new QLabel ("Polyphony (each part):", grid1);
 	_polyphony = new QSpinBox (1, 256, 1, grid1);
 	_polyphony->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	_polyphony->setValue (atomic (_params.polyphony));
+	_polyphony->setValue (_params.polyphony.get());
 	QObject::connect (_polyphony, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 
 	// Enable audio input:
@@ -231,8 +231,8 @@ General::update_params()
 	if (_loading_params)
 		return;
 
-	atomic (_params.polyphony) = _polyphony->value();
-	atomic (_params.enable_audio_input) = _enable_audio_input->isChecked();
+	_params.polyphony.set (_polyphony->value());
+	_params.enable_audio_input.set (_enable_audio_input->isChecked());
 
 	// Knob params are updated automatically using #assign_parameter.
 }

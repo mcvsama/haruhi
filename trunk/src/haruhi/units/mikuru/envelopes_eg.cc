@@ -206,7 +206,7 @@ EG::create_widgets()
 void
 EG::voice_created (VoiceManager* voice_manager, Voice* voice)
 {
-	if (!atomic (_params.enabled))
+	if (!_params.enabled.get())
 		return;
 
 	unsigned int sample_rate = _mikuru->graph()->sample_rate();
@@ -326,17 +326,17 @@ EG::update_params()
 	if (_loading_params)
 		return;
 
-	atomic (_params.enabled) = _enabled->isChecked();
-	atomic (_params.segments) = _segments->value();
-	atomic (_params.sustain_point) = _sustain_point->value() - 1;
+	_params.enabled.set (_enabled->isChecked());
+	_params.segments.set (_segments->value());
+	_params.sustain_point.set (_sustain_point->value() - 1);
 
 	// Update points:
 	DSP::Envelope::Points& points = _envelope_template.points();
-	size_t s = atomic (_params.segments) + 1;
+	size_t s = _params.segments.get() + 1;
 	for (size_t i = 0; i < s; ++i)
 	{
-		atomic (_params.values[i]) = points[i].value * Params::EG::PointValueDenominator;
-		atomic (_params.durations[i]) = points[i].samples;
+		_params.values[i].set (points[i].value * Params::EG::PointValueDenominator);
+		_params.durations[i].set (points[i].samples);
 	}
 
 	// Knob params are updated automatically using #assign_parameter.

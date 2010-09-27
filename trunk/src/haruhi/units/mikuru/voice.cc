@@ -21,7 +21,6 @@
 #include <haruhi/haruhi.h>
 #include <haruhi/core/audio_buffer.h>
 #include <haruhi/dsp/functions.h>
-#include <haruhi/utility/atomic.h>
 
 // Local:
 #include "mikuru.h"
@@ -80,11 +79,11 @@ Voice::Voice (VoiceManager* voice_manager, SynthThread* thread, Core::KeyID key_
 	int sample_rate = _mikuru->graph()->sample_rate();
 
 	// Setup smoothers:
-	_smoother_amplitude.set_smoothing_samples (0.001f * atomic (op->amplitude_smoothing) * sample_rate);
-	_smoother_frequency.set_smoothing_samples (0.001f * atomic (op->frequency_smoothing) * sample_rate);
-	_smoother_pitchbend.set_smoothing_samples (0.001f * atomic (op->pitchbend_smoothing) * sample_rate);
-	_smoother_panorama_1.set_smoothing_samples (0.001f * atomic (op->panorama_smoothing) * sample_rate);
-	_smoother_panorama_2.set_smoothing_samples (0.001f * atomic (op->panorama_smoothing) * sample_rate);
+	_smoother_amplitude.set_smoothing_samples (0.001f * op->amplitude_smoothing.get() * sample_rate);
+	_smoother_frequency.set_smoothing_samples (0.001f * op->frequency_smoothing.get() * sample_rate);
+	_smoother_pitchbend.set_smoothing_samples (0.001f * op->pitchbend_smoothing.get() * sample_rate);
+	_smoother_panorama_1.set_smoothing_samples (0.001f * op->panorama_smoothing.get() * sample_rate);
+	_smoother_panorama_2.set_smoothing_samples (0.001f * op->panorama_smoothing.get() * sample_rate);
 }
 
 
@@ -137,11 +136,11 @@ Voice::mixin (Core::AudioBuffer* output1, Core::AudioBuffer* output2)
 	_oscillator.set_unison_number (_params.unison_index.get());
 	_oscillator.set_unison_noise (_params.unison_noise.to_f());
 	_oscillator.set_noise_amplitude (oscillator_params->noise_level.to_f());
-	_oscillator.set_wavetable_enabled (atomic (oscillator_params->wave_enabled));
-	_oscillator.set_noise_enabled (atomic (oscillator_params->noise_enabled));
+	_oscillator.set_wavetable_enabled (oscillator_params->wave_enabled.get());
+	_oscillator.set_noise_enabled (oscillator_params->noise_enabled.get());
 	_oscillator.fill (&_commons->oscillator_buffer);
 
-	_double_filter.configure (static_cast<DoubleFilter::Configuration> (static_cast<int> (atomic (_part->filters()->params()->filter_configuration))), &_filter1_params, &_filter2_params);
+	_double_filter.configure (static_cast<DoubleFilter::Configuration> (static_cast<int> (_part->filters()->params()->filter_configuration.get())), &_filter1_params, &_filter2_params);
 	bool filtered = _double_filter.process (_commons->oscillator_buffer, _commons->filter_buffer1, _commons->filter_buffer2, _commons->output_buffer);
 	Core::AudioBuffer& filters_output = filtered ? _commons->output_buffer : _commons->oscillator_buffer;
 
@@ -226,7 +225,7 @@ Voice::process_frequency()
 	std::fill (_commons->frequency_buffer.begin(), _commons->frequency_buffer.end(), 1.0f);
 
 	// Transposition:
-	frequency *= std::pow (2.0f, (1.0f / 12.0f) * atomic (oscillator_params->transposition_semitones));
+	frequency *= std::pow (2.0f, (1.0f / 12.0f) * oscillator_params->transposition_semitones.get());
 
 	// Glide:
 	if (_frequency_change != 1.0f)
@@ -248,14 +247,14 @@ Voice::process_frequency()
 	// Pitchbend:
 	{
 		float pitchbend = 1.0f;
-		if (atomic (oscillator_params->pitchbend_enabled))
+		if (oscillator_params->pitchbend_enabled.get())
 		{
-			if (released() && !atomic (oscillator_params->pitchbend_released))
+			if (released() && !oscillator_params->pitchbend_released.get())
 				pitchbend = _last_pitchbend_value;
 			else
 			{
 				pitchbend = _params.pitchbend.to_f();
-				float range = std::pow (2.0f, (1.0f / 12.0f) * (pitchbend >= 0 ? atomic (oscillator_params->pitchbend_up_semitones) : atomic (oscillator_params->pitchbend_down_semitones)));
+				float range = std::pow (2.0f, (1.0f / 12.0f) * (pitchbend >= 0 ? oscillator_params->pitchbend_up_semitones.get() : oscillator_params->pitchbend_down_semitones.get()));
 				pitchbend = std::pow (range, pitchbend + 1.0f) / range;
 				_last_pitchbend_value = pitchbend;
 			}
@@ -273,7 +272,7 @@ Voice::process_frequency()
 
 		Core::Sample* tb = _commons->temp1.begin();
 		Core::Sample* fb = _commons->frequency_buffer.begin();
-		float range = 1.0f * atomic (oscillator_params->frequency_mod_range);
+		float range = 1.0f * oscillator_params->frequency_mod_range.get();
 
 		for (std::size_t i = 0; i < buffer_size; ++i)
 			fb[i] *= std::pow (2.0f, (1.0f / 12.0f) * (frq_det + tb[i] * range));
@@ -315,7 +314,7 @@ Voice::update_glide_parameters()
 	int portamento_time = _part->oscillator()->oscillator_params()->portamento_time.get();
 	if (portamento_time > 0)
 	{
-		if (atomic (_part->oscillator()->oscillator_params()->const_portamento_time))
+		if (_part->oscillator()->oscillator_params()->const_portamento_time.get())
 		{
 			_frequency_change = std::pow (_target_frequency / source_frequency,
 										  1.0f / (1.0f / Params::Oscillator::PortamentoTimeDenominator * portamento_time * _mikuru->graph()->sample_rate()));

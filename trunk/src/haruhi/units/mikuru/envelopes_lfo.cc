@@ -390,7 +390,7 @@ LFO::create_widgets (QWidget* knobs_panel)
 void
 LFO::voice_created (VoiceManager*, Voice* voice)
 {
-	int mode = atomic (_params.mode);
+	int mode = _params.mode.get();
 	unsigned int sample_rate = _mikuru->graph()->sample_rate();
 
 	// If this will be the first voice in the set and mode is CommonKeySync, reset common osc:
@@ -407,7 +407,7 @@ LFO::voice_created (VoiceManager*, Voice* voice)
 		osc->set_delay (_params.delay.to_f() * sample_rate);
 		osc->set_fade_in (_params.fade_in.to_f() * sample_rate);
 		osc->set_fade_out (_params.fade_out.to_f() * sample_rate);
-		osc->set_fade_out_enabled (atomic (_params.fade_out_enabled));
+		osc->set_fade_out_enabled (_params.fade_out_enabled.get());
 		// Add osc to set:
 		_oscs[voice] = osc;
 	}
@@ -460,10 +460,10 @@ LFO::process()
 	_proxy_fade_out->process_events();
 
 	// Skip if disabled or not connected:
-	if (!atomic (_params.enabled) || _port_output->forward_connections().empty())
+	if (!_params.enabled.get() || _port_output->forward_connections().empty())
 		return;
 
-	int wave_type = atomic (_params.wave_type);
+	int wave_type = _params.wave_type.get();
 	Core::Timestamp t = _mikuru->graph()->timestamp();
 	unsigned int sample_rate = _mikuru->graph()->sample_rate();
 	unsigned int buffer_size = _mikuru->graph()->buffer_size();
@@ -472,7 +472,7 @@ LFO::process()
 	float frequency = _params.frequency.to_f() / sample_rate;
 	float level = _params.level.to_f();
 	float depth = _params.depth.to_f();
-	bool invert = atomic (_params.wave_invert);
+	bool invert = _params.wave_invert.get();
 
 	// Assuming that output ports are cleared by Mikuru on beginnig of each
 	// processing round.
@@ -490,7 +490,7 @@ LFO::process()
 		_port_output->event_buffer()->push (new Core::VoiceControllerEvent (t, voice->voice_id(), apply_function (osc->advance (buffer_size))));
 	}
 
-	int mode = atomic (_params.mode);
+	int mode = _params.mode.get();
 	if ((mode == Params::LFO::CommonKeySync && _pressed_keys > 0) || mode == Params::LFO::CommonContinuous)
 	{
 		_common_osc.set_wave (wave, wave_type == Params::LFO::RandomSquare || wave_type == Params::LFO::RandomTriangle);
@@ -548,22 +548,22 @@ LFO::update_params()
 	if (_loading_params)
 		return;
 
-	int prev_mode = atomic (_params.mode);
+	int prev_mode = _params.mode.get();
 
-	atomic (_params.enabled) = _enabled->isChecked();
-	atomic (_params.wave_type) = _wave_type->currentItem();
-	atomic (_params.wave_invert) = _wave_invert->isChecked();
-	atomic (_params.function) = _function->currentItem();
-	atomic (_params.mode) = _mode->currentItem();
-	atomic (_params.tempo_sync) = _tempo_sync->isChecked();
-	atomic (_params.tempo_numerator) = _tempo_numerator->value();
-	atomic (_params.tempo_denominator) = _tempo_denominator->value();
-	atomic (_params.random_start_phase) = _random_start_phase->isChecked();
-	atomic (_params.fade_out_enabled) = _fade_out_enabled->isChecked();
+	_params.enabled.set (_enabled->isChecked());
+	_params.wave_type.set (_wave_type->currentItem());
+	_params.wave_invert.set (_wave_invert->isChecked());
+	_params.function.set (_function->currentItem());
+	_params.mode.set (_mode->currentItem());
+	_params.tempo_sync.set (_tempo_sync->isChecked());
+	_params.tempo_numerator.set (_tempo_numerator->value());
+	_params.tempo_denominator.set (_tempo_denominator->value());
+	_params.random_start_phase.set (_random_start_phase->isChecked());
+	_params.fade_out_enabled.set (_fade_out_enabled->isChecked());
 
 	// Knob params are updated automatically using #assign_parameter.
 
-	if (prev_mode != atomic (_params.mode))
+	if (prev_mode != _params.mode.get())
 		reset_common_osc();
 }
 
@@ -571,11 +571,11 @@ LFO::update_params()
 void
 LFO::update_plot()
 {
-	bool random = atomic (_params.wave_type) == Params::LFO::RandomSquare || atomic (_params.wave_type) == Params::LFO::RandomTriangle;
+	bool random = _params.wave_type.get() == Params::LFO::RandomSquare || _params.wave_type.get() == Params::LFO::RandomTriangle;
 	if (!random)
 	{
 		update_wave_param();
-		_plot->assign_wave (_waves[atomic (_params.wave_type)], true, true, atomic (_params.wave_invert));
+		_plot->assign_wave (_waves[_params.wave_type.get()], true, true, _params.wave_invert.get());
 		_plot->set_phase_marker (true, _params.phase.to_f());
 		_plot->plot_shape();
 	}
@@ -585,8 +585,8 @@ LFO::update_plot()
 void
 LFO::update_widgets()
 {
-	bool random = atomic (_params.wave_type) == Params::LFO::RandomSquare || atomic (_params.wave_type) == Params::LFO::RandomTriangle;
-	bool continuous = atomic (_params.mode) == Params::LFO::CommonContinuous;
+	bool random = _params.wave_type.get() == Params::LFO::RandomSquare || _params.wave_type.get() == Params::LFO::RandomTriangle;
+	bool continuous = _params.mode.get() == Params::LFO::CommonContinuous;
 	_control_delay->setEnabled (!continuous);
 	_control_fade_in->setEnabled (!continuous);
 	_control_fade_out->setEnabled (!continuous && _params.fade_out_enabled);
@@ -601,7 +601,7 @@ LFO::update_widgets()
 void
 LFO::update_wave_param()
 {
-	_waves[atomic (_params.wave_type)]->set_param (_params.wave_shape.to_f());
+	_waves[_params.wave_type.get()]->set_param (_params.wave_shape.to_f());
 }
 
 
@@ -624,14 +624,14 @@ LFO::set_common_osc()
 	_common_osc.set_delay (_params.delay.to_f() * sample_rate);
 	_common_osc.set_fade_in (_params.fade_in.to_f() * sample_rate);
 	_common_osc.set_fade_out (_params.fade_out.to_f() * sample_rate);
-	_common_osc.set_fade_out_enabled (atomic (_params.fade_out_enabled));
+	_common_osc.set_fade_out_enabled (_params.fade_out_enabled.get());
 }
 
 
 Core::Sample
 LFO::apply_function (Core::Sample v) const
 {
-	switch (atomic (_params.function))
+	switch (_params.function.get())
 	{
 		case Params::LFO::LogarithmicE: return std::pow (v, 1.0f/M_E);
 		case Params::LFO::Logarithmic2: return std::pow (v, 0.5f);
@@ -646,7 +646,7 @@ LFO::apply_function (Core::Sample v) const
 float
 LFO::get_phase() const
 {
-	return atomic (_params.random_start_phase)
+	return _params.random_start_phase.get()
 		? _noise.get()
 		: _params.phase.to_f();
 }

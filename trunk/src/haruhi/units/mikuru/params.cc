@@ -16,7 +16,7 @@
 #include <algorithm>
 
 // Haruhi:
-#include <haruhi/utility/atomic.h>
+#include <haruhi/utility/numeric.h>
 #include <haruhi/dsp/modulated_wave.h>
 
 // Local:
@@ -30,8 +30,8 @@
 #define HARUHI_MIKURU_COPY(name) \
 	name = other.name;
 
-#define HARUHI_MIKURU_COPY_ATOMIC(name) \
-	name = atomic (other.name);
+#define HARUHI_MIKURU_SANITIZE(var) \
+	var.sanitize();
 
 
 namespace MikuruPrivate {
@@ -44,8 +44,8 @@ Params::General::General():
 	HARUHI_MIKURU_CONSTRUCT (stereo_width, StereoWidth),
 	HARUHI_MIKURU_CONSTRUCT (input_volume, InputVolume),
 	// Non-controller:
-	polyphony (32),
-	enable_audio_input (0)
+	polyphony (0, 512, 32),
+	enable_audio_input (0, 1, 0)
 {
 	panorama.set_smoothing (50);
 }
@@ -65,8 +65,21 @@ Params::General::set_controller_params (General& other)
 void
 Params::General::set_non_controller_params (General& other)
 {
-	HARUHI_MIKURU_COPY_ATOMIC (polyphony)
-	HARUHI_MIKURU_COPY_ATOMIC (enable_audio_input)
+	HARUHI_MIKURU_COPY (polyphony)
+	HARUHI_MIKURU_COPY (enable_audio_input)
+}
+
+
+void
+Params::General::sanitize()
+{
+	HARUHI_MIKURU_SANITIZE (volume)
+	HARUHI_MIKURU_SANITIZE (detune)
+	HARUHI_MIKURU_SANITIZE (panorama)
+	HARUHI_MIKURU_SANITIZE (stereo_width)
+	HARUHI_MIKURU_SANITIZE (input_volume)
+	HARUHI_MIKURU_SANITIZE (polyphony)
+	HARUHI_MIKURU_SANITIZE (enable_audio_input)
 }
 
 
@@ -77,10 +90,10 @@ Params::Filter::Filter():
 	HARUHI_MIKURU_CONSTRUCT (gain, Gain),
 	HARUHI_MIKURU_CONSTRUCT (attenuation, Attenuation),
 	// Non-controller:
-	enabled (0),
-	type (RBJImpulseResponse::LowPass),
-	passes (1),
-	limiter_enabled (true)
+	enabled (0, 1, 0),
+	type (0, 7, RBJImpulseResponse::LowPass),
+	passes (1, 5, 1),
+	limiter_enabled (0, 1, 1)
 {
 	frequency.set_smoothing (50);
 	resonance.set_smoothing (50);
@@ -102,17 +115,31 @@ Params::Filter::set_controller_params (Filter& other)
 void
 Params::Filter::set_non_controller_params (Filter& other)
 {
-	HARUHI_MIKURU_COPY_ATOMIC (enabled)
-	HARUHI_MIKURU_COPY_ATOMIC (type)
-	HARUHI_MIKURU_COPY_ATOMIC (passes)
-	HARUHI_MIKURU_COPY_ATOMIC (limiter_enabled)
+	HARUHI_MIKURU_COPY (enabled)
+	HARUHI_MIKURU_COPY (type)
+	HARUHI_MIKURU_COPY (passes)
+	HARUHI_MIKURU_COPY (limiter_enabled)
+}
+
+
+void
+Params::Filter::sanitize()
+{
+	HARUHI_MIKURU_SANITIZE (frequency)
+	HARUHI_MIKURU_SANITIZE (resonance)
+	HARUHI_MIKURU_SANITIZE (gain)
+	HARUHI_MIKURU_SANITIZE (attenuation)
+	HARUHI_MIKURU_SANITIZE (enabled)
+	HARUHI_MIKURU_SANITIZE (type)
+	HARUHI_MIKURU_SANITIZE (passes)
+	HARUHI_MIKURU_SANITIZE (limiter_enabled)
 }
 
 
 Params::CommonFilters::CommonFilters():
 	// Non-controller:
-	filter_configuration (FilterConfigurationSerial),
-	route_audio_input (0)
+	filter_configuration (0, 1, FilterConfigurationSerial),
+	route_audio_input (0, 1, 0)
 {
 }
 
@@ -126,14 +153,22 @@ Params::CommonFilters::set_controller_params (CommonFilters&)
 void
 Params::CommonFilters::set_non_controller_params (CommonFilters& other)
 {
-	HARUHI_MIKURU_COPY_ATOMIC (filter_configuration)
-	HARUHI_MIKURU_COPY_ATOMIC (route_audio_input)
+	HARUHI_MIKURU_COPY (filter_configuration)
+	HARUHI_MIKURU_COPY (route_audio_input)
+}
+
+
+void
+Params::CommonFilters::sanitize()
+{
+	HARUHI_MIKURU_SANITIZE (filter_configuration)
+	HARUHI_MIKURU_SANITIZE (route_audio_input)
 }
 
 
 Params::Part::Part():
 	// Non-controller:
-	enabled (1)
+	enabled (0, 1, 1)
 {
 }
 
@@ -147,13 +182,20 @@ Params::Part::set_controller_params (Part&)
 void
 Params::Part::set_non_controller_params (Part& other)
 {
-	HARUHI_MIKURU_COPY_ATOMIC (enabled)
+	HARUHI_MIKURU_COPY (enabled)
+}
+
+
+void
+Params::Part::sanitize()
+{
+	HARUHI_MIKURU_SANITIZE (enabled)
 }
 
 
 Params::PartFilters::PartFilters():
 	// Non-controller:
-	filter_configuration (FilterConfigurationSerial)
+	filter_configuration (0, 1, FilterConfigurationSerial)
 {
 }
 
@@ -167,7 +209,14 @@ Params::PartFilters::set_controller_params (PartFilters&)
 void
 Params::PartFilters::set_non_controller_params (PartFilters& other)
 {
-	HARUHI_MIKURU_COPY_ATOMIC (filter_configuration)
+	HARUHI_MIKURU_COPY (filter_configuration)
+}
+
+
+void
+Params::PartFilters::sanitize()
+{
+	HARUHI_MIKURU_SANITIZE (filter_configuration)
 }
 
 
@@ -178,14 +227,14 @@ Params::Waveform::Waveform():
 	HARUHI_MIKURU_CONSTRUCT (modulator_index, ModulatorIndex),
 	HARUHI_MIKURU_CONSTRUCT (modulator_shape, ModulatorShape),
 	// Non-controller:
-	wave_type (0),
-	modulator_type (DSP::ModulatedWave::Ring),
-	modulator_wave_type (0)
+	wave_type (0, 8, 0),
+	modulator_type (0, 1, DSP::ModulatedWave::Ring),
+	modulator_wave_type (0, 3, 0)
 {
 	for (int i = 0; i < HarmonicsNumber; ++i)
-		harmonics[i] = HarmonicDefault;
+		harmonics[i] = Haruhi::Param<int> (HarmonicMin, HarmonicMax, HarmonicDefault);
 	for (int i = 0; i < HarmonicsNumber; ++i)
-		phases[i] = PhaseDefault;
+		phases[i] = Haruhi::Param<int> (PhaseMin, PhaseMax, PhaseDefault);
 }
 
 
@@ -202,13 +251,30 @@ Params::Waveform::set_controller_params (Waveform& other)
 void
 Params::Waveform::set_non_controller_params (Waveform& other)
 {
-	HARUHI_MIKURU_COPY_ATOMIC (wave_type)
-	HARUHI_MIKURU_COPY_ATOMIC (modulator_type)
-	HARUHI_MIKURU_COPY_ATOMIC (modulator_wave_type)
+	HARUHI_MIKURU_COPY (wave_type)
+	HARUHI_MIKURU_COPY (modulator_type)
+	HARUHI_MIKURU_COPY (modulator_wave_type)
 	for (int i = 0; i < HarmonicsNumber; ++i)
-		harmonics[i] = atomic (other.harmonics[i]);
+		HARUHI_MIKURU_COPY (harmonics[i]);
 	for (int i = 0; i < HarmonicsNumber; ++i)
-		phases[i] = atomic (other.phases[i]);
+		HARUHI_MIKURU_COPY (phases[i]);
+}
+
+
+void
+Params::Waveform::sanitize()
+{
+	HARUHI_MIKURU_SANITIZE (wave_shape)
+	HARUHI_MIKURU_SANITIZE (modulator_amplitude)
+	HARUHI_MIKURU_SANITIZE (modulator_index)
+	HARUHI_MIKURU_SANITIZE (modulator_shape)
+	HARUHI_MIKURU_SANITIZE (wave_type)
+	HARUHI_MIKURU_SANITIZE (modulator_type)
+	HARUHI_MIKURU_SANITIZE (modulator_wave_type)
+	for (int i = 0; i < HarmonicsNumber; ++i)
+		HARUHI_MIKURU_SANITIZE (harmonics[i]);
+	for (int i = 0; i < HarmonicsNumber; ++i)
+		HARUHI_MIKURU_SANITIZE (phases[i]);
 }
 
 
@@ -219,22 +285,23 @@ Params::Oscillator::Oscillator():
 	HARUHI_MIKURU_CONSTRUCT (phase, Phase),
 	HARUHI_MIKURU_CONSTRUCT (noise_level, NoiseLevel),
 	// Non-controller:
-	wave_enabled (1),
-	noise_enabled (0),
-	frequency_mod_range (60),
-	pitchbend_enabled (1),
-	pitchbend_released (0),
-	pitchbend_up_semitones (2),
-	pitchbend_down_semitones (2),
-	transposition_semitones (0),
-	monophonic (0),
-	monophonic_retrigger (0),
-	monophonic_key_priority (LastPressed),
-	const_portamento_time (1),
-	amplitude_smoothing (50),
-	frequency_smoothing (50),
-	pitchbend_smoothing (50),
-	panorama_smoothing (50)
+	wave_enabled (0, 1, 1),
+	noise_enabled (0, 1, 0),
+	frequency_mod_range (0, 60, 12),
+	pitchbend_enabled (0, 1, 1),
+	pitchbend_released (0, 1, 0),
+	pitchbend_up_semitones (0, 60, 2),
+	pitchbend_down_semitones (0, 60, 2),
+	transposition_semitones (-60, 60, 0),
+	monophonic (0, 1, 0),
+	monophonic_retrigger (0, 1, 0),
+	monophonic_key_priority (0, 3, LastPressed),
+	const_portamento_time (0, 1, 1),
+	// TODO: handle external smoothing parameters
+	amplitude_smoothing (0, 1000, 50),
+	frequency_smoothing (0, 1000, 50),
+	pitchbend_smoothing (0, 1000, 50),
+	panorama_smoothing (0, 1000, 50)
 {
 }
 
@@ -252,22 +319,48 @@ Params::Oscillator::set_controller_params (Oscillator& other)
 void
 Params::Oscillator::set_non_controller_params (Oscillator& other)
 {
-	HARUHI_MIKURU_COPY_ATOMIC (wave_enabled)
-	HARUHI_MIKURU_COPY_ATOMIC (noise_enabled)
-	HARUHI_MIKURU_COPY_ATOMIC (frequency_mod_range)
-	HARUHI_MIKURU_COPY_ATOMIC (pitchbend_enabled)
-	HARUHI_MIKURU_COPY_ATOMIC (pitchbend_released)
-	HARUHI_MIKURU_COPY_ATOMIC (pitchbend_up_semitones)
-	HARUHI_MIKURU_COPY_ATOMIC (pitchbend_down_semitones)
-	HARUHI_MIKURU_COPY_ATOMIC (transposition_semitones)
-	HARUHI_MIKURU_COPY_ATOMIC (monophonic)
-	HARUHI_MIKURU_COPY_ATOMIC (monophonic_retrigger)
-	HARUHI_MIKURU_COPY_ATOMIC (monophonic_key_priority)
-	HARUHI_MIKURU_COPY_ATOMIC (const_portamento_time)
-	HARUHI_MIKURU_COPY_ATOMIC (amplitude_smoothing)
-	HARUHI_MIKURU_COPY_ATOMIC (frequency_smoothing)
-	HARUHI_MIKURU_COPY_ATOMIC (pitchbend_smoothing)
-	HARUHI_MIKURU_COPY_ATOMIC (panorama_smoothing)
+	HARUHI_MIKURU_COPY (wave_enabled)
+	HARUHI_MIKURU_COPY (noise_enabled)
+	HARUHI_MIKURU_COPY (frequency_mod_range)
+	HARUHI_MIKURU_COPY (pitchbend_enabled)
+	HARUHI_MIKURU_COPY (pitchbend_released)
+	HARUHI_MIKURU_COPY (pitchbend_up_semitones)
+	HARUHI_MIKURU_COPY (pitchbend_down_semitones)
+	HARUHI_MIKURU_COPY (transposition_semitones)
+	HARUHI_MIKURU_COPY (monophonic)
+	HARUHI_MIKURU_COPY (monophonic_retrigger)
+	HARUHI_MIKURU_COPY (monophonic_key_priority)
+	HARUHI_MIKURU_COPY (const_portamento_time)
+	HARUHI_MIKURU_COPY (amplitude_smoothing)
+	HARUHI_MIKURU_COPY (frequency_smoothing)
+	HARUHI_MIKURU_COPY (pitchbend_smoothing)
+	HARUHI_MIKURU_COPY (panorama_smoothing)
+}
+
+
+void
+Params::Oscillator::sanitize()
+{
+	HARUHI_MIKURU_SANITIZE (volume)
+	HARUHI_MIKURU_SANITIZE (portamento_time)
+	HARUHI_MIKURU_SANITIZE (phase)
+	HARUHI_MIKURU_SANITIZE (noise_level)
+	HARUHI_MIKURU_SANITIZE (wave_enabled)
+	HARUHI_MIKURU_SANITIZE (noise_enabled)
+	HARUHI_MIKURU_SANITIZE (frequency_mod_range)
+	HARUHI_MIKURU_SANITIZE (pitchbend_enabled)
+	HARUHI_MIKURU_SANITIZE (pitchbend_released)
+	HARUHI_MIKURU_SANITIZE (pitchbend_up_semitones)
+	HARUHI_MIKURU_SANITIZE (pitchbend_down_semitones)
+	HARUHI_MIKURU_SANITIZE (transposition_semitones)
+	HARUHI_MIKURU_SANITIZE (monophonic)
+	HARUHI_MIKURU_SANITIZE (monophonic_retrigger)
+	HARUHI_MIKURU_SANITIZE (monophonic_key_priority)
+	HARUHI_MIKURU_SANITIZE (const_portamento_time)
+	HARUHI_MIKURU_SANITIZE (amplitude_smoothing)
+	HARUHI_MIKURU_SANITIZE (frequency_smoothing)
+	HARUHI_MIKURU_SANITIZE (pitchbend_smoothing)
+	HARUHI_MIKURU_SANITIZE (panorama_smoothing)
 }
 
 
@@ -311,6 +404,23 @@ Params::Voice::set_non_controller_params (Voice& other)
 }
 
 
+void
+Params::Voice::sanitize()
+{
+	HARUHI_MIKURU_SANITIZE (panorama)
+	HARUHI_MIKURU_SANITIZE (detune)
+	HARUHI_MIKURU_SANITIZE (pitchbend)
+	HARUHI_MIKURU_SANITIZE (velocity_sens)
+	HARUHI_MIKURU_SANITIZE (unison_index)
+	HARUHI_MIKURU_SANITIZE (unison_spread)
+	HARUHI_MIKURU_SANITIZE (unison_init)
+	HARUHI_MIKURU_SANITIZE (unison_noise)
+	HARUHI_MIKURU_SANITIZE (adsr)
+	HARUHI_MIKURU_SANITIZE (amplitude)
+	HARUHI_MIKURU_SANITIZE (frequency)
+}
+
+
 Params::Waveshaper::Waveshaper()
 {
 }
@@ -328,6 +438,12 @@ Params::Waveshaper::set_non_controller_params (Waveshaper& other)
 }
 
 
+void
+Params::Waveshaper::sanitize()
+{
+}
+
+
 Params::ADSR::ADSR():
 	// Controller:
 	HARUHI_MIKURU_CONSTRUCT (delay, Delay),
@@ -338,12 +454,12 @@ Params::ADSR::ADSR():
 	HARUHI_MIKURU_CONSTRUCT (sustain_hold, SustainHold),
 	HARUHI_MIKURU_CONSTRUCT (release, Release),
 	// Non-controller:
-	enabled (1),
-	direct_adsr (1),
-	forced_release (0),
-	sustain_enabled (1),
-	function (Linear),
-	mode (Polyphonic)
+	enabled (0, 1, 1),
+	direct_adsr (0, 1, 1),
+	forced_release (0, 1, 0),
+	sustain_enabled (0, 1, 1),
+	function (0, 4, Linear),
+	mode (0, 1, Polyphonic)
 {
 }
 
@@ -364,12 +480,31 @@ Params::ADSR::set_controller_params (ADSR& other)
 void
 Params::ADSR::set_non_controller_params (ADSR& other)
 {
-	HARUHI_MIKURU_COPY_ATOMIC (enabled)
-	HARUHI_MIKURU_COPY_ATOMIC (direct_adsr)
-	HARUHI_MIKURU_COPY_ATOMIC (forced_release)
-	HARUHI_MIKURU_COPY_ATOMIC (sustain_enabled)
-	HARUHI_MIKURU_COPY_ATOMIC (function)
-	HARUHI_MIKURU_COPY_ATOMIC (mode)
+	HARUHI_MIKURU_COPY (enabled)
+	HARUHI_MIKURU_COPY (direct_adsr)
+	HARUHI_MIKURU_COPY (forced_release)
+	HARUHI_MIKURU_COPY (sustain_enabled)
+	HARUHI_MIKURU_COPY (function)
+	HARUHI_MIKURU_COPY (mode)
+}
+
+
+void
+Params::ADSR::sanitize()
+{
+	HARUHI_MIKURU_SANITIZE (delay)
+	HARUHI_MIKURU_SANITIZE (attack)
+	HARUHI_MIKURU_SANITIZE (attack_hold)
+	HARUHI_MIKURU_SANITIZE (decay)
+	HARUHI_MIKURU_SANITIZE (sustain)
+	HARUHI_MIKURU_SANITIZE (sustain_hold)
+	HARUHI_MIKURU_SANITIZE (release)
+	HARUHI_MIKURU_SANITIZE (enabled)
+	HARUHI_MIKURU_SANITIZE (direct_adsr)
+	HARUHI_MIKURU_SANITIZE (forced_release)
+	HARUHI_MIKURU_SANITIZE (sustain_enabled)
+	HARUHI_MIKURU_SANITIZE (function)
+	HARUHI_MIKURU_SANITIZE (mode)
 }
 
 
@@ -384,16 +519,16 @@ Params::LFO::LFO():
 	HARUHI_MIKURU_CONSTRUCT (wave_shape, WaveShape),
 	HARUHI_MIKURU_CONSTRUCT (fade_out, FadeOut),
 	// Non-controller:
-	enabled (1),
-	wave_type (Sine),
-	wave_invert (0),
-	function (Linear),
-	mode (Polyphonic),
-	tempo_sync (0),
-	tempo_numerator (1),
-	tempo_denominator (1),
-	random_start_phase (0),
-	fade_out_enabled (0)
+	enabled (0, 1, 1),
+	wave_type (0, 6, Sine),
+	wave_invert (0, 1, 0),
+	function (0, 4, Linear),
+	mode (0, 2, Polyphonic),
+	tempo_sync (0, 1, 0),
+	tempo_numerator (1, 32, 1),
+	tempo_denominator (1, 32, 1),
+	random_start_phase (0, 1, 0),
+	fade_out_enabled (0, 1, 0)
 {
 }
 
@@ -415,30 +550,54 @@ Params::LFO::set_controller_params (LFO& other)
 void
 Params::LFO::set_non_controller_params (LFO& other)
 {
-	HARUHI_MIKURU_COPY_ATOMIC (enabled)
-	HARUHI_MIKURU_COPY_ATOMIC (wave_type)
-	HARUHI_MIKURU_COPY_ATOMIC (wave_invert)
-	HARUHI_MIKURU_COPY_ATOMIC (function)
-	HARUHI_MIKURU_COPY_ATOMIC (mode)
-	HARUHI_MIKURU_COPY_ATOMIC (tempo_sync)
-	HARUHI_MIKURU_COPY_ATOMIC (tempo_numerator)
-	HARUHI_MIKURU_COPY_ATOMIC (tempo_denominator)
-	HARUHI_MIKURU_COPY_ATOMIC (random_start_phase)
-	HARUHI_MIKURU_COPY_ATOMIC (fade_out_enabled)
+	HARUHI_MIKURU_COPY (enabled)
+	HARUHI_MIKURU_COPY (wave_type)
+	HARUHI_MIKURU_COPY (wave_invert)
+	HARUHI_MIKURU_COPY (function)
+	HARUHI_MIKURU_COPY (mode)
+	HARUHI_MIKURU_COPY (tempo_sync)
+	HARUHI_MIKURU_COPY (tempo_numerator)
+	HARUHI_MIKURU_COPY (tempo_denominator)
+	HARUHI_MIKURU_COPY (random_start_phase)
+	HARUHI_MIKURU_COPY (fade_out_enabled)
+}
+
+
+void
+Params::LFO::sanitize()
+{
+	HARUHI_MIKURU_SANITIZE (delay)
+	HARUHI_MIKURU_SANITIZE (fade_in)
+	HARUHI_MIKURU_SANITIZE (frequency)
+	HARUHI_MIKURU_SANITIZE (level)
+	HARUHI_MIKURU_SANITIZE (depth)
+	HARUHI_MIKURU_SANITIZE (phase)
+	HARUHI_MIKURU_SANITIZE (wave_shape)
+	HARUHI_MIKURU_SANITIZE (fade_out)
+	HARUHI_MIKURU_SANITIZE (enabled)
+	HARUHI_MIKURU_SANITIZE (wave_type)
+	HARUHI_MIKURU_SANITIZE (wave_invert)
+	HARUHI_MIKURU_SANITIZE (function)
+	HARUHI_MIKURU_SANITIZE (mode)
+	HARUHI_MIKURU_SANITIZE (tempo_sync)
+	HARUHI_MIKURU_SANITIZE (tempo_numerator)
+	HARUHI_MIKURU_SANITIZE (tempo_denominator)
+	HARUHI_MIKURU_SANITIZE (random_start_phase)
+	HARUHI_MIKURU_SANITIZE (fade_out_enabled)
 }
 
 
 Params::EG::EG():
 	// Controller:
 	// Non-controller:
-	enabled (1),
-	segments (1),
-	sustain_point (0)
+	enabled (0, 1, 1),
+	segments (2, MaxPoints - 1, 1),
+	sustain_point (1, MaxPoints - 1, 0)
 {
 	for (int i = 0; i < MaxPoints; ++i)
 	{
-		values[i] = 0;
-		durations[i] = 0;
+		values[i] = Haruhi::Param<unsigned int> (PointValueMin, PointValueMax, PointValueDefault);
+		durations[i] = Haruhi::Param<unsigned int> (SegmentDurationMin, SegmentDurationMax, SegmentDurationDefault);
 	}
 }
 
@@ -452,14 +611,14 @@ Params::EG::set_controller_params (EG& other)
 void
 Params::EG::set_non_controller_params (EG& other)
 {
-	HARUHI_MIKURU_COPY_ATOMIC (enabled)
-	HARUHI_MIKURU_COPY_ATOMIC (segments)
-	HARUHI_MIKURU_COPY_ATOMIC (sustain_point)
+	HARUHI_MIKURU_COPY (enabled)
+	HARUHI_MIKURU_COPY (segments)
+	HARUHI_MIKURU_COPY (sustain_point)
 	// Copy tables:
 	for (int i = 0; i < MaxPoints; ++i)
 	{
-		values[i] = atomic (other.values[i]);
-		durations[i] = atomic (other.durations[i]);
+		HARUHI_MIKURU_COPY (values[i])
+		HARUHI_MIKURU_COPY (durations[i])
 	}
 }
 
@@ -467,21 +626,25 @@ Params::EG::set_non_controller_params (EG& other)
 void
 Params::EG::sanitize()
 {
-	int p = atomic (segments);
+	int p = segments.get();
 	if (p < 2)
 	{
 		p = 2;
-		atomic (segments) = p;
+		segments.set (p);
 	}
 
-	int s = atomic (sustain_point);
+	int s = sustain_point.get();
 	if (s >= p)
 	{
 		s = p;
-		atomic (sustain_point) = s;
+		sustain_point = s;
 	}
 
-	// TODO sanitize values[]/durations[] values.
+	for (int i = 0; i < MaxPoints; ++i)
+	{
+		HARUHI_MIKURU_SANITIZE (values[i])
+		HARUHI_MIKURU_SANITIZE (durations[i])
+	}
 }
 
 } // namespace MikuruPrivate

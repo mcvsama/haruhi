@@ -135,7 +135,7 @@ VoiceManager::current_polyphony() const
 void
 VoiceManager::check_polyphony()
 {
-	while (current_polyphony() > atomic (_mikuru->general()->params()->polyphony))
+	while (current_polyphony() > _mikuru->general()->params()->polyphony.get())
 	{
 		Voice* v = select_released_voice_to_drop();
 		if (!v)
@@ -203,7 +203,7 @@ VoiceManager::voice_event (Core::VoiceEvent const* voice_event)
 	{
 		_keys.insert (Key (voice_event->timestamp(), voice_event->key_id(), voice_event->frequency(), voice_event->value()));
 
-		if (atomic (_part->oscillator()->oscillator_params()->monophonic))
+		if (_part->oscillator()->oscillator_params()->monophonic.get())
 			mono_update (voice_event);
 		else
 			poly_create (voice_event);
@@ -436,12 +436,12 @@ VoiceManager::poly_drop (Voice* voice)
 void
 VoiceManager::mono_update (Core::VoiceEvent const* voice_event)
 {
-	if (atomic (_part->oscillator()->oscillator_params()->monophonic) || _mono_voice)
+	if (_part->oscillator()->oscillator_params()->monophonic.get() || _mono_voice)
 	{
 		if (_keys.size() > 0)
 		{
 			Key const* key = 0;
-			switch (atomic (_part->oscillator()->oscillator_params()->monophonic_key_priority))
+			switch (_part->oscillator()->oscillator_params()->monophonic_key_priority.get())
 			{
 				case Params::Oscillator::FirstPressed:		key = &*_keys.begin(); break;
 				case Params::Oscillator::LastPressed:		key = &*_keys.rbegin(); break;
@@ -459,7 +459,7 @@ VoiceManager::mono_update (Core::VoiceEvent const* voice_event)
 
 				if (_mono_voice)
 				{
-					if (atomic (_part->oscillator()->oscillator_params()->monophonic_retrigger) && _mono_voice->key_id() != key_id)
+					if (_part->oscillator()->oscillator_params()->monophonic_retrigger.get() && _mono_voice->key_id() != key_id)
 					{
 						mono_release();
 						_mono_voice = new Voice (this, _mikuru->select_thread_for_new_voice(), key_id, voice_id, frequency, value, timestamp);

@@ -249,7 +249,7 @@ ADSR::create_widgets (QWidget* knobs_panel)
 void
 ADSR::voice_created (VoiceManager* voice_manager, Voice* voice)
 {
-	if (!atomic (_params.enabled))
+	if (!_params.enabled.get())
 		return;
 
 	uint64_t sr = _mikuru->graph()->sample_rate();
@@ -266,7 +266,7 @@ ADSR::voice_created (VoiceManager* voice_manager, Voice* voice)
 		_params.sustain_enabled,
 		_params.forced_release
 	);
-	if (atomic (_params.direct_adsr))
+	if (_params.direct_adsr.get())
 		voice->set_tracked (true);
 }
 
@@ -318,7 +318,7 @@ ADSR::process()
 
 	Core::Timestamp t = _mikuru->graph()->timestamp();
 	Core::Sample v;
-	const bool direct_adsr = atomic (_params.direct_adsr);
+	const bool direct_adsr = _params.direct_adsr.get();
 
 	// Assuming that output ports are cleared by Mikuru on beginnig of each
 	// processing round.
@@ -400,12 +400,12 @@ ADSR::update_params()
 	if (_loading_params)
 		return;
 
-	atomic (_params.enabled) = _enabled->isChecked();
-	atomic (_params.direct_adsr) = _direct_adsr->isChecked();
-	atomic (_params.forced_release) = _forced_release->isChecked();
-	atomic (_params.sustain_enabled) = _sustain_enabled->isChecked();
-	atomic (_params.function) = _function->currentItem();
-	atomic (_params.mode) = _mode->currentItem();
+	_params.enabled.set (_enabled->isChecked());
+	_params.direct_adsr.set (_direct_adsr->isChecked());
+	_params.forced_release.set (_forced_release->isChecked());
+	_params.sustain_enabled.set (_sustain_enabled->isChecked());
+	_params.function.set (_function->currentItem());
+	_params.mode.set (_mode->currentItem());
 
 	// Knob params are updated automatically using #assign_parameter.
 }

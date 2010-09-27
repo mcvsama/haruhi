@@ -92,8 +92,8 @@ DoubleFilter::process (Core::AudioBuffer& input, Core::AudioBuffer& buffer1, Cor
 	bool f1 = _params1.enabled;
 	bool f2 = _params2.enabled;
 
-	int passes1 = std::min (static_cast<int> (NumFilters), _params1.passes);
-	int passes2 = std::min (static_cast<int> (NumFilters), _params2.passes);
+	int passes1 = std::min (static_cast<int> (NumFilters), _params1.passes.get());
+	int passes2 = std::min (static_cast<int> (NumFilters), _params2.passes.get());
 
 	if (f1)
 	{
@@ -102,7 +102,7 @@ DoubleFilter::process (Core::AudioBuffer& input, Core::AudioBuffer& buffer1, Cor
 		_smoother_filter1_gain.advance (nsamples);
 		_smoother_filter1_attenuation.advance (nsamples);
 
-		_impulse_response1.set_type (static_cast<RBJImpulseResponse::Type> (_params1.type));
+		_impulse_response1.set_type (static_cast<RBJImpulseResponse::Type> (_params1.type.get()));
 		_impulse_response1.set_frequency (_smoother_filter1_frequency.current());
 		_impulse_response1.set_resonance (_smoother_filter1_resonance.current());
 		_impulse_response1.set_gain (_smoother_filter1_gain.current());
@@ -117,7 +117,7 @@ DoubleFilter::process (Core::AudioBuffer& input, Core::AudioBuffer& buffer1, Cor
 		_smoother_filter2_gain.advance (nsamples);
 		_smoother_filter2_attenuation.advance (nsamples);
 
-		_impulse_response2.set_type (static_cast<RBJImpulseResponse::Type> (_params2.type));
+		_impulse_response2.set_type (static_cast<RBJImpulseResponse::Type> (_params2.type.get()));
 		_impulse_response2.set_frequency (_smoother_filter2_frequency.current());
 		_impulse_response2.set_resonance (_smoother_filter2_resonance.current());
 		_impulse_response2.set_gain (_smoother_filter2_gain.current());

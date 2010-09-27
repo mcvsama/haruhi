@@ -373,14 +373,14 @@ Waveform::update_widgets()
 Waveform::WaveInfo&
 Waveform::active_wave()
 {
-	return _waves[std::min (_params.wave_type, static_cast<unsigned int> (_waves.size() - 1))];
+	return _waves[std::min (_params.wave_type.get(), static_cast<unsigned int> (_waves.size() - 1))];
 }
 
 
 Waveform::WaveInfo&
 Waveform::active_modulator_wave()
 {
-	return _modulator_waves[std::min (_params.modulator_wave_type, static_cast<unsigned int> (_modulator_waves.size() - 1))];
+	return _modulator_waves[std::min (_params.modulator_wave_type.get(), static_cast<unsigned int> (_modulator_waves.size() - 1))];
 }
 
 
@@ -442,7 +442,7 @@ Waveform::recompute_wave()
 			set_button_highlighted (_phases_resets[i], pv != 0);
 		}
 		// Modulate wave:
-		int xt = atomic (_params.modulator_type);
+		int xt = _params.modulator_type.get();
 		DSP::ModulatedWave* xw = new DSP::ModulatedWave (hw, mw, static_cast<DSP::ModulatedWave::Type> (xt),
 														 1.0f * _params.modulator_amplitude.get() / Params::Waveform::ModulatorAmplitudeMax,
 														 _params.modulator_index.get(), true);

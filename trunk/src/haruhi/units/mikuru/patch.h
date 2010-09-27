@@ -21,6 +21,7 @@
 
 // Haruhi:
 #include <haruhi/haruhi.h>
+#include <haruhi/param.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/widgets/knob.h>
 
@@ -68,6 +69,13 @@ class Patch: public SaveableState
 	{
 		return QString::number (param.get());
 	}
+
+	template<class Type>
+		QString
+		to_string (Haruhi::Param<Type> const& param) const
+		{
+			return QString::number (param.get());
+		}
 
 	/**
 	 * Saves parameters like save_parameter adding Knob config. parameters.
@@ -143,6 +151,18 @@ class Patch: public SaveableState
 
 	void
 	convert_string (QString const& string, Haruhi::ControllerParam& param) const
+	{
+		param.set (string.toInt());
+	}
+
+	void
+	convert_string (QString const& string, Haruhi::Param<int>& param) const
+	{
+		param.set (string.toInt());
+	}
+
+	void
+	convert_string (QString const& string, Haruhi::Param<unsigned int>& param) const
 	{
 		param.set (string.toInt());
 	}

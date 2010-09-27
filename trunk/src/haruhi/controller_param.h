@@ -93,6 +93,13 @@ class ControllerParam: public SaveableState
 	volatile int*
 	smoothing_parameter() { return &_smoothing_parameter; }
 
+	/**
+	 * Enforces value and smoothing value to be in
+	 * configured bounds.
+	 */
+	void
+	sanitize();
+
 	/*
 	 * SaveableState API
 	 */

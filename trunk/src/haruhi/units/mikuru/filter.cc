@@ -126,7 +126,7 @@ Filter::Filter (FilterID filter_id, Core::PortGroup* port_group, QString const& 
 	_passes->addItem ("3 passes");
 	_passes->addItem ("4 passes");
 	_passes->addItem ("5 passes");
-	_passes->setCurrentItem (bound (p.passes, 1, 5) - 1);
+	_passes->setCurrentItem (p.passes.get() - 1);
 	QObject::connect (_passes, SIGNAL (activated (int)), this, SLOT (update_params()));
 	QObject::connect (_passes, SIGNAL (activated (int)), this, SLOT (update_widgets()));
 
@@ -240,7 +240,7 @@ Filter::load_params()
 
 	_filter_label->checkbox()->setChecked (p.enabled);
 	_filter_type->setCurrentItem (p.type);
-	_passes->setCurrentItem (bound (p.passes, 1, 5) - 1);
+	_passes->setCurrentItem (p.passes.get() - 1);
 	_limiter_enabled->setChecked (p.limiter_enabled);
 
 	_loading_params = false;
@@ -280,7 +280,7 @@ Filter::update_widgets()
 {
 	int ft = _filter_type->currentItem();
 	_control_gain->setEnabled (ft == RBJImpulseResponse::Peaking || ft == RBJImpulseResponse::LowShelf || ft == RBJImpulseResponse::HighShelf);
-	_panel->setEnabled (atomic (_params.enabled));
+	_panel->setEnabled (_params.enabled.get());
 	_limiter_enabled->setEnabled (ft == RBJImpulseResponse::LowPass || ft == RBJImpulseResponse::HighPass || ft == RBJImpulseResponse::BandPass ||
 								  ft == RBJImpulseResponse::LowShelf || ft == RBJImpulseResponse::HighShelf);
 	// TODO update freq.respones (grid dB) according to _params.passes
@@ -292,12 +292,12 @@ Filter::update_frequency_response()
 {
 	params_updated();
 
-	_impulse_response.set_type (static_cast<RBJImpulseResponse::Type> (static_cast<int> (atomic (_params.type))));
+	_impulse_response.set_type (static_cast<RBJImpulseResponse::Type> (_params.type.get()));
 	_impulse_response.set_frequency (0.5f * _params.frequency.get() / Params::Filter::FrequencyMax);
 	_impulse_response.set_resonance (_params.resonance.to_f());
 	_impulse_response.set_gain (_params.gain.to_f());
 	_impulse_response.set_attenuation (_params.attenuation.to_f());
-	_impulse_response.set_limiter (atomic (_params.limiter_enabled));
+	_impulse_response.set_limiter (_params.limiter_enabled.get());
 	_response_plot->replot();
 }
 

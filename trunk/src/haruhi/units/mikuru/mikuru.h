@@ -37,7 +37,6 @@
 #include <haruhi/core/event_port.h>
 #include <haruhi/dsp/smoother.h>
 #include <haruhi/unit.h>
-#include <haruhi/utility/atomic.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/saveable_state.h>

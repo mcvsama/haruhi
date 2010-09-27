@@ -103,8 +103,8 @@ void
 CommonFilters::process_filters (Core::AudioBuffer& input1, Core::AudioBuffer& buffer1, Core::AudioBuffer& output1,
 								Core::AudioBuffer& input2, Core::AudioBuffer& buffer2, Core::AudioBuffer& output2)
 {
-	_double_filter_1.configure (static_cast<DoubleFilter::Configuration> (static_cast<int> (atomic (_params.filter_configuration))), _filter1->params(), _filter2->params());
-	_double_filter_2.configure (static_cast<DoubleFilter::Configuration> (static_cast<int> (atomic (_params.filter_configuration))), _filter1->params(), _filter2->params());
+	_double_filter_1.configure (static_cast<DoubleFilter::Configuration> (_params.filter_configuration.get()), _filter1->params(), _filter2->params());
+	_double_filter_2.configure (static_cast<DoubleFilter::Configuration> (_params.filter_configuration.get()), _filter1->params(), _filter2->params());
 
 	if (!_double_filter_1.process (input1, buffer1, buffer2, output1))
 		output1.fill (&input1);
@@ -158,8 +158,8 @@ CommonFilters::update_params()
 		return;
 
 	Params::CommonFilters p;
-	p.filter_configuration = _filter_configuration->currentItem();
-	p.route_audio_input = _route_audio_input->isChecked();
+	p.filter_configuration.set (_filter_configuration->currentItem());
+	p.route_audio_input.set (_route_audio_input->isChecked());
 	_params = p;
 }
 
