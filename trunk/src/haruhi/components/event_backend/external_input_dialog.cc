@@ -81,10 +81,11 @@ ExternalInputDialog::clear()
 void
 ExternalInputDialog::from (ExternalInputItem* item)
 {
+	setEnabled (true);
 	_item = item;
 	_name->setText (item->name());
+	_name->selectAll();
 	_name->setFocus();
-	setEnabled (true);
 }
 
 

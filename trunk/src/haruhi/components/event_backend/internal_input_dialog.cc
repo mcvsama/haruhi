@@ -220,6 +220,7 @@ InternalInputDialog::clear()
 void
 InternalInputDialog::from (InternalInputItem* item)
 {
+	setEnabled (true);
 	_item = item;
 	_name->setText (item->name());
 	_note_checkbox->setChecked (item->_note_filter);
@@ -233,9 +234,9 @@ InternalInputDialog::from (InternalInputItem* item)
 	_channel_pressure_checkbox->setChecked (item->_channel_pressure_filter);
 	_channel_pressure_channel->setCurrentItem (item->_channel_pressure_channel);
 	_channel_pressure_invert->setChecked (item->_channel_pressure_invert);
+	_name->selectAll();
 	_name->setFocus();
 	update_widgets();
-	setEnabled (true);
 }
 
 
