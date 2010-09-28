@@ -154,7 +154,7 @@ SRC_MOCHDRS += haruhi/components/presets_manager/presets_manager.h
 
 ######## /config ########
 
-SRC_SOURCES += $(VERSION_FILE)
+NODEP_SOURCES += $(VERSION_FILE)
 
 ######## /core ########
 
@@ -402,10 +402,11 @@ SRC_MOCHDRS += haruhi/session_loader.h
 ################
 
 VERSION_FILE := haruhi/config/version.cc
-HEADERS += $(foreach file, $(SRC_HEADERS), $(file))
-SOURCES += $(foreach file, $(SRC_SOURCES), $(file))
+HEADERS += $(SRC_HEADERS)
+SOURCES += $(SRC_SOURCES)
 MOCSRCS += $(call mkmocs, $(foreach file, $(SRC_MOCHDRS), $(file)))
 OBJECTS += $(call mkobjs, $(SOURCES))
+OBJECTS += $(call mkobjs, $(NODEP_SOURCES))
 MOCOBJS += $(call mkobjs, $(MOCSRCS))
 TARGETS += $(distdir)/haruhi.run
 LINKEDS += $(distdir)/haruhi.run

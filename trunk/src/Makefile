@@ -20,6 +20,7 @@ MAKEFLAGS = --silent
 HEADERS =
 SOURCES =
 OBJECTS =
+NODEP_OBJECTS =
 MOCSRCS =
 TARGETS =
 
@@ -50,28 +51,32 @@ GIT_AVAILABLE := $(shell which git 1>/dev/null && echo OK)
 
 ifeq ($(GIT_AVAILABLE),OK)
 COMMIT			= $(shell cat .commit 2>/dev/null)
-COMMIT_REAL		= $(shell git rev-parse HEAD)
+COMMIT_REAL		= $(shell git rev-parse HEAD 2>/dev/null)
 BRANCH			= $(shell cat .branch 2>/dev/null)
 BRANCH_REAL		= $(shell git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
 
-ifneq ($(COMMIT),$(COMMIT_REAL))
-.PHONY: $(VERSION_FILE)
+.PHONY: .commit .branch
 
-$(VERSION_FILE):
-	@echo " Saving commit ID and branch name"
-	@echo "$(COMMIT_REAL)" >.commit
-	@echo "$(BRANCH_REAL)" >.branch
+.commit:
+	@if [ "$(COMMIT)" != "$(COMMIT_REAL)" ]; then \
+		echo " Saving commit ID"; \
+		echo "$(COMMIT_REAL)" >$@; \
+	 fi
+
+.branch:
+	@if [ "$(BRANCH)" != "$(BRANCH_REAL)" ]; then \
+		echo " Saving branch name"; \
+		echo "$(BRANCH_REAL)" >$@; \
+	 fi
+
+$(VERSION_FILE): .commit .branch
 	@echo "// Do not edit - automatically generated." >$@
 	@echo "namespace Haruhi { namespace Version {" >>$@
 	@echo "	const char* commit = \"$(COMMIT_REAL)\";" >>$@
 	@echo "	const char* branch = \"$(BRANCH_REAL)\";" >>$@
 	@echo "} }" >>$@
-	$(call prepdir, $@)
-	@echo $(_s) "C++     " $(_l) $@
-	$(CXX) $(CXXFLAGS) $@ -o $(call mkobjs,$(VERSION_FILE))
 
-$(LINKEDS): $(VERSION_FILE)
-endif # COMMIT != COMMIT_REAL
+$(call mkobjs, $(VERSION_FILE)): $(VERSION_FILE)
 endif # GIT_AVAILABLE == OK
 endif # VERSION_FILE != ""
 
@@ -94,7 +99,7 @@ clean:
 	@rm -f $(MOCSRCS)
 
 distclean:
-	@rm -f $(DEPFILES) $(MOCOBJS) $(OBJECTS)
+	@rm -f $(DEPFILES) $(MOCOBJS) $(OBJECTS) $(NODEP_OBJECTS)
 
 $(distdir)/Makefile.dep: Makefile Makefile.sources $(DEPFILES)
 	$(call prepdir, $@)
@@ -147,7 +152,7 @@ $(distdir)/%.dep: %.h
 $(LINKEDS):
 	$(call prepdir, $@)
 	@echo $(_s) "LD      " $(_l) $@
-	$(LD) -o $@ $(OBJECTS) $(MOCOBJS) $(LDFLAGS)
+	$(LD) -o $@ $(NODEP_OBJECTS) $(OBJECTS) $(MOCOBJS) $(LDFLAGS)
 
 -include $(distdir)/Makefile.dep
 
