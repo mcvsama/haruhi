@@ -36,7 +36,7 @@ namespace EventBackendPrivate {
 InternalInputDialog::InternalInputDialog (QWidget* parent):
 	QDialog (parent)
 {
-	setCaption ("Internal input port configuration");
+	setCaption ("Controller configuration");
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	setMinimumWidth (300);
 
@@ -47,7 +47,7 @@ InternalInputDialog::InternalInputDialog (QWidget* parent):
 
 		QHBoxLayout* name_layout = new QHBoxLayout (layout, Config::spacing);
 
-			QLabel* name_label = new QLabel ("Port name:", this);
+			QLabel* name_label = new QLabel ("Controller name:", this);
 
 			_name = new QLineEdit (this);
 
@@ -56,7 +56,7 @@ InternalInputDialog::InternalInputDialog (QWidget* parent):
 
 		// Filters:
 
-		Q3GroupBox* filters = new Q3GroupBox (1, Qt::Horizontal, "Filters", this);
+		Q3GroupBox* filters = new Q3GroupBox (1, Qt::Horizontal, "MIDI filters", this);
 		layout->addWidget (filters);
 
 			// Note filters:
@@ -274,7 +274,7 @@ void
 InternalInputDialog::validate_and_save()
 {
 	if (_name->text().isEmpty())
-		QMessageBox::warning (this, "Port name", "Enter name for the port.");
+		QMessageBox::warning (this, "Controller name", "Enter name for the controller.");
 	else if (_item)
 		apply (_item);
 }

@@ -52,22 +52,22 @@ EventBackend::EventBackend (Session* session, QString const& client_name, int id
 
 	// Ports list:
 
-	_inputs_list = new Private::PortsListView (this, this, "Event inputs");
+	_inputs_list = new Private::PortsListView (this, this, "Session devices");
 
 	QObject::connect (_inputs_list, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_inputs (const QPoint&)));
 	QObject::connect (_inputs_list, SIGNAL (itemSelectionChanged()), this, SLOT (selection_changed()));
 
-	_create_external_input_button = new QPushButton (Config::Icons16::add(), "External port", this);
+	_create_external_input_button = new QPushButton (Config::Icons16::add(), "Add device", this);
 	_create_external_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	QToolTip::add (_create_external_input_button, "Create new external input port");
+	QToolTip::add (_create_external_input_button, "Add new device and external input port");
 
-	_create_internal_input_button = new QPushButton (Config::Icons16::add(), "Internal port", this);
+	_create_internal_input_button = new QPushButton (Config::Icons16::add(), "Add controller", this);
 	_create_internal_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	QToolTip::add (_create_internal_input_button, "Create new internal output port connected to external input port");
+	QToolTip::add (_create_internal_input_button, "Add new controller and internal output port");
 
 	_destroy_input_button = new QPushButton (Config::Icons16::remove(), "Destroy", this);
 	_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	QToolTip::add (_destroy_input_button, "Destroy selected external or internal port");
+	QToolTip::add (_destroy_input_button, "Destroy selected device or controller");
 
 	QObject::connect (_create_external_input_button, SIGNAL (clicked()), this, SLOT (create_external_input()));
 	QObject::connect (_create_internal_input_button, SIGNAL (clicked()), this, SLOT (create_internal_input()));
@@ -257,7 +257,7 @@ EventBackend::selection_changed()
 void
 EventBackend::create_external_input()
 {
-	QString name = "<unnamed>";
+	QString name = "<unnamed device>";
 	QTreeWidgetItem* item = new Private::ExternalInputItem (_inputs_list, name);
 	_inputs_list->setCurrentItem (item);
 }
@@ -266,7 +266,7 @@ EventBackend::create_external_input()
 void
 EventBackend::create_internal_input()
 {
-	QString name = "<unnamed>";
+	QString name = "<unnamed controller>";
 	QTreeWidgetItem* sel = _inputs_list->selected_item();
 	if (sel != 0)
 	{
@@ -296,23 +296,23 @@ EventBackend::context_menu_for_inputs (QPoint const& pos)
 		{
 			menu->insertItem (Config::Icons16::colorpicker(), "&Learn", this, SLOT (learn_from_midi()));
 			menu->insertSeparator();
-			menu->insertItem (Config::Icons16::add(), "Create &port", this, SLOT (create_internal_input()));
-			menu->insertItem (Config::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_input()));
+			menu->insertItem (Config::Icons16::add(), "Add &controller", this, SLOT (create_internal_input()));
+			menu->insertItem (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_input()));
 		}
 		else if (dynamic_cast<Private::ExternalInputItem*> (item) != 0)
 		{
-			menu->insertItem (Config::Icons16::add(), "Create &port", this, SLOT (create_internal_input()));
+			menu->insertItem (Config::Icons16::add(), "Add &controller", this, SLOT (create_internal_input()));
 			menu->insertSeparator();
 			menu->insertItem (Config::Icons16::save(), "&Save as template", this, SLOT (save_selected_input()));
 			menu->insertSeparator();
-			menu->insertItem (Config::Icons16::add(), "&New external port", this, SLOT (create_external_input()));
-			menu->insertItem (Config::Icons16::remove(), "&Destroy external port", this, SLOT (destroy_selected_input()));
+			menu->insertItem (Config::Icons16::add(), "&Add device", this, SLOT (create_external_input()));
+			menu->insertItem (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_input()));
 		}
 	}
 	else
 	{
-		menu->insertItem (Config::Icons16::add(), "&New external port", this, SLOT (create_external_input()));
-		i = menu->insertItem (Config::Icons16::remove(), "&Destroy external port", this, SLOT (destroy_selected_input()));
+		menu->insertItem (Config::Icons16::add(), "&Add device", this, SLOT (create_external_input()));
+		i = menu->insertItem (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_input()));
 		menu->setItemEnabled (i, false);
 	}
 	menu->insertSeparator();

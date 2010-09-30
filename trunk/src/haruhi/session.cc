@@ -416,8 +416,8 @@ Session::Session (QWidget* parent):
 		_event = new EventTab (this, _backends);
 
 		_backends->addTab (_global, Config::Icons22::configure(), "Global");
-		_backends->addTab (_audio, Config::Icons22::show_audio(), "Audio");
-		_backends->addTab (_event, Config::Icons22::show_event(), "Event");
+		_backends->addTab (_audio, Config::Icons22::show_audio(), "Audio backend");
+		_backends->addTab (_event, Config::Icons22::show_event(), "Input devices");
 
 		// Start engine and backends before program is loaded:
 		_engine = new Engine (this);

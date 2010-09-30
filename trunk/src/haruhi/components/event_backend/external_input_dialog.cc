@@ -35,7 +35,7 @@ namespace EventBackendPrivate {
 ExternalInputDialog::ExternalInputDialog (QWidget* parent):
 	QWidget (parent)
 {
-	setCaption ("External input port configuration");
+	setCaption ("Device configuration");
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	setMinimumWidth (300);
 
@@ -44,7 +44,7 @@ ExternalInputDialog::ExternalInputDialog (QWidget* parent):
 
 		QHBoxLayout* name_layout = new QHBoxLayout (layout, Config::spacing);
 
-			QLabel* name_label = new QLabel ("External port name:", this);
+			QLabel* name_label = new QLabel ("Device name:", this);
 
 			_name = new QLineEdit (this);
 
@@ -108,7 +108,7 @@ void
 ExternalInputDialog::validate_and_save()
 {
 	if (_name->text().isEmpty())
-		QMessageBox::warning (this, "External port name", "Enter name for the external port.");
+		QMessageBox::warning (this, "Device name", "Enter name for the device.");
 	else if (_item)
 		apply (_item);
 }
