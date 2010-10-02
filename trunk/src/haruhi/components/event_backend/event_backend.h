@@ -44,10 +44,10 @@
 #include "event_transport.h"
 #include "ports_list_view.h"
 #include "port_item.h"
-#include "external_input_item.h"
-#include "internal_input_item.h"
-#include "external_input_dialog.h"
-#include "internal_input_dialog.h"
+#include "device_item.h"
+#include "controller_item.h"
+#include "device_dialog.h"
+#include "controller_dialog.h"
 
 
 namespace Haruhi {
@@ -59,8 +59,8 @@ class EventBackend:
 {
 	Q_OBJECT
 
-	friend class EventBackendPrivate::ExternalInputItem;
-	friend class EventBackendPrivate::InternalInputItem;
+	friend class EventBackendPrivate::DeviceItem;
+	friend class EventBackendPrivate::ControllerItem;
 
   public:
 	/**
@@ -96,7 +96,7 @@ class EventBackend:
 
   private:
 	typedef std::set<std::pair<Learnable*, EventTypes> > Learnables;
-	typedef std::map<EventTransport::Port*, EventBackendPrivate::ExternalInputItem*> InputsMap;
+	typedef std::map<EventTransport::Port*, EventBackendPrivate::DeviceItem*> InputsMap;
 	typedef std::map<int, Config::EventHardwareTemplate> Templates;
 
   public:
@@ -135,10 +135,10 @@ class EventBackend:
 	connected() const;
 
 	void
-	configure_item (EventBackendPrivate::ExternalInputItem* item);
+	configure_item (EventBackendPrivate::DeviceItem* item);
 
 	void
-	configure_item (EventBackendPrivate::InternalInputItem* item);
+	configure_item (EventBackendPrivate::ControllerItem* item);
 
 	/**
 	 * Starts listening for specified event types.
@@ -162,10 +162,10 @@ class EventBackend:
 	selection_changed();
 
 	void
-	create_external_input();
+	create_device();
 
 	void
-	create_internal_input();
+	create_controller();
 
 	void
 	context_menu_for_inputs (QPoint const&);
@@ -202,23 +202,23 @@ class EventBackend:
 	insert_template (int menu_item_id);
 
   private:
-	QString			_client_name;
-	EventTransport*	_transport;
-	InputsMap		_inputs;
-	Learnables		_learnables;
+	QString									_client_name;
+	EventTransport*							_transport;
+	InputsMap								_inputs;
+	Learnables								_learnables;
 
 	// Views:
-	QPushButton*			_create_external_input_button;
-	QPushButton*			_create_internal_input_button;
-	QPushButton*			_destroy_input_button;
-	QStackedWidget*			_stack;
-	EventBackendPrivate::ExternalInputDialog*	_external_input_dialog;
-	EventBackendPrivate::InternalInputDialog*	_internal_input_dialog;
-	EventBackendPrivate::PortsListView*			_inputs_list;
+	QPushButton*							_create_device_button;
+	QPushButton*							_create_controller_button;
+	QPushButton*							_destroy_input_button;
+	QStackedWidget*							_stack;
+	EventBackendPrivate::DeviceDialog*		_device_dialog;
+	EventBackendPrivate::ControllerDialog*	_controller_dialog;
+	EventBackendPrivate::PortsListView*		_inputs_list;
 
 	// External (hardware) port templates menu and helper storage:
-	Templates		_templates;
-	Q3PopupMenu*	_templates_menu;
+	Templates								_templates;
+	Q3PopupMenu*							_templates_menu;
 };
 
 

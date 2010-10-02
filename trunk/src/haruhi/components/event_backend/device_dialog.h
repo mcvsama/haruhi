@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__EXTERNAL_INPUT_DIALOG_H__INCLUDED
-#define HARUHI__COMPONENTS__EVENT_BACKEND__EXTERNAL_INPUT_DIALOG_H__INCLUDED
+#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__DEVICE_DIALOG_H__INCLUDED
+#define HARUHI__COMPONENTS__EVENT_BACKEND__DEVICE_DIALOG_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -21,30 +21,30 @@
 #include <QtGui/QDialog>
 
 // Local:
-#include "external_input_item.h"
+#include "device_item.h"
 
 
 namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-class ExternalInputDialog: public QWidget
+class DeviceDialog: public QWidget
 {
 	Q_OBJECT
 
   public:
-	ExternalInputDialog (QWidget* parent);
+	DeviceDialog (QWidget* parent);
 
-	virtual ~ExternalInputDialog() { }
+	virtual ~DeviceDialog() { }
 
 	void
 	clear();
 
 	void
-	from (ExternalInputItem*);
+	from (DeviceItem*);
 
 	void
-	apply (ExternalInputItem*) const;
+	apply (DeviceItem*) const;
 
   private slots:
 	void
@@ -54,9 +54,9 @@ class ExternalInputDialog: public QWidget
 	validate_and_save();
 
   private:
-	ExternalInputItem*	_item;
-	QLineEdit*			_name;
-	QPushButton*		_save_button;
+	DeviceItem*		_item;
+	QLineEdit*		_name;
+	QPushButton*	_save_button;
 };
 
 } // namespace EventBackendPrivate

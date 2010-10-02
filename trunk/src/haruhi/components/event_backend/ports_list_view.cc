@@ -20,7 +20,7 @@
 
 // Local:
 #include "ports_list_view.h"
-#include "external_input_item.h"
+#include "device_item.h"
 
 
 namespace Haruhi {
@@ -59,13 +59,13 @@ PortsListView::save_state (QDomElement& element) const
 {
 	for (int i = 0; i < invisibleRootItem()->childCount(); ++i)
 	{
-		ExternalInputItem* external_input_item = dynamic_cast<ExternalInputItem*> (invisibleRootItem()->child (i));
+		DeviceItem* device_item = dynamic_cast<DeviceItem*> (invisibleRootItem()->child (i));
 		PortItem* port_item = 0;
 		QDomElement e;
 
-		if (external_input_item)
+		if (device_item)
 		{
-			port_item = external_input_item;
+			port_item = device_item;
 			e = element.ownerDocument().createElement ("external-input");
 		}
 
@@ -88,7 +88,7 @@ PortsListView::load_state (QDomElement const& element)
 		{
 			if (e.tagName() == "external-input")
 			{
-				ExternalInputItem* port = new ExternalInputItem (this, e.attribute ("name"));
+				DeviceItem* port = new DeviceItem (this, e.attribute ("name"));
 				port->load_state (e);
 			}
 		}

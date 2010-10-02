@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__INTERNAL_INPUT_DIALOG_H__INCLUDED
-#define HARUHI__COMPONENTS__EVENT_BACKEND__INTERNAL_INPUT_DIALOG_H__INCLUDED
+#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__CONTROLLER_DIALOG_H__INCLUDED
+#define HARUHI__COMPONENTS__EVENT_BACKEND__CONTROLLER_DIALOG_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -24,33 +24,33 @@
 #include <QtGui/QSpinBox>
 
 // Local:
-#include "internal_input_item.h"
+#include "controller_item.h"
 
 
 namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-class InternalInputDialog: public QDialog
+class ControllerDialog: public QDialog
 {
 	Q_OBJECT
 
   public:
-	InternalInputDialog (QWidget* parent);
+	ControllerDialog (QWidget* parent);
 
-	virtual ~InternalInputDialog() { }
+	virtual ~ControllerDialog() { }
 
-	InternalInputItem*
+	ControllerItem*
 	item() const;
 
 	void
 	clear();
 
 	void
-	from (InternalInputItem*);
+	from (ControllerItem*);
 
 	void
-	apply (InternalInputItem*) const;
+	apply (ControllerItem*) const;
 
   private slots:
 	void
@@ -60,7 +60,7 @@ class InternalInputDialog: public QDialog
 	validate_and_save();
 
   private:
-	InternalInputItem*	_item;
+	ControllerItem*		_item;
 	QLineEdit*			_name;
 	QPushButton*		_save_button;
 	QCheckBox*			_note_checkbox;

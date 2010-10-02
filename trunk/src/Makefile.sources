@@ -84,22 +84,22 @@ SRC_HEADERS += haruhi/components/event_backend/event_backend.h
 SRC_HEADERS += haruhi/components/event_backend/event_transport.h
 SRC_HEADERS += haruhi/components/event_backend/ports_list_view.h
 SRC_HEADERS += haruhi/components/event_backend/port_item.h
-SRC_HEADERS += haruhi/components/event_backend/external_input_item.h
-SRC_HEADERS += haruhi/components/event_backend/internal_input_item.h
-SRC_HEADERS += haruhi/components/event_backend/external_input_dialog.h
-SRC_HEADERS += haruhi/components/event_backend/internal_input_dialog.h
+SRC_HEADERS += haruhi/components/event_backend/device_item.h
+SRC_HEADERS += haruhi/components/event_backend/device_dialog.h
+SRC_HEADERS += haruhi/components/event_backend/controller_item.h
+SRC_HEADERS += haruhi/components/event_backend/controller_dialog.h
 
 SRC_SOURCES += haruhi/components/event_backend/event_backend.cc
 SRC_SOURCES += haruhi/components/event_backend/ports_list_view.cc
 SRC_SOURCES += haruhi/components/event_backend/port_item.cc
-SRC_SOURCES += haruhi/components/event_backend/external_input_item.cc
-SRC_SOURCES += haruhi/components/event_backend/internal_input_item.cc
-SRC_SOURCES += haruhi/components/event_backend/external_input_dialog.cc
-SRC_SOURCES += haruhi/components/event_backend/internal_input_dialog.cc
+SRC_SOURCES += haruhi/components/event_backend/device_item.cc
+SRC_SOURCES += haruhi/components/event_backend/device_dialog.cc
+SRC_SOURCES += haruhi/components/event_backend/controller_item.cc
+SRC_SOURCES += haruhi/components/event_backend/controller_dialog.cc
 
 SRC_MOCHDRS += haruhi/components/event_backend/event_backend.h
-SRC_MOCHDRS += haruhi/components/event_backend/external_input_dialog.h
-SRC_MOCHDRS += haruhi/components/event_backend/internal_input_dialog.h
+SRC_MOCHDRS += haruhi/components/event_backend/device_dialog.h
+SRC_MOCHDRS += haruhi/components/event_backend/controller_dialog.h
 
 ######## /components/ports_connector ########
 

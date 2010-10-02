@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__EXTERNAL_INPUT_ITEM_H__INCLUDED
-#define HARUHI__COMPONENTS__EVENT_BACKEND__EXTERNAL_INPUT_ITEM_H__INCLUDED
+#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__DEVICE_ITEM_H__INCLUDED
+#define HARUHI__COMPONENTS__EVENT_BACKEND__DEVICE_ITEM_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -30,14 +30,14 @@ namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-class ExternalInputItem: public PortItem
+class DeviceItem: public PortItem
 {
 	friend class PortsListView;
 
   public:
-	ExternalInputItem (PortsListView* parent, QString const& name);
+	DeviceItem (PortsListView* parent, QString const& name);
 
-	virtual ~ExternalInputItem();
+	virtual ~DeviceItem();
 
 	void
 	update_name();

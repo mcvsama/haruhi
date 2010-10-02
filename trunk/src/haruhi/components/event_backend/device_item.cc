@@ -21,7 +21,7 @@
 #include <haruhi/config.h>
 
 // Local:
-#include "external_input_item.h"
+#include "device_item.h"
 #include "event_backend.h"
 
 
@@ -29,7 +29,7 @@ namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-ExternalInputItem::ExternalInputItem (PortsListView* parent, QString const& name):
+DeviceItem::DeviceItem (PortsListView* parent, QString const& name):
 	PortItem (parent, name)
 {
 	_transport_port = _backend->transport()->create_input (name.toStdString());
@@ -45,7 +45,7 @@ ExternalInputItem::ExternalInputItem (PortsListView* parent, QString const& name
 }
 
 
-ExternalInputItem::~ExternalInputItem()
+DeviceItem::~DeviceItem()
 {
 	// Delete children:
 	while (childCount() > 0)
@@ -67,7 +67,7 @@ ExternalInputItem::~ExternalInputItem()
 
 
 void
-ExternalInputItem::update_name()
+DeviceItem::update_name()
 {
 	_transport_port->rename (name().toStdString());
 	// Update group name:
@@ -78,30 +78,30 @@ ExternalInputItem::update_name()
 
 
 QString
-ExternalInputItem::name() const
+DeviceItem::name() const
 {
 	return text (0);
 }
 
 
 Core::PortGroup*
-ExternalInputItem::port_group() const
+DeviceItem::port_group() const
 {
 	return _port_group;
 }
 
 
 void
-ExternalInputItem::save_state (QDomElement& element) const
+DeviceItem::save_state (QDomElement& element) const
 {
 	element.setAttribute ("name", name());
 	for (int i = 0; i < childCount(); ++i)
 	{
-		InternalInputItem* internal_input_item = dynamic_cast<InternalInputItem*> (child (i));
-		if (internal_input_item)
+		ControllerItem* controller_item = dynamic_cast<ControllerItem*> (child (i));
+		if (controller_item)
 		{
 			QDomElement e = element.ownerDocument().createElement ("internal-input");
-			internal_input_item->save_state (e);
+			controller_item->save_state (e);
 			element.appendChild (e);
 		}
 	}
@@ -109,7 +109,7 @@ ExternalInputItem::save_state (QDomElement& element) const
 
 
 void
-ExternalInputItem::load_state (QDomElement const& element)
+DeviceItem::load_state (QDomElement const& element)
 {
 	setText (0, element.attribute ("name"));
 	update_name();
@@ -120,7 +120,7 @@ ExternalInputItem::load_state (QDomElement const& element)
 		{
 			if (e.tagName() == "internal-input")
 			{
-				InternalInputItem* port = new InternalInputItem (this, e.attribute ("name"));
+				ControllerItem* port = new ControllerItem (this, e.attribute ("name"));
 				port->load_state (e);
 			}
 		}

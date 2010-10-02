@@ -26,14 +26,14 @@
 #include <haruhi/config.h>
 
 // Local:
-#include "internal_input_dialog.h"
+#include "controller_dialog.h"
 
 
 namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-InternalInputDialog::InternalInputDialog (QWidget* parent):
+ControllerDialog::ControllerDialog (QWidget* parent):
 	QDialog (parent)
 {
 	setCaption ("Controller configuration");
@@ -210,7 +210,7 @@ InternalInputDialog::InternalInputDialog (QWidget* parent):
 
 
 void
-InternalInputDialog::clear()
+ControllerDialog::clear()
 {
 	_item = 0;
 	setEnabled (false);
@@ -218,7 +218,7 @@ InternalInputDialog::clear()
 
 
 void
-InternalInputDialog::from (InternalInputItem* item)
+ControllerDialog::from (ControllerItem* item)
 {
 	setEnabled (true);
 	_item = item;
@@ -241,7 +241,7 @@ InternalInputDialog::from (InternalInputItem* item)
 
 
 void
-InternalInputDialog::apply (InternalInputItem* item) const
+ControllerDialog::apply (ControllerItem* item) const
 {
 	item->setText (0, _name->text());
 	item->update_name();
@@ -260,7 +260,7 @@ InternalInputDialog::apply (InternalInputItem* item) const
 
 
 void
-InternalInputDialog::update_widgets()
+ControllerDialog::update_widgets()
 {
 	_save_button->setEnabled (!_name->text().isEmpty());
 	_note_params->setEnabled (_note_checkbox->isChecked());
@@ -271,7 +271,7 @@ InternalInputDialog::update_widgets()
 
 
 void
-InternalInputDialog::validate_and_save()
+ControllerDialog::validate_and_save()
 {
 	if (_name->text().isEmpty())
 		QMessageBox::warning (this, "Controller name", "Enter name for the controller.");

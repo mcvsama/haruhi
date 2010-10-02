@@ -25,14 +25,14 @@
 #include <haruhi/config.h>
 
 // Local:
-#include "external_input_dialog.h"
+#include "device_dialog.h"
 
 
 namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-ExternalInputDialog::ExternalInputDialog (QWidget* parent):
+DeviceDialog::DeviceDialog (QWidget* parent):
 	QWidget (parent)
 {
 	setCaption ("Device configuration");
@@ -71,7 +71,7 @@ ExternalInputDialog::ExternalInputDialog (QWidget* parent):
 
 
 void
-ExternalInputDialog::clear()
+DeviceDialog::clear()
 {
 	_item = 0;
 	setEnabled (false);
@@ -79,7 +79,7 @@ ExternalInputDialog::clear()
 
 
 void
-ExternalInputDialog::from (ExternalInputItem* item)
+DeviceDialog::from (DeviceItem* item)
 {
 	setEnabled (true);
 	_item = item;
@@ -90,7 +90,7 @@ ExternalInputDialog::from (ExternalInputItem* item)
 
 
 void
-ExternalInputDialog::apply (ExternalInputItem* item) const
+DeviceDialog::apply (DeviceItem* item) const
 {
 	item->setText (0, _name->text());
 	item->update_name();
@@ -98,14 +98,14 @@ ExternalInputDialog::apply (ExternalInputItem* item) const
 
 
 void
-ExternalInputDialog::update_widgets()
+DeviceDialog::update_widgets()
 {
 	_save_button->setEnabled (!_name->text().isEmpty());
 }
 
 
 void
-ExternalInputDialog::validate_and_save()
+DeviceDialog::validate_and_save()
 {
 	if (_name->text().isEmpty())
 		QMessageBox::warning (this, "Device name", "Enter name for the device.");

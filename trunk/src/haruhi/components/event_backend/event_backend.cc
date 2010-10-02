@@ -29,8 +29,8 @@
 // Local:
 #include "transports/alsa_event_transport.h"
 #include "event_backend.h"
-#include "external_input_dialog.h"
-#include "internal_input_dialog.h"
+#include "device_dialog.h"
+#include "controller_dialog.h"
 
 
 namespace Haruhi {
@@ -57,30 +57,30 @@ EventBackend::EventBackend (Session* session, QString const& client_name, int id
 	QObject::connect (_inputs_list, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_inputs (const QPoint&)));
 	QObject::connect (_inputs_list, SIGNAL (itemSelectionChanged()), this, SLOT (selection_changed()));
 
-	_create_external_input_button = new QPushButton (Config::Icons16::add(), "Add device", this);
-	_create_external_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	QToolTip::add (_create_external_input_button, "Add new device and external input port");
+	_create_device_button = new QPushButton (Config::Icons16::add(), "Add device", this);
+	_create_device_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	QToolTip::add (_create_device_button, "Add new device and external input port");
 
-	_create_internal_input_button = new QPushButton (Config::Icons16::add(), "Add controller", this);
-	_create_internal_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	QToolTip::add (_create_internal_input_button, "Add new controller and internal output port");
+	_create_controller_button = new QPushButton (Config::Icons16::add(), "Add controller", this);
+	_create_controller_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	QToolTip::add (_create_controller_button, "Add new controller and internal output port");
 
 	_destroy_input_button = new QPushButton (Config::Icons16::remove(), "Destroy", this);
 	_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QToolTip::add (_destroy_input_button, "Destroy selected device or controller");
 
-	QObject::connect (_create_external_input_button, SIGNAL (clicked()), this, SLOT (create_external_input()));
-	QObject::connect (_create_internal_input_button, SIGNAL (clicked()), this, SLOT (create_internal_input()));
+	QObject::connect (_create_device_button, SIGNAL (clicked()), this, SLOT (create_device()));
+	QObject::connect (_create_controller_button, SIGNAL (clicked()), this, SLOT (create_controller()));
 	QObject::connect (_destroy_input_button, SIGNAL (clicked()), this, SLOT (destroy_selected_input()));
 
 	// Right panel (stack):
 
 	_stack = new QStackedWidget (this);
-	_external_input_dialog = new Private::ExternalInputDialog (this);
-	_internal_input_dialog = new Private::InternalInputDialog (this);
-	_stack->addWidget (_external_input_dialog);
-	_stack->addWidget (_internal_input_dialog);
-	_stack->setCurrentWidget (_external_input_dialog);
+	_device_dialog = new Private::DeviceDialog (this);
+	_controller_dialog = new Private::ControllerDialog (this);
+	_stack->addWidget (_device_dialog);
+	_stack->addWidget (_controller_dialog);
+	_stack->setCurrentWidget (_device_dialog);
 
 	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
 	QHBoxLayout* panels_layout = new QHBoxLayout (layout, Config::spacing);
@@ -89,8 +89,8 @@ EventBackend::EventBackend (Session* session, QString const& client_name, int id
 	panels_layout->addWidget (_inputs_list);
 	panels_layout->addWidget (_stack);
 
-	input_buttons_layout->addWidget (_create_external_input_button);
-	input_buttons_layout->addWidget (_create_internal_input_button);
+	input_buttons_layout->addWidget (_create_device_button);
+	input_buttons_layout->addWidget (_create_controller_button);
 	input_buttons_layout->addWidget (_destroy_input_button);
 	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 
@@ -114,8 +114,8 @@ EventBackend::~EventBackend()
 	delete _templates_menu;
 
 	_inputs_list->disconnect();
-	_create_external_input_button->disconnect();
-	_create_internal_input_button->disconnect();
+	_create_device_button->disconnect();
+	_create_controller_button->disconnect();
 	_destroy_input_button->disconnect();
 }
 
@@ -135,8 +135,8 @@ EventBackend::process()
 		EventTransport::Port* transport_port = h->first;
 		if (transport_port->buffer().empty())
 			continue;
-		Private::ExternalInputItem* external_port_item = h->second;
-		for (Private::PortItem::InternalInputs::iterator iii = external_port_item->internal_inputs()->begin(); iii != external_port_item->internal_inputs()->end(); ++iii)
+		Private::DeviceItem* external_port_item = h->second;
+		for (Private::PortItem::Controllers::iterator iii = external_port_item->controllers()->begin(); iii != external_port_item->controllers()->end(); ++iii)
 		{
 			if ((*iii)->ready())
 			{
@@ -208,18 +208,18 @@ EventBackend::connected() const
 
 
 void
-EventBackend::configure_item (Private::ExternalInputItem* item)
+EventBackend::configure_item (Private::DeviceItem* item)
 {
-	_external_input_dialog->from (item);
-	_stack->setCurrentWidget (_external_input_dialog);
+	_device_dialog->from (item);
+	_stack->setCurrentWidget (_device_dialog);
 }
 
 
 void
-EventBackend::configure_item (Private::InternalInputItem* item)
+EventBackend::configure_item (Private::ControllerItem* item)
 {
-	_internal_input_dialog->from (item);
-	_stack->setCurrentWidget (_internal_input_dialog);
+	_controller_dialog->from (item);
+	_stack->setCurrentWidget (_controller_dialog);
 }
 
 
@@ -241,7 +241,7 @@ void
 EventBackend::update_widgets()
 {
 	QTreeWidgetItem* sel = _inputs_list->selected_item();
-	_create_internal_input_button->setEnabled (sel != 0);
+	_create_controller_button->setEnabled (sel != 0);
 	_destroy_input_button->setEnabled (sel != 0);
 }
 
@@ -255,27 +255,27 @@ EventBackend::selection_changed()
 
 
 void
-EventBackend::create_external_input()
+EventBackend::create_device()
 {
 	QString name = "<unnamed device>";
-	QTreeWidgetItem* item = new Private::ExternalInputItem (_inputs_list, name);
+	QTreeWidgetItem* item = new Private::DeviceItem (_inputs_list, name);
 	_inputs_list->setCurrentItem (item);
 }
 
 
 void
-EventBackend::create_internal_input()
+EventBackend::create_controller()
 {
 	QString name = "<unnamed controller>";
 	QTreeWidgetItem* sel = _inputs_list->selected_item();
 	if (sel != 0)
 	{
-		Private::ExternalInputItem* parent = dynamic_cast<Private::ExternalInputItem*> (sel);
+		Private::DeviceItem* parent = dynamic_cast<Private::DeviceItem*> (sel);
 		if (parent == 0)
-			parent = dynamic_cast<Private::ExternalInputItem*> (sel->parent());
+			parent = dynamic_cast<Private::DeviceItem*> (sel->parent());
 		if (parent != 0)
 		{
-			QTreeWidgetItem* item = new Private::InternalInputItem (parent, name);
+			QTreeWidgetItem* item = new Private::ControllerItem (parent, name);
 			_inputs_list->setCurrentItem (item);
 			parent->setExpanded (true);
 		}
@@ -292,26 +292,26 @@ EventBackend::context_menu_for_inputs (QPoint const& pos)
 
 	if (item != 0)
 	{
-		if (dynamic_cast<Private::InternalInputItem*> (item) != 0)
+		if (dynamic_cast<Private::ControllerItem*> (item) != 0)
 		{
 			menu->insertItem (Config::Icons16::colorpicker(), "&Learn", this, SLOT (learn_from_midi()));
 			menu->insertSeparator();
-			menu->insertItem (Config::Icons16::add(), "Add &controller", this, SLOT (create_internal_input()));
+			menu->insertItem (Config::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
 			menu->insertItem (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_input()));
 		}
-		else if (dynamic_cast<Private::ExternalInputItem*> (item) != 0)
+		else if (dynamic_cast<Private::DeviceItem*> (item) != 0)
 		{
-			menu->insertItem (Config::Icons16::add(), "Add &controller", this, SLOT (create_internal_input()));
+			menu->insertItem (Config::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
 			menu->insertSeparator();
 			menu->insertItem (Config::Icons16::save(), "&Save as template", this, SLOT (save_selected_input()));
 			menu->insertSeparator();
-			menu->insertItem (Config::Icons16::add(), "&Add device", this, SLOT (create_external_input()));
+			menu->insertItem (Config::Icons16::add(), "&Add device", this, SLOT (create_device()));
 			menu->insertItem (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_input()));
 		}
 	}
 	else
 	{
-		menu->insertItem (Config::Icons16::add(), "&Add device", this, SLOT (create_external_input()));
+		menu->insertItem (Config::Icons16::add(), "&Add device", this, SLOT (create_device()));
 		i = menu->insertItem (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_input()));
 		menu->setItemEnabled (i, false);
 	}
@@ -329,20 +329,20 @@ EventBackend::configure_selected_input()
 {
 	if (_inputs_list->selected_item())
 	{
-		Private::ExternalInputItem* external_input_item = dynamic_cast<Private::ExternalInputItem*> (_inputs_list->selected_item());
-		if (external_input_item)
-			configure_item (external_input_item);
+		Private::DeviceItem* device_item = dynamic_cast<Private::DeviceItem*> (_inputs_list->selected_item());
+		if (device_item)
+			configure_item (device_item);
 		else
 		{
-			Private::InternalInputItem* internal_input_item = dynamic_cast<Private::InternalInputItem*> (_inputs_list->selected_item());
-			if (internal_input_item)
-				configure_item (internal_input_item);
+			Private::ControllerItem* controller_item = dynamic_cast<Private::ControllerItem*> (_inputs_list->selected_item());
+			if (controller_item)
+				configure_item (controller_item);
 		}
 	}
 	else
 	{
-		_external_input_dialog->clear();
-		_internal_input_dialog->clear();
+		_device_dialog->clear();
+		_controller_dialog->clear();
 	}
 }
 
@@ -352,7 +352,7 @@ EventBackend::learn_from_midi()
 {
 	if (_inputs_list->selected_item())
 	{
-		Private::InternalInputItem* item = dynamic_cast<Private::InternalInputItem*> (_inputs_list->selected_item());
+		Private::ControllerItem* item = dynamic_cast<Private::ControllerItem*> (_inputs_list->selected_item());
 		if (item)
 			item->learn();
 	}
@@ -378,7 +378,7 @@ EventBackend::save_selected_input()
 	QTreeWidgetItem* item = _inputs_list->selected_item();
 	if (item)
 	{
-		Private::ExternalInputItem* input_item = dynamic_cast<Private::ExternalInputItem*> (item);
+		Private::DeviceItem* input_item = dynamic_cast<Private::DeviceItem*> (item);
 		if (input_item)
 		{
 			Config::EventHardwareTemplate tpl (input_item->name());
@@ -438,7 +438,7 @@ EventBackend::insert_template (int menu_item_id)
 	Templates::iterator t = _templates.find (menu_item_id);
 	if (t != _templates.end())
 	{
-		Private::ExternalInputItem* item = new Private::ExternalInputItem (_inputs_list, t->second.name);
+		Private::DeviceItem* item = new Private::DeviceItem (_inputs_list, t->second.name);
 		item->load_state (t->second.element);
 		item->treeWidget()->clearSelection();
 		item->treeWidget()->setCurrentItem (item);

@@ -33,14 +33,14 @@ namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-class InternalInputItem;
+class ControllerItem;
 
 class PortItem:
 	public QTreeWidgetItem,
 	public SaveableState
 {
   public:
-	typedef std::set<InternalInputItem*> InternalInputs;
+	typedef std::set<ControllerItem*> Controllers;
 
   public:
 	PortItem (PortsListView* parent, QString const& name);
@@ -49,8 +49,8 @@ class PortItem:
 
 	~PortItem();
 
-	InternalInputs*
-	internal_inputs() { return &_internal_inputs; }
+	Controllers*
+	controllers() { return &_controllers; }
 
 	/**
 	 * Updates name of backend ports basing on GUI port name.
@@ -82,7 +82,7 @@ class PortItem:
 	PortItem*		_port_item;
 	// For quick traversal over children. Child items
 	// will add/remove itself from this set:
-	InternalInputs	_internal_inputs;
+	Controllers		_controllers;
 
   private:
 	// Set when port is fully constructed:

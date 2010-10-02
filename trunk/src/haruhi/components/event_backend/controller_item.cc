@@ -21,7 +21,7 @@
 #include <haruhi/config.h>
 
 // Local:
-#include "internal_input_item.h"
+#include "controller_item.h"
 #include "event_backend.h"
 
 
@@ -29,7 +29,7 @@ namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-InternalInputItem::InternalInputItem (ExternalInputItem* parent, QString const& name):
+ControllerItem::ControllerItem (DeviceItem* parent, QString const& name):
 	PortItem (parent, name),
 	_note_filter (false),
 	_note_channel (0),
@@ -51,7 +51,7 @@ InternalInputItem::InternalInputItem (ExternalInputItem* parent, QString const& 
 	_backend->graph()->lock();
 	_port = new Core::EventPort (_backend, name.ascii(), Core::Port::Output, parent->port_group());
 	if (port_item())
-		port_item()->internal_inputs()->insert (this);
+		port_item()->controllers()->insert (this);
 	_backend->graph()->unlock();
 	// Configure item:
 	setIcon (0, Config::Icons16::event_output_port());
@@ -60,18 +60,18 @@ InternalInputItem::InternalInputItem (ExternalInputItem* parent, QString const& 
 }
 
 
-InternalInputItem::~InternalInputItem()
+ControllerItem::~ControllerItem()
 {
 	_backend->graph()->lock();
 	if (port_item())
-		port_item()->internal_inputs()->erase (this);
+		port_item()->controllers()->erase (this);
 	delete _port;
 	_backend->graph()->unlock();
 }
 
 
 void
-InternalInputItem::learn()
+ControllerItem::learn()
 {
 	_learning = !_learning;
 	if (_learning)
@@ -82,7 +82,7 @@ InternalInputItem::learn()
 
 
 void
-InternalInputItem::stop_learning()
+ControllerItem::stop_learning()
 {
 	_learning = false;
 	QApplication::postEvent (treeWidget(), new PortsListView::LearnedParams (this));
@@ -90,28 +90,28 @@ InternalInputItem::stop_learning()
 
 
 void
-InternalInputItem::update_name()
+ControllerItem::update_name()
 {
 	_port->set_name (text (0).ascii());
 }
 
 
 QString
-InternalInputItem::name() const
+ControllerItem::name() const
 {
 	return text (0);
 }
 
 
 Core::EventPort*
-InternalInputItem::port() const
+ControllerItem::port() const
 {
 	return _port;
 }
 
 
 bool
-InternalInputItem::handle_event (EventTransport::MidiEvent const& event)
+ControllerItem::handle_event (EventTransport::MidiEvent const& event)
 {
 	typedef EventTransport::MidiEvent MidiEvent;
 
@@ -236,7 +236,7 @@ InternalInputItem::handle_event (EventTransport::MidiEvent const& event)
 
 
 void
-InternalInputItem::save_state (QDomElement& element) const
+ControllerItem::save_state (QDomElement& element) const
 {
 	element.setAttribute ("name", name());
 
@@ -267,7 +267,7 @@ InternalInputItem::save_state (QDomElement& element) const
 
 
 void
-InternalInputItem::load_state (QDomElement const& element)
+ControllerItem::load_state (QDomElement const& element)
 {
 	setText (0, element.attribute ("name"));
 	update_name();

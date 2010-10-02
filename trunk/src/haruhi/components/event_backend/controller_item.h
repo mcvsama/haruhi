@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__INTERNAL_INPUT_ITEM_H__INCLUDED
-#define HARUHI__COMPONENTS__EVENT_BACKEND__INTERNAL_INPUT_ITEM_H__INCLUDED
+#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__CONTROLLER_ITEM_H__INCLUDED
+#define HARUHI__COMPONENTS__EVENT_BACKEND__CONTROLLER_ITEM_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -26,21 +26,21 @@
 // Local:
 #include "event_transport.h"
 #include "port_item.h"
-#include "external_input_item.h"
+#include "device_item.h"
 
 
 namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-class InternalInputItem: public PortItem
+class ControllerItem: public PortItem
 {
-	friend class InternalInputDialog;
+	friend class ControllerDialog;
 
   public:
-	InternalInputItem (ExternalInputItem* parent, QString const& name);
+	ControllerItem (DeviceItem* parent, QString const& name);
 
-	virtual ~InternalInputItem();
+	virtual ~ControllerItem();
 
 	void
 	learn();
