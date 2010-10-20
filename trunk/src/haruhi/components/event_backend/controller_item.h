@@ -22,6 +22,7 @@
 
 // Haruhi:
 #include <haruhi/core/event_port.h>
+#include <haruhi/utility/saveable_state.h>
 
 // Local:
 #include "event_transport.h"
@@ -33,14 +34,52 @@ namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-class ControllerItem: public PortItem
+class ControllerItem:
+	public Item,
+	public SaveableState
 {
-	friend class ControllerDialog;
-
   public:
 	ControllerItem (DeviceItem* parent, QString const& name);
 
 	virtual ~ControllerItem();
+
+	QString
+	name() const { return QTreeWidgetItem::text (0); }
+
+	void
+	save_state (QDomElement&) const;
+
+	void
+	load_state (QDomElement const&);
+
+  public:
+	bool	_note_filter;
+	int		_note_channel;					// 0 means 'all'
+	bool	_controller_filter;
+	int		_controller_channel;			// 0 means 'all'
+	int		_controller_number;
+	bool	_controller_invert;
+	bool	_pitchbend_filter;
+	int		_pitchbend_channel;				// 0 means 'all'
+	bool	_channel_pressure_filter;
+	int		_channel_pressure_channel;		// 0 means 'all'
+	bool	_channel_pressure_invert;
+	bool	_key_pressure_filter;
+	int		_key_pressure_channel;			// 0 means 'all'
+	bool	_key_pressure_invert;
+};
+
+
+class ControllerWithPortItem:
+	public ControllerItem,
+	public PortItem
+{
+	friend class ControllerDialog;
+
+  public:
+	ControllerWithPortItem (DeviceWithPortItem* parent, QString const& name);
+
+	virtual ~ControllerWithPortItem();
 
 	void
 	learn();
@@ -65,27 +104,12 @@ class ControllerItem: public PortItem
 	handle_event (EventTransport::MidiEvent const& event);
 
 	void
-	save_state (QDomElement&) const;
-
-	void
-	load_state (QDomElement const&);
+	load_state (QDomElement const& element);
 
   private:
 	Core::EventPort*	_port;
-	bool				_note_filter;
-	int					_note_channel;					// 0 means 'all'
-	bool				_controller_filter;
-	int					_controller_channel;			// 0 means 'all'
-	int					_controller_number;
-	bool				_controller_invert;
-	bool				_pitchbend_filter;
-	int					_pitchbend_channel;				// 0 means 'all'
-	bool				_channel_pressure_filter;
-	int					_channel_pressure_channel;		// 0 means 'all'
-	bool				_channel_pressure_invert;
-	bool				_key_pressure_filter;
-	int					_key_pressure_channel;			// 0 means 'all'
-	bool				_key_pressure_invert;
+	// Link to DeviceItem:
+	DeviceWithPortItem*	_device_item;
 	// Learning from MIDI mode.
 	bool				_learning;
 };

@@ -30,18 +30,11 @@ namespace Haruhi {
 namespace EventBackendPrivate {
 
 DeviceItem::DeviceItem (PortsListView* parent, QString const& name):
-	PortItem (parent, name)
+	Item (parent, name)
 {
-	_transport_port = _backend->transport()->create_input (name.toStdString());
-	// Allocate port group:
-	_backend->graph()->lock();
-	_port_group = new Core::PortGroup (_backend->graph(), name.ascii());
-	_backend->graph()->unlock();
-	_backend->_inputs[_transport_port] = this;
 	// Configure item:
 	setIcon (0, Config::Icons16::keyboard());
-	// Fully constructed:
-	set_ready (true);
+	update_minimum_size();
 }
 
 
@@ -54,40 +47,9 @@ DeviceItem::~DeviceItem()
 		takeChild (0);
 		delete c;
 	}
-	// TODO lock for _inputs map:
-	_backend->_inputs.erase (_transport_port);
-	_backend->transport()->destroy_port (_transport_port);
-	_backend->graph()->lock();
-	delete _port_group;
-	_backend->graph()->unlock();
 	// Remove itself from External ports list view:
 	if (treeWidget())
 		treeWidget()->invisibleRootItem()->takeChild (treeWidget()->invisibleRootItem()->indexOfChild (this));
-}
-
-
-void
-DeviceItem::update_name()
-{
-	_transport_port->rename (name().toStdString());
-	// Update group name:
-	_backend->graph()->lock();
-	_port_group->set_name (name().toStdString());
-	_backend->graph()->unlock();
-}
-
-
-QString
-DeviceItem::name() const
-{
-	return text (0);
-}
-
-
-Core::PortGroup*
-DeviceItem::port_group() const
-{
-	return _port_group;
 }
 
 
@@ -112,7 +74,6 @@ void
 DeviceItem::load_state (QDomElement const& element)
 {
 	setText (0, element.attribute ("name"));
-	update_name();
 	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
 	{
 		QDomElement e = n.toElement();
@@ -125,6 +86,70 @@ DeviceItem::load_state (QDomElement const& element)
 			}
 		}
 	}
+}
+
+
+DeviceWithPortItem::DeviceWithPortItem (EventBackend* p_backend, PortsListView* parent, QString const& name):
+	DeviceItem (parent, name),
+	PortItem (p_backend)
+{
+	_transport_port = backend()->transport()->create_input (name.toStdString());
+	backend()->_inputs[_transport_port] = this;
+	// Allocate port group:
+	backend()->graph()->lock();
+	_port_group = new Core::PortGroup (backend()->graph(), name.ascii());
+	backend()->graph()->unlock();
+	// Ready for handling events:
+	set_ready (true);
+}
+
+
+DeviceWithPortItem::~DeviceWithPortItem()
+{
+	// Delete children:
+	while (childCount() > 0)
+	{
+		QTreeWidgetItem* c = child (0);
+		takeChild (0);
+		delete c;
+	}
+	// TODO lock for _inputs map:
+	backend()->_inputs.erase (_transport_port);
+	backend()->transport()->destroy_port (_transport_port);
+	backend()->graph()->lock();
+	delete _port_group;
+	backend()->graph()->unlock();
+}
+
+
+void
+DeviceWithPortItem::update_name()
+{
+	_transport_port->rename (name().toStdString());
+	// Update group name:
+	backend()->graph()->lock();
+	_port_group->set_name (name().toStdString());
+	backend()->graph()->unlock();
+}
+
+
+void
+DeviceWithPortItem::load_state (QDomElement const& element)
+{
+	setText (0, element.attribute ("name"));
+	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	{
+		QDomElement e = n.toElement();
+		if (!e.isNull())
+		{
+			if (e.tagName() == "internal-input")
+			{
+				ControllerItem* port = new ControllerWithPortItem (this, e.attribute ("name"));
+				port->load_state (e);
+			}
+		}
+	}
+	update_name();
 }
 
 } // namespace EventBackendPrivate

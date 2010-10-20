@@ -60,18 +60,12 @@ PortsListView::save_state (QDomElement& element) const
 	for (int i = 0; i < invisibleRootItem()->childCount(); ++i)
 	{
 		DeviceItem* device_item = dynamic_cast<DeviceItem*> (invisibleRootItem()->child (i));
-		PortItem* port_item = 0;
 		QDomElement e;
 
 		if (device_item)
 		{
-			port_item = device_item;
 			e = element.ownerDocument().createElement ("external-input");
-		}
-
-		if (port_item)
-		{
-			port_item->save_state (e);
+			device_item->save_state (e);
 			element.appendChild (e);
 		}
 	}
@@ -88,7 +82,7 @@ PortsListView::load_state (QDomElement const& element)
 		{
 			if (e.tagName() == "external-input")
 			{
-				DeviceItem* port = new DeviceItem (this, e.attribute ("name"));
+				DeviceItem* port = new DeviceWithPortItem (_backend, this, e.attribute ("name"));
 				port->load_state (e);
 			}
 		}
@@ -103,10 +97,10 @@ PortsListView::customEvent (QEvent* event)
 	if (lp)
 	{
 		// Force update of editor dialog:
-		lp->port_item->setSelected (false);
-		lp->port_item->setSelected (true);
+		lp->item->setSelected (false);
+		lp->item->setSelected (true);
 		// Reset icon:
-		lp->port_item->setIcon (0, Config::Icons16::event_output_port());
+		lp->item->setIcon (0, Config::Icons16::event_output_port());
 	}
 }
 

@@ -47,13 +47,13 @@ class PortsListView:
 	class LearnedParams: public QEvent
 	{
 	  public:
-		LearnedParams (PortItem* port_item):
+		LearnedParams (QTreeWidgetItem* item):
 			QEvent (QEvent::User),
-			port_item (port_item)
+			item (item)
 		{ }
 
 	  public:
-		PortItem* port_item;
+		QTreeWidgetItem* item;
 	};
 
   public:

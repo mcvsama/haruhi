@@ -244,7 +244,6 @@ void
 ControllerDialog::apply (ControllerItem* item) const
 {
 	item->setText (0, _name->text());
-	item->update_name();
 	item->_note_filter = _note_checkbox->isChecked();
 	item->_note_channel = _note_channel->currentText().toInt();
 	item->_controller_filter = _controller_checkbox->isChecked();
@@ -256,6 +255,9 @@ ControllerDialog::apply (ControllerItem* item) const
 	item->_channel_pressure_filter = _channel_pressure_checkbox->isChecked();
 	item->_channel_pressure_channel = _channel_pressure_channel->currentText().toInt();
 	item->_channel_pressure_invert = _channel_pressure_invert->isChecked();
+	DeviceWithPortItem* port_item = dynamic_cast<DeviceWithPortItem*> (item);
+	if (port_item)
+		port_item->update_name();
 }
 
 

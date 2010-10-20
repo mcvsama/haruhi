@@ -28,36 +28,8 @@ namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-PortItem::PortItem (PortsListView* parent, QString const& name):
-	QTreeWidgetItem (parent, QStringList (name)),
-	_backend (parent->backend()),
-	_port_item (0),
-	_ready (false)
-{
-	update_minimum_size();
-}
-
-
-PortItem::PortItem (PortItem* parent, QString const& name):
-	QTreeWidgetItem (parent, QStringList (name)),
-	_backend (parent->_backend),
-	_port_item (parent),
-	_ready (false)
-{
-	update_minimum_size();
-}
-
-
-PortItem::~PortItem()
-{
-	// Remove itself from list view:
-	if (parent())
-		parent()->takeChild (parent()->indexOfChild (this));
-}
-
-
 void
-PortItem::update_minimum_size()
+Item::update_minimum_size()
 {
 	QSize s = sizeHint (0);
 	if (s.height() < 18)
@@ -65,6 +37,13 @@ PortItem::update_minimum_size()
 		s.setHeight (18);
 		setSizeHint (0, s);
 	}
+}
+
+
+PortItem::PortItem (EventBackend* backend):
+	_backend (backend),
+	_ready (false)
+{
 }
 
 } // namespace EventBackendPrivate

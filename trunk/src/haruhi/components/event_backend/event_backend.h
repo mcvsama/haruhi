@@ -59,8 +59,8 @@ class EventBackend:
 {
 	Q_OBJECT
 
-	friend class EventBackendPrivate::DeviceItem;
-	friend class EventBackendPrivate::ControllerItem;
+	friend class EventBackendPrivate::DeviceWithPortItem;
+	friend class EventBackendPrivate::ControllerWithPortItem;
 
   public:
 	/**
@@ -96,7 +96,7 @@ class EventBackend:
 
   private:
 	typedef std::set<std::pair<Learnable*, EventTypes> > Learnables;
-	typedef std::map<EventTransport::Port*, EventBackendPrivate::DeviceItem*> InputsMap;
+	typedef std::map<EventTransport::Port*, EventBackendPrivate::DeviceWithPortItem*> InputsMap;
 	typedef std::map<int, Config::EventHardwareTemplate> Templates;
 
   public:
@@ -135,10 +135,10 @@ class EventBackend:
 	connected() const;
 
 	void
-	configure_item (EventBackendPrivate::DeviceItem* item);
+	configure_item (EventBackendPrivate::DeviceWithPortItem* item);
 
 	void
-	configure_item (EventBackendPrivate::ControllerItem* item);
+	configure_item (EventBackendPrivate::ControllerWithPortItem* item);
 
 	/**
 	 * Starts listening for specified event types.

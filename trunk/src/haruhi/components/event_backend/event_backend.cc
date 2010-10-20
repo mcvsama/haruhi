@@ -30,6 +30,7 @@
 #include "transports/alsa_event_transport.h"
 #include "event_backend.h"
 #include "device_dialog.h"
+#include "controller_item.h"
 #include "controller_dialog.h"
 
 
@@ -135,8 +136,8 @@ EventBackend::process()
 		EventTransport::Port* transport_port = h->first;
 		if (transport_port->buffer().empty())
 			continue;
-		Private::DeviceItem* external_port_item = h->second;
-		for (Private::PortItem::Controllers::iterator iii = external_port_item->controllers()->begin(); iii != external_port_item->controllers()->end(); ++iii)
+		Private::DeviceWithPortItem* device_item = h->second;
+		for (Private::DeviceWithPortItem::Controllers::iterator iii = device_item->controllers()->begin(); iii != device_item->controllers()->end(); ++iii)
 		{
 			if ((*iii)->ready())
 			{
@@ -208,7 +209,7 @@ EventBackend::connected() const
 
 
 void
-EventBackend::configure_item (Private::DeviceItem* item)
+EventBackend::configure_item (Private::DeviceWithPortItem* item)
 {
 	_device_dialog->from (item);
 	_stack->setCurrentWidget (_device_dialog);
@@ -216,7 +217,7 @@ EventBackend::configure_item (Private::DeviceItem* item)
 
 
 void
-EventBackend::configure_item (Private::ControllerItem* item)
+EventBackend::configure_item (Private::ControllerWithPortItem* item)
 {
 	_controller_dialog->from (item);
 	_stack->setCurrentWidget (_controller_dialog);
@@ -258,7 +259,7 @@ void
 EventBackend::create_device()
 {
 	QString name = "<unnamed device>";
-	QTreeWidgetItem* item = new Private::DeviceItem (_inputs_list, name);
+	QTreeWidgetItem* item = new Private::DeviceWithPortItem (this, _inputs_list, name);
 	_inputs_list->setCurrentItem (item);
 }
 
@@ -270,12 +271,12 @@ EventBackend::create_controller()
 	QTreeWidgetItem* sel = _inputs_list->selected_item();
 	if (sel != 0)
 	{
-		Private::DeviceItem* parent = dynamic_cast<Private::DeviceItem*> (sel);
+		Private::DeviceWithPortItem* parent = dynamic_cast<Private::DeviceWithPortItem*> (sel);
 		if (parent == 0)
-			parent = dynamic_cast<Private::DeviceItem*> (sel->parent());
+			parent = dynamic_cast<Private::DeviceWithPortItem*> (sel->parent());
 		if (parent != 0)
 		{
-			QTreeWidgetItem* item = new Private::ControllerItem (parent, name);
+			QTreeWidgetItem* item = new Private::ControllerWithPortItem (parent, name);
 			_inputs_list->setCurrentItem (item);
 			parent->setExpanded (true);
 		}
@@ -292,14 +293,14 @@ EventBackend::context_menu_for_inputs (QPoint const& pos)
 
 	if (item != 0)
 	{
-		if (dynamic_cast<Private::ControllerItem*> (item) != 0)
+		if (dynamic_cast<Private::ControllerWithPortItem*> (item) != 0)
 		{
 			menu->insertItem (Config::Icons16::colorpicker(), "&Learn", this, SLOT (learn_from_midi()));
 			menu->insertSeparator();
 			menu->insertItem (Config::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
 			menu->insertItem (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_input()));
 		}
-		else if (dynamic_cast<Private::DeviceItem*> (item) != 0)
+		else if (dynamic_cast<Private::DeviceWithPortItem*> (item) != 0)
 		{
 			menu->insertItem (Config::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
 			menu->insertSeparator();
@@ -329,12 +330,12 @@ EventBackend::configure_selected_input()
 {
 	if (_inputs_list->selected_item())
 	{
-		Private::DeviceItem* device_item = dynamic_cast<Private::DeviceItem*> (_inputs_list->selected_item());
+		Private::DeviceWithPortItem* device_item = dynamic_cast<Private::DeviceWithPortItem*> (_inputs_list->selected_item());
 		if (device_item)
 			configure_item (device_item);
 		else
 		{
-			Private::ControllerItem* controller_item = dynamic_cast<Private::ControllerItem*> (_inputs_list->selected_item());
+			Private::ControllerWithPortItem* controller_item = dynamic_cast<Private::ControllerWithPortItem*> (_inputs_list->selected_item());
 			if (controller_item)
 				configure_item (controller_item);
 		}
@@ -352,7 +353,7 @@ EventBackend::learn_from_midi()
 {
 	if (_inputs_list->selected_item())
 	{
-		Private::ControllerItem* item = dynamic_cast<Private::ControllerItem*> (_inputs_list->selected_item());
+		Private::ControllerWithPortItem* item = dynamic_cast<Private::ControllerWithPortItem*> (_inputs_list->selected_item());
 		if (item)
 			item->learn();
 	}
@@ -378,7 +379,7 @@ EventBackend::save_selected_input()
 	QTreeWidgetItem* item = _inputs_list->selected_item();
 	if (item)
 	{
-		Private::DeviceItem* input_item = dynamic_cast<Private::DeviceItem*> (item);
+		Private::DeviceWithPortItem* input_item = dynamic_cast<Private::DeviceWithPortItem*> (item);
 		if (input_item)
 		{
 			Config::EventHardwareTemplate tpl (input_item->name());
@@ -438,7 +439,7 @@ EventBackend::insert_template (int menu_item_id)
 	Templates::iterator t = _templates.find (menu_item_id);
 	if (t != _templates.end())
 	{
-		Private::DeviceItem* item = new Private::DeviceItem (_inputs_list, t->second.name);
+		Private::DeviceWithPortItem* item = new Private::DeviceWithPortItem (this, _inputs_list, t->second.name);
 		item->load_state (t->second.element);
 		item->treeWidget()->clearSelection();
 		item->treeWidget()->setCurrentItem (item);

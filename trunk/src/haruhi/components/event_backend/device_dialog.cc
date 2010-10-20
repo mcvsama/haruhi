@@ -93,7 +93,9 @@ void
 DeviceDialog::apply (DeviceItem* item) const
 {
 	item->setText (0, _name->text());
-	item->update_name();
+	DeviceWithPortItem* port_item = dynamic_cast<DeviceWithPortItem*> (item);
+	if (port_item)
+		port_item->update_name();
 }
 
 

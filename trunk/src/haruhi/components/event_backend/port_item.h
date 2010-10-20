@@ -22,7 +22,6 @@
 #include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
-#include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/atomic.h>
 
 // Local:
@@ -33,24 +32,23 @@ namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-class ControllerItem;
-
-class PortItem:
-	public QTreeWidgetItem,
-	public SaveableState
+class Item: public QTreeWidgetItem
 {
   public:
-	typedef std::set<ControllerItem*> Controllers;
+	template<class Parent>
+		Item (Parent* parent, QString const& name):
+			QTreeWidgetItem (parent, QStringList (name))
+		{ }
 
+	void
+	update_minimum_size();
+};
+
+
+class PortItem
+{
   public:
-	PortItem (PortsListView* parent, QString const& name);
-
-	PortItem (PortItem* parent, QString const& name);
-
-	~PortItem();
-
-	Controllers*
-	controllers() { return &_controllers; }
+	PortItem (EventBackend* backend);
 
 	/**
 	 * Updates name of backend ports basing on GUI port name.
@@ -65,26 +63,19 @@ class PortItem:
 	bool
 	ready() const { return _ready; }
 
+	EventBackend*
+	backend() { return _backend; }
+
   protected:
 	void
 	set_ready (bool r) { atomic (_ready) = r; }
-
-	PortItem*
-	port_item() const { return _port_item; }
 
   private:
 	void
 	update_minimum_size();
 
-  protected:
-	EventBackend*	_backend;
-	// Link to parent PortItem or 0 if it's a chlid of TreeWidget.
-	PortItem*		_port_item;
-	// For quick traversal over children. Child items
-	// will add/remove itself from this set:
-	Controllers		_controllers;
-
   private:
+	EventBackend*	_backend;
 	// Set when port is fully constructed:
 	bool			_ready;
 };

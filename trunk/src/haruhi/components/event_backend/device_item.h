@@ -19,6 +19,7 @@
 
 // Haruhi:
 #include <haruhi/core/port_group.h>
+#include <haruhi/utility/saveable_state.h>
 
 // Local:
 #include "event_transport.h"
@@ -30,7 +31,9 @@ namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-class DeviceItem: public PortItem
+class DeviceItem:
+	public Item,
+	public SaveableState
 {
 	friend class PortsListView;
 
@@ -39,23 +42,52 @@ class DeviceItem: public PortItem
 
 	virtual ~DeviceItem();
 
-	void
-	update_name();
-
 	QString
-	name() const;
-
-	EventTransport::Port*
-	transport_port() const { return _transport_port; }
-
-	Core::PortGroup*
-	port_group() const;
+	name() const { return QTreeWidgetItem::text (0); }
 
 	void
 	save_state (QDomElement&) const;
 
 	void
 	load_state (QDomElement const&);
+};
+
+
+class ControllerWithPortItem;
+
+class DeviceWithPortItem:
+	public DeviceItem,
+	public PortItem
+{
+	friend class PortsListView;
+
+  public:
+	typedef std::set<ControllerWithPortItem*> Controllers;
+
+  public:
+	DeviceWithPortItem (EventBackend* backend, PortsListView* parent, QString const& name);
+
+	virtual ~DeviceWithPortItem();
+
+	Controllers*
+	controllers() { return &_controllers; }
+
+	EventTransport::Port*
+	transport_port() const { return _transport_port; }
+
+	Core::PortGroup*
+	port_group() const { return _port_group; }
+
+	void
+	update_name();
+
+	void
+	load_state (QDomElement const&);
+
+  protected:
+	// For quick traversal over children. Child items
+	// will add/remove itself from this set:
+	Controllers _controllers;
 
   private:
 	Core::PortGroup*		_port_group;
