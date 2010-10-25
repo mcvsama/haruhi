@@ -296,38 +296,6 @@ Session::MeterPanel::MeterPanel (Session* session, QWidget* parent):
 }
 
 
-Session::AudioTab::AudioTab (Session* session, QWidget* parent):
-	QFrame (parent),
-	_session (session)
-{
-	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-
-	_backend_parent = new QWidget (this);
-	_backend_parent->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-
-	QVBoxLayout* layout = new QVBoxLayout (this, 0, 0);
-	QVBoxLayout* backend_parent_layout = new QVBoxLayout (_backend_parent, 0, 0);
-	backend_parent_layout->setAutoAdd (true);
-	layout->addWidget (_backend_parent);
-}
-
-
-Session::EventTab::EventTab (Session* session, QWidget* parent):
-	QFrame (parent),
-	_session (session)
-{
-	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-
-	_backend_parent = new QWidget (this);
-	_backend_parent->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-
-	QVBoxLayout* layout = new QVBoxLayout (this, 0, 0);
-	QVBoxLayout* backend_parent_layout = new QVBoxLayout (_backend_parent, 0, 0);
-	backend_parent_layout->setAutoAdd (true);
-	layout->addWidget (_backend_parent);
-}
-
-
 Session::Session (QWidget* parent):
 	QWidget (parent),
 	_graph (new Core::Graph()),
@@ -412,12 +380,22 @@ Session::Session (QWidget* parent):
 		_backends->setIconSize (QSize (32, 22));
 
 		_global = new Private::Global (this, _backends);
-		_audio = new AudioTab (this, _backends);
-		_event = new EventTab (this, _backends);
+		_audio_tab = new QWidget (this);
+		_event_tab = new QWidget (this);
 
+		// Configure layouts for audio and event tabs:
+		_audio_tab->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+		QHBoxLayout* audio_tab_layout = new QHBoxLayout (_audio_tab, 0, 0);
+		audio_tab_layout->setAutoAdd (true);
+
+		_event_tab->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+		QHBoxLayout* event_tab_layout = new QHBoxLayout (_event_tab, 0, 0);
+		event_tab_layout->setAutoAdd (true);
+
+		// Add tabs:
 		_backends->addTab (_global, Config::Icons22::configure(), "Global");
-		_backends->addTab (_audio, Config::Icons22::show_audio(), "Audio backend");
-		_backends->addTab (_event, Config::Icons22::show_event(), "Input devices");
+		_backends->addTab (_audio_tab, Config::Icons22::show_audio(), "Audio backend");
+		_backends->addTab (_event_tab, Config::Icons22::show_event(), "Input devices");
 
 		// Start engine and backends before program is loaded:
 		_engine = new Engine (this);
@@ -719,7 +697,7 @@ void
 Session::start_audio_backend()
 {
 	try {
-		_audio_backend = new AudioBackend (this, "Haruhi", 1, _audio->_backend_parent);
+		_audio_backend = new AudioBackend (this, "Haruhi", 1, _audio_tab);
 		_audio_backend->show();
 		_audio_backend->connect();
 		_audio_backend->enable();
@@ -735,7 +713,7 @@ void
 Session::start_event_backend()
 {
 	try {
-		_event_backend = new EventBackend (this, "Haruhi", 2, _event->_backend_parent);
+		_event_backend = new EventBackend (this, "Haruhi", 2, _event_tab);
 		_event_backend->show();
 		_event_backend->connect();
 		_event_backend->enable();

@@ -169,36 +169,10 @@ class Session: public QWidget
 	};
 
   private:
-	class AudioTab: public QFrame
-	{
-		friend class Session;
-
-	  public:
-		AudioTab (Session*, QWidget* parent);
-
-	  private:
-		Session*	_session;
-		QWidget*	_backend_parent;
-	};
-
-	class EventTab: public QFrame
-	{
-		friend class Session;
-
-	  public:
-		EventTab (Session*, QWidget* parent);
-
-	  private:
-		Session*	_session;
-		QWidget*	_backend_parent;
-	};
-
 	// Prevent copying:
 	Session (Session const&);
 	Session& operator= (Session const&);
 
-	friend class AudioTab;
-	friend class EventTab;
 	friend class SessionPrivate::SettingsDialog;
 
   public:
@@ -332,8 +306,8 @@ class Session: public QWidget
 	QTabWidget*				_backends;
 
 	SessionPrivate::Global*	_global;
-	AudioTab*				_audio;
-	EventTab*				_event;
+	QWidget*				_audio_tab;
+	QWidget*				_event_tab;
 
 	// Links to main session components:
 	AudioBackend*			_audio_backend;
