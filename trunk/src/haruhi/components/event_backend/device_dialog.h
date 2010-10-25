@@ -18,7 +18,9 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QDialog>
+#include <QtGui/QWidget>
+#include <QtGui/QPushButton>
+#include <QtGui/QLineEdit>
 
 // Local:
 #include "device_item.h"

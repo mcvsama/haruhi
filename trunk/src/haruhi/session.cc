@@ -380,22 +380,16 @@ Session::Session (QWidget* parent):
 		_backends->setIconSize (QSize (32, 22));
 
 		_global = new Private::Global (this, _backends);
-		_audio_tab = new QWidget (this);
-		_event_tab = new QWidget (this);
 
-		// Configure layouts for audio and event tabs:
-		_audio_tab->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-		QHBoxLayout* audio_tab_layout = new QHBoxLayout (_audio_tab, 0, 0);
-		audio_tab_layout->setAutoAdd (true);
-
-		_event_tab->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-		QHBoxLayout* event_tab_layout = new QHBoxLayout (_event_tab, 0, 0);
-		event_tab_layout->setAutoAdd (true);
+		_audio_tab = create_container (this);
+		_event_tab = create_container (this);
+		_devices_manager_tab = create_container (this);
 
 		// Add tabs:
 		_backends->addTab (_global, Config::Icons22::configure(), "Global");
 		_backends->addTab (_audio_tab, Config::Icons22::show_audio(), "Audio backend");
 		_backends->addTab (_event_tab, Config::Icons22::show_event(), "Input devices");
+		_backends->addTab (_devices_manager_tab, Config::Icons22::show_event(), "Devices manager");
 
 		// Start engine and backends before program is loaded:
 		_engine = new Engine (this);
@@ -730,6 +724,18 @@ Session::closeEvent (QCloseEvent* e)
 {
 	e->accept();
 	Haruhi::haruhi()->ok_to_quit();
+}
+
+
+QWidget*
+Session::create_container (QWidget* parent)
+{
+	// Configure layouts for audio and event tabs:
+	QWidget* w = new QWidget (parent);
+	w->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+	QHBoxLayout* layout = new QHBoxLayout (w, 0, 0);
+	layout->setAutoAdd (true);
+	return w;
 }
 
 } // namespace Haruhi

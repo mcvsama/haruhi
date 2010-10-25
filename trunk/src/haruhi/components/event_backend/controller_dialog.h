@@ -18,10 +18,11 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QDialog>
+#include <QtGui/QWidget>
 #include <QtGui/QCheckBox>
 #include <QtGui/QComboBox>
 #include <QtGui/QSpinBox>
+#include <QtGui/QPushButton>
 
 // Local:
 #include "controller_item.h"
@@ -31,7 +32,7 @@ namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-class ControllerDialog: public QDialog
+class ControllerDialog: public QWidget
 {
 	Q_OBJECT
 

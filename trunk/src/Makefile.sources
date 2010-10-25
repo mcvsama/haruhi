@@ -101,6 +101,14 @@ SRC_MOCHDRS += haruhi/components/event_backend/event_backend.h
 SRC_MOCHDRS += haruhi/components/event_backend/device_dialog.h
 SRC_MOCHDRS += haruhi/components/event_backend/controller_dialog.h
 
+######## /components/event_backend ########
+
+SRC_HEADERS += haruhi/components/devices_manager/devices_manager.h
+
+SRC_SOURCES += haruhi/components/devices_manager/devices_manager.c
+
+SRC_MOCHDRS += haruhi/components/devices_manager/devices_manager.h
+
 ######## /components/ports_connector ########
 
 SRC_HEADERS += haruhi/components/ports_connector/panel.h

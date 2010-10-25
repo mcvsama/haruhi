@@ -34,7 +34,7 @@ namespace Haruhi {
 namespace EventBackendPrivate {
 
 ControllerDialog::ControllerDialog (QWidget* parent):
-	QDialog (parent)
+	QWidget (parent)
 {
 	setCaption ("Controller configuration");
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);

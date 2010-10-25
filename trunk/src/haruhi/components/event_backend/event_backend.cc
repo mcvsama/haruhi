@@ -66,7 +66,7 @@ EventBackend::EventBackend (Session* session, QString const& client_name, int id
 	_create_controller_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QToolTip::add (_create_controller_button, "Add new controller and internal output port");
 
-	_destroy_input_button = new QPushButton (Config::Icons16::remove(), "Destroy", this);
+	_destroy_input_button = new QPushButton (Config::Icons16::remove(), "Destroy device", this);
 	_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QToolTip::add (_destroy_input_button, "Destroy selected device or controller");
 
@@ -84,8 +84,13 @@ EventBackend::EventBackend (Session* session, QString const& client_name, int id
 	_stack->setCurrentWidget (_device_dialog);
 
 	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
-	QHBoxLayout* panels_layout = new QHBoxLayout (layout, Config::spacing);
+
 	QHBoxLayout* input_buttons_layout = new QHBoxLayout (layout, Config::spacing);
+	QHBoxLayout* panels_layout = new QHBoxLayout (layout, Config::spacing);
+
+	QLabel* info = new QLabel ("Devices used in current session. Each device corresponds to external MIDI port.", this);
+	info->setMargin (Config::margin);
+	layout->addWidget (info);
 
 	panels_layout->addWidget (_inputs_list);
 	panels_layout->addWidget (_stack);
@@ -244,6 +249,17 @@ EventBackend::update_widgets()
 	QTreeWidgetItem* sel = _inputs_list->selected_item();
 	_create_controller_button->setEnabled (sel != 0);
 	_destroy_input_button->setEnabled (sel != 0);
+
+	// "Destroy device" or "Destroy controller":
+	if (sel)
+	{
+		if (dynamic_cast<Private::DeviceItem*> (sel))
+			_destroy_input_button->setText ("Destroy device");
+		else if (dynamic_cast<Private::ControllerItem*> (sel))
+			_destroy_input_button->setText ("Destroy controller");
+		else
+			_destroy_input_button->setText ("Destroy");
+	}
 }
 
 

@@ -33,6 +33,7 @@
 #include <haruhi/core/graph.h>
 #include <haruhi/components/audio_backend/audio_backend.h>
 #include <haruhi/components/event_backend/event_backend.h>
+#include <haruhi/components/devices_manager/devices_manager.h>
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/widgets/level_meter.h>
@@ -289,6 +290,10 @@ class Session: public QWidget
 	closeEvent (QCloseEvent* e);
 
   private:
+	QWidget*
+	create_container (QWidget* parent);
+
+  private:
 	QString					_name;
 	QString					_file_name;
 	Parameters				_parameters;
@@ -308,12 +313,14 @@ class Session: public QWidget
 	SessionPrivate::Global*	_global;
 	QWidget*				_audio_tab;
 	QWidget*				_event_tab;
+	QWidget*				_devices_manager_tab;
 
 	// Links to main session components:
 	AudioBackend*			_audio_backend;
 	EventBackend*			_event_backend;
 	Engine*					_engine;
 	UnitLoader*				_unit_loader;
+	DevicesManager*			_devices_manager;
 
 	QDoubleSpinBox*			_tempo_spinbox;
 	QMenu*					_main_menu;

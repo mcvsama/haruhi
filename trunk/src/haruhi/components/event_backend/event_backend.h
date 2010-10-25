@@ -21,7 +21,6 @@
 
 // Qt:
 #include <QtGui/QLayout>
-#include <QtGui/QDialog>
 #include <QtGui/QLineEdit>
 #include <QtGui/QPushButton>
 #include <QtGui/QCheckBox>
