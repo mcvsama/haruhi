@@ -33,27 +33,45 @@ class Engine: public Thread
 	~Engine();
 
 	/**
-	 * Waits for processing round completion.
+	 * Waits for processing round completion,
+	 * which is done at end of each round inside
+	 * run() loop.
 	 */
 	void
 	wait_for_data();
 
 	/**
 	 * Tells engine that it should perform processing round
-	 * on graph.
+	 * on graph, that is it should execute one run() loop
+	 * round.
+	 * Returns immediately.
+	 *
 	 * \threadsafe
 	 */
 	void
 	continue_processing();
 
   protected:
+	/**
+	 * Main engine loop. Loops until _quit is set.
+	 * Syncs audio backend on each round and
+	 * signals wait_for_data() semaphore.
+	 */
 	void
 	run();
 
   private:
+	/**
+	 * Reads events from audio_backend()->master_volume_port()
+	 * and adjusts volume knob.
+	 */
 	void
 	adjust_master_volume();
 
+	/**
+	 * Reads events from audio_backend()->panic_port()
+	 * and perhaps drops all sounds.
+	 */
 	void
 	check_panic_button();
 
