@@ -37,12 +37,12 @@ DevicesManager::DevicesManager (QWidget* parent):
 	info->setMargin (Config::margin);
 	layout->addWidget (info);
 
-	QHBoxLayout* panels_layout = new QHBoxLayout (layout, Config::spacing);
-	QHBoxLayout* input_buttons_layout = new QHBoxLayout (layout, Config::spacing);
+//	QHBoxLayout* panels_layout = new QHBoxLayout (layout, Config::spacing);
+//	QHBoxLayout* input_buttons_layout = new QHBoxLayout (layout, Config::spacing);
 
 //	panels_layout->addWidget (_inputs_list);
 //	panels_layout->addWidget (_stack);
-//
+
 //	input_buttons_layout->addWidget (_create_device_button);
 //	input_buttons_layout->addWidget (_create_controller_button);
 //	input_buttons_layout->addWidget (_destroy_input_button);

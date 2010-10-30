@@ -23,6 +23,7 @@
 
 // Haruhi:
 #include <haruhi/utility/saveable_state.h>
+#include <haruhi/components/devices_manager/ports_list_view.h>
 
 
 namespace Haruhi {
@@ -31,11 +32,9 @@ class EventBackend;
 
 namespace EventBackendPrivate {
 
-class PortItem;
+using DevicesManagerPrivate::DeviceItem;
 
-class PortsListView:
-	public QTreeWidget,
-	public SaveableState
+class PortsListView: public DevicesManagerPrivate::PortsListView
 {
   public:
 	/**
@@ -57,19 +56,19 @@ class PortsListView:
 	};
 
   public:
-	PortsListView (QWidget* parent, EventBackend*, const char* header_title);
+	PortsListView (QWidget* parent, EventBackend*);
 
 	EventBackend*
 	backend() const { return _backend; }
 
-	QTreeWidgetItem*
-	selected_item() const;
-
-	void
-	save_state (QDomElement&) const;
-
-	void
-	load_state (QDomElement const&);
+	/**
+	 * Allocates DeviceItem that will be used
+	 * as child for this PortsList.
+	 *
+	 * \param	parent MUST be instance of EventBackendPrivate::PortsListView.
+	 */
+	DeviceItem*
+	create_device_item (DevicesManagerPrivate::PortsListView* parent, QString const& name);
 
   protected:
 	void

@@ -27,8 +27,8 @@ namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-PortsListView::PortsListView (QWidget* parent, EventBackend* backend, const char* header_title):
-	QTreeWidget (parent),
+PortsListView::PortsListView (QWidget* parent, EventBackend* backend):
+	DevicesManagerPrivate::PortsListView (parent),
 	_backend (backend)
 {
 	header()->setClickable (false);
@@ -42,51 +42,14 @@ PortsListView::PortsListView (QWidget* parent, EventBackend* backend, const char
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	setVerticalScrollMode (QAbstractItemView::ScrollPerPixel);
 	setContextMenuPolicy (Qt::CustomContextMenu);
-	setHeaderLabel (header_title);
+	setHeaderLabel ("Session devices");
 }
 
 
-QTreeWidgetItem*
-PortsListView::selected_item() const
+DeviceItem*
+PortsListView::create_device_item (DevicesManagerPrivate::PortsListView* parent, QString const& name)
 {
-	QList<QTreeWidgetItem*> list = selectedItems();
-	return list.empty() ? 0 : list.front();
-}
-
-
-void
-PortsListView::save_state (QDomElement& element) const
-{
-	for (int i = 0; i < invisibleRootItem()->childCount(); ++i)
-	{
-		DeviceItem* device_item = dynamic_cast<DeviceItem*> (invisibleRootItem()->child (i));
-		QDomElement e;
-
-		if (device_item)
-		{
-			e = element.ownerDocument().createElement ("external-input");
-			device_item->save_state (e);
-			element.appendChild (e);
-		}
-	}
-}
-
-
-void
-PortsListView::load_state (QDomElement const& element)
-{
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
-	{
-		QDomElement e = n.toElement();
-		if (!e.isNull())
-		{
-			if (e.tagName() == "external-input")
-			{
-				DeviceItem* port = new DeviceWithPortItem (_backend, this, e.attribute ("name"));
-				port->load_state (e);
-			}
-		}
-	}
+	return new DeviceWithPortItem (_backend, dynamic_cast<PortsListView*> (parent), name);
 }
 
 

@@ -23,6 +23,7 @@
 // Haruhi:
 #include <haruhi/core/event_port.h>
 #include <haruhi/utility/saveable_state.h>
+#include <haruhi/components/devices_manager/controller_item.h>
 
 // Local:
 #include "event_transport.h"
@@ -34,41 +35,7 @@ namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-class ControllerItem:
-	public Item,
-	public SaveableState
-{
-  public:
-	ControllerItem (DeviceItem* parent, QString const& name);
-
-	virtual ~ControllerItem();
-
-	QString
-	name() const { return QTreeWidgetItem::text (0); }
-
-	void
-	save_state (QDomElement&) const;
-
-	void
-	load_state (QDomElement const&);
-
-  public:
-	bool	_note_filter;
-	int		_note_channel;					// 0 means 'all'
-	bool	_controller_filter;
-	int		_controller_channel;			// 0 means 'all'
-	int		_controller_number;
-	bool	_controller_invert;
-	bool	_pitchbend_filter;
-	int		_pitchbend_channel;				// 0 means 'all'
-	bool	_channel_pressure_filter;
-	int		_channel_pressure_channel;		// 0 means 'all'
-	bool	_channel_pressure_invert;
-	bool	_key_pressure_filter;
-	int		_key_pressure_channel;			// 0 means 'all'
-	bool	_key_pressure_invert;
-};
-
+using DevicesManagerPrivate::ControllerItem;
 
 class ControllerWithPortItem:
 	public ControllerItem,
@@ -81,12 +48,24 @@ class ControllerWithPortItem:
 
 	virtual ~ControllerWithPortItem();
 
+	/**
+	 * Puts controller into learning mode.
+	 * Uses EventBackend learning methods to setup controller
+	 * according to first incoming MIDI event.
+	 */
 	void
 	learn();
 
+	/**
+	 * Resets controller to normal (not learning) mode.
+	 */
 	void
 	stop_learning();
 
+	/**
+	 * Sets Core port's name to what
+	 * was set by user in the UI.
+	 */
 	void
 	update_name();
 

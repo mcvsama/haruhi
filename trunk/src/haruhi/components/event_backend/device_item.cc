@@ -22,72 +22,13 @@
 
 // Local:
 #include "device_item.h"
+#include "controller_item.h"
 #include "event_backend.h"
 
 
 namespace Haruhi {
 
 namespace EventBackendPrivate {
-
-DeviceItem::DeviceItem (PortsListView* parent, QString const& name):
-	Item (parent, name)
-{
-	// Configure item:
-	setIcon (0, Config::Icons16::keyboard());
-	update_minimum_size();
-}
-
-
-DeviceItem::~DeviceItem()
-{
-	// Delete children:
-	while (childCount() > 0)
-	{
-		QTreeWidgetItem* c = child (0);
-		takeChild (0);
-		delete c;
-	}
-	// Remove itself from External ports list view:
-	if (treeWidget())
-		treeWidget()->invisibleRootItem()->takeChild (treeWidget()->invisibleRootItem()->indexOfChild (this));
-}
-
-
-void
-DeviceItem::save_state (QDomElement& element) const
-{
-	element.setAttribute ("name", name());
-	for (int i = 0; i < childCount(); ++i)
-	{
-		ControllerItem* controller_item = dynamic_cast<ControllerItem*> (child (i));
-		if (controller_item)
-		{
-			QDomElement e = element.ownerDocument().createElement ("internal-input");
-			controller_item->save_state (e);
-			element.appendChild (e);
-		}
-	}
-}
-
-
-void
-DeviceItem::load_state (QDomElement const& element)
-{
-	setText (0, element.attribute ("name"));
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
-	{
-		QDomElement e = n.toElement();
-		if (!e.isNull())
-		{
-			if (e.tagName() == "internal-input")
-			{
-				ControllerItem* port = new ControllerItem (this, e.attribute ("name"));
-				port->load_state (e);
-			}
-		}
-	}
-}
-
 
 DeviceWithPortItem::DeviceWithPortItem (EventBackend* p_backend, PortsListView* parent, QString const& name):
 	DeviceItem (parent, name),
@@ -122,6 +63,13 @@ DeviceWithPortItem::~DeviceWithPortItem()
 }
 
 
+ControllerItem*
+DeviceWithPortItem::create_controller_item (DeviceItem* parent, QString const& name)
+{
+	return new ControllerWithPortItem (dynamic_cast<DeviceWithPortItem*> (parent), name);
+}
+
+
 void
 DeviceWithPortItem::update_name()
 {
@@ -136,19 +84,7 @@ DeviceWithPortItem::update_name()
 void
 DeviceWithPortItem::load_state (QDomElement const& element)
 {
-	setText (0, element.attribute ("name"));
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
-	{
-		QDomElement e = n.toElement();
-		if (!e.isNull())
-		{
-			if (e.tagName() == "internal-input")
-			{
-				ControllerItem* port = new ControllerWithPortItem (this, e.attribute ("name"));
-				port->load_state (e);
-			}
-		}
-	}
+	DeviceItem::load_state (element);
 	update_name();
 }
 

@@ -20,6 +20,7 @@
 // Haruhi:
 #include <haruhi/core/port_group.h>
 #include <haruhi/utility/saveable_state.h>
+#include <haruhi/components/devices_manager/device_item.h>
 
 // Local:
 #include "event_transport.h"
@@ -31,27 +32,8 @@ namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-class DeviceItem:
-	public Item,
-	public SaveableState
-{
-	friend class PortsListView;
-
-  public:
-	DeviceItem (PortsListView* parent, QString const& name);
-
-	virtual ~DeviceItem();
-
-	QString
-	name() const { return QTreeWidgetItem::text (0); }
-
-	void
-	save_state (QDomElement&) const;
-
-	void
-	load_state (QDomElement const&);
-};
-
+using DevicesManagerPrivate::DeviceItem;
+using DevicesManagerPrivate::ControllerItem;
 
 class ControllerWithPortItem;
 
@@ -78,8 +60,21 @@ class DeviceWithPortItem:
 	Core::PortGroup*
 	port_group() const { return _port_group; }
 
+	/**
+	 * Sets externally visible transport port name to what
+	 * was set by user in the UI.
+	 */
 	void
 	update_name();
+
+	/**
+	 * Allocates ControllerWithPortItem that will be used
+	 * as child for this DeviceWithPortItem.
+	 *
+	 * \param	parent MUST be instance of DeviceWithPortItem.
+	 */
+	ControllerItem*
+	create_controller_item (DeviceItem* parent, QString const& name);
 
 	void
 	load_state (QDomElement const&);

@@ -19,6 +19,7 @@
 
 // Qt:
 #include <QtGui/QWidget>
+#include <QtGui/QStackedWidget>
 
 
 namespace Haruhi {
@@ -29,6 +30,12 @@ class DevicesManager: public QWidget
 
   public:
 	DevicesManager (QWidget* parent);
+
+  private:
+	QStackedWidget*								_stack;
+//	DevicesManagerPrivate::DeviceDialog*		_device_dialog;
+//	DevicesManagerPrivate::ControllerDialog*	_controller_dialog;
+//	DevicesManagerPrivate::PortsListView*		_ports_list;
 };
 
 } // namespace Haruhi

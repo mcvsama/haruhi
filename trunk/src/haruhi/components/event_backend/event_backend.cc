@@ -53,7 +53,7 @@ EventBackend::EventBackend (Session* session, QString const& client_name, int id
 
 	// Ports list:
 
-	_inputs_list = new Private::PortsListView (this, this, "Session devices");
+	_inputs_list = new Private::PortsListView (this, this);
 
 	QObject::connect (_inputs_list, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_inputs (const QPoint&)));
 	QObject::connect (_inputs_list, SIGNAL (itemSelectionChanged()), this, SLOT (selection_changed()));

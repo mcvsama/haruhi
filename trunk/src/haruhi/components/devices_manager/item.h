@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__PORT_ITEM_H__INCLUDED
-#define HARUHI__COMPONENTS__EVENT_BACKEND__PORT_ITEM_H__INCLUDED
+#ifndef HARUHI__COMPONENTS__DEVICES_MANAGER__PORT_ITEM_H__INCLUDED
+#define HARUHI__COMPONENTS__DEVICES_MANAGER__PORT_ITEM_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -30,44 +30,21 @@
 
 namespace Haruhi {
 
-namespace EventBackendPrivate {
+namespace DevicesManagerPrivate {
 
-class PortItem
+class Item: public QTreeWidgetItem
 {
   public:
-	PortItem (EventBackend* backend);
+	template<class Parent>
+		Item (Parent* parent, QString const& name):
+			QTreeWidgetItem (parent, QStringList (name))
+		{ }
 
-	/**
-	 * Updates name of backend ports basing on GUI port name.
-	 */
-	virtual void
-	update_name() = 0;
-
-	/**
-	 * Tells whether port has been fully constructed and
-	 * may be normally used by backend.
-	 */
-	bool
-	ready() const { return _ready; }
-
-	EventBackend*
-	backend() { return _backend; }
-
-  protected:
-	void
-	set_ready (bool r) { atomic (_ready) = r; }
-
-  private:
 	void
 	update_minimum_size();
-
-  private:
-	EventBackend*	_backend;
-	// Set when port is fully constructed:
-	bool			_ready;
 };
 
-} // namespace EventBackendPrivate
+} // namespace DevicesManagerPrivate
 
 } // namespace Haruhi
 

@@ -20,21 +20,25 @@
 #include <QtGui/QTreeWidgetItem>
 
 // Local:
-#include "port_item.h"
-#include "event_backend.h"
+#include "item.h"
 
 
 namespace Haruhi {
 
-namespace EventBackendPrivate {
+namespace DevicesManagerPrivate {
 
-PortItem::PortItem (EventBackend* backend):
-	_backend (backend),
-	_ready (false)
+void
+Item::update_minimum_size()
 {
+	QSize s = sizeHint (0);
+	if (s.height() < 18)
+	{
+		s.setHeight (18);
+		setSizeHint (0, s);
+	}
 }
 
-} // namespace EventBackendPrivate
+} // namespace DevicesManagerPrivate
 
 } // namespace Haruhi
 
