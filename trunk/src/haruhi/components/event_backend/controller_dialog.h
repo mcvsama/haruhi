@@ -25,7 +25,7 @@
 #include <QtGui/QPushButton>
 
 // Local:
-#include "controller_item.h"
+#include "controller_with_port_item.h"
 
 
 namespace Haruhi {

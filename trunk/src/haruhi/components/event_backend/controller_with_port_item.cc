@@ -21,7 +21,7 @@
 #include <haruhi/config.h>
 
 // Local:
-#include "controller_item.h"
+#include "controller_with_port_item.h"
 #include "event_backend.h"
 
 

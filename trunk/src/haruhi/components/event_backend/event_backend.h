@@ -43,8 +43,8 @@
 #include "event_transport.h"
 #include "ports_list_view.h"
 #include "port_item.h"
-#include "device_item.h"
-#include "controller_item.h"
+#include "device_with_port_item.h"
+#include "controller_with_port_item.h"
 #include "device_dialog.h"
 #include "controller_dialog.h"
 

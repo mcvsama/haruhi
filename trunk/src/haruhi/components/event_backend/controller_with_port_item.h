@@ -28,7 +28,7 @@
 // Local:
 #include "event_transport.h"
 #include "port_item.h"
-#include "device_item.h"
+#include "device_with_port_item.h"
 
 
 namespace Haruhi {

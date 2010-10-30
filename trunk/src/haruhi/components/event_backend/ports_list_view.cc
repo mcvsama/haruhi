@@ -20,7 +20,7 @@
 
 // Local:
 #include "ports_list_view.h"
-#include "device_item.h"
+#include "device_with_port_item.h"
 
 
 namespace Haruhi {

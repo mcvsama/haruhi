@@ -23,7 +23,7 @@
 #include <QtGui/QLineEdit>
 
 // Local:
-#include "device_item.h"
+#include "device_with_port_item.h"
 
 
 namespace Haruhi {

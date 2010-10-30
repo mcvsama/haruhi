@@ -30,7 +30,7 @@
 #include "transports/alsa_event_transport.h"
 #include "event_backend.h"
 #include "device_dialog.h"
-#include "controller_item.h"
+#include "controller_with_port_item.h"
 #include "controller_dialog.h"
 
 
