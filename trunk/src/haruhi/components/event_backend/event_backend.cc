@@ -38,11 +38,10 @@ namespace Haruhi {
 
 namespace Private = EventBackendPrivate;
 
-
 EventBackend::EventBackend (Session* session, QString const& client_name, int id, QWidget* parent):
 	Unit (0, session, "urn://haruhi.mulabs.org/backend/event-backend/1", "• Event", id, parent),
 	_client_name (client_name),
-	_inputs_list (0),
+	_tree (0),
 	_templates_menu (0)
 {
 	_transport = new ALSAEventTransport (this);
@@ -53,10 +52,10 @@ EventBackend::EventBackend (Session* session, QString const& client_name, int id
 
 	// Ports list:
 
-	_inputs_list = new Private::PortsListView (this, this);
+	_tree = new Private::PortsListView (this, this);
 
-	QObject::connect (_inputs_list, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_inputs (const QPoint&)));
-	QObject::connect (_inputs_list, SIGNAL (itemSelectionChanged()), this, SLOT (selection_changed()));
+	QObject::connect (_tree, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_inputs (const QPoint&)));
+	QObject::connect (_tree, SIGNAL (itemSelectionChanged()), this, SLOT (selection_changed()));
 
 	_create_device_button = new QPushButton (Config::Icons16::add(), "Add device", this);
 	_create_device_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -84,7 +83,6 @@ EventBackend::EventBackend (Session* session, QString const& client_name, int id
 	_stack->setCurrentWidget (_device_dialog);
 
 	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
-
 	QHBoxLayout* input_buttons_layout = new QHBoxLayout (layout, Config::spacing);
 	QHBoxLayout* panels_layout = new QHBoxLayout (layout, Config::spacing);
 
@@ -92,7 +90,7 @@ EventBackend::EventBackend (Session* session, QString const& client_name, int id
 	info->setMargin (Config::margin);
 	layout->addWidget (info);
 
-	panels_layout->addWidget (_inputs_list);
+	panels_layout->addWidget (_tree);
 	panels_layout->addWidget (_stack);
 
 	input_buttons_layout->addWidget (_create_device_button);
@@ -102,7 +100,6 @@ EventBackend::EventBackend (Session* session, QString const& client_name, int id
 
 	selection_changed();
 	register_unit();
-
 	update_widgets();
 }
 
@@ -111,7 +108,7 @@ EventBackend::~EventBackend()
 {
 	disable();
 
-	_inputs_list->clear();
+	_tree->clear();
 
 	if (connected())
 		disconnect();
@@ -119,7 +116,7 @@ EventBackend::~EventBackend()
 
 	delete _templates_menu;
 
-	_inputs_list->disconnect();
+	_tree->disconnect();
 	_create_device_button->disconnect();
 	_create_controller_button->disconnect();
 	_destroy_input_button->disconnect();
@@ -161,7 +158,7 @@ void
 EventBackend::save_state (QDomElement& element) const
 {
 	QDomElement inputs = element.ownerDocument().createElement ("inputs");
-	_inputs_list->save_state (inputs);
+	_tree->save_state (inputs);
 	element.appendChild (inputs);
 }
 
@@ -178,7 +175,7 @@ EventBackend::load_state (QDomElement const& element)
 		if (!e.isNull())
 		{
 			if (e.tagName() == "inputs")
-				_inputs_list->load_state (e);
+				_tree->load_state (e);
 		}
 	}
 	if (e)
@@ -246,7 +243,7 @@ EventBackend::stop_learning (Learnable* learnable, EventTypes event_types)
 void
 EventBackend::update_widgets()
 {
-	QTreeWidgetItem* sel = _inputs_list->selected_item();
+	QTreeWidgetItem* sel = _tree->selected_item();
 	_create_controller_button->setEnabled (sel != 0);
 	_destroy_input_button->setEnabled (sel != 0);
 
@@ -275,8 +272,8 @@ void
 EventBackend::create_device()
 {
 	QString name = "<unnamed device>";
-	QTreeWidgetItem* item = new Private::DeviceWithPortItem (this, _inputs_list, name);
-	_inputs_list->setCurrentItem (item);
+	QTreeWidgetItem* item = new Private::DeviceWithPortItem (this, _tree, name);
+	_tree->setCurrentItem (item);
 }
 
 
@@ -284,7 +281,7 @@ void
 EventBackend::create_controller()
 {
 	QString name = "<unnamed controller>";
-	QTreeWidgetItem* sel = _inputs_list->selected_item();
+	QTreeWidgetItem* sel = _tree->selected_item();
 	if (sel != 0)
 	{
 		Private::DeviceWithPortItem* parent = dynamic_cast<Private::DeviceWithPortItem*> (sel);
@@ -293,7 +290,7 @@ EventBackend::create_controller()
 		if (parent != 0)
 		{
 			QTreeWidgetItem* item = new Private::ControllerWithPortItem (parent, name);
-			_inputs_list->setCurrentItem (item);
+			_tree->setCurrentItem (item);
 			parent->setExpanded (true);
 		}
 	}
@@ -304,7 +301,7 @@ void
 EventBackend::context_menu_for_inputs (QPoint const& pos)
 {
 	Q3PopupMenu* menu = new Q3PopupMenu (this);
-	QTreeWidgetItem* item = _inputs_list->itemAt (pos);
+	QTreeWidgetItem* item = _tree->itemAt (pos);
 	int i;
 
 	if (item != 0)
@@ -344,14 +341,14 @@ EventBackend::context_menu_for_inputs (QPoint const& pos)
 void
 EventBackend::configure_selected_input()
 {
-	if (_inputs_list->selected_item())
+	if (_tree->selected_item())
 	{
-		Private::DeviceWithPortItem* device_item = dynamic_cast<Private::DeviceWithPortItem*> (_inputs_list->selected_item());
+		Private::DeviceWithPortItem* device_item = dynamic_cast<Private::DeviceWithPortItem*> (_tree->selected_item());
 		if (device_item)
 			configure_item (device_item);
 		else
 		{
-			Private::ControllerWithPortItem* controller_item = dynamic_cast<Private::ControllerWithPortItem*> (_inputs_list->selected_item());
+			Private::ControllerWithPortItem* controller_item = dynamic_cast<Private::ControllerWithPortItem*> (_tree->selected_item());
 			if (controller_item)
 				configure_item (controller_item);
 		}
@@ -367,9 +364,9 @@ EventBackend::configure_selected_input()
 void
 EventBackend::learn_from_midi()
 {
-	if (_inputs_list->selected_item())
+	if (_tree->selected_item())
 	{
-		Private::ControllerWithPortItem* item = dynamic_cast<Private::ControllerWithPortItem*> (_inputs_list->selected_item());
+		Private::ControllerWithPortItem* item = dynamic_cast<Private::ControllerWithPortItem*> (_tree->selected_item());
 		if (item)
 			item->learn();
 	}
@@ -379,9 +376,9 @@ EventBackend::learn_from_midi()
 void
 EventBackend::destroy_selected_input()
 {
-	if (_inputs_list->selected_item())
+	if (_tree->selected_item())
 	{
-		QTreeWidgetItem* item = _inputs_list->selected_item();
+		QTreeWidgetItem* item = _tree->selected_item();
 		if (item->parent())
 			item->parent()->takeChild (item->parent()->indexOfChild (item));
 		delete item;
@@ -392,7 +389,7 @@ EventBackend::destroy_selected_input()
 void
 EventBackend::save_selected_input()
 {
-	QTreeWidgetItem* item = _inputs_list->selected_item();
+	QTreeWidgetItem* item = _tree->selected_item();
 	if (item)
 	{
 		Private::DeviceWithPortItem* input_item = dynamic_cast<Private::DeviceWithPortItem*> (item);
@@ -455,7 +452,7 @@ EventBackend::insert_template (int menu_item_id)
 	Templates::iterator t = _templates.find (menu_item_id);
 	if (t != _templates.end())
 	{
-		Private::DeviceWithPortItem* item = new Private::DeviceWithPortItem (this, _inputs_list, t->second.name);
+		Private::DeviceWithPortItem* item = new Private::DeviceWithPortItem (this, _tree, t->second.name);
 		item->load_state (t->second.element);
 		item->treeWidget()->clearSelection();
 		item->treeWidget()->setCurrentItem (item);

@@ -20,6 +20,10 @@
 // Qt:
 #include <QtGui/QWidget>
 #include <QtGui/QStackedWidget>
+#include <QtGui/QPushButton>
+
+// Local:
+#include "ports_list_view.h"
 
 
 namespace Haruhi {
@@ -35,7 +39,12 @@ class DevicesManager: public QWidget
 	QStackedWidget*								_stack;
 //	DevicesManagerPrivate::DeviceDialog*		_device_dialog;
 //	DevicesManagerPrivate::ControllerDialog*	_controller_dialog;
-//	DevicesManagerPrivate::PortsListView*		_ports_list;
+
+	// Widgets:
+	QPushButton*								_create_device_button;
+	QPushButton*								_create_controller_button;
+	QPushButton*								_destroy_input_button;
+	DevicesManagerPrivate::PortsListView*		_tree;
 };
 
 } // namespace Haruhi

@@ -206,14 +206,14 @@ class EventBackend:
 	InputsMap								_inputs;
 	Learnables								_learnables;
 
-	// Views:
+	// Widgets:
 	QPushButton*							_create_device_button;
 	QPushButton*							_create_controller_button;
 	QPushButton*							_destroy_input_button;
 	QStackedWidget*							_stack;
 	EventBackendPrivate::DeviceDialog*		_device_dialog;
 	EventBackendPrivate::ControllerDialog*	_controller_dialog;
-	EventBackendPrivate::PortsListView*		_inputs_list;
+	EventBackendPrivate::PortsListView*		_tree;
 
 	// External (hardware) port templates menu and helper storage:
 	Templates								_templates;

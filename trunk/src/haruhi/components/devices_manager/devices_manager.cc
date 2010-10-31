@@ -18,6 +18,7 @@
 #include <QtGui/QWidget>
 #include <QtGui/QLayout>
 #include <QtGui/QLabel>
+#include <QtGui/QToolTip>
 
 // Haruhi:
 #include <haruhi/config.h>
@@ -28,30 +29,59 @@
 
 namespace Haruhi {
 
+namespace Private = DevicesManagerPrivate;
+
 DevicesManager::DevicesManager (QWidget* parent):
 	QWidget (parent)
 {
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::dialog_margin, Config::spacing);
+	_tree = new Private::PortsListView (this);
+
+	QObject::connect (_tree, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_inputs (const QPoint&)));
+	QObject::connect (_tree, SIGNAL (itemSelectionChanged()), this, SLOT (selection_changed()));
+
+	_create_device_button = new QPushButton (Config::Icons16::add(), "Add device", this);
+	_create_device_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	QToolTip::add (_create_device_button, "Add new device and external input port");
+
+	_create_controller_button = new QPushButton (Config::Icons16::add(), "Add controller", this);
+	_create_controller_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	QToolTip::add (_create_controller_button, "Add new controller and internal output port");
+
+	_destroy_input_button = new QPushButton (Config::Icons16::remove(), "Destroy device", this);
+	_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	QToolTip::add (_destroy_input_button, "Destroy selected device or controller");
+
+	QObject::connect (_create_device_button, SIGNAL (clicked()), this, SLOT (create_device()));
+	QObject::connect (_create_controller_button, SIGNAL (clicked()), this, SLOT (create_controller()));
+	QObject::connect (_destroy_input_button, SIGNAL (clicked()), this, SLOT (destroy_selected_input()));
+
+	// Right panel (stack):
+
+//	_stack = new QStackedWidget (this);
+//	_device_dialog = new Private::DeviceDialog (this);
+//	_controller_dialog = new Private::ControllerDialog (this);
+//	_stack->addWidget (_device_dialog);
+//	_stack->addWidget (_controller_dialog);
+//	_stack->setCurrentWidget (_device_dialog);
+
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
+	QHBoxLayout* input_buttons_layout = new QHBoxLayout (layout, Config::spacing);
+	QHBoxLayout* panels_layout = new QHBoxLayout (layout, Config::spacing);
 
 	QLabel* info = new QLabel ("Device templates.", this);
 	info->setMargin (Config::margin);
 	layout->addWidget (info);
 
-//	QHBoxLayout* panels_layout = new QHBoxLayout (layout, Config::spacing);
-//	QHBoxLayout* input_buttons_layout = new QHBoxLayout (layout, Config::spacing);
+	panels_layout->addWidget (_tree);
+	panels_layout->addWidget (_stack);
 
-//	panels_layout->addWidget (_inputs_list);
-//	panels_layout->addWidget (_stack);
+	input_buttons_layout->addWidget (_create_device_button);
+	input_buttons_layout->addWidget (_create_controller_button);
+	input_buttons_layout->addWidget (_destroy_input_button);
+	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 
-//	input_buttons_layout->addWidget (_create_device_button);
-//	input_buttons_layout->addWidget (_create_controller_button);
-//	input_buttons_layout->addWidget (_destroy_input_button);
-//	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
-//
-//	selection_changed();
-//	register_unit();
-//
-//	update_widgets();
+	//selection_changed();
+	//update_widgets();
 }
 
 } // namespace Haruhi
