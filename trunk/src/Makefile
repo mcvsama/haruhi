@@ -55,6 +55,18 @@ COMMIT_REAL		= $(shell git rev-parse HEAD 2>/dev/null)
 BRANCH			= $(shell cat .branch 2>/dev/null)
 BRANCH_REAL		= $(shell git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
 
+ifeq ($(COMMIT),$(COMMIT_REAL))
+COMMIT_FILE		=
+else
+COMMIT_FILE		= .commit
+endif
+
+ifeq ($(BRANCH),$(BRANCH_REAL))
+BRANCH_FILE		=
+else
+BRANCH_FILE		= .branch
+endif
+
 .PHONY: .commit .branch
 
 .commit:
@@ -69,7 +81,7 @@ BRANCH_REAL		= $(shell git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 
 		echo "$(BRANCH_REAL)" >$@; \
 	 fi
 
-$(VERSION_FILE): .commit .branch
+$(VERSION_FILE): $(COMMIT_FILE) $(BRANCH_FILE)
 	@echo "// Do not edit - automatically generated." >$@
 	@echo "namespace Haruhi { namespace Version {" >>$@
 	@echo "	const char* commit = \"$(COMMIT_REAL)\";" >>$@
