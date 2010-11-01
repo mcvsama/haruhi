@@ -272,7 +272,7 @@ void
 EventBackend::create_device()
 {
 	QString name = "<unnamed device>";
-	QTreeWidgetItem* item = new Private::DeviceWithPortItem (this, _tree, name);
+	QTreeWidgetItem* item = _tree->create_device_item (name);
 	_tree->setCurrentItem (item);
 }
 
@@ -289,7 +289,7 @@ EventBackend::create_controller()
 			parent = dynamic_cast<Private::DeviceWithPortItem*> (sel->parent());
 		if (parent != 0)
 		{
-			QTreeWidgetItem* item = new Private::ControllerWithPortItem (parent, name);
+			QTreeWidgetItem* item = parent->create_controller_item (name);
 			_tree->setCurrentItem (item);
 			parent->setExpanded (true);
 		}
@@ -452,7 +452,7 @@ EventBackend::insert_template (int menu_item_id)
 	Templates::iterator t = _templates.find (menu_item_id);
 	if (t != _templates.end())
 	{
-		Private::DeviceWithPortItem* item = new Private::DeviceWithPortItem (this, _tree, t->second.name);
+		Private::DeviceItem* item = _tree->create_device_item (t->second.name);
 		item->load_state (t->second.element);
 		item->treeWidget()->clearSelection();
 		item->treeWidget()->setCurrentItem (item);

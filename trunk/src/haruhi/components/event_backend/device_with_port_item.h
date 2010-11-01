@@ -70,11 +70,9 @@ class DeviceWithPortItem:
 	/**
 	 * Allocates ControllerWithPortItem that will be used
 	 * as child for this DeviceWithPortItem.
-	 *
-	 * \param	parent MUST be instance of DeviceWithPortItem.
 	 */
 	ControllerItem*
-	create_controller_item (DeviceItem* parent, QString const& name);
+	create_controller_item (QString const& name);
 
 	void
 	load_state (QDomElement const&);

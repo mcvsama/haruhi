@@ -47,9 +47,9 @@ PortsListView::PortsListView (QWidget* parent, EventBackend* backend):
 
 
 DeviceItem*
-PortsListView::create_device_item (DevicesManagerPrivate::PortsListView* parent, QString const& name)
+PortsListView::create_device_item (QString const& name)
 {
-	return new DeviceWithPortItem (_backend, dynamic_cast<PortsListView*> (parent), name);
+	return new DeviceWithPortItem (_backend, this, name);
 }
 
 

@@ -54,9 +54,9 @@ DeviceItem::~DeviceItem()
 
 
 ControllerItem*
-DeviceItem::create_controller_item (DeviceItem* parent, QString const& name)
+DeviceItem::create_controller_item (QString const& name)
 {
-	return new ControllerItem (parent, name);
+	return new ControllerItem (this, name);
 }
 
 
@@ -88,7 +88,7 @@ DeviceItem::load_state (QDomElement const& element)
 		{
 			if (e.tagName() == "controller")
 			{
-				ControllerItem* port = create_controller_item (this, e.attribute ("name"));
+				ControllerItem* port = create_controller_item (e.attribute ("name"));
 				port->load_state (e);
 			}
 		}

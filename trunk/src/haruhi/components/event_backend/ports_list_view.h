@@ -64,11 +64,9 @@ class PortsListView: public DevicesManagerPrivate::PortsListView
 	/**
 	 * Allocates DeviceItem that will be used
 	 * as child for this PortsList.
-	 *
-	 * \param	parent MUST be instance of EventBackendPrivate::PortsListView.
 	 */
 	DeviceItem*
-	create_device_item (DevicesManagerPrivate::PortsListView* parent, QString const& name);
+	create_device_item (QString const& name);
 
   protected:
 	void

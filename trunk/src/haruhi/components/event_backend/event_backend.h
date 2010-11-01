@@ -160,9 +160,18 @@ class EventBackend:
 	void
 	selection_changed();
 
+	/**
+	 * Creates new unnamed/unconfigured device
+	 * and inserts it into the tree.
+	 */
 	void
 	create_device();
 
+	/**
+	 * Creates new unnamed/unconfigured controller
+	 * and inserts it into the subtree of currently selected device.
+	 * If no device is selected, it does nothing.
+	 */
 	void
 	create_controller();
 

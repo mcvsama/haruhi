@@ -44,7 +44,7 @@ class PortsListView:
 	 * as child for this PortsList.
 	 */
 	virtual DeviceItem*
-	create_device_item (PortsListView* parent, QString const& name);
+	create_device_item (QString const& name);
 
 	QTreeWidgetItem*
 	selected_item() const;

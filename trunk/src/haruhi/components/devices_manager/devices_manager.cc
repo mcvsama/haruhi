@@ -25,6 +25,8 @@
 
 // Local:
 #include "devices_manager.h"
+#include "device_item.h"
+#include "controller_item.h"
 
 
 namespace Haruhi {
@@ -57,7 +59,7 @@ DevicesManager::DevicesManager (QWidget* parent):
 
 	// Right panel (stack):
 
-//	_stack = new QStackedWidget (this);
+	_stack = new QStackedWidget (this);
 //	_device_dialog = new Private::DeviceDialog (this);
 //	_controller_dialog = new Private::ControllerDialog (this);
 //	_stack->addWidget (_device_dialog);
@@ -83,6 +85,36 @@ DevicesManager::DevicesManager (QWidget* parent):
 	//selection_changed();
 	//update_widgets();
 }
+
+
+void
+DevicesManager::create_device()
+{
+	QString name = "<unnamed device>";
+	QTreeWidgetItem* item = _tree->create_device_item (name);
+	_tree->setCurrentItem (item);
+}
+
+
+void
+DevicesManager::create_controller()
+{
+	QString name = "<unnamed controller>";
+	QTreeWidgetItem* sel = _tree->selected_item();
+	if (sel != 0)
+	{
+		Private::DeviceItem* parent = dynamic_cast<Private::DeviceItem*> (sel);
+		if (parent == 0)
+			parent = dynamic_cast<Private::DeviceItem*> (sel->parent());
+		if (parent != 0)
+		{
+			QTreeWidgetItem* item = parent->create_controller_item (name);
+			_tree->setCurrentItem (item);
+			parent->setExpanded (true);
+		}
+	}
+}
+
 
 } // namespace Haruhi
 

@@ -54,7 +54,7 @@ class DeviceItem:
 	 * as child for this DeviceItem.
 	 */
 	virtual ControllerItem*
-	create_controller_item (DeviceItem* parent, QString const& name);
+	create_controller_item (QString const& name);
 
 	void
 	save_state (QDomElement&) const;

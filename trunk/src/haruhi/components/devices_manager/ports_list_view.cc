@@ -54,9 +54,9 @@ PortsListView::selected_item() const
 
 
 DeviceItem*
-PortsListView::create_device_item (PortsListView* parent, QString const& name)
+PortsListView::create_device_item (QString const& name)
 {
-	return new DeviceItem (parent, name);
+	return new DeviceItem (this, name);
 }
 
 
@@ -88,7 +88,7 @@ PortsListView::load_state (QDomElement const& element)
 		{
 			if (e.tagName() == "device")
 			{
-				DeviceItem* port = create_device_item (this, e.attribute ("name"));
+				DeviceItem* port = create_device_item (e.attribute ("name"));
 				port->load_state (e);
 			}
 		}

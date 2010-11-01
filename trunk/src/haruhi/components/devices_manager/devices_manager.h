@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__DEVICES_MANAGER__DEVICES_MANAGER_H__INCLUDED
-#define HARUHI__COMPONENTS__EVENT_BACKEND__DEVICES_MANAGER__DEVICES_MANAGER_H__INCLUDED
+#ifndef HARUHI__COMPONENTS__DEVICES_MANAGER__DEVICES_MANAGER_H__INCLUDED
+#define HARUHI__COMPONENTS__DEVICES_MANAGER__DEVICES_MANAGER_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -35,16 +35,31 @@ class DevicesManager: public QWidget
   public:
 	DevicesManager (QWidget* parent);
 
-  private:
-	QStackedWidget*								_stack;
-//	DevicesManagerPrivate::DeviceDialog*		_device_dialog;
-//	DevicesManagerPrivate::ControllerDialog*	_controller_dialog;
+  public slots:
+	/**
+	 * Creates new unnamed/unconfigured device
+	 * and inserts it into the tree.
+	 */
+	void
+	create_device();
 
+	/**
+	 * Creates new unnamed/unconfigured controller
+	 * and inserts it into the subtree of currently selected device.
+	 * If no device is selected, it does nothing.
+	 */
+	void
+	create_controller();
+
+  private:
 	// Widgets:
+	QStackedWidget*								_stack;
 	QPushButton*								_create_device_button;
 	QPushButton*								_create_controller_button;
 	QPushButton*								_destroy_input_button;
 	DevicesManagerPrivate::PortsListView*		_tree;
+//	DevicesManagerPrivate::DeviceDialog*		_device_dialog;
+//	DevicesManagerPrivate::ControllerDialog*	_controller_dialog;
 };
 
 } // namespace Haruhi

@@ -21,7 +21,6 @@
 #include <alsa/asoundlib.h>
 
 // Haruhi:
-#include <haruhi/core/event_port.h>
 #include <haruhi/utility/saveable_state.h>
 
 // Local:

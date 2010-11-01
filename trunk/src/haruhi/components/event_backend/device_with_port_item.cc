@@ -64,9 +64,9 @@ DeviceWithPortItem::~DeviceWithPortItem()
 
 
 ControllerItem*
-DeviceWithPortItem::create_controller_item (DeviceItem* parent, QString const& name)
+DeviceWithPortItem::create_controller_item (QString const& name)
 {
-	return new ControllerWithPortItem (dynamic_cast<DeviceWithPortItem*> (parent), name);
+	return new ControllerWithPortItem (this, name);
 }
 
 
