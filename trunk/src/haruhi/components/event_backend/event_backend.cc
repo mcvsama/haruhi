@@ -21,6 +21,8 @@
 #include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
+#include <haruhi/components/devices_manager/device_dialog.h>
+#include <haruhi/components/devices_manager/controller_dialog.h>
 #include <haruhi/core/event_buffer.h>
 #include <haruhi/config.h>
 #include <haruhi/haruhi.h>
@@ -29,9 +31,9 @@
 // Local:
 #include "transports/alsa_event_transport.h"
 #include "event_backend.h"
-#include "device_dialog.h"
+#include "device_with_port_dialog.h"
+#include "controller_with_port_dialog.h"
 #include "controller_with_port_item.h"
-#include "controller_dialog.h"
 
 
 namespace Haruhi {
@@ -76,8 +78,8 @@ EventBackend::EventBackend (Session* session, QString const& client_name, int id
 	// Right panel (stack):
 
 	_stack = new QStackedWidget (this);
-	_device_dialog = new Private::DeviceDialog (this);
-	_controller_dialog = new Private::ControllerDialog (this);
+	_device_dialog = new Private::DeviceWithPortDialog (this);
+	_controller_dialog = new Private::ControllerWithPortDialog (this);
 	_stack->addWidget (_device_dialog);
 	_stack->addWidget (_controller_dialog);
 	_stack->setCurrentWidget (_device_dialog);

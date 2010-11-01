@@ -84,38 +84,42 @@ SRC_HEADERS += haruhi/components/event_backend/event_backend.h
 SRC_HEADERS += haruhi/components/event_backend/event_transport.h
 SRC_HEADERS += haruhi/components/event_backend/ports_list_view.h
 SRC_HEADERS += haruhi/components/event_backend/port_item.h
+SRC_HEADERS += haruhi/components/event_backend/device_with_port_dialog.h
 SRC_HEADERS += haruhi/components/event_backend/device_with_port_item.h
-SRC_HEADERS += haruhi/components/event_backend/device_dialog.h
+SRC_HEADERS += haruhi/components/event_backend/controller_with_port_dialog.h
 SRC_HEADERS += haruhi/components/event_backend/controller_with_port_item.h
-SRC_HEADERS += haruhi/components/event_backend/controller_dialog.h
 
 SRC_SOURCES += haruhi/components/event_backend/event_backend.cc
 SRC_SOURCES += haruhi/components/event_backend/ports_list_view.cc
 SRC_SOURCES += haruhi/components/event_backend/port_item.cc
+SRC_SOURCES += haruhi/components/event_backend/device_with_port_dialog.cc
 SRC_SOURCES += haruhi/components/event_backend/device_with_port_item.cc
-SRC_SOURCES += haruhi/components/event_backend/device_dialog.cc
+SRC_SOURCES += haruhi/components/event_backend/controller_with_port_dialog.cc
 SRC_SOURCES += haruhi/components/event_backend/controller_with_port_item.cc
-SRC_SOURCES += haruhi/components/event_backend/controller_dialog.cc
 
 SRC_MOCHDRS += haruhi/components/event_backend/event_backend.h
-SRC_MOCHDRS += haruhi/components/event_backend/device_dialog.h
-SRC_MOCHDRS += haruhi/components/event_backend/controller_dialog.h
 
 ######## /components/devices_manager ########
 
 SRC_HEADERS += haruhi/components/devices_manager/devices_manager.h
 SRC_HEADERS += haruhi/components/devices_manager/item.h
+SRC_HEADERS += haruhi/components/devices_manager/controller_dialog.h
 SRC_HEADERS += haruhi/components/devices_manager/controller_item.h
+SRC_HEADERS += haruhi/components/devices_manager/device_dialog.h
 SRC_HEADERS += haruhi/components/devices_manager/device_item.h
 SRC_HEADERS += haruhi/components/devices_manager/ports_list_view.h
 
 SRC_SOURCES += haruhi/components/devices_manager/devices_manager.cc
 SRC_SOURCES += haruhi/components/devices_manager/item.cc
+SRC_SOURCES += haruhi/components/devices_manager/controller_dialog.cc
 SRC_SOURCES += haruhi/components/devices_manager/controller_item.cc
+SRC_SOURCES += haruhi/components/devices_manager/device_dialog.cc
 SRC_SOURCES += haruhi/components/devices_manager/device_item.cc
 SRC_SOURCES += haruhi/components/devices_manager/ports_list_view.cc
 
 SRC_MOCHDRS += haruhi/components/devices_manager/devices_manager.h
+SRC_MOCHDRS += haruhi/components/devices_manager/device_dialog.h
+SRC_MOCHDRS += haruhi/components/devices_manager/controller_dialog.h
 
 ######## /components/ports_connector ########
 

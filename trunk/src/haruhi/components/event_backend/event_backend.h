@@ -31,6 +31,8 @@
 #include <Qt3Support/Q3PopupMenu>
 
 // Haruhi:
+#include <haruhi/components/devices_manager/device_dialog.h>
+#include <haruhi/components/devices_manager/controller_dialog.h>
 #include <haruhi/haruhi.h>
 #include <haruhi/config.h>
 #include <haruhi/core/event.h>
@@ -45,11 +47,17 @@
 #include "port_item.h"
 #include "device_with_port_item.h"
 #include "controller_with_port_item.h"
-#include "device_dialog.h"
-#include "controller_dialog.h"
 
 
 namespace Haruhi {
+
+namespace EventBackendPrivate {
+
+class DeviceWithPortDialog;
+class ControllerWithPortDialog;
+
+}
+
 
 class EventBackend:
 	public Unit,
@@ -220,9 +228,9 @@ class EventBackend:
 	QPushButton*							_create_controller_button;
 	QPushButton*							_destroy_input_button;
 	QStackedWidget*							_stack;
-	EventBackendPrivate::DeviceDialog*		_device_dialog;
-	EventBackendPrivate::ControllerDialog*	_controller_dialog;
 	EventBackendPrivate::PortsListView*		_tree;
+	EventBackendPrivate::DeviceWithPortDialog* _device_dialog;
+	EventBackendPrivate::ControllerWithPortDialog* _controller_dialog;
 
 	// External (hardware) port templates menu and helper storage:
 	Templates								_templates;

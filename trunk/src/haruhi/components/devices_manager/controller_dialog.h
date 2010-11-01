@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__CONTROLLER_DIALOG_H__INCLUDED
-#define HARUHI__COMPONENTS__EVENT_BACKEND__CONTROLLER_DIALOG_H__INCLUDED
+#ifndef HARUHI__COMPONENTS__DEVICES_MANAGER__CONTROLLER_DIALOG_H__INCLUDED
+#define HARUHI__COMPONENTS__DEVICES_MANAGER__CONTROLLER_DIALOG_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -25,12 +25,12 @@
 #include <QtGui/QPushButton>
 
 // Local:
-#include "controller_with_port_item.h"
+#include "controller_item.h"
 
 
 namespace Haruhi {
 
-namespace EventBackendPrivate {
+namespace DevicesManagerPrivate {
 
 class ControllerDialog: public QWidget
 {
@@ -44,13 +44,13 @@ class ControllerDialog: public QWidget
 	ControllerItem*
 	item() const;
 
-	void
+	virtual void
 	clear();
 
-	void
+	virtual void
 	from (ControllerItem*);
 
-	void
+	virtual void
 	apply (ControllerItem*) const;
 
   private slots:
@@ -85,7 +85,7 @@ class ControllerDialog: public QWidget
 	QCheckBox*			_key_pressure_invert;
 };
 
-} // namespace EventBackendPrivate
+} // namespace DevicesManagerPrivate
 
 } // namespace Haruhi
 
