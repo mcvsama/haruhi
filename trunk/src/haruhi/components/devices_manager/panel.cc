@@ -24,19 +24,19 @@
 #include <haruhi/config.h>
 
 // Local:
-#include "devices_manager.h"
+#include "panel.h"
 #include "device_item.h"
 #include "controller_item.h"
 
 
 namespace Haruhi {
 
-namespace Private = DevicesManagerPrivate;
+namespace DevicesManager {
 
-DevicesManager::DevicesManager (QWidget* parent):
+Panel::Panel (QWidget* parent):
 	QWidget (parent)
 {
-	_tree = new Private::PortsListView (this);
+	_tree = new PortsListView (this);
 
 	QObject::connect (_tree, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_inputs (const QPoint&)));
 	QObject::connect (_tree, SIGNAL (itemSelectionChanged()), this, SLOT (selection_changed()));
@@ -60,8 +60,8 @@ DevicesManager::DevicesManager (QWidget* parent):
 	// Right panel (stack):
 
 	_stack = new QStackedWidget (this);
-//	_device_dialog = new Private::DeviceDialog (this);
-//	_controller_dialog = new Private::ControllerDialog (this);
+//	_device_dialog = new DeviceDialog (this);
+//	_controller_dialog = new ControllerDialog (this);
 //	_stack->addWidget (_device_dialog);
 //	_stack->addWidget (_controller_dialog);
 //	_stack->setCurrentWidget (_device_dialog);
@@ -88,7 +88,7 @@ DevicesManager::DevicesManager (QWidget* parent):
 
 
 void
-DevicesManager::create_device()
+Panel::create_device()
 {
 	QString name = "<unnamed device>";
 	QTreeWidgetItem* item = _tree->create_device_item (name);
@@ -97,15 +97,15 @@ DevicesManager::create_device()
 
 
 void
-DevicesManager::create_controller()
+Panel::create_controller()
 {
 	QString name = "<unnamed controller>";
 	QTreeWidgetItem* sel = _tree->selected_item();
 	if (sel != 0)
 	{
-		Private::DeviceItem* parent = dynamic_cast<Private::DeviceItem*> (sel);
+		DeviceItem* parent = dynamic_cast<DeviceItem*> (sel);
 		if (parent == 0)
-			parent = dynamic_cast<Private::DeviceItem*> (sel->parent());
+			parent = dynamic_cast<DeviceItem*> (sel->parent());
 		if (parent != 0)
 		{
 			QTreeWidgetItem* item = parent->create_controller_item (name);
@@ -115,6 +115,7 @@ DevicesManager::create_controller()
 	}
 }
 
+} // namespace DevicesManager
 
 } // namespace Haruhi
 

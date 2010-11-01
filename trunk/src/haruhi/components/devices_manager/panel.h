@@ -28,12 +28,14 @@
 
 namespace Haruhi {
 
-class DevicesManager: public QWidget
+namespace DevicesManager {
+
+class Panel: public QWidget
 {
 	Q_OBJECT
 
   public:
-	DevicesManager (QWidget* parent);
+	Panel (QWidget* parent);
 
   public slots:
 	/**
@@ -53,14 +55,16 @@ class DevicesManager: public QWidget
 
   private:
 	// Widgets:
-	QStackedWidget*								_stack;
-	QPushButton*								_create_device_button;
-	QPushButton*								_create_controller_button;
-	QPushButton*								_destroy_input_button;
-	DevicesManagerPrivate::PortsListView*		_tree;
-//	DevicesManagerPrivate::DeviceDialog*		_device_dialog;
-//	DevicesManagerPrivate::ControllerDialog*	_controller_dialog;
+	QStackedWidget*		_stack;
+	QPushButton*		_create_device_button;
+	QPushButton*		_create_controller_button;
+	QPushButton*		_destroy_input_button;
+	PortsListView*		_tree;
+//	DeviceDialog*		_device_dialog;
+//	ControllerDialog*	_controller_dialog;
 };
+
+} // namespace DevicesManager
 
 } // namespace Haruhi
 

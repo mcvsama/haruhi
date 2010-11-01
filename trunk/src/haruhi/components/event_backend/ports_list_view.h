@@ -32,9 +32,9 @@ class EventBackend;
 
 namespace EventBackendPrivate {
 
-using DevicesManagerPrivate::DeviceItem;
+using DevicesManager::DeviceItem;
 
-class PortsListView: public DevicesManagerPrivate::PortsListView
+class PortsListView: public DevicesManager::PortsListView
 {
   public:
 	/**

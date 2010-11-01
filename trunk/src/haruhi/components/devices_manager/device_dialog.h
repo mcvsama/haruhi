@@ -28,7 +28,7 @@
 
 namespace Haruhi {
 
-namespace DevicesManagerPrivate {
+namespace DevicesManager {
 
 class DeviceDialog: public QWidget
 {
@@ -61,7 +61,7 @@ class DeviceDialog: public QWidget
 	QPushButton*	_save_button;
 };
 
-} // namespace DevicesManagerPrivate
+} // namespace DevicesManager
 
 } // namespace Haruhi
 

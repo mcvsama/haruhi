@@ -30,7 +30,7 @@
 
 namespace Haruhi {
 
-namespace DevicesManagerPrivate {
+namespace DevicesManager {
 
 class ControllerDialog: public QWidget
 {
@@ -85,7 +85,7 @@ class ControllerDialog: public QWidget
 	QCheckBox*			_key_pressure_invert;
 };
 
-} // namespace DevicesManagerPrivate
+} // namespace DevicesManager
 
 } // namespace Haruhi
 

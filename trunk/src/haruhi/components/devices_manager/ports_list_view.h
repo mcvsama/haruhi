@@ -26,9 +26,7 @@
 
 namespace Haruhi {
 
-class DevicesManager;
-
-namespace DevicesManagerPrivate {
+namespace DevicesManager {
 
 class DeviceItem;
 
@@ -56,7 +54,7 @@ class PortsListView:
 	load_state (QDomElement const&);
 };
 
-} // namespace DevicesManagerPrivate
+} // namespace DevicesManager
 
 } // namespace Haruhi
 

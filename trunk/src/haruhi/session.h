@@ -33,7 +33,7 @@
 #include <haruhi/core/graph.h>
 #include <haruhi/components/audio_backend/audio_backend.h>
 #include <haruhi/components/event_backend/event_backend.h>
-#include <haruhi/components/devices_manager/devices_manager.h>
+#include <haruhi/components/devices_manager/panel.h>
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/widgets/level_meter.h>
@@ -320,7 +320,7 @@ class Session: public QWidget
 	EventBackend*			_event_backend;
 	Engine*					_engine;
 	UnitLoader*				_unit_loader;
-	DevicesManager*			_devices_manager;
+	DevicesManager::Panel*	_devices_manager;
 
 	QDoubleSpinBox*			_tempo_spinbox;
 	QMenu*					_main_menu;

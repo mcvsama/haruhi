@@ -28,7 +28,7 @@ namespace Haruhi {
 namespace EventBackendPrivate {
 
 PortsListView::PortsListView (QWidget* parent, EventBackend* backend):
-	DevicesManagerPrivate::PortsListView (parent),
+	DevicesManager::PortsListView (parent),
 	_backend (backend)
 {
 	header()->setClickable (false);

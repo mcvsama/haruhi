@@ -25,7 +25,7 @@
 
 namespace Haruhi {
 
-namespace DevicesManagerPrivate {
+namespace DevicesManager {
 
 PortsListView::PortsListView (QWidget* parent):
 	QTreeWidget (parent)
@@ -95,7 +95,7 @@ PortsListView::load_state (QDomElement const& element)
 	}
 }
 
-} // namespace DevicesManagerPrivate
+} // namespace DevicesManager
 
 } // namespace Haruhi
 

@@ -26,7 +26,7 @@
 
 namespace Haruhi {
 
-namespace DevicesManagerPrivate {
+namespace DevicesManager {
 
 ControllerItem::ControllerItem (DeviceItem* parent, QString const& name):
 	Item (static_cast<QTreeWidgetItem*> (parent), name),
@@ -127,7 +127,7 @@ ControllerItem::load_state (QDomElement const& element)
 	}
 }
 
-} // namespace DevicesManagerPrivate
+} // namespace DevicesManager
 
 } // namespace Haruhi
 

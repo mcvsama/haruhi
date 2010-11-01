@@ -30,7 +30,7 @@
 
 namespace Haruhi {
 
-namespace DevicesManagerPrivate {
+namespace DevicesManager {
 
 class ControllerItem:
 	public Item,
@@ -70,7 +70,7 @@ class ControllerItem:
 	bool	_key_pressure_invert;
 };
 
-} // namespace DevicesManagerPrivate
+} // namespace DevicesManager
 
 } // namespace Haruhi
 

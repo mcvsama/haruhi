@@ -101,7 +101,7 @@ SRC_MOCHDRS += haruhi/components/event_backend/event_backend.h
 
 ######## /components/devices_manager ########
 
-SRC_HEADERS += haruhi/components/devices_manager/devices_manager.h
+SRC_HEADERS += haruhi/components/devices_manager/panel.h
 SRC_HEADERS += haruhi/components/devices_manager/item.h
 SRC_HEADERS += haruhi/components/devices_manager/controller_dialog.h
 SRC_HEADERS += haruhi/components/devices_manager/controller_item.h
@@ -109,7 +109,7 @@ SRC_HEADERS += haruhi/components/devices_manager/device_dialog.h
 SRC_HEADERS += haruhi/components/devices_manager/device_item.h
 SRC_HEADERS += haruhi/components/devices_manager/ports_list_view.h
 
-SRC_SOURCES += haruhi/components/devices_manager/devices_manager.cc
+SRC_SOURCES += haruhi/components/devices_manager/panel.cc
 SRC_SOURCES += haruhi/components/devices_manager/item.cc
 SRC_SOURCES += haruhi/components/devices_manager/controller_dialog.cc
 SRC_SOURCES += haruhi/components/devices_manager/controller_item.cc
@@ -117,7 +117,7 @@ SRC_SOURCES += haruhi/components/devices_manager/device_dialog.cc
 SRC_SOURCES += haruhi/components/devices_manager/device_item.cc
 SRC_SOURCES += haruhi/components/devices_manager/ports_list_view.cc
 
-SRC_MOCHDRS += haruhi/components/devices_manager/devices_manager.h
+SRC_MOCHDRS += haruhi/components/devices_manager/panel.h
 SRC_MOCHDRS += haruhi/components/devices_manager/device_dialog.h
 SRC_MOCHDRS += haruhi/components/devices_manager/controller_dialog.h
 

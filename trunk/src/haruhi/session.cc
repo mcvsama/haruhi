@@ -383,7 +383,7 @@ Session::Session (QWidget* parent):
 
 		_audio_tab = create_container (this);
 		_event_tab = create_container (this);
-		_devices_manager_tab = new DevicesManager (this);
+		_devices_manager_tab = new DevicesManager::Panel (this);
 
 		// Add tabs:
 		_backends->addTab (_global, Config::Icons22::configure(), "Global");

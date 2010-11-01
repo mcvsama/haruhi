@@ -30,7 +30,7 @@
 
 namespace Haruhi {
 
-namespace DevicesManagerPrivate {
+namespace DevicesManager {
 
 DeviceDialog::DeviceDialog (QWidget* parent):
 	QWidget (parent)
@@ -111,7 +111,7 @@ DeviceDialog::validate_and_save()
 		apply (_item);
 }
 
-} // namespace DevicesManagerPrivate
+} // namespace DevicesManager
 
 } // namespace Haruhi
 

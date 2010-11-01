@@ -28,7 +28,7 @@
 
 namespace Haruhi {
 
-namespace DevicesManagerPrivate {
+namespace DevicesManager {
 
 class ControllerItem;
 
@@ -63,7 +63,7 @@ class DeviceItem:
 	load_state (QDomElement const&);
 };
 
-} // namespace DevicesManagerPrivate
+} // namespace DevicesManager
 
 } // namespace Haruhi
 

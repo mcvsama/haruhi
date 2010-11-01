@@ -27,7 +27,7 @@
 
 namespace Haruhi {
 
-namespace DevicesManagerPrivate {
+namespace DevicesManager {
 
 DeviceItem::DeviceItem (PortsListView* parent, QString const& name):
 	Item (parent, name)
@@ -95,7 +95,7 @@ DeviceItem::load_state (QDomElement const& element)
 	}
 }
 
-} // namespace DevicesManagerPrivate
+} // namespace DevicesManager
 
 } // namespace Haruhi
 

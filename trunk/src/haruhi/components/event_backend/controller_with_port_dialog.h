@@ -25,9 +25,9 @@ namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-using DevicesManagerPrivate::ControllerItem;
+using DevicesManager::ControllerItem;
 
-class ControllerWithPortDialog: public DevicesManagerPrivate::ControllerDialog
+class ControllerWithPortDialog: public DevicesManager::ControllerDialog
 {
   public:
 	ControllerWithPortDialog (QWidget* parent);

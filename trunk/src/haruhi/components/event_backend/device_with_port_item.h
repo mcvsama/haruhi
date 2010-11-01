@@ -32,8 +32,8 @@ namespace Haruhi {
 
 namespace EventBackendPrivate {
 
-using DevicesManagerPrivate::DeviceItem;
-using DevicesManagerPrivate::ControllerItem;
+using DevicesManager::DeviceItem;
+using DevicesManager::ControllerItem;
 
 class ControllerWithPortItem;
 
