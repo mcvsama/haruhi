@@ -30,6 +30,11 @@ namespace Haruhi {
 
 namespace DevicesManager {
 
+class DeviceDialog;
+class DeviceItem;
+class ControllerDialog;
+class ControllerItem;
+
 class Panel: public QWidget
 {
 	Q_OBJECT
@@ -38,6 +43,24 @@ class Panel: public QWidget
 	Panel (QWidget* parent);
 
   public slots:
+	void
+	update_widgets();
+
+	void
+	selection_changed();
+
+	void
+	configure_item (DeviceItem* item);
+
+	void
+	configure_item (ControllerItem* item);
+
+	void
+	configure_selected_item();
+
+	void
+	destroy_selected_item();
+
 	/**
 	 * Creates new unnamed/unconfigured device
 	 * and inserts it into the tree.
@@ -60,8 +83,8 @@ class Panel: public QWidget
 	QPushButton*		_create_controller_button;
 	QPushButton*		_destroy_input_button;
 	PortsListView*		_tree;
-//	DeviceDialog*		_device_dialog;
-//	ControllerDialog*	_controller_dialog;
+	DeviceDialog*		_device_dialog;
+	ControllerDialog*	_controller_dialog;
 };
 
 } // namespace DevicesManager

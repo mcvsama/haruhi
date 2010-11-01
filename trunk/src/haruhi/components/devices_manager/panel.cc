@@ -25,7 +25,9 @@
 
 // Local:
 #include "panel.h"
+#include "device_dialog.h"
 #include "device_item.h"
+#include "controller_dialog.h"
 #include "controller_item.h"
 
 
@@ -55,16 +57,16 @@ Panel::Panel (QWidget* parent):
 
 	QObject::connect (_create_device_button, SIGNAL (clicked()), this, SLOT (create_device()));
 	QObject::connect (_create_controller_button, SIGNAL (clicked()), this, SLOT (create_controller()));
-	QObject::connect (_destroy_input_button, SIGNAL (clicked()), this, SLOT (destroy_selected_input()));
+	QObject::connect (_destroy_input_button, SIGNAL (clicked()), this, SLOT (destroy_selected_item()));
 
 	// Right panel (stack):
 
 	_stack = new QStackedWidget (this);
-//	_device_dialog = new DeviceDialog (this);
-//	_controller_dialog = new ControllerDialog (this);
-//	_stack->addWidget (_device_dialog);
-//	_stack->addWidget (_controller_dialog);
-//	_stack->setCurrentWidget (_device_dialog);
+	_device_dialog = new DeviceDialog (this);
+	_controller_dialog = new ControllerDialog (this);
+	_stack->addWidget (_device_dialog);
+	_stack->addWidget (_controller_dialog);
+	_stack->setCurrentWidget (_device_dialog);
 
 	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
 	QHBoxLayout* input_buttons_layout = new QHBoxLayout (layout, Config::spacing);
@@ -82,8 +84,88 @@ Panel::Panel (QWidget* parent):
 	input_buttons_layout->addWidget (_destroy_input_button);
 	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 
-	//selection_changed();
-	//update_widgets();
+	selection_changed();
+	update_widgets();
+}
+
+
+void
+Panel::update_widgets()
+{
+	QTreeWidgetItem* sel = _tree->selected_item();
+	_create_controller_button->setEnabled (sel != 0);
+	_destroy_input_button->setEnabled (sel != 0);
+
+	// "Destroy device" or "Destroy controller":
+	if (sel)
+	{
+		if (dynamic_cast<DeviceItem*> (sel))
+			_destroy_input_button->setText ("Destroy device");
+		else if (dynamic_cast<ControllerItem*> (sel))
+			_destroy_input_button->setText ("Destroy controller");
+		else
+			_destroy_input_button->setText ("Destroy");
+	}
+}
+
+
+void
+Panel::selection_changed()
+{
+	update_widgets();
+	configure_selected_item();
+}
+
+
+void
+Panel::configure_item (DeviceItem* item)
+{
+	_device_dialog->from (item);
+	_stack->setCurrentWidget (_device_dialog);
+}
+
+
+void
+Panel::configure_item (ControllerItem* item)
+{
+	_controller_dialog->from (item);
+	_stack->setCurrentWidget (_controller_dialog);
+}
+
+
+void
+Panel::configure_selected_item()
+{
+	if (_tree->selected_item())
+	{
+		DeviceItem* device_item = dynamic_cast<DeviceItem*> (_tree->selected_item());
+		if (device_item)
+			configure_item (device_item);
+		else
+		{
+			ControllerItem* controller_item = dynamic_cast<ControllerItem*> (_tree->selected_item());
+			if (controller_item)
+				configure_item (controller_item);
+		}
+	}
+	else
+	{
+		_device_dialog->clear();
+		_controller_dialog->clear();
+	}
+}
+
+
+void
+Panel::destroy_selected_item()
+{
+	if (_tree->selected_item())
+	{
+		QTreeWidgetItem* item = _tree->selected_item();
+		if (item->parent())
+			item->parent()->takeChild (item->parent()->indexOfChild (item));
+		delete item;
+	}
 }
 
 

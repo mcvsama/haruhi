@@ -73,7 +73,7 @@ EventBackend::EventBackend (Session* session, QString const& client_name, int id
 
 	QObject::connect (_create_device_button, SIGNAL (clicked()), this, SLOT (create_device()));
 	QObject::connect (_create_controller_button, SIGNAL (clicked()), this, SLOT (create_controller()));
-	QObject::connect (_destroy_input_button, SIGNAL (clicked()), this, SLOT (destroy_selected_input()));
+	QObject::connect (_destroy_input_button, SIGNAL (clicked()), this, SLOT (destroy_selected_item()));
 
 	// Right panel (stack):
 
@@ -213,22 +213,6 @@ EventBackend::connected() const
 
 
 void
-EventBackend::configure_item (Private::DeviceWithPortItem* item)
-{
-	_device_dialog->from (item);
-	_stack->setCurrentWidget (_device_dialog);
-}
-
-
-void
-EventBackend::configure_item (Private::ControllerWithPortItem* item)
-{
-	_controller_dialog->from (item);
-	_stack->setCurrentWidget (_controller_dialog);
-}
-
-
-void
 EventBackend::start_learning (Learnable* learnable, EventTypes event_types)
 {
 	_learnables.insert (std::make_pair (learnable, event_types));
@@ -266,7 +250,7 @@ void
 EventBackend::selection_changed()
 {
 	update_widgets();
-	configure_selected_input();
+	configure_selected_item();
 }
 
 
@@ -313,7 +297,7 @@ EventBackend::context_menu_for_inputs (QPoint const& pos)
 			menu->insertItem (Config::Icons16::colorpicker(), "&Learn", this, SLOT (learn_from_midi()));
 			menu->insertSeparator();
 			menu->insertItem (Config::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
-			menu->insertItem (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_input()));
+			menu->insertItem (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
 		}
 		else if (dynamic_cast<Private::DeviceWithPortItem*> (item) != 0)
 		{
@@ -322,13 +306,13 @@ EventBackend::context_menu_for_inputs (QPoint const& pos)
 			menu->insertItem (Config::Icons16::save(), "&Save as template", this, SLOT (save_selected_input()));
 			menu->insertSeparator();
 			menu->insertItem (Config::Icons16::add(), "&Add device", this, SLOT (create_device()));
-			menu->insertItem (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_input()));
+			menu->insertItem (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
 		}
 	}
 	else
 	{
 		menu->insertItem (Config::Icons16::add(), "&Add device", this, SLOT (create_device()));
-		i = menu->insertItem (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_input()));
+		i = menu->insertItem (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected()));
 		menu->setItemEnabled (i, false);
 	}
 	menu->insertSeparator();
@@ -341,16 +325,32 @@ EventBackend::context_menu_for_inputs (QPoint const& pos)
 
 
 void
-EventBackend::configure_selected_input()
+EventBackend::configure_item (Private::DeviceItem* item)
+{
+	_device_dialog->from (item);
+	_stack->setCurrentWidget (_device_dialog);
+}
+
+
+void
+EventBackend::configure_item (Private::ControllerItem* item)
+{
+	_controller_dialog->from (item);
+	_stack->setCurrentWidget (_controller_dialog);
+}
+
+
+void
+EventBackend::configure_selected_item()
 {
 	if (_tree->selected_item())
 	{
-		Private::DeviceWithPortItem* device_item = dynamic_cast<Private::DeviceWithPortItem*> (_tree->selected_item());
+		Private::DeviceItem* device_item = dynamic_cast<Private::DeviceItem*> (_tree->selected_item());
 		if (device_item)
 			configure_item (device_item);
 		else
 		{
-			Private::ControllerWithPortItem* controller_item = dynamic_cast<Private::ControllerWithPortItem*> (_tree->selected_item());
+			Private::ControllerItem* controller_item = dynamic_cast<Private::ControllerItem*> (_tree->selected_item());
 			if (controller_item)
 				configure_item (controller_item);
 		}
@@ -376,7 +376,7 @@ EventBackend::learn_from_midi()
 
 
 void
-EventBackend::destroy_selected_input()
+EventBackend::destroy_selected_item()
 {
 	if (_tree->selected_item())
 	{

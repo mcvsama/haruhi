@@ -141,12 +141,6 @@ class EventBackend:
 	bool
 	connected() const;
 
-	void
-	configure_item (EventBackendPrivate::DeviceWithPortItem* item);
-
-	void
-	configure_item (EventBackendPrivate::ControllerWithPortItem* item);
-
 	/**
 	 * Starts listening for specified event types.
 	 * When specified event arrive on any input port Learnable
@@ -187,13 +181,19 @@ class EventBackend:
 	context_menu_for_inputs (QPoint const&);
 
 	void
-	configure_selected_input();
+	configure_item (EventBackendPrivate::DeviceItem* item);
+
+	void
+	configure_item (EventBackendPrivate::ControllerItem* item);
+
+	void
+	configure_selected_item();
 
 	void
 	learn_from_midi();
 
 	void
-	destroy_selected_input();
+	destroy_selected_item();
 
 	void
 	save_selected_input();
