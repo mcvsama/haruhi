@@ -64,8 +64,6 @@ class KnobProperties: public QDialog
 
 /**
  * Knob for parameter manipulation.
- * Knob should be always deleted before ControllerProxies, to prevent
- * race conditions from PeriodicUpdater.
  */
 class Knob:
 	public QFrame,
