@@ -15,7 +15,10 @@
 #include <cstddef>
 
 
+namespace Haruhi {
+
 namespace Core {
 
 } // namespace Core
 
+} // namespace Haruhi

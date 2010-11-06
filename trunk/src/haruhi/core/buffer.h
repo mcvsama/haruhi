@@ -18,6 +18,8 @@
 #include <cstddef>
 
 
+namespace Haruhi {
+
 namespace Core {
 
 /**
@@ -57,6 +59,8 @@ class Buffer
 };
 
 } // namespace Core
+
+} // namespace Haruhi
 
 #endif
 

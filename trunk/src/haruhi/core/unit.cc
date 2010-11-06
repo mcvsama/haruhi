@@ -22,6 +22,8 @@
 #include "unit.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 int Unit::_id_counter = 0;
@@ -144,4 +146,6 @@ Unit::allocate_id()
 }
 
 } // namespace Core
+
+} // namespace Haruhi
 

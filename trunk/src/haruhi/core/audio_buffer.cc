@@ -24,6 +24,8 @@
 #include "audio_buffer.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 POOL_ALLOCATOR_FOR (AudioBuffer)
@@ -61,4 +63,6 @@ AudioBuffer::resize (std::size_t samples)
 }
 
 } // namespace Core
+
+} // namespace Haruhi
 

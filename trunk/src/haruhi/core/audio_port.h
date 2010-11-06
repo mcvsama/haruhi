@@ -26,6 +26,8 @@
 #include "port_group.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 class AudioBuffer;
@@ -52,6 +54,8 @@ class AudioPort: public Port
 };
 
 } // namespace Core
+
+} // namespace Haruhi
 
 #endif
 

@@ -27,6 +27,8 @@
 #include "port_group.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 class EventBuffer;
@@ -53,6 +55,8 @@ class EventPort: public Port
 };
 
 } // namespace Core
+
+} // namespace Haruhi
 
 #endif
 

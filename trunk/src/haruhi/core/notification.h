@@ -19,6 +19,8 @@
 #include <string>
 
 
+namespace Haruhi {
+
 namespace Core {
 
 class Notification
@@ -55,6 +57,8 @@ class Notification
 };
 
 } // namespace Core
+
+} // namespace Haruhi
 
 #endif
 

@@ -28,6 +28,8 @@
 #include "exception.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 class AudioBuffer: public Core::Buffer
@@ -183,6 +185,8 @@ class AudioBuffer: public Core::Buffer
 };
 
 } // namespace Core
+
+} // namespace Haruhi
 
 #endif
 
