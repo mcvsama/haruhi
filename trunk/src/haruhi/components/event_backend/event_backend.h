@@ -20,6 +20,7 @@
 #include <set>
 
 // Qt:
+#include <QtCore/QSignalMapper>
 #include <QtGui/QLayout>
 #include <QtGui/QLineEdit>
 #include <QtGui/QPushButton>
@@ -27,8 +28,8 @@
 #include <QtGui/QComboBox>
 #include <QtGui/QSpinBox>
 #include <QtGui/QStackedWidget>
+#include <QtGui/QMenu>
 #include <QtXml/QDomNode>
-#include <Qt3Support/Q3PopupMenu>
 
 // Haruhi:
 #include <haruhi/components/devices_manager/device_dialog.h>
@@ -43,6 +44,7 @@
 
 // Local:
 #include "event_transport.h"
+#include "event_teacher.h"
 #include "ports_list_view.h"
 #include "port_item.h"
 #include "device_with_port_item.h"
@@ -61,6 +63,7 @@ class ControllerWithPortDialog;
 
 class EventBackend:
 	public Unit,
+	public EventBackendPrivate::Teacher,
 	public SaveableState,
 	public Backend
 {
@@ -69,40 +72,7 @@ class EventBackend:
 	friend class EventBackendPrivate::DeviceWithPortItem;
 	friend class EventBackendPrivate::ControllerWithPortItem;
 
-  public:
-	/**
-	 * Ports to listen for in start_learning()/stop_learning().
-	 * As transport type use EventTypes.
-	 */
-	enum {
-		Keyboard			= 1 << 0,
-		Controller			= 1 << 1,
-		Pitchbend			= 1 << 2,
-		ChannelPressure		= 1 << 3,
-		KeyPressure			= 1 << 4,
-	};
-
-	typedef uint32_t EventTypes;
-
-	/**
-	 * Objects deriving this class can use EventBackend
-	 * to automatically learn which event port to use
-	 * for eg. given knob.
-	 * See start_learning() and stop_learning() methods.
-	 */
-	class Learnable
-	{
-	  public:
-		/**
-		 * Will be called when port is learned.
-		 * \entry	Synth thread.
-		 */
-		virtual void
-		learned_port (EventTypes event_types, Core::EventPort* event_port) = 0;
-	};
-
   private:
-	typedef std::set<std::pair<Learnable*, EventTypes> > Learnables;
 	typedef std::map<EventTransport::Port*, EventBackendPrivate::DeviceWithPortItem*> InputsMap;
 	typedef std::map<int, Config::EventHardwareTemplate> Templates;
 
@@ -132,29 +102,23 @@ class EventBackend:
 	load_state (QDomElement const&);
 
   public slots:
+	/**
+	 * Connects to backend to transport to allow operation.
+	 */
 	void
 	connect();
 
+	/**
+	 * Disconnects backend from transport.
+	 */
 	void
 	disconnect();
 
+	/**
+	 * Returns true, if backend is connected to transport.
+	 */
 	bool
 	connected() const;
-
-	/**
-	 * Starts listening for specified event types.
-	 * When specified event arrive on any input port Learnable
-	 * is notified about it.
-	 */
-	void
-	start_learning (Learnable*, EventTypes);
-
-	/**
-	 * Stops learning started with start_learning(),
-	 * eg. when user changes his mind.
-	 */
-	void
-	stop_learning (Learnable*, EventTypes);
 
 	void
 	update_widgets();
@@ -178,9 +142,6 @@ class EventBackend:
 	create_controller();
 
 	void
-	context_menu_for_inputs (QPoint const&);
-
-	void
 	configure_item (EventBackendPrivate::DeviceItem* item);
 
 	void
@@ -196,18 +157,18 @@ class EventBackend:
 	destroy_selected_item();
 
 	void
-	save_selected_input();
+	save_selected_item();
+
+	void
+	context_menu_for_items (QPoint const&);
 
   private:
 	/**
 	 * Creates popup menu with templates for insertion
 	 * and stores it in _templates_menu.
 	 */
-	Q3PopupMenu*
-	create_templates_menu();
-
 	void
-	handle_event_for_learnables (EventTransport::MidiEvent const&, Core::EventPort*);
+	create_templates_menu (QMenu* menu);
 
   private slots:
 	/**
@@ -215,26 +176,26 @@ class EventBackend:
 	 * Uses menu_item_id from _templates map.
 	 */
 	void
-	insert_template (int menu_item_id);
+	insert_template (int template_id);
 
   private:
-	QString									_client_name;
-	EventTransport*							_transport;
-	InputsMap								_inputs;
-	Learnables								_learnables;
+	QString											_client_name;
+	EventTransport*									_transport;
+	InputsMap										_inputs;
+	QSignalMapper*									_insert_template_signal_mapper;
 
 	// Widgets:
-	QPushButton*							_create_device_button;
-	QPushButton*							_create_controller_button;
-	QPushButton*							_destroy_input_button;
-	QStackedWidget*							_stack;
-	EventBackendPrivate::PortsListView*		_tree;
-	EventBackendPrivate::DeviceWithPortDialog* _device_dialog;
-	EventBackendPrivate::ControllerWithPortDialog* _controller_dialog;
+	QPushButton*									_create_device_button;
+	QPushButton*									_create_controller_button;
+	QPushButton*									_destroy_input_button;
+	QStackedWidget*									_stack;
+	EventBackendPrivate::PortsListView*				_tree;
+	EventBackendPrivate::DeviceWithPortDialog*		_device_dialog;
+	EventBackendPrivate::ControllerWithPortDialog*	_controller_dialog;
 
 	// External (hardware) port templates menu and helper storage:
-	Templates								_templates;
-	Q3PopupMenu*							_templates_menu;
+	Templates										_templates;
+	QMenu*											_templates_menu;
 };
 
 

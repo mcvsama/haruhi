@@ -53,6 +53,10 @@ class ControllerItem:
 	void
 	load_state (QDomElement const&);
 
+	// TODO learn from MIDI
+	void
+	learn() { }
+
   public:
 	bool	_note_filter;
 	int		_note_channel;					// 0 means 'all'

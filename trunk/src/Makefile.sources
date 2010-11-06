@@ -82,6 +82,7 @@ SRC_SOURCES += haruhi/components/event_backend/transports/alsa_event_transport.c
 
 SRC_HEADERS += haruhi/components/event_backend/event_backend.h
 SRC_HEADERS += haruhi/components/event_backend/event_transport.h
+SRC_HEADERS += haruhi/components/event_backend/event_teacher.h
 SRC_HEADERS += haruhi/components/event_backend/ports_list_view.h
 SRC_HEADERS += haruhi/components/event_backend/port_item.h
 SRC_HEADERS += haruhi/components/event_backend/device_with_port_dialog.h
@@ -90,6 +91,7 @@ SRC_HEADERS += haruhi/components/event_backend/controller_with_port_dialog.h
 SRC_HEADERS += haruhi/components/event_backend/controller_with_port_item.h
 
 SRC_SOURCES += haruhi/components/event_backend/event_backend.cc
+SRC_SOURCES += haruhi/components/event_backend/event_teacher.cc
 SRC_SOURCES += haruhi/components/event_backend/ports_list_view.cc
 SRC_SOURCES += haruhi/components/event_backend/port_item.cc
 SRC_SOURCES += haruhi/components/event_backend/device_with_port_dialog.cc

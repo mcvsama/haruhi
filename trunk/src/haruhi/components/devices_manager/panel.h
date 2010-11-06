@@ -49,18 +49,6 @@ class Panel: public QWidget
 	void
 	selection_changed();
 
-	void
-	configure_item (DeviceItem* item);
-
-	void
-	configure_item (ControllerItem* item);
-
-	void
-	configure_selected_item();
-
-	void
-	destroy_selected_item();
-
 	/**
 	 * Creates new unnamed/unconfigured device
 	 * and inserts it into the tree.
@@ -75,6 +63,24 @@ class Panel: public QWidget
 	 */
 	void
 	create_controller();
+
+	void
+	configure_item (DeviceItem* item);
+
+	void
+	configure_item (ControllerItem* item);
+
+	void
+	configure_selected_item();
+
+	void
+	learn_from_midi();
+
+	void
+	destroy_selected_item();
+
+	void
+	context_menu_for_items (QPoint const&);
 
   private:
 	// Widgets:

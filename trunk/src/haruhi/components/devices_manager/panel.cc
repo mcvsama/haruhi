@@ -19,6 +19,7 @@
 #include <QtGui/QLayout>
 #include <QtGui/QLabel>
 #include <QtGui/QToolTip>
+#include <QtGui/QMenu>
 
 // Haruhi:
 #include <haruhi/config.h>
@@ -40,7 +41,7 @@ Panel::Panel (QWidget* parent):
 {
 	_tree = new PortsListView (this);
 
-	QObject::connect (_tree, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_inputs (const QPoint&)));
+	QObject::connect (_tree, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_items (const QPoint&)));
 	QObject::connect (_tree, SIGNAL (itemSelectionChanged()), this, SLOT (selection_changed()));
 
 	_create_device_button = new QPushButton (Config::Icons16::add(), "Add device", this);
@@ -118,6 +119,35 @@ Panel::selection_changed()
 
 
 void
+Panel::create_device()
+{
+	QString name = "<unnamed device>";
+	QTreeWidgetItem* item = _tree->create_device_item (name);
+	_tree->setCurrentItem (item);
+}
+
+
+void
+Panel::create_controller()
+{
+	QString name = "<unnamed controller>";
+	QTreeWidgetItem* sel = _tree->selected_item();
+	if (sel != 0)
+	{
+		DeviceItem* parent = dynamic_cast<DeviceItem*> (sel);
+		if (parent == 0)
+			parent = dynamic_cast<DeviceItem*> (sel->parent());
+		if (parent != 0)
+		{
+			QTreeWidgetItem* item = parent->create_controller_item (name);
+			_tree->setCurrentItem (item);
+			parent->setExpanded (true);
+		}
+	}
+}
+
+
+void
 Panel::configure_item (DeviceItem* item)
 {
 	_device_dialog->from (item);
@@ -157,6 +187,18 @@ Panel::configure_selected_item()
 
 
 void
+Panel::learn_from_midi()
+{
+	if (_tree->selected_item())
+	{
+		ControllerItem* item = dynamic_cast<ControllerItem*> (_tree->selected_item());
+		if (item)
+			item->learn();
+	}
+}
+
+
+void
 Panel::destroy_selected_item()
 {
 	if (_tree->selected_item())
@@ -170,31 +212,38 @@ Panel::destroy_selected_item()
 
 
 void
-Panel::create_device()
+Panel::context_menu_for_items (QPoint const& pos)
 {
-	QString name = "<unnamed device>";
-	QTreeWidgetItem* item = _tree->create_device_item (name);
-	_tree->setCurrentItem (item);
-}
+	QMenu* menu = new QMenu (this);
+	QTreeWidgetItem* item = _tree->itemAt (pos);
+	QAction* a;
 
-
-void
-Panel::create_controller()
-{
-	QString name = "<unnamed controller>";
-	QTreeWidgetItem* sel = _tree->selected_item();
-	if (sel != 0)
+	if (item != 0)
 	{
-		DeviceItem* parent = dynamic_cast<DeviceItem*> (sel);
-		if (parent == 0)
-			parent = dynamic_cast<DeviceItem*> (sel->parent());
-		if (parent != 0)
+		if (dynamic_cast<ControllerItem*> (item) != 0)
 		{
-			QTreeWidgetItem* item = parent->create_controller_item (name);
-			_tree->setCurrentItem (item);
-			parent->setExpanded (true);
+			menu->addAction (Config::Icons16::colorpicker(), "&Learn", this, SLOT (learn_from_midi()));
+			menu->addSeparator();
+			menu->addAction (Config::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
+			menu->addAction (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
+		}
+		else if (dynamic_cast<DeviceItem*> (item) != 0)
+		{
+			menu->addAction (Config::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
+			menu->addSeparator();
+			menu->addAction (Config::Icons16::add(), "&Add device", this, SLOT (create_device()));
+			menu->addAction (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
 		}
 	}
+	else
+	{
+		menu->addAction (Config::Icons16::add(), "&Add device", this, SLOT (create_device()));
+		a = menu->addAction (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
+		a->setEnabled (false);
+	}
+
+	menu->exec (QCursor::pos());
+	delete menu;
 }
 
 } // namespace DevicesManager
