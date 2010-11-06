@@ -28,45 +28,46 @@
 
 namespace Haruhi {
 
-namespace EventBackendPrivate {
+namespace EventBackend {
+
+/**
+ * Ports to listen for in start_learning()/stop_learning().
+ * As transport type use EventTypes.
+ */
+enum {
+	Keyboard			= 1 << 0,
+	Controller			= 1 << 1,
+	Pitchbend			= 1 << 2,
+	ChannelPressure		= 1 << 3,
+	KeyPressure			= 1 << 4,
+};
+
+typedef uint32_t EventTypes;
+
+
+/**
+ * Objects deriving this class can use EventBackend
+ * to automatically learn which event port to use
+ * for eg. given knob.
+ * See start_learning() and stop_learning() methods.
+ */
+class Learnable
+{
+  public:
+	/**
+	 * Will be called when port is learned.
+	 * \entry	Synth thread.
+	 */
+	virtual void
+	learned_port (EventTypes event_types, Core::EventPort* event_port) = 0;
+};
+
 
 /**
  * Implements 'learning from MIDI' functionality.
  */
 class Teacher
 {
-  public:
-	/**
-	 * Ports to listen for in start_learning()/stop_learning().
-	 * As transport type use EventTypes.
-	 */
-	enum {
-		Keyboard			= 1 << 0,
-		Controller			= 1 << 1,
-		Pitchbend			= 1 << 2,
-		ChannelPressure		= 1 << 3,
-		KeyPressure			= 1 << 4,
-	};
-
-	typedef uint32_t EventTypes;
-
-	/**
-	 * Objects deriving this class can use EventBackend
-	 * to automatically learn which event port to use
-	 * for eg. given knob.
-	 * See start_learning() and stop_learning() methods.
-	 */
-	class Learnable
-	{
-	  public:
-		/**
-		 * Will be called when port is learned.
-		 * \entry	Synth thread.
-		 */
-		virtual void
-		learned_port (EventTypes event_types, Core::EventPort* event_port) = 0;
-	};
-
   public:
 	/**
 	 * Starts listening for specified event types.
@@ -94,7 +95,7 @@ class Teacher
 	Learnables _learnables;
 };
 
-} // namespace EventBackendPrivate
+} // namespace EventBackend
 
 } // namespace Haruhi
 

@@ -35,7 +35,7 @@ void
 FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 {
 	if (samples < 4096)
-		throw new Exception ("samples number must be at least 4096");
+		throw new Haruhi::Exception ("samples number must be at least 4096");
 
 	const unsigned int oversampling = 1;
 	const unsigned int number = Wavetable::Number;

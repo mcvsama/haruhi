@@ -220,7 +220,7 @@ void
 Port::unregister_me()
 {
 	if (_unit->graph() == 0)
-		throw Exception ("deleting port on already unregistered unit");
+		throw Haruhi::Exception ("deleting port on already unregistered unit");
 	disconnect();
 	switch (_direction)
 	{

@@ -30,12 +30,12 @@
 
 namespace Haruhi {
 
-namespace EventBackendPrivate {
+namespace EventBackend {
 
 using DevicesManager::DeviceItem;
 using DevicesManager::ControllerItem;
-
 class ControllerWithPortItem;
+class Backend;
 
 class DeviceWithPortItem:
 	public DeviceItem,
@@ -47,7 +47,7 @@ class DeviceWithPortItem:
 	typedef std::set<ControllerWithPortItem*> Controllers;
 
   public:
-	DeviceWithPortItem (EventBackend* backend, PortsListView* parent, QString const& name);
+	DeviceWithPortItem (Backend* backend, PortsListView* parent, QString const& name);
 
 	virtual ~DeviceWithPortItem();
 
@@ -87,7 +87,7 @@ class DeviceWithPortItem:
 	EventTransport::Port*	_transport_port;
 };
 
-} // namespace EventBackendPrivate
+} // namespace EventBackend
 
 } // namespace Haruhi
 

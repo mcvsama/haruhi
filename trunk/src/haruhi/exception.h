@@ -19,6 +19,8 @@
 #include <stdexcept>
 
 
+namespace Haruhi {
+
 class Exception: public std::runtime_error
 {
   public:
@@ -38,6 +40,8 @@ class Exception: public std::runtime_error
   private:
 	std::string _details;
 };
+
+} // namespace Haruhi
 
 #endif
 

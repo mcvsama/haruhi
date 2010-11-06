@@ -44,10 +44,10 @@ Unit::~Unit()
 	_processing_mutex.lock();
 	// Check if unit is properly disabled when destroyed:
 	if (enabled())
-		throw Exception ("disable unit before deletion");
+		throw Haruhi::Exception ("disable unit before deletion");
 	// Check if all ports have been unregistered:
 	if (_inputs.size() > 0 || _outputs.size() > 0)
-		throw Exception ("delete all ports before deleting unit");
+		throw Haruhi::Exception ("delete all ports before deleting unit");
 	_processing_mutex.unlock();
 }
 

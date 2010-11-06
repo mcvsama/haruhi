@@ -21,20 +21,20 @@
 
 // Local:
 #include "port_item.h"
-#include "event_backend.h"
+#include "backend.h"
 
 
 namespace Haruhi {
 
-namespace EventBackendPrivate {
+namespace EventBackend {
 
-PortItem::PortItem (EventBackend* backend):
+PortItem::PortItem (Backend* backend):
 	_backend (backend),
 	_ready (false)
 {
 }
 
-} // namespace EventBackendPrivate
+} // namespace EventBackend
 
 } // namespace Haruhi
 

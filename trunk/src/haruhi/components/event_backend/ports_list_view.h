@@ -28,11 +28,10 @@
 
 namespace Haruhi {
 
-class EventBackend;
-
-namespace EventBackendPrivate {
+namespace EventBackend {
 
 using DevicesManager::DeviceItem;
+class Backend;
 
 class PortsListView: public DevicesManager::PortsListView
 {
@@ -56,9 +55,9 @@ class PortsListView: public DevicesManager::PortsListView
 	};
 
   public:
-	PortsListView (QWidget* parent, EventBackend*);
+	PortsListView (QWidget* parent, Backend*);
 
-	EventBackend*
+	Backend*
 	backend() const { return _backend; }
 
 	/**
@@ -73,10 +72,10 @@ class PortsListView: public DevicesManager::PortsListView
 	customEvent (QEvent*);
 
   private:
-	EventBackend* _backend;
+	Backend* _backend;
 };
 
-} // namespace EventBackendPrivate
+} // namespace EventBackend
 
 } // namespace Haruhi
 

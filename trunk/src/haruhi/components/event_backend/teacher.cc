@@ -15,12 +15,12 @@
 #include <cstddef>
 
 // Local:
-#include "event_teacher.h"
+#include "teacher.h"
 
 
 namespace Haruhi {
 
-namespace EventBackendPrivate {
+namespace EventBackend {
 
 void
 Teacher::handle_event_for_learnables (EventTransport::MidiEvent const& event, Core::EventPort* port)
@@ -60,7 +60,7 @@ Teacher::stop_learning (Learnable* learnable, EventTypes event_types)
 	_learnables.erase (std::make_pair (learnable, event_types));
 }
 
-} // namespace EventBackendPrivate
+} // namespace EventBackend
 
 } // namespace Haruhi
 

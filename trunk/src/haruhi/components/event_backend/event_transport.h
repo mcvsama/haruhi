@@ -25,7 +25,9 @@
 
 namespace Haruhi {
 
-class EventBackend;
+namespace EventBackend {
+
+class Backend;
 
 /**
  * Parent class for event transport implementations
@@ -119,20 +121,20 @@ class EventTransport
 	};
 
   public:
-	EventTransport (EventBackend* backend):
+	EventTransport (Backend* backend):
 		_backend (backend)
 	{ }
 
 	virtual ~EventTransport() { }
 
-	EventBackend*
+	Backend*
 	backend() const { return _backend; }
 
 	/**
 	 * Connects to transport.
 	 * \param	client_name is client name for transports
 	 * 			that support it. May be ignored.
-	 * \throws	EventBackendException when problem arises.
+	 * \throws	Exception when problem arises.
 	 */
 	virtual void
 	connect (std::string const& client_name) = 0;
@@ -178,8 +180,10 @@ class EventTransport
 	sync() = 0;
 
   private:
-	EventBackend* _backend;
+	Backend* _backend;
 };
+
+} // namespace EventBackend
 
 } // namespace Haruhi
 

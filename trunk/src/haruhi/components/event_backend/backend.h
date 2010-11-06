@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__EVENT_BACKEND_H__INCLUDED
-#define HARUHI__COMPONENTS__EVENT_BACKEND__EVENT_BACKEND_H__INCLUDED
+#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__BACKEND_H__INCLUDED
+#define HARUHI__COMPONENTS__EVENT_BACKEND__BACKEND_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -32,6 +32,7 @@
 #include <QtXml/QDomNode>
 
 // Haruhi:
+#include <haruhi/backend.h>
 #include <haruhi/components/devices_manager/device_dialog.h>
 #include <haruhi/components/devices_manager/controller_dialog.h>
 #include <haruhi/haruhi.h>
@@ -39,12 +40,11 @@
 #include <haruhi/core/event.h>
 #include <haruhi/core/event_port.h>
 #include <haruhi/utility/saveable_state.h>
-#include <haruhi/backend.h>
 #include <haruhi/unit.h>
 
 // Local:
 #include "event_transport.h"
-#include "event_teacher.h"
+#include "teacher.h"
 #include "ports_list_view.h"
 #include "port_item.h"
 #include "device_with_port_item.h"
@@ -53,33 +53,30 @@
 
 namespace Haruhi {
 
-namespace EventBackendPrivate {
+namespace EventBackend {
 
 class DeviceWithPortDialog;
 class ControllerWithPortDialog;
 
-}
-
-
-class EventBackend:
+class Backend:
 	public Unit,
-	public EventBackendPrivate::Teacher,
+	public Teacher,
 	public SaveableState,
-	public Backend
+	public ::Haruhi::Backend
 {
 	Q_OBJECT
 
-	friend class EventBackendPrivate::DeviceWithPortItem;
-	friend class EventBackendPrivate::ControllerWithPortItem;
+	friend class DeviceWithPortItem;
+	friend class ControllerWithPortItem;
 
   private:
-	typedef std::map<EventTransport::Port*, EventBackendPrivate::DeviceWithPortItem*> InputsMap;
+	typedef std::map<EventTransport::Port*, DeviceWithPortItem*> InputsMap;
 	typedef std::map<int, Config::EventHardwareTemplate> Templates;
 
   public:
-	EventBackend (Session*, QString const& client_name, int id, QWidget* parent);
+	Backend (Session*, QString const& client_name, int id, QWidget* parent);
 
-	~EventBackend();
+	~Backend();
 
 	EventTransport*
 	transport() const { return _transport; }
@@ -142,10 +139,10 @@ class EventBackend:
 	create_controller();
 
 	void
-	configure_item (EventBackendPrivate::DeviceItem* item);
+	configure_item (DeviceItem* item);
 
 	void
-	configure_item (EventBackendPrivate::ControllerItem* item);
+	configure_item (ControllerItem* item);
 
 	void
 	configure_selected_item();
@@ -179,48 +176,50 @@ class EventBackend:
 	insert_template (int template_id);
 
   private:
-	QString											_client_name;
-	EventTransport*									_transport;
-	InputsMap										_inputs;
-	QSignalMapper*									_insert_template_signal_mapper;
+	QString						_client_name;
+	EventTransport*				_transport;
+	InputsMap					_inputs;
+	QSignalMapper*				_insert_template_signal_mapper;
 
 	// Widgets:
-	QPushButton*									_create_device_button;
-	QPushButton*									_create_controller_button;
-	QPushButton*									_destroy_input_button;
-	QStackedWidget*									_stack;
-	EventBackendPrivate::PortsListView*				_tree;
-	EventBackendPrivate::DeviceWithPortDialog*		_device_dialog;
-	EventBackendPrivate::ControllerWithPortDialog*	_controller_dialog;
+	QPushButton*				_create_device_button;
+	QPushButton*				_create_controller_button;
+	QPushButton*				_destroy_input_button;
+	QStackedWidget*				_stack;
+	PortsListView*				_tree;
+	DeviceWithPortDialog*		_device_dialog;
+	ControllerWithPortDialog*	_controller_dialog;
 
 	// External (hardware) port templates menu and helper storage:
-	Templates										_templates;
-	QMenu*											_templates_menu;
+	Templates					_templates;
+	QMenu*						_templates_menu;
 };
 
 
 /**
- * EventBackendException
+ * Exception
  */
-class EventBackendException: public Exception
+class Exception: public ::Haruhi::Exception
 {
   public:
-	explicit EventBackendException (const char* what, const char* details):
+	explicit Exception (const char* what, const char* details):
+		::Haruhi::Exception (what, details)
+	{ }
+};
+
+
+/**
+ * PortException
+ */
+class PortException: public Exception
+{
+  public:
+	explicit PortException (const char* what, const char* details):
 		Exception (what, details)
 	{ }
 };
 
-
-/**
- * EventBackendPortException
- */
-class EventBackendPortException: public EventBackendException
-{
-  public:
-	explicit EventBackendPortException (const char* what, const char* details):
-		EventBackendException (what, details)
-	{ }
-};
+} // namespace EventBackend
 
 } // namespace Haruhi
 

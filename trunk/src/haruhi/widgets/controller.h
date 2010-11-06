@@ -19,7 +19,7 @@
 
 // Haruhi:
 #include <haruhi/lib/controller_proxy.h>
-#include <haruhi/components/event_backend/event_backend.h>
+#include <haruhi/components/event_backend/backend.h>
 
 
 namespace Haruhi {

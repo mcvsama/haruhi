@@ -21,7 +21,7 @@
 
 namespace Haruhi {
 
-namespace EventBackendPrivate {
+namespace EventBackend {
 
 ControllerWithPortDialog::ControllerWithPortDialog (QWidget* parent):
 	ControllerDialog (parent)
@@ -38,7 +38,7 @@ ControllerWithPortDialog::apply (ControllerItem* item) const
 		controller_item->update_name();
 }
 
-} // namespace EventBackendPrivate
+} // namespace EventBackend
 
 } // namespace Haruhi
 

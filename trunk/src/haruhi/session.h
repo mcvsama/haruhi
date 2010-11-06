@@ -32,7 +32,7 @@
 // Haruhi:
 #include <haruhi/core/graph.h>
 #include <haruhi/components/audio_backend/audio_backend.h>
-#include <haruhi/components/event_backend/event_backend.h>
+#include <haruhi/components/event_backend/backend.h>
 #include <haruhi/components/devices_manager/panel.h>
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/mutex.h>
@@ -184,7 +184,7 @@ class Session: public QWidget
 	AudioBackend*
 	audio_backend() const { return _audio_backend; }
 
-	EventBackend*
+	EventBackend::Backend*
 	event_backend() const { return _event_backend; }
 
 	Engine*
@@ -317,7 +317,7 @@ class Session: public QWidget
 
 	// Links to main session components:
 	AudioBackend*			_audio_backend;
-	EventBackend*			_event_backend;
+	EventBackend::Backend*	_event_backend;
 	Engine*					_engine;
 	UnitLoader*				_unit_loader;
 	DevicesManager::Panel*	_devices_manager;
