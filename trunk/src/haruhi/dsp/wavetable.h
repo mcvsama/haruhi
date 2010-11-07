@@ -26,6 +26,8 @@
 #include <haruhi/utility/numeric.h>
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 class Wavetable
@@ -136,6 +138,8 @@ class Wavetable
 };
 
 } // namespace DSP
+
+} // namespace Haruhi
 
 #endif
 

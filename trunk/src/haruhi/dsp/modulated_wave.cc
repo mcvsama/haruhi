@@ -22,6 +22,8 @@
 #include "modulated_wave.h"
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 ModulatedWave::ModulatedWave (Wave* wave, Wave* modulator, Type mod_type, Core::Sample mod_amplitude, unsigned int mod_index, bool auto_delete_wave, bool auto_delete_modulator):
@@ -93,4 +95,6 @@ ModulatedWave::value_for_frequency (Core::Sample phase, Core::Sample frequency) 
 }
 
 } // namespace DSP
+
+} // namespace Haruhi
 

@@ -22,6 +22,8 @@
 #include "harmonics_wave.h"
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 HarmonicsWave::HarmonicsWave (Wave* wave, bool auto_delete):
@@ -69,4 +71,6 @@ HarmonicsWave::set_harmonic (unsigned int index, Core::Sample value, Core::Sampl
 }
 
 } // namespace DSP
+
+} // namespace Haruhi
 

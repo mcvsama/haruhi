@@ -26,6 +26,8 @@
 #include <haruhi/utility/numeric.h>
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 /*
@@ -428,6 +430,8 @@ template<class Sample>
 } // namespace SeriesFunctions
 
 } // namespace DSP
+
+} // namespace Haruhi
 
 #endif
 

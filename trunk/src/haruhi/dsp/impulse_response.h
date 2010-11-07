@@ -22,6 +22,8 @@
 #include <haruhi/core/audio.h>
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 /**
@@ -85,6 +87,8 @@ class ImpulseResponse
 };
 
 } // namespace DSP
+
+} // namespace Haruhi
 
 #endif
 

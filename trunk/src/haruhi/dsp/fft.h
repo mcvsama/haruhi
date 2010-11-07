@@ -26,6 +26,8 @@
 #include <haruhi/utility/noncopyable.h>
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 class FFT
@@ -106,6 +108,8 @@ class FFT
 };
 
 } // namespace DSP
+
+} // namespace Haruhi
 
 #endif
 

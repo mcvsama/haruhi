@@ -21,6 +21,8 @@
 #include "envelope.h"
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 Envelope::Envelope():
@@ -104,4 +106,6 @@ Envelope::fill (Core::Sample* begin, Core::Sample* end)
 }
 
 } // namespace DSP
+
+} // namespace Haruhi
 

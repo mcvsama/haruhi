@@ -23,6 +23,8 @@
 #include <haruhi/core/audio.h>
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 class Envelope
@@ -95,6 +97,8 @@ class Envelope
 };
 
 } // namespace DSP
+
+} // namespace Haruhi
 
 #endif
 

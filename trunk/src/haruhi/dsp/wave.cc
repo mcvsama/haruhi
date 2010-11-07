@@ -21,6 +21,8 @@
 #include "wave.h"
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 Wave::Wave (bool immutable):
@@ -29,4 +31,6 @@ Wave::Wave (bool immutable):
 }
 
 } // namespace DSP
+
+} // namespace Haruhi
 

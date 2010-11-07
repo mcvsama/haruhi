@@ -22,6 +22,8 @@
 #include <haruhi/dsp/wave.h>
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 /**
@@ -43,6 +45,8 @@ class ParametricWave: public Wave
 };
 
 } // namespace DSP
+
+} // namespace Haruhi
 
 #endif
 
