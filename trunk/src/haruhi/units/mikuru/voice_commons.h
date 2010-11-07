@@ -37,15 +37,15 @@ class VoiceCommons
 
   public:
 	// Buffers:
-	Core::AudioBuffer	temp1;
-	Core::AudioBuffer	frequency_buffer;
-	Core::AudioBuffer	amplitude_buffer;
-	Core::AudioBuffer	oscillator_buffer;
-	Core::AudioBuffer	filter_buffer1;
-	Core::AudioBuffer	filter_buffer2;
-	Core::AudioBuffer	output_buffer;
-	Core::AudioBuffer	output_buffer1;
-	Core::AudioBuffer	output_buffer2;
+	Haruhi::Core::AudioBuffer	temp1;
+	Haruhi::Core::AudioBuffer	frequency_buffer;
+	Haruhi::Core::AudioBuffer	amplitude_buffer;
+	Haruhi::Core::AudioBuffer	oscillator_buffer;
+	Haruhi::Core::AudioBuffer	filter_buffer1;
+	Haruhi::Core::AudioBuffer	filter_buffer2;
+	Haruhi::Core::AudioBuffer	output_buffer;
+	Haruhi::Core::AudioBuffer	output_buffer1;
+	Haruhi::Core::AudioBuffer	output_buffer2;
 };
 
 } // namespace MikuruPrivate

@@ -26,7 +26,8 @@
 
 namespace MikuruPrivate {
 
-using Core::Sample;
+using Haruhi::Core::Sample;
+namespace DSP = Haruhi::DSP;
 
 
 /*

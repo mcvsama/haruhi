@@ -27,6 +27,9 @@
 #include <haruhi/utility/numeric.h>
 
 
+namespace Core = Haruhi::Core;
+namespace DSP = Haruhi::DSP;
+
 namespace MikuruPrivate {
 
 class VoiceOscillator 
