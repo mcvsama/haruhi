@@ -22,7 +22,7 @@
 
 // Haruhi:
 #include <haruhi/utility/saveable_state.h>
-#include <haruhi/unit.h>
+#include <haruhi/core/unit.h>
 
 
 namespace Haruhi {
@@ -58,7 +58,7 @@ class ConnectionsDump: public SaveableState
 	ConnectionsDump (bool only_internal = false);
 
 	void
-	insert_unit (Unit*);
+	insert_unit (Core::Unit*);
 
 	template<class UnitPointerIterator>
 		void
@@ -69,7 +69,7 @@ class ConnectionsDump: public SaveableState
 		}
 
 	void
-	remove_unit (Unit*);
+	remove_unit (Core::Unit*);
 
 	void
 	save();

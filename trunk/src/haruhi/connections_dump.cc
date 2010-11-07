@@ -31,14 +31,14 @@ ConnectionsDump::ConnectionsDump (bool only_internal):
 
 
 void
-ConnectionsDump::insert_unit (Unit* unit)
+ConnectionsDump::insert_unit (Core::Unit* unit)
 {
 	_units.insert (unit);
 }
 
 
 void
-ConnectionsDump::remove_unit (Unit* unit)
+ConnectionsDump::remove_unit (Core::Unit* unit)
 {
 	_units.erase (unit);
 }
