@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__PARAM_H__INCLUDED
-#define HARUHI__PARAM_H__INCLUDED
+#ifndef HARUHI__LIB__PARAM_H__INCLUDED
+#define HARUHI__LIB__PARAM_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -23,6 +23,10 @@
 
 namespace Haruhi {
 
+/**
+ * General type parameter supporting
+ * min/max and sanitization.
+ */
 template<class tType>
 	class Param
 	{
@@ -76,11 +80,23 @@ template<class tType>
 		Type
 		default_value() const { return _default_value; }
 
-		void
+		/**
+		 * Resets parameter to default value.
+		 */
+		virtual void
 		reset() { set (_default_value); }
 
-		void
+		/**
+		 * Enforces value to be between [minimum, maximum].
+		 */
+		virtual void
 		sanitize() { set (bound (get(), _minimum, _maximum)); }
+
+		/**
+		 * Returns pointer to value parameter.
+		 */
+		volatile int*
+		parameter() { return &_value; }
 
 	  private:
 		Type			_minimum;

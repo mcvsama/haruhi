@@ -24,6 +24,10 @@
 
 namespace Haruhi {
 
+/**
+ * Object deriving this class supports loading and saving
+ * presets.
+ */
 class Presetable
 {
   public:

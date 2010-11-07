@@ -23,6 +23,9 @@
 
 namespace Haruhi {
 
+/**
+ * Implements label that sends signal clicked() when clicked.
+ */
 class ClickableLabel: public QLabel
 {
 	Q_OBJECT

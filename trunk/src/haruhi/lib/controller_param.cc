@@ -26,25 +26,18 @@
 namespace Haruhi {
 
 ControllerParam::ControllerParam():
-	_minimum (0),
-	_maximum (0),
 	_denominator (1),
-	_default_value (0),
 	_smoothing_enabled (false),
 	// No need to use atomic during construction:
-	_parameter (_minimum),
 	_smoothing_parameter (0)
 { }
 
 
 ControllerParam::ControllerParam (int minimum, int maximum, int denominator, int default_value):
-	_minimum (minimum),
-	_maximum (maximum),
+	Param (minimum, maximum, default_value),
 	_denominator (denominator),
-	_default_value (default_value),
 	_smoothing_enabled (false),
 	// No need to use atomic during construction:
-	_parameter (default_value),
 	_smoothing_parameter (0)
 { }
 
@@ -52,13 +45,10 @@ ControllerParam::ControllerParam (int minimum, int maximum, int denominator, int
 ControllerParam&
 ControllerParam::operator= (ControllerParam const& other)
 {
-	_minimum = other._minimum;
-	_maximum = other._maximum;
-	_denominator = other._denominator;
-	_default_value = other._default_value;
-	_smoothing_enabled = other._smoothing_enabled;
+	Param::operator= (other);
 
-	atomic (_parameter) = atomic (other._parameter);
+	_denominator = other._denominator;
+	_smoothing_enabled = other._smoothing_enabled;
 	atomic (_smoothing_parameter) = atomic (other._smoothing_parameter);
 
 	return *this;
@@ -68,7 +58,7 @@ ControllerParam::operator= (ControllerParam const& other)
 void
 ControllerParam::sanitize()
 {
-	set (bound (get(), _minimum, _maximum));
+	Param::sanitize();
 	set_smoothing (bound (smoothing(), 0, 1000)); // 0…1000ms
 }
 

@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__CONTROLLER_PARAM_H__INCLUDED
-#define HARUHI__CONTROLLER_PARAM_H__INCLUDED
+#ifndef HARUHI__LIB__CONTROLLER_PARAM_H__INCLUDED
+#define HARUHI__LIB__CONTROLLER_PARAM_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -20,16 +20,18 @@
 // Haruhi:
 #include <haruhi/utility/atomic.h>
 #include <haruhi/utility/saveable_state.h>
+#include <haruhi/lib/param.h>
 
 
 namespace Haruhi {
 
 /**
- * Represents integer parameter that can be controlled by
- * Haruhi::Controller. Also can contain information about
- * parameter smoothing.
+ * Param that can be controlled by Haruhi::Controller.
+ * Extends Param with smoothing parameter.
  */
-class ControllerParam: public SaveableState
+class ControllerParam:
+	public Param<int>,
+	public SaveableState
 {
   public:
 	ControllerParam();
@@ -42,22 +44,7 @@ class ControllerParam: public SaveableState
 	operator= (ControllerParam const& other);
 
 	int
-	minimum() const { return _minimum; }
-
-	int
-	maximum() const { return _maximum; }
-
-	int
 	denominator() const { return _denominator; }
-
-	int
-	default_value() const { return _default_value; }
-
-	int
-	get() const { return atomic (_parameter); }
-
-	void
-	set (int value) { atomic (_parameter) = value; }
 
 	int
 	smoothing() const { return atomic (_smoothing_parameter); }
@@ -79,23 +66,14 @@ class ControllerParam: public SaveableState
 	 * Returns value divided by denominator and casted to float.
 	 */
 	float
-	to_f() const { return 1.0f * atomic (_parameter) / _denominator; }
-
-	/**
-	 * Resets parameter to default value.
-	 */
-	void
-	reset() { set (_default_value); }
-
-	volatile int*
-	parameter() { return &_parameter; }
+	to_f() const { return 1.0f * get() / _denominator; }
 
 	volatile int*
 	smoothing_parameter() { return &_smoothing_parameter; }
 
 	/**
-	 * Enforces value and smoothing value to be in
-	 * configured bounds.
+	 * Calls Param<int>::sanitize().
+	 * Additionally sanitizes smoothing parameter.
 	 */
 	void
 	sanitize();
@@ -111,13 +89,8 @@ class ControllerParam: public SaveableState
     load_state (QDomElement const&);
 
   private:
-	int				_minimum;
-	int				_maximum;
 	int				_denominator;
-	int				_default_value;
 	bool			_smoothing_enabled;
-
-	volatile int	_parameter;
 	volatile int	_smoothing_parameter;
 };
 

@@ -26,7 +26,6 @@ namespace Haruhi {
 
 class UnitBay;
 
-
 /**
  * Base class for UI widgets that represent MIDI controllers.
  * Controller should be always deleted before ControllerProxies, to prevent
