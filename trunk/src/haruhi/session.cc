@@ -34,7 +34,7 @@
 #include <haruhi/config.h>
 #include <haruhi/core/graph.h>
 #include <haruhi/components/audio_backend/audio_backend.h>
-#include <haruhi/components/event_backend/event_backend.h>
+#include <haruhi/components/event_backend/backend.h>
 #include <haruhi/widgets/clickable_label.h>
 #include <haruhi/utility/numeric.h>
 #include <haruhi/periodic_updater.h>
@@ -383,7 +383,7 @@ Session::Session (QWidget* parent):
 
 		_audio_tab = create_container (this);
 		_event_tab = create_container (this);
-		_devices_manager_tab = create_container (this);
+		_devices_manager_tab = new DevicesManager::Panel (this);
 
 		// Add tabs:
 		_backends->addTab (_global, Config::Icons22::configure(), "Global");
@@ -707,7 +707,7 @@ void
 Session::start_event_backend()
 {
 	try {
-		_event_backend = new EventBackend (this, "Haruhi", 2, _event_tab);
+		_event_backend = new EventBackend::Backend (this, "Haruhi", 2, _event_tab);
 		_event_backend->show();
 		_event_backend->connect();
 		_event_backend->enable();

@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__CONTROLLER_ITEM_H__INCLUDED
-#define HARUHI__COMPONENTS__EVENT_BACKEND__CONTROLLER_ITEM_H__INCLUDED
+#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__CONTROLLER_WITH_PORT_ITEM_H__INCLUDED
+#define HARUHI__COMPONENTS__EVENT_BACKEND__CONTROLLER_WITH_PORT_ITEM_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -21,9 +21,10 @@
 #include <alsa/asoundlib.h>
 
 // Haruhi:
+#include <haruhi/components/devices_manager/controller_item.h>
+#include <haruhi/components/devices_manager/controller_dialog.h>
 #include <haruhi/core/event_port.h>
 #include <haruhi/utility/saveable_state.h>
-#include <haruhi/components/devices_manager/controller_item.h>
 
 // Local:
 #include "event_transport.h"
@@ -33,16 +34,15 @@
 
 namespace Haruhi {
 
-namespace EventBackendPrivate {
+namespace EventBackend {
 
-using DevicesManagerPrivate::ControllerItem;
+using DevicesManager::ControllerItem;
+using DevicesManager::ControllerDialog;
 
 class ControllerWithPortItem:
 	public ControllerItem,
 	public PortItem
 {
-	friend class ControllerDialog;
-
   public:
 	ControllerWithPortItem (DeviceWithPortItem* parent, QString const& name);
 
@@ -93,7 +93,7 @@ class ControllerWithPortItem:
 	bool				_learning;
 };
 
-} // namespace EventBackendPrivate
+} // namespace EventBackend
 
 } // namespace Haruhi
 

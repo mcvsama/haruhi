@@ -23,6 +23,8 @@
 #include <haruhi/dsp/wave.h>
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 /**
@@ -113,6 +115,8 @@ class ModulatedWave: public Wave
 };
 
 } // namespace DSP
+
+} // namespace Haruhi
 
 #endif
 

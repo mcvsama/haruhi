@@ -141,12 +141,22 @@ class AudioBackend:
 	load_state (QDomElement const&);
 
   public slots:
+	/**
+	 * Connects backend to underlying transport to
+	 * allow operation.
+	 */
 	void
 	connect();
 
+	/**
+	 * Disconnects backend from transport.
+	 */
 	void
 	disconnect();
 
+	/**
+	 * Returns true if backend is connected to transport.
+	 */
 	bool
 	connected() const;
 

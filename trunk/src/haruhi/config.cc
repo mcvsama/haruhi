@@ -306,7 +306,7 @@ Config::save()
 	// Save file:
 	QFile file (config_home() + "/" + Config::_file_name + "~");
 	if (!file.open (IO_WriteOnly))
-		throw Exception (QString ("Could not save configuration file: ") + file.errorString());
+		throw Haruhi::Exception (QString ("Could not save configuration file: ") + file.errorString());
 	QTextStream ts (&file);
 	ts << document.toString();
 	file.flush();

@@ -20,13 +20,15 @@
 #include <alsa/seq.h>
 
 // Haruhi:
-#include <haruhi/components/event_backend/event_backend.h>
+#include <haruhi/components/event_backend/backend.h>
 
 // Local:
 #include "alsa_event_transport.h"
 
 
 namespace Haruhi {
+
+namespace EventBackend {
 
 ALSAEventTransport::ALSAPort::ALSAPort (EventTransport* transport, Direction direction, std::string const& name):
 	Port (transport),
@@ -102,7 +104,7 @@ ALSAEventTransport::ALSAPort::destroy()
 }
 
 
-ALSAEventTransport::ALSAEventTransport (EventBackend* backend):
+ALSAEventTransport::ALSAEventTransport (Backend* backend):
 	EventTransport (backend),
 	_seq (0)
 { }
@@ -118,7 +120,7 @@ void
 ALSAEventTransport::connect (std::string const& client_name)
 {
 	if (snd_seq_open (&_seq, "default", SND_SEQ_OPEN_INPUT, SND_SEQ_NONBLOCK))
-		throw EventBackendException ("could not open default ALSA midi sequencer", __func__);
+		throw Exception ("could not open default ALSA midi sequencer", __func__);
 	snd_seq_set_client_name (_seq, client_name.c_str());
 	// Switch all ports online:
 	for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
@@ -260,6 +262,8 @@ ALSAEventTransport::map_alsa_to_internal (MidiEvent& midi, ::snd_seq_event_t* ev
 
 	return true;
 }
+
+} // namespace EventBackend
 
 } // namespace Haruhi
 

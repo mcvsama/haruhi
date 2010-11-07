@@ -24,6 +24,8 @@
 #include <haruhi/utility/pool_allocator.h>
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 class ADSR
@@ -81,6 +83,8 @@ class ADSR
 };
 
 } // namespace DSP
+
+} // namespace Haruhi
 
 #endif
 

@@ -25,6 +25,8 @@
 #include <haruhi/dsp/wavetable.h>
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 class FourierSeriesFiller: public Wavetable::Filler
@@ -52,6 +54,7 @@ class FourierSeriesFiller: public Wavetable::Filler
 
 } // namespace DSP
 
-#endif
+} // namespace Haruhi
 
+#endif
 

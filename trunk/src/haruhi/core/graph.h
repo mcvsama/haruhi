@@ -28,6 +28,8 @@
 #include "unit.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 class Port;
@@ -192,6 +194,8 @@ class Graph: public RecursiveMutex
 };
 
 } // namespace Core
+
+} // namespace Haruhi
 
 #endif
 

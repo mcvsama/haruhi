@@ -21,6 +21,8 @@
 #include "wavetable.h"
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 Wavetable::Wavetable():
@@ -45,4 +47,6 @@ Wavetable::drop_tables()
 }
 
 } // namespace DSP
+
+} // namespace Haruhi
 

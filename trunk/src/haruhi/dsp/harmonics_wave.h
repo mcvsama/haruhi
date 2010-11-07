@@ -24,6 +24,8 @@
 #include <haruhi/utility/numeric.h>
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 /**
@@ -121,6 +123,8 @@ class HarmonicsWave: public Wave
 };
 
 } // namespace DSP
+
+} // namespace Haruhi
 
 #endif
 

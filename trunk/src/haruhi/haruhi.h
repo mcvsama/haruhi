@@ -38,8 +38,6 @@
 namespace Haruhi {
 
 class UnitManager;
-class AudioBackend;
-class EventBackend;
 class Session;
 class PeriodicUpdater;
 

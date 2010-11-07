@@ -30,7 +30,7 @@
 
 namespace Haruhi {
 
-namespace DevicesManagerPrivate {
+namespace DevicesManager {
 
 class Item: public QTreeWidgetItem
 {
@@ -44,7 +44,7 @@ class Item: public QTreeWidgetItem
 	update_minimum_size();
 };
 
-} // namespace DevicesManagerPrivate
+} // namespace DevicesManager
 
 } // namespace Haruhi
 

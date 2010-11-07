@@ -16,6 +16,8 @@
 #include "graph.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 PortGroup::PortGroup (Graph* graph, std::string const& name):
@@ -48,4 +50,6 @@ PortGroup::graph() const
 }
 
 } // namespace Core
+
+} // namespace Haruhi
 

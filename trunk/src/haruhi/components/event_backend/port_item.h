@@ -30,12 +30,14 @@
 
 namespace Haruhi {
 
-namespace EventBackendPrivate {
+namespace EventBackend {
+
+class Backend;
 
 class PortItem
 {
   public:
-	PortItem (EventBackend* backend);
+	PortItem (Backend* backend);
 
 	/**
 	 * Updates name of backend ports basing on GUI port name.
@@ -50,7 +52,7 @@ class PortItem
 	bool
 	ready() const { return _ready; }
 
-	EventBackend*
+	Backend*
 	backend() { return _backend; }
 
   protected:
@@ -62,12 +64,12 @@ class PortItem
 	update_minimum_size();
 
   private:
-	EventBackend*	_backend;
+	Backend*	_backend;
 	// Set when port is fully constructed:
-	bool			_ready;
+	bool		_ready;
 };
 
-} // namespace EventBackendPrivate
+} // namespace EventBackend
 
 } // namespace Haruhi
 

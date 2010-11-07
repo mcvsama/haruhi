@@ -28,6 +28,8 @@
 #include "wave.h"
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 class Noise: public Wave
@@ -96,6 +98,8 @@ class Noise: public Wave
 };
 
 } // namespace DSP
+
+} // namespace Haruhi
 
 #endif
 

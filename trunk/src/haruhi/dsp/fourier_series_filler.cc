@@ -22,6 +22,8 @@
 #include "fourier_series_filler.h"
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 FourierSeriesFiller::FourierSeriesFiller (Function function):
@@ -54,4 +56,6 @@ FourierSeriesFiller::fill (Wavetable::Tables& tables, int number, int samples)
 }
 
 } // namespace DSP
+
+} // namespace Haruhi
 

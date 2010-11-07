@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__DEVICE_ITEM_H__INCLUDED
-#define HARUHI__COMPONENTS__EVENT_BACKEND__DEVICE_ITEM_H__INCLUDED
+#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__DEVICE_WITH_PORT_ITEM_H__INCLUDED
+#define HARUHI__COMPONENTS__EVENT_BACKEND__DEVICE_WITH_PORT_ITEM_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -30,12 +30,12 @@
 
 namespace Haruhi {
 
-namespace EventBackendPrivate {
+namespace EventBackend {
 
-using DevicesManagerPrivate::DeviceItem;
-using DevicesManagerPrivate::ControllerItem;
-
+using DevicesManager::DeviceItem;
+using DevicesManager::ControllerItem;
 class ControllerWithPortItem;
+class Backend;
 
 class DeviceWithPortItem:
 	public DeviceItem,
@@ -47,7 +47,7 @@ class DeviceWithPortItem:
 	typedef std::set<ControllerWithPortItem*> Controllers;
 
   public:
-	DeviceWithPortItem (EventBackend* backend, PortsListView* parent, QString const& name);
+	DeviceWithPortItem (Backend* backend, PortsListView* parent, QString const& name);
 
 	virtual ~DeviceWithPortItem();
 
@@ -70,11 +70,9 @@ class DeviceWithPortItem:
 	/**
 	 * Allocates ControllerWithPortItem that will be used
 	 * as child for this DeviceWithPortItem.
-	 *
-	 * \param	parent MUST be instance of DeviceWithPortItem.
 	 */
 	ControllerItem*
-	create_controller_item (DeviceItem* parent, QString const& name);
+	create_controller_item (QString const& name);
 
 	void
 	load_state (QDomElement const&);
@@ -89,7 +87,7 @@ class DeviceWithPortItem:
 	EventTransport::Port*	_transport_port;
 };
 
-} // namespace EventBackendPrivate
+} // namespace EventBackend
 
 } // namespace Haruhi
 

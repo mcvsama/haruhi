@@ -22,6 +22,8 @@
 #include "unit.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 int Unit::_id_counter = 0;
@@ -44,10 +46,10 @@ Unit::~Unit()
 	_processing_mutex.lock();
 	// Check if unit is properly disabled when destroyed:
 	if (enabled())
-		throw Exception ("disable unit before deletion");
+		throw Haruhi::Exception ("disable unit before deletion");
 	// Check if all ports have been unregistered:
 	if (_inputs.size() > 0 || _outputs.size() > 0)
-		throw Exception ("delete all ports before deleting unit");
+		throw Haruhi::Exception ("delete all ports before deleting unit");
 	_processing_mutex.unlock();
 }
 
@@ -57,10 +59,7 @@ Unit::sync()
 {
 	// Prevent syncing when not in processing round:
 	if (!_graph->_inside_processing_round)
-	{
-		*reinterpret_cast<int*> (0) = 12;
 		throw OutsideProcessingRound ("tried to bump Sync outside processing round", __func__);
-	}
 
 	// Check if we can acquire processing lock. If not, unit
 	// is disabled - don't wait for it.
@@ -147,4 +146,6 @@ Unit::allocate_id()
 }
 
 } // namespace Core
+
+} // namespace Haruhi
 

@@ -29,6 +29,8 @@
 
 namespace Haruhi {
 
+namespace EventBackend {
+
 /**
  * ALSA event transport.
  */
@@ -79,7 +81,7 @@ class ALSAEventTransport: public EventTransport
 	typedef std::map<int, ALSAPort*> Ports;
 
   public:
-	ALSAEventTransport (EventBackend* backend);
+	ALSAEventTransport (Backend* backend);
 
 	~ALSAEventTransport();
 
@@ -120,6 +122,8 @@ class ALSAEventTransport: public EventTransport
 	snd_seq_t*	_seq;
 	Ports		_ports;
 };
+
+} // namespace EventBackend
 
 } // namespace Haruhi
 

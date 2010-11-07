@@ -25,6 +25,8 @@
 #include <haruhi/dsp/wavetable.h>
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 /**
@@ -52,6 +54,8 @@ class FFTFiller: public Wavetable::Filler
 };
 
 } // namespace DSP
+
+} // namespace Haruhi
 
 #endif
 

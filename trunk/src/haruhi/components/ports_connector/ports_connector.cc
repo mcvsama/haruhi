@@ -344,7 +344,7 @@ PortsConnector::unit_registered (Core::Unit* core_unit)
 	if (unit)
 	{
 		bool x = _unit_bay->units().find (unit) != _unit_bay->units().end();
-		bool s = dynamic_cast<AudioBackend*> (unit) || dynamic_cast<EventBackend*> (unit);
+		bool s = dynamic_cast<AudioBackend*> (unit) || dynamic_cast<EventBackend::Backend*> (unit);
 		if (x || s)
 		{
 			if (s)
@@ -364,7 +364,7 @@ PortsConnector::unit_unregistered (Core::Unit* core_unit)
 	Unit* unit = dynamic_cast<Unit*> (core_unit);
 	if (unit)
 	{
-		if (dynamic_cast<AudioBackend*> (unit) || dynamic_cast<EventBackend*> (unit))
+		if (dynamic_cast<AudioBackend*> (unit) || dynamic_cast<EventBackend::Backend*> (unit))
 			_external_units.erase (unit);
 		_ipanel->list()->remove_unit (unit);
 		_opanel->list()->remove_unit (unit);

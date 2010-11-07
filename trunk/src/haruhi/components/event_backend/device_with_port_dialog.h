@@ -11,27 +11,34 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-// Standard:
-#include <string>
+#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__DEVICE_WITH_PORT_DIALOG_H__INCLUDED
+#define HARUHI__COMPONENTS__EVENT_BACKEND__DEVICE_WITH_PORT_DIALOG_H__INCLUDED
 
-// Local:
-#include "notification.h"
+// Standard:
+#include <cstddef>
+
+// Haruhi:
+#include <haruhi/components/devices_manager/device_dialog.h>
 
 
 namespace Haruhi {
 
-namespace Core {
+namespace EventBackend {
 
-Notification::Notification():
-	_broadcast (true)
-{ }
+using DevicesManager::DeviceItem;
 
+class DeviceWithPortDialog: public DevicesManager::DeviceDialog
+{
+  public:
+	DeviceWithPortDialog (QWidget* parent);
 
-Notification::Notification (std::string const& target_urn):
-	_broadcast (false),
-	_target_urn (target_urn)
-{ }
+	void
+	apply (DeviceItem*) const;
+};
 
-} // namespace Core
+} // namespace EventBackend
 
 } // namespace Haruhi
+
+#endif
+

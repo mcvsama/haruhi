@@ -28,13 +28,12 @@
 
 namespace Haruhi {
 
-class EventBackend;
+namespace EventBackend {
 
-namespace EventBackendPrivate {
+using DevicesManager::DeviceItem;
+class Backend;
 
-using DevicesManagerPrivate::DeviceItem;
-
-class PortsListView: public DevicesManagerPrivate::PortsListView
+class PortsListView: public DevicesManager::PortsListView
 {
   public:
 	/**
@@ -56,29 +55,27 @@ class PortsListView: public DevicesManagerPrivate::PortsListView
 	};
 
   public:
-	PortsListView (QWidget* parent, EventBackend*);
+	PortsListView (QWidget* parent, Backend*);
 
-	EventBackend*
+	Backend*
 	backend() const { return _backend; }
 
 	/**
 	 * Allocates DeviceItem that will be used
 	 * as child for this PortsList.
-	 *
-	 * \param	parent MUST be instance of EventBackendPrivate::PortsListView.
 	 */
 	DeviceItem*
-	create_device_item (DevicesManagerPrivate::PortsListView* parent, QString const& name);
+	create_device_item (QString const& name);
 
   protected:
 	void
 	customEvent (QEvent*);
 
   private:
-	EventBackend* _backend;
+	Backend* _backend;
 };
 
-} // namespace EventBackendPrivate
+} // namespace EventBackend
 
 } // namespace Haruhi
 

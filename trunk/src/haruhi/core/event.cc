@@ -23,6 +23,8 @@
 #include "event.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 POOL_ALLOCATOR_FOR (Event)
@@ -54,4 +56,6 @@ VoiceEvent::frequency_from_key_id (KeyID key_id, float master_tune)
 }
 
 } // namespace Core
+
+} // namespace Haruhi
 

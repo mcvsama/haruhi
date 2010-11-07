@@ -40,14 +40,14 @@ VanHalen::VanHalen (Haruhi::UnitFactory* factory, Haruhi::Session* session, std:
 {
 	register_unit();
 
-	_input = new Core::EventPort (this, "Input", Core::Port::Input);
-	_output = new Core::EventPort (this, "Output", Core::Port::Output);
+	_input = new Haruhi::Core::EventPort (this, "Input", Haruhi::Core::Port::Input);
+	_output = new Haruhi::Core::EventPort (this, "Output", Haruhi::Core::Port::Output);
 
-	_audio_input_1 = new Core::AudioPort (this, "Audio L", Core::Port::Input);
-	_audio_input_2 = new Core::AudioPort (this, "Audio R", Core::Port::Input);
+	_audio_input_1 = new Haruhi::Core::AudioPort (this, "Audio L", Haruhi::Core::Port::Input);
+	_audio_input_2 = new Haruhi::Core::AudioPort (this, "Audio R", Haruhi::Core::Port::Input);
 
-	_audio_output_1 = new Core::AudioPort (this, "Audio L", Core::Port::Output);
-	_audio_output_2 = new Core::AudioPort (this, "Audio R", Core::Port::Output);
+	_audio_output_1 = new Haruhi::Core::AudioPort (this, "Audio L", Haruhi::Core::Port::Output);
+	_audio_output_2 = new Haruhi::Core::AudioPort (this, "Audio R", Haruhi::Core::Port::Output);
 
 	_proxy_comb_index = new Haruhi::ControllerProxy (0, &_comb_index);
 	_proxy_comb_alpha = new Haruhi::ControllerProxy (0, &_comb_alpha);
@@ -113,10 +113,10 @@ VanHalen::process()
 	}
 #endif
 
-	Core::AudioBuffer* i1 = _audio_input_1->audio_buffer();
-	Core::AudioBuffer* i2 = _audio_input_2->audio_buffer();
-	Core::AudioBuffer* o1 = _audio_output_1->audio_buffer();
-	Core::AudioBuffer* o2 = _audio_output_2->audio_buffer();
+	Haruhi::Core::AudioBuffer* i1 = _audio_input_1->audio_buffer();
+	Haruhi::Core::AudioBuffer* i2 = _audio_input_2->audio_buffer();
+	Haruhi::Core::AudioBuffer* o1 = _audio_output_1->audio_buffer();
+	Haruhi::Core::AudioBuffer* o2 = _audio_output_2->audio_buffer();
 
 #if 0
 	// Audio quantization effect:

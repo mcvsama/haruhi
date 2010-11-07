@@ -24,6 +24,8 @@
 #include "exception.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 POOL_ALLOCATOR_FOR (EventBuffer)
@@ -47,7 +49,7 @@ void
 EventBuffer::mixin (Buffer* other)
 {
 	if (other->type() != EventBuffer::TYPE)
-		throw Exception ("incompatible buffers");
+		throw Haruhi::Exception ("incompatible buffers");
 	EventBuffer const* other_buffer = static_cast<EventBuffer*> (other);
 	EventsMultiset* aux = new EventsMultiset();
 	std::merge (_events->begin(), _events->end(), other_buffer->_events->begin(), other_buffer->_events->end(),
@@ -57,4 +59,6 @@ EventBuffer::mixin (Buffer* other)
 }
 
 } // namespace Core
+
+} // namespace Haruhi
 

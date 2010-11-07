@@ -23,6 +23,8 @@
 #include "fft.h"
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 Mutex FFT::_plan_mutex;
@@ -136,4 +138,6 @@ FFT::Inverse::transform()
 }
 
 } // namespace DSP
+
+} // namespace Haruhi
 

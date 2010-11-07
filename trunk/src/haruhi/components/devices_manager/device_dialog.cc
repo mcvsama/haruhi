@@ -30,7 +30,7 @@
 
 namespace Haruhi {
 
-namespace EventBackendPrivate {
+namespace DevicesManager {
 
 DeviceDialog::DeviceDialog (QWidget* parent):
 	QWidget (parent)
@@ -54,7 +54,6 @@ DeviceDialog::DeviceDialog (QWidget* parent):
 		QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::spacing);
 
 			_save_button = new QPushButton (Config::Icons16::ok(), "&Apply", this);
-			_save_button->setDefault (true);
 
 		buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 		buttons_layout->addWidget (_save_button);
@@ -93,9 +92,6 @@ void
 DeviceDialog::apply (DeviceItem* item) const
 {
 	item->setText (0, _name->text());
-	DeviceWithPortItem* port_item = dynamic_cast<DeviceWithPortItem*> (item);
-	if (port_item)
-		port_item->update_name();
 }
 
 
@@ -115,7 +111,7 @@ DeviceDialog::validate_and_save()
 		apply (_item);
 }
 
-} // namespace EventBackendPrivate
+} // namespace DevicesManager
 
 } // namespace Haruhi
 

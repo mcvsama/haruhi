@@ -22,6 +22,8 @@
 #include "unit.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 Port::Port (Unit* unit, std::string const& name, Direction direction, Buffer* buffer, PortGroup* group, Flags flags):
@@ -220,7 +222,7 @@ void
 Port::unregister_me()
 {
 	if (_unit->graph() == 0)
-		throw Exception ("deleting port on already unregistered unit");
+		throw Haruhi::Exception ("deleting port on already unregistered unit");
 	disconnect();
 	switch (_direction)
 	{
@@ -234,4 +236,6 @@ Port::unregister_me()
 }
 
 } // namespace Core
+
+} // namespace Haruhi
 

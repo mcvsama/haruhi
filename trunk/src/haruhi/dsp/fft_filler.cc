@@ -22,6 +22,8 @@
 #include "fft_filler.h"
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 FFTFiller::FFTFiller (Wave* wave, bool autoscale):
@@ -35,7 +37,7 @@ void
 FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 {
 	if (samples < 4096)
-		throw new Exception ("samples number must be at least 4096");
+		throw new Haruhi::Exception ("samples number must be at least 4096");
 
 	const unsigned int oversampling = 1;
 	const unsigned int number = Wavetable::Number;
@@ -94,4 +96,6 @@ FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 }
 
 } // namespace DSP
+
+} // namespace Haruhi
 

@@ -28,6 +28,8 @@
 #include "port_group.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 class Unit;
@@ -231,6 +233,8 @@ class Port: private Noncopyable
 };
 
 } // namespace Core
+
+} // namespace Haruhi
 
 #endif
 

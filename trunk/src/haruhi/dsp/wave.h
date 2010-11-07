@@ -22,6 +22,8 @@
 #include <haruhi/core/audio.h>
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 class Wave
@@ -61,6 +63,8 @@ class Wave
 };
 
 } // namespace DSP
+
+} // namespace Haruhi
 
 #endif
 

@@ -22,12 +22,12 @@
 
 // Local:
 #include "controller_with_port_item.h"
-#include "event_backend.h"
+#include "backend.h"
 
 
 namespace Haruhi {
 
-namespace EventBackendPrivate {
+namespace EventBackend {
 
 ControllerWithPortItem::ControllerWithPortItem (DeviceWithPortItem* parent, QString const& name):
 	ControllerItem (parent, name),
@@ -226,7 +226,7 @@ ControllerWithPortItem::load_state (QDomElement const& element)
 	update_name();
 }
 
-} // namespace EventBackendPrivate
+} // namespace EventBackend
 
 } // namespace Haruhi
 

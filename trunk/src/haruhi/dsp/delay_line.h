@@ -21,6 +21,8 @@
 #include <haruhi/core/audio.h>
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 class DelayLine
@@ -84,6 +86,8 @@ class DelayLine
 };
 
 } // namespace DSP
+
+} // namespace Haruhi
 
 #endif
 

@@ -21,6 +21,8 @@
 #include "adsr.h"
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 POOL_ALLOCATOR_FOR (ADSR)
@@ -169,4 +171,6 @@ ADSR::fill (Core::Sample* begin, Core::Sample* end)
 }
 
 } // namespace DSP
+
+} // namespace Haruhi
 

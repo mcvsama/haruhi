@@ -12,26 +12,33 @@
  */
 
 // Standard:
-#include <string>
+#include <cstddef>
 
 // Local:
-#include "notification.h"
+#include "device_with_port_dialog.h"
+#include "device_with_port_item.h"
 
 
 namespace Haruhi {
 
-namespace Core {
+namespace EventBackend {
 
-Notification::Notification():
-	_broadcast (true)
-{ }
+DeviceWithPortDialog::DeviceWithPortDialog (QWidget* parent):
+	DeviceDialog (parent)
+{
+}
 
 
-Notification::Notification (std::string const& target_urn):
-	_broadcast (false),
-	_target_urn (target_urn)
-{ }
+void
+DeviceWithPortDialog::apply (DeviceItem* item) const
+{
+	DeviceDialog::apply (item);
+	DeviceWithPortItem* device_item = dynamic_cast<DeviceWithPortItem*> (item);
+	if (device_item)
+		device_item->update_name();
+}
 
-} // namespace Core
+} // namespace EventBackend
 
 } // namespace Haruhi
+

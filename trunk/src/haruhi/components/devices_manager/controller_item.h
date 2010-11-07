@@ -21,7 +21,6 @@
 #include <alsa/asoundlib.h>
 
 // Haruhi:
-#include <haruhi/core/event_port.h>
 #include <haruhi/utility/saveable_state.h>
 
 // Local:
@@ -31,7 +30,7 @@
 
 namespace Haruhi {
 
-namespace DevicesManagerPrivate {
+namespace DevicesManager {
 
 class ControllerItem:
 	public Item,
@@ -54,6 +53,10 @@ class ControllerItem:
 	void
 	load_state (QDomElement const&);
 
+	// TODO learn from MIDI
+	void
+	learn() { }
+
   public:
 	bool	_note_filter;
 	int		_note_channel;					// 0 means 'all'
@@ -71,7 +74,7 @@ class ControllerItem:
 	bool	_key_pressure_invert;
 };
 
-} // namespace DevicesManagerPrivate
+} // namespace DevicesManager
 
 } // namespace Haruhi
 

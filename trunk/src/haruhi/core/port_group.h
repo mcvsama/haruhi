@@ -19,10 +19,11 @@
 #include <string>
 
 
+namespace Haruhi {
+
 namespace Core {
 
 class Graph;
-
 
 class PortGroup
 {
@@ -54,6 +55,8 @@ class PortGroup
 };
 
 } // namespace Core
+
+} // namespace Haruhi
 
 #endif
 

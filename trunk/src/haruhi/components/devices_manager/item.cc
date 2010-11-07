@@ -25,7 +25,7 @@
 
 namespace Haruhi {
 
-namespace DevicesManagerPrivate {
+namespace DevicesManager {
 
 void
 Item::update_minimum_size()
@@ -38,7 +38,7 @@ Item::update_minimum_size()
 	}
 }
 
-} // namespace DevicesManagerPrivate
+} // namespace DevicesManager
 
 } // namespace Haruhi
 

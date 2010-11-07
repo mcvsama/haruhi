@@ -22,9 +22,11 @@
 #include <haruhi/exception.h>
 
 
+namespace Haruhi {
+
 namespace Core {
 
-class CoreException: public Exception
+class CoreException: public Haruhi::Exception
 {
   public:
 	explicit CoreException (const char* what, const char* details):
@@ -141,6 +143,8 @@ class Impossible: public CoreException
 };
 
 } // namespace Core
+
+} // namespace Haruhi
 
 #endif
 

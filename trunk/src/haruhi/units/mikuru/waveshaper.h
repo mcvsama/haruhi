@@ -34,6 +34,7 @@ class Mikuru;
 
 namespace MikuruPrivate {
 
+namespace Core = Haruhi::Core;
 class Part;
 
 class Waveshaper: public QWidget

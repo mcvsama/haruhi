@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__DEVICE_DIALOG_H__INCLUDED
-#define HARUHI__COMPONENTS__EVENT_BACKEND__DEVICE_DIALOG_H__INCLUDED
+#ifndef HARUHI__COMPONENTS__DEVICES_MANAGER__DEVICE_DIALOG_H__INCLUDED
+#define HARUHI__COMPONENTS__DEVICES_MANAGER__DEVICE_DIALOG_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -23,12 +23,12 @@
 #include <QtGui/QLineEdit>
 
 // Local:
-#include "device_with_port_item.h"
+#include "device_item.h"
 
 
 namespace Haruhi {
 
-namespace EventBackendPrivate {
+namespace DevicesManager {
 
 class DeviceDialog: public QWidget
 {
@@ -39,13 +39,13 @@ class DeviceDialog: public QWidget
 
 	virtual ~DeviceDialog() { }
 
-	void
+	virtual void
 	clear();
 
-	void
+	virtual void
 	from (DeviceItem*);
 
-	void
+	virtual void
 	apply (DeviceItem*) const;
 
   private slots:
@@ -61,7 +61,7 @@ class DeviceDialog: public QWidget
 	QPushButton*	_save_button;
 };
 
-} // namespace EventBackendPrivate
+} // namespace DevicesManager
 
 } // namespace Haruhi
 

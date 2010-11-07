@@ -18,6 +18,8 @@
 #include "oscillator.h"
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 using Core::Sample;
@@ -81,4 +83,6 @@ Oscillator::reset()
 }
 
 } // namespace DSP
+
+} // namespace Haruhi
 

@@ -40,6 +40,8 @@ class Mikuru;
 
 namespace MikuruPrivate {
 
+namespace Core = Haruhi::Core;
+namespace DSP = Haruhi::DSP;
 class Voice;
 class VoiceManager;
 class Part;

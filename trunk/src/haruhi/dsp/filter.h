@@ -24,6 +24,8 @@
 #include <haruhi/exception.h>
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 /*
@@ -163,6 +165,8 @@ class Filter
 };
 
 } // namespace DSP
+
+} // namespace Haruhi
 
 #endif
 

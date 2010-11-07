@@ -30,6 +30,7 @@ class Mikuru;
 
 namespace MikuruPrivate {
 
+namespace Core = Haruhi::Core;
 class VoiceManager;
 
 
