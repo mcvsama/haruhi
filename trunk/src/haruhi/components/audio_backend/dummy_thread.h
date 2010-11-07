@@ -24,13 +24,13 @@
 
 namespace Haruhi {
 
-class AudioBackend;
+namespace AudioBackend {
 
-namespace AudioBackendPrivate {
+class Backend;
 
 /**
  * Dummy thread for executing processing rounds on Graphs
- * while AudioBackend is not connected to JACK.
+ * while Backend is not connected to JACK.
  * Implemented as different thread because executing
  * processing rounds on Graph cannot be done from within
  * Qt thread (called by QTimer).
@@ -38,10 +38,10 @@ namespace AudioBackendPrivate {
 class DummyThread: public Thread
 {
   public:
-	DummyThread (AudioBackend*);
+	DummyThread (Backend*);
 
 	/**
-	 * Executes one dummy processing round on AudioBackend.
+	 * Executes one dummy processing round on Backend.
 	 */
 	void
 	execute();
@@ -57,12 +57,12 @@ class DummyThread: public Thread
 	run();
 
   private:
-	AudioBackend*	_audio_backend;
-	Semaphore		_semaphore;
-	bool			_quit;
+	Backend*	_backend;
+	Semaphore	_semaphore;
+	bool		_quit;
 };
 
-} // namespace AudioBackendPrivate
+} // namespace AudioBackend
 
 } // namespace Haruhi
 

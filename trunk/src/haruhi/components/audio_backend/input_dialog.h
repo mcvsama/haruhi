@@ -37,14 +37,14 @@
 
 namespace Haruhi {
 
-namespace AudioBackendPrivate {
+namespace AudioBackend {
 
 class InputDialog: public PortDialog
 {
 	Q_OBJECT
 
   public:
-	InputDialog (QWidget* parent, AudioBackend* backend);
+	InputDialog (QWidget* parent, Backend* backend);
 
 	virtual ~InputDialog() { }
 
@@ -68,7 +68,7 @@ class InputDialog: public PortDialog
 	QPushButton*	_reject_button;
 };
 
-} // namespace AudioBackendPrivate
+} // namespace AudioBackend
 
 } // namespace Haruhi
 

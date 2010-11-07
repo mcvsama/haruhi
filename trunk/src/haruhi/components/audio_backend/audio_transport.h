@@ -26,7 +26,9 @@
 
 namespace Haruhi {
 
-class AudioBackend;
+namespace AudioBackend {
+
+class Backend;
 
 /**
  * Parent class for audio transport implementations
@@ -67,13 +69,13 @@ class AudioTransport
 	};
 
   public:
-	AudioTransport (AudioBackend* backend):
+	AudioTransport (Backend* backend):
 		_backend (backend)
 	{ }
 
 	virtual ~AudioTransport() { }
 
-	AudioBackend*
+	Backend*
 	backend() const { return _backend; }
 
 	/**
@@ -138,8 +140,10 @@ class AudioTransport
 	destroy_port (Port*) = 0;
 
   private:
-	AudioBackend* _backend;
+	Backend* _backend;
 };
+
+} // namespace AudioBackend
 
 } // namespace Haruhi
 

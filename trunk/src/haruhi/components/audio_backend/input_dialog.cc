@@ -29,9 +29,9 @@
 
 namespace Haruhi {
 
-namespace AudioBackendPrivate {
+namespace AudioBackend {
 
-InputDialog::InputDialog (QWidget* parent, AudioBackend* backend):
+InputDialog::InputDialog (QWidget* parent, Backend* backend):
 	PortDialog (parent, backend)
 {
 	setCaption ("Input port configuration");
@@ -104,7 +104,7 @@ InputDialog::validate_and_accept()
 		accept();
 }
 
-} // namespace AudioBackendPrivate
+} // namespace AudioBackend
 
 } // namespace Haruhi
 

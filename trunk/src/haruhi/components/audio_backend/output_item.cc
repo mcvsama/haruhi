@@ -25,7 +25,7 @@
 
 namespace Haruhi {
 
-namespace AudioBackendPrivate {
+namespace AudioBackend {
 
 OutputItem::OutputItem (PortsListView* parent, QString const& name):
 	PortItem (parent, name)
@@ -101,7 +101,7 @@ OutputItem::attenuate (Core::Sample value)
 	_smoother.multiply (port()->audio_buffer()->begin(), port()->audio_buffer()->end());
 }
 
-} // namespace AudioBackendPrivate
+} // namespace AudioBackend
 
 } // namespace Haruhi
 

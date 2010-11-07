@@ -28,6 +28,8 @@
 
 namespace Haruhi {
 
+namespace AudioBackend {
+
 /**
  * JACK audio transport.
  */
@@ -88,7 +90,7 @@ class JackAudioTransport: public AudioTransport
 	typedef std::set<JackPort*> Ports;
 
   public:
-	JackAudioTransport (AudioBackend* backend);
+	JackAudioTransport (Backend* backend);
 
 	~JackAudioTransport();
 
@@ -184,6 +186,8 @@ class JackAudioTransport: public AudioTransport
 	Ports			_ports;
 	bool			_active;
 };
+
+} // namespace AudioBackend
 
 } // namespace Haruhi
 

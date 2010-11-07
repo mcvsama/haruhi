@@ -23,15 +23,15 @@
 
 namespace Haruhi {
 
-namespace AudioBackendPrivate {
+namespace AudioBackend {
 
-PortDialog::PortDialog (QWidget* parent, AudioBackend* backend):
+PortDialog::PortDialog (QWidget* parent, Backend* backend):
 	QDialog (parent),
 	_backend (backend)
 {
 }
 
-} // namespace AudioBackendPrivate
+} // namespace AudioBackend
 
 } // namespace Haruhi
 

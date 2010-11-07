@@ -32,22 +32,22 @@
 
 namespace Haruhi {
 
-class AudioBackend;
+namespace AudioBackend {
 
-namespace AudioBackendPrivate {
+class Backend;
 
 class PortDialog: public QDialog
 {
   public:
-	PortDialog (QWidget* parent, AudioBackend* backend);
+	PortDialog (QWidget* parent, Backend* backend);
 
 	virtual ~PortDialog() { }
 
   protected:
-	AudioBackend* _backend;
+	Backend* _backend;
 };
 
-} // namespace AudioBackendPrivate
+} // namespace AudioBackend
 
 } // namespace Haruhi
 

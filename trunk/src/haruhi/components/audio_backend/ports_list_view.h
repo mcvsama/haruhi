@@ -36,18 +36,18 @@
 
 namespace Haruhi {
 
-class AudioBackend;
+namespace AudioBackend {
 
-namespace AudioBackendPrivate {
+class Backend;
 
 class PortsListView:
 	public QTreeWidget,
 	public SaveableState
 {
   public:
-	PortsListView (QWidget* parent, AudioBackend*, const char* header_title);
+	PortsListView (QWidget* parent, Backend*, const char* header_title);
 
-	AudioBackend*
+	Backend*
 	backend() const { return _backend; }
 
 	QTreeWidgetItem*
@@ -60,10 +60,10 @@ class PortsListView:
 	load_state (QDomElement const&);
 
   private:
-	AudioBackend* _backend;
+	Backend* _backend;
 };
 
-} // namespace AudioBackendPrivate
+} // namespace AudioBackend
 
 } // namespace Haruhi
 

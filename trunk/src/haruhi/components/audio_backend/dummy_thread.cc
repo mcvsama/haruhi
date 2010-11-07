@@ -24,10 +24,10 @@
 
 namespace Haruhi {
 
-namespace AudioBackendPrivate {
+namespace AudioBackend {
 
-DummyThread::DummyThread (AudioBackend* audio_backend):
-	_audio_backend (audio_backend),
+DummyThread::DummyThread (Backend* backend):
+	_backend (backend),
 	_semaphore (0),
 	_quit (false)
 { }
@@ -56,12 +56,12 @@ DummyThread::run()
 		_semaphore.wait();
 		if (_quit)
 			break;
-		_audio_backend->graph()->enter_processing_round();
-		_audio_backend->graph()->leave_processing_round();
+		_backend->graph()->enter_processing_round();
+		_backend->graph()->leave_processing_round();
 	}
 }
 
-} // namespace AudioBackendPrivate
+} // namespace AudioBackend
 
 } // namespace Haruhi
 

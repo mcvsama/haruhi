@@ -691,7 +691,7 @@ void
 Session::start_audio_backend()
 {
 	try {
-		_audio_backend = new AudioBackend (this, "Haruhi", 1, _audio_tab);
+		_audio_backend = new AudioBackend::Backend (this, "Haruhi", 1, _audio_tab);
 		_audio_backend->show();
 		_audio_backend->connect();
 		_audio_backend->enable();

@@ -38,10 +38,9 @@
 // TODO handle dummy_timer and faked sample_rate+buffer_size when transport disconnects.
 namespace Haruhi {
 
-namespace Private = AudioBackendPrivate;
+namespace AudioBackend {
 
-
-AudioBackend::AudioBackend (Session* session, QString const& client_name, int id, QWidget* parent):
+Backend::Backend (Session* session, QString const& client_name, int id, QWidget* parent):
 	Unit (0, session, "urn://haruhi.mulabs.org/backend/jack-audio-backend/1", "• Audio", id, parent),
 	_client_name (client_name)
 {
@@ -65,7 +64,7 @@ AudioBackend::AudioBackend (Session* session, QString const& client_name, int id
 	top_layout->addWidget (_reconnect_button);
 	top_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
-		_inputs_list = new Private::PortsListView (this, this, "Audio inputs");
+		_inputs_list = new PortsListView (this, this, "Audio inputs");
 
 	inputs_layout->addWidget (_inputs_list);
 
@@ -90,7 +89,7 @@ AudioBackend::AudioBackend (Session* session, QString const& client_name, int id
 	QObject::connect (_create_input_button, SIGNAL (clicked()), this, SLOT (create_input()));
 	QObject::connect (_destroy_input_button, SIGNAL (clicked()), this, SLOT (destroy_selected_input()));
 
-		_outputs_list = new Private::PortsListView (this, this, "Audio outputs");
+		_outputs_list = new PortsListView (this, this, "Audio outputs");
 
 	outputs_layout->addWidget (_outputs_list);
 
@@ -129,7 +128,7 @@ AudioBackend::AudioBackend (Session* session, QString const& client_name, int id
 }
 
 
-AudioBackend::~AudioBackend()
+Backend::~Backend()
 {
 	dummy_stop();
 	disable();
@@ -149,7 +148,7 @@ AudioBackend::~AudioBackend()
 
 
 void
-AudioBackend::enable()
+Backend::enable()
 {
 	Unit::enable();
 	_transport->activate();
@@ -157,7 +156,7 @@ AudioBackend::enable()
 
 
 void
-AudioBackend::disable()
+Backend::disable()
 {
 	_transport->deactivate();
 	Unit::disable();
@@ -165,7 +164,7 @@ AudioBackend::disable()
 
 
 void
-AudioBackend::transfer()
+Backend::transfer()
 {
 	session()->engine()->wait_for_data();
 
@@ -211,7 +210,7 @@ AudioBackend::transfer()
 
 
 void
-AudioBackend::process()
+Backend::process()
 {
 	if (graph()->dummy())
 		return;
@@ -221,7 +220,7 @@ AudioBackend::process()
 
 
 void
-AudioBackend::save_state (QDomElement& element) const
+Backend::save_state (QDomElement& element) const
 {
 	QDomElement inputs = element.ownerDocument().createElement ("inputs");
 	QDomElement outputs = element.ownerDocument().createElement ("outputs");
@@ -235,7 +234,7 @@ AudioBackend::save_state (QDomElement& element) const
 
 
 void
-AudioBackend::load_state (QDomElement const& element)
+Backend::load_state (QDomElement const& element)
 {
 	bool active = _transport->active();
 	if (active)
@@ -259,7 +258,7 @@ AudioBackend::load_state (QDomElement const& element)
 
 
 void
-AudioBackend::connect()
+Backend::connect()
 {
 	try {
 		dummy_stop();
@@ -276,7 +275,7 @@ AudioBackend::connect()
 
 
 void
-AudioBackend::disconnect()
+Backend::disconnect()
 {
 	_transport->deactivate();
 	_transport->disconnect();
@@ -286,21 +285,21 @@ AudioBackend::disconnect()
 
 
 bool
-AudioBackend::connected() const
+Backend::connected() const
 {
 	return _transport->connected();
 }
 
 
 void
-AudioBackend::notify_disconnected()
+Backend::notify_disconnected()
 {
 	QApplication::postEvent (this, new OfflineNotification());
 }
 
 
 void
-AudioBackend::update_widgets()
+Backend::update_widgets()
 {
 	_disconnect_button->setEnabled (connected());
 	_reconnect_button->setEnabled (!connected());
@@ -314,12 +313,12 @@ AudioBackend::update_widgets()
 
 
 void
-AudioBackend::create_input()
+Backend::create_input()
 {
-	Private::InputDialog* dialog = new Private::InputDialog (this, this);
-	if (dialog->exec() == Private::InputDialog::Accepted)
+	InputDialog* dialog = new InputDialog (this, this);
+	if (dialog->exec() == InputDialog::Accepted)
 	{
-		Private::InputItem* item = new Private::InputItem (_inputs_list, dialog->name());
+		InputItem* item = new InputItem (_inputs_list, dialog->name());
 		dialog->apply (item);
 		_inputs_list->setCurrentItem (item);
 	}
@@ -327,20 +326,20 @@ AudioBackend::create_input()
 
 
 void
-AudioBackend::create_input (QString const& name)
+Backend::create_input (QString const& name)
 {
-	Private::InputItem* item = new Private::InputItem (_inputs_list, name);
+	InputItem* item = new InputItem (_inputs_list, name);
 	_inputs_list->setCurrentItem (item);
 }
 
 
 void
-AudioBackend::create_output()
+Backend::create_output()
 {
-	Private::OutputDialog* dialog = new Private::OutputDialog (this, this);
-	if (dialog->exec() == Private::OutputDialog::Accepted)
+	OutputDialog* dialog = new OutputDialog (this, this);
+	if (dialog->exec() == OutputDialog::Accepted)
 	{
-		Private::OutputItem* item = new Private::OutputItem (_outputs_list, dialog->name());
+		OutputItem* item = new OutputItem (_outputs_list, dialog->name());
 		dialog->apply (item);
 		_outputs_list->setCurrentItem (item);
 	}
@@ -348,15 +347,15 @@ AudioBackend::create_output()
 
 
 void
-AudioBackend::create_output (QString const& name)
+Backend::create_output (QString const& name)
 {
-	Private::OutputItem* item = new Private::OutputItem (_outputs_list, name);
+	OutputItem* item = new OutputItem (_outputs_list, name);
 	_outputs_list->setCurrentItem (item);
 }
 
 
 void
-AudioBackend::context_menu_for_inputs (QPoint const& pos)
+Backend::context_menu_for_inputs (QPoint const& pos)
 {
 	Q3PopupMenu* menu = new Q3PopupMenu (this);
 	QTreeWidgetItem* item = _inputs_list->itemAt (pos);
@@ -364,7 +363,7 @@ AudioBackend::context_menu_for_inputs (QPoint const& pos)
 
 	if (item != 0)
 	{
-		if (dynamic_cast<Private::InputItem*> (item) != 0)
+		if (dynamic_cast<InputItem*> (item) != 0)
 		{
 			i = menu->insertItem (Config::Icons16::rename(), "&Rename", this, SLOT (rename_selected_input()));
 			menu->insertSeparator();
@@ -386,7 +385,7 @@ AudioBackend::context_menu_for_inputs (QPoint const& pos)
 
 
 void
-AudioBackend::context_menu_for_outputs (QPoint const& pos)
+Backend::context_menu_for_outputs (QPoint const& pos)
 {
 	Q3PopupMenu* menu = new Q3PopupMenu (this);
 	QTreeWidgetItem* item = _outputs_list->itemAt (pos);
@@ -394,7 +393,7 @@ AudioBackend::context_menu_for_outputs (QPoint const& pos)
 
 	if (item != 0)
 	{
-		if (dynamic_cast<Private::OutputItem*> (item) != 0)
+		if (dynamic_cast<OutputItem*> (item) != 0)
 		{
 			i = menu->insertItem (Config::Icons16::rename(), "&Rename", this, SLOT (rename_selected_output()));
 			menu->insertSeparator();
@@ -416,7 +415,7 @@ AudioBackend::context_menu_for_outputs (QPoint const& pos)
 
 
 void
-AudioBackend::double_click_on_inputs (QTreeWidgetItem* item, int)
+Backend::double_click_on_inputs (QTreeWidgetItem* item, int)
 {
 	if (item != 0)
 	{
@@ -427,7 +426,7 @@ AudioBackend::double_click_on_inputs (QTreeWidgetItem* item, int)
 
 
 void
-AudioBackend::double_click_on_outputs (QTreeWidgetItem* item, int)
+Backend::double_click_on_outputs (QTreeWidgetItem* item, int)
 {
 	if (item != 0)
 	{
@@ -438,11 +437,11 @@ AudioBackend::double_click_on_outputs (QTreeWidgetItem* item, int)
 
 
 void
-AudioBackend::configure_selected_input()
+Backend::configure_selected_input()
 {
 	if (_inputs_list->selected_item())
 	{
-		Private::PortItem* item = dynamic_cast<Private::PortItem*> (_inputs_list->selected_item());
+		PortItem* item = dynamic_cast<PortItem*> (_inputs_list->selected_item());
 		if (item)
 			item->configure();
 	}
@@ -450,11 +449,11 @@ AudioBackend::configure_selected_input()
 
 
 void
-AudioBackend::configure_selected_output()
+Backend::configure_selected_output()
 {
 	if (_outputs_list->selected_item())
 	{
-		Private::PortItem* item = dynamic_cast<Private::PortItem*> (_outputs_list->selected_item());
+		PortItem* item = dynamic_cast<PortItem*> (_outputs_list->selected_item());
 		if (item)
 			item->configure();
 	}
@@ -462,7 +461,7 @@ AudioBackend::configure_selected_output()
 
 
 void
-AudioBackend::rename_selected_input()
+Backend::rename_selected_input()
 {
 	QTreeWidgetItem* sel = _inputs_list->selected_item();
 	if (sel != 0)
@@ -471,7 +470,7 @@ AudioBackend::rename_selected_input()
 
 
 void
-AudioBackend::rename_selected_output()
+Backend::rename_selected_output()
 {
 	QTreeWidgetItem* sel = _outputs_list->selected_item();
 	if (sel != 0)
@@ -480,7 +479,7 @@ AudioBackend::rename_selected_output()
 
 
 void
-AudioBackend::destroy_selected_input()
+Backend::destroy_selected_input()
 {
 	if (_inputs_list->selected_item())
 	{
@@ -492,7 +491,7 @@ AudioBackend::destroy_selected_input()
 
 
 void
-AudioBackend::destroy_selected_output()
+Backend::destroy_selected_output()
 {
 	if (_outputs_list->selected_item())
 	{
@@ -504,7 +503,7 @@ AudioBackend::destroy_selected_output()
 
 
 void
-AudioBackend::dummy_start()
+Backend::dummy_start()
 {
 	const int DummyPeriodTime = 33; // ms
 	const int DummySampleRate = 48000;
@@ -518,14 +517,14 @@ AudioBackend::dummy_start()
 
 
 void
-AudioBackend::dummy_stop()
+Backend::dummy_stop()
 {
 	_dummy_timer->stop();
 }
 
 
 void
-AudioBackend::dummy_round()
+Backend::dummy_round()
 {
 	session()->engine()->wait_for_data();
 	update_level_meter();
@@ -534,14 +533,14 @@ AudioBackend::dummy_round()
 
 
 void
-AudioBackend::update_level_meter()
+Backend::update_level_meter()
 {
 	// Level meter:
-	std::vector<Private::OutputItem*> ovec;
+	std::vector<OutputItem*> ovec;
 	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
 		ovec.push_back (p->second);
-	std::sort (ovec.begin(), ovec.end(), Private::PortItem::CompareByPortName());
-	for (unsigned int i = 0; i < std::min (ovec.size(), static_cast<std::vector<Private::OutputItem*>::size_type> (2u)); ++i)
+	std::sort (ovec.begin(), ovec.end(), PortItem::CompareByPortName());
+	for (unsigned int i = 0; i < std::min (ovec.size(), static_cast<std::vector<OutputItem*>::size_type> (2u)); ++i)
 	{
 		Core::AudioBuffer* abuf = ovec[i]->port()->audio_buffer();
 		session()->meter_panel()->level_meters_group()->meter (i)->process (abuf->begin(), abuf->end());
@@ -550,7 +549,7 @@ AudioBackend::update_level_meter()
 
 
 void
-AudioBackend::customEvent (QEvent* event)
+Backend::customEvent (QEvent* event)
 {
 	OfflineNotification* offline_notification = dynamic_cast<OfflineNotification*> (event);
 	if (offline_notification)
@@ -564,13 +563,15 @@ AudioBackend::customEvent (QEvent* event)
 
 
 void
-AudioBackend::graph_updated()
+Backend::graph_updated()
 {
 	Unit::graph_updated();
 	// Update smoothers for all OutputItems:
 	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
 		p->second->graph_updated();
 }
+
+} // namespace AudioBackend
 
 } // namespace Haruhi
 

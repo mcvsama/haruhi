@@ -20,8 +20,8 @@
  * acquire graph lock when changing core objects (ports, unit attributes, connecting ports, etc.).
  */
 
-#ifndef HARUHI__COMPONENTS__AUDIO_BACKEND__AUDIO_BACKEND_H__INCLUDED
-#define HARUHI__COMPONENTS__AUDIO_BACKEND__AUDIO_BACKEND_H__INCLUDED
+#ifndef HARUHI__COMPONENTS__AUDIO_BACKEND__BACKEND_H__INCLUDED
+#define HARUHI__COMPONENTS__AUDIO_BACKEND__BACKEND_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -61,10 +61,12 @@
 
 namespace Haruhi {
 
-class AudioBackend:
+namespace AudioBackend {
+
+class Backend:
 	public Unit,
 	public SaveableState,
-	public Backend
+	public ::Haruhi::Backend
 {
 	Q_OBJECT
 
@@ -76,18 +78,18 @@ class AudioBackend:
 		{ }
 	};
 
-	friend class AudioBackendPrivate::PortItem;
-	friend class AudioBackendPrivate::InputItem;
-	friend class AudioBackendPrivate::OutputItem;
+	friend class PortItem;
+	friend class InputItem;
+	friend class OutputItem;
 
   private:
-	typedef std::map<AudioTransport::Port*, AudioBackendPrivate::InputItem*>	InputsMap;
-	typedef std::map<AudioTransport::Port*, AudioBackendPrivate::OutputItem*>	OutputsMap;
+	typedef std::map<AudioTransport::Port*, InputItem*>		InputsMap;
+	typedef std::map<AudioTransport::Port*, OutputItem*>	OutputsMap;
 
   public:
-	AudioBackend (Session* session, QString const& client_name, int id, QWidget* parent);
+	Backend (Session* session, QString const& client_name, int id, QWidget* parent);
 
-	~AudioBackend();
+	~Backend();
 
 	AudioTransport*
 	transport() const { return _transport; }
@@ -105,7 +107,7 @@ class AudioBackend:
 	enable();
 
 	/**
-	 * Stops processing. AudioBackend must not enter processing round after this call ends.
+	 * Stops processing. Backend must not enter processing round after this call ends.
 	 * Otherwise system behavior is undefined.
 	 */
 	void
@@ -245,8 +247,8 @@ class AudioBackend:
 	QPushButton*		_destroy_output_button;
 
 	// Ports lists:
-	AudioBackendPrivate::PortsListView*	_inputs_list;
-	AudioBackendPrivate::PortsListView*	_outputs_list;
+	PortsListView*		_inputs_list;
+	PortsListView*		_outputs_list;
 
 	// Master volume control port:
 	Core::EventPort*	_master_volume_port;
@@ -283,6 +285,8 @@ class AudioBackendPortException: public AudioBackendException
 		AudioBackendException (what, details)
 	{ }
 };
+
+} // namespace AudioBackend
 
 } // namespace Haruhi
 

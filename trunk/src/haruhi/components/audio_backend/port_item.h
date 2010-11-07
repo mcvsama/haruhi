@@ -43,10 +43,9 @@
 
 namespace Haruhi {
 
-class AudioBackend;
+namespace AudioBackend {
 
-namespace AudioBackendPrivate {
-
+class Backend;
 class PortsListView;
 
 class PortItem:
@@ -101,7 +100,7 @@ class PortItem:
 	set_ready (bool r) { atomic (_ready) = r; }
 
   protected:
-	AudioBackend*			_backend;
+	Backend*				_backend;
 	Core::AudioPort*		_port;
 	AudioTransport::Port*	_transport_port;
 
@@ -110,7 +109,7 @@ class PortItem:
 	bool					_ready;
 };
 
-} // namespace AudioBackendPrivate
+} // namespace AudioBackend
 
 } // namespace Haruhi
 

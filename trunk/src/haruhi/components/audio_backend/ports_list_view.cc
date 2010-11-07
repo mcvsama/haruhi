@@ -29,9 +29,9 @@
 
 namespace Haruhi {
 
-namespace AudioBackendPrivate {
+namespace AudioBackend {
 
-PortsListView::PortsListView (QWidget* parent, AudioBackend* backend, const char* header_title):
+PortsListView::PortsListView (QWidget* parent, Backend* backend, const char* header_title):
 	QTreeWidget (parent),
 	_backend (backend)
 {
@@ -111,7 +111,7 @@ PortsListView::load_state (QDomElement const& element)
 	}
 }
 
-} // namespace AudioBackendPrivate
+} // namespace AudioBackend
 
 } // namespace Haruhi
 

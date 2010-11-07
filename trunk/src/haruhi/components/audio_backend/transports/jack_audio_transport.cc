@@ -32,6 +32,8 @@
 
 namespace Haruhi {
 
+namespace AudioBackend {
+
 JackAudioTransport::JackPort::JackPort (AudioTransport* transport, Direction direction, std::string const& name):
 	Port (transport),
 	_direction (direction),
@@ -96,7 +98,7 @@ JackAudioTransport::JackPort::destroy()
 }
 
 
-JackAudioTransport::JackAudioTransport (AudioBackend* backend):
+JackAudioTransport::JackAudioTransport (Backend* backend):
 	AudioTransport (backend),
 	_jack_client (0),
 	_active (false)
@@ -278,6 +280,8 @@ JackAudioTransport::s_log_info (const char* message)
 {
 	std::clog << "INFO[JACK] " << message << std::endl;
 }
+
+} // namespace AudioBackend
 
 } // namespace Haruhi
 
