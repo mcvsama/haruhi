@@ -32,6 +32,8 @@
 #include "notification.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 /*
@@ -226,6 +228,8 @@ class Unit: private Noncopyable
 };
 
 } // namespace Core
+
+} // namespace Haruhi
 
 #endif
 

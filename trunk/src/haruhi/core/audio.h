@@ -18,11 +18,15 @@
 #include <cstddef>
 
 
+namespace Haruhi {
+
 namespace Core {
 
 typedef float Sample;
 
 } // namespace Core
+
+} // namespace Haruhi
 
 // Local:
 #include "audio_buffer.h"

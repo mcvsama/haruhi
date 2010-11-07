@@ -18,6 +18,8 @@
 #include "noise.h"
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 Noise::State::State()
@@ -26,4 +28,6 @@ Noise::State::State()
 }
 
 } // namespace DSP
+
+} // namespace Haruhi
 

@@ -19,6 +19,8 @@
 #include "smoother.h"
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 Smoother::Smoother (unsigned int max_samples):
@@ -66,4 +68,6 @@ Smoother::set_absolute_value (float value)
 }
 
 } // namespace DSP
+
+} // namespace Haruhi
 

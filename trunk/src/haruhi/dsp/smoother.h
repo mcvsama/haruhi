@@ -23,6 +23,8 @@
 #include <haruhi/dsp/wave.h>
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 class Smoother
@@ -86,6 +88,8 @@ class Smoother
 };
 
 } // namespace DSP
+
+} // namespace Haruhi
 
 #endif
 

@@ -38,6 +38,9 @@ class Mikuru;
 
 namespace MikuruPrivate {
 
+namespace Core = Haruhi::Core;
+
+
 class General: public QWidget
 {
 	Q_OBJECT

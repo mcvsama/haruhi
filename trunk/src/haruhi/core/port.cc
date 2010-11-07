@@ -22,6 +22,8 @@
 #include "unit.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 Port::Port (Unit* unit, std::string const& name, Direction direction, Buffer* buffer, PortGroup* group, Flags flags):
@@ -234,4 +236,6 @@ Port::unregister_me()
 }
 
 } // namespace Core
+
+} // namespace Haruhi
 

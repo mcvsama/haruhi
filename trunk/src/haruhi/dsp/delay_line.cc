@@ -21,6 +21,8 @@
 #include "delay_line.h"
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 DelayLine::DelayLine (std::size_t delay, std::size_t max_delay, std::size_t size):
@@ -111,4 +113,6 @@ DelayLine::clear()
 }
 
 } // namespace DSP
+
+} // namespace Haruhi
 

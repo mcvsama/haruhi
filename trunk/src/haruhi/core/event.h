@@ -26,6 +26,8 @@
 #include "core.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 enum { OmniKey = -1, OmniVoice = -1, VoiceAuto = -1 };
@@ -234,6 +236,8 @@ class VoiceControllerEvent: public ControllerEvent
 };
 
 } // namespace Core
+
+} // namespace Haruhi
 
 // Local:
 #include "event_port.h"

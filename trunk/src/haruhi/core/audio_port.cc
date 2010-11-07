@@ -20,6 +20,8 @@
 #include "unit.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 AudioPort::AudioPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group, Flags flags):
@@ -50,3 +52,4 @@ AudioPort::graph_updated()
 
 } // namespace Core
 
+} // namespace Haruhi

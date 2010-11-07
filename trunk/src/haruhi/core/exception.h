@@ -22,6 +22,8 @@
 #include <haruhi/exception.h>
 
 
+namespace Haruhi {
+
 namespace Core {
 
 class CoreException: public Haruhi::Exception
@@ -141,6 +143,8 @@ class Impossible: public CoreException
 };
 
 } // namespace Core
+
+} // namespace Haruhi
 
 #endif
 

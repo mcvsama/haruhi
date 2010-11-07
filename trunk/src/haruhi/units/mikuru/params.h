@@ -67,6 +67,8 @@
 	name##Default = deflt,
 
 
+namespace DSP = Haruhi::DSP;
+
 namespace MikuruPrivate {
 
 struct Params

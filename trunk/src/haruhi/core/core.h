@@ -18,11 +18,15 @@
 #include <cstddef>
 
 
+namespace Haruhi {
+
 namespace Core {
 
 typedef int64_t Timestamp;
 
 } // namespace Core
+
+} // namespace Haruhi
 
 #endif
 

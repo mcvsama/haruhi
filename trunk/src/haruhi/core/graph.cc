@@ -25,6 +25,8 @@
 #include "notification.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 Graph::Graph():
@@ -174,4 +176,6 @@ Graph::now()
 }
 
 } // namespace Core
+
+} // namespace Haruhi
 

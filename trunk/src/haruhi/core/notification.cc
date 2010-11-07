@@ -18,6 +18,8 @@
 #include "notification.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 Notification::Notification():
@@ -32,3 +34,4 @@ Notification::Notification (std::string const& target_urn):
 
 } // namespace Core
 
+} // namespace Haruhi

@@ -22,6 +22,9 @@
 
 namespace MikuruPrivate {
 
+namespace Core = Haruhi::Core;
+
+
 RBJImpulseResponse::RBJImpulseResponse (Type type, Sample frequency, Sample resonance, Sample gain, Sample attenuation):
 	_type (type),
 	_frequency (frequency),

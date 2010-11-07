@@ -28,6 +28,8 @@
 #include "buffer.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 class EventBuffer: public Core::Buffer
@@ -74,6 +76,8 @@ class EventBuffer: public Core::Buffer
 };
 
 } // namespace Core
+
+} // namespace Haruhi
 
 #endif
 

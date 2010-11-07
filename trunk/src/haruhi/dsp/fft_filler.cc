@@ -22,6 +22,8 @@
 #include "fft_filler.h"
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 FFTFiller::FFTFiller (Wave* wave, bool autoscale):
@@ -94,4 +96,6 @@ FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 }
 
 } // namespace DSP
+
+} // namespace Haruhi
 

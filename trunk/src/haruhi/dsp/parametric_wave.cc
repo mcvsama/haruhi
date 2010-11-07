@@ -21,6 +21,8 @@
 #include "parametric_wave.h"
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 ParametricWave::ParametricWave (bool immutable):
@@ -30,4 +32,6 @@ ParametricWave::ParametricWave (bool immutable):
 }
 
 } // namespace DSP
+
+} // namespace Haruhi
 

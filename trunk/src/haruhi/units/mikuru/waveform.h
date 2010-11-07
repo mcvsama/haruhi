@@ -53,6 +53,8 @@ namespace Haruhi {
 
 namespace MikuruPrivate {
 
+namespace Core = Haruhi::Core;
+namespace DSP = Haruhi::DSP;
 class Part;
 class WaveComputer;
 

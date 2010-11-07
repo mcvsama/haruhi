@@ -14,6 +14,8 @@
 #ifndef HARUHI__CORE__PREDICATES_TCC__INCLUDED
 #define HARUHI__CORE__PREDICATES_TCC__INCLUDED
 
+namespace Haruhi {
+
 namespace Core {
 
 template<class Port>
@@ -44,6 +46,8 @@ template<class Port>
 	}
 
 } // namespace Core
+
+} // namespace Haruhi
 
 #endif
 

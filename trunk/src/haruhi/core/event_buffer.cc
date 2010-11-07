@@ -24,6 +24,8 @@
 #include "exception.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 POOL_ALLOCATOR_FOR (EventBuffer)
@@ -57,4 +59,6 @@ EventBuffer::mixin (Buffer* other)
 }
 
 } // namespace Core
+
+} // namespace Haruhi
 

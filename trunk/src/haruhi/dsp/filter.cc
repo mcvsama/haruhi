@@ -20,6 +20,8 @@
 #include "filter.h"
 
 
+namespace Haruhi {
+
 namespace DSP {
 
 Filter::Filter():
@@ -90,4 +92,6 @@ Filter::assign_impulse_response (ImpulseResponse* impulse_response)
 }
 
 } // namespace DSP
+
+} // namespace Haruhi
 

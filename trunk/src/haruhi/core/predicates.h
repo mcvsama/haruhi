@@ -21,6 +21,8 @@
 #include "unit.h"
 
 
+namespace Haruhi {
+
 namespace Core {
 
 template<class Port>
@@ -73,6 +75,8 @@ template<class Port>
 	}
 
 } // namespace Core
+
+} // namespace Haruhi
 
 #include "predicates.tcc"
 
