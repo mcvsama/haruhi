@@ -25,8 +25,8 @@
 #include "unit_loader.h"
 
 // Factories:
-#include <haruhi/units/mikuru/mikuru.h>
-#include <haruhi/units/vanhalen/vanhalen.h>
+#include <units/mikuru/mikuru.h>
+#include <units/vanhalen/vanhalen.h>
 
 
 namespace Haruhi {
