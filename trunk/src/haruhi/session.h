@@ -34,13 +34,13 @@
 #include <haruhi/components/audio_backend/audio_backend.h>
 #include <haruhi/components/event_backend/backend.h>
 #include <haruhi/components/devices_manager/panel.h>
+#include <haruhi/plugin/plugin_loader.h>
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/widgets/level_meter.h>
 #include <haruhi/widgets/dial_control.h>
 #include <haruhi/engine.h>
 #include <haruhi/program.h>
-#include <haruhi/unit_loader.h>
 
 
 namespace Haruhi {
@@ -212,8 +212,8 @@ class Session: public QWidget
 	Core::Graph*
 	graph() const { return _graph; }
 
-	UnitLoader*
-	unit_loader() const { return _unit_loader; }
+	PluginLoader*
+	plugin_loader() const { return _plugin_loader; }
 
 	MeterPanel*
 	meter_panel() const { return _meter_panel; }
@@ -319,7 +319,7 @@ class Session: public QWidget
 	AudioBackend::Backend*	_audio_backend;
 	EventBackend::Backend*	_event_backend;
 	Engine*					_engine;
-	UnitLoader*				_unit_loader;
+	PluginLoader*			_plugin_loader;
 	DevicesManager::Panel*	_devices_manager;
 
 	QDoubleSpinBox*			_tempo_spinbox;

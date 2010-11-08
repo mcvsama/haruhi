@@ -42,7 +42,7 @@
 #include <haruhi/config.h>
 #include <haruhi/haruhi.h>
 #include <haruhi/backend.h>
-#include <haruhi/unit.h>
+#include <haruhi/core/unit.h>
 #include <haruhi/core/audio.h>
 #include <haruhi/core/event_port.h>
 #include <haruhi/utility/saveable_state.h>
@@ -64,7 +64,8 @@ namespace Haruhi {
 namespace AudioBackend {
 
 class Backend:
-	public Unit,
+	public QWidget,
+	public Core::Unit,
 	public SaveableState,
 	public ::Haruhi::Backend
 {
@@ -90,6 +91,18 @@ class Backend:
 	Backend (Session* session, QString const& client_name, int id, QWidget* parent);
 
 	~Backend();
+
+	/**
+	 * Core::Unit API
+	 */
+	void
+	registered();
+
+	/**
+	 * Core::Unit API
+	 */
+	void
+	unregistered();
 
 	AudioTransport*
 	transport() const { return _transport; }

@@ -35,7 +35,7 @@
 
 // Haruhi:
 #include <haruhi/config.h>
-#include <haruhi/unit.h>
+#include <haruhi/core/unit.h>
 #include <haruhi/utility/filesystem.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/memory.h>
@@ -114,13 +114,9 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 	QString all_presets_dir = Config::data_home() + "/presets";
 	mkpath (all_presets_dir.toStdString(), 0700);
 
-	UnitFactory::InformationMap::const_iterator i = _unit->factory()->information().find ("haruhi:presets.directory");
-	_packages_dir = "-";
-	if (i != _unit->factory()->information().end())
-	{
-		_packages_dir = all_presets_dir + "/" + QString::fromStdString (i->second);
-		read();
-	}
+	std::string dir = sanitize_urn (_unit->urn());
+	_packages_dir = all_presets_dir + "/" + QString::fromStdString (dir);
+	read();
 
 	update_widgets();
 }
@@ -485,6 +481,17 @@ QString
 PresetsManager::lock_file_name() const
 {
 	return _packages_dir + "/" + ".haruhi-lock.pid";
+}
+
+
+std::string
+PresetsManager::sanitize_urn (std::string const& urn) const
+{
+	std::string r = urn;
+	for (std::string::size_type i = 0; i < r.size(); ++i)
+		if (r[i] == '/')
+			r[i] = '_';
+	return r;
 }
 
 } // namespace Haruhi

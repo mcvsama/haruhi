@@ -301,7 +301,7 @@ Session::Session (QWidget* parent):
 	_graph (new Core::Graph()),
 	_audio_backend (0),
 	_event_backend (0),
-	_unit_loader (new UnitLoader (this))
+	_plugin_loader (new PluginLoader (this))
 {
 	_name = "";
 
@@ -411,7 +411,7 @@ Session::Session (QWidget* parent):
 
 Session::~Session()
 {
-	delete _unit_loader;
+	delete _plugin_loader;
 	delete _program;
 
 	stop_audio_backend();
@@ -667,6 +667,7 @@ Session::stop_audio_backend()
 		_audio_backend->disable();
 		_audio_backend->disconnect();
 		_audio_backend->hide();
+		_graph->unregister_unit (_audio_backend);
 		delete _audio_backend;
 	}
 	_audio_backend = 0;
@@ -681,6 +682,7 @@ Session::stop_event_backend()
 		_event_backend->disable();
 		_event_backend->disconnect();
 		_event_backend->hide();
+		_graph->unregister_unit (_event_backend);
 		delete _event_backend;
 	}
 	_event_backend = 0;
@@ -692,6 +694,7 @@ Session::start_audio_backend()
 {
 	try {
 		_audio_backend = new AudioBackend::Backend (this, "Haruhi", 1, _audio_tab);
+		_graph->register_unit (_audio_backend);
 		_audio_backend->show();
 		_audio_backend->connect();
 		_audio_backend->enable();
@@ -708,6 +711,7 @@ Session::start_event_backend()
 {
 	try {
 		_event_backend = new EventBackend::Backend (this, "Haruhi", 2, _event_tab);
+		_graph->register_unit (_event_backend);
 		_event_backend->show();
 		_event_backend->connect();
 		_event_backend->enable();

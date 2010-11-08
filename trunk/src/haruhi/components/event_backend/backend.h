@@ -39,8 +39,8 @@
 #include <haruhi/config.h>
 #include <haruhi/core/event.h>
 #include <haruhi/core/event_port.h>
+#include <haruhi/core/unit.h>
 #include <haruhi/utility/saveable_state.h>
-#include <haruhi/unit.h>
 
 // Local:
 #include "event_transport.h"
@@ -59,7 +59,8 @@ class DeviceWithPortDialog;
 class ControllerWithPortDialog;
 
 class Backend:
-	public Unit,
+	public QWidget,
+	public Core::Unit,
 	public Teacher,
 	public SaveableState,
 	public ::Haruhi::Backend
@@ -77,6 +78,18 @@ class Backend:
 	Backend (Session*, QString const& client_name, int id, QWidget* parent);
 
 	~Backend();
+
+	/**
+	 * Core::Unit API
+	 */
+	void
+	registered();
+
+	/**
+	 * Core::Unit API
+	 */
+	void
+	unregistered();
 
 	EventTransport*
 	transport() const { return _transport; }

@@ -24,6 +24,7 @@
 #include <Qt3Support/Q3PopupMenu>
 
 // Haruhi:
+#include <haruhi/plugin/plugin_factory.h>
 #include <haruhi/config.h>
 #include <haruhi/session.h>
 #include <haruhi/presetable.h>
@@ -52,6 +53,8 @@ ConnectionsTab::ConnectionsTab (Patch* patch, QWidget* parent):
 
 	_ports_connector = new PortsConnector (_patch, this);
 	_ports_connector->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+	_ports_connector->add_external_unit (_patch->session()->audio_backend());
+	_ports_connector->add_external_unit (_patch->session()->event_backend());
 
 	layout->addWidget (_ports_connector);
 }
@@ -63,13 +66,13 @@ ConnectionsTab::~ConnectionsTab()
 }
 
 
-UnitTab::UnitTab (Patch* patch, QWidget* parent, Unit* unit):
+PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	QWidget (parent),
 	_patch (patch),
-	_unit (unit)
+	_plugin (plugin)
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
-	bool unit_is_presetable = dynamic_cast<Presetable*> (unit);
+	bool plugin_is_presetable = dynamic_cast<Presetable*> (_plugin);
 
 	QWidget* bar = new QWidget (this);
 	_stack = new QStackedWidget (this);
@@ -78,7 +81,7 @@ UnitTab::UnitTab (Patch* patch, QWidget* parent, Unit* unit):
 	_menu->insertItem (Config::Icons16::remove(), "Unload", this, SLOT (unload()));
 
 	// Title/menu button:
-	QPushButton* title_button = new QPushButton (QString::fromStdString (_unit->title()), bar);
+	QPushButton* title_button = new QPushButton (QString::fromStdString (_plugin->title()), bar);
 	title_button->clearFocus();
 	title_button->setFlat (true);
 	title_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -90,9 +93,9 @@ UnitTab::UnitTab (Patch* patch, QWidget* parent, Unit* unit):
 	title_button->setFont (font);
 
 	// Presetable?
-	if (unit_is_presetable)
+	if (plugin_is_presetable)
 	{
-		_presets_manager = new PresetsManager (_unit, this);
+		_presets_manager = new PresetsManager (_plugin, this);
 		QObject::connect (_presets_manager, SIGNAL (preset_selected (const QString&, const QString&)),
 						  this, SLOT (set_preset (const QString&, const QString&)));
 
@@ -126,7 +129,7 @@ UnitTab::UnitTab (Patch* patch, QWidget* parent, Unit* unit):
 	bar->setAutoFillBackground (true);
 
 	bar_layout->addWidget (title_button);
-	if (unit_is_presetable)
+	if (plugin_is_presetable)
 	{
 		bar_layout->addItem (new QSpacerItem (5, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
 		bar_layout->addWidget (_preset_name);
@@ -138,11 +141,11 @@ UnitTab::UnitTab (Patch* patch, QWidget* parent, Unit* unit):
 	else
 		bar_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
-	_unit->reparent (_stack, QPoint(), true);
-	if (unit_is_presetable)
+	_plugin->reparent (_stack, QPoint(), true);
+	if (plugin_is_presetable)
 		_stack->addWidget (_presets_manager);
-	_stack->addWidget (_unit);
-	_stack->setCurrentWidget (_unit);
+	_stack->addWidget (_plugin);
+	_stack->setCurrentWidget (_plugin);
 
 	layout->addWidget (bar);
 	layout->addWidget (_stack);
@@ -150,25 +153,25 @@ UnitTab::UnitTab (Patch* patch, QWidget* parent, Unit* unit):
 }
 
 
-UnitTab::~UnitTab()
+PluginTab::~PluginTab()
 {
 	delete _menu;
 }
 
 
 void
-UnitTab::unload()
+PluginTab::unload()
 {
-	_patch->unload_unit (_unit);
+	_patch->unload_plugin (_plugin);
 }
 
 
 void
-UnitTab::presets()
+PluginTab::presets()
 {
 	if (_stack->currentWidget() == _presets_manager)
 	{
-		_stack->setCurrentWidget (_unit);
+		_stack->setCurrentWidget (_plugin);
 		_presets_button->setPaletteForegroundColor (QColor (0xff, 0xff, 0xff));
 		_presets_button->setPaletteBackgroundColor (QColor (0x00, 0x2A, 0x5B));
 		_presets_button->setAutoFillBackground (true);
@@ -184,7 +187,7 @@ UnitTab::presets()
 
 
 void
-UnitTab::set_preset (QString const& uuid, QString const& name)
+PluginTab::set_preset (QString const& uuid, QString const& name)
 {
 	if (_presets_manager)
 	{
@@ -197,7 +200,7 @@ UnitTab::set_preset (QString const& uuid, QString const& name)
 
 
 void
-UnitTab::favorited (bool set)
+PluginTab::favorited (bool set)
 {
 	if (_presets_manager)
 		_presets_manager->set_favorite (_preset_uuid, _preset_name->text(), set);
@@ -210,22 +213,26 @@ namespace Private = PatchPrivate;
 
 
 Patch::Patch (Session* session, std::string const& title, QWidget* parent):
-	UnitBay (session, "", title, 0, parent)
+	UnitBay (session, "", title, 0, parent),
+	_session (session)
 {
+	// Register itself:
+	_session->graph()->register_unit (this);
+
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-	_units_menu = create_units_menu();
+	_plugins_menu = create_plugins_menu();
 
-	QWidget* add_unit_frame = new QWidget (this);
+	QWidget* add_plugin_frame = new QWidget (this);
 
-	QPushButton* add_unit_button = new QPushButton (Config::Icons16::add(), "Load unit", add_unit_frame);
-	add_unit_button->setFlat (true);
-	add_unit_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
-	add_unit_button->setPopup (_units_menu);
+	QPushButton* add_plugin_button = new QPushButton (Config::Icons16::add(), "Load plugin", add_plugin_frame);
+	add_plugin_button->setFlat (true);
+	add_plugin_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
+	add_plugin_button->setPopup (_plugins_menu);
 
-	QVBoxLayout* add_unit_layout = new QVBoxLayout (add_unit_frame, 0, 0);
-	add_unit_layout->addItem (new QSpacerItem (0, Config::spacing, QSizePolicy::Fixed, QSizePolicy::Expanding));
-	add_unit_layout->addWidget (add_unit_button);
+	QVBoxLayout* add_plugin_layout = new QVBoxLayout (add_plugin_frame, 0, 0);
+	add_plugin_layout->addItem (new QSpacerItem (0, Config::spacing, QSizePolicy::Fixed, QSizePolicy::Expanding));
+	add_plugin_layout->addWidget (add_plugin_button);
 
 	_layout = new QVBoxLayout (this, 0, Config::spacing);
 
@@ -234,7 +241,7 @@ Patch::Patch (Session* session, std::string const& title, QWidget* parent):
 		_tabs->setTabPosition (QTabWidget::South);
 		_tabs->setIconSize (QSize (32, 22));
 		_tabs->setMovable (true);
-		_tabs->setCornerWidget (add_unit_frame, Qt::BottomRightCorner);
+		_tabs->setCornerWidget (add_plugin_frame, Qt::BottomRightCorner);
 
 			_connections_tab = new Private::ConnectionsTab (this, _tabs);
 
@@ -248,63 +255,65 @@ Patch::~Patch()
 {
 	// Delete _connections_tab manually, to early delete PortsConnector:
 	delete _connections_tab;
-	delete _units_menu;
+	delete _plugins_menu;
 
 	while (!units().empty())
 	{
 		Units::iterator u = units().begin();
-		(*u)->hide();
 		// TODO use unloader for deleting objects:
-		delete *u; // Deleting unit will automatically remove it from units list (via graph notification).
+		delete *u; // Deleting plugin will automatically remove it from plugins list (via graph notification).
 	}
 	units().clear();
+
+	// Unregister itself:
+	_session->graph()->unregister_unit (this);
 }
 
 
-Unit*
-Patch::load_unit (QString const& urn)
+Plugin*
+Patch::load_plugin (QString const& urn)
 {
-	Unit* unit = session()->unit_loader()->load (urn.toStdString());
-	if (unit)
+	Plugin* plugin = session()->plugin_loader()->load (urn.toStdString());
+	if (plugin)
 	{
-		// If unit isn't already in units list, insert it:
-		if (units().find (unit) == units().end())
+		// If plugin isn't already in plugins list, insert it:
+		if (units().find (plugin) == units().end())
 		{
-			units().insert (unit);
-			_connections_tab->ports_connector()->insert_unit (unit);
+			units().insert (plugin);
+			_connections_tab->ports_connector()->insert_unit (plugin);
 		}
 
-		// If unit is UnitBayAware, setup self as UnitBay:
-		UnitBayAware* unit_bay_aware_unit = dynamic_cast<UnitBayAware*> (unit);
-		if (unit_bay_aware_unit)
-			unit_bay_aware_unit->set_unit_bay (this);
+		// If plugin is UnitBayAware, setup self as UnitBay:
+		UnitBayAware* unit_bay_aware_plugin = dynamic_cast<UnitBayAware*> (plugin);
+		if (unit_bay_aware_plugin)
+			unit_bay_aware_plugin->set_unit_bay (this);
 
 		// Create unit frame:
-		Private::UnitTab* unit_tab = new Private::UnitTab (this, _tabs, unit);
-		// TODO patch should give a hint to unit how should it call itself in Core::Graph:
-		_tabs->addTab (unit_tab, Config::Icons22::spacer(), QString ("%1: %2").arg (1).arg (QString::fromStdString (unit->title())));
-		_units_to_frames_map[unit] = unit_tab;
+		Private::PluginTab* plugin_tab = new Private::PluginTab (this, _tabs, plugin);
+		// TODO patch should give a hint to plugin how should it call itself in Core::Graph:
+		_tabs->addTab (plugin_tab, Config::Icons22::spacer(), QString ("%1: %2").arg (1).arg (QString::fromStdString (plugin->title())));
+		_plugins_to_frames_map[plugin] = plugin_tab;
 	}
-	return unit;
+	return plugin;
 }
 
 
 void
-Patch::unload_unit (Unit* unit)
+Patch::unload_plugin (Plugin* plugin)
 {
-	UnitsToFramesMap::iterator u = _units_to_frames_map.find (unit);
-	if (u != _units_to_frames_map.end())
+	PluginsToFramesMap::iterator u = _plugins_to_frames_map.find (plugin);
+	if (u != _plugins_to_frames_map.end())
 	{
-		Private::UnitTab* unit_tab = u->second;
-		// Remove unit from ports connector:
-		_connections_tab->ports_connector()->remove_unit (unit);
-		// Remove unit from unit bay:
-		units().erase (unit);
-		// Unload unit:
-		session()->unit_loader()->unload (unit);
+		Private::PluginTab* plugin_tab = u->second;
+		// Remove plugin from ports connector:
+		_connections_tab->ports_connector()->remove_unit (plugin);
+		// Remove plugin from plugin bay:
+		units().erase (plugin);
+		// Unload plugin:
+		session()->plugin_loader()->unload (plugin);
 		// Dispose of tab:
-		delete unit_tab;
-		_units_to_frames_map.erase (u);
+		delete plugin_tab;
+		_plugins_to_frames_map.erase (u);
 	}
 }
 
@@ -312,33 +321,37 @@ Patch::unload_unit (Unit* unit)
 void
 Patch::save_state (QDomElement& element) const
 {
-	QDomElement units = element.ownerDocument().createElement ("units");
+	QDomElement plugins = element.ownerDocument().createElement ("plugins");
 
 	// Tabs sorted by their tab-position:
-	std::multimap<int, QDomElement> sorted_units;
+	std::multimap<int, QDomElement> sorted_plugins;
 	for (Units::const_iterator u = this->units().begin(); u != this->units().end(); ++u)
 	{
-		QDomElement unit = element.ownerDocument().createElement ("unit");
-		// Unit attributes:
-		unit.setAttribute ("urn", QString::fromStdString ((*u)->urn()));
-		unit.setAttribute ("title", QString::fromStdString ((*u)->title()));
-		unit.setAttribute ("id", QString ("%1").arg ((*u)->id()));
-		// Presetable?
-		Presetable* presetable = dynamic_cast<Presetable*> (*u);
-		if (presetable)
+		Plugin* p = dynamic_cast<Plugin*> (*u);
+		if (p)
 		{
-			unit.setAttribute ("preset-name", _units_to_frames_map.find (*u)->second->preset_name());
-			unit.setAttribute ("preset-uuid", _units_to_frames_map.find (*u)->second->preset_uuid());
+			QDomElement plugin = element.ownerDocument().createElement ("plugin");
+			// Plugin attributes:
+			plugin.setAttribute ("urn", QString::fromStdString (p->urn()));
+			plugin.setAttribute ("title", QString::fromStdString (p->title()));
+			plugin.setAttribute ("id", QString ("%1").arg (p->id()));
+			// Presetable?
+			Presetable* presetable = dynamic_cast<Presetable*> (p);
+			if (presetable)
+			{
+				plugin.setAttribute ("preset-name", _plugins_to_frames_map.find (p)->second->preset_name());
+				plugin.setAttribute ("preset-uuid", _plugins_to_frames_map.find (p)->second->preset_uuid());
+			}
+			// SaveableState?
+			SaveableState* saveable_state = dynamic_cast<SaveableState*> (p);
+			if (saveable_state)
+				saveable_state->save_state (plugin);
+			// Tab position:
+			sorted_plugins.insert (std::make_pair (plugin_tab_position (p), plugin));
 		}
-		// SaveableState?
-		SaveableState* saveable_state = dynamic_cast<SaveableState*> (*u);
-		if (saveable_state)
-			saveable_state->save_state (unit);
-		// Tab position:
-		sorted_units.insert (std::make_pair (unit_tab_position (*u), unit));
 	}
-	for (std::multimap<int, QDomElement>::iterator u = sorted_units.begin(); u != sorted_units.end(); ++u)
-		units.appendChild (u->second);
+	for (std::multimap<int, QDomElement>::iterator u = sorted_plugins.begin(); u != sorted_plugins.end(); ++u)
+		plugins.appendChild (u->second);
 
 	QDomElement connections = element.ownerDocument().createElement ("connections");
 	ConnectionsDump connections_dump;
@@ -348,7 +361,7 @@ Patch::save_state (QDomElement& element) const
 	connections_dump.save();
 	connections_dump.save_state (connections);
 
-	element.appendChild (units);
+	element.appendChild (plugins);
 	element.appendChild (connections);
 }
 
@@ -362,21 +375,21 @@ Patch::load_state (QDomElement const& element)
 		QDomElement e = n.toElement();
 		if (!e.isNull())
 		{
-			if (e.tagName() == "units")
+			if (e.tagName() == "plugins")
 			{
 				for (QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling())
 				{
 					QDomElement e = n.toElement();
-					if (!e.isNull() && e.tagName() == "unit")
+					if (!e.isNull() && e.tagName() == "plugin")
 					{
-						Unit* unit = load_unit (e.attribute ("urn"));
-						if (unit)
+						Plugin* plugin = load_plugin (e.attribute ("urn"));
+						if (plugin)
 						{
-							unit->set_id (e.attribute ("id").toInt());
-							Presetable* presetable = dynamic_cast<Presetable*> (unit);
+							plugin->set_id (e.attribute ("id").toInt());
+							Presetable* presetable = dynamic_cast<Presetable*> (plugin);
 							if (presetable)
-								_units_to_frames_map[unit]->set_preset (e.attribute ("preset-uuid"), e.attribute ("preset-name"));
-							SaveableState* saveable_state = dynamic_cast<SaveableState*> (unit);
+								_plugins_to_frames_map[plugin]->set_preset (e.attribute ("preset-uuid"), e.attribute ("preset-name"));
+							SaveableState* saveable_state = dynamic_cast<SaveableState*> (plugin);
 							if (saveable_state)
 								saveable_state->load_state (e);
 						}
@@ -387,7 +400,7 @@ Patch::load_state (QDomElement const& element)
 				connections = e.toElement();
 		}
 	}
-	// Setup connections between units:
+	// Setup connections between plugins:
 	if (!connections.isNull())
 	{
 		ConnectionsDump connections_dump;
@@ -401,41 +414,41 @@ Patch::load_state (QDomElement const& element)
 
 
 int
-Patch::unit_tab_position (Unit* unit) const
+Patch::plugin_tab_position (Plugin* plugin) const
 {
 	int tab_position = -1;
-	UnitsToFramesMap::const_iterator f = _units_to_frames_map.find (unit);
-	if (f != _units_to_frames_map.end())
+	PluginsToFramesMap::const_iterator f = _plugins_to_frames_map.find (plugin);
+	if (f != _plugins_to_frames_map.end())
 		tab_position = _tabs->indexOf (f->second);
 	return tab_position;
 }
 
 
 Q3PopupMenu*
-Patch::create_units_menu()
+Patch::create_plugins_menu()
 {
 	Q3PopupMenu* menu = new Q3PopupMenu (this);
 
 	_urns.clear();
 
-	UnitLoader::UnitFactoryList const& list = session()->unit_loader()->unit_factories();
-	for (UnitLoader::UnitFactoryList::const_iterator u = list.begin(); u != list.end(); ++u)
+	PluginLoader::PluginFactories const& list = session()->plugin_loader()->plugin_factories();
+	for (PluginLoader::PluginFactories::const_iterator u = list.begin(); u != list.end(); ++u)
 	{
-		UnitFactory::InformationMap::const_iterator title = (*u)->information().find ("haruhi:title");
-		UnitFactory::InformationMap::const_iterator urn = (*u)->information().find ("haruhi:urn");
+		PluginFactory::InformationMap::const_iterator title = (*u)->information().find ("haruhi:title");
+		PluginFactory::InformationMap::const_iterator urn = (*u)->information().find ("haruhi:urn");
 		if (title != (*u)->information().end() && urn != (*u)->information().end())
 			_urns[menu->insertItem (QString::fromStdString (title->second))] = QString::fromStdString (urn->second);
 	}
-	QObject::connect (menu, SIGNAL (activated (int)), this, SLOT (load_unit_request (int)));
+	QObject::connect (menu, SIGNAL (activated (int)), this, SLOT (load_plugin_request (int)));
 
 	return menu;
 }
 
 
 void
-Patch::load_unit_request (int i)
+Patch::load_plugin_request (int i)
 {
-	load_unit (_urns[i]);
+	load_plugin (_urns[i]);
 }
 
 } // namespace Haruhi

@@ -42,7 +42,8 @@ namespace Haruhi {
 namespace EventBackend {
 
 Backend::Backend (Session* session, QString const& client_name, int id, QWidget* parent):
-	Unit (0, session, "urn://haruhi.mulabs.org/backend/event-backend/1", "• Event", id, parent),
+	QWidget (parent),
+	Unit (session, "urn://haruhi.mulabs.org/backend/event-backend/1", "• Event", id),
 	_client_name (client_name),
 	_insert_template_signal_mapper (0),
 	_tree (0),
@@ -103,27 +104,34 @@ Backend::Backend (Session* session, QString const& client_name, int id, QWidget*
 	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 
 	selection_changed();
-	register_unit();
 	update_widgets();
 }
 
 
 Backend::~Backend()
 {
-	disable();
-
-	_tree->clear();
-
-	if (connected())
-		disconnect();
-	unregister_unit();
-
 	delete _templates_menu;
 
 	_tree->disconnect();
 	_create_device_button->disconnect();
 	_create_controller_button->disconnect();
 	_destroy_input_button->disconnect();
+}
+
+
+void
+Backend::registered()
+{
+}
+
+
+void
+Backend::unregistered()
+{
+	if (connected())
+		disconnect();
+
+	_tree->clear();
 }
 
 

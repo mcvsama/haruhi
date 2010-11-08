@@ -49,12 +49,12 @@ Graph::~Graph()
 void
 Graph::register_unit (Unit* unit)
 {
-	Graph* other = unit->graph();
-	if (other)
+	Graph* other_graph = unit->graph();
+	if (other_graph)
 	{
-		other->lock();
-		other->unregister_unit (unit);
-		other->unlock();
+		other_graph->lock();
+		other_graph->unregister_unit (unit);
+		other_graph->unlock();
 	}
 	lock();
 	unit->_graph = this;
@@ -62,12 +62,15 @@ Graph::register_unit (Unit* unit)
 	// Signal:
 	unit_registered (unit);
 	unlock();
+	unit->registered();
 }
 
 
 void
 Graph::unregister_unit (Unit* unit)
 {
+	unit->disable();
+	unit->unregistered();
 	lock();
 	Units::iterator f = _units.find (unit);
 	if (f != _units.end())

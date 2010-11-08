@@ -24,12 +24,15 @@
 
 namespace Haruhi {
 
+class Session;
+
 namespace Core {
 
 int Unit::_id_counter = 0;
 
 
-Unit::Unit (Graph* graph, std::string const& urn, std::string const& title, int id):
+Unit::Unit (Session* session, std::string const& urn, std::string const& title, int id):
+	_session (session),
 	_graph (0),
 	_synced (true),
 	_enabled (false),
@@ -45,8 +48,8 @@ Unit::~Unit()
 	// Prevent processing:
 	_processing_mutex.lock();
 	// Check if unit is properly disabled when destroyed:
-	if (enabled())
-		throw Haruhi::Exception ("disable unit before deletion");
+	if (enabled() || graph())
+		throw Haruhi::Exception ("disable and unregisted unit before deletion");
 	// Check if all ports have been unregistered:
 	if (_inputs.size() > 0 || _outputs.size() > 0)
 		throw Haruhi::Exception ("delete all ports before deleting unit");

@@ -56,8 +56,8 @@
 namespace Private = MikuruPrivate;
 
 
-Mikuru::Mikuru (Haruhi::UnitFactory* factory, Haruhi::Session* session, std::string const& urn, std::string const& title, int id, QWidget* parent):
-	Haruhi::Unit (factory, session, urn, title, id, parent),
+Mikuru::Mikuru (Haruhi::Session* session, std::string const& urn, std::string const& title, int id, QWidget* parent):
+	Haruhi::Plugin (session, urn, title, id, parent),
 	_patch (this),
 	_general (0),
 	_common_filters (0),
@@ -68,29 +68,8 @@ Mikuru::Mikuru (Haruhi::UnitFactory* factory, Haruhi::Session* session, std::str
 	_input_buffer_L (64),
 	_input_buffer_R (64)
 {
-	register_unit();
-
-	int sample_rate = graph()->sample_rate();
-
-	// Smoothers (100ms):
-	_audio_input_smoother_L.set_smoothing_samples (0.100f * sample_rate);
-	_audio_input_smoother_R.set_smoothing_samples (0.100f * sample_rate);
-	_master_volume_smoother_L.set_smoothing_samples (0.100f * sample_rate);
-	_master_volume_smoother_R.set_smoothing_samples (0.100f * sample_rate);
-
-	// Resize buffers:
-	graph_updated();
-
-	graph()->lock();
-	_audio_input_L = new Core::AudioPort (this, "L input", Core::Port::Input, 0, Core::Port::StandardAudio);
-	_audio_input_R = new Core::AudioPort (this, "R input", Core::Port::Input, 0, Core::Port::StandardAudio);
-
-	_audio_output_L = new Core::AudioPort (this, "L output", Core::Port::Output, 0, Core::Port::StandardAudio);
-	_audio_output_R = new Core::AudioPort (this, "R output", Core::Port::Output, 0, Core::Port::StandardAudio);
-
-	_port_keyboard = new Core::EventPort (this, "Keyboard", Core::Port::Input, 0, Core::Port::ControlKeyboard);
-	_port_sustain = new Core::EventPort (this, "Sustain", Core::Port::Input, 0, Core::Port::ControlSustain);
-	graph()->unlock();
+	// Register itself:
+	session->graph()->register_unit (this);
 
 	// Widgets:
 
@@ -147,17 +126,56 @@ Mikuru::Mikuru (Haruhi::UnitFactory* factory, Haruhi::Session* session, std::str
 
 Mikuru::~Mikuru()
 {
+	// Unregister itself:
+	session()->graph()->unregister_unit (this);
+
 	_update_ui_timer->stop();
+}
 
+
+void
+Mikuru::registered()
+{
+	int sample_rate = graph()->sample_rate();
+
+	// Smoothers (100ms):
+	_audio_input_smoother_L.set_smoothing_samples (0.100f * sample_rate);
+	_audio_input_smoother_R.set_smoothing_samples (0.100f * sample_rate);
+	_master_volume_smoother_L.set_smoothing_samples (0.100f * sample_rate);
+	_master_volume_smoother_R.set_smoothing_samples (0.100f * sample_rate);
+
+	// Resize buffers:
+	graph_updated();
+
+	graph()->lock();
+
+	_audio_input_L = new Core::AudioPort (this, "L input", Core::Port::Input, 0, Core::Port::StandardAudio);
+	_audio_input_R = new Core::AudioPort (this, "R input", Core::Port::Input, 0, Core::Port::StandardAudio);
+
+	_audio_output_L = new Core::AudioPort (this, "L output", Core::Port::Output, 0, Core::Port::StandardAudio);
+	_audio_output_R = new Core::AudioPort (this, "R output", Core::Port::Output, 0, Core::Port::StandardAudio);
+
+	_port_keyboard = new Core::EventPort (this, "Keyboard", Core::Port::Input, 0, Core::Port::ControlKeyboard);
+	_port_sustain = new Core::EventPort (this, "Sustain", Core::Port::Input, 0, Core::Port::ControlSustain);
+
+	graph()->unlock();
+
+	enable();
+}
+
+
+void
+Mikuru::unregistered()
+{
 	panic();
-	disable();
 
-	// Stop synth. threads:
+	// Stop synthesis threads:
 	stop_threads();
 	del_all_parts();
 
 	_general->delete_ports();
 	_common_filters->delete_ports();
+	_general->delete_envelopes();
 
 	delete _audio_input_L;
 	delete _audio_input_R;
@@ -167,18 +185,6 @@ Mikuru::~Mikuru()
 
 	delete _port_keyboard;
 	delete _port_sustain;
-
-	// Delete parts:
-	int i = 0;
-	for (Parts::iterator t = _parts.begin(); t != _parts.end(); ++t, ++i)
-	{
-		_tabs_widget->removePage (*t);
-		delete *t;
-	}
-	// Delete envelopes:
-	_general->delete_envelopes();
-
-	unregister_unit();
 }
 
 
@@ -642,7 +648,7 @@ Mikuru::select_thread_for_new_voice()
 
 
 MikuruFactory::MikuruFactory():
-	Haruhi::UnitFactory()
+	Haruhi::PluginFactory()
 {
 	_information["haruhi:urn"] = "urn://haruhi.mulabs.org/synth/mikuru/1";
 	_information["haruhi:presets.directory"] = "mikuru-1";
@@ -654,17 +660,17 @@ MikuruFactory::MikuruFactory():
 }
 
 
-Haruhi::Unit*
-MikuruFactory::create_unit (Haruhi::Session* session, int id, QWidget* parent)
+Haruhi::Plugin*
+MikuruFactory::create_plugin (Haruhi::Session* session, int id, QWidget* parent)
 {
-	return new Mikuru (this, session, _information["haruhi:urn"], _information["haruhi:title"], id, parent);
+	return new Mikuru (session, _information["haruhi:urn"], _information["haruhi:title"], id, parent);
 }
 
 
 void
-MikuruFactory::destroy_unit (Haruhi::Unit* unit)
+MikuruFactory::destroy_plugin (Haruhi::Plugin* plugin)
 {
-	delete unit;
+	delete plugin;
 }
 
 

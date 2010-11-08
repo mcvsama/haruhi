@@ -31,6 +31,7 @@
 
 // Haruhi:
 #include <haruhi/components/ports_connector/ports_connector.h>
+#include <haruhi/plugin/plugin.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/unit_bay.h>
 
@@ -56,19 +57,19 @@ namespace PatchPrivate {
 		ports_connector() const { return _ports_connector; }
 
 	  private:
-		Patch*					_patch;
-		PortsConnector*			_ports_connector;
+		Patch*			_patch;
+		PortsConnector*	_ports_connector;
 	};
 
 
-	class UnitTab: public QWidget
+	class PluginTab: public QWidget
 	{
 		Q_OBJECT
 
 	  public:
-		UnitTab (Patch* patch, QWidget* parent, Unit* unit);
+		PluginTab (Patch* patch, QWidget* parent, Plugin* plugin);
 
-		~UnitTab();
+		~PluginTab();
 
 		QString
 		preset_uuid() const { return _preset_uuid; }
@@ -91,7 +92,7 @@ namespace PatchPrivate {
 
 	  private:
 		Patch*			_patch;
-		Unit*			_unit;
+		Plugin*			_plugin;
 		QStackedWidget*	_stack;
 		QCheckBox*		_favorite_checkbox;
 		QString			_preset_uuid;
@@ -105,23 +106,24 @@ namespace PatchPrivate {
 
 
 /**
- * Maintains a set of living Units and a list of connections between them.
+ * Maintains a set of living Plugins and a list of connections between them.
  * Loads/saves patches.
  *
- * Warning: When restoring Unit no graph locking is done by the Patch.
- * Unit must ensure itself that processing-round will not
+ * Warning: When restoring Plugin no graph locking is done by the Patch.
+ * Plugin must ensure itself that processing-round will not
  * interfere with it, either by disabling itself for a while
  * (best option), or locking graph (xrun generator).
  */
 class Patch:
+	public QWidget,
 	public UnitBay,
 	public SaveableState
 {
 	Q_OBJECT
 
-	friend class PatchPrivate::UnitTab;
+	friend class PatchPrivate::PluginTab;
 
-	typedef std::map<Unit*, PatchPrivate::UnitTab*> UnitsToFramesMap;
+	typedef std::map<Plugin*, PatchPrivate::PluginTab*> PluginsToFramesMap;
 
   public:
 	// Ctor
@@ -130,11 +132,14 @@ class Patch:
 	// Dtor
 	virtual ~Patch();
 
-	Unit*
-	load_unit (QString const&);
+	Session*
+	session() const { return _session; }
+
+	Plugin*
+	load_plugin (QString const&);
 
 	void
-	unload_unit (Unit*);
+	unload_plugin (Plugin*);
 
 	void
 	save_state (QDomElement&) const;
@@ -143,25 +148,26 @@ class Patch:
 	load_state (QDomElement const&);
 
 	/**
-	 * Returns tab-position of given unit.
+	 * Returns tab-position of given plugin.
 	 */
 	int
-	unit_tab_position (Unit*) const;
+	plugin_tab_position (Plugin*) const;
 
   private:
 	Q3PopupMenu*
-	create_units_menu();
+	create_plugins_menu();
 
   private slots:
 	void
-	load_unit_request (int i);
+	load_plugin_request (int i);
 
   private:
+	Session*						_session;
 	QVBoxLayout*					_layout;
 	QTabWidget*						_tabs;
 	PatchPrivate::ConnectionsTab*	_connections_tab;
-	UnitsToFramesMap				_units_to_frames_map;
-	Q3PopupMenu*					_units_menu;
+	PluginsToFramesMap				_plugins_to_frames_map;
+	Q3PopupMenu*					_plugins_menu;
 	std::map<int, QString>			_urns;
 };
 

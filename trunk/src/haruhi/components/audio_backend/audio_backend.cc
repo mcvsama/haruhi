@@ -41,7 +41,8 @@ namespace Haruhi {
 namespace AudioBackend {
 
 Backend::Backend (Session* session, QString const& client_name, int id, QWidget* parent):
-	Unit (0, session, "urn://haruhi.mulabs.org/backend/jack-audio-backend/1", "• Audio", id, parent),
+	QWidget (parent),
+	Unit (session, "urn://haruhi.mulabs.org/backend/jack-audio-backend/1", "• Audio", id),
 	_client_name (client_name)
 {
 	_transport = new JackAudioTransport (this);
@@ -114,8 +115,18 @@ Backend::Backend (Session* session, QString const& client_name, int id, QWidget*
 	QObject::connect (_create_output_button, SIGNAL (clicked()), this, SLOT (create_output()));
 	QObject::connect (_destroy_output_button, SIGNAL (clicked()), this, SLOT (destroy_selected_output()));
 
-	register_unit();
+	update_widgets();
+}
 
+
+Backend::~Backend()
+{
+}
+
+
+void
+Backend::registered()
+{
 	_master_volume_port = new Core::EventPort (this, "Master Volume", Core::Port::Input);
 	_panic_port = new Core::EventPort (this, "Panic", Core::Port::Input);
 
@@ -123,27 +134,23 @@ Backend::Backend (Session* session, QString const& client_name, int id, QWidget*
 	_dummy_timer = new QTimer (this);
 	QObject::connect (_dummy_timer, SIGNAL (timeout()), this, SLOT (dummy_round()));
 	dummy_start();
-
-	update_widgets();
 }
 
 
-Backend::~Backend()
+void
+Backend::unregistered()
 {
 	dummy_stop();
-	disable();
+	if (connected())
+		disconnect();
 
 	// Deallocate all ports:
 	_inputs_list->clear();
 	_outputs_list->clear();
 
-	if (connected())
-		disconnect();
-
+	delete _dummy_timer;
 	delete _master_volume_port;
 	delete _panic_port;
-
-	unregister_unit();
 }
 
 

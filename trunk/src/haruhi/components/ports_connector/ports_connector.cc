@@ -124,12 +124,7 @@ PortsConnector::PortsConnector (UnitBay* unit_bay, QWidget* parent):
 	_unit_bay->graph()->port_unregistered.connect (this, &PortsConnector::port_unregistered);
 	_unit_bay->graph()->port_group_renamed.connect (this, &PortsConnector::port_group_renamed);
 
-	_external_units.insert (_unit_bay->session()->audio_backend());
-	_external_units.insert (_unit_bay->session()->event_backend());
-
 	insert_unit (_unit_bay);
-	insert_unit (_unit_bay->session()->audio_backend());
-	insert_unit (_unit_bay->session()->event_backend());
 
 	_highlight_connected = true;
 }
@@ -159,6 +154,14 @@ void
 PortsConnector::forget_item (PortItem* item)
 {
 	_highlighted_items.erase (item);
+}
+
+
+void
+PortsConnector::add_external_unit (Unit* unit)
+{
+	_external_units.insert (unit);
+	insert_unit (unit);
 }
 
 
@@ -338,36 +341,13 @@ PortsConnector::remove_unit (Unit* unit)
 
 
 void
-PortsConnector::unit_registered (Core::Unit* core_unit)
+PortsConnector::unit_registered (Unit* unit)
 {
-	Unit* unit = dynamic_cast<Unit*> (core_unit);
-	if (unit)
+	if (_unit_bay->units().find (unit) != _unit_bay->units().end() ||
+		_external_units.find (unit) != _external_units.end())
 	{
-		bool x = _unit_bay->units().find (unit) != _unit_bay->units().end();
-		bool s = dynamic_cast<AudioBackend::Backend*> (unit) || dynamic_cast<EventBackend::Backend*> (unit);
-		if (x || s)
-		{
-			if (s)
-				_external_units.insert (unit);
-			_ipanel->list()->insert_unit (unit);
-			_opanel->list()->insert_unit (unit);
-			_ipanel->filter()->read_units();
-			_opanel->filter()->read_units();
-		}
-	}
-}
-
-
-void
-PortsConnector::unit_unregistered (Core::Unit* core_unit)
-{
-	Unit* unit = dynamic_cast<Unit*> (core_unit);
-	if (unit)
-	{
-		if (dynamic_cast<AudioBackend::Backend*> (unit) || dynamic_cast<EventBackend::Backend*> (unit))
-			_external_units.erase (unit);
-		_ipanel->list()->remove_unit (unit);
-		_opanel->list()->remove_unit (unit);
+		_ipanel->list()->insert_unit (unit);
+		_opanel->list()->insert_unit (unit);
 		_ipanel->filter()->read_units();
 		_opanel->filter()->read_units();
 	}
@@ -375,16 +355,24 @@ PortsConnector::unit_unregistered (Core::Unit* core_unit)
 
 
 void
-PortsConnector::unit_retitled (Core::Unit* core_unit)
+PortsConnector::unit_unregistered (Unit* unit)
 {
-	Unit* unit = dynamic_cast<Unit*> (core_unit);
-	if (unit)
-	{
-		_ipanel->list()->update_unit (unit);
-		_opanel->list()->update_unit (unit);
-		_ipanel->filter()->read_units();
-		_opanel->filter()->read_units();
-	}
+	if (_external_units.find (unit) != _external_units.end())
+		_external_units.erase (unit);
+	_ipanel->list()->remove_unit (unit);
+	_opanel->list()->remove_unit (unit);
+	_ipanel->filter()->read_units();
+	_opanel->filter()->read_units();
+}
+
+
+void
+PortsConnector::unit_retitled (Unit* unit)
+{
+	_ipanel->list()->update_unit (unit);
+	_opanel->list()->update_unit (unit);
+	_ipanel->filter()->read_units();
+	_opanel->filter()->read_units();
 }
 
 

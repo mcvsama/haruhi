@@ -13,43 +13,23 @@
 
 // Standard:
 #include <cstddef>
+#include <string>
 
-// Haruhi:
-#include <haruhi/haruhi.h>
-#include <haruhi/session.h>
+// Qt:
+#include <QtGui/QWidget>
 
 // Local:
-#include "unit.h"
+#include "plugin.h"
 
 
 namespace Haruhi {
 
-Unit::Unit (UnitFactory* factory, Session* session, std::string const& urn, std::string const& title, int id, QWidget* parent):
-	Core::Unit (session->graph(), urn, title, id),
-	QWidget (parent),
-	_factory (factory),
-	_session (session)
+Plugin::Plugin (Session* session, std::string const& urn, std::string const& title, int id, QWidget* parent):
+	Core::Unit (session, urn, title, id),
+	QWidget (parent)
 {
 	setSizePolicy (QSizePolicy::Minimum, QSizePolicy::Minimum);
 }
-
-
-void
-Unit::register_unit()
-{
-	session()->graph()->register_unit (this);
-}
-
-
-void
-Unit::unregister_unit()
-{
-	session()->graph()->unregister_unit (this);
-}
-
-
-UnitFactory::UnitFactory()
-{ }
 
 } // namespace Haruhi
 

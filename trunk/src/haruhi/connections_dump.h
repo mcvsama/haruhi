@@ -14,6 +14,9 @@
 #ifndef HARUHI__CONNECTIONS_DUMP_H__INCLUDED
 #define HARUHI__CONNECTIONS_DUMP_H__INCLUDED
 
+// Qt:
+#include <QtXml/QDomElement>
+
 // Standard:
 #include <cstddef>
 #include <string>

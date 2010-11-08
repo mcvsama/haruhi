@@ -34,6 +34,8 @@
 
 namespace Haruhi {
 
+class Session;
+
 namespace Core {
 
 /*
@@ -61,7 +63,16 @@ class Unit: private Noncopyable
 	};
 
   public:
-	Unit (Graph*, std::string const& urn, std::string const& title, int id = 0);
+	/**
+	 * Creates Unit.
+	 * \param	session is user data. No special meaning.
+	 * \param	urn identifies Unit type. Used by notification system.
+	 * \param	title is Unit's name visible to user.
+	 * \param	id is Unit ID. It's not used internally by Unit, but might be useful
+	 * 			for other objects. It's not verified to be unique. If 0, then new ID
+	 * 			will be automatically assigned.
+	 */
+	Unit (Session* session, std::string const& urn, std::string const& title, int id = 0);
 
 	/**
 	 * Dtor
@@ -76,17 +87,52 @@ class Unit: private Noncopyable
 	void
 	sync();
 
+	/**
+	 * Returns pointer to associated session.
+	 * Used as 'user data', Session doesn't have any special meaning
+	 * to Unit.
+	 */
+	Session*
+	session() const { return _session; }
+
+	/**
+	 * Returns Graph that owns this Unit.
+	 */
 	Graph*
 	graph() const { return _graph; }
 
 	/**
-	 * Enables unit. May not be called inside of processing round.
+	 * Called after unit has been registered to new graph.
+	 * Graph is not locked when executing this method.
+	 */
+	virtual void
+	registered() { }
+
+	/**
+	 * Called before unit is unregistered.
+	 * Graph is not locked when executing this method.
+	 * Unit is disabled before entering this method.
+	 */
+	virtual void
+	unregistered() { }
+
+	/**
+	 * Receives Notifications. Default implementation
+	 * does nothing.
+	 */
+	virtual void
+	notify (Notification*) { }
+
+	/**
+	 * Enables unit. Enabled unit are synced periodically by Graph.
+	 * May not be called inside of processing round.
 	 */
 	void
 	enable() { atomic (_enabled) = true; }
 
 	/**
-	 * Disabled unit. May not be called inside of processing round.
+	 * Disables unit. Disabled units aren't synced.
+	 * May not be called inside of processing round.
 	 */
 	void
 	disable();
@@ -143,13 +189,6 @@ class Unit: private Noncopyable
 	 */
 	Ports const&
 	outputs() const;
-
-	/**
-	 * Receives Notifications. Default implementation
-	 * does nothing.
-	 */
-	virtual void
-	notify (Notification*) { }
 
 	/**
 	 * Allocates and returns unique ID for new unit.
@@ -211,6 +250,7 @@ class Unit: private Noncopyable
   private:
 	static int	_id_counter;
 
+	Session*	_session;
 	Graph*		_graph;
 	bool		_synced;
 	bool		_enabled;

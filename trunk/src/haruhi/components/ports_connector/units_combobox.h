@@ -25,6 +25,7 @@
 // Haruhi:
 #include <haruhi/core/graph.h>
 #include <haruhi/core/port.h>
+#include <haruhi/core/unit.h>
 #include <haruhi/unit_bay.h>
 
 
@@ -36,19 +37,19 @@ namespace PortsConnectorPrivate {
 
 class UnitsCombobox: public QComboBox
 {
-	typedef std::vector<Unit*> Units;
+	typedef std::vector<Core::Unit*> Units;
 
   public:
 	/**
 	 * Creates combobox that observed unit_bay
 	 * for inserting/removing units.
 	 */
-	UnitsCombobox (UnitBay* unit_bay, Core::Port::Direction type, QWidget* parent);
+	UnitsCombobox (PortsConnector* ports_connector, Core::Port::Direction type, QWidget* parent);
 
 	~UnitsCombobox();
 
 	/**
-	 * Reads list of units registered in graph
+	 * Reads list of units registered in unit_bay
 	 * and updates list.
 	 */
 	void
@@ -58,11 +59,11 @@ class UnitsCombobox: public QComboBox
 	 * Returns currently selected Unit*
 	 * or 0 to indicate "no filtering".
 	 */
-	Unit*
+	Core::Unit*
 	unit() const { return _units[currentItem()]; }
 
   private:
-	UnitBay*				_unit_bay;
+	PortsConnector*			_ports_connector;
 	Units					_units;
 	Core::Port::Direction	_type;
 };

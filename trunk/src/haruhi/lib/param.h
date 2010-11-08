@@ -19,6 +19,7 @@
 
 // Haruhi:
 #include <haruhi/utility/atomic.h>
+#include <haruhi/utility/numeric.h>
 
 
 namespace Haruhi {

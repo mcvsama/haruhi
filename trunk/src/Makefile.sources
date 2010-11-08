@@ -255,6 +255,16 @@ SRC_HEADERS += haruhi/lib/param.h
 SRC_SOURCES += haruhi/lib/controller_param.cc
 SRC_SOURCES += haruhi/lib/controller_proxy.cc
 
+######## /plugin ########
+
+SRC_SOURCES += haruhi/plugin/plugin.cc
+SRC_SOURCES += haruhi/plugin/plugin_factory.cc
+SRC_SOURCES += haruhi/plugin/plugin_loader.cc
+
+SRC_HEADERS += haruhi/plugin/plugin.h
+SRC_HEADERS += haruhi/plugin/plugin_factory.h
+SRC_HEADERS += haruhi/plugin/plugin_loader.h
+
 ######## /utility ########
 
 SRC_HEADERS += haruhi/utility/atomic.h
@@ -320,9 +330,7 @@ SRC_HEADERS += haruhi/presetable.h
 SRC_HEADERS += haruhi/program.h
 SRC_HEADERS += haruhi/session.h
 SRC_HEADERS += haruhi/session_loader.h
-SRC_HEADERS += haruhi/unit.h
 SRC_HEADERS += haruhi/unit_bay.h
-SRC_HEADERS += haruhi/unit_loader.h
 
 SRC_SOURCES += haruhi/config.cc
 SRC_SOURCES += haruhi/connections_dump.cc
@@ -335,9 +343,7 @@ SRC_SOURCES += haruhi/periodic_updater.cc
 SRC_SOURCES += haruhi/program.cc
 SRC_SOURCES += haruhi/session.cc
 SRC_SOURCES += haruhi/session_loader.cc
-SRC_SOURCES += haruhi/unit.cc
 SRC_SOURCES += haruhi/unit_bay.cc
-SRC_SOURCES += haruhi/unit_loader.cc
 
 SRC_MOCHDRS += haruhi/haruhi.h
 SRC_MOCHDRS += haruhi/patch.h

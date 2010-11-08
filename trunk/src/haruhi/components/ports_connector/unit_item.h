@@ -23,7 +23,7 @@
 
 // Haruhi:
 #include <haruhi/core/port.h>
-#include <haruhi/unit.h>
+#include <haruhi/core/unit.h>
 
 // Local:
 #include "port_item.h"
@@ -45,9 +45,9 @@ class UnitItem:
 	enum Graph { Audio, Event };
 
   public:
-	UnitItem (Core::Port::Direction, Unit*, QTreeWidget* parent, QString const& label);
+	UnitItem (Core::Port::Direction, Core::Unit*, QTreeWidget* parent, QString const& label);
 
-	Unit*
+	Core::Unit*
 	unit() const;
 
 	void
@@ -98,7 +98,7 @@ class UnitItem:
 
   private:
 	Core::Port::Direction	_type;
-	Unit*					_unit;
+	Core::Unit*				_unit;
 };
 
 } // namespace PortsConnectorPrivate

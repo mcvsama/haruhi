@@ -34,6 +34,7 @@ class PortsConnector;
 namespace PortsConnectorPrivate {
 
 class Panel;
+using Core::Unit;
 
 class PortsList: public QTreeWidget
 {

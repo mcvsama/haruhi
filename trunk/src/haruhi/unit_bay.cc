@@ -38,16 +38,13 @@ UnitBayAware::set_unit_bay (UnitBay* unit_bay)
 
 
 UnitBay::UnitBay (Session* session, std::string const& urn, std::string const& title, int id, QWidget* parent):
-	Unit (0, session, urn, title, id, parent)
+	Unit (session, urn, title, id)
 {
-	register_unit();
-	graph()->unit_unregistered.connect (this, &UnitBay::unit_unregistered);
 }
 
 
 UnitBay::~UnitBay()
 {
-	unregister_unit();
 }
 
 
@@ -72,10 +69,24 @@ UnitBay::units() const
 
 
 void
+UnitBay::registered()
+{
+	graph()->unit_unregistered.connect (this, &UnitBay::unit_unregistered);
+}
+
+
+void
+UnitBay::unregistered()
+{
+	graph()->unit_unregistered.disconnect (this, &UnitBay::unit_unregistered);
+}
+
+
+void
 UnitBay::unit_unregistered (Core::Unit* core_unit)
 {
 	Unit* unit = dynamic_cast<Unit*> (core_unit);
-	// Remove from UnitBay, if it is owned sync:
+	// Remove from UnitBay, if it is owned unit:
 	if (unit)
 		_units.erase (unit);
 }

@@ -39,7 +39,7 @@ Panel::Panel (Core::Port::Direction type, PortsConnector* ports_connector, QWidg
 
 	_layout = new QVBoxLayout (this, 0, Config::spacing);
 
-		_filter = new UnitsCombobox (ports_connector->unit_bay(), type, this);
+		_filter = new UnitsCombobox (ports_connector, type, this);
 		_list = new PortsList (type, this, ports_connector, this);
 
 		QObject::connect (_filter, SIGNAL (activated (int)), this, SLOT (filter_updated()));

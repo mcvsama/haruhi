@@ -29,8 +29,8 @@
 #include "vanhalen.h"
 
 
-VanHalen::VanHalen (Haruhi::UnitFactory* factory, Haruhi::Session* session, std::string const& urn, std::string const& title, int id, QWidget* parent):
-	Haruhi::Unit (factory, session, urn, title, id, parent),
+VanHalen::VanHalen (Haruhi::Session* session, std::string const& urn, std::string const& title, int id, QWidget* parent):
+	Haruhi::Plugin (session, urn, title, id, parent),
 	_buf1 (session->graph()->buffer_size()),
 	_buf2 (session->graph()->buffer_size()),
 	_delay1 (16, 100000, session->graph()->buffer_size()),
@@ -38,16 +38,8 @@ VanHalen::VanHalen (Haruhi::UnitFactory* factory, Haruhi::Session* session, std:
 	_comb_index (0, 0, 1000, 0),
 	_comb_alpha (0, -1000, 1000, 0)
 {
-	register_unit();
-
-	_input = new Haruhi::Core::EventPort (this, "Input", Haruhi::Core::Port::Input);
-	_output = new Haruhi::Core::EventPort (this, "Output", Haruhi::Core::Port::Output);
-
-	_audio_input_1 = new Haruhi::Core::AudioPort (this, "Audio L", Haruhi::Core::Port::Input);
-	_audio_input_2 = new Haruhi::Core::AudioPort (this, "Audio R", Haruhi::Core::Port::Input);
-
-	_audio_output_1 = new Haruhi::Core::AudioPort (this, "Audio L", Haruhi::Core::Port::Output);
-	_audio_output_2 = new Haruhi::Core::AudioPort (this, "Audio R", Haruhi::Core::Port::Output);
+	// Register itself:
+	session->graph()->register_unit (this);
 
 	_proxy_comb_index = new Haruhi::ControllerProxy (0, &_comb_index);
 	_proxy_comb_alpha = new Haruhi::ControllerProxy (0, &_comb_alpha);
@@ -58,15 +50,36 @@ VanHalen::VanHalen (Haruhi::UnitFactory* factory, Haruhi::Session* session, std:
 	QHBoxLayout* layout = new QHBoxLayout (this, Config::spacing);
 	layout->addWidget (_knob_comb_index);
 	layout->addWidget (_knob_comb_alpha);
-
-	enable();
 }
 
 
 VanHalen::~VanHalen()
 {
+	// Unregister itself:
+	session()->graph()->unregister_unit (this);
+}
+
+
+void
+VanHalen::registered()
+{
+	_input = new Haruhi::Core::EventPort (this, "Input", Haruhi::Core::Port::Input);
+	_output = new Haruhi::Core::EventPort (this, "Output", Haruhi::Core::Port::Output);
+
+	_audio_input_1 = new Haruhi::Core::AudioPort (this, "Audio L", Haruhi::Core::Port::Input);
+	_audio_input_2 = new Haruhi::Core::AudioPort (this, "Audio R", Haruhi::Core::Port::Input);
+
+	_audio_output_1 = new Haruhi::Core::AudioPort (this, "Audio L", Haruhi::Core::Port::Output);
+	_audio_output_2 = new Haruhi::Core::AudioPort (this, "Audio R", Haruhi::Core::Port::Output);
+
+	enabled();
+}
+
+
+void
+VanHalen::unregistered()
+{
 	panic();
-	disable();
 
 	delete _input;
 	delete _output;
@@ -74,8 +87,6 @@ VanHalen::~VanHalen()
 	delete _audio_input_2;
 	delete _audio_output_1;
 	delete _audio_output_2;
-
-	unregister_unit();
 }
 
 
@@ -177,7 +188,7 @@ VanHalen::panic()
 
 
 VanHalenFactory::VanHalenFactory():
-	Haruhi::UnitFactory()
+	Haruhi::PluginFactory()
 {
 	_information["haruhi:urn"] = "urn://haruhi.mulabs.org/synth/vanhalen/1";
 	_information["haruhi:presets.directory"] = "vanhalen-1";
@@ -189,17 +200,17 @@ VanHalenFactory::VanHalenFactory():
 }
 
 
-Haruhi::Unit*
-VanHalenFactory::create_unit (Haruhi::Session* session, int id, QWidget* parent)
+Haruhi::Plugin*
+VanHalenFactory::create_plugin (Haruhi::Session* session, int id, QWidget* parent)
 {
-	return new VanHalen (this, session, _information["haruhi:urn"], _information["haruhi:title"], id, parent);
+	return new VanHalen (session, _information["haruhi:urn"], _information["haruhi:title"], id, parent);
 }
 
 
 void
-VanHalenFactory::destroy_unit (Haruhi::Unit* unit)
+VanHalenFactory::destroy_plugin (Haruhi::Plugin* plugin)
 {
-	delete unit;
+	delete plugin;
 }
 
 

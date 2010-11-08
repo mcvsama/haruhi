@@ -42,6 +42,7 @@
 #include "ports_list.h"
 #include "unit_item.h"
 #include "comparable_item.h"
+#include "units_combobox.h"
 
 
 namespace Haruhi {
@@ -53,6 +54,8 @@ namespace PortsConnectorPrivate {
 	enum Operation { Connect, Disconnect };
 
 }
+
+using Core::Unit;
 
 class PortsConnector:
 	public QWidget,
@@ -79,6 +82,7 @@ class PortsConnector:
 	friend class PortsConnectorPrivate::UnitItem;
 	friend class PortsConnectorPrivate::GroupItem;
 	friend class PortsConnectorPrivate::PortItem;
+	friend class PortsConnectorPrivate::UnitsCombobox;
 
   public:
 	PortsConnector (UnitBay* unit_bay, QWidget* parent = 0);
@@ -98,6 +102,13 @@ class PortsConnector:
 	 */
 	void
 	forget_item (PortItem*);
+
+	/**
+	 * Adds Unit that will be always inserted into list.
+	 * Useful for Audio/Event backend units, etc.
+	 */
+	void
+	add_external_unit (Unit*);
 
   public slots:
 	void

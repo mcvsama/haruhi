@@ -26,19 +26,32 @@
 #include <haruhi/core/audio_port.h>
 #include <haruhi/dsp/delay_line.h>
 #include <haruhi/lib/controller_proxy.h>
+#include <haruhi/plugin/plugin.h>
+#include <haruhi/plugin/plugin_factory.h>
 #include <haruhi/widgets/knob.h>
-#include <haruhi/unit.h>
 
 
 class VanHalen:
-	public Haruhi::Unit
+	public Haruhi::Plugin
 {
 	Q_OBJECT
 
   public:
-	VanHalen (Haruhi::UnitFactory*, Haruhi::Session*, std::string const& urn, std::string const& title, int id, QWidget* parent);
+	VanHalen (Haruhi::Session*, std::string const& urn, std::string const& title, int id, QWidget* parent);
 
 	virtual ~VanHalen();
+
+	/**
+	 * Core::Unit API
+	 */
+	void
+	registered();
+
+	/**
+	 * Core::Unit API
+	 */
+	void
+	unregistered();
 
 	std::string
 	name() const;
@@ -75,16 +88,16 @@ class VanHalen:
 };
 
 
-class VanHalenFactory: public Haruhi::UnitFactory
+class VanHalenFactory: public Haruhi::PluginFactory
 {
   public:
 	VanHalenFactory();
 
-	Haruhi::Unit*
-	create_unit (Haruhi::Session*, int id, QWidget* parent);
+	Haruhi::Plugin*
+	create_plugin (Haruhi::Session*, int id, QWidget* parent);
 
 	void
-	destroy_unit (Haruhi::Unit* unit);
+	destroy_plugin (Haruhi::Plugin* plugin);
 
 	InformationMap const&
 	information() const;

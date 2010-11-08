@@ -27,7 +27,7 @@
 #include <Qt3Support/Q3PopupMenu>
 
 // Haruhi:
-#include <haruhi/unit.h>
+#include <haruhi/core/unit.h>
 #include <haruhi/utility/saveable_state.h>
 
 
@@ -40,6 +40,8 @@ class PresetItem;
 class PresetsListView;
 
 }
+
+using Core::Unit;
 
 class PresetsManager: public QWidget
 {
@@ -118,6 +120,9 @@ class PresetsManager: public QWidget
 
 	QString
 	lock_file_name() const;
+
+	std::string
+	sanitize_urn (std::string const& urn) const;
 
   private:
 	QString									_packages_dir;

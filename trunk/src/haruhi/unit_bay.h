@@ -19,14 +19,18 @@
 #include <string>
 #include <set>
 
+// Qt:
+#include <QtGui/QWidget>
+
 // Haruhi:
 #include <haruhi/utility/signal.h>
-#include <haruhi/unit.h>
+#include <haruhi/core/unit.h>
 
 
 namespace Haruhi {
 
 class UnitBay;
+class Session;
 
 
 /**
@@ -60,11 +64,11 @@ class UnitBayAware
  * UnitBay is an Unit that contains other Units inside.
  */
 class UnitBay:
-	public Unit,
+	public Core::Unit,
 	public Signal::Receiver
 {
   public:
-	typedef std::set<Unit*>	Units;
+	typedef std::set<Core::Unit*>	Units;
 
   public:
 	UnitBay (Session*, std::string const& urn, std::string const& title, int id, QWidget* parent);
@@ -79,6 +83,16 @@ class UnitBay:
 
 	void
 	process();
+
+	/*
+	 * Core::Unit API.
+	 */
+
+	void
+	registered();
+
+	void
+	unregistered();
 
   private:
 	void

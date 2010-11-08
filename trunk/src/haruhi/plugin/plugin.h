@@ -11,51 +11,30 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__UNIT_LOADER_H__INCLUDED
-#define HARUHI__UNIT_LOADER_H__INCLUDED
+#ifndef HARUHI__PLUGIN__PLUGIN_H__INCLUDED
+#define HARUHI__PLUGIN__PLUGIN_H__INCLUDED
 
 // Standard:
 #include <cstddef>
 #include <string>
 
+// Qt:
+#include <QtGui/QWidget>
+
 // Haruhi:
-#include <haruhi/unit.h>
+#include <haruhi/core/unit.h>
 
 
 namespace Haruhi {
 
 class Session;
 
-
-/**
- * Manages units factories.
- */
-class UnitLoader
+class Plugin:
+	public Core::Unit,
+	public QWidget
 {
   public:
-	typedef std::list<UnitFactory*> UnitFactoryList;
-
-  public:
-	UnitLoader (Session*);
-
-	~UnitLoader();
-
-	Unit*
-	load (std::string const& urn, int id = 0);
-
-	void
-	unload (Unit*);
-
-	UnitFactoryList const&
-	unit_factories() const;
-
-  private:
-	UnitFactory*
-	find_factory (std::string const& urn) const;
-
-  private:
-	Session*		_session;
-	UnitFactoryList	_unit_factories;
+	Plugin (Session*, std::string const& urn, std::string const& title, int id, QWidget* parent);
 };
 
 } // namespace Haruhi

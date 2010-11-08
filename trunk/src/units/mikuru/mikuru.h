@@ -36,7 +36,8 @@
 #include <haruhi/core/audio_port.h>
 #include <haruhi/core/event_port.h>
 #include <haruhi/dsp/smoother.h>
-#include <haruhi/unit.h>
+#include <haruhi/plugin/plugin.h>
+#include <haruhi/plugin/plugin_factory.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/saveable_state.h>
@@ -59,7 +60,7 @@
  * Mutexes acquiring order: Core::Graph mutex, _parts_mutex, _synth_threads_mutex.
  */
 class Mikuru:
-	public Haruhi::Unit,
+	public Haruhi::Plugin,
 	public Haruhi::UnitBayAware,
 	public Haruhi::Presetable,
 	public SaveableState
@@ -97,9 +98,21 @@ class Mikuru:
 	typedef std::set<int>  IDs;
 
   public:
-	Mikuru (Haruhi::UnitFactory*, Haruhi::Session*, std::string const& urn, std::string const& title, int id, QWidget* parent);
+	Mikuru (Haruhi::Session*, std::string const& urn, std::string const& title, int id, QWidget* parent);
 
 	virtual ~Mikuru();
+
+	/**
+	 * Core::Unit API
+	 */
+	void
+	registered();
+
+	/**
+	 * Core::Unit API
+	 */
+	void
+	unregistered();
 
 	std::string
 	name() const;
@@ -351,16 +364,16 @@ class Mikuru:
 };
 
 
-class MikuruFactory: public Haruhi::UnitFactory
+class MikuruFactory: public Haruhi::PluginFactory
 {
   public:
 	MikuruFactory();
 
-	Haruhi::Unit*
-	create_unit (Haruhi::Session*, int id, QWidget* parent);
+	Haruhi::Plugin*
+	create_plugin (Haruhi::Session*, int id, QWidget* parent);
 
 	void
-	destroy_unit (Haruhi::Unit* unit);
+	destroy_plugin (Haruhi::Plugin* plugin);
 
 	InformationMap const&
 	information() const;
