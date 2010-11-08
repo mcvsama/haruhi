@@ -123,16 +123,16 @@ JackAudioTransport::connect (std::string const& client_name)
 
 	try {
 		if (!(_jack_client = jack_client_open (client_name.c_str(), (jack_options_t)JackNoStartServer, 0)))
-			throw AudioBackendException ("could not connect to JACK server - is it running?", __func__);
+			throw Exception ("could not connect to JACK server - is it running?", __func__);
 
 		if (jack_set_process_callback (_jack_client, s_process, vthis))
-			throw AudioBackendException ("could not setup process callback", __func__);
+			throw Exception ("could not setup process callback", __func__);
 
 		if (jack_set_sample_rate_callback (_jack_client, s_sample_rate_change, vthis))
-			throw AudioBackendException ("could not setup sample rate change callback", __func__);
+			throw Exception ("could not setup sample rate change callback", __func__);
 
 		if (jack_set_buffer_size_callback (_jack_client, s_buffer_size_change, vthis))
-			throw AudioBackendException ("could not setup buffer size change callback", __func__);
+			throw Exception ("could not setup buffer size change callback", __func__);
 
 		jack_on_shutdown (_jack_client, s_shutdown, vthis);
 

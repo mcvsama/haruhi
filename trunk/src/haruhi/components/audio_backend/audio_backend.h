@@ -264,13 +264,13 @@ class Backend:
 
 
 /**
- * AudioBackendException
+ * Exception
  */
-class AudioBackendException: public Exception
+class Exception: public ::Haruhi::Exception
 {
   public:
-	explicit AudioBackendException (const char* what, const char* details):
-		Exception (what, details)
+	explicit Exception (const char* what, const char* details):
+		::Haruhi::Exception (what, details)
 	{ }
 };
 
@@ -278,11 +278,11 @@ class AudioBackendException: public Exception
 /**
  * AudioBackendPortException
  */
-class AudioBackendPortException: public AudioBackendException
+class PortException: public Exception
 {
   public:
-	explicit AudioBackendPortException (const char* what, const char* details):
-		AudioBackendException (what, details)
+	explicit PortException (const char* what, const char* details):
+		Exception (what, details)
 	{ }
 };
 
