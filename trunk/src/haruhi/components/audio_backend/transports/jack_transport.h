@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__COMPONENTS__AUDIO_BACKEND__TRANSPORTS__JACK_AUDIO_TRANSPORT_H__INCLUDED
-#define HARUHI__COMPONENTS__AUDIO_BACKEND__TRANSPORTS__JACK_AUDIO_TRANSPORT_H__INCLUDED
+#ifndef HARUHI__COMPONENTS__AUDIO_BACKEND__TRANSPORTS__JACK_TRANSPORT_H__INCLUDED
+#define HARUHI__COMPONENTS__AUDIO_BACKEND__TRANSPORTS__JACK_TRANSPORT_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -23,7 +23,7 @@
 #include <jack/jack.h>
 
 // Haruhi:
-#include <haruhi/components/audio_backend/audio_transport.h>
+#include <haruhi/components/audio_backend/transport.h>
 
 
 namespace Haruhi {
@@ -33,7 +33,7 @@ namespace AudioBackend {
 /**
  * JACK audio transport.
  */
-class JackAudioTransport: public AudioTransport
+class JackTransport: public Transport
 {
   public:
 	/**
@@ -42,7 +42,7 @@ class JackAudioTransport: public AudioTransport
 	 */
 	class JackPort: public Port
 	{
-		friend class JackAudioTransport;
+		friend class JackTransport;
 
 	  public:
 		enum Direction { Input, Output };
@@ -51,7 +51,7 @@ class JackAudioTransport: public AudioTransport
 		/**
 		 * Creates JackPort. Also initializes JACK port with reinit().
 		 */
-		JackPort (AudioTransport*, Direction, std::string const& name);
+		JackPort (Transport*, Direction, std::string const& name);
 
 		/**
 		 * Destroys JACK port using destroy().
@@ -90,9 +90,9 @@ class JackAudioTransport: public AudioTransport
 	typedef std::set<JackPort*> Ports;
 
   public:
-	JackAudioTransport (Backend* backend);
+	JackTransport (Backend* backend);
 
-	~JackAudioTransport();
+	~JackTransport();
 
 	void
 	connect (std::string const& client_name);
@@ -161,19 +161,19 @@ class JackAudioTransport: public AudioTransport
 
 	static int
 	s_process (jack_nframes_t samples, void* klass)
-		{ return reinterpret_cast<JackAudioTransport*> (klass)->c_process (samples); }
+		{ return reinterpret_cast<JackTransport*> (klass)->c_process (samples); }
 
 	static int
 	s_sample_rate_change (jack_nframes_t sample_rate, void* klass)
-		{ return reinterpret_cast<JackAudioTransport*> (klass)->c_sample_rate_change (sample_rate); }
+		{ return reinterpret_cast<JackTransport*> (klass)->c_sample_rate_change (sample_rate); }
 
 	static int
 	s_buffer_size_change (jack_nframes_t buffer_size, void* klass)
-		{ return reinterpret_cast<JackAudioTransport*> (klass)->c_buffer_size_change (buffer_size); }
+		{ return reinterpret_cast<JackTransport*> (klass)->c_buffer_size_change (buffer_size); }
 
 	static void
 	s_shutdown (void* klass)
-	 	{ reinterpret_cast<JackAudioTransport*> (klass)->c_shutdown(); }
+	 	{ reinterpret_cast<JackTransport*> (klass)->c_shutdown(); }
 
 	static void
 	s_log_error (const char*);

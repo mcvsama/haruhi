@@ -30,7 +30,7 @@
 #include <haruhi/session.h>
 
 // Local:
-#include "transports/alsa_event_transport.h"
+#include "transports/alsa_transport.h"
 #include "backend.h"
 #include "device_with_port_dialog.h"
 #include "controller_with_port_dialog.h"
@@ -49,7 +49,7 @@ Backend::Backend (Session* session, QString const& client_name, int id, QWidget*
 	_tree (0),
 	_templates_menu (0)
 {
-	_transport = new ALSAEventTransport (this);
+	_transport = new AlsaTransport (this);
 
 	//
 	// Widgets
@@ -147,7 +147,7 @@ Backend::process()
 
 	for (InputsMap::iterator h = _inputs.begin(); h != _inputs.end(); ++h)
 	{
-		EventTransport::Port* transport_port = h->first;
+		Transport::Port* transport_port = h->first;
 		if (transport_port->buffer().empty())
 			continue;
 		DeviceWithPortItem* device_item = h->second;
@@ -155,7 +155,7 @@ Backend::process()
 		{
 			if ((*iii)->ready())
 			{
-				for (EventTransport::MidiBuffer::iterator m = transport_port->buffer().begin(); m != transport_port->buffer().end(); ++m)
+				for (Transport::MidiBuffer::iterator m = transport_port->buffer().begin(); m != transport_port->buffer().end(); ++m)
 				{
 					if ((*iii)->handle_event (*m))
 						handle_event_for_learnables (*m, (*iii)->port());

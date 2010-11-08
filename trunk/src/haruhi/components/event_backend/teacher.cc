@@ -23,7 +23,7 @@ namespace Haruhi {
 namespace EventBackend {
 
 void
-Teacher::handle_event_for_learnables (EventTransport::MidiEvent const& event, Core::EventPort* port)
+Teacher::handle_event_for_learnables (Transport::MidiEvent const& event, Core::EventPort* port)
 {
 	Learnables::iterator lnext;
 	for (Learnables::iterator l = _learnables.begin(); l != _learnables.end(); l = lnext)
@@ -32,11 +32,11 @@ Teacher::handle_event_for_learnables (EventTransport::MidiEvent const& event, Co
 		++lnext;
 
 		bool learned = false;
-		learned |= (l->second & Keyboard) && (event.type == EventTransport::MidiEvent::NoteOn || event.type == EventTransport::MidiEvent::NoteOff);
-		learned |= (l->second & Controller) && event.type == EventTransport::MidiEvent::Controller;
-		learned |= (l->second & Pitchbend) && event.type == EventTransport::MidiEvent::Pitchbend;
-		learned |= (l->second & ChannelPressure) && event.type == EventTransport::MidiEvent::ChannelPressure;
-		learned |= (l->second & KeyPressure) && event.type == EventTransport::MidiEvent::KeyPressure;
+		learned |= (l->second & Keyboard) && (event.type == Transport::MidiEvent::NoteOn || event.type == Transport::MidiEvent::NoteOff);
+		learned |= (l->second & Controller) && event.type == Transport::MidiEvent::Controller;
+		learned |= (l->second & Pitchbend) && event.type == Transport::MidiEvent::Pitchbend;
+		learned |= (l->second & ChannelPressure) && event.type == Transport::MidiEvent::ChannelPressure;
+		learned |= (l->second & KeyPressure) && event.type == Transport::MidiEvent::KeyPressure;
 
 		if (learned)
 		{

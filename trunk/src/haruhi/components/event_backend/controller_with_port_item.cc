@@ -95,9 +95,9 @@ ControllerWithPortItem::port() const
 
 
 bool
-ControllerWithPortItem::handle_event (EventTransport::MidiEvent const& event)
+ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 {
-	typedef EventTransport::MidiEvent MidiEvent;
+	typedef Transport::MidiEvent MidiEvent;
 
 	bool handled = false;
 	Core::Timestamp t = event.timestamp;

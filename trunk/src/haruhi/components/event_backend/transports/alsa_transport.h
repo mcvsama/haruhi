@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__TRANSPORTS__ALSA_EVENT_TRANSPORT_H__INCLUDED
-#define HARUHI__COMPONENTS__EVENT_BACKEND__TRANSPORTS__ALSA_EVENT_TRANSPORT_H__INCLUDED
+#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__TRANSPORTS__ALSA_TRANSPORT_H__INCLUDED
+#define HARUHI__COMPONENTS__EVENT_BACKEND__TRANSPORTS__ALSA_TRANSPORT_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -24,7 +24,7 @@
 #include <alsa/seq.h>
 
 // Haruhi:
-#include <haruhi/components/event_backend/event_transport.h>
+#include <haruhi/components/event_backend/transport.h>
 
 
 namespace Haruhi {
@@ -34,18 +34,18 @@ namespace EventBackend {
 /**
  * ALSA event transport.
  */
-class ALSAEventTransport: public EventTransport
+class AlsaTransport: public Transport
 {
   public:
 	class ALSAPort: public Port
 	{
-		friend class ALSAEventTransport;
+		friend class AlsaTransport;
 
 	  public:
 		enum Direction { Input, Output };
 
 	  public:
-		ALSAPort (EventTransport*, Direction, std::string const& name);
+		ALSAPort (Transport*, Direction, std::string const& name);
 
 		~ALSAPort();
 
@@ -81,9 +81,9 @@ class ALSAEventTransport: public EventTransport
 	typedef std::map<int, ALSAPort*> Ports;
 
   public:
-	ALSAEventTransport (Backend* backend);
+	AlsaTransport (Backend* backend);
 
-	~ALSAEventTransport();
+	~AlsaTransport();
 
 	void
 	connect (std::string const& client_name);

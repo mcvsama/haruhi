@@ -43,12 +43,12 @@
 #include <haruhi/utility/saveable_state.h>
 
 // Local:
-#include "event_transport.h"
 #include "teacher.h"
 #include "ports_list_view.h"
 #include "port_item.h"
 #include "device_with_port_item.h"
 #include "controller_with_port_item.h"
+#include "transport.h"
 
 
 namespace Haruhi {
@@ -71,7 +71,7 @@ class Backend:
 	friend class ControllerWithPortItem;
 
   private:
-	typedef std::map<EventTransport::Port*, DeviceWithPortItem*> InputsMap;
+	typedef std::map<Transport::Port*, DeviceWithPortItem*> InputsMap;
 	typedef std::map<int, Config::EventHardwareTemplate> Templates;
 
   public:
@@ -91,7 +91,7 @@ class Backend:
 	void
 	unregistered();
 
-	EventTransport*
+	Transport*
 	transport() const { return _transport; }
 
 	/*
@@ -190,7 +190,7 @@ class Backend:
 
   private:
 	QString						_client_name;
-	EventTransport*				_transport;
+	Transport*					_transport;
 	InputsMap					_inputs;
 	QSignalMapper*				_insert_template_signal_mapper;
 

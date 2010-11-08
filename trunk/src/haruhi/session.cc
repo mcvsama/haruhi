@@ -33,7 +33,7 @@
 // Haruhi:
 #include <haruhi/config.h>
 #include <haruhi/core/graph.h>
-#include <haruhi/components/audio_backend/audio_backend.h>
+#include <haruhi/components/audio_backend/backend.h>
 #include <haruhi/components/event_backend/backend.h>
 #include <haruhi/widgets/clickable_label.h>
 #include <haruhi/utility/numeric.h>

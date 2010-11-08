@@ -23,9 +23,9 @@
 #include <haruhi/components/devices_manager/device_item.h>
 
 // Local:
-#include "event_transport.h"
 #include "port_item.h"
 #include "ports_list_view.h"
+#include "transport.h"
 
 
 namespace Haruhi {
@@ -54,7 +54,7 @@ class DeviceWithPortItem:
 	Controllers*
 	controllers() { return &_controllers; }
 
-	EventTransport::Port*
+	Transport::Port*
 	transport_port() const { return _transport_port; }
 
 	Core::PortGroup*
@@ -83,8 +83,8 @@ class DeviceWithPortItem:
 	Controllers _controllers;
 
   private:
-	Core::PortGroup*		_port_group;
-	EventTransport::Port*	_transport_port;
+	Core::PortGroup*	_port_group;
+	Transport::Port*	_transport_port;
 };
 
 } // namespace EventBackend

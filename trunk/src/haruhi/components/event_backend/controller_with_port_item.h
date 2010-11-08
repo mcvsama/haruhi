@@ -27,9 +27,9 @@
 #include <haruhi/utility/saveable_state.h>
 
 // Local:
-#include "event_transport.h"
 #include "port_item.h"
 #include "device_with_port_item.h"
+#include "transport.h"
 
 
 namespace Haruhi {
@@ -80,7 +80,7 @@ class ControllerWithPortItem:
 	 * Returns true if event has been actually passed by port.
 	 */
 	bool
-	handle_event (EventTransport::MidiEvent const& event);
+	handle_event (Transport::MidiEvent const& event);
 
 	void
 	load_state (QDomElement const& element);

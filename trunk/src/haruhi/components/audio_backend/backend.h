@@ -49,7 +49,6 @@
 #include <haruhi/utility/mutex.h>
 
 // Local:
-#include "audio_transport.h"
 #include "ports_list_view.h"
 #include "port_item.h"
 #include "input_item.h"
@@ -57,6 +56,7 @@
 #include "port_dialog.h"
 #include "input_dialog.h"
 #include "output_dialog.h"
+#include "transport.h"
 
 
 namespace Haruhi {
@@ -84,8 +84,8 @@ class Backend:
 	friend class OutputItem;
 
   private:
-	typedef std::map<AudioTransport::Port*, InputItem*>		InputsMap;
-	typedef std::map<AudioTransport::Port*, OutputItem*>	OutputsMap;
+	typedef std::map<Transport::Port*, InputItem*>	InputsMap;
+	typedef std::map<Transport::Port*, OutputItem*>	OutputsMap;
 
   public:
 	Backend (Session* session, QString const& client_name, int id, QWidget* parent);
@@ -104,7 +104,7 @@ class Backend:
 	void
 	unregistered();
 
-	AudioTransport*
+	Transport*
 	transport() const { return _transport; }
 
 	Core::EventPort*
@@ -127,7 +127,7 @@ class Backend:
 	disable();
 
 	/**
-	 * Transports data between graph's ports and AudioTransport's ports.
+	 * Transports data between graph's ports and Transport's ports.
 	 */
 	void
 	transfer();
@@ -248,7 +248,7 @@ class Backend:
 
   private:
 	QString				_client_name;
-	AudioTransport*		_transport;
+	Transport*			_transport;
 	RecursiveMutex		_ports_lock;
 
 	// Views:

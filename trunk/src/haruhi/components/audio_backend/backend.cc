@@ -31,8 +31,8 @@
 #include <haruhi/utility/numeric.h>
 
 // Local:
-#include "transports/jack_audio_transport.h"
-#include "audio_backend.h"
+#include "transports/jack_transport.h"
+#include "backend.h"
 
 
 // TODO handle dummy_timer and faked sample_rate+buffer_size when transport disconnects.
@@ -45,7 +45,7 @@ Backend::Backend (Session* session, QString const& client_name, int id, QWidget*
 	Unit (session, "urn://haruhi.mulabs.org/backend/jack-audio-backend/1", "• Audio", id),
 	_client_name (client_name)
 {
-	_transport = new JackAudioTransport (this);
+	_transport = new JackTransport (this);
 
 	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
 	QHBoxLayout* top_layout = new QHBoxLayout (layout, Config::spacing);

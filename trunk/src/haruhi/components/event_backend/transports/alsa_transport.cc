@@ -23,14 +23,14 @@
 #include <haruhi/components/event_backend/backend.h>
 
 // Local:
-#include "alsa_event_transport.h"
+#include "alsa_transport.h"
 
 
 namespace Haruhi {
 
 namespace EventBackend {
 
-ALSAEventTransport::ALSAPort::ALSAPort (EventTransport* transport, Direction direction, std::string const& name):
+AlsaTransport::ALSAPort::ALSAPort (Transport* transport, Direction direction, std::string const& name):
 	Port (transport),
 	_direction (direction),
 	_name (name),
@@ -40,19 +40,19 @@ ALSAEventTransport::ALSAPort::ALSAPort (EventTransport* transport, Direction dir
 }
 
 
-ALSAEventTransport::ALSAPort::~ALSAPort()
+AlsaTransport::ALSAPort::~ALSAPort()
 {
 	destroy();
 }
 
 
 void
-ALSAEventTransport::ALSAPort::rename (std::string const& new_name)
+AlsaTransport::ALSAPort::rename (std::string const& new_name)
 {
 	_name = new_name;
 	if (transport()->connected())
 	{
-		ALSAEventTransport* alsa_transport = static_cast<ALSAEventTransport*> (transport());
+		AlsaTransport* alsa_transport = static_cast<AlsaTransport*> (transport());
 		snd_seq_port_info_t* info = 0;
 		try {
 			// Rename ALSA port:
@@ -75,19 +75,19 @@ ALSAEventTransport::ALSAPort::rename (std::string const& new_name)
 
 
 void
-ALSAEventTransport::ALSAPort::reinit()
+AlsaTransport::ALSAPort::reinit()
 {
 	if (transport()->connected())
 	{
 		switch (_direction)
 		{
 			case Input:
-				_alsa_port = snd_seq_create_simple_port (static_cast<ALSAEventTransport*> (transport())->seq(), _name.c_str(),
+				_alsa_port = snd_seq_create_simple_port (static_cast<AlsaTransport*> (transport())->seq(), _name.c_str(),
 														 SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_WRITE,
 														 SND_SEQ_PORT_TYPE_SYNTHESIZER | SND_SEQ_PORT_TYPE_SOFTWARE);
 				break;
 			case Output:
-				_alsa_port = snd_seq_create_simple_port (static_cast<ALSAEventTransport*> (transport())->seq(), _name.c_str(),
+				_alsa_port = snd_seq_create_simple_port (static_cast<AlsaTransport*> (transport())->seq(), _name.c_str(),
 														 SND_SEQ_PORT_CAP_READ | SND_SEQ_PORT_CAP_SUBS_READ,
 														 SND_SEQ_PORT_TYPE_SYNTHESIZER | SND_SEQ_PORT_TYPE_SOFTWARE);
 				break;
@@ -97,27 +97,27 @@ ALSAEventTransport::ALSAPort::reinit()
 
 
 void
-ALSAEventTransport::ALSAPort::destroy()
+AlsaTransport::ALSAPort::destroy()
 {
 	if (transport()->connected())
-		snd_seq_delete_port (static_cast<ALSAEventTransport*> (transport())->seq(), _alsa_port);
+		snd_seq_delete_port (static_cast<AlsaTransport*> (transport())->seq(), _alsa_port);
 }
 
 
-ALSAEventTransport::ALSAEventTransport (Backend* backend):
-	EventTransport (backend),
+AlsaTransport::AlsaTransport (Backend* backend):
+	Transport (backend),
 	_seq (0)
 { }
 
 
-ALSAEventTransport::~ALSAEventTransport()
+AlsaTransport::~AlsaTransport()
 {
 	disconnect();
 }
 
 
 void
-ALSAEventTransport::connect (std::string const& client_name)
+AlsaTransport::connect (std::string const& client_name)
 {
 	if (snd_seq_open (&_seq, "default", SND_SEQ_OPEN_INPUT, SND_SEQ_NONBLOCK))
 		throw Exception ("could not open default ALSA midi sequencer", __func__);
@@ -129,7 +129,7 @@ ALSAEventTransport::connect (std::string const& client_name)
 
 
 void
-ALSAEventTransport::disconnect()
+AlsaTransport::disconnect()
 {
 	if (_seq)
 	{
@@ -143,14 +143,14 @@ ALSAEventTransport::disconnect()
 
 
 bool
-ALSAEventTransport::connected() const
+AlsaTransport::connected() const
 {
 	return !!_seq;
 }
 
 
-ALSAEventTransport::Port*
-ALSAEventTransport::create_input (std::string const& port_name)
+AlsaTransport::Port*
+AlsaTransport::create_input (std::string const& port_name)
 {
 	ALSAPort* port = new ALSAPort (this, ALSAPort::Input, port_name);
 	_ports[port->alsa_port()] = port;
@@ -158,8 +158,8 @@ ALSAEventTransport::create_input (std::string const& port_name)
 }
 
 
-ALSAEventTransport::Port*
-ALSAEventTransport::create_output (std::string const& port_name)
+AlsaTransport::Port*
+AlsaTransport::create_output (std::string const& port_name)
 {
 	ALSAPort* port = new ALSAPort (this, ALSAPort::Output, port_name);
 	_ports[port->alsa_port()] = port;
@@ -168,7 +168,7 @@ ALSAEventTransport::create_output (std::string const& port_name)
 
 
 void
-ALSAEventTransport::destroy_port (Port* port)
+AlsaTransport::destroy_port (Port* port)
 {
 	_ports.erase (static_cast<ALSAPort*> (port)->alsa_port());
 	delete port;
@@ -176,7 +176,7 @@ ALSAEventTransport::destroy_port (Port* port)
 
 
 void
-ALSAEventTransport::sync()
+AlsaTransport::sync()
 {
 	if (!connected())
 		return;
@@ -209,7 +209,7 @@ ALSAEventTransport::sync()
 
 
 bool
-ALSAEventTransport::map_alsa_to_internal (MidiEvent& midi, ::snd_seq_event_t* event)
+AlsaTransport::map_alsa_to_internal (MidiEvent& midi, ::snd_seq_event_t* event)
 {
 	switch (event->type)
 	{

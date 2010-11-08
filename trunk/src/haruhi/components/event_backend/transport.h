@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__COMPONENTS__AUDIO_BACKEND__AUDIO_TRANSPORT_H__INCLUDED
-#define HARUHI__COMPONENTS__AUDIO_BACKEND__AUDIO_TRANSPORT_H__INCLUDED
+#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__TRANSPORT_H__INCLUDED
+#define HARUHI__COMPONENTS__EVENT_BACKEND__TRANSPORT_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -21,31 +21,80 @@
 // Haruhi:
 #include <haruhi/config.h>
 #include <haruhi/core/core.h>
-#include <haruhi/core/audio_buffer.h>
 
 
 namespace Haruhi {
 
-namespace AudioBackend {
+namespace EventBackend {
 
 class Backend;
 
 /**
- * Parent class for audio transport implementations
+ * Parent class for event transport implementations
  * (ALSA, JACK, OSS, etc.)
- *
- * AudioTransport should update graph parameters
- * such like sample-rate or buffer-size (after proper graph lock).
  */
-class AudioTransport
+class Transport
 {
   public:
+	struct MidiEvent
+	{
+		enum Type {
+			NoteOn,
+			NoteOff,
+			Controller,
+			Pitchbend,
+			ChannelPressure,
+			KeyPressure,
+		};
+
+		Core::Timestamp timestamp;
+		Type type;
+
+		union
+		{
+			struct {
+				unsigned char channel;
+				unsigned char note;
+				unsigned char velocity;
+			} note_on;
+
+			struct {
+				unsigned char channel;
+				unsigned char note;
+				unsigned char velocity;
+			} note_off;
+
+			struct {
+				unsigned char channel;
+				unsigned char number;
+				unsigned char value;
+			} controller;
+
+			struct {
+				unsigned char channel;
+				int value;
+			} pitchbend;
+
+			struct {
+				unsigned char channel;
+				unsigned char value;
+			} channel_pressure;
+
+			struct {
+				unsigned char channel;
+				unsigned char note;
+				unsigned char value;
+			} key_pressure;
+		};
+	};
+
+	typedef std::list<MidiEvent> MidiBuffer;
+
 	class Port
 	{
 	  public:
-		Port (AudioTransport* transport):
-			_transport (transport),
-			_buffer (1)
+		Port (Transport* transport):
+			_transport (transport)
 		{ }
 
 		virtual ~Port() { }
@@ -53,27 +102,30 @@ class AudioTransport
 		virtual void
 		rename (std::string const&) = 0;
 
-		AudioTransport*
+		Transport*
 		transport() { return _transport; }
 
 		/**
-		 * Returns audio buffer to use for transporting audio.
-		 * May return 0 if data is not available/port is disabled.
+		 * Returns event buffer to use
+		 * for transporting events.
 		 */
-		virtual Core::Sample*
-		buffer() = 0;
+		MidiBuffer&
+		buffer() { return _buffer; }
+
+		MidiBuffer const&
+		buffer() const { return _buffer; }
 
 	  private:
-		AudioTransport*		_transport;
-		Core::AudioBuffer	_buffer;
+		Transport*	_transport;
+		MidiBuffer	_buffer;
 	};
 
   public:
-	AudioTransport (Backend* backend):
+	Transport (Backend* backend):
 		_backend (backend)
 	{ }
 
-	virtual ~AudioTransport() { }
+	virtual ~Transport() { }
 
 	Backend*
 	backend() const { return _backend; }
@@ -82,7 +134,7 @@ class AudioTransport
 	 * Connects to transport.
 	 * \param	client_name is client name for transports
 	 * 			that support it. May be ignored.
-	 * \throws	AudioBackendException when problem arises.
+	 * \throws	Exception when problem arises.
 	 */
 	virtual void
 	connect (std::string const& client_name) = 0;
@@ -98,24 +150,6 @@ class AudioTransport
 	 */
 	virtual bool
 	connected() const = 0;
-
-	/**
-	 * Activates transport (enables periodic callbacks).
-	 */
-	virtual void
-	activate() = 0;
-
-	/**
-	 * Deactivates transport (disable periodic callbacks).
-	 */
-	virtual void
-	deactivate() = 0;
-
-	/**
-	 * Returns true if transport is active.
-	 */
-	virtual bool
-	active() const = 0;
 
 	/**
 	 * Creates input port with given name.
@@ -139,11 +173,17 @@ class AudioTransport
 	virtual void
 	destroy_port (Port*) = 0;
 
+	/**
+	 * Synchronizes ports (fills buffers, etc).
+	 */
+	virtual void
+	sync() = 0;
+
   private:
 	Backend* _backend;
 };
 
-} // namespace AudioBackend
+} // namespace EventBackend
 
 } // namespace Haruhi
 

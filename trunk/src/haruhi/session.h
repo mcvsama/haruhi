@@ -31,7 +31,7 @@
 
 // Haruhi:
 #include <haruhi/core/graph.h>
-#include <haruhi/components/audio_backend/audio_backend.h>
+#include <haruhi/components/audio_backend/backend.h>
 #include <haruhi/components/event_backend/backend.h>
 #include <haruhi/components/devices_manager/panel.h>
 #include <haruhi/plugin/plugin_loader.h>

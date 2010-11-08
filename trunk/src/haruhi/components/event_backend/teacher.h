@@ -23,7 +23,7 @@
 #include <haruhi/core/event_port.h>
 
 // Local:
-#include "event_transport.h"
+#include "transport.h"
 
 
 namespace Haruhi {
@@ -89,7 +89,7 @@ class Teacher
 
   protected:
 	void
-	handle_event_for_learnables (EventTransport::MidiEvent const& event, Core::EventPort* port);
+	handle_event_for_learnables (Transport::MidiEvent const& event, Core::EventPort* port);
 
   protected:
 	Learnables _learnables;

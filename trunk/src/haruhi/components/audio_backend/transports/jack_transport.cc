@@ -23,37 +23,37 @@
 
 // Haruhi:
 #include <haruhi/core/graph.h>
-#include <haruhi/components/audio_backend/audio_backend.h>
-#include <haruhi/components/audio_backend/audio_transport.h>
+#include <haruhi/components/audio_backend/backend.h>
+#include <haruhi/components/audio_backend/transport.h>
 
 // Local:
-#include "jack_audio_transport.h"
+#include "jack_transport.h"
 
 
 namespace Haruhi {
 
 namespace AudioBackend {
 
-JackAudioTransport::JackPort::JackPort (AudioTransport* transport, Direction direction, std::string const& name):
+JackTransport::JackPort::JackPort (Transport* transport, Direction direction, std::string const& name):
 	Port (transport),
 	_direction (direction),
 	_name (name),
 	_jack_port (0)
 {
-	jack_set_error_function (JackAudioTransport::s_log_error);
-	jack_set_info_function (JackAudioTransport::s_log_info);
+	jack_set_error_function (JackTransport::s_log_error);
+	jack_set_info_function (JackTransport::s_log_info);
 	reinit();
 }
 
 
-JackAudioTransport::JackPort::~JackPort()
+JackTransport::JackPort::~JackPort()
 {
 	destroy();
 }
 
 
 Core::Sample*
-JackAudioTransport::JackPort::buffer()
+JackTransport::JackPort::buffer()
 {
 	if (transport()->connected())
 		return static_cast<Core::Sample*> (jack_port_get_buffer (_jack_port, transport()->backend()->graph()->buffer_size()));
@@ -62,7 +62,7 @@ JackAudioTransport::JackPort::buffer()
 
 
 void
-JackAudioTransport::JackPort::rename (std::string const& new_name)
+JackTransport::JackPort::rename (std::string const& new_name)
 {
 	_name = new_name;
 	if (transport()->connected())
@@ -71,18 +71,18 @@ JackAudioTransport::JackPort::rename (std::string const& new_name)
 
 
 void
-JackAudioTransport::JackPort::reinit()
+JackTransport::JackPort::reinit()
 {
 	if (transport()->connected())
 	{
 		switch (_direction)
 		{
 			case Input:
-				_jack_port = jack_port_register (static_cast<JackAudioTransport*> (transport())->jack_client(), _name.c_str(),
+				_jack_port = jack_port_register (static_cast<JackTransport*> (transport())->jack_client(), _name.c_str(),
 												 JACK_DEFAULT_AUDIO_TYPE, JackPortIsTerminal | JackPortIsInput, 0);
 				break;
 			case Output:
-				_jack_port = jack_port_register (static_cast<JackAudioTransport*> (transport())->jack_client(), _name.c_str(),
+				_jack_port = jack_port_register (static_cast<JackTransport*> (transport())->jack_client(), _name.c_str(),
 												 JACK_DEFAULT_AUDIO_TYPE, JackPortIsTerminal | JackPortIsOutput, 0);
 				break;
 		}
@@ -91,15 +91,15 @@ JackAudioTransport::JackPort::reinit()
 
 
 void
-JackAudioTransport::JackPort::destroy()
+JackTransport::JackPort::destroy()
 {
 	if (transport()->connected())
-		jack_port_unregister (static_cast<JackAudioTransport*> (transport())->jack_client(), _jack_port);
+		jack_port_unregister (static_cast<JackTransport*> (transport())->jack_client(), _jack_port);
 }
 
 
-JackAudioTransport::JackAudioTransport (Backend* backend):
-	AudioTransport (backend),
+JackTransport::JackTransport (Backend* backend):
+	Transport (backend),
 	_jack_client (0),
 	_active (false)
 {
@@ -107,14 +107,14 @@ JackAudioTransport::JackAudioTransport (Backend* backend):
 }
 
 
-JackAudioTransport::~JackAudioTransport()
+JackTransport::~JackTransport()
 {
 	disconnect();
 }
 
 
 void
-JackAudioTransport::connect (std::string const& client_name)
+JackTransport::connect (std::string const& client_name)
 {
 	void* vthis = static_cast<void*> (this);
 
@@ -152,7 +152,7 @@ JackAudioTransport::connect (std::string const& client_name)
 
 
 void
-JackAudioTransport::disconnect()
+JackTransport::disconnect()
 {
 	if (_jack_client)
 	{
@@ -167,14 +167,14 @@ JackAudioTransport::disconnect()
 
 
 bool
-JackAudioTransport::connected() const
+JackTransport::connected() const
 {
 	return !!_jack_client;
 }
 
 
 void
-JackAudioTransport::activate()
+JackTransport::activate()
 {
 	if (connected())
 	{
@@ -185,7 +185,7 @@ JackAudioTransport::activate()
 
 
 void
-JackAudioTransport::deactivate()
+JackTransport::deactivate()
 {
 	if (connected())
 	{
@@ -195,8 +195,8 @@ JackAudioTransport::deactivate()
 }
 
 
-JackAudioTransport::Port*
-JackAudioTransport::create_input (std::string const& port_name)
+JackTransport::Port*
+JackTransport::create_input (std::string const& port_name)
 {
 	JackPort* port = new JackPort (this, JackPort::Input, port_name);
 	_ports.insert (port);
@@ -204,8 +204,8 @@ JackAudioTransport::create_input (std::string const& port_name)
 }
 
 
-JackAudioTransport::Port*
-JackAudioTransport::create_output (std::string const& port_name)
+JackTransport::Port*
+JackTransport::create_output (std::string const& port_name)
 {
 	JackPort* port = new JackPort (this, JackPort::Output, port_name);
 	_ports.insert (port);
@@ -214,7 +214,7 @@ JackAudioTransport::create_output (std::string const& port_name)
 
 
 void
-JackAudioTransport::destroy_port (Port* port)
+JackTransport::destroy_port (Port* port)
 {
 	_ports.erase (static_cast<JackPort*> (port));
 	delete port;
@@ -222,7 +222,7 @@ JackAudioTransport::destroy_port (Port* port)
 
 
 void
-JackAudioTransport::ignore_sigpipe()
+JackTransport::ignore_sigpipe()
 {
 	sigset_t set;
 	sigemptyset (&set);
@@ -232,7 +232,7 @@ JackAudioTransport::ignore_sigpipe()
 
 
 int
-JackAudioTransport::c_process (jack_nframes_t samples)
+JackTransport::c_process (jack_nframes_t samples)
 {
 	backend()->transfer();
 	return 0;
@@ -240,7 +240,7 @@ JackAudioTransport::c_process (jack_nframes_t samples)
 
 
 int
-JackAudioTransport::c_sample_rate_change (jack_nframes_t sample_rate)
+JackTransport::c_sample_rate_change (jack_nframes_t sample_rate)
 {
 	backend()->graph()->lock();
 	backend()->graph()->set_sample_rate (sample_rate);
@@ -250,7 +250,7 @@ JackAudioTransport::c_sample_rate_change (jack_nframes_t sample_rate)
 
 
 int
-JackAudioTransport::c_buffer_size_change (jack_nframes_t buffer_size)
+JackTransport::c_buffer_size_change (jack_nframes_t buffer_size)
 {
 	backend()->graph()->lock();
 	backend()->graph()->set_buffer_size (buffer_size);
@@ -260,7 +260,7 @@ JackAudioTransport::c_buffer_size_change (jack_nframes_t buffer_size)
 
 
 void
-JackAudioTransport::c_shutdown()
+JackTransport::c_shutdown()
 {
 	_jack_client = 0;
 	_active = false;
@@ -269,14 +269,14 @@ JackAudioTransport::c_shutdown()
 
 
 void
-JackAudioTransport::s_log_error (const char* message)
+JackTransport::s_log_error (const char* message)
 {
 	std::clog << "ERROR[JACK] " << message << std::endl;
 }
 
 
 void
-JackAudioTransport::s_log_info (const char* message)
+JackTransport::s_log_info (const char* message)
 {
 	std::clog << "INFO[JACK] " << message << std::endl;
 }
