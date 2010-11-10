@@ -52,22 +52,20 @@ General::General (Mikuru* mikuru, QWidget* parent):
 	_port_frequency = new Core::EventPort (_mikuru, "Frequency (global)", Core::Port::Input, 0, Core::Port::ControlPitchbend | Core::Port::Polyphonic);
 	_mikuru->graph()->unlock();
 
-	_proxy_volume = new Haruhi::ControllerProxy (_port_volume, &_params.volume);
-	_proxy_detune = new Haruhi::ControllerProxy (_port_detune, &_params.detune);
-	_proxy_panorama = new Haruhi::ControllerProxy (_port_panorama, &_params.panorama);
-	_proxy_stereo_width = new Haruhi::ControllerProxy (_port_stereo_width, &_params.stereo_width);
-	_proxy_input_volume = new Haruhi::ControllerProxy (_port_input_volume, &_params.input_volume);
+	_knob_volume = new Haruhi::Knob (this, _port_volume, &_params.volume, "Volume dB",
+									 -std::numeric_limits<float>::infinity(), 0.0f,
+									 (Params::General::VolumeMax - Params::General::VolumeMin) / 500, 2);
+	_knob_detune = new Haruhi::Knob (this, _port_detune, &_params.detune, "Detune", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::Detune, 100), 2);
+	_knob_panorama = new Haruhi::Knob (this, _port_panorama, &_params.panorama, "Panorama", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::Panorama, 100), 2);
+	_knob_stereo_width = new Haruhi::Knob (this, _port_stereo_width, &_params.stereo_width, "St.width", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::StereoWidth, 100), 2);
+	_knob_input_volume = new Haruhi::Knob (this, _port_input_volume, &_params.input_volume, "Input dB",
+										   -std::numeric_limits<float>::infinity(), 0.0f,
+										   (Params::General::InputVolumeMax - Params::General::InputVolumeMin) / 500, 2);
 
-	_control_volume = new Haruhi::Knob (this, _proxy_volume, "Volume dB",
-										-std::numeric_limits<float>::infinity(), 0.0f, (Params::General::VolumeMax - Params::General::VolumeMin) / 500, 2);
-	_control_volume->set_volume_scale (true, M_E);
-	_control_detune = new Haruhi::Knob (this, _proxy_detune, "Detune", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::Detune, 100), 2);
-	_control_panorama = new Haruhi::Knob (this, _proxy_panorama, "Panorama", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::Panorama, 100), 2);
-	_control_stereo_width = new Haruhi::Knob (this, _proxy_stereo_width, "St.width", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::StereoWidth, 100), 2);
-	_control_input_volume = new Haruhi::Knob (this, _proxy_input_volume, "Input dB",
-											  -std::numeric_limits<float>::infinity(), 0.0f, (Params::General::InputVolumeMax - Params::General::InputVolumeMin) / 500, 2);
-	_control_input_volume->set_volume_scale (true, M_E);
-	QToolTip::add (_control_stereo_width, "Stereo width");
+	_knob_volume->set_volume_scale (true, M_E);
+	_knob_input_volume->set_volume_scale (true, M_E);
+
+	QToolTip::add (_knob_stereo_width, "Stereo width");
 
 	Q3GroupBox* grid1 = new Q3GroupBox (2, Qt::Horizontal, "", this);
 	grid1->setInsideMargin (3 * Config::margin);
@@ -103,11 +101,11 @@ General::General (Mikuru* mikuru, QWidget* parent):
 
 	QVBoxLayout* v1_layout = new QVBoxLayout (this, Config::margin, Config::spacing);
 	QHBoxLayout* h1_layout = new QHBoxLayout (v1_layout, Config::spacing);
-	h1_layout->addWidget (_control_volume);
-	h1_layout->addWidget (_control_detune);
-	h1_layout->addWidget (_control_panorama);
-	h1_layout->addWidget (_control_stereo_width);
-	h1_layout->addWidget (_control_input_volume);
+	h1_layout->addWidget (_knob_volume);
+	h1_layout->addWidget (_knob_detune);
+	h1_layout->addWidget (_knob_panorama);
+	h1_layout->addWidget (_knob_stereo_width);
+	h1_layout->addWidget (_knob_input_volume);
 	h1_layout->addWidget (grid1);
 	v1_layout->addWidget (new StyledLabel ("LFOs & Envelopes", this));
 	v1_layout->addWidget (_envelopes);
@@ -124,17 +122,11 @@ void
 General::delete_ports()
 {
 	// Delete knobs before ControllerProxies:
-	delete _control_volume;
-	delete _control_detune;
-	delete _control_panorama;
-	delete _control_stereo_width;
-	delete _control_input_volume;
-
-	delete _proxy_volume;
-	delete _proxy_detune;
-	delete _proxy_panorama;
-	delete _proxy_stereo_width;
-	delete _proxy_input_volume;
+	delete _knob_volume;
+	delete _knob_detune;
+	delete _knob_panorama;
+	delete _knob_stereo_width;
+	delete _knob_input_volume;
 
 	_mikuru->graph()->lock();
 	delete _port_volume;
@@ -160,11 +152,11 @@ General::delete_envelopes()
 void
 General::process_events()
 {
-	_proxy_volume->process_events();
-	_proxy_detune->process_events();
-	_proxy_panorama->process_events();
-	_proxy_stereo_width->process_events();
-	_proxy_input_volume->process_events();
+	_knob_volume->controller_proxy().process_events();
+	_knob_detune->controller_proxy().process_events();
+	_knob_panorama->controller_proxy().process_events();
+	_knob_stereo_width->controller_proxy().process_events();
+	_knob_input_volume->controller_proxy().process_events();
 
 	// Copy values from pitchbend/amplitude/frequency ports to each part's port:
 	Core::EventBuffer* pitchbend_buffer = _port_pitchbend->event_buffer();
@@ -185,11 +177,11 @@ General::process_events()
 void
 General::unit_bay_assigned()
 {
-	_control_volume->set_unit_bay (_mikuru->unit_bay());
-	_control_detune->set_unit_bay (_mikuru->unit_bay());
-	_control_panorama->set_unit_bay (_mikuru->unit_bay());
-	_control_stereo_width->set_unit_bay (_mikuru->unit_bay());
-	_control_input_volume->set_unit_bay (_mikuru->unit_bay());
+	_knob_volume->set_unit_bay (_mikuru->unit_bay());
+	_knob_detune->set_unit_bay (_mikuru->unit_bay());
+	_knob_panorama->set_unit_bay (_mikuru->unit_bay());
+	_knob_stereo_width->set_unit_bay (_mikuru->unit_bay());
+	_knob_input_volume->set_unit_bay (_mikuru->unit_bay());
 }
 
 

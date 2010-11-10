@@ -183,9 +183,6 @@ class LFO: public Envelope
 	create_ports();
 
 	void
-	create_proxies();
-
-	void
 	create_knobs (QWidget* parent);
 
 	void
@@ -283,23 +280,14 @@ class LFO: public Envelope
 	Waves						_waves;
 	DSP::Noise					_noise;
 
-	Haruhi::ControllerProxy*	_proxy_delay;
-	Haruhi::ControllerProxy*	_proxy_fade_in;
-	Haruhi::ControllerProxy*	_proxy_frequency;
-	Haruhi::ControllerProxy*	_proxy_level;
-	Haruhi::ControllerProxy*	_proxy_depth;
-	Haruhi::ControllerProxy*	_proxy_phase;
-	Haruhi::ControllerProxy*	_proxy_wave_shape;
-	Haruhi::ControllerProxy*	_proxy_fade_out;
-
-	Haruhi::Knob*				_control_delay;
-	Haruhi::Knob*				_control_fade_in;
-	Haruhi::Knob*				_control_frequency;
-	Haruhi::Knob*				_control_level;
-	Haruhi::Knob*				_control_depth;
-	Haruhi::Knob*				_control_phase;
-	Haruhi::Knob*				_control_wave_shape;
-	Haruhi::Knob*				_control_fade_out;
+	Haruhi::Knob*				_knob_delay;
+	Haruhi::Knob*				_knob_fade_in;
+	Haruhi::Knob*				_knob_frequency;
+	Haruhi::Knob*				_knob_level;
+	Haruhi::Knob*				_knob_depth;
+	Haruhi::Knob*				_knob_phase;
+	Haruhi::Knob*				_knob_wave_shape;
+	Haruhi::Knob*				_knob_fade_out;
 
 	QCheckBox*					_enabled;
 	QComboBox*					_wave_type;

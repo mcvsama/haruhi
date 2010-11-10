@@ -161,20 +161,6 @@ class Oscillator: public QWidget
 	Core::EventPort*			_port_unison_noise;
 	Core::EventPort*			_port_noise_level;
 
-	// Proxies:
-	Haruhi::ControllerProxy*	_proxy_volume;
-	Haruhi::ControllerProxy*	_proxy_portamento_time;
-	Haruhi::ControllerProxy*	_proxy_phase;
-	Haruhi::ControllerProxy*	_proxy_panorama;
-	Haruhi::ControllerProxy*	_proxy_detune;
-	Haruhi::ControllerProxy*	_proxy_pitchbend;
-	Haruhi::ControllerProxy*	_proxy_velocity_sens;
-	Haruhi::ControllerProxy*	_proxy_unison_index;
-	Haruhi::ControllerProxy*	_proxy_unison_spread;
-	Haruhi::ControllerProxy*	_proxy_unison_init;
-	Haruhi::ControllerProxy*	_proxy_unison_noise;
-	Haruhi::ControllerProxy*	_proxy_noise_level;
-
 	// Event dispatchers for polyphonic-input ports:
 	EventDispatcher*			_evdisp_amplitude;
 	EventDispatcher*			_evdisp_frequency;
@@ -188,22 +174,22 @@ class Oscillator: public QWidget
 	EventDispatcher*			_evdisp_unison_noise;
 
 	// Volume knobs:
-	Haruhi::Knob*				_control_volume;
-	Haruhi::Knob*				_control_panorama;
-	Haruhi::Knob*				_control_detune;
-	Haruhi::Knob*				_control_pitchbend;
-	Haruhi::Knob*				_control_velocity_sens;
+	Haruhi::Knob*				_knob_volume;
+	Haruhi::Knob*				_knob_panorama;
+	Haruhi::Knob*				_knob_detune;
+	Haruhi::Knob*				_knob_pitchbend;
+	Haruhi::Knob*				_knob_velocity_sens;
 
 	// Unison knobs:
-	Haruhi::Knob*				_control_unison_index;
-	Haruhi::Knob*				_control_unison_spread;
-	Haruhi::Knob*				_control_unison_init;
-	Haruhi::Knob*				_control_unison_noise;
+	Haruhi::Knob*				_knob_unison_index;
+	Haruhi::Knob*				_knob_unison_spread;
+	Haruhi::Knob*				_knob_unison_init;
+	Haruhi::Knob*				_knob_unison_noise;
 
 	// Other knobs:
-	Haruhi::Knob*				_control_portamento_time;
-	Haruhi::Knob*				_control_phase;
-	Haruhi::Knob*				_control_noise_level;
+	Haruhi::Knob*				_knob_portamento_time;
+	Haruhi::Knob*				_knob_phase;
+	Haruhi::Knob*				_knob_noise_level;
 
 	// Pitchbend/transposition:
 	QCheckBox*					_const_portamento_time;

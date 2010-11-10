@@ -41,11 +41,8 @@ VanHalen::VanHalen (Haruhi::Session* session, std::string const& urn, std::strin
 	// Register itself:
 	session->graph()->register_unit (this);
 
-	_proxy_comb_index = new Haruhi::ControllerProxy (0, &_comb_index);
-	_proxy_comb_alpha = new Haruhi::ControllerProxy (0, &_comb_alpha);
-
-	_knob_comb_index = new Haruhi::Knob (this, _proxy_comb_index, "Index", 0, 1000, 1, 0);
-	_knob_comb_alpha = new Haruhi::Knob (this, _proxy_comb_alpha, "Alpha", -1.0, 1.0, 10, 2);
+	_knob_comb_index = new Haruhi::Knob (this, 0, &_comb_index, "Index", 0, 1000, 1, 0);
+	_knob_comb_alpha = new Haruhi::Knob (this, 0, &_comb_alpha, "Alpha", -1.0, 1.0, 10, 2);
 
 	QHBoxLayout* layout = new QHBoxLayout (this, Config::spacing);
 	layout->addWidget (_knob_comb_index);

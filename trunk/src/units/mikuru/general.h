@@ -121,19 +121,12 @@ class General: public QWidget
 	Core::EventPort*			_port_amplitude;
 	Core::EventPort*			_port_frequency;
 
-	// Controller proxies:
-	Haruhi::ControllerProxy*	_proxy_volume;
-	Haruhi::ControllerProxy*	_proxy_detune;
-	Haruhi::ControllerProxy*	_proxy_panorama;
-	Haruhi::ControllerProxy*	_proxy_stereo_width;
-	Haruhi::ControllerProxy*	_proxy_input_volume;
-
 	// Knobs:
-	Haruhi::Knob*				_control_volume;
-	Haruhi::Knob*				_control_detune;
-	Haruhi::Knob*				_control_panorama;
-	Haruhi::Knob*				_control_stereo_width;
-	Haruhi::Knob*				_control_input_volume;
+	Haruhi::Knob*				_knob_volume;
+	Haruhi::Knob*				_knob_detune;
+	Haruhi::Knob*				_knob_panorama;
+	Haruhi::Knob*				_knob_stereo_width;
+	Haruhi::Knob*				_knob_input_volume;
 
 	Envelopes*					_envelopes;
 };

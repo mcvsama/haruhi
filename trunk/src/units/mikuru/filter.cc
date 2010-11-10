@@ -67,42 +67,36 @@ Filter::Filter (FilterID filter_id, Core::PortGroup* port_group, QString const& 
 	_port_attenuation = new Core::EventPort (_mikuru, (port_prefix + " - Attenuate").toStdString(), Core::Port::Input, port_group, _polyphonic_control ? Core::Port::Polyphonic : 0);
 	_mikuru->graph()->unlock();
 
-	_proxy_frequency = new Haruhi::ControllerProxy (_port_frequency, &_params.frequency);
-	_proxy_frequency->config()->curve = 1.0;
-	_proxy_frequency->config()->user_limit_min = 0.04 * Params::Filter::FrequencyDenominator;
-	_proxy_frequency->config()->user_limit_max = 22.0 * Params::Filter::FrequencyDenominator;
-	_proxy_frequency->apply_config();
-	_proxy_resonance = new Haruhi::ControllerProxy (_port_resonance, &_params.resonance);
-	_proxy_gain = new Haruhi::ControllerProxy (_port_gain, &_params.gain);
-	_proxy_attenuation = new Haruhi::ControllerProxy (_port_attenuation, &_params.attenuation);
-	_proxy_attenuation->config()->curve = 1.0;
-	_proxy_attenuation->apply_config();
+	_knob_frequency = new Haruhi::Knob (_panel, _port_frequency, &_params.frequency, "Freq.", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Frequency, 2400), 2);
+	_knob_resonance = new Haruhi::Knob (_panel, _port_resonance, &_params.resonance, "Q", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Resonance, 100), 2);
+	_knob_gain = new Haruhi::Knob (_panel, _port_gain, &_params.gain, "Gain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Gain, 100), 1);
+	_knob_attenuation = new Haruhi::Knob (_panel, _port_attenuation, &_params.attenuation, "Attenuate",
+										  -std::numeric_limits<float>::infinity(), 0.0f,
+										  (Params::Filter::AttenuationMax - Params::Filter::AttenuationMin) / 500, 2);
 
-	_control_frequency = new Haruhi::Knob (_panel, _proxy_frequency, "Freq.", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Frequency, 2400), 2);
-	_control_frequency->set_unit_bay (_mikuru->unit_bay());
-	_control_resonance = new Haruhi::Knob (_panel, _proxy_resonance, "Q", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Resonance, 100), 2);
-	_control_resonance->set_unit_bay (_mikuru->unit_bay());
-	_control_gain = new Haruhi::Knob (_panel, _proxy_gain, "Gain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Gain, 100), 1);
-	_control_gain->set_unit_bay (_mikuru->unit_bay());
-	_control_attenuation = new Haruhi::Knob (_panel, _proxy_attenuation, "Attenuate",
-											 -std::numeric_limits<float>::infinity(), 0.0f, (Params::Filter::AttenuationMax - Params::Filter::AttenuationMin) / 500, 2);
-	_control_attenuation->set_unit_bay (_mikuru->unit_bay());
-	_control_attenuation->set_volume_scale (true, 1.0);
+	_knob_frequency->controller_proxy().config().curve = 1.0;
+	_knob_frequency->controller_proxy().config().user_limit_min = 0.04 * Params::Filter::FrequencyDenominator;
+	_knob_frequency->controller_proxy().config().user_limit_min = 22.0 * Params::Filter::FrequencyDenominator;
+	_knob_frequency->controller_proxy().apply_config();
 
-	QObject::connect (_control_frequency, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
-	QObject::connect (_control_resonance, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
-	QObject::connect (_control_gain, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
-	QObject::connect (_control_attenuation, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
+	_knob_attenuation->controller_proxy().config().curve = 1.0;
+	_knob_attenuation->controller_proxy().apply_config();
+	_knob_attenuation->set_volume_scale (true, 1.0);
+
+	QObject::connect (_knob_frequency, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
+	QObject::connect (_knob_resonance, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
+	QObject::connect (_knob_gain, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
+	QObject::connect (_knob_attenuation, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
 
 	if (_polyphonic_control)
 	{
 		VoiceManager* vm = _part->voice_manager();
 		EventDispatcher::VoiceFilterParamReceiver::FilterID fid = _filter_id == Filter1 ? EventDispatcher::VoiceFilterParamReceiver::Filter1 : EventDispatcher::VoiceFilterParamReceiver::Filter2;
 
-		_evdisp_frequency = new EventDispatcher (_port_frequency, _control_frequency, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::frequency));
-		_evdisp_resonance = new EventDispatcher (_port_resonance, _control_resonance, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::resonance));
-		_evdisp_gain = new EventDispatcher (_port_gain, _control_gain, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::gain));
-		_evdisp_attenuation = new EventDispatcher (_port_attenuation, _control_attenuation, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::attenuation));
+		_evdisp_frequency = new EventDispatcher (_port_frequency, _knob_frequency, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::frequency));
+		_evdisp_resonance = new EventDispatcher (_port_resonance, _knob_resonance, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::resonance));
+		_evdisp_gain = new EventDispatcher (_port_gain, _knob_gain, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::gain));
+		_evdisp_attenuation = new EventDispatcher (_port_attenuation, _knob_attenuation, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::attenuation));
 	}
 
 	// Widgets/knobs:
@@ -157,10 +151,10 @@ Filter::Filter (FilterID filter_id, Core::PortGroup* port_group, QString const& 
 	QHBoxLayout* hor3_layout = new QHBoxLayout (ver1_layout, Config::spacing);
 
 	QHBoxLayout* params_layout = new QHBoxLayout (hor3_layout, Config::spacing);
-	params_layout->addWidget (_control_frequency);
-	params_layout->addWidget (_control_resonance);
-	params_layout->addWidget (_control_gain);
-	params_layout->addWidget (_control_attenuation);
+	params_layout->addWidget (_knob_frequency);
+	params_layout->addWidget (_knob_resonance);
+	params_layout->addWidget (_knob_gain);
+	params_layout->addWidget (_knob_attenuation);
 
 	_response_plot->assign_impulse_response (&_impulse_response);
 
@@ -175,15 +169,10 @@ Filter::~Filter()
 	_response_plot->assign_impulse_response (0);
 
 	// Delete knobs before ControllerProxies:
-	delete _control_frequency;
-	delete _control_resonance;
-	delete _control_gain;
-	delete _control_attenuation;
-
-	delete _proxy_frequency;
-	delete _proxy_resonance;
-	delete _proxy_gain;
-	delete _proxy_attenuation;
+	delete _knob_frequency;
+	delete _knob_resonance;
+	delete _knob_gain;
+	delete _knob_attenuation;
 
 	if (_polyphonic_control)
 	{
@@ -214,10 +203,10 @@ Filter::process_events()
 	}
 	else
 	{
-		_proxy_frequency->process_events();
-		_proxy_resonance->process_events();
-		_proxy_gain->process_events();
-		_proxy_attenuation->process_events();
+		_knob_frequency->controller_proxy().process_events();
+		_knob_resonance->controller_proxy().process_events();
+		_knob_gain->controller_proxy().process_events();
+		_knob_attenuation->controller_proxy().process_events();
 	}
 }
 
@@ -225,10 +214,10 @@ Filter::process_events()
 void
 Filter::unit_bay_assigned()
 {
-	_control_frequency->set_unit_bay (_mikuru->unit_bay());
-	_control_resonance->set_unit_bay (_mikuru->unit_bay());
-	_control_gain->set_unit_bay (_mikuru->unit_bay());
-	_control_attenuation->set_unit_bay (_mikuru->unit_bay());
+	_knob_frequency->set_unit_bay (_mikuru->unit_bay());
+	_knob_resonance->set_unit_bay (_mikuru->unit_bay());
+	_knob_gain->set_unit_bay (_mikuru->unit_bay());
+	_knob_attenuation->set_unit_bay (_mikuru->unit_bay());
 }
 
 
@@ -279,7 +268,7 @@ void
 Filter::update_widgets()
 {
 	int ft = _filter_type->currentItem();
-	_control_gain->setEnabled (ft == RBJImpulseResponse::Peaking || ft == RBJImpulseResponse::LowShelf || ft == RBJImpulseResponse::HighShelf);
+	_knob_gain->setEnabled (ft == RBJImpulseResponse::Peaking || ft == RBJImpulseResponse::LowShelf || ft == RBJImpulseResponse::HighShelf);
 	_panel->setEnabled (_params.enabled.get());
 	_limiter_enabled->setEnabled (ft == RBJImpulseResponse::LowPass || ft == RBJImpulseResponse::HighPass || ft == RBJImpulseResponse::BandPass ||
 								  ft == RBJImpulseResponse::LowShelf || ft == RBJImpulseResponse::HighShelf);

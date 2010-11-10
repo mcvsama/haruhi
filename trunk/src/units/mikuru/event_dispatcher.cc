@@ -55,8 +55,8 @@ EventDispatcher::EventDispatcher (Core::EventPort* port, Haruhi::Knob* knob, Rec
 	_port (port),
 	_knob (knob),
 	_receiver (receiver),
-	_min (knob->controller_proxy()->config()->user_limit_min),
-	_max (knob->controller_proxy()->config()->user_limit_max)
+	_min (knob->controller_proxy().config().user_limit_min),
+	_max (knob->controller_proxy().config().user_limit_max)
 {
 }
 
@@ -105,7 +105,7 @@ EventDispatcher::load_events()
 	if (ce)
 	{
 		if (_knob)
-			_knob->controller_proxy()->process_event (ce);
+			_knob->controller_proxy().process_event (ce);
 		else
 			_receiver->receive (Core::OmniVoice, renormalize (ce->value(), 0.0f, 1.0f, _min, _max));
 	}
@@ -114,7 +114,7 @@ EventDispatcher::load_events()
 	{
 		for (VCEMap::iterator v = _vcemap.begin(); v != _vcemap.end(); ++v)
 		{
-			float const val = renormalize (v->second->value(), 0.0f, 1.0f, _knob->controller_proxy()->config()->user_limit_min, _knob->controller_proxy()->config()->user_limit_max);
+			float const val = renormalize (v->second->value(), 0.0f, 1.0f, _knob->controller_proxy().config().user_limit_min, _knob->controller_proxy().config().user_limit_max);
 			_receiver->receive (v->second->voice_id(), val);
 		}
 	}

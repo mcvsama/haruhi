@@ -255,17 +255,11 @@ class Waveform:
 	Core::EventPort*			_port_modulator_index;
 	Core::EventPort*			_port_modulator_shape;
 
-	// Proxies:
-	Haruhi::ControllerProxy*	_proxy_wave_shape;
-	Haruhi::ControllerProxy*	_proxy_modulator_amplitude;
-	Haruhi::ControllerProxy*	_proxy_modulator_index;
-	Haruhi::ControllerProxy*	_proxy_modulator_shape;
-
 	// Widgets and knobs:
-	Haruhi::Knob*				_control_wave_shape;
-	Haruhi::Knob*				_control_modulator_amplitude;
-	Haruhi::Knob*				_control_modulator_index;
-	Haruhi::Knob*				_control_modulator_shape;
+	Haruhi::Knob*				_knob_wave_shape;
+	Haruhi::Knob*				_knob_modulator_amplitude;
+	Haruhi::Knob*				_knob_modulator_index;
+	Haruhi::Knob*				_knob_modulator_shape;
 	QWidget*					_panel;
 	Haruhi::WavePlot*			_base_wave_plot;
 	Haruhi::WavePlot*			_final_wave_plot;

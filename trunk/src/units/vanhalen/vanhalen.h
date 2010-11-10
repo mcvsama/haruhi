@@ -64,21 +64,18 @@ class VanHalen:
 
   private:
 	// Drive:
-	Haruhi::Core::EventPort*			_input;
-	Haruhi::Core::EventPort*			_output;
-	Haruhi::Core::AudioPort*			_audio_input_1;
-	Haruhi::Core::AudioPort*			_audio_input_2;
-	Haruhi::Core::AudioPort*			_audio_output_1;
-	Haruhi::Core::AudioPort*			_audio_output_2;
+	Haruhi::Core::EventPort*	_input;
+	Haruhi::Core::EventPort*	_output;
+	Haruhi::Core::AudioPort*	_audio_input_1;
+	Haruhi::Core::AudioPort*	_audio_input_2;
+	Haruhi::Core::AudioPort*	_audio_output_1;
+	Haruhi::Core::AudioPort*	_audio_output_2;
 
-	Haruhi::Core::AudioBuffer			_buf1;
-	Haruhi::Core::AudioBuffer			_buf2;
+	Haruhi::Core::AudioBuffer	_buf1;
+	Haruhi::Core::AudioBuffer	_buf2;
 
-	Haruhi::DSP::DelayLine				_delay1;
-	Haruhi::DSP::DelayLine				_delay2;
-
-	Haruhi::ControllerProxy*	_proxy_comb_index;
-	Haruhi::ControllerProxy*	_proxy_comb_alpha;
+	Haruhi::DSP::DelayLine		_delay1;
+	Haruhi::DSP::DelayLine		_delay2;
 
 	Haruhi::Knob*				_knob_comb_index;
 	Haruhi::Knob*				_knob_comb_alpha;

@@ -26,15 +26,28 @@
 
 namespace Haruhi {
 
-Controller::Controller (ControllerProxy* controller_proxy):
-	_controller_proxy (controller_proxy),
+Controller::Controller (Core::EventPort* event_port, ControllerParam* controller_param):
+	_controller_proxy (event_port, controller_param),
 	_unit_bay (0),
 	_learning (false)
-{ }
+{
+	_controller_proxy.set_widget (this);
+	schedule_for_update();
+}
 
 
 Controller::~Controller()
-{ }
+{
+	// Ensure that engine thread will not notify us about
+	// learned port:
+	if (unit_bay())
+		stop_learning();
+	// Ensure that ControllerProxy will not request periodic-update
+	// on this widget anymore:
+	_controller_proxy.set_widget (0);
+	// Forget current periodic-update request:
+	forget_about_update();
+}
 
 
 void
@@ -62,7 +75,7 @@ Controller::learned_port (EventBackend::EventTypes, Core::EventPort* event_port)
 	{
 		atomic (_learning) = false;
 		unit_bay()->graph()->lock();
-		event_port->connect_to (controller_proxy()->event_port());
+		event_port->connect_to (controller_proxy().event_port());
 		unit_bay()->graph()->unlock();
 		// We're in engine thread, not UI thread, so use safe update method:
 		schedule_for_update();

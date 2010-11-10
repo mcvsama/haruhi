@@ -132,26 +132,26 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 	QObject::connect (_modulator_wave_type, SIGNAL (activated (int)), this, SLOT (update_params()));
 	QToolTip::add (_modulator_wave_type, "Modulator wave type");
 
-	// Wave parameters:
+	_knob_wave_shape			= new Haruhi::Knob (top_frame, _port_wave_shape, &_params.wave_shape, "Shape",
+													HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::WaveShape, 100), 2);
+	_knob_modulator_amplitude	= new Haruhi::Knob (top_frame, _port_modulator_amplitude, &_params.modulator_amplitude, "Mod.amp.",
+													HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::ModulatorAmplitude, 100), 2);
+	_knob_modulator_index		= new Haruhi::Knob (top_frame, _port_modulator_index, &_params.modulator_index, "Mod.index",
+													HARUHI_MIKURU_PARAMS_FOR_KNOB (Params::Waveform::ModulatorIndex), 1, 0);
+	_knob_modulator_shape		= new Haruhi::Knob (top_frame, _port_modulator_shape, &_params.modulator_shape, "Mod.shape",
+													HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::ModulatorShape, 100), 2);
 
-	_proxy_wave_shape = new Haruhi::ControllerProxy (_port_wave_shape, &_params.wave_shape);
-	_proxy_modulator_amplitude = new Haruhi::ControllerProxy (_port_modulator_amplitude, &_params.modulator_amplitude);
-	_proxy_modulator_index = new Haruhi::ControllerProxy (_port_modulator_index, &_params.modulator_index);
-	_proxy_modulator_shape = new Haruhi::ControllerProxy (_port_modulator_shape, &_params.modulator_shape);
+	// Set unit bay:
+	Haruhi::Knob* all_knobs[] = {
+		_knob_wave_shape, _knob_modulator_amplitude, _knob_modulator_index, _knob_modulator_shape
+	};
+	for (Haruhi::Knob** k = all_knobs; k != all_knobs+ sizeof (all_knobs) / sizeof (*all_knobs); ++k)
+		(*k)->set_unit_bay (_mikuru->unit_bay());
 
-	_control_wave_shape = new Haruhi::Knob (top_frame, _proxy_wave_shape, "Shape", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::WaveShape, 100), 2);
-	_control_wave_shape->set_unit_bay (_mikuru->unit_bay());
-	_control_modulator_amplitude = new Haruhi::Knob (top_frame, _proxy_modulator_amplitude, "Mod.amp.", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::ModulatorAmplitude, 100), 2);
-	_control_modulator_amplitude->set_unit_bay (_mikuru->unit_bay());
-	_control_modulator_index = new Haruhi::Knob (top_frame, _proxy_modulator_index, "Mod.index", HARUHI_MIKURU_PARAMS_FOR_KNOB (Params::Waveform::ModulatorIndex), 1, 0);
-	_control_modulator_index->set_unit_bay (_mikuru->unit_bay());
-	_control_modulator_shape = new Haruhi::Knob (top_frame, _proxy_modulator_shape, "Mod.shape", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::ModulatorShape, 100), 2);
-	_control_modulator_shape->set_unit_bay (_mikuru->unit_bay());
-
-	QObject::connect (_control_wave_shape, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
-	QObject::connect (_control_modulator_amplitude, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
-	QObject::connect (_control_modulator_index, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
-	QObject::connect (_control_modulator_shape, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
+	QObject::connect (_knob_wave_shape, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
+	QObject::connect (_knob_modulator_amplitude, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
+	QObject::connect (_knob_modulator_index, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
+	QObject::connect (_knob_modulator_shape, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
 
 	// Tabs:
 
@@ -241,10 +241,10 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 	hor2_layout->addWidget (_modulator_type);
 	hor2_layout->addWidget (_modulator_wave_type);
 	QHBoxLayout* hor3_layout = new QHBoxLayout (ver1_layout, Config::spacing);
-	hor3_layout->addWidget (_control_wave_shape);
-	hor3_layout->addWidget (_control_modulator_amplitude);
-	hor3_layout->addWidget (_control_modulator_index);
-	hor3_layout->addWidget (_control_modulator_shape);
+	hor3_layout->addWidget (_knob_wave_shape);
+	hor3_layout->addWidget (_knob_modulator_amplitude);
+	hor3_layout->addWidget (_knob_modulator_index);
+	hor3_layout->addWidget (_knob_modulator_shape);
 	hor3_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
 	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
@@ -261,15 +261,10 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 Waveform::~Waveform()
 {
 	// Delete knobs before ControllerProxies:
-	delete _control_wave_shape;
-	delete _control_modulator_amplitude;
-	delete _control_modulator_index;
-	delete _control_modulator_shape;
-
-	delete _proxy_wave_shape;
-	delete _proxy_modulator_amplitude;
-	delete _proxy_modulator_index;
-	delete _proxy_modulator_shape;
+	delete _knob_wave_shape;
+	delete _knob_modulator_amplitude;
+	delete _knob_modulator_index;
+	delete _knob_modulator_shape;
 
 	_mikuru->graph()->lock();
 	delete _wave_computer;
@@ -284,10 +279,10 @@ Waveform::~Waveform()
 void
 Waveform::process_events()
 {
-	_proxy_wave_shape->process_events();
-	_proxy_modulator_amplitude->process_events();
-	_proxy_modulator_index->process_events();
-	_proxy_modulator_shape->process_events();
+	_knob_wave_shape->controller_proxy().process_events();
+	_knob_modulator_amplitude->controller_proxy().process_events();
+	_knob_modulator_index->controller_proxy().process_events();
+	_knob_modulator_shape->controller_proxy().process_events();
 }
 
 
@@ -359,10 +354,10 @@ void
 Waveform::update_widgets()
 {
 	bool immutable = active_wave().wave.get()->immutable();
-	_control_wave_shape->setEnabled (immutable);
-	_control_modulator_amplitude->setEnabled (immutable);
-	_control_modulator_index->setEnabled (immutable);
-	_control_modulator_shape->setEnabled (immutable);
+	_knob_wave_shape->setEnabled (immutable);
+	_knob_modulator_amplitude->setEnabled (immutable);
+	_knob_modulator_index->setEnabled (immutable);
+	_knob_modulator_shape->setEnabled (immutable);
 	_modulator_type->setEnabled (immutable);
 	_modulator_wave_type->setEnabled (immutable);
 	_harmonics_tab->setEnabled (immutable);

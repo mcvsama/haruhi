@@ -65,9 +65,6 @@ class ADSR: public Envelope
 	create_ports();
 
 	void
-	create_proxies();
-
-	void
 	create_knobs (QWidget* parent);
 
 	void
@@ -145,25 +142,17 @@ class ADSR: public Envelope
 	Core::EventPort*			_port_release;
 	Core::EventPort*			_port_output;
 
-	Haruhi::ControllerProxy*	_proxy_delay;
-	Haruhi::ControllerProxy*	_proxy_attack;
-	Haruhi::ControllerProxy*	_proxy_attack_hold;
-	Haruhi::ControllerProxy*	_proxy_decay;
-	Haruhi::ControllerProxy*	_proxy_sustain;
-	Haruhi::ControllerProxy*	_proxy_sustain_hold;
-	Haruhi::ControllerProxy*	_proxy_release;
-
 	QCheckBox*					_enabled;
 	QCheckBox*					_direct_adsr;
 	QCheckBox*					_forced_release;
 	QCheckBox*					_sustain_enabled;
-	Haruhi::Knob*				_control_delay;
-	Haruhi::Knob*				_control_attack;
-	Haruhi::Knob*				_control_attack_hold;
-	Haruhi::Knob*				_control_decay;
-	Haruhi::Knob*				_control_sustain;
-	Haruhi::Knob*				_control_sustain_hold;
-	Haruhi::Knob*				_control_release;
+	Haruhi::Knob*				_knob_delay;
+	Haruhi::Knob*				_knob_attack;
+	Haruhi::Knob*				_knob_attack_hold;
+	Haruhi::Knob*				_knob_decay;
+	Haruhi::Knob*				_knob_sustain;
+	Haruhi::Knob*				_knob_sustain_hold;
+	Haruhi::Knob*				_knob_release;
 	QComboBox*					_function;
 	QComboBox*					_mode;
 	Haruhi::EnvelopePlot*		_plot;

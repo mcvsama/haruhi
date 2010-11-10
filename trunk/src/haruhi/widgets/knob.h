@@ -154,10 +154,13 @@ class Knob:
 	 * \param	step: Change step.
 	 * \param	decimals: How many decimal digits should be shown in spinbox.
 	 */
-	Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& label, float show_min, float show_max, int step, int decimals);
+	Knob (QWidget* parent, Core::EventPort* event_port, ControllerParam* controller_param,
+		  QString const& label, float show_min, float show_max, int step, int decimals);
 
-	~Knob();
-
+	/**
+	 * Enables/disables volume scale (shown in dB).
+	 * \param	exp is power value, usually M_E.
+	 */
 	void
 	set_volume_scale (bool setting, float exp = 1.0f) { _spin_box->set_volume_scale (setting, exp); }
 

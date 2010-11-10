@@ -67,9 +67,6 @@ class EG: public Envelope
 	create_ports();
 
 	void
-	create_proxies();
-
-	void
 	create_knobs (QWidget* parent);
 
 	void
@@ -180,12 +177,9 @@ class EG: public Envelope
 	Core::EventPort*			_port_segment_duration;
 	Core::EventPort*			_port_output;
 
-	Haruhi::ControllerProxy*	_proxy_point_value;
-	Haruhi::ControllerProxy*	_proxy_segment_duration;
-
 	QCheckBox*					_enabled;
-	Haruhi::Knob*				_control_point_value;
-	Haruhi::Knob*				_control_segment_duration;
+	Haruhi::Knob*				_knob_point_value;
+	Haruhi::Knob*				_knob_segment_duration;
 	QSpinBox*					_active_point;
 	Haruhi::EnvelopePlot*		_plot;
 	QSpinBox*					_sustain_point;

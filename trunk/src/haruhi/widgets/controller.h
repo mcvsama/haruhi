@@ -27,18 +27,35 @@ namespace Haruhi {
 class UnitBay;
 
 /**
- * Base class for UI widgets that represent MIDI controllers.
- * Controller should be always deleted before ControllerProxies, to prevent
- * race conditions from PeriodicUpdater.
+ * Base class for UI widgets that represent (MIDI) controllers.
+ *
+ * Controller should be always unregistered from PeriodicUpdater
+ * before ControllerProxies are deleted, to prevent race conditions from PeriodicUpdater.
+ * Since Controller has its own ControllerProxy, This is done automatically for you.
+ *
+ * Classes that inherit Controller must implement periodic_update() method (by PeriodicUpdater)
+ * that should read controlled param and update itself according to its value.
  */
 class Controller:
-	public ControllerProxy::Widget,
-	public EventBackend::Learnable
+	public EventBackend::Learnable,
+	public ControllerProxy::Widget
 {
   public:
-	Controller (ControllerProxy* controller_proxy);
+	Controller (Core::EventPort* event_port, ControllerParam* controller_param);
 
 	virtual ~Controller();
+
+	/**
+	 * Returns associated ControllerParam.
+	 */
+	ControllerParam*
+	param() const { return _controller_proxy.param(); }
+
+	/**
+	 * Returns associated EventPort.
+	 */
+	Core::EventPort*
+	event_port() const { return _controller_proxy.event_port(); }
 
 	/**
 	 * Associate this Controller with UnitBay, so widget can
@@ -54,13 +71,16 @@ class Controller:
 	unit_bay() const { return _unit_bay; }
 
 	/**
-	 * Returns associated ControllerProxy.
+	 * Returns ControllerProxy owned by this Controller.
 	 */
-	ControllerProxy*
+	ControllerProxy&
+	controller_proxy() { return _controller_proxy; }
+
+	ControllerProxy const&
 	controller_proxy() const { return _controller_proxy; }
 
 	/**
-	 * Stops learning mode.
+	 * Puts controller into (MIDI) learning mode.
 	 * Requires that controller has assigned UnitBay.
 	 * \entry	UI thread only.
 	 */
@@ -68,7 +88,7 @@ class Controller:
 	start_learning();
 
 	/**
-	 * Puts controller into (MIDI) learning mode.
+	 * Stops learning mode.
 	 * Requires that controller has assigned UnitBay.
 	 * \entry	UI thread only.
 	 */
@@ -98,9 +118,9 @@ class Controller:
 	learned_port (EventBackend::EventTypes, Core::EventPort*);
 
   private:
-	ControllerProxy*	_controller_proxy;
-	UnitBay*			_unit_bay;
-	bool				_learning;
+	ControllerProxy	_controller_proxy;
+	UnitBay*		_unit_bay;
+	bool			_learning;
 };
 
 } // namespace Haruhi

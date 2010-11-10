@@ -46,9 +46,9 @@ EG::EG (int id, Mikuru* mikuru, QWidget* parent):
 	_mute_point_controls (false),
 	_buffer (mikuru->graph()->buffer_size()),
 	_segment_duration (Params::EG::SegmentDurationMin, Params::EG::SegmentDurationMax,
-					   Params::EG::SegmentDurationDenominator, Params::EG::SegmentDurationDefault),
+					   Params::EG::SegmentDurationDefault, Params::EG::SegmentDurationDenominator),
 	_point_value (Params::EG::PointValueMin, Params::EG::PointValueMax,
-				  Params::EG::PointValueDenominator, Params::EG::PointValueDefault)
+				  Params::EG::PointValueDefault, Params::EG::PointValueDenominator)
 {
 	_id = (id == 0) ? _mikuru->allocate_id ("egs") : _mikuru->reserve_id ("egs", id);
 
@@ -57,7 +57,6 @@ EG::EG (int id, Mikuru* mikuru, QWidget* parent):
 	_envelope_template.points().push_back (DSP::Envelope::Point (0.5, 0));
 
 	create_ports();
-	create_proxies();
 	create_widgets();
 	update_params();
 	update_plot();
@@ -72,11 +71,8 @@ EG::~EG()
 	_mikuru->free_id ("egs", _id);
 
 	// Delete knobs before ControllerProxies:
-	delete _control_point_value;
-	delete _control_segment_duration;
-
-	delete _proxy_point_value;
-	delete _proxy_segment_duration;
+	delete _knob_point_value;
+	delete _knob_segment_duration;
 
 	_mikuru->graph()->lock();
 	delete _port_point_value;
@@ -109,27 +105,18 @@ EG::create_ports()
 
 
 void
-EG::create_proxies()
-{
-	_proxy_segment_duration = new Haruhi::ControllerProxy (_port_segment_duration, &_segment_duration);
-	_proxy_segment_duration->config()->curve = 1.0;
-	_proxy_segment_duration->apply_config();
-
-	_proxy_point_value = new Haruhi::ControllerProxy (_port_point_value, &_point_value);
-}
-
-
-void
 EG::create_knobs (QWidget* parent)
 {
-	_control_point_value = new Haruhi::Knob (parent, _proxy_point_value, "Value", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::EG::PointValue, 100), 2);
-	_control_point_value->set_unit_bay (_mikuru->unit_bay());
+	_knob_point_value = new Haruhi::Knob (parent, _port_point_value, &_point_value, "Value", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::EG::PointValue, 100), 2);
+	_knob_point_value->set_unit_bay (_mikuru->unit_bay());
 
-	_control_segment_duration = new Haruhi::Knob (parent, _proxy_segment_duration, "Duration", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::EG::SegmentDuration, 100), 2);
-	_control_segment_duration->set_unit_bay (_mikuru->unit_bay());
+	_knob_segment_duration = new Haruhi::Knob (parent, _port_segment_duration, &_segment_duration, "Duration", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::EG::SegmentDuration, 100), 2);
+	_knob_segment_duration->set_unit_bay (_mikuru->unit_bay());
+	_knob_segment_duration->controller_proxy().config().curve = 1.0;
+	_knob_segment_duration->controller_proxy().apply_config();
 
-	QObject::connect (_control_point_value, SIGNAL (changed (int)), this, SLOT (changed_segment_value()));
-	QObject::connect (_control_segment_duration, SIGNAL (changed (int)), this, SLOT (changed_segment_duration()));
+	QObject::connect (_knob_point_value, SIGNAL (changed (int)), this, SLOT (changed_segment_value()));
+	QObject::connect (_knob_segment_duration, SIGNAL (changed (int)), this, SLOT (changed_segment_duration()));
 }
 
 
@@ -190,8 +177,8 @@ EG::create_widgets()
 	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::spacing);
 	h1->addWidget (plot_frame);
 	QHBoxLayout* h2 = new QHBoxLayout (v1, Config::spacing);
-	h2->addWidget (_control_point_value);
-	h2->addWidget (_control_segment_duration);
+	h2->addWidget (_knob_point_value);
+	h2->addWidget (_knob_segment_duration);
 	h2->addWidget (_active_point);
 	v1->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
@@ -245,8 +232,8 @@ EG::process()
 	_port_segment_duration->sync();
 
 	// Process ports events:
-	_proxy_point_value->process_events();
-	_proxy_segment_duration->process_events();
+	_knob_point_value->controller_proxy().process_events();
+	_knob_segment_duration->controller_proxy().process_events();
 
 	// Nothing to process?
 	if (_egs.empty())
@@ -433,12 +420,12 @@ EG::update_point_knobs()
 {
 	unsigned int p = _active_point->value();
 
-	_proxy_point_value->param()->set (_envelope_template.points()[p].value * Params::EG::PointValueDenominator);
-	_proxy_segment_duration->param()->set (p > 0 ? (1.0f * _envelope_template.points()[p-1].samples / ARTIFICIAL_SAMPLE_RATE * Params::EG::SegmentDurationDenominator) : 0);
+	_knob_point_value->param()->set (_envelope_template.points()[p].value * Params::EG::PointValueDenominator);
+	_knob_segment_duration->param()->set (p > 0 ? (1.0f * _envelope_template.points()[p-1].samples / ARTIFICIAL_SAMPLE_RATE * Params::EG::SegmentDurationDenominator) : 0);
 
-	_control_point_value->read();
-	_control_segment_duration->read();
-	_control_segment_duration->setEnabled (p > 0);
+	_knob_point_value->read();
+	_knob_segment_duration->read();
+	_knob_segment_duration->setEnabled (p > 0);
 
 	update_params();
 }

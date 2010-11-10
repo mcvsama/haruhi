@@ -96,8 +96,11 @@ class ControllerProxy: public SaveableState
 	ControllerParam*
 	param() const { return _param; }
 
-	Config*
-	config() { return &_config; }
+	Config&
+	config() { return _config; }
+
+	Config const&
+	config() const { return _config; }
 
 	/**
 	 * Assigns Widget to be notified of parameter updates.
