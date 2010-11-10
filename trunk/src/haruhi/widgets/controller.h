@@ -60,13 +60,17 @@ class Controller:
 	controller_proxy() const { return _controller_proxy; }
 
 	/**
-	 * \entry	Qt thread only.
+	 * Stops learning mode.
+	 * Requires that controller has assigned UnitBay.
+	 * \entry	UI thread only.
 	 */
 	void
 	start_learning();
 
 	/**
-	 * \entry	Qt thread only.
+	 * Puts controller into (MIDI) learning mode.
+	 * Requires that controller has assigned UnitBay.
+	 * \entry	UI thread only.
 	 */
 	void
 	stop_learning();
@@ -74,6 +78,7 @@ class Controller:
   protected:
 	/**
 	 * Called whenever learning is started/stopped.
+	 * To be reimplemented in subclass.
 	 */
 	virtual void
 	learning_state_changed() { }
@@ -85,7 +90,10 @@ class Controller:
 	learning() { return atomic (_learning); }
 
   private:
-	// EventBackend::Learnable API:
+	/**
+	 * EventBackend::Learnable API.
+	 * Connects given event port to this controller.
+	 */
 	void
 	learned_port (EventBackend::EventTypes, Core::EventPort*);
 

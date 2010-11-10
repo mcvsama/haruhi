@@ -55,8 +55,8 @@ class Learnable
 {
   public:
 	/**
-	 * Will be called when port is learned.
-	 * \entry	Synth thread.
+	 * Will be called from within engine thread when port is learned.
+	 * \entry	engine thread
 	 */
 	virtual void
 	learned_port (EventTypes event_types, Core::EventPort* event_port) = 0;

@@ -28,16 +28,24 @@
 namespace Haruhi {
 
 /**
- * Proxy between event port and int parameter.
- * Also handles UI widget.
+ * Proxy between event port, ui widget and controller parameter.
+ *
+ * When there is event coming from event port, controlled parameter is
+ * updated right away, and UI widget is updated from UI thread with PeriodicUpdater
+ * (that means it will be updated on next PeriodicUpdater round).
+ * When UI widget sends change events, controlled parameter is updated right away.
  */
 class ControllerProxy: public SaveableState
 {
   public:
 	/**
 	 * Client class. Knobs and other controls
-	 * must derive this class in order to be able to be paired
+	 * must inherit this class in order to be able to be paired
 	 * with ControllerProxy.
+	 *
+	 * This means that class inheriting Widget effectively
+	 * become PeriodicUpdater's receiver and will periodically
+	 * receive periodic_update() events from UI thread.
 	 */
 	class Widget: public PeriodicUpdater::Receiver
 	{
@@ -93,6 +101,7 @@ class ControllerProxy: public SaveableState
 
 	/**
 	 * Assigns Widget to be notified of parameter updates.
+	 * \entry	any thread
 	 */
 	void
 	set_widget (Widget* widget) { _widget = widget; }
@@ -107,13 +116,14 @@ class ControllerProxy: public SaveableState
 
 	/**
 	 * Processes events from assigned EventPort.
-	 * Calls process_event() for the last controller value in the buffer.
+	 * Calls process_event() for the most recent controller value in the buffer.
 	 */
 	void
 	process_events();
 
 	/**
-	 * Processes given event.
+	 * Processes given event - propagates changes to controlled
+	 * parameter and requests periodic-update on widget.
 	 */
 	void
 	process_event (Core::ControllerEvent const*);

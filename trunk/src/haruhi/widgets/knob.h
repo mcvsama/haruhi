@@ -36,6 +36,9 @@ namespace Haruhi {
 class Knob;
 
 
+/**
+ * Can't insert it into Knob namespace due to Qt's MOC restrictions.
+ */
 class KnobProperties: public QDialog
 {
 	Q_OBJECT
@@ -104,8 +107,8 @@ class Knob:
 		set_volume_scale (bool setting, float exp = 1.0f);
 
 		/**
-		 * Detached knob works like a simple QDoubleSpinBox.
-		 * Set as deatched when spin box is not main Knob's spin box.
+		 * Detached knob works like a simple QDoubleSpinBox,
+		 * that is it does not care about any knob.
 		 */
 		void
 		set_detached (bool setting) { _detached = setting; }
@@ -146,7 +149,6 @@ class Knob:
 	 * Creates Knob.
 	 *
 	 * \param	parent: Parent widget.
-	 * \param	controller_proxy: ControllerProxy object, must be present.
 	 * \param	label: Displayed label.
 	 * \param	show_min, show_max: Values range shown in spinbox.
 	 * \param	step: Change step.
@@ -161,7 +163,7 @@ class Knob:
 
 	/**
 	 * Reads ControllerProxy::Config and updates widgets.
-	 * \entry	Qt thread only.
+	 * \entry	UI thread only.
 	 */
 	void
 	read_config();
@@ -186,14 +188,14 @@ class Knob:
   public slots:
 	/**
 	 * Reset Knob to default value.
-	 * \entry	Qt thread only.
+	 * \entry	UI thread only.
 	 */
 	void
 	reset();
 
 	/**
 	 * Call configuration dialog.
-	 * \entry	Qt thread only.
+	 * \entry	UI thread only.
 	 */
 	void
 	configure();
