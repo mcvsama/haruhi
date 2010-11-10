@@ -25,7 +25,7 @@
 
 
 #define HARUHI_MIKURU_CONSTRUCT(var, name) \
-	var (name##Min, name##Max, name##Denominator, name##Default)
+	var (name##Min, name##Max, name##Default, name##Denominator)
 
 #define HARUHI_MIKURU_COPY(name) \
 	name = other.name;

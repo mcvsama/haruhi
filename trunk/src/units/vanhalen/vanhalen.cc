@@ -35,8 +35,8 @@ VanHalen::VanHalen (Haruhi::Session* session, std::string const& urn, std::strin
 	_buf2 (session->graph()->buffer_size()),
 	_delay1 (16, 100000, session->graph()->buffer_size()),
 	_delay2 (16, 100000, session->graph()->buffer_size()),
-	_comb_index (0, 0, 1000, 0),
-	_comb_alpha (0, -1000, 1000, 0)
+	_comb_index (0, 0, 0, 1000),
+	_comb_alpha (0, -1000, 0, 1000)
 {
 	// Register itself:
 	session->graph()->register_unit (this);

@@ -36,7 +36,7 @@ class ControllerParam:
   public:
 	ControllerParam();
 
-	ControllerParam (int minimum, int maximum, int denominator, int default_value);
+	ControllerParam (int minimum, int maximum, int default_value, int denominator = 1);
 
 	ControllerParam (ControllerParam const& other) { *this = other; }
 

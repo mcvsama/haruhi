@@ -33,7 +33,7 @@ ControllerParam::ControllerParam():
 { }
 
 
-ControllerParam::ControllerParam (int minimum, int maximum, int denominator, int default_value):
+ControllerParam::ControllerParam (int minimum, int maximum, int default_value, int denominator):
 	Param (minimum, maximum, default_value),
 	_denominator (denominator),
 	_smoothing_enabled (false),
