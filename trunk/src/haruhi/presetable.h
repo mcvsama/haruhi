@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__COMPONENTS__PRESETS_MANAGER__PRESETABLE_H__INCLUDED
-#define HARUHI__COMPONENTS__PRESETS_MANAGER__PRESETABLE_H__INCLUDED
+#ifndef HARUHI__PRESETABLE_H__INCLUDED
+#define HARUHI__PRESETABLE_H__INCLUDED
 
 // Standard:
 #include <cstddef>
