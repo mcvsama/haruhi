@@ -11,20 +11,13 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__CONFIG__VERSION_H__INCLUDED
-#define HARUHI__CONFIG__VERSION_H__INCLUDED
+#ifndef HARUHI__CONFIG__TYPES_H__INCLUDED
+#define HARUHI__CONFIG__TYPES_H__INCLUDED
 
 namespace Haruhi {
-namespace Version {
 
-/**
- * References to dynamically created commit ID and branch name.
- * File version.cc will be made and compiled by build system.
- */
-extern const char* commit;
-extern const char* branch;
+typedef float Sample;
 
-} // namespace Version
 } // namespace Haruhi
 
 #endif

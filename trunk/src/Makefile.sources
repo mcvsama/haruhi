@@ -248,10 +248,12 @@ SRC_SOURCES += haruhi/dsp/wave.cc
 
 ######## /lib ########
 
+SRC_SOURCES += haruhi/lib/controller.cc
 SRC_HEADERS += haruhi/lib/controller_param.h
 SRC_HEADERS += haruhi/lib/controller_proxy.h
 SRC_HEADERS += haruhi/lib/param.h
 
+SRC_HEADERS += haruhi/lib/controller.h
 SRC_SOURCES += haruhi/lib/controller_param.cc
 SRC_SOURCES += haruhi/lib/controller_proxy.cc
 
@@ -292,7 +294,6 @@ SRC_SOURCES += haruhi/utility/thread.cc
 ######### /widgets ########
 
 SRC_HEADERS += haruhi/widgets/clickable_label.h
-SRC_HEADERS += haruhi/widgets/controller.h
 SRC_HEADERS += haruhi/widgets/dial_control.h
 SRC_HEADERS += haruhi/widgets/envelope_plot.h
 SRC_HEADERS += haruhi/widgets/frequency_response_plot.h
@@ -301,7 +302,6 @@ SRC_HEADERS += haruhi/widgets/level_meter.h
 SRC_HEADERS += haruhi/widgets/wave_plot.h
 
 SRC_SOURCES += haruhi/widgets/clickable_label.cc
-SRC_SOURCES += haruhi/widgets/controller.cc
 SRC_SOURCES += haruhi/widgets/dial_control.cc
 SRC_SOURCES += haruhi/widgets/envelope_plot.cc
 SRC_SOURCES += haruhi/widgets/frequency_response_plot.cc
