@@ -39,8 +39,8 @@ SynthThread::SynthThread (Mikuru* mikuru):
 		_mikuru->graph()->lock();
 	std::size_t bs = _mikuru->graph()->buffer_size();
 	_voice_commons = new VoiceCommons (bs);
-	_buffer_1 = new Core::AudioBuffer (bs);
-	_buffer_2 = new Core::AudioBuffer (bs);
+	_buffer_1 = new Haruhi::Core::AudioBuffer (bs);
+	_buffer_2 = new Haruhi::Core::AudioBuffer (bs);
 	if (_mikuru->graph())
 		_mikuru->graph()->unlock();
 	// 512k stack will be sufficient:
@@ -122,8 +122,8 @@ SynthThread::run()
 		// Stereo width:
 		// TODO smoothing
 		float w = std::pow (1.0f - _mikuru->general()->params()->stereo_width.to_f(), M_E);
-		Core::Sample o1, o2;
-		for (Core::Sample *s1 = _buffer_1->begin(), *s2 = _buffer_2->begin(); s1 != _buffer_1->end(); ++s1, ++s2)
+		Sample o1, o2;
+		for (Sample *s1 = _buffer_1->begin(), *s2 = _buffer_2->begin(); s1 != _buffer_1->end(); ++s1, ++s2)
 		{
 			o1 = *s1;
 			o2 = *s2;

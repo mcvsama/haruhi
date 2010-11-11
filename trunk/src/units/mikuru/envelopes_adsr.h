@@ -26,6 +26,7 @@
 // Haruhi:
 #include <haruhi/haruhi.h>
 #include <haruhi/core/event.h>
+#include <haruhi/core/audio_buffer.h>
 #include <haruhi/dsp/adsr.h>
 #include <haruhi/dsp/wave.h>
 #include <haruhi/lib/controller_proxy.h>
@@ -128,19 +129,19 @@ class ADSR: public Envelope
 	int							_id;
 	DSP::Envelope				_envelope_for_plot;
 	ADSRs						_adsrs;
-	Core::AudioBuffer			_buffer;
+	Haruhi::Core::AudioBuffer	_buffer;
 	// List of Voices which has been dropped and need ADSRs to be deleted also:
 	std::list<Voice*>			_dropped_voices;
 
-	Core::PortGroup*			_port_group;
-	Core::EventPort*			_port_delay;
-	Core::EventPort*			_port_attack;
-	Core::EventPort*			_port_attack_hold;
-	Core::EventPort*			_port_decay;
-	Core::EventPort*			_port_sustain;
-	Core::EventPort*			_port_sustain_hold;
-	Core::EventPort*			_port_release;
-	Core::EventPort*			_port_output;
+	Haruhi::Core::PortGroup*	_port_group;
+	Haruhi::Core::EventPort*	_port_delay;
+	Haruhi::Core::EventPort*	_port_attack;
+	Haruhi::Core::EventPort*	_port_attack_hold;
+	Haruhi::Core::EventPort*	_port_decay;
+	Haruhi::Core::EventPort*	_port_sustain;
+	Haruhi::Core::EventPort*	_port_sustain_hold;
+	Haruhi::Core::EventPort*	_port_release;
+	Haruhi::Core::EventPort*	_port_output;
 
 	QCheckBox*					_enabled;
 	QCheckBox*					_direct_adsr;

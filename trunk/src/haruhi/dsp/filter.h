@@ -19,7 +19,7 @@
 #include <cmath>
 
 // Haruhi:
-#include <haruhi/core/audio.h>
+#include <haruhi/config/all.h>
 #include <haruhi/dsp/impulse_response.h>
 #include <haruhi/exception.h>
 
@@ -116,37 +116,37 @@ class Filter
 		}
 
   private:
-	Core::Sample
-	advance_fir (Core::Sample* x)
+	Sample
+	advance_fir (Sample* x)
 	{
-		Core::Sample register sum = 0.0;
+		Sample register sum = 0.0;
 		for (int i = 0; i < _size; ++i)
 			sum += _b[i] * x[-i];
 		return sum;
 	}
 
-	Core::Sample
-	advance_iir (Core::Sample* x, Core::Sample* y)
+	Sample
+	advance_iir (Sample* x, Sample* y)
 	{
-		Core::Sample register sum = 0.0;
+		Sample register sum = 0.0;
 		for (int i = 0; i < _size; ++i)
 			sum += _b[i] * x[-i] - _a[i] * y[-i];
 		return sum;
 	}
 
-	Core::Sample
-	mixed_advance_fir (Core::Sample* x, int position)
+	Sample
+	mixed_advance_fir (Sample* x, int position)
 	{
-		Core::Sample register sum = 0.0;
+		Sample register sum = 0.0;
 		for (int i = 0; i < _size; ++i)
 			sum += _b[i] * (i > position ? _px[i-1-position] : x[-i]);
 		return sum;
 	}
 
-	Core::Sample
-	mixed_advance_iir (Core::Sample* x, Core::Sample* y, int position)
+	Sample
+	mixed_advance_iir (Sample* x, Sample* y, int position)
 	{
-		Core::Sample register sum = 0.0;
+		Sample register sum = 0.0;
 		for (int i = 0; i < _size; ++i)
 			sum += _b[i] * (i > position ? _px[i-1-position] : x[-i]) - _a[i] * (i > position ? _py[i-1-position] : y[-i]);
 		return sum;
@@ -156,12 +156,12 @@ class Filter
 	ImpulseResponse*		_impulse_response;
 	ImpulseResponse::Serial	_last_serial;
 	// Cached data from ImpulseResponse:
-	Core::Sample*			_a;
-	Core::Sample*			_b;
+	Sample*					_a;
+	Sample*					_b;
 	int						_size;
 	// Previous samples buffer, stored in reverse order (index 0 contains last sample, 1 one before last, etc):
-	Core::Sample*			_px;
-	Core::Sample*			_py;
+	Sample*					_px;
+	Sample*					_py;
 };
 
 } // namespace DSP

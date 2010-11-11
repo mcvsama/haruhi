@@ -22,9 +22,6 @@ namespace Haruhi {
 
 namespace DSP {
 
-using Core::Sample;
-
-
 Oscillator::Oscillator (Wavetable* wavetable):
 	_wavetable (wavetable),
 	_frequency (0),

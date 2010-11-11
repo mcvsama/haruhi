@@ -26,7 +26,7 @@ namespace Haruhi {
 
 namespace Core {
 
-class CoreException: public Haruhi::Exception
+class CoreException: public ::Haruhi::Exception
 {
   public:
 	explicit CoreException (const char* what, const char* details):

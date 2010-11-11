@@ -19,7 +19,7 @@
 #include <vector>
 
 // Haruhi:
-#include <haruhi/core/audio.h>
+#include <haruhi/config/all.h>
 #include <haruhi/dsp/wave.h>
 #include <haruhi/utility/numeric.h>
 
@@ -45,8 +45,8 @@ class HarmonicsWave: public Wave
 			phase (0)
 		{ }
 
-		Core::Sample	value;
-		Core::Sample	phase;
+		Sample	value;
+		Sample	phase;
 	};
 
 	typedef std::vector<Harmonic> Harmonics;
@@ -62,10 +62,10 @@ class HarmonicsWave: public Wave
 	 * \param	frequency is the base frequency of the signal this sample will
 	 * 			be used in (this is for limiting bandwidth).
 	 */
-	Core::Sample
-	operator() (Core::Sample register phase, Core::Sample frequency) const
+	Sample
+	operator() (Sample register phase, Sample frequency) const
 	{
-		Core::Sample sum = 0;
+		Sample sum = 0;
 		for (Harmonics::size_type h = 0, n = _harmonics.size(); h < n; ++h)
 			sum += _harmonics[h].value * _wave->operator() (mod1 (0.5f * _harmonics[h].phase + phase * (h + 1)), frequency);
 		return sum;
@@ -98,7 +98,7 @@ class HarmonicsWave: public Wave
 	set_harmonic (unsigned int index, Harmonic const& harmonic);
 
 	void
-	set_harmonic (unsigned int index, Core::Sample value, Core::Sample phase);
+	set_harmonic (unsigned int index, Sample value, Sample phase);
 
 	/**
 	 * Gets given harmonic.

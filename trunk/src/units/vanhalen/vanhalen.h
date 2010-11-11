@@ -24,6 +24,7 @@
 #include <haruhi/core/event.h>
 #include <haruhi/core/event_port.h>
 #include <haruhi/core/audio_port.h>
+#include <haruhi/core/audio_buffer.h>
 #include <haruhi/dsp/delay_line.h>
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/plugin/plugin.h>

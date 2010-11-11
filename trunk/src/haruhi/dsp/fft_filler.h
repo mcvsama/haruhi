@@ -20,7 +20,7 @@
 #include <vector>
 
 // Haruhi:
-#include <haruhi/core/audio.h>
+#include <haruhi/config/all.h>
 #include <haruhi/dsp/wave.h>
 #include <haruhi/dsp/wavetable.h>
 

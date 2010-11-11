@@ -15,6 +15,7 @@
 #include <cstddef>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/exception.h>
 #include <haruhi/dsp/fft.h>
 
@@ -51,7 +52,7 @@ FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 
 	// Create wavetables:
 	for (unsigned int i = 0; i < number; ++i)
-		tables.push_back (new Core::Sample[samples]);
+		tables.push_back (new Sample[samples]);
 
 	FFT::Vector source (samples * oversampling);
 	FFT::Vector target (samples * oversampling);
@@ -60,7 +61,7 @@ FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 	FFT::Inverse inverse (source, target);
 
 	// Create freq. spectrum of original wave:
-	Core::Sample max = 0.0f, new_max;
+	Sample max = 0.0f, new_max;
 	for (unsigned int i = 0; i < samples * oversampling; ++i)
 	{
 		source[i].real() = (*_wave)(1.0f * i / (samples * oversampling), 0);

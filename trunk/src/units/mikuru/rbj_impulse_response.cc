@@ -17,13 +17,11 @@
 #include <cmath>
 
 // Local:
+#include "types.h"
 #include "rbj_impulse_response.h"
 
 
 namespace MikuruPrivate {
-
-namespace Core = Haruhi::Core;
-
 
 RBJImpulseResponse::RBJImpulseResponse (Type type, Sample frequency, Sample resonance, Sample gain, Sample attenuation):
 	_type (type),
@@ -113,7 +111,7 @@ RBJImpulseResponse::set_limiter (bool enabled)
 }
 
 
-Core::Sample
+Sample
 RBJImpulseResponse::response (Sample frequency) const
 {
 	// Normally one would substitute: z = e^(i2πf) = e^(iω)

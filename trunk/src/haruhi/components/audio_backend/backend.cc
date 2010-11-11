@@ -26,6 +26,7 @@
 #include <QtGui/QToolTip>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/haruhi.h>
 #include <haruhi/session.h>
 #include <haruhi/utility/numeric.h>
@@ -179,10 +180,10 @@ Backend::transfer()
 	// Transport -> Haruhi:
 	for (InputsMap::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
 	{
-		Core::Sample* src_buffer = p->first->buffer();
+		Sample* src_buffer = p->first->buffer();
 		Core::AudioBuffer* dst_buffer = p->second->port()->audio_buffer();
 		if (src_buffer)
-			memcpy (dst_buffer->begin(), src_buffer, sizeof (Core::Sample) * dst_buffer->size());
+			memcpy (dst_buffer->begin(), src_buffer, sizeof (Sample) * dst_buffer->size());
 		else
 			dst_buffer->clear();
 	}
@@ -190,7 +191,7 @@ Backend::transfer()
 	// Use Master Volume control to adjust volume of outputs:
 	// FIXME not-secure, use exported int value (controller_proxy->value()):
 	DialControl* master_volume = session()->meter_panel()->master_volume();
-	Core::Sample v = std::pow (master_volume->value() / static_cast<float> (Session::MeterPanel::ZeroVolume), M_E);
+	Sample v = std::pow (master_volume->value() / static_cast<float> (Session::MeterPanel::ZeroVolume), M_E);
 	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
 		p->second->attenuate (v);
 
@@ -198,13 +199,13 @@ Backend::transfer()
 	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
 	{
 		Core::AudioBuffer* src_buffer = p->second->port()->audio_buffer();
-		Core::Sample* dst_buffer = p->first->buffer();
+		Sample* dst_buffer = p->first->buffer();
 		if (dst_buffer)
 		{
 			if (p->second->port()->back_connections().empty())
-				memset (dst_buffer, 0, sizeof (Core::Sample) * src_buffer->size());
+				memset (dst_buffer, 0, sizeof (Sample) * src_buffer->size());
 			else
-				memcpy (dst_buffer, src_buffer->begin(), sizeof (Core::Sample) * src_buffer->size());
+				memcpy (dst_buffer, src_buffer->begin(), sizeof (Sample) * src_buffer->size());
 		}
 	}
 

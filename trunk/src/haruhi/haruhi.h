@@ -29,8 +29,8 @@
 #include <QtGui/QLabel>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/config.h>
-#include <haruhi/core/audio.h>
 #include <haruhi/utility/noncopyable.h>
 #include <haruhi/utility/backtrace.h>
 
@@ -40,9 +40,6 @@ namespace Haruhi {
 class UnitManager;
 class Session;
 class PeriodicUpdater;
-
-using Core::Sample;
-
 
 /**
  * Haruhi/system - stores shared data.

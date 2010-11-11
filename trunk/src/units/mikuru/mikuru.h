@@ -35,6 +35,7 @@
 #include <haruhi/core/event.h>
 #include <haruhi/core/audio_port.h>
 #include <haruhi/core/event_port.h>
+#include <haruhi/core/notification.h>
 #include <haruhi/dsp/smoother.h>
 #include <haruhi/plugin/plugin.h>
 #include <haruhi/plugin/plugin_factory.h>
@@ -79,11 +80,11 @@ class Mikuru:
 	 * Notification sent to other Mikurus
 	 * when user changes global configuration.
 	 */
-	class UpdateConfig: public Core::Notification
+	class UpdateConfig: public Haruhi::Core::Notification
 	{
 	  public:
 		UpdateConfig (Mikuru* sender, std::string const& urn):
-			Core::Notification (urn),
+			Haruhi::Core::Notification (urn),
 			_sender (sender)
 		{ }
 
@@ -126,7 +127,7 @@ class Mikuru:
 	void
 	graph_updated();
 
-	Core::EventPort*
+	Haruhi::Core::EventPort*
 	keyboard_port() const { return _port_keyboard; }
 
 	/**
@@ -169,7 +170,7 @@ class Mikuru:
 	 * Core::Unit::notify implementation.
 	 */
 	void
-	notify (Core::Notification*);
+	notify (Haruhi::Core::Notification*);
 
 	/*
 	 * Haruhi::UnitBayAware implementation.
@@ -336,24 +337,24 @@ class Mikuru:
 	// Synthesizer ports
 	//
 
-	Core::AudioBuffer				_mix_L;
-	Core::AudioBuffer				_mix_R;
-	Core::AudioBuffer				_filter_buffer_L;
-	Core::AudioBuffer				_filter_buffer_R;
-	Core::AudioBuffer				_input_buffer_L;
-	Core::AudioBuffer				_input_buffer_R;
+	Haruhi::Core::AudioBuffer		_mix_L;
+	Haruhi::Core::AudioBuffer		_mix_R;
+	Haruhi::Core::AudioBuffer		_filter_buffer_L;
+	Haruhi::Core::AudioBuffer		_filter_buffer_R;
+	Haruhi::Core::AudioBuffer		_input_buffer_L;
+	Haruhi::Core::AudioBuffer		_input_buffer_R;
 
 	// Audio inputs:
-	Core::AudioPort*				_audio_input_L;
-	Core::AudioPort*				_audio_input_R;
+	Haruhi::Core::AudioPort*		_audio_input_L;
+	Haruhi::Core::AudioPort*		_audio_input_R;
 
 	// Audio outputs:
-	Core::AudioPort*				_audio_output_L;
-	Core::AudioPort*				_audio_output_R;
+	Haruhi::Core::AudioPort*		_audio_output_L;
+	Haruhi::Core::AudioPort*		_audio_output_R;
 
 	// Drive:
-	Core::EventPort*				_port_keyboard;
-	Core::EventPort*				_port_sustain;
+	Haruhi::Core::EventPort*		_port_keyboard;
+	Haruhi::Core::EventPort*		_port_sustain;
 
 	//
 	// Other

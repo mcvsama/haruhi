@@ -19,7 +19,7 @@
 #include <cmath>
 
 // Haruhi:
-#include <haruhi/core/audio.h>
+#include <haruhi/config/all.h>
 
 
 namespace Haruhi {
@@ -50,20 +50,20 @@ class ImpulseResponse
 	/**
 	 * Computes response magnitude for given frequency (0, 0.5).
 	 */
-	virtual Core::Sample
-	response (Core::Sample frequency) const = 0;
+	virtual Sample
+	response (Sample frequency) const = 0;
 
 	/**
 	 * Returns table of H(z)'s denominator coefficients.
 	 * For FIR returns 0.
 	 */
-	virtual Core::Sample*
+	virtual Sample*
 	a() = 0;
 
 	/**
 	 * Returns table of H(z)'s numerator coefficients.
 	 */
-	virtual Core::Sample*
+	virtual Sample*
 	b() = 0;
 
 	/**

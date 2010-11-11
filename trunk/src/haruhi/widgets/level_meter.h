@@ -26,7 +26,7 @@
 #include <QtGui/QPushButton>
 
 // Haruhi:
-#include <haruhi/core/audio.h>
+#include <haruhi/config/all.h>
 #include <haruhi/utility/numeric.h>
 
 
@@ -45,7 +45,7 @@ class LevelMeter: public QWidget
 	~LevelMeter();
 
 	void
-	process (Core::Sample* begin, Core::Sample* end);
+	process (Sample* begin, Sample* end);
 
 	void
 	update();
@@ -134,7 +134,7 @@ class LevelMetersGroup: public QWidget
 	meter (Vector::size_type index);
 
 	void
-	update_peak (Core::Sample sample);
+	update_peak (Sample sample);
 
 	void
 	set_fps (int fps) { _timer->setInterval (1000.0 / fps); }
@@ -148,21 +148,21 @@ class LevelMetersGroup: public QWidget
 
   private:
 	// Meter configuration:
-	float				_lower_db;
-	float				_upper_db;
+	float			_lower_db;
+	float			_upper_db;
 
 	// Vector of meters:
-	Vector				_vector;
+	Vector			_vector;
 
 	// Widgets:
-	Core::Sample		_peak_sample;
-	QPushButton*		_peak_button;
-	Scale*				_scale;
-	QColor				_peak_button_bg;
-	QColor				_peak_button_fg;
+	Sample			_peak_sample;
+	QPushButton*	_peak_button;
+	Scale*			_scale;
+	QColor			_peak_button_bg;
+	QColor			_peak_button_fg;
 
 	// Timer for decaying meters:
-	QTimer*				_timer;
+	QTimer*			_timer;
 };
 
 } // namespace Haruhi

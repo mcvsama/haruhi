@@ -11,14 +11,12 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-// Standard:
-#include <cstddef>
+#ifndef HARUHI__CONFIG__ALL_H__INCLUDED
+#define HARUHI__CONFIG__ALL_H__INCLUDED
 
+#include "system.h"
+#include "types.h"
+#include "version.h"
 
-namespace Haruhi {
+#endif
 
-namespace Core {
-
-} // namespace Core
-
-} // namespace Haruhi

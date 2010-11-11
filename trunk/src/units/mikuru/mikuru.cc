@@ -140,14 +140,14 @@ Mikuru::registered()
 	if (graph())
 		graph()->lock();
 
-	_audio_input_L = new Core::AudioPort (this, "L input", Core::Port::Input, 0, Core::Port::StandardAudio);
-	_audio_input_R = new Core::AudioPort (this, "R input", Core::Port::Input, 0, Core::Port::StandardAudio);
+	_audio_input_L = new Haruhi::Core::AudioPort (this, "L input", Haruhi::Core::Port::Input, 0, Haruhi::Core::Port::StandardAudio);
+	_audio_input_R = new Haruhi::Core::AudioPort (this, "R input", Haruhi::Core::Port::Input, 0, Haruhi::Core::Port::StandardAudio);
 
-	_audio_output_L = new Core::AudioPort (this, "L output", Core::Port::Output, 0, Core::Port::StandardAudio);
-	_audio_output_R = new Core::AudioPort (this, "R output", Core::Port::Output, 0, Core::Port::StandardAudio);
+	_audio_output_L = new Haruhi::Core::AudioPort (this, "L output", Haruhi::Core::Port::Output, 0, Haruhi::Core::Port::StandardAudio);
+	_audio_output_R = new Haruhi::Core::AudioPort (this, "R output", Haruhi::Core::Port::Output, 0, Haruhi::Core::Port::StandardAudio);
 
-	_port_keyboard = new Core::EventPort (this, "Keyboard", Core::Port::Input, 0, Core::Port::ControlKeyboard);
-	_port_sustain = new Core::EventPort (this, "Sustain", Core::Port::Input, 0, Core::Port::ControlSustain);
+	_port_keyboard = new Haruhi::Core::EventPort (this, "Keyboard", Haruhi::Core::Port::Input, 0, Haruhi::Core::Port::ControlKeyboard);
+	_port_sustain = new Haruhi::Core::EventPort (this, "Sustain", Haruhi::Core::Port::Input, 0, Haruhi::Core::Port::ControlSustain);
 
 	if (graph())
 		graph()->unlock();
@@ -241,7 +241,7 @@ Mikuru::process()
 	}
 
 	// Master volume:
-	Core::Sample v = std::pow (general()->params()->volume.to_f(), M_E);
+	Haruhi::Sample v = std::pow (general()->params()->volume.to_f(), M_E);
 	_master_volume_smoother_L.set_value (v);
 	_master_volume_smoother_L.multiply (_audio_output_L->audio_buffer()->begin(), _audio_output_L->audio_buffer()->end());
 	_master_volume_smoother_R.set_value (v);
@@ -294,7 +294,7 @@ Mikuru::graph_updated()
 
 
 void
-Mikuru::notify (Core::Notification* notification)
+Mikuru::notify (Haruhi::Core::Notification* notification)
 {
 	UpdateConfig* update_config = dynamic_cast<UpdateConfig*> (notification);
 	if (update_config)
@@ -467,7 +467,7 @@ Mikuru::sync_some_inputs()
 {
 	// Sync all inputs except keyboard and sustain (those
 	// are manually synced in process_voice_events()).
-	for (Core::Ports::const_iterator i = inputs().begin(); i != inputs().end(); ++i)
+	for (Haruhi::Core::Ports::const_iterator i = inputs().begin(); i != inputs().end(); ++i)
 		if (*i != _port_keyboard && *i != _port_sustain)
 			(*i)->sync();
 }
@@ -497,17 +497,17 @@ Mikuru::process_envelopes()
 void
 Mikuru::process_voice_events()
 {
-	Core::EventBuffer* buffer;
+	Haruhi::Core::EventBuffer* buffer;
 
 	// Sustain:
 	_port_sustain->sync();
 	buffer = _port_sustain->event_buffer();
 	// Find most recent ControllerEvent, throw the rest:
-	for (Core::EventBuffer::EventsMultiset::reverse_iterator e = buffer->events().rbegin(); e != buffer->events().rend(); ++e)
+	for (Haruhi::Core::EventBuffer::EventsMultiset::reverse_iterator e = buffer->events().rbegin(); e != buffer->events().rend(); ++e)
 	{
-		if ((*e)->event_type() == Core::Event::ControllerEventType)
+		if ((*e)->event_type() == Haruhi::Core::Event::ControllerEventType)
 		{
-			Core::ControllerEvent const* controller_event = static_cast<Core::ControllerEvent const*> (e->get());
+			Haruhi::Core::ControllerEvent const* controller_event = static_cast<Haruhi::Core::ControllerEvent const*> (e->get());
 			for (Parts::iterator t = _parts.begin(); t != _parts.end(); ++t)
 				(*t)->voice_manager()->set_sustain (controller_event->value() >= 0.5);
 			break;
@@ -518,12 +518,12 @@ Mikuru::process_voice_events()
 	_port_keyboard->sync();
 	buffer = _port_keyboard->event_buffer();
 	int enabled = atomic (_param_enabled);
-	for (Core::EventBuffer::EventsMultiset::iterator e = buffer->events().begin(); e != buffer->events().end(); ++e)
+	for (Haruhi::Core::EventBuffer::EventsMultiset::iterator e = buffer->events().begin(); e != buffer->events().end(); ++e)
 	{
-		if ((*e)->event_type() == Core::Event::VoiceEventType)
+		if ((*e)->event_type() == Haruhi::Core::Event::VoiceEventType)
 		{
-			Core::VoiceEvent const* voice_event = static_cast<Core::VoiceEvent const*> (e->get());
-			if (enabled || voice_event->type() == Core::VoiceEvent::Release || voice_event->type() == Core::VoiceEvent::Drop)
+			Haruhi::Core::VoiceEvent const* voice_event = static_cast<Haruhi::Core::VoiceEvent const*> (e->get());
+			if (enabled || voice_event->type() == Haruhi::Core::VoiceEvent::Release || voice_event->type() == Haruhi::Core::VoiceEvent::Drop)
 				for (Parts::iterator t = _parts.begin(); t != _parts.end(); ++t)
 					(*t)->voice_manager()->voice_event (voice_event);
 		}

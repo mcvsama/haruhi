@@ -19,7 +19,7 @@
 #include <string>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 #include <haruhi/core/core.h>
 #include <haruhi/core/audio_buffer.h>
 
@@ -60,7 +60,7 @@ class Transport
 		 * Returns audio buffer to use for transporting audio.
 		 * May return 0 if data is not available/port is disabled.
 		 */
-		virtual Core::Sample*
+		virtual Sample*
 		buffer() = 0;
 
 	  private:

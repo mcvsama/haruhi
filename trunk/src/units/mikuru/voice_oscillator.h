@@ -20,17 +20,19 @@
 #include <vector>
 
 // Haruhi:
-#include <haruhi/core/audio.h>
+#include <haruhi/config/all.h>
 #include <haruhi/core/audio_buffer.h>
 #include <haruhi/dsp/wavetable.h>
 #include <haruhi/dsp/noise.h>
 #include <haruhi/utility/numeric.h>
 
 
+namespace MikuruPrivate {
+
 namespace Core = Haruhi::Core;
 namespace DSP = Haruhi::DSP;
 
-namespace MikuruPrivate {
+using Haruhi::Sample;
 
 class VoiceOscillator 
 {
@@ -85,19 +87,19 @@ class VoiceOscillator
 	 * Sets noise amplitude.
 	 */
 	void
-	set_noise_amplitude (Core::Sample amplitude) { _noise_amplitude = amplitude; }
+	set_noise_amplitude (Sample amplitude) { _noise_amplitude = amplitude; }
 
 	/**
 	 * Argument: [-1.0…1.0]
 	 */
 	void
-	set_phase (Core::Sample phase);
+	set_phase (Sample phase);
 
 	/**
 	 * Argument: [-1.0…1.0]
 	 */
 	void
-	set_initial_phases_spread (Core::Sample spread) { _initial_phase_spread = spread; }
+	set_initial_phases_spread (Sample spread) { _initial_phase_spread = spread; }
 
 	/**
 	 * Argument: [1…MaxUnison]
@@ -109,7 +111,7 @@ class VoiceOscillator
 	 * Argument: [0…1.0]
 	 */
 	void
-	set_unison_spread (Core::Sample spread)
+	set_unison_spread (Sample spread)
 	{
 		if (_unison_spread != spread)
 		{
@@ -122,7 +124,7 @@ class VoiceOscillator
 	 * Argument: [0…1.0] (0.0 disables noise completely).
 	 */
 	void
-	set_unison_noise (Core::Sample noise) { _unison_noise = (1.0f / 20.f) * noise; }
+	set_unison_noise (Sample noise) { _unison_noise = (1.0f / 20.f) * noise; }
 
 	/**
 	 * Fills output buffer.
@@ -130,7 +132,7 @@ class VoiceOscillator
 	void
 	fill (Core::AudioBuffer* output)
 	{
-		Core::Sample* const o = output->begin();
+		Sample* const o = output->begin();
 		bool mul = false;
 
 		if (_wavetable == 0 || !_wavetable_enabled)
@@ -163,8 +165,8 @@ class VoiceOscillator
 	}
 
   private:
-	Core::Sample
-	unison_delta (Core::Sample const& f)
+	Sample
+	unison_delta (Sample const& f)
 	{
 		return f * _unison_relative_spread;
 	}
@@ -192,9 +194,9 @@ class VoiceOscillator
 	void
 	fill_without_noised_unison (Core::AudioBuffer* output)
 	{
-		Core::Sample f;
-		Core::Sample* const o = output->begin();
-		Core::Sample* const fs = _frequency_source->begin();
+		Sample f;
+		Sample* const o = output->begin();
+		Sample* const fs = _frequency_source->begin();
 
 		// Oscillate:
 		for (std::size_t i = 0, n = output->size(); i < n; ++i)
@@ -224,9 +226,9 @@ class VoiceOscillator
 	void
 	fill_with_noised_unison (Core::AudioBuffer* output)
 	{
-		Core::Sample f;
-		Core::Sample* const o = output->begin();
-		Core::Sample* const fs = _frequency_source->begin();
+		Sample f;
+		Sample* const o = output->begin();
+		Sample* const fs = _frequency_source->begin();
 
 		// Oscillate:
 		for (std::size_t i = 0, n = output->size(); i < n; ++i)
@@ -260,7 +262,7 @@ class VoiceOscillator
 	/**
 	 * Returns random sample in range [-2.0..2.0] with triangular distribution.
 	 */
-	Core::Sample
+	Sample
 	noise_sample()
 	{
 		return _noise.get (_noise_state) + _noise.get (_noise_state);
@@ -271,33 +273,33 @@ class VoiceOscillator
 	DSP::Wavetable*		_wavetable;
 	Core::AudioBuffer*	_frequency_source;
 	Core::AudioBuffer*	_amplitude_source;
-	Core::Sample		_distribution_lookup[MaxUnison];
-	Core::Sample		_phases[MaxUnison];
+	Sample				_distribution_lookup[MaxUnison];
+	Sample				_phases[MaxUnison];
 
 	// Unison:
-	Core::Sample		_initial_phase_spread;
+	Sample				_initial_phase_spread;
 	int					_unison_number;
-	Core::Sample		_unison_spread;
-	Core::Sample		_unison_noise;
-	Core::Sample		_1_div_unison_number;		// Cached 1.0f / _unison_number.
-	Core::Sample		_unison_relative_spread;	// Cached _unison_spread / _unson_number.
-	Core::Sample		_half_unison_number;		// Cached (_unison_number - 1) / 2.0f.
+	Sample				_unison_spread;
+	Sample				_unison_noise;
+	Sample				_1_div_unison_number;		// Cached 1.0f / _unison_number.
+	Sample				_unison_relative_spread;	// Cached _unison_spread / _unson_number.
+	Sample				_half_unison_number;		// Cached (_unison_number - 1) / 2.0f.
 
 	// Used for both white noise and unison noise:
 	DSP::Noise			_noise;
 	DSP::Noise::State	_noise_state;
 	bool				_noise_enabled;
-	Core::Sample		_noise_amplitude;
+	Sample				_noise_amplitude;
 
 	// Helpers:
-	Core::Sample		_sum;	// Unison waves sum (multiphases sum)
-	Core::Sample		_l;		// Unison lowest frequency
-	Core::Sample		_c;		// Unison center frequency
-	Core::Sample		_h;		// Unison highest frequency
-	Core::Sample		_e;		// Noising range (extent)
-	Core::Sample		_f;		// Frequency
-	Core::Sample		_d;		// Unison delta
-	Core::Sample		_z;		// Noised frequency
+	Sample				_sum;	// Unison waves sum (multiphases sum)
+	Sample				_l;		// Unison lowest frequency
+	Sample				_c;		// Unison center frequency
+	Sample				_h;		// Unison highest frequency
+	Sample				_e;		// Noising range (extent)
+	Sample				_f;		// Frequency
+	Sample				_d;		// Unison delta
+	Sample				_z;		// Noised frequency
 };
 
 } // namespace MikuruPrivate

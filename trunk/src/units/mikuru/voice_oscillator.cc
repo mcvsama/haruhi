@@ -15,10 +15,9 @@
 #include <cstddef>
 
 // Local:
+#include "types.h"
 #include "voice_oscillator.h"
 
-
-using Core::Sample;
 
 namespace MikuruPrivate {
 

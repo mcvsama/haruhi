@@ -19,7 +19,7 @@
 #include <vector>
 
 // Haruhi:
-#include <haruhi/core/audio.h>
+#include <haruhi/config/all.h>
 #include <haruhi/dsp/wave.h>
 
 
@@ -33,7 +33,7 @@ namespace DSP {
  */
 class ModulatedWave: public Wave
 {
-	typedef Core::Sample (ModulatedWave::*ValueFunction)(Core::Sample, Core::Sample) const;
+	typedef Sample (ModulatedWave::*ValueFunction)(Sample, Sample) const;
 
   public:
 	enum Type {
@@ -55,8 +55,8 @@ class ModulatedWave: public Wave
 	 * \param	frequency is the base frequency of the signal this sample will
 	 * 			be used in (this is for limiting bandwidth).
 	 */
-	Core::Sample
-	operator() (Core::Sample register phase, Core::Sample frequency) const;
+	Sample
+	operator() (Sample register phase, Sample frequency) const;
 
 	/**
 	 * Returns wave object.
@@ -97,17 +97,17 @@ class ModulatedWave: public Wave
 	set_auto_delete_modulator (bool set) { _auto_delete_modulator = set; }
 
   private:
-	Core::Sample
-	value_for_ring (Core::Sample phase, Core::Sample frequency) const;
+	Sample
+	value_for_ring (Sample phase, Sample frequency) const;
 
-	Core::Sample
-	value_for_frequency (Core::Sample phase, Core::Sample frequency) const;
+	Sample
+	value_for_frequency (Sample phase, Sample frequency) const;
 
   private:
 	Wave*			_wave;
 	Wave*			_modulator;
 	Type			_mod_type;
-	Core::Sample	_mod_amplitude;
+	Sample			_mod_amplitude;
 	unsigned int	_mod_index;
 	bool			_auto_delete_wave;
 	bool			_auto_delete_modulator;

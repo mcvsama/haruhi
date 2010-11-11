@@ -22,6 +22,7 @@
 #include <jack/jack.h>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/core/graph.h>
 #include <haruhi/components/audio_backend/backend.h>
 #include <haruhi/components/audio_backend/transport.h>
@@ -52,11 +53,11 @@ JackTransport::JackPort::~JackPort()
 }
 
 
-Core::Sample*
+Sample*
 JackTransport::JackPort::buffer()
 {
 	if (transport()->connected())
-		return static_cast<Core::Sample*> (jack_port_get_buffer (_jack_port, transport()->backend()->graph()->buffer_size()));
+		return static_cast<Sample*> (jack_port_get_buffer (_jack_port, transport()->backend()->graph()->buffer_size()));
 	return 0;
 }
 

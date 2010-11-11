@@ -19,7 +19,6 @@
 #include <haruhi/utility/pool_allocator.h>
 
 // Local:
-#include "audio.h"
 #include "event.h"
 
 

@@ -20,7 +20,7 @@
 #include <vector>
 
 // Haruhi:
-#include <haruhi/core/audio.h>
+#include <haruhi/config/all.h>
 #include <haruhi/utility/pool_allocator.h>
 
 
@@ -48,7 +48,7 @@ class ADSR
 	 * \param	sustain_enabled: Sustaining enabled or going directly to release phase?
 	 * \param	forced_release: Go directly to release phase on release().
 	 */
-	ADSR (unsigned int delay, unsigned int attack, unsigned int attack_hold, unsigned int decay, Core::Sample sustain, unsigned int sustain_hold,
+	ADSR (unsigned int delay, unsigned int attack, unsigned int attack_hold, unsigned int decay, Sample sustain, unsigned int sustain_hold,
 		  unsigned int release, bool sustain_enabled, bool forced_release);
 
 	void
@@ -61,25 +61,25 @@ class ADSR
 	finished() const { return _phase == Finished; }
 
 	void
-	fill (Core::Sample* begin, Core::Sample* end);
+	fill (Sample* begin, Sample* end);
 
   private:
 	// D,A,D,R are sample numbers:
-	unsigned int		_delay;
-	unsigned int		_attack;
-	unsigned int		_attack_hold;
-	unsigned int		_decay;
-	Core::Sample		_sustain;
-	unsigned int		_sustain_hold;
-	unsigned int		_release;
-	bool				_sustain_enabled;
-	bool				_forced_release;
-	bool				_released;
-	Core::Sample		_release_at;
+	unsigned int	_delay;
+	unsigned int	_attack;
+	unsigned int	_attack_hold;
+	unsigned int	_decay;
+	Sample			_sustain;
+	unsigned int	_sustain_hold;
+	unsigned int	_release;
+	bool			_sustain_enabled;
+	bool			_forced_release;
+	bool			_released;
+	Sample			_release_at;
 	// Current ADSR phase:
-	Phase				_phase;
+	Phase			_phase;
 	// Phase sample number:
-	unsigned int		_p;
+	unsigned int	_p;
 };
 
 } // namespace DSP

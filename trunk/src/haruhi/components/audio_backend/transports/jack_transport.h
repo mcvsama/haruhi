@@ -23,6 +23,7 @@
 #include <jack/jack.h>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/components/audio_backend/transport.h>
 
 
@@ -58,7 +59,7 @@ class JackTransport: public Transport
 		 */
 		virtual ~JackPort();
 
-		Core::Sample*
+		Sample*
 		buffer();
 
 		void

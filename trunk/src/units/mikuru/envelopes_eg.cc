@@ -244,7 +244,7 @@ EG::process()
 		return;
 
 	Core::Timestamp t = _mikuru->graph()->timestamp();
-	Core::Sample v;
+	Haruhi::Sample v;
 
 	// Assuming that output ports are cleared by Mikuru on beginnig of each
 	// processing round.

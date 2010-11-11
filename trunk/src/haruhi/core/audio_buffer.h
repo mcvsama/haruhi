@@ -19,11 +19,10 @@
 #include <cstdlib>
 
 // Haruhi:
-#include <haruhi/config/system.h>
+#include <haruhi/config/all.h>
 #include <haruhi/utility/pool_allocator.h>
 
 // Local:
-#include "audio.h"
 #include "buffer.h"
 #include "exception.h"
 

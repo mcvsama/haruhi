@@ -21,7 +21,7 @@
 #include <algorithm>
 
 // Haruhi:
-#include <haruhi/core/audio.h>
+#include <haruhi/config/all.h>
 #include <haruhi/dsp/wave.h>
 #include <haruhi/utility/numeric.h>
 
@@ -38,7 +38,7 @@ class Wavetable
 	};
 
   public:
-	typedef std::vector<Core::Sample*>  Tables;
+	typedef std::vector<Sample*>  Tables;
 
 	/**
 	 * All filler classes (that is classes that fill wavetables with samples)
@@ -60,8 +60,8 @@ class Wavetable
 			_wavetable (wavetable)
 		{ }
 
-		Core::Sample
-		operator() (Core::Sample register phase, Core::Sample frequency) const
+		Sample
+		operator() (Sample register phase, Sample frequency) const
 		{
 			return _wavetable->operator() (phase, frequency);
 		}
@@ -97,21 +97,21 @@ class Wavetable
 		_size = size;
 	}
 
-	Core::Sample
-	operator() (Core::Sample register phase, Core::Sample frequency) const
+	Sample
+	operator() (Sample register phase, Sample frequency) const
 	{
 		const int t = table_index (frequency);
 		const float p = mod1 (phase) * _size;
 		const int k = static_cast<int> (p);
 		const Tables::value_type& table = _tables[t];
-		const Core::Sample v1 = table[k];
-		const Core::Sample v2 = table[(k + 1) % _size];
+		const Sample v1 = table[k];
+		const Sample v2 = table[(k + 1) % _size];
 		// Linear approximation:
 		return v1 + (p - k) * (v2 - v1);
 	}
 
-	Core::Sample
-	base (Core::Sample register phase, Core::Sample frequency) const
+	Sample
+	base (Sample register phase, Sample frequency) const
 	{
 		return this->operator() (phase, frequency);
 	}

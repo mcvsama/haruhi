@@ -18,7 +18,7 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/core/audio.h>
+#include <haruhi/config/all.h>
 
 
 namespace Haruhi {
@@ -61,7 +61,7 @@ class DelayLine
 	 * \param	data is pointer to source buffer.
 	 */
 	void
-	write (Core::Sample const* data);
+	write (Sample const* data);
 
 	/**
 	 * Reads delayed buffer-size samples from delay line.
@@ -69,7 +69,7 @@ class DelayLine
 	 * \param	data is pointer to output buffer.
 	 */
 	void
-	read (Core::Sample* data);
+	read (Sample* data);
 
 	/**
 	 * Clears data buffer.
@@ -78,11 +78,11 @@ class DelayLine
 	clear();
 
   private:
-	Core::Sample*	_data;
-	std::size_t		_max_delay;		// Whole buffer size (number of samples).
-	std::size_t		_size;			// Number of samples read/written on each round.
-	std::size_t		_delay;
-	std::size_t		_wpos;
+	Sample*		_data;
+	std::size_t	_max_delay;		// Whole buffer size (number of samples).
+	std::size_t	_size;			// Number of samples read/written on each round.
+	std::size_t	_delay;
+	std::size_t	_wpos;
 };
 
 } // namespace DSP

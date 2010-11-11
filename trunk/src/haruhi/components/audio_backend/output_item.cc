@@ -15,7 +15,7 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "output_item.h"
@@ -95,7 +95,7 @@ OutputItem::graph_updated()
 
 
 void
-OutputItem::attenuate (Core::Sample value)
+OutputItem::attenuate (Sample value)
 {
 	_smoother.set_value (value);
 	_smoother.multiply (port()->audio_buffer()->begin(), port()->audio_buffer()->end());

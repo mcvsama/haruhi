@@ -15,7 +15,7 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/config/system.h>
+#include <haruhi/config/all.h>
 #include <haruhi/utility/numeric.h>
 
 // Local:
@@ -26,7 +26,7 @@ namespace Haruhi {
 
 namespace DSP {
 
-ModulatedWave::ModulatedWave (Wave* wave, Wave* modulator, Type mod_type, Core::Sample mod_amplitude, unsigned int mod_index, bool auto_delete_wave, bool auto_delete_modulator):
+ModulatedWave::ModulatedWave (Wave* wave, Wave* modulator, Type mod_type, Sample mod_amplitude, unsigned int mod_index, bool auto_delete_wave, bool auto_delete_modulator):
 	Wave (wave ? wave->immutable() : false),
 	_wave (wave),
 	_modulator (modulator),
@@ -55,8 +55,8 @@ ModulatedWave::~ModulatedWave()
 }
 
 
-Core::Sample
-ModulatedWave::operator() (Core::Sample phase, Core::Sample frequency) const
+Sample
+ModulatedWave::operator() (Sample phase, Sample frequency) const
 {
 	return (this->*_value_function) (phase, frequency);	
 }
@@ -81,15 +81,15 @@ ModulatedWave::set_modulator (Wave* modulator)
 }
 
 
-Core::Sample
-ModulatedWave::value_for_ring (Core::Sample phase, Core::Sample frequency) const
+Sample
+ModulatedWave::value_for_ring (Sample phase, Sample frequency) const
 {
 	return (*_wave)(phase, frequency) * (1.0f - _mod_amplitude * (*_modulator)(mod1 (phase * _mod_index), frequency * _mod_index));
 }
 
 
-Core::Sample
-ModulatedWave::value_for_frequency (Core::Sample phase, Core::Sample frequency) const
+Sample
+ModulatedWave::value_for_frequency (Sample phase, Sample frequency) const
 {
 	return (*_wave)(mod1 (phase * (1.0f - 0.1 * _mod_amplitude * (*_modulator)(mod1 (phase * _mod_index), frequency * _mod_index))), frequency);
 }

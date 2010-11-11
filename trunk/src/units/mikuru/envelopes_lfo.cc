@@ -60,7 +60,7 @@ LFO::Osc::reset (float start_phase)
 }
 
 
-Core::Sample
+Haruhi::Sample
 LFO::Osc::advance (unsigned int samples)
 {
 	if (!_wave)
@@ -118,8 +118,8 @@ LFO::RandomWave::next_step()
 }
 
 
-Core::Sample
-LFO::RandomWave::operator() (Core::Sample register phase, Core::Sample) const
+Haruhi::Sample
+LFO::RandomWave::operator() (Haruhi::Sample register phase, Haruhi::Sample) const
 {
 	switch (_type)
 	{
@@ -613,8 +613,8 @@ LFO::set_common_osc()
 }
 
 
-Core::Sample
-LFO::apply_function (Core::Sample v) const
+Haruhi::Sample
+LFO::apply_function (Haruhi::Sample v) const
 {
 	switch (_params.function.get())
 	{

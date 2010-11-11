@@ -26,6 +26,7 @@
 // Haruhi:
 #include <haruhi/haruhi.h>
 #include <haruhi/core/event.h>
+#include <haruhi/core/audio_buffer.h>
 #include <haruhi/dsp/envelope.h>
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/knob.h>
@@ -165,17 +166,17 @@ class EG: public Envelope
 	// all segment lengths must be recomputed to match current sample-rate.
 	DSP::Envelope				_envelope_template;
 	EGs							_egs;
-	Core::AudioBuffer			_buffer;
+	Haruhi::Core::AudioBuffer	_buffer;
 	// List of Voices which has been dropped and need ADSRs to be deleted also:
 	std::list<Voice*>			_dropped_voices;
 
 	Haruhi::ControllerParam		_segment_duration;
 	Haruhi::ControllerParam		_point_value;
 
-	Core::PortGroup*			_port_group;
-	Core::EventPort*			_port_point_value;
-	Core::EventPort*			_port_segment_duration;
-	Core::EventPort*			_port_output;
+	Haruhi::Core::PortGroup*	_port_group;
+	Haruhi::Core::EventPort*	_port_point_value;
+	Haruhi::Core::EventPort*	_port_segment_duration;
+	Haruhi::Core::EventPort*	_port_output;
 
 	QCheckBox*					_enabled;
 	Haruhi::Knob*				_knob_point_value;

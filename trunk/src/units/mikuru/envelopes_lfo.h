@@ -116,7 +116,7 @@ class LFO: public Envelope
 		 * \param	samples is number of samples to advance.
 		 * \returns	new sample after advancing LFO a number of samples.
 		 */
-		Core::Sample
+		Haruhi::Sample
 		advance (unsigned int samples);
 
 	  private:
@@ -155,8 +155,8 @@ class LFO: public Envelope
 		 * DSP::Wave API.
 		 */
 
-		Core::Sample
-		operator() (Core::Sample register phase, Core::Sample frequency) const;
+		Haruhi::Sample
+		operator() (Haruhi::Sample register phase, Haruhi::Sample frequency) const;
 
 	  private:
 		float
@@ -251,8 +251,8 @@ class LFO: public Envelope
 	void
 	set_common_osc();
 
-	Core::Sample
-	apply_function (Core::Sample v) const;
+	Haruhi::Sample
+	apply_function (Haruhi::Sample v) const;
 
 	float
 	get_phase() const;
@@ -264,16 +264,16 @@ class LFO: public Envelope
 	int							_id;
 	int							_pressed_keys;
 
-	Core::PortGroup*			_port_group;
-	Core::EventPort*			_port_delay;
-	Core::EventPort*			_port_fade_in;
-	Core::EventPort*			_port_frequency;
-	Core::EventPort*			_port_level;
-	Core::EventPort*			_port_depth;
-	Core::EventPort*			_port_phase;
-	Core::EventPort*			_port_output;
-	Core::EventPort*			_port_wave_shape;
-	Core::EventPort*			_port_fade_out;
+	Haruhi::Core::PortGroup*	_port_group;
+	Haruhi::Core::EventPort*	_port_delay;
+	Haruhi::Core::EventPort*	_port_fade_in;
+	Haruhi::Core::EventPort*	_port_frequency;
+	Haruhi::Core::EventPort*	_port_level;
+	Haruhi::Core::EventPort*	_port_depth;
+	Haruhi::Core::EventPort*	_port_phase;
+	Haruhi::Core::EventPort*	_port_output;
+	Haruhi::Core::EventPort*	_port_wave_shape;
+	Haruhi::Core::EventPort*	_port_fade_out;
 
 	Oscs						_oscs;
 	Osc							_common_osc;

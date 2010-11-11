@@ -15,7 +15,7 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/config/system.h>
+#include <haruhi/config/all.h>
 #include <haruhi/dsp/functions.h>
 
 // Local:
@@ -42,7 +42,7 @@ FourierSeriesFiller::fill (Wavetable::Tables& tables, int number, int samples)
 	// Create wavetables:
 	for (int i = 0; i < number; ++i)
 	{
-		tables.push_back (new Core::Sample[samples]);
+		tables.push_back (new Sample[samples]);
 		double const base_frequency = 0.5 - 0.5 * (std::pow (2, i) - 1) / std::pow (2, i);
 		// Initialize first table or copy coefficients from previous to current table:
 		if (i > 0)

@@ -19,7 +19,7 @@
 #include <vector>
 
 // Haruhi:
-#include <haruhi/core/audio.h>
+#include <haruhi/config/all.h>
 
 
 namespace Haruhi {
@@ -55,8 +55,8 @@ class Wave
 	 * 			frequency (in range [0..1]). If you want to get highest possible
 	 * 			bandwidth, pass 0.0.
 	 */
-	virtual Core::Sample
-	operator() (Core::Sample register phase, Core::Sample frequency) const = 0;
+	virtual Sample
+	operator() (Sample register phase, Sample frequency) const = 0;
 
   private:
 	bool _immutable;

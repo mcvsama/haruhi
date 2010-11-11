@@ -67,11 +67,11 @@ LevelMeter::~LevelMeter()
 
 
 void
-LevelMeter::process (Core::Sample* begin, Core::Sample* end)
+LevelMeter::process (Sample* begin, Sample* end)
 {
 	// Find maximum:
-	Core::Sample register max = 0;
-	for (Core::Sample* s = begin; s != end;  ++s)
+	Sample register max = 0;
+	for (Sample* s = begin; s != end;  ++s)
 		if (std::abs (*s) > max)
 			max = std::abs (*s);
 	// Compare to current value:
@@ -283,7 +283,7 @@ LevelMetersGroup::meter (Vector::size_type index)
 
 
 void
-LevelMetersGroup::update_peak (Core::Sample sample)
+LevelMetersGroup::update_peak (Sample sample)
 {
 	sample = std::abs (sample);
 	if (_peak_sample < sample)

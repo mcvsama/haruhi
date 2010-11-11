@@ -20,7 +20,7 @@
 #include <vector>
 
 // Haruhi:
-#include <haruhi/core/audio.h>
+#include <haruhi/config/all.h>
 #include <haruhi/dsp/wave.h>
 #include <haruhi/dsp/wavetable.h>
 
@@ -32,7 +32,7 @@ namespace DSP {
 class FourierSeriesFiller: public Wavetable::Filler
 {
   public:
-	typedef Core::Sample (*Function)(Core::Sample, Core::Sample, Core::Sample, Core::Sample);
+	typedef Sample (*Function)(Sample, Sample, Sample, Sample);
 
   public:
 	FourierSeriesFiller (Function function);

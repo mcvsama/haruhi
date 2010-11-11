@@ -23,6 +23,7 @@
 #include <QtGui/QPixmap>
 
 // Haruhi:
+#include <haruhi/core/graph.h>
 #include <haruhi/dsp/impulse_response.h>
 
 

@@ -15,6 +15,7 @@
 #include <cstddef>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/pool_allocator.h>
 
 // Local:
@@ -28,7 +29,7 @@ namespace DSP {
 POOL_ALLOCATOR_FOR (ADSR)
 
 
-ADSR::ADSR (unsigned int delay, unsigned int attack, unsigned int attack_hold, unsigned int decay, Core::Sample sustain, unsigned int sustain_hold,
+ADSR::ADSR (unsigned int delay, unsigned int attack, unsigned int attack_hold, unsigned int decay, Sample sustain, unsigned int sustain_hold,
 			unsigned int release, bool sustain_enabled, bool forced_release):
 	_delay (delay),
 	_attack (attack),
@@ -60,9 +61,9 @@ ADSR::release()
 
 
 void
-ADSR::fill (Core::Sample* begin, Core::Sample* end)
+ADSR::fill (Sample* begin, Sample* end)
 {
-	Core::Sample* cur = begin;
+	Sample* cur = begin;
 	while (cur != end)
 	{
 		switch (_phase)
