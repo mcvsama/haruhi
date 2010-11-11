@@ -411,8 +411,9 @@ Session::Session (QWidget* parent):
 
 Session::~Session()
 {
-	delete _plugin_loader;
+	// In this order:
 	delete _program;
+	delete _plugin_loader;
 
 	stop_audio_backend();
 	stop_event_backend();

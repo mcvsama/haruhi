@@ -260,12 +260,14 @@ Patch::~Patch()
 	while (!units().empty())
 	{
 		Units::iterator u = units().begin();
-		// TODO use unloader for deleting objects:
-		delete *u; // Deleting plugin will automatically remove it from plugins list (via graph notification).
+		Plugin* plugin = dynamic_cast<Plugin*> (*u);
+		if (plugin)
+			unload_plugin (plugin);
 	}
 	units().clear();
 
 	// Unregister itself:
+	disable();
 	_session->graph()->unregister_unit (this);
 }
 
@@ -293,6 +295,7 @@ Patch::load_plugin (QString const& urn)
 		// TODO patch should give a hint to plugin how should it call itself in Core::Graph:
 		_tabs->addTab (plugin_tab, Config::Icons22::spacer(), QString ("%1: %2").arg (1).arg (QString::fromStdString (plugin->title())));
 		_plugins_to_frames_map[plugin] = plugin_tab;
+		_session->graph()->register_unit (plugin);
 	}
 	return plugin;
 }
@@ -301,12 +304,13 @@ Patch::load_plugin (QString const& urn)
 void
 Patch::unload_plugin (Plugin* plugin)
 {
+	// Unregister plugin:
+	_session->graph()->unregister_unit (plugin);
+
 	PluginsToFramesMap::iterator u = _plugins_to_frames_map.find (plugin);
 	if (u != _plugins_to_frames_map.end())
 	{
 		Private::PluginTab* plugin_tab = u->second;
-		// Remove plugin from ports connector:
-		_connections_tab->ports_connector()->remove_unit (plugin);
 		// Remove plugin from plugin bay:
 		units().erase (plugin);
 		// Unload plugin:
