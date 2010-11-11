@@ -69,17 +69,16 @@ Graph::register_unit (Unit* unit)
 void
 Graph::unregister_unit (Unit* unit)
 {
+	Units::iterator f = _units.find (unit);
+	if (f == _units.end())
+		throw Haruhi::Exception ("unit was not registered in this graph");
 	unit->disable();
 	unit->unregistered();
 	lock();
-	Units::iterator f = _units.find (unit);
-	if (f != _units.end())
-	{
-		_units.erase (f);
-		unit->_graph = 0;
-		// Signal:
-		unit_unregistered (unit);
-	}
+	_units.erase (f);
+	unit->_graph = 0;
+	// Signal:
+	unit_unregistered (unit);
 	unlock();
 }
 

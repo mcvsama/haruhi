@@ -214,15 +214,14 @@ Port::register_me()
 		case Port::Output:	_unit->_outputs.insert (this);	break;
 	}
 	// Send notification:
-	graph()->port_registered (this, _unit);
+	if (graph())
+		graph()->port_registered (this, _unit);
 }
 
 
 void
 Port::unregister_me()
 {
-	if (_unit->graph() == 0)
-		throw Haruhi::Exception ("deleting port on already unregistered unit");
 	disconnect();
 	switch (_direction)
 	{
@@ -232,7 +231,8 @@ Port::unregister_me()
 	// Delete buffer:
 	delete _buffer;
 	// Send notification:
-	graph()->port_unregistered (this, _unit);
+	if (graph())
+		graph()->port_unregistered (this, _unit);
 }
 
 } // namespace Core

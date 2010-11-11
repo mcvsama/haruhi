@@ -40,6 +40,10 @@ typedef std::set<Port*> Ports;
 
 
 /**
+ * Represents Port in Graph. Port is a data entry point for Units.
+ * Unit can have any number of Ports associated with it.
+ * Ports can be registered on Unit before Unit is registered to Graph.
+ *
  * No method is thread-safe. You must lock graph
  * before using port's methods.
  */
