@@ -38,9 +38,6 @@ VanHalen::VanHalen (Haruhi::Session* session, std::string const& urn, std::strin
 	_comb_index (0, 0, 0, 1000),
 	_comb_alpha (0, -1000, 0, 1000)
 {
-	// Register itself:
-	session->graph()->register_unit (this);
-
 	_knob_comb_index = new Haruhi::Knob (this, 0, &_comb_index, "Index", 0, 1000, 1, 0);
 	_knob_comb_alpha = new Haruhi::Knob (this, 0, &_comb_alpha, "Alpha", -1.0, 1.0, 10, 2);
 
@@ -52,8 +49,6 @@ VanHalen::VanHalen (Haruhi::Session* session, std::string const& urn, std::strin
 
 VanHalen::~VanHalen()
 {
-	// Unregister itself:
-	session()->graph()->unregister_unit (this);
 }
 
 
@@ -69,7 +64,7 @@ VanHalen::registered()
 	_audio_output_1 = new Haruhi::Core::AudioPort (this, "Audio L", Haruhi::Core::Port::Output);
 	_audio_output_2 = new Haruhi::Core::AudioPort (this, "Audio R", Haruhi::Core::Port::Output);
 
-	enabled();
+	enable();
 }
 
 

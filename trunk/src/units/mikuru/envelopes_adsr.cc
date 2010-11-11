@@ -70,7 +70,8 @@ ADSR::~ADSR()
 	delete _knob_sustain_hold;
 	delete _knob_release;
 
-	_mikuru->graph()->lock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
 	delete _port_output;
 	delete _port_delay;
 	delete _port_attack;
@@ -88,14 +89,16 @@ ADSR::~ADSR()
 		x->first->set_tracked (false);
 		delete x->second;
 	}
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 }
 
 
 void
 ADSR::create_ports()
 {
-	_mikuru->graph()->lock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
 	_port_group = new Core::PortGroup (_mikuru->graph(), QString ("ADSR %1").arg (this->id()).toStdString());
 	// Inputs:
 	_port_delay = new Core::EventPort (_mikuru, "Delay", Core::Port::Input, _port_group);
@@ -107,7 +110,8 @@ ADSR::create_ports()
 	_port_release = new Core::EventPort (_mikuru, "Release", Core::Port::Input, _port_group);
 	// Outputs:
 	_port_output = new Core::EventPort (_mikuru, QString ("ADSR %1").arg (this->id()).toStdString(), Core::Port::Output, 0, Core::Port::Polyphonic);
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 }
 
 

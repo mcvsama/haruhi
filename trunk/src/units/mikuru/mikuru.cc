@@ -68,9 +68,6 @@ Mikuru::Mikuru (Haruhi::Session* session, std::string const& urn, std::string co
 	_input_buffer_L (64),
 	_input_buffer_R (64)
 {
-	// Register itself:
-	session->graph()->register_unit (this);
-
 	// Widgets:
 
 	_enabled = new QCheckBox ("Enabled (Note On)", this);
@@ -113,10 +110,6 @@ Mikuru::Mikuru (Haruhi::Session* session, std::string const& urn, std::string co
 
 	layout->addWidget (_tabs_widget);
 
-	load_config();
-
-	enable();
-
 	// UI timer:
 	_update_ui_timer = new QTimer (this);
 	QObject::connect (_update_ui_timer, SIGNAL (timeout()), this, SLOT (update_ui()));
@@ -126,9 +119,6 @@ Mikuru::Mikuru (Haruhi::Session* session, std::string const& urn, std::string co
 
 Mikuru::~Mikuru()
 {
-	// Unregister itself:
-	session()->graph()->unregister_unit (this);
-
 	_update_ui_timer->stop();
 }
 
@@ -147,7 +137,8 @@ Mikuru::registered()
 	// Resize buffers:
 	graph_updated();
 
-	graph()->lock();
+	if (graph())
+		graph()->lock();
 
 	_audio_input_L = new Core::AudioPort (this, "L input", Core::Port::Input, 0, Core::Port::StandardAudio);
 	_audio_input_R = new Core::AudioPort (this, "R input", Core::Port::Input, 0, Core::Port::StandardAudio);
@@ -158,7 +149,10 @@ Mikuru::registered()
 	_port_keyboard = new Core::EventPort (this, "Keyboard", Core::Port::Input, 0, Core::Port::ControlKeyboard);
 	_port_sustain = new Core::EventPort (this, "Sustain", Core::Port::Input, 0, Core::Port::ControlSustain);
 
-	graph()->unlock();
+	if (graph())
+		graph()->unlock();
+
+	load_config();
 
 	enable();
 }
@@ -276,7 +270,8 @@ Mikuru::graph_updated()
 {
 	Unit::graph_updated();
 
-	graph()->lock();
+	if (graph())
+		graph()->lock();
 
 	std::size_t s = graph()->buffer_size();
 	_synth_threads_mutex.lock();
@@ -293,7 +288,8 @@ Mikuru::graph_updated()
 	if (general() && general()->envelopes())
 		general()->envelopes()->resize_buffers (s);
 
-	graph()->unlock();
+	if (graph())
+		graph()->unlock();
 }
 
 
@@ -302,7 +298,7 @@ Mikuru::notify (Core::Notification* notification)
 {
 	UpdateConfig* update_config = dynamic_cast<UpdateConfig*> (notification);
 	if (update_config)
-		if (update_config->sender() != this)
+		if (update_config->sender() != this && graph())
 			load_config();
 }
 
@@ -584,7 +580,8 @@ Mikuru::set_threads_number (int threads)
 
 	threads = std::min (16, std::max (1, threads));
 
-	graph()->lock();
+	if (graph())
+		graph()->lock();
 	_synth_threads_mutex.lock();
 	// Delete excess threads (over user-set limit):
 	while (_synth_threads.size() > static_cast<unsigned int> (threads))
@@ -601,7 +598,8 @@ Mikuru::set_threads_number (int threads)
 			(*v)->set_thread (select_thread_for_new_voice());
 		// Temporarily unlock graph in case synth thread is waiting for it:
 		_synth_threads_mutex.unlock();
-		graph()->yield();
+		if (graph())
+			graph()->yield();
 		_synth_threads_mutex.lock();
 	}
 
@@ -612,12 +610,14 @@ Mikuru::set_threads_number (int threads)
 		(*s)->start();
 		// Temporarily unlock graph in case synth thread is waiting for it:
 		_synth_threads_mutex.unlock();
-		graph()->yield();
+		if (graph())
+			graph()->yield();
 		_synth_threads_mutex.lock();
 	}
 
 	_synth_threads_mutex.unlock();
-	graph()->unlock();
+	if (graph())
+		graph()->unlock();
 }
 
 

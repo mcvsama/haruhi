@@ -175,7 +175,8 @@ LFO::~LFO()
 	_plot->assign_wave (0);
 	_mikuru->free_id ("lfos", _id);
 
-	_mikuru->graph()->lock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
 	delete _port_delay;
 	delete _port_fade_in;
 	delete _port_frequency;
@@ -188,7 +189,8 @@ LFO::~LFO()
 	// Delete remaining Oscs:
 	for (Oscs::iterator x = _oscs.begin(); x != _oscs.end(); ++x)
 		delete x->second;
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 
 	// Delete waves:
 	for (Waves::iterator w = _waves.begin(); w != _waves.end(); ++w)
@@ -199,7 +201,8 @@ LFO::~LFO()
 void
 LFO::create_ports()
 {
-	_mikuru->graph()->lock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
 	_port_group = new Core::PortGroup (_mikuru->graph(), QString ("LFO %1").arg (this->id()).toStdString());
 	// Inputs:
 	_port_delay = new Core::EventPort (_mikuru, "Delay", Core::Port::Input, _port_group);
@@ -212,7 +215,8 @@ LFO::create_ports()
 	_port_fade_out = new Core::EventPort (_mikuru, "Fade out", Core::Port::Input, _port_group);
 	// Outputs:
 	_port_output = new Core::EventPort (_mikuru, QString ("LFO %1").arg (this->id()).toStdString(), Core::Port::Output, 0, Core::Port::Polyphonic);
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 }
 
 

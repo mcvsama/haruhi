@@ -60,12 +60,14 @@ Filter::Filter (FilterID filter_id, Core::PortGroup* port_group, QString const& 
 	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::spacing);
 	plot_frame_layout->addWidget (_response_plot);
 
-	_mikuru->graph()->lock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
 	_port_frequency = new Core::EventPort (_mikuru, (port_prefix + " - Frequency").toStdString(), Core::Port::Input, port_group, _polyphonic_control ? Core::Port::Polyphonic : 0);
 	_port_resonance = new Core::EventPort (_mikuru, (port_prefix + " - Resonance").toStdString(), Core::Port::Input, port_group, _polyphonic_control ? Core::Port::Polyphonic : 0);
 	_port_gain = new Core::EventPort (_mikuru, (port_prefix + " - Gain").toStdString(), Core::Port::Input, port_group, _polyphonic_control ? Core::Port::Polyphonic : 0);
 	_port_attenuation = new Core::EventPort (_mikuru, (port_prefix + " - Attenuate").toStdString(), Core::Port::Input, port_group, _polyphonic_control ? Core::Port::Polyphonic : 0);
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 
 	_knob_frequency = new Haruhi::Knob (_panel, _port_frequency, &_params.frequency, "Freq.", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Frequency, 2400), 2);
 	_knob_resonance = new Haruhi::Knob (_panel, _port_resonance, &_params.resonance, "Q", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Resonance, 100), 2);
@@ -182,12 +184,14 @@ Filter::~Filter()
 		delete _evdisp_attenuation;
 	}
 
-	_mikuru->graph()->lock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
 	delete _port_frequency;
 	delete _port_resonance;
 	delete _port_gain;
 	delete _port_attenuation;
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 }
 
 

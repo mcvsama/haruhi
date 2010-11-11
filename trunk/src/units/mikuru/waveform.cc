@@ -51,12 +51,14 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 {
 	std::string port_prefix = q_port_prefix.toStdString();
 
-	_mikuru->graph()->lock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
 	_port_wave_shape = new Core::EventPort (_mikuru, port_prefix + " - Wave shape", Core::Port::Input, port_group);
 	_port_modulator_amplitude = new Core::EventPort (_mikuru, port_prefix + " - Modulator amplitude", Core::Port::Input, port_group);
 	_port_modulator_index = new Core::EventPort (_mikuru, port_prefix + " - Modulator index", Core::Port::Input, port_group);
 	_port_modulator_shape = new Core::EventPort (_mikuru, port_prefix + " - Modulator shape", Core::Port::Input, port_group);
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 
 	Params::Waveform p = _params;
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -266,13 +268,15 @@ Waveform::~Waveform()
 	delete _knob_modulator_index;
 	delete _knob_modulator_shape;
 
-	_mikuru->graph()->lock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
 	delete _wave_computer;
 	delete _port_wave_shape;
 	delete _port_modulator_amplitude;
 	delete _port_modulator_index;
 	delete _port_modulator_shape;
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 }
 
 

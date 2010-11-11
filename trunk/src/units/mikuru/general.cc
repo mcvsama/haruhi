@@ -41,7 +41,6 @@ General::General (Mikuru* mikuru, QWidget* parent):
 {
 	Params::General p = _params;
 
-	_mikuru->graph()->lock();
 	_port_volume = new Core::EventPort (_mikuru, "Volume", Core::Port::Input, 0, Core::Port::ControlVolume);
 	_port_detune = new Core::EventPort (_mikuru, "Detune", Core::Port::Input);
 	_port_panorama = new Core::EventPort (_mikuru, "Panorama", Core::Port::Input);
@@ -50,7 +49,6 @@ General::General (Mikuru* mikuru, QWidget* parent):
 	_port_pitchbend = new Core::EventPort (_mikuru, "Pitchbend (global)", Core::Port::Input, 0, Core::Port::ControlPitchbend | Core::Port::Polyphonic);
 	_port_amplitude= new Core::EventPort (_mikuru, "Amplitude (global)", Core::Port::Input, 0, Core::Port::ControlPitchbend | Core::Port::Polyphonic);
 	_port_frequency = new Core::EventPort (_mikuru, "Frequency (global)", Core::Port::Input, 0, Core::Port::ControlPitchbend | Core::Port::Polyphonic);
-	_mikuru->graph()->unlock();
 
 	_knob_volume = new Haruhi::Knob (this, _port_volume, &_params.volume, "Volume dB",
 									 -std::numeric_limits<float>::infinity(), 0.0f,
@@ -128,7 +126,6 @@ General::delete_ports()
 	delete _knob_stereo_width;
 	delete _knob_input_volume;
 
-	_mikuru->graph()->lock();
 	delete _port_volume;
 	delete _port_detune;
 	delete _port_panorama;
@@ -137,7 +134,6 @@ General::delete_ports()
 	delete _port_pitchbend;
 	delete _port_amplitude;
 	delete _port_frequency;
-	_mikuru->graph()->unlock();
 }
 
 

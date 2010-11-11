@@ -69,7 +69,8 @@ Oscillator::Oscillator (Part* part, Core::PortGroup* port_group, QString const& 
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_panel = new QWidget (this);
 
-	_mikuru->graph()->lock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
 	_port_volume = new Core::EventPort (_mikuru, port_prefix + " - Volume", Core::Port::Input, port_group);
 	_port_amplitude = new Core::EventPort (_mikuru, port_prefix + " - Amplitude modulation", Core::Port::Input, port_group, Core::Port::Polyphonic);
 	_port_frequency = new Core::EventPort (_mikuru, port_prefix + " - Frequency modulation", Core::Port::Input, port_group, Core::Port::Polyphonic);
@@ -84,7 +85,8 @@ Oscillator::Oscillator (Part* part, Core::PortGroup* port_group, QString const& 
 	_port_portamento_time = new Core::EventPort (_mikuru, port_prefix + " - Portamento time", Core::Port::Input, port_group);
 	_port_phase = new Core::EventPort (_mikuru, port_prefix + " - Phase", Core::Port::Input, port_group);
 	_port_noise_level = new Core::EventPort (_mikuru, port_prefix + " - Noise level", Core::Port::Input, port_group);
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 
 	_knob_volume			= new Haruhi::Knob (_panel, _port_volume, &_oscillator_params.volume, "Volume dB",
 												-std::numeric_limits<float>::infinity(), 0.0f,
@@ -325,7 +327,8 @@ Oscillator::~Oscillator()
 	delete _knob_phase;
 	delete _knob_noise_level;
 
-	_mikuru->graph()->lock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
 	delete _port_volume;
 	delete _port_amplitude;
 	delete _port_frequency;
@@ -340,7 +343,8 @@ Oscillator::~Oscillator()
 	delete _port_portamento_time;
 	delete _port_phase;
 	delete _port_noise_level;
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 }
 
 
