@@ -36,16 +36,16 @@ class GroupItem:
 	public HighlightableItem
 {
   public:
-	GroupItem (Core::PortGroup*, UnitItem* parent);
+	GroupItem (PortGroup*, UnitItem* parent);
 
-	Core::PortGroup*
+	PortGroup*
 	group() const;
 
 	void
 	update();
 
   private:
-	Core::PortGroup* _group;
+	PortGroup* _group;
 };
 
 } // namespace PortsConnectorPrivate

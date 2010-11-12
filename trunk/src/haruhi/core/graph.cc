@@ -27,8 +27,6 @@
 
 namespace Haruhi {
 
-namespace Core {
-
 Graph::Graph():
 	RecursiveMutex(),
 	_inside_processing_round (false),
@@ -176,8 +174,6 @@ Graph::now()
 	::gettimeofday (&t, 0);
 	return t.tv_sec * 1000000 + t.tv_usec;
 }
-
-} // namespace Core
 
 } // namespace Haruhi
 

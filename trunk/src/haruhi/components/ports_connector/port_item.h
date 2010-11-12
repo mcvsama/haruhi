@@ -41,19 +41,19 @@ class PortItem:
 	friend class ComparableItem;
 
   public:
-	PortItem (Core::Port::Direction type, Core::Port* port, QTreeWidgetItem* parent, QString const& label);
+	PortItem (Port::Direction type, Port* port, QTreeWidgetItem* parent, QString const& label);
 
 	~PortItem();
 
-	Core::Port*
+	Port*
 	port() const;
 
 	void
 	update();
 
   protected:
-	Core::Port::Direction	_type;
-	Core::Port*				_port;
+	Port::Direction	_type;
+	Port*			_port;
 };
 
 } // namespace PortsConnectorPrivate

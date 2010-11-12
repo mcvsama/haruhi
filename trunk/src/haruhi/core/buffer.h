@@ -20,8 +20,6 @@
 
 namespace Haruhi {
 
-namespace Core {
-
 /**
  * Port's buffer (for audio, events).
  *
@@ -57,8 +55,6 @@ class Buffer
 	virtual void
 	mixin (Buffer*) = 0;
 };
-
-} // namespace Core
 
 } // namespace Haruhi
 

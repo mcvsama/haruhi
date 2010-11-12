@@ -149,9 +149,9 @@ VoiceManager::check_polyphony()
 
 
 void
-VoiceManager::voice_event (Haruhi::Core::VoiceEvent const* voice_event)
+VoiceManager::voice_event (Haruhi::VoiceEvent const* voice_event)
 {
-	if (voice_event->type() == Haruhi::Core::VoiceEvent::Release || voice_event->type() == Haruhi::Core::VoiceEvent::Drop)
+	if (voice_event->type() == Haruhi::VoiceEvent::Release || voice_event->type() == Haruhi::VoiceEvent::Drop)
 	{
 		// Find and remove Key from _keys:
 		Keys::iterator k = find_key_by_key_id (voice_event->key_id());
@@ -166,7 +166,7 @@ VoiceManager::voice_event (Haruhi::Core::VoiceEvent const* voice_event)
 
 		switch (voice_event->type())
 		{
-			case Haruhi::Core::VoiceEvent::Release:
+			case Haruhi::VoiceEvent::Release:
 			{
 				Voices result;
 				find_voices_by_key_id (_pressed_voices, voice_event->key_id(), result);
@@ -183,7 +183,7 @@ VoiceManager::voice_event (Haruhi::Core::VoiceEvent const* voice_event)
 				break;
 			}
 
-			case Haruhi::Core::VoiceEvent::Drop:
+			case Haruhi::VoiceEvent::Drop:
 				{
 					Voice* voice;
 					while ((voice = find_voice_by_id (_pressed_voices, voice_event->voice_id())))
@@ -199,7 +199,7 @@ VoiceManager::voice_event (Haruhi::Core::VoiceEvent const* voice_event)
 				;
 		}
 	}
-	else if (voice_event->type() == Haruhi::Core::VoiceEvent::Create && _part->params()->enabled && _part->waveform()->wavetable())
+	else if (voice_event->type() == Haruhi::VoiceEvent::Create && _part->params()->enabled && _part->waveform()->wavetable())
 	{
 		_keys.insert (Key (voice_event->timestamp(), voice_event->key_id(), voice_event->frequency(), voice_event->value()));
 
@@ -212,7 +212,7 @@ VoiceManager::voice_event (Haruhi::Core::VoiceEvent const* voice_event)
 
 
 void
-VoiceManager::buffer_voice_event (Haruhi::Core::VoiceEvent* voice_event)
+VoiceManager::buffer_voice_event (Haruhi::VoiceEvent* voice_event)
 {
 	_events_buffer.push (voice_event);
 }
@@ -221,8 +221,8 @@ VoiceManager::buffer_voice_event (Haruhi::Core::VoiceEvent* voice_event)
 void
 VoiceManager::process_buffered_events()
 {
-	for (Haruhi::Core::EventBuffer::EventsMultiset::iterator e = _events_buffer.events().begin(); e != _events_buffer.events().end(); ++e)
-		voice_event (static_cast<Haruhi::Core::VoiceEvent const*> (e->get()));
+	for (Haruhi::EventBuffer::EventsMultiset::iterator e = _events_buffer.events().begin(); e != _events_buffer.events().end(); ++e)
+		voice_event (static_cast<Haruhi::VoiceEvent const*> (e->get()));
 	_events_buffer.clear();
 }
 
@@ -245,9 +245,9 @@ VoiceManager::set_sustain (bool enabled)
 
 
 void
-VoiceManager::set_voice_param (Haruhi::Core::VoiceID voice_id, Haruhi::ControllerParam (Params::Voice::* param), int value)
+VoiceManager::set_voice_param (Haruhi::VoiceID voice_id, Haruhi::ControllerParam (Params::Voice::* param), int value)
 {
-	if (voice_id == Haruhi::Core::OmniVoice)
+	if (voice_id == Haruhi::OmniVoice)
 	{
 		Voices::iterator v;
 		for (v = _pressed_voices.begin(); v != _pressed_voices.end(); ++v)
@@ -277,9 +277,9 @@ VoiceManager::set_voice_param (Haruhi::Core::VoiceID voice_id, Haruhi::Controlle
 
 
 void
-VoiceManager::set_filter1_param (Haruhi::Core::VoiceID voice_id, Haruhi::ControllerParam (Params::Filter::* param), int value)
+VoiceManager::set_filter1_param (Haruhi::VoiceID voice_id, Haruhi::ControllerParam (Params::Filter::* param), int value)
 {
-	if (voice_id == Haruhi::Core::OmniVoice)
+	if (voice_id == Haruhi::OmniVoice)
 	{
 		Voices::iterator v;
 		for (v = _pressed_voices.begin(); v != _pressed_voices.end(); ++v)
@@ -309,9 +309,9 @@ VoiceManager::set_filter1_param (Haruhi::Core::VoiceID voice_id, Haruhi::Control
 
 
 void
-VoiceManager::set_filter2_param (Haruhi::Core::VoiceID voice_id, Haruhi::ControllerParam (Params::Filter::* param), int value)
+VoiceManager::set_filter2_param (Haruhi::VoiceID voice_id, Haruhi::ControllerParam (Params::Filter::* param), int value)
 {
-	if (voice_id == Haruhi::Core::OmniVoice)
+	if (voice_id == Haruhi::OmniVoice)
 	{
 		Voices::iterator v;
 		for (v = _pressed_voices.begin(); v != _pressed_voices.end(); ++v)
@@ -383,7 +383,7 @@ VoiceManager::set_all_filters2_params (Params::Filter& params)
 
 
 void
-VoiceManager::poly_create (Haruhi::Core::VoiceEvent const* voice_event)
+VoiceManager::poly_create (Haruhi::VoiceEvent const* voice_event)
 {
 	// If there is already voice with the same voice_id, drop it first:
 	Voice* v = find_voice_by_id (_pressed_voices, voice_event->voice_id());
@@ -434,7 +434,7 @@ VoiceManager::poly_drop (Voice* voice)
 
 
 void
-VoiceManager::mono_update (Haruhi::Core::VoiceEvent const* voice_event)
+VoiceManager::mono_update (Haruhi::VoiceEvent const* voice_event)
 {
 	if (_part->oscillator()->oscillator_params()->monophonic.get() || _mono_voice)
 	{
@@ -451,10 +451,10 @@ VoiceManager::mono_update (Haruhi::Core::VoiceEvent const* voice_event)
 
 			if (key)
 			{
-				Haruhi::Core::KeyID key_id = key->key_id;
-				Haruhi::Core::VoiceID voice_id = voice_event ? voice_event->voice_id() : _mono_voice->voice_id();
-				Haruhi::Core::VoiceEvent::Frequency frequency = Haruhi::Core::VoiceEvent::frequency_from_key_id (key_id, _mikuru->graph()->master_tune()) / _mikuru->graph()->sample_rate();
-				Haruhi::Core::Timestamp timestamp = key->timestamp;
+				Haruhi::KeyID key_id = key->key_id;
+				Haruhi::VoiceID voice_id = voice_event ? voice_event->voice_id() : _mono_voice->voice_id();
+				Haruhi::VoiceEvent::Frequency frequency = Haruhi::VoiceEvent::frequency_from_key_id (key_id, _mikuru->graph()->master_tune()) / _mikuru->graph()->sample_rate();
+				Haruhi::Timestamp timestamp = key->timestamp;
 				Sample value = key->value;
 
 				if (_mono_voice)
@@ -516,7 +516,7 @@ VoiceManager::mono_drop()
 
 
 Voice*
-VoiceManager::find_voice_by_id (Voices& where, Haruhi::Core::VoiceID voice_id) const
+VoiceManager::find_voice_by_id (Voices& where, Haruhi::VoiceID voice_id) const
 {
 	for (Voices::const_iterator v = where.begin(); v != where.end(); ++v)
 		if ((*v)->voice_id() == voice_id)
@@ -526,7 +526,7 @@ VoiceManager::find_voice_by_id (Voices& where, Haruhi::Core::VoiceID voice_id) c
 
 
 void
-VoiceManager::find_voices_by_key_id (Voices& where, Haruhi::Core::KeyID key_id, Voices& result) const
+VoiceManager::find_voices_by_key_id (Voices& where, Haruhi::KeyID key_id, Voices& result) const
 {
 	for (Voices::const_iterator v = where.begin(); v != where.end(); ++v)
 		if ((*v)->key_id() == key_id)
@@ -535,7 +535,7 @@ VoiceManager::find_voices_by_key_id (Voices& where, Haruhi::Core::KeyID key_id, 
 
 
 VoiceManager::Keys::iterator
-VoiceManager::find_key_by_key_id (Haruhi::Core::KeyID key_id)
+VoiceManager::find_key_by_key_id (Haruhi::KeyID key_id)
 {
 	for (Keys::iterator k = _keys.begin(); k != _keys.end(); ++k)
 		if (k->key_id == key_id)
@@ -551,7 +551,7 @@ VoiceManager::find_key_with_lowest_key_id()
 		return _keys.end();
 
 	Keys::iterator current = _keys.begin();
-	Haruhi::Core::KeyID key_id = current->key_id;
+	Haruhi::KeyID key_id = current->key_id;
 	for (Keys::iterator k = _keys.begin(); k != _keys.end(); ++k)
 	{
 		if (k->key_id < key_id)
@@ -571,7 +571,7 @@ VoiceManager::find_key_with_highest_key_id()
 		return _keys.end();
 
 	Keys::iterator current = _keys.begin();
-	Haruhi::Core::KeyID key_id = current->key_id;
+	Haruhi::KeyID key_id = current->key_id;
 	for (Keys::iterator k = _keys.begin(); k != _keys.end(); ++k)
 	{
 		if (k->key_id > key_id)

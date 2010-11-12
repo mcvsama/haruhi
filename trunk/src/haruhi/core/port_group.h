@@ -21,8 +21,6 @@
 
 namespace Haruhi {
 
-namespace Core {
-
 class Graph;
 
 class PortGroup
@@ -31,7 +29,7 @@ class PortGroup
 	struct CompareByName
 	{
 		bool
-		operator() (Core::PortGroup* a, Core::PortGroup* b)
+		operator() (PortGroup* a, PortGroup* b)
 		{
 			return a->name() < b->name();
 		}
@@ -53,8 +51,6 @@ class PortGroup
 	Graph*		_graph;
 	std::string	_name;
 };
-
-} // namespace Core
 
 } // namespace Haruhi
 

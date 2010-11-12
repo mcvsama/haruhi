@@ -40,7 +40,6 @@ class Mikuru;
 
 namespace MikuruPrivate {
 
-namespace Core = Haruhi::Core;
 namespace DSP = Haruhi::DSP;
 class Voice;
 class VoiceManager;
@@ -258,48 +257,48 @@ class LFO: public Envelope
 	get_phase() const;
 
   private:
-	Mikuru*						_mikuru;
-	Params::LFO					_params;
-	bool						_loading_params;
-	int							_id;
-	int							_pressed_keys;
+	Mikuru*				_mikuru;
+	Params::LFO			_params;
+	bool				_loading_params;
+	int					_id;
+	int					_pressed_keys;
 
-	Haruhi::Core::PortGroup*	_port_group;
-	Haruhi::Core::EventPort*	_port_delay;
-	Haruhi::Core::EventPort*	_port_fade_in;
-	Haruhi::Core::EventPort*	_port_frequency;
-	Haruhi::Core::EventPort*	_port_level;
-	Haruhi::Core::EventPort*	_port_depth;
-	Haruhi::Core::EventPort*	_port_phase;
-	Haruhi::Core::EventPort*	_port_output;
-	Haruhi::Core::EventPort*	_port_wave_shape;
-	Haruhi::Core::EventPort*	_port_fade_out;
+	Haruhi::PortGroup*	_port_group;
+	Haruhi::EventPort*	_port_delay;
+	Haruhi::EventPort*	_port_fade_in;
+	Haruhi::EventPort*	_port_frequency;
+	Haruhi::EventPort*	_port_level;
+	Haruhi::EventPort*	_port_depth;
+	Haruhi::EventPort*	_port_phase;
+	Haruhi::EventPort*	_port_output;
+	Haruhi::EventPort*	_port_wave_shape;
+	Haruhi::EventPort*	_port_fade_out;
 
-	Oscs						_oscs;
-	Osc							_common_osc;
-	Waves						_waves;
-	DSP::Noise					_noise;
+	Oscs				_oscs;
+	Osc					_common_osc;
+	Waves				_waves;
+	DSP::Noise			_noise;
 
-	Haruhi::Knob*				_knob_delay;
-	Haruhi::Knob*				_knob_fade_in;
-	Haruhi::Knob*				_knob_frequency;
-	Haruhi::Knob*				_knob_level;
-	Haruhi::Knob*				_knob_depth;
-	Haruhi::Knob*				_knob_phase;
-	Haruhi::Knob*				_knob_wave_shape;
-	Haruhi::Knob*				_knob_fade_out;
+	Haruhi::Knob*		_knob_delay;
+	Haruhi::Knob*		_knob_fade_in;
+	Haruhi::Knob*		_knob_frequency;
+	Haruhi::Knob*		_knob_level;
+	Haruhi::Knob*		_knob_depth;
+	Haruhi::Knob*		_knob_phase;
+	Haruhi::Knob*		_knob_wave_shape;
+	Haruhi::Knob*		_knob_fade_out;
 
-	QCheckBox*					_enabled;
-	QComboBox*					_wave_type;
-	QCheckBox*					_wave_invert;
-	QComboBox*					_function;
-	QComboBox*					_mode;
-	QCheckBox*					_tempo_sync;
-	QSpinBox*					_tempo_numerator;
-	QSpinBox*					_tempo_denominator;
-	QCheckBox*					_random_start_phase;
-	QCheckBox*					_fade_out_enabled;
-	Haruhi::WavePlot*			_plot;
+	QCheckBox*			_enabled;
+	QComboBox*			_wave_type;
+	QCheckBox*			_wave_invert;
+	QComboBox*			_function;
+	QComboBox*			_mode;
+	QCheckBox*			_tempo_sync;
+	QSpinBox*			_tempo_numerator;
+	QSpinBox*			_tempo_denominator;
+	QCheckBox*			_random_start_phase;
+	QCheckBox*			_fade_out_enabled;
+	Haruhi::WavePlot*	_plot;
 };
 
 } // namespace MikuruPrivate

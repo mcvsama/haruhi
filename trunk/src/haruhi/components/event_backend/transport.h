@@ -19,8 +19,7 @@
 #include <string>
 
 // Haruhi:
-#include <haruhi/config.h>
-#include <haruhi/core/core.h>
+#include <haruhi/config/all.h>
 
 
 namespace Haruhi {
@@ -47,7 +46,7 @@ class Transport
 			KeyPressure,
 		};
 
-		Core::Timestamp timestamp;
+		Timestamp timestamp;
 		Type type;
 
 		union

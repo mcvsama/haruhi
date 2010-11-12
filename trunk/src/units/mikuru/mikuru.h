@@ -58,7 +58,7 @@
 /**
  * Mikuru virtual-analog synthesizer.
  *
- * Mutexes acquiring order: Core::Graph mutex, _parts_mutex, _synth_threads_mutex.
+ * Mutexes acquiring order: Haruhi::Graph mutex, _parts_mutex, _synth_threads_mutex.
  */
 class Mikuru:
 	public Haruhi::Plugin,
@@ -80,11 +80,11 @@ class Mikuru:
 	 * Notification sent to other Mikurus
 	 * when user changes global configuration.
 	 */
-	class UpdateConfig: public Haruhi::Core::Notification
+	class UpdateConfig: public Haruhi::Notification
 	{
 	  public:
 		UpdateConfig (Mikuru* sender, std::string const& urn):
-			Haruhi::Core::Notification (urn),
+			Haruhi::Notification (urn),
 			_sender (sender)
 		{ }
 
@@ -104,13 +104,13 @@ class Mikuru:
 	virtual ~Mikuru();
 
 	/**
-	 * Core::Unit API
+	 * Unit API
 	 */
 	void
 	registered();
 
 	/**
-	 * Core::Unit API
+	 * Unit API
 	 */
 	void
 	unregistered();
@@ -127,7 +127,7 @@ class Mikuru:
 	void
 	graph_updated();
 
-	Haruhi::Core::EventPort*
+	Haruhi::EventPort*
 	keyboard_port() const { return _port_keyboard; }
 
 	/**
@@ -167,10 +167,10 @@ class Mikuru:
 	part_tab_position (MikuruPrivate::Part* part) const { return _tabs_widget->indexOf (part); }
 
 	/**
-	 * Core::Unit::notify implementation.
+	 * Unit::notify implementation.
 	 */
 	void
-	notify (Haruhi::Core::Notification*);
+	notify (Haruhi::Notification*);
 
 	/*
 	 * Haruhi::UnitBayAware implementation.
@@ -337,24 +337,24 @@ class Mikuru:
 	// Synthesizer ports
 	//
 
-	Haruhi::Core::AudioBuffer		_mix_L;
-	Haruhi::Core::AudioBuffer		_mix_R;
-	Haruhi::Core::AudioBuffer		_filter_buffer_L;
-	Haruhi::Core::AudioBuffer		_filter_buffer_R;
-	Haruhi::Core::AudioBuffer		_input_buffer_L;
-	Haruhi::Core::AudioBuffer		_input_buffer_R;
+	Haruhi::AudioBuffer				_mix_L;
+	Haruhi::AudioBuffer				_mix_R;
+	Haruhi::AudioBuffer				_filter_buffer_L;
+	Haruhi::AudioBuffer				_filter_buffer_R;
+	Haruhi::AudioBuffer				_input_buffer_L;
+	Haruhi::AudioBuffer				_input_buffer_R;
 
 	// Audio inputs:
-	Haruhi::Core::AudioPort*		_audio_input_L;
-	Haruhi::Core::AudioPort*		_audio_input_R;
+	Haruhi::AudioPort*				_audio_input_L;
+	Haruhi::AudioPort*				_audio_input_R;
 
 	// Audio outputs:
-	Haruhi::Core::AudioPort*		_audio_output_L;
-	Haruhi::Core::AudioPort*		_audio_output_R;
+	Haruhi::AudioPort*				_audio_output_L;
+	Haruhi::AudioPort*				_audio_output_R;
 
 	// Drive:
-	Haruhi::Core::EventPort*		_port_keyboard;
-	Haruhi::Core::EventPort*		_port_sustain;
+	Haruhi::EventPort*				_port_keyboard;
+	Haruhi::EventPort*				_port_sustain;
 
 	//
 	// Other

@@ -209,7 +209,7 @@ class Session: public QWidget
 	void
 	set_file_name (QString const& file_name) { _file_name = file_name; }
 
-	Core::Graph*
+	Graph*
 	graph() const { return _graph; }
 
 	PluginLoader*
@@ -298,7 +298,7 @@ class Session: public QWidget
 	QString					_file_name;
 	Parameters				_parameters;
 
-	Core::Graph*			_graph;
+	Graph*					_graph;
 
 	QVBoxLayout*			_layout;
 	MeterPanel*				_meter_panel;

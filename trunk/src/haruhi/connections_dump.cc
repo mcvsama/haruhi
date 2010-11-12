@@ -31,14 +31,14 @@ ConnectionsDump::ConnectionsDump (bool only_internal):
 
 
 void
-ConnectionsDump::insert_unit (Core::Unit* unit)
+ConnectionsDump::insert_unit (Unit* unit)
 {
 	_units.insert (unit);
 }
 
 
 void
-ConnectionsDump::remove_unit (Core::Unit* unit)
+ConnectionsDump::remove_unit (Unit* unit)
 {
 	_units.erase (unit);
 }
@@ -50,10 +50,10 @@ ConnectionsDump::save()
 	_connections.clear();
 	for (Units::iterator u = _units.begin(); u != _units.end(); ++u)
 	{
-		for (Core::Ports::const_iterator f = (*u)->outputs().begin(); f != (*u)->outputs().end(); ++f)
+		for (Ports::const_iterator f = (*u)->outputs().begin(); f != (*u)->outputs().end(); ++f)
 		{
 			// Collect only forward connections:
-			for (Core::Ports::const_iterator t = (*f)->forward_connections().begin(); t != (*f)->forward_connections().end(); ++t)
+			for (Ports::const_iterator t = (*f)->forward_connections().begin(); t != (*f)->forward_connections().end(); ++t)
 			{
 				if (_only_internal && _units.find ((*t)->unit()) == _units.end())
 					continue;
@@ -68,7 +68,7 @@ ConnectionsDump::save()
 void
 ConnectionsDump::load() const
 {
-	typedef std::map<QString, Core::Unit*> Map;
+	typedef std::map<QString, Unit*> Map;
 	Map map;
 
 	// Build map for fast access to Units:
@@ -83,8 +83,8 @@ ConnectionsDump::load() const
 		if (m1 != map.end() && m2 != map.end())
 		{
 			// Find ports by full-name:
-			Core::Ports::const_iterator e1 = m1->second->outputs().end(), e2 = m2->second->inputs().end();
-			Core::Ports::const_iterator p1 = e1, p2 = e2;
+			Ports::const_iterator e1 = m1->second->outputs().end(), e2 = m2->second->inputs().end();
+			Ports::const_iterator p1 = e1, p2 = e2;
 			for (p1 = m1->second->outputs().begin(); p1 != e1; ++p1)
 				if ((*p1)->full_name() == c->source_port.toStdString())
 					break;

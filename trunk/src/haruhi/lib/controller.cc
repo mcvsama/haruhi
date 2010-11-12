@@ -26,7 +26,7 @@
 
 namespace Haruhi {
 
-Controller::Controller (Core::EventPort* event_port, ControllerParam* controller_param):
+Controller::Controller (EventPort* event_port, ControllerParam* controller_param):
 	_controller_proxy (event_port, controller_param),
 	_unit_bay (0),
 	_learning (false)
@@ -69,7 +69,7 @@ Controller::stop_learning()
 
 
 void
-Controller::learned_port (EventBackend::EventTypes, Core::EventPort* event_port)
+Controller::learned_port (EventBackend::EventTypes, EventPort* event_port)
 {
 	if (unit_bay())
 	{

@@ -60,7 +60,7 @@ class ControllerWithPortDialog;
 
 class Backend:
 	public QWidget,
-	public Core::Unit,
+	public Unit,
 	public Teacher,
 	public SaveableState,
 	public ::Haruhi::Backend
@@ -80,13 +80,13 @@ class Backend:
 	~Backend();
 
 	/**
-	 * Core::Unit API
+	 * Unit API
 	 */
 	void
 	registered();
 
 	/**
-	 * Core::Unit API
+	 * Unit API
 	 */
 	void
 	unregistered();

@@ -61,7 +61,7 @@ PortItem::name() const
 }
 
 
-Core::AudioPort*
+AudioPort*
 PortItem::port() const
 {
 	return _port;

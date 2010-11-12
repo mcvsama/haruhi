@@ -43,13 +43,13 @@ class VanHalen:
 	virtual ~VanHalen();
 
 	/**
-	 * Core::Unit API
+	 * Unit API
 	 */
 	void
 	registered();
 
 	/**
-	 * Core::Unit API
+	 * Unit API
 	 */
 	void
 	unregistered();
@@ -65,24 +65,24 @@ class VanHalen:
 
   private:
 	// Drive:
-	Haruhi::Core::EventPort*	_input;
-	Haruhi::Core::EventPort*	_output;
-	Haruhi::Core::AudioPort*	_audio_input_1;
-	Haruhi::Core::AudioPort*	_audio_input_2;
-	Haruhi::Core::AudioPort*	_audio_output_1;
-	Haruhi::Core::AudioPort*	_audio_output_2;
+	Haruhi::EventPort*		_input;
+	Haruhi::EventPort*		_output;
+	Haruhi::AudioPort*		_audio_input_1;
+	Haruhi::AudioPort*		_audio_input_2;
+	Haruhi::AudioPort*		_audio_output_1;
+	Haruhi::AudioPort*		_audio_output_2;
 
-	Haruhi::Core::AudioBuffer	_buf1;
-	Haruhi::Core::AudioBuffer	_buf2;
+	Haruhi::AudioBuffer		_buf1;
+	Haruhi::AudioBuffer		_buf2;
 
-	Haruhi::DSP::DelayLine		_delay1;
-	Haruhi::DSP::DelayLine		_delay2;
+	Haruhi::DSP::DelayLine	_delay1;
+	Haruhi::DSP::DelayLine	_delay2;
 
-	Haruhi::Knob*				_knob_comb_index;
-	Haruhi::Knob*				_knob_comb_alpha;
+	Haruhi::Knob*			_knob_comb_index;
+	Haruhi::Knob*			_knob_comb_alpha;
 
-	Haruhi::ControllerParam		_comb_index;
-	Haruhi::ControllerParam		_comb_alpha;
+	Haruhi::ControllerParam	_comb_index;
+	Haruhi::ControllerParam	_comb_alpha;
 };
 
 

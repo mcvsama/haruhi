@@ -29,9 +29,7 @@
 
 namespace Haruhi {
 
-namespace Core {
-
-class AudioBuffer: public Core::Buffer
+class AudioBuffer: public Buffer
 {
 	USES_POOL_ALLOCATOR (AudioBuffer)
 
@@ -182,8 +180,6 @@ class AudioBuffer: public Core::Buffer
 	std::size_t	_size;
 	Sample*		_end;
 };
-
-} // namespace Core
 
 } // namespace Haruhi
 

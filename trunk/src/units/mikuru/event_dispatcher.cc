@@ -29,14 +29,14 @@
 namespace MikuruPrivate {
 
 void
-EventDispatcher::VoiceParamReceiver::receive (Core::VoiceID voice_id, int value)
+EventDispatcher::VoiceParamReceiver::receive (Haruhi::VoiceID voice_id, int value)
 {
 	_voice_manager->set_voice_param (voice_id, _voice_param, value);
 }
 
 
 void
-EventDispatcher::VoiceFilterParamReceiver::receive (Core::VoiceID voice_id, int value)
+EventDispatcher::VoiceFilterParamReceiver::receive (Haruhi::VoiceID voice_id, int value)
 {
 	switch (_filter_id)
 	{
@@ -51,7 +51,7 @@ EventDispatcher::VoiceFilterParamReceiver::receive (Core::VoiceID voice_id, int 
 }
 
 
-EventDispatcher::EventDispatcher (Core::EventPort* port, Haruhi::Knob* knob, Receiver* receiver):
+EventDispatcher::EventDispatcher (Haruhi::EventPort* port, Haruhi::Knob* knob, Receiver* receiver):
 	_port (port),
 	_knob (knob),
 	_receiver (receiver),
@@ -61,7 +61,7 @@ EventDispatcher::EventDispatcher (Core::EventPort* port, Haruhi::Knob* knob, Rec
 }
 
 
-EventDispatcher::EventDispatcher (Core::EventPort* port, int min, int max, Receiver* receiver):
+EventDispatcher::EventDispatcher (Haruhi::EventPort* port, int min, int max, Receiver* receiver):
 	_port (port),
 	_knob (0),
 	_receiver (receiver),
@@ -74,25 +74,25 @@ EventDispatcher::EventDispatcher (Core::EventPort* port, int min, int max, Recei
 void
 EventDispatcher::load_events()
 {
-	Core::EventBuffer* buffer = _port->event_buffer();
-	Core::ControllerEvent const* ce = 0;
-	Core::VoiceControllerEvent const* vce = 0;
+	Haruhi::EventBuffer* buffer = _port->event_buffer();
+	Haruhi::ControllerEvent const* ce = 0;
+	Haruhi::VoiceControllerEvent const* vce = 0;
 
 	_vcemap.clear();
 
 	if (!buffer->events().empty())
 	{
 		// Use last controller value:
-		for (Core::EventBuffer::EventsMultiset::const_iterator e = buffer->events().begin(); e != buffer->events().end(); ++e)
+		for (Haruhi::EventBuffer::EventsMultiset::const_iterator e = buffer->events().begin(); e != buffer->events().end(); ++e)
 		{
 			switch ((*e)->event_type())
 			{
-				case Core::Event::ControllerEventType:
-					ce = static_cast<Core::ControllerEvent const*> (e->get());
+				case Haruhi::Event::ControllerEventType:
+					ce = static_cast<Haruhi::ControllerEvent const*> (e->get());
 					break;
 
-				case Core::Event::VoiceControllerEventType:
-					vce = static_cast<Core::VoiceControllerEvent const*> (e->get());
+				case Haruhi::Event::VoiceControllerEventType:
+					vce = static_cast<Haruhi::VoiceControllerEvent const*> (e->get());
 					_vcemap[vce->voice_id()] = vce;
 					break;
 
@@ -107,7 +107,7 @@ EventDispatcher::load_events()
 		if (_knob)
 			_knob->controller_proxy().process_event (ce);
 		else
-			_receiver->receive (Core::OmniVoice, renormalize (ce->value(), 0.0f, 1.0f, _min, _max));
+			_receiver->receive (Haruhi::OmniVoice, renormalize (ce->value(), 0.0f, 1.0f, _min, _max));
 	}
 
 	if (_knob)

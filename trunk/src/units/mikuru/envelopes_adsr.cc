@@ -99,17 +99,17 @@ ADSR::create_ports()
 {
 	if (_mikuru->graph())
 		_mikuru->graph()->lock();
-	_port_group = new Core::PortGroup (_mikuru->graph(), QString ("ADSR %1").arg (this->id()).toStdString());
+	_port_group = new Haruhi::PortGroup (_mikuru->graph(), QString ("ADSR %1").arg (this->id()).toStdString());
 	// Inputs:
-	_port_delay = new Core::EventPort (_mikuru, "Delay", Core::Port::Input, _port_group);
-	_port_attack = new Core::EventPort (_mikuru, "Attack", Core::Port::Input, _port_group);
-	_port_attack_hold = new Core::EventPort (_mikuru, "Attack hold", Core::Port::Input, _port_group);
-	_port_decay = new Core::EventPort (_mikuru, "Decay", Core::Port::Input, _port_group);
-	_port_sustain = new Core::EventPort (_mikuru, "Sustain", Core::Port::Input, _port_group);
-	_port_sustain_hold = new Core::EventPort (_mikuru, "Sustain hold", Core::Port::Input, _port_group);
-	_port_release = new Core::EventPort (_mikuru, "Release", Core::Port::Input, _port_group);
+	_port_delay = new Haruhi::EventPort (_mikuru, "Delay", Haruhi::Port::Input, _port_group);
+	_port_attack = new Haruhi::EventPort (_mikuru, "Attack", Haruhi::Port::Input, _port_group);
+	_port_attack_hold = new Haruhi::EventPort (_mikuru, "Attack hold", Haruhi::Port::Input, _port_group);
+	_port_decay = new Haruhi::EventPort (_mikuru, "Decay", Haruhi::Port::Input, _port_group);
+	_port_sustain = new Haruhi::EventPort (_mikuru, "Sustain", Haruhi::Port::Input, _port_group);
+	_port_sustain_hold = new Haruhi::EventPort (_mikuru, "Sustain hold", Haruhi::Port::Input, _port_group);
+	_port_release = new Haruhi::EventPort (_mikuru, "Release", Haruhi::Port::Input, _port_group);
 	// Outputs:
-	_port_output = new Core::EventPort (_mikuru, QString ("ADSR %1").arg (this->id()).toStdString(), Core::Port::Output, 0, Core::Port::Polyphonic);
+	_port_output = new Haruhi::EventPort (_mikuru, QString ("ADSR %1").arg (this->id()).toStdString(), Haruhi::Port::Output, 0, Haruhi::Port::Polyphonic);
 	if (_mikuru->graph())
 		_mikuru->graph()->unlock();
 }
@@ -293,7 +293,7 @@ ADSR::process()
 	if (_adsrs.empty())
 		return;
 
-	Core::Timestamp t = _mikuru->graph()->timestamp();
+	Haruhi::Timestamp t = _mikuru->graph()->timestamp();
 	Haruhi::Sample v;
 	const bool direct_adsr = _params.direct_adsr.get();
 
@@ -321,10 +321,10 @@ ADSR::process()
 			if (direct_adsr)
 				voice->voice_manager()->set_voice_param (voice->voice_id(), &Params::Voice::adsr, Params::Voice::AdsrMin);
 			// Mute sound completely:
-			_port_output->event_buffer()->push (new Core::VoiceControllerEvent (t, voice->voice_id(), 0.0f));
+			_port_output->event_buffer()->push (new Haruhi::VoiceControllerEvent (t, voice->voice_id(), 0.0f));
 			// Don't call VoiceManager#voice_event() directly, because it will callback our methods. Use buffer.
 			if (direct_adsr)
-				voice->voice_manager()->buffer_voice_event (new Core::VoiceEvent (t, Core::OmniKey, voice->voice_id(), Core::VoiceEvent::Drop, 0.0, 0.0));
+				voice->voice_manager()->buffer_voice_event (new Haruhi::VoiceEvent (t, Haruhi::OmniKey, voice->voice_id(), Haruhi::VoiceEvent::Drop, 0.0, 0.0));
 		}
 		else
 		{
@@ -332,7 +332,7 @@ ADSR::process()
 			if (direct_adsr)
 				voice->voice_manager()->set_voice_param (voice->voice_id(), &Params::Voice::adsr, Params::Voice::AdsrMax * v);
 			// Normal event on output:
-			_port_output->event_buffer()->push (new Core::VoiceControllerEvent (t, voice->voice_id(), v));
+			_port_output->event_buffer()->push (new Haruhi::VoiceControllerEvent (t, voice->voice_id(), v));
 		}
 	}
 }

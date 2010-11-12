@@ -21,8 +21,6 @@
 
 namespace Haruhi {
 
-namespace Core {
-
 class Notification
 {
   public:
@@ -55,8 +53,6 @@ class Notification
 	bool		_broadcast;
 	std::string	_target_urn;
 };
-
-} // namespace Core
 
 } // namespace Haruhi
 

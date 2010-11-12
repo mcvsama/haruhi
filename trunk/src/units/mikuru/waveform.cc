@@ -43,7 +43,7 @@
 
 namespace MikuruPrivate {
 
-Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_port_prefix, Mikuru* mikuru, QWidget* parent):
+Waveform::Waveform (Part* part, Haruhi::PortGroup* port_group, QString const& q_port_prefix, Mikuru* mikuru, QWidget* parent):
 	QWidget (parent),
 	_mikuru (mikuru),
 	_part (part),
@@ -53,10 +53,10 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 
 	if (_mikuru->graph())
 		_mikuru->graph()->lock();
-	_port_wave_shape = new Core::EventPort (_mikuru, port_prefix + " - Wave shape", Core::Port::Input, port_group);
-	_port_modulator_amplitude = new Core::EventPort (_mikuru, port_prefix + " - Modulator amplitude", Core::Port::Input, port_group);
-	_port_modulator_index = new Core::EventPort (_mikuru, port_prefix + " - Modulator index", Core::Port::Input, port_group);
-	_port_modulator_shape = new Core::EventPort (_mikuru, port_prefix + " - Modulator shape", Core::Port::Input, port_group);
+	_port_wave_shape = new Haruhi::EventPort (_mikuru, port_prefix + " - Wave shape", Haruhi::Port::Input, port_group);
+	_port_modulator_amplitude = new Haruhi::EventPort (_mikuru, port_prefix + " - Modulator amplitude", Haruhi::Port::Input, port_group);
+	_port_modulator_index = new Haruhi::EventPort (_mikuru, port_prefix + " - Modulator index", Haruhi::Port::Input, port_group);
+	_port_modulator_shape = new Haruhi::EventPort (_mikuru, port_prefix + " - Modulator shape", Haruhi::Port::Input, port_group);
 	if (_mikuru->graph())
 		_mikuru->graph()->unlock();
 

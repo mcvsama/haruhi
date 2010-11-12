@@ -39,7 +39,7 @@
 
 namespace MikuruPrivate {
 
-Voice::Voice (VoiceManager* voice_manager, SynthThread* thread, Core::KeyID key_id, Core::VoiceID voice_id, Sample frequency, Sample amplitude, Haruhi::Core::Timestamp timestamp):
+Voice::Voice (VoiceManager* voice_manager, SynthThread* thread, Haruhi::KeyID key_id, Haruhi::VoiceID voice_id, Sample frequency, Sample amplitude, Haruhi::Timestamp timestamp):
 	_mikuru (voice_manager->part()->mikuru()),
 	_params (*voice_manager->part()->oscillator()->voice_params()),
 	_part (voice_manager->part()),
@@ -124,7 +124,7 @@ Voice::set_frequency (Sample frequency)
 
 
 void
-Voice::mixin (Haruhi::Core::AudioBuffer* output1, Haruhi::Core::AudioBuffer* output2)
+Voice::mixin (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
 {
 	process_frequency();
 	process_amplitude();
@@ -143,7 +143,7 @@ Voice::mixin (Haruhi::Core::AudioBuffer* output1, Haruhi::Core::AudioBuffer* out
 
 	_double_filter.configure (static_cast<DoubleFilter::Configuration> (static_cast<int> (_part->filters()->params()->filter_configuration.get())), &_filter1_params, &_filter2_params);
 	bool filtered = _double_filter.process (_commons->oscillator_buffer, _commons->filter_buffer1, _commons->filter_buffer2, _commons->output_buffer);
-	Haruhi::Core::AudioBuffer& filters_output = filtered ? _commons->output_buffer : _commons->oscillator_buffer;
+	Haruhi::AudioBuffer& filters_output = filtered ? _commons->output_buffer : _commons->oscillator_buffer;
 
 	// Attacking or dropping? Multiply samples.
 	if (_attack_sample < _attack_samples)

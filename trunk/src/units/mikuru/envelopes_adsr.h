@@ -42,11 +42,9 @@ class Mikuru;
 
 namespace MikuruPrivate {
 
-namespace Core = Haruhi::Core;
 class Voice;
 class VoiceManager;
 class Part;
-
 
 class ADSR: public Envelope
 {
@@ -123,40 +121,40 @@ class ADSR: public Envelope
 	sweep();
 
   private:
-	Mikuru*						_mikuru;
-	Params::ADSR				_params;
-	bool						_loading_params;
-	int							_id;
-	DSP::Envelope				_envelope_for_plot;
-	ADSRs						_adsrs;
-	Haruhi::Core::AudioBuffer	_buffer;
+	Mikuru*					_mikuru;
+	Params::ADSR			_params;
+	bool					_loading_params;
+	int						_id;
+	DSP::Envelope			_envelope_for_plot;
+	ADSRs					_adsrs;
+	Haruhi::AudioBuffer		_buffer;
 	// List of Voices which has been dropped and need ADSRs to be deleted also:
-	std::list<Voice*>			_dropped_voices;
+	std::list<Voice*>		_dropped_voices;
 
-	Haruhi::Core::PortGroup*	_port_group;
-	Haruhi::Core::EventPort*	_port_delay;
-	Haruhi::Core::EventPort*	_port_attack;
-	Haruhi::Core::EventPort*	_port_attack_hold;
-	Haruhi::Core::EventPort*	_port_decay;
-	Haruhi::Core::EventPort*	_port_sustain;
-	Haruhi::Core::EventPort*	_port_sustain_hold;
-	Haruhi::Core::EventPort*	_port_release;
-	Haruhi::Core::EventPort*	_port_output;
+	Haruhi::PortGroup*		_port_group;
+	Haruhi::EventPort*		_port_delay;
+	Haruhi::EventPort*		_port_attack;
+	Haruhi::EventPort*		_port_attack_hold;
+	Haruhi::EventPort*		_port_decay;
+	Haruhi::EventPort*		_port_sustain;
+	Haruhi::EventPort*		_port_sustain_hold;
+	Haruhi::EventPort*		_port_release;
+	Haruhi::EventPort*		_port_output;
 
-	QCheckBox*					_enabled;
-	QCheckBox*					_direct_adsr;
-	QCheckBox*					_forced_release;
-	QCheckBox*					_sustain_enabled;
-	Haruhi::Knob*				_knob_delay;
-	Haruhi::Knob*				_knob_attack;
-	Haruhi::Knob*				_knob_attack_hold;
-	Haruhi::Knob*				_knob_decay;
-	Haruhi::Knob*				_knob_sustain;
-	Haruhi::Knob*				_knob_sustain_hold;
-	Haruhi::Knob*				_knob_release;
-	QComboBox*					_function;
-	QComboBox*					_mode;
-	Haruhi::EnvelopePlot*		_plot;
+	QCheckBox*				_enabled;
+	QCheckBox*				_direct_adsr;
+	QCheckBox*				_forced_release;
+	QCheckBox*				_sustain_enabled;
+	Haruhi::Knob*			_knob_delay;
+	Haruhi::Knob*			_knob_attack;
+	Haruhi::Knob*			_knob_attack_hold;
+	Haruhi::Knob*			_knob_decay;
+	Haruhi::Knob*			_knob_sustain;
+	Haruhi::Knob*			_knob_sustain_hold;
+	Haruhi::Knob*			_knob_release;
+	QComboBox*				_function;
+	QComboBox*				_mode;
+	Haruhi::EnvelopePlot*	_plot;
 };
 
 } // namespace MikuruPrivate

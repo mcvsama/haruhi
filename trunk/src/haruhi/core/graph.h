@@ -19,18 +19,16 @@
 #include <set>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/signal.h>
 
 // Local:
-#include "core.h"
 #include "exception.h"
 #include "unit.h"
 
 
 namespace Haruhi {
-
-namespace Core {
 
 class Port;
 class Unit;
@@ -192,8 +190,6 @@ class Graph: public RecursiveMutex
 	float			_tempo;
 	float			_master_tune;
 };
-
-} // namespace Core
 
 } // namespace Haruhi
 

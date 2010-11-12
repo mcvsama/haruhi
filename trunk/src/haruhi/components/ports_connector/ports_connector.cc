@@ -71,9 +71,9 @@ PortsConnector::PortsConnector (UnitBay* unit_bay, QWidget* parent):
 		_splitter = new QSplitter (Qt::Horizontal, this);
 		_splitter->setChildrenCollapsible (false);
 
-			_opanel = new Panel (Core::Port::Output, this, _splitter);
+			_opanel = new Panel (Port::Output, this, _splitter);
 			_connector = new Connector (this, _splitter);
-			_ipanel = new Panel (Core::Port::Input, this, _splitter);
+			_ipanel = new Panel (Port::Input, this, _splitter);
 
 		_splitter->setStretchFactor (0, 4);
 		_splitter->setStretchFactor (1, 3);
@@ -174,15 +174,15 @@ PortsConnector::create_port()
 		UnitItem* unit_item = dynamic_cast<UnitItem*> (_context_item);
 		if (unit_item && dialog->exec() == Private::CreatePortDialog::Accepted)
 		{
-			Core::Port::Direction dir =
+			Port::Direction dir =
 				(unit_item->treeWidget() == _opanel->list())
-					? Core::Port::Output
-					: Core::Port::Input;
+					? Port::Output
+					: Port::Input;
 			_unit_bay->graph()->lock();
 			if (dialog->port_type() == Private::CreatePortDialog::Audio)
-				new Core::AudioPort (_unit_bay, dialog->port_name().ascii(), dir);
+				new AudioPort (_unit_bay, dialog->port_name().ascii(), dir);
 			else
-				new Core::EventPort (_unit_bay, dialog->port_name().ascii(), dir);
+				new EventPort (_unit_bay, dialog->port_name().ascii(), dir);
 			_unit_bay->graph()->unlock();
 		}
 	}
@@ -319,9 +319,9 @@ PortsConnector::insert_unit (Unit* unit)
 {
 	_unit_bay->graph()->lock();
 	unit_registered (unit);
-	for (Core::Ports::iterator p = unit->inputs().begin(); p != unit->inputs().end(); ++p)
+	for (Ports::iterator p = unit->inputs().begin(); p != unit->inputs().end(); ++p)
 		port_registered (*p, unit);
-	for (Core::Ports::iterator p = unit->outputs().begin(); p != unit->outputs().end(); ++p)
+	for (Ports::iterator p = unit->outputs().begin(); p != unit->outputs().end(); ++p)
 		port_registered (*p, unit);
 	_unit_bay->graph()->unlock();
 }
@@ -331,9 +331,9 @@ void
 PortsConnector::remove_unit (Unit* unit)
 {
 	_unit_bay->graph()->lock();
-	for (Core::Ports::iterator p = unit->inputs().begin(); p != unit->inputs().end(); ++p)
+	for (Ports::iterator p = unit->inputs().begin(); p != unit->inputs().end(); ++p)
 		port_unregistered (*p, unit);
-	for (Core::Ports::iterator p = unit->outputs().begin(); p != unit->outputs().end(); ++p)
+	for (Ports::iterator p = unit->outputs().begin(); p != unit->outputs().end(); ++p)
 		port_unregistered (*p, unit);
 	unit_unregistered (unit);
 	_unit_bay->graph()->unlock();
@@ -377,7 +377,7 @@ PortsConnector::unit_retitled (Unit* unit)
 
 
 void
-PortsConnector::port_renamed (Core::Port* port)
+PortsConnector::port_renamed (Port* port)
 {
 	UnitItem* unit_item = find_unit_item (port->direction(), port->unit());
 	if (unit_item)
@@ -386,21 +386,21 @@ PortsConnector::port_renamed (Core::Port* port)
 
 
 void
-PortsConnector::port_connected_to (Core::Port*, Core::Port*)
+PortsConnector::port_connected_to (Port*, Port*)
 {
 	_connector->update();
 }
 
 
 void
-PortsConnector::port_disconnected_from (Core::Port*, Core::Port*)
+PortsConnector::port_disconnected_from (Port*, Port*)
 {
 	_connector->update();
 }
 
 
 void
-PortsConnector::port_registered (Core::Port* port, Core::Unit* unit)
+PortsConnector::port_registered (Port* port, Unit* unit)
 {
 	UnitItem* unit_item = find_unit_item (port->direction(), unit);
 	if (unit_item)
@@ -409,7 +409,7 @@ PortsConnector::port_registered (Core::Port* port, Core::Unit* unit)
 
 
 void
-PortsConnector::port_unregistered (Core::Port* port, Core::Unit* unit)
+PortsConnector::port_unregistered (Port* port, Unit* unit)
 {
 	_ports_to_items.erase (port);
 	UnitItem* unit_item = find_unit_item (port->direction(), unit);
@@ -419,7 +419,7 @@ PortsConnector::port_unregistered (Core::Port* port, Core::Unit* unit)
 
 
 void
-PortsConnector::port_group_renamed (Core::PortGroup*)
+PortsConnector::port_group_renamed (PortGroup*)
 {
 	// TODO
 }
@@ -467,48 +467,48 @@ PortsConnector::operate_on_selected (Operation operation)
 		// Port -> Unit?
 		else if (po && ui)
 		{
-			Core::Ports const& ports = ui->unit()->inputs();
-			for (Core::Ports::const_iterator port = ports.begin();  port != ports.end();  ++port)
+			Ports const& ports = ui->unit()->inputs();
+			for (Ports::const_iterator port = ports.begin();  port != ports.end();  ++port)
 				operate_on_ports (operation, po->port(), *port);
 		}
 		// Unit -> Port?
 		else if (uo && pi)
 		{
-			Core::Ports const& ports = uo->unit()->outputs();
-			for (Core::Ports::const_iterator port = ports.begin();  port != ports.end();  ++port)
+			Ports const& ports = uo->unit()->outputs();
+			for (Ports::const_iterator port = ports.begin();  port != ports.end();  ++port)
 				operate_on_ports (operation, *port, pi->port());
 		}
 		// Unit -> Unit?
 		else if (uo && ui)
 		{
 			// Filter audio/event ports:
-			std::list<Core::Port*> audio_oports, audio_iports;
-			std::list<Core::Port*> event_oports, event_iports;
-			for (Core::Ports::const_iterator p = uo->unit()->outputs().begin();  p != uo->unit()->outputs().end();  ++p)
+			std::list<Port*> audio_oports, audio_iports;
+			std::list<Port*> event_oports, event_iports;
+			for (Ports::const_iterator p = uo->unit()->outputs().begin();  p != uo->unit()->outputs().end();  ++p)
 			{
-				if (dynamic_cast<Core::AudioPort*> (*p))
+				if (dynamic_cast<AudioPort*> (*p))
 					audio_oports.push_back (*p);
-				else if (dynamic_cast<Core::EventPort*> (*p))
+				else if (dynamic_cast<EventPort*> (*p))
 					event_oports.push_back (*p);
 			}
-			for (Core::Ports::const_iterator p = ui->unit()->inputs().begin();  p != ui->unit()->inputs().end();  ++p)
+			for (Ports::const_iterator p = ui->unit()->inputs().begin();  p != ui->unit()->inputs().end();  ++p)
 			{
-				if (dynamic_cast<Core::AudioPort*> (*p))
+				if (dynamic_cast<AudioPort*> (*p))
 					audio_iports.push_back (*p);
-				else if (dynamic_cast<Core::EventPort*> (*p))
+				else if (dynamic_cast<EventPort*> (*p))
 					event_iports.push_back (*p);
 			}
 			// Audio:
 			{
-				std::list<Core::Port*>::const_iterator o = audio_oports.begin();
-				std::list<Core::Port*>::const_iterator i = audio_iports.begin();
+				std::list<Port*>::const_iterator o = audio_oports.begin();
+				std::list<Port*>::const_iterator i = audio_iports.begin();
 				for (; o != audio_oports.end() && i != audio_iports.end();  ++o, ++i)
 					operate_on_ports (operation, *o, *i);
 			}
 			// Event:
 			{
-				std::list<Core::Port*>::const_iterator o = event_oports.begin();
-				std::list<Core::Port*>::const_iterator i = event_iports.begin();
+				std::list<Port*>::const_iterator o = event_oports.begin();
+				std::list<Port*>::const_iterator i = event_iports.begin();
 				for (; o != event_oports.end() && i != event_iports.end();  ++o, ++i)
 					operate_on_ports (operation, *o, *i);
 			}
@@ -542,13 +542,13 @@ PortsConnector::can_operate_on (Operation operation, QTreeWidgetItem* oitem, QTr
 	// TODO obsługa GroupItemów. Również w operate_on(…)
 	if (operation == Private::Connect)
 		return (po && pi && !po->port()->connected_to (pi->port()))
-			|| (po && ui && ui->count_inputs_if (std::not1 (Core::connected_from (po->port()))) > 0)
-			|| (uo && pi && uo->count_outputs_if (std::not1 (Core::connected_to (pi->port()))) > 0)
+			|| (po && ui && ui->count_inputs_if (std::not1 (GraphDetail::connected_from (po->port()))) > 0)
+			|| (uo && pi && uo->count_outputs_if (std::not1 (GraphDetail::connected_to (pi->port()))) > 0)
 			|| (uo && ui); // TODO: && istnieją takie, które nie są połączone, a były by po połączeniu:
 	else
 		return (po && pi && po->port()->connected_to (pi->port()))
-			|| (po && ui && ui->count_inputs_if (Core::connected_from (po->port())) > 0)
-			|| (uo && pi && uo->count_outputs_if (Core::connected_to (pi->port())) > 0)
+			|| (po && ui && ui->count_inputs_if (GraphDetail::connected_from (po->port())) > 0)
+			|| (uo && pi && uo->count_outputs_if (GraphDetail::connected_to (pi->port())) > 0)
 			|| (uo && ui); // TODO: && istnieją połączenia, które były by stworzone po połączeniu uo+ui
 }
 
@@ -601,9 +601,9 @@ PortsConnector::highlight_connected()
 		PortItem* oportitem = dynamic_cast<PortItem*> (oitem);
 		if (oportitem)
 		{
-			Core::Ports const& iports = oportitem->port()->forward_connections();
+			Ports const& iports = oportitem->port()->forward_connections();
 			_unit_bay->graph()->lock();
-			for (Core::Ports::iterator p = iports.begin(); p != iports.end(); ++p)
+			for (Ports::iterator p = iports.begin(); p != iports.end(); ++p)
 			{
 				PortItem* pi = find_port_item (*p);
 				if (pi)
@@ -623,8 +623,8 @@ PortsConnector::highlight_connected()
 		if (iportitem)
 		{
 			_unit_bay->graph()->lock();
-			Core::Ports const& oports = iportitem->port()->back_connections();
-			for (Core::Ports::iterator p = oports.begin(); p != oports.end(); ++p)
+			Ports const& oports = iportitem->port()->back_connections();
+			for (Ports::iterator p = oports.begin(); p != oports.end(); ++p)
 			{
 				PortItem* pi = find_port_item (*p);
 				if (pi)
@@ -640,7 +640,7 @@ PortsConnector::highlight_connected()
 
 
 Private::UnitItem*
-PortsConnector::find_unit_item (Core::Port::Direction direction, Core::Unit* core_unit) const
+PortsConnector::find_unit_item (Port::Direction direction, Unit* core_unit) const
 {
 	Unit* unit = dynamic_cast<Unit*> (core_unit);
 	if (unit)
@@ -648,8 +648,8 @@ PortsConnector::find_unit_item (Core::Port::Direction direction, Core::Unit* cor
 		PortsList::UnitsToItemsMap const* units_list = 0;
 		switch (direction)
 		{
-			case Core::Port::Input:		units_list = _ipanel->list()->units(); break;
-			case Core::Port::Output:	units_list = _opanel->list()->units(); break;
+			case Port::Input:	units_list = _ipanel->list()->units(); break;
+			case Port::Output:	units_list = _opanel->list()->units(); break;
 		}
 		PortsList::UnitsToItemsMap::const_iterator unit_item = units_list->find (unit);
 		if (unit_item != units_list->end())
@@ -660,7 +660,7 @@ PortsConnector::find_unit_item (Core::Port::Direction direction, Core::Unit* cor
 
 
 Private::PortItem*
-PortsConnector::find_port_item (Core::Port* port) const
+PortsConnector::find_port_item (Port* port) const
 {
 	PortsToItemsMap::const_iterator p = _ports_to_items.find (port);
 	if (p != _ports_to_items.end())

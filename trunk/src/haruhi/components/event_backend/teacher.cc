@@ -23,7 +23,7 @@ namespace Haruhi {
 namespace EventBackend {
 
 void
-Teacher::handle_event_for_learnables (Transport::MidiEvent const& event, Core::EventPort* port)
+Teacher::handle_event_for_learnables (Transport::MidiEvent const& event, EventPort* port)
 {
 	Learnables::iterator lnext;
 	for (Learnables::iterator l = _learnables.begin(); l != _learnables.end(); l = lnext)

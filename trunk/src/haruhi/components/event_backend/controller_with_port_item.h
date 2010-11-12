@@ -72,7 +72,7 @@ class ControllerWithPortItem:
 	QString
 	name() const;
 
-	Core::EventPort*
+	EventPort*
 	port() const;
 
 	/**
@@ -86,7 +86,7 @@ class ControllerWithPortItem:
 	load_state (QDomElement const& element);
 
   private:
-	Core::EventPort*	_port;
+	EventPort*			_port;
 	// Link to DeviceItem:
 	DeviceWithPortItem*	_device_item;
 	// Learning from MIDI mode.

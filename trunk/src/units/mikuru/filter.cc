@@ -31,7 +31,7 @@
 
 namespace MikuruPrivate {
 
-Filter::Filter (FilterID filter_id, Core::PortGroup* port_group, QString const& port_prefix, QString const& label, Part* part, Mikuru* mikuru, QWidget* parent):
+Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const& port_prefix, QString const& label, Part* part, Mikuru* mikuru, QWidget* parent):
 	QWidget (parent),
 	_mikuru (mikuru),
 	_loading_params (false),
@@ -62,10 +62,10 @@ Filter::Filter (FilterID filter_id, Core::PortGroup* port_group, QString const& 
 
 	if (_mikuru->graph())
 		_mikuru->graph()->lock();
-	_port_frequency = new Core::EventPort (_mikuru, (port_prefix + " - Frequency").toStdString(), Core::Port::Input, port_group, _polyphonic_control ? Core::Port::Polyphonic : 0);
-	_port_resonance = new Core::EventPort (_mikuru, (port_prefix + " - Resonance").toStdString(), Core::Port::Input, port_group, _polyphonic_control ? Core::Port::Polyphonic : 0);
-	_port_gain = new Core::EventPort (_mikuru, (port_prefix + " - Gain").toStdString(), Core::Port::Input, port_group, _polyphonic_control ? Core::Port::Polyphonic : 0);
-	_port_attenuation = new Core::EventPort (_mikuru, (port_prefix + " - Attenuate").toStdString(), Core::Port::Input, port_group, _polyphonic_control ? Core::Port::Polyphonic : 0);
+	_port_frequency = new Haruhi::EventPort (_mikuru, (port_prefix + " - Frequency").toStdString(), Haruhi::Port::Input, port_group, _polyphonic_control ? Haruhi::Port::Polyphonic : 0);
+	_port_resonance = new Haruhi::EventPort (_mikuru, (port_prefix + " - Resonance").toStdString(), Haruhi::Port::Input, port_group, _polyphonic_control ? Haruhi::Port::Polyphonic : 0);
+	_port_gain = new Haruhi::EventPort (_mikuru, (port_prefix + " - Gain").toStdString(), Haruhi::Port::Input, port_group, _polyphonic_control ? Haruhi::Port::Polyphonic : 0);
+	_port_attenuation = new Haruhi::EventPort (_mikuru, (port_prefix + " - Attenuate").toStdString(), Haruhi::Port::Input, port_group, _polyphonic_control ? Haruhi::Port::Polyphonic : 0);
 	if (_mikuru->graph())
 		_mikuru->graph()->unlock();
 

@@ -22,8 +22,6 @@
 
 namespace Haruhi {
 
-namespace Core {
-
 EventPort::EventPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group, Flags flags):
 	Port (unit, name, direction, new EventBuffer(), group, flags)
 {
@@ -48,8 +46,6 @@ void
 EventPort::graph_updated()
 {
 }
-
-} // namespace Core
 
 } // namespace Haruhi
 

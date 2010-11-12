@@ -30,7 +30,7 @@ namespace Haruhi {
 class Session;
 
 class Plugin:
-	public Core::Unit,
+	public Unit,
 	public QWidget
 {
   public:

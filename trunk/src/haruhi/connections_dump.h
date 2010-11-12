@@ -50,7 +50,7 @@ class ConnectionsDump: public SaveableState
 	};
 
   public:
-	typedef std::set<Core::Unit*>	Units;
+	typedef std::set<Unit*>	Units;
 	typedef std::list<Connection>	Connections;
 
   public:
@@ -61,7 +61,7 @@ class ConnectionsDump: public SaveableState
 	ConnectionsDump (bool only_internal = false);
 
 	void
-	insert_unit (Core::Unit*);
+	insert_unit (Unit*);
 
 	template<class UnitPointerIterator>
 		void
@@ -72,7 +72,7 @@ class ConnectionsDump: public SaveableState
 		}
 
 	void
-	remove_unit (Core::Unit*);
+	remove_unit (Unit*);
 
 	void
 	save();

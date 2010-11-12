@@ -182,7 +182,7 @@ AlsaTransport::sync()
 		return;
 
 	::snd_seq_event_t* e = 0;
-	Core::Timestamp t = backend()->graph()->timestamp();
+	Timestamp t = backend()->graph()->timestamp();
 
 	// Clear all buffers:
 	for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)

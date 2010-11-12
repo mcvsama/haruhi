@@ -38,7 +38,7 @@ class Panel: public QWidget
 	Q_OBJECT
 
   public:
-	Panel (Core::Port::Direction type, PortsConnector* ports_connector, QWidget* parent);
+	Panel (Port::Direction type, PortsConnector* ports_connector, QWidget* parent);
 
 	PortsList*
 	list() const { return _list; }

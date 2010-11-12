@@ -240,7 +240,7 @@ Knob::SpinBox::float_to_int (float y) const
 }
 
 
-Knob::Knob (QWidget* parent, Core::EventPort* event_port, ControllerParam* controller_param,
+Knob::Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param,
 			QString const& label, float show_min, float show_max, int step, int decimals):
 	QFrame (parent),
 	Controller (event_port, controller_param),
@@ -396,13 +396,13 @@ Knob::create_context_menu()
 		}
 
 		// Iterate over all connected ports and create Disconnect menu:
-		Core::Ports const& back_connections = event_port()->back_connections();
+		Ports const& back_connections = event_port()->back_connections();
 		if (!back_connections.empty())
 		{
 			_context_menu->addSeparator();
 			_context_menu->addAction ("Disconnect from all", this, SLOT (disconnect_from_all()));
 		}
-		for (Core::Ports::iterator p = back_connections.begin(); p != back_connections.end(); ++p)
+		for (Ports::iterator p = back_connections.begin(); p != back_connections.end(); ++p)
 		{
 			_action_id += 1;
 			QAction* action = _disconnect_menu->addAction (pixmap_for_port,
@@ -423,19 +423,19 @@ Knob::create_context_menu()
 
 
 void
-Knob::create_connect_menu (QMenu* unit_menu, Core::Unit* unit, QPixmap const& pixmap_for_port_group, QPixmap const& pixmap_for_port)
+Knob::create_connect_menu (QMenu* unit_menu, Unit* unit, QPixmap const& pixmap_for_port_group, QPixmap const& pixmap_for_port)
 {
-	typedef std::vector<Core::Port*> PortsVector;
-	typedef std::vector<Core::PortGroup*> GroupsVector;
-	typedef std::map<Core::PortGroup*, PortsVector> GroupsMap;
+	typedef std::vector<Port*> PortsVector;
+	typedef std::vector<PortGroup*> GroupsVector;
+	typedef std::map<PortGroup*, PortsVector> GroupsMap;
 
 	GroupsMap groups;
 	PortsVector ports;
 
 	// Collect ports and groups:
-	for (Core::Ports::iterator p = unit->outputs().begin(); p != unit->outputs().end(); ++p)
+	for (Ports::iterator p = unit->outputs().begin(); p != unit->outputs().end(); ++p)
 	{
-		Core::EventPort* ep = dynamic_cast<Core::EventPort*> (*p);
+		EventPort* ep = dynamic_cast<EventPort*> (*p);
 		if (ep)
 		{
 			if (ep->group())
@@ -449,7 +449,7 @@ Knob::create_connect_menu (QMenu* unit_menu, Core::Unit* unit, QPixmap const& pi
 	for (GroupsMap::iterator g = groups.begin(); g != groups.end(); ++g)
 	{
 		QMenu* group_menu = unit_menu->addMenu (pixmap_for_port_group, QString::fromStdString (g->first->name()));
-		std::sort (g->second.begin(), g->second.end(), Core::Port::CompareByName());
+		std::sort (g->second.begin(), g->second.end(), Port::CompareByName());
 		for (PortsVector::iterator p = g->second.begin(); p != g->second.end(); ++p)
 		{
 			_action_id += 1;
@@ -461,7 +461,7 @@ Knob::create_connect_menu (QMenu* unit_menu, Core::Unit* unit, QPixmap const& pi
 	}
 
 	// Add port items:
-	std::sort (ports.begin(), ports.end(), Core::Port::CompareByName());
+	std::sort (ports.begin(), ports.end(), Port::CompareByName());
 	for (PortsVector::iterator p = ports.begin(); p != ports.end(); ++p)
 	{
 		_action_id += 1;

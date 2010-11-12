@@ -34,7 +34,7 @@ namespace Haruhi {
 
 namespace PortsConnectorPrivate {
 
-PortItem::PortItem (Core::Port::Direction type, Core::Port* port, QTreeWidgetItem* parent, QString const& label):
+PortItem::PortItem (Port::Direction type, Port* port, QTreeWidgetItem* parent, QString const& label):
 	QTreeWidgetItem (parent, QStringList (label)),
 	_type (type),
 	_port (port)
@@ -46,30 +46,30 @@ PortItem::PortItem (Core::Port::Direction type, Core::Port* port, QTreeWidgetIte
 		setSizeHint (0, s);
 	}
 
-	if (dynamic_cast<Core::AudioPort*> (port))
+	if (dynamic_cast<AudioPort*> (port))
 	{
 		switch (_type)
 		{
-			case Core::Port::Input:		setIcon (0, Config::Icons16::audio_input_port()); break;
-			case Core::Port::Output:	setIcon (0, Config::Icons16::audio_output_port()); break;
+			case Port::Input:	setIcon (0, Config::Icons16::audio_input_port()); break;
+			case Port::Output:	setIcon (0, Config::Icons16::audio_output_port()); break;
 		}
 	}
 	else
 	{
-		if (port->has_flags (Core::Port::Polyphonic))
+		if (port->has_flags (Port::Polyphonic))
 		{
 			switch (_type)
 			{
-				case Core::Port::Input:		setIcon (0, Config::Icons16::event_polyphonic_input_port()); break;
-				case Core::Port::Output:	setIcon (0, Config::Icons16::event_polyphonic_output_port()); break;
+				case Port::Input:	setIcon (0, Config::Icons16::event_polyphonic_input_port()); break;
+				case Port::Output:	setIcon (0, Config::Icons16::event_polyphonic_output_port()); break;
 			}
 		}
 		else
 		{
 			switch (_type)
 			{
-				case Core::Port::Input:		setIcon (0, Config::Icons16::event_input_port()); break;
-				case Core::Port::Output:	setIcon (0, Config::Icons16::event_output_port()); break;
+				case Port::Input:	setIcon (0, Config::Icons16::event_input_port()); break;
+				case Port::Output:	setIcon (0, Config::Icons16::event_output_port()); break;
 			}
 		}
 	}
@@ -93,7 +93,7 @@ PortItem::~PortItem()
 }
 
 
-Core::Port*
+Port*
 PortItem::port() const
 {
 	return _port;

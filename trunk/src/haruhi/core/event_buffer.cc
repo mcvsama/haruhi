@@ -26,11 +26,9 @@
 
 namespace Haruhi {
 
-namespace Core {
-
 POOL_ALLOCATOR_FOR (EventBuffer)
 
-Buffer::TypeID EventBuffer::TYPE = "Core::EventBuffer";
+Buffer::TypeID EventBuffer::TYPE = "Haruhi::EventBuffer";
 
 
 EventBuffer::EventBuffer():
@@ -57,8 +55,6 @@ EventBuffer::mixin (Buffer* other)
 	delete _events;
 	_events = aux;
 }
-
-} // namespace Core
 
 } // namespace Haruhi
 

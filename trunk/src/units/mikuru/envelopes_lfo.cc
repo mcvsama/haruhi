@@ -203,18 +203,18 @@ LFO::create_ports()
 {
 	if (_mikuru->graph())
 		_mikuru->graph()->lock();
-	_port_group = new Core::PortGroup (_mikuru->graph(), QString ("LFO %1").arg (this->id()).toStdString());
+	_port_group = new Haruhi::PortGroup (_mikuru->graph(), QString ("LFO %1").arg (this->id()).toStdString());
 	// Inputs:
-	_port_delay = new Core::EventPort (_mikuru, "Delay", Core::Port::Input, _port_group);
-	_port_fade_in = new Core::EventPort (_mikuru, "Fade in", Core::Port::Input, _port_group);
-	_port_frequency = new Core::EventPort (_mikuru, "Frequency", Core::Port::Input, _port_group);
-	_port_level = new Core::EventPort (_mikuru, "Level", Core::Port::Input, _port_group);
-	_port_depth = new Core::EventPort (_mikuru, "Depth", Core::Port::Input, _port_group);
-	_port_phase = new Core::EventPort (_mikuru, "Start phase", Core::Port::Input, _port_group);
-	_port_wave_shape = new Core::EventPort (_mikuru, "Wave shape", Core::Port::Input, _port_group);
-	_port_fade_out = new Core::EventPort (_mikuru, "Fade out", Core::Port::Input, _port_group);
+	_port_delay = new Haruhi::EventPort (_mikuru, "Delay", Haruhi::Port::Input, _port_group);
+	_port_fade_in = new Haruhi::EventPort (_mikuru, "Fade in", Haruhi::Port::Input, _port_group);
+	_port_frequency = new Haruhi::EventPort (_mikuru, "Frequency", Haruhi::Port::Input, _port_group);
+	_port_level = new Haruhi::EventPort (_mikuru, "Level", Haruhi::Port::Input, _port_group);
+	_port_depth = new Haruhi::EventPort (_mikuru, "Depth", Haruhi::Port::Input, _port_group);
+	_port_phase = new Haruhi::EventPort (_mikuru, "Start phase", Haruhi::Port::Input, _port_group);
+	_port_wave_shape = new Haruhi::EventPort (_mikuru, "Wave shape", Haruhi::Port::Input, _port_group);
+	_port_fade_out = new Haruhi::EventPort (_mikuru, "Fade out", Haruhi::Port::Input, _port_group);
 	// Outputs:
-	_port_output = new Core::EventPort (_mikuru, QString ("LFO %1").arg (this->id()).toStdString(), Core::Port::Output, 0, Core::Port::Polyphonic);
+	_port_output = new Haruhi::EventPort (_mikuru, QString ("LFO %1").arg (this->id()).toStdString(), Haruhi::Port::Output, 0, Haruhi::Port::Polyphonic);
 	if (_mikuru->graph())
 		_mikuru->graph()->unlock();
 }
@@ -449,7 +449,7 @@ LFO::process()
 		return;
 
 	int wave_type = _params.wave_type.get();
-	Core::Timestamp t = _mikuru->graph()->timestamp();
+	Haruhi::Timestamp t = _mikuru->graph()->timestamp();
 	unsigned int sample_rate = _mikuru->graph()->sample_rate();
 	unsigned int buffer_size = _mikuru->graph()->buffer_size();
 	DSP::ParametricWave* wave = _waves[wave_type];
@@ -472,7 +472,7 @@ LFO::process()
 		osc->set_level (level);
 		osc->set_depth (depth);
 		osc->set_invert (invert);
-		_port_output->event_buffer()->push (new Core::VoiceControllerEvent (t, voice->voice_id(), apply_function (osc->advance (buffer_size))));
+		_port_output->event_buffer()->push (new Haruhi::VoiceControllerEvent (t, voice->voice_id(), apply_function (osc->advance (buffer_size))));
 	}
 
 	int mode = _params.mode.get();
@@ -483,7 +483,7 @@ LFO::process()
 		_common_osc.set_level (level);
 		_common_osc.set_depth (depth);
 		_common_osc.set_invert (invert);
-		_port_output->event_buffer()->push (new Core::ControllerEvent (t, apply_function (_common_osc.advance (buffer_size))));
+		_port_output->event_buffer()->push (new Haruhi::ControllerEvent (t, apply_function (_common_osc.advance (buffer_size))));
 	}
 }
 

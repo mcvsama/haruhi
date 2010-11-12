@@ -27,7 +27,7 @@
 
 namespace MikuruPrivate {
 
-Waveshaper::Waveshaper (Part* part, Haruhi::Core::PortGroup* port_group, QString const& port_prefix, Mikuru* mikuru, QWidget* parent):
+Waveshaper::Waveshaper (Part* part, Haruhi::PortGroup* port_group, QString const& port_prefix, Mikuru* mikuru, QWidget* parent):
 	QWidget (parent),
 	_mikuru (mikuru),
 	_part (part),
@@ -55,7 +55,7 @@ float sh (float input)
 
 
 void
-Waveshaper::process (Haruhi::Core::AudioBuffer* buffer1, Haruhi::Core::AudioBuffer* buffer2)
+Waveshaper::process (Haruhi::AudioBuffer* buffer1, Haruhi::AudioBuffer* buffer2)
 {
 	// TODO temporary hardcoded polynomial waveshaper:
 	for (Sample* s = buffer1->begin(); s != buffer1->end(); ++s)

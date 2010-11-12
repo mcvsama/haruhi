@@ -128,8 +128,8 @@ Backend::~Backend()
 void
 Backend::registered()
 {
-	_master_volume_port = new Core::EventPort (this, "Master Volume", Core::Port::Input);
-	_panic_port = new Core::EventPort (this, "Panic", Core::Port::Input);
+	_master_volume_port = new EventPort (this, "Master Volume", Port::Input);
+	_panic_port = new EventPort (this, "Panic", Port::Input);
 
 	// Graph ticks emulator:
 	_dummy_timer = new QTimer (this);
@@ -181,7 +181,7 @@ Backend::transfer()
 	for (InputsMap::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
 	{
 		Sample* src_buffer = p->first->buffer();
-		Core::AudioBuffer* dst_buffer = p->second->port()->audio_buffer();
+		AudioBuffer* dst_buffer = p->second->port()->audio_buffer();
 		if (src_buffer)
 			memcpy (dst_buffer->begin(), src_buffer, sizeof (Sample) * dst_buffer->size());
 		else
@@ -198,7 +198,7 @@ Backend::transfer()
 	// Haruhi -> Transport:
 	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
 	{
-		Core::AudioBuffer* src_buffer = p->second->port()->audio_buffer();
+		AudioBuffer* src_buffer = p->second->port()->audio_buffer();
 		Sample* dst_buffer = p->first->buffer();
 		if (dst_buffer)
 		{
@@ -550,7 +550,7 @@ Backend::update_level_meter()
 	std::sort (ovec.begin(), ovec.end(), PortItem::CompareByPortName());
 	for (unsigned int i = 0; i < std::min (ovec.size(), static_cast<std::vector<OutputItem*>::size_type> (2u)); ++i)
 	{
-		Core::AudioBuffer* abuf = ovec[i]->port()->audio_buffer();
+		AudioBuffer* abuf = ovec[i]->port()->audio_buffer();
 		session()->meter_panel()->level_meters_group()->meter (i)->process (abuf->begin(), abuf->end());
 	}
 }

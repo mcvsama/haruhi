@@ -34,7 +34,7 @@ namespace Haruhi {
 
 namespace PortsConnectorPrivate {
 
-PortsList::PortsList (Core::Port::Direction type, PortsConnector::Panel* panel, PortsConnector* ports_connector, QWidget* parent):
+PortsList::PortsList (Port::Direction type, PortsConnector::Panel* panel, PortsConnector* ports_connector, QWidget* parent):
 	QTreeWidget (parent),
 	_type (type),
 	_panel (panel),
@@ -59,8 +59,8 @@ PortsList::PortsList (Core::Port::Direction type, PortsConnector::Panel* panel, 
 
 	switch (_type)
 	{
-		case Core::Port::Input:		setHeaderLabel ("Input ports"); break;
-		case Core::Port::Output:	setHeaderLabel ("Output ports"); break;
+		case Port::Input:	setHeaderLabel ("Input ports"); break;
+		case Port::Output:	setHeaderLabel ("Output ports"); break;
 	}
 
 	_auto_open_timer = new QTimer (this);

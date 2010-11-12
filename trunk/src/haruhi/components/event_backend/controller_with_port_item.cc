@@ -37,7 +37,7 @@ ControllerWithPortItem::ControllerWithPortItem (DeviceWithPortItem* parent, QStr
 {
 	// Allocate new port:
 	backend()->graph()->lock();
-	_port = new Core::EventPort (backend(), name.ascii(), Core::Port::Output, parent->port_group());
+	_port = new EventPort (backend(), name.ascii(), Port::Output, parent->port_group());
 	_device_item->controllers()->insert (this);
 	backend()->graph()->unlock();
 	// Fully constructed:
@@ -87,7 +87,7 @@ ControllerWithPortItem::name() const
 }
 
 
-Core::EventPort*
+EventPort*
 ControllerWithPortItem::port() const
 {
 	return _port;
@@ -100,8 +100,8 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 	typedef Transport::MidiEvent MidiEvent;
 
 	bool handled = false;
-	Core::Timestamp t = event.timestamp;
-	Core::EventBuffer* buffer = _port->event_buffer();
+	Timestamp t = event.timestamp;
+	EventBuffer* buffer = _port->event_buffer();
 	switch (event.type)
 	{
 		case MidiEvent::NoteOn:
@@ -116,11 +116,11 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 			}
 			if (_note_filter && (_note_channel == 0 || _note_channel == event.note_on.channel + 1))
 			{
-				buffer->push (new Core::VoiceEvent (t, event.note_on.note, Core::VoiceAuto,
-													(event.note_on.velocity == 0)? Core::VoiceEvent::Release : Core::VoiceEvent::Create,
-													Core::VoiceEvent::frequency_from_key_id (event.note_on.note, backend()->graph()->master_tune()),
-													event.note_on.velocity / 127.0));
-				buffer->push (new Core::VoiceControllerEvent (t, event.note_on.note, event.note_on.velocity / 127.0));
+				buffer->push (new VoiceEvent (t, event.note_on.note, VoiceAuto,
+											  (event.note_on.velocity == 0)? VoiceEvent::Release : VoiceEvent::Create,
+											  VoiceEvent::frequency_from_key_id (event.note_on.note, backend()->graph()->master_tune()),
+											  event.note_on.velocity / 127.0));
+				buffer->push (new VoiceControllerEvent (t, event.note_on.note, event.note_on.velocity / 127.0));
 				handled = true;
 			}
 			break;
@@ -128,10 +128,10 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 		case MidiEvent::NoteOff:
 			if (_note_filter && (_note_channel == 0 || _note_channel == event.note_off.channel + 1))
 			{
-				buffer->push (new Core::VoiceControllerEvent (t, event.note_off.note, event.note_off.velocity / 127.0));
-				buffer->push (new Core::VoiceEvent (t, event.note_off.note, Core::VoiceAuto, Core::VoiceEvent::Release,
-													Core::VoiceEvent::frequency_from_key_id (event.note_off.note, backend()->graph()->master_tune()),
-													event.note_off.velocity / 127.0));
+				buffer->push (new VoiceControllerEvent (t, event.note_off.note, event.note_off.velocity / 127.0));
+				buffer->push (new VoiceEvent (t, event.note_off.note, VoiceAuto, VoiceEvent::Release,
+											  VoiceEvent::frequency_from_key_id (event.note_off.note, backend()->graph()->master_tune()),
+											  event.note_off.velocity / 127.0));
 				handled = true;
 			}
 			break;
@@ -155,7 +155,7 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 					value = 127 - value;
 				if (_controller_filter && (_controller_channel == 0 || _controller_channel == event.controller.channel + 1) && _controller_number == static_cast<int> (event.controller.number))
 				{
-					buffer->push (new Core::ControllerEvent (t, value / 127.0));
+					buffer->push (new ControllerEvent (t, value / 127.0));
 					handled = true;
 				}
 			}
@@ -173,7 +173,7 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 			}
 			if (_pitchbend_filter && (_pitchbend_channel == 0 || _pitchbend_channel == event.pitchbend.channel + 1))
 			{
-				buffer->push (new Core::ControllerEvent (t, event.pitchbend.value == 0 ? 0.5 : (event.pitchbend.value + 8192) / 16382.0));
+				buffer->push (new ControllerEvent (t, event.pitchbend.value == 0 ? 0.5 : (event.pitchbend.value + 8192) / 16382.0));
 				handled = true;
 			}
 			break;
@@ -195,7 +195,7 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 					value = 127 - value;
 				if (_channel_pressure_filter && (_channel_pressure_channel == 0 || _channel_pressure_channel == event.channel_pressure.channel + 1))
 				{
-					buffer->push (new Core::ControllerEvent (t, value / 127.0));
+					buffer->push (new ControllerEvent (t, value / 127.0));
 					handled = true;
 				}
 			}
@@ -208,7 +208,7 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 					value = 127 - value;
 				if (_key_pressure_filter && (_key_pressure_channel == 0 || _key_pressure_channel == event.key_pressure.channel + 1))
 				{
-					buffer->push (new Core::VoiceControllerEvent (t, event.key_pressure.note, value / 127.0));
+					buffer->push (new VoiceControllerEvent (t, event.key_pressure.note, value / 127.0));
 					handled = true;
 				}
 			}

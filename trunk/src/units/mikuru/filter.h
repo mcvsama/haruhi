@@ -39,12 +39,10 @@
 
 class Mikuru;
 
-
 namespace MikuruPrivate {
 
 class Part;
 class EventDispatcher;
-
 
 class Filter: public QWidget
 {
@@ -59,7 +57,7 @@ class Filter: public QWidget
 	/**
 	 * \param	part can be null, if this is common filter.
 	 */
-	Filter (FilterID filter_id, Core::PortGroup* port_group, QString const& port_prefix, QString const& label, Part* part, Mikuru* mikuru, QWidget* parent);
+	Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const& port_prefix, QString const& label, Part* part, Mikuru* mikuru, QWidget* parent);
 
 	~Filter();
 
@@ -118,10 +116,10 @@ class Filter: public QWidget
 	bool							_polyphonic_control;
 
 	// Ports:
-	Core::EventPort*				_port_frequency;
-	Core::EventPort*				_port_resonance;
-	Core::EventPort*				_port_gain;
-	Core::EventPort*				_port_attenuation;
+	Haruhi::EventPort*				_port_frequency;
+	Haruhi::EventPort*				_port_resonance;
+	Haruhi::EventPort*				_port_gain;
+	Haruhi::EventPort*				_port_attenuation;
 
 	// Event dispatchers for polyphonic-input ports:
 	EventDispatcher*				_evdisp_frequency;

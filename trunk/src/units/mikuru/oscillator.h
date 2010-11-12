@@ -47,7 +47,7 @@ class Oscillator: public QWidget
 	friend class Patch;
 
   public:
-	Oscillator (Part* part, Core::PortGroup* port_group, QString const& port_prefix, Mikuru* mikuru, QWidget* parent);
+	Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const& port_prefix, Mikuru* mikuru, QWidget* parent);
 
 	~Oscillator();
 
@@ -60,13 +60,13 @@ class Oscillator: public QWidget
 	void
 	process_events();
 
-	Core::EventPort*
+	Haruhi::EventPort*
 	pitchbend_port() const { return _port_pitchbend; }
 
-	Core::EventPort*
+	Haruhi::EventPort*
 	amplitude_port() const { return _port_amplitude; }
 
-	Core::EventPort*
+	Haruhi::EventPort*
 	frequency_port() const { return _port_frequency; }
 
   public slots:
@@ -136,80 +136,80 @@ class Oscillator: public QWidget
 	update_voice_velocity_sens();
 
   private:
-	Mikuru*						_mikuru;
-	Part*						_part;
-	Params::Oscillator			_oscillator_params;
-	Params::Voice				_voice_params;
-	bool						_loading_params;
-	QWidget*					_panel;
+	Mikuru*				_mikuru;
+	Part*				_part;
+	Params::Oscillator	_oscillator_params;
+	Params::Voice		_voice_params;
+	bool				_loading_params;
+	QWidget*			_panel;
 
 	// Part ports:
-	Core::EventPort*			_port_volume;
-	Core::EventPort*			_port_portamento_time;
-	Core::EventPort*			_port_phase;
+	Haruhi::EventPort*	_port_volume;
+	Haruhi::EventPort*	_port_portamento_time;
+	Haruhi::EventPort*	_port_phase;
 
 	// Polyphonic-input ports:
-	Core::EventPort*			_port_amplitude;
-	Core::EventPort*			_port_frequency;
-	Core::EventPort*			_port_panorama;
-	Core::EventPort*			_port_detune;
-	Core::EventPort*			_port_pitchbend;
-	Core::EventPort*			_port_velocity_sens;
-	Core::EventPort*			_port_unison_index;
-	Core::EventPort*			_port_unison_spread;
-	Core::EventPort*			_port_unison_init;
-	Core::EventPort*			_port_unison_noise;
-	Core::EventPort*			_port_noise_level;
+	Haruhi::EventPort*	_port_amplitude;
+	Haruhi::EventPort*	_port_frequency;
+	Haruhi::EventPort*	_port_panorama;
+	Haruhi::EventPort*	_port_detune;
+	Haruhi::EventPort*	_port_pitchbend;
+	Haruhi::EventPort*	_port_velocity_sens;
+	Haruhi::EventPort*	_port_unison_index;
+	Haruhi::EventPort*	_port_unison_spread;
+	Haruhi::EventPort*	_port_unison_init;
+	Haruhi::EventPort*	_port_unison_noise;
+	Haruhi::EventPort*	_port_noise_level;
 
 	// Event dispatchers for polyphonic-input ports:
-	EventDispatcher*			_evdisp_amplitude;
-	EventDispatcher*			_evdisp_frequency;
-	EventDispatcher*			_evdisp_panorama;
-	EventDispatcher*			_evdisp_detune;
-	EventDispatcher*			_evdisp_pitchbend;
-	EventDispatcher*			_evdisp_velocity_sens;
-	EventDispatcher*			_evdisp_unison_index;
-	EventDispatcher*			_evdisp_unison_spread;
-	EventDispatcher*			_evdisp_unison_init;
-	EventDispatcher*			_evdisp_unison_noise;
+	EventDispatcher*	_evdisp_amplitude;
+	EventDispatcher*	_evdisp_frequency;
+	EventDispatcher*	_evdisp_panorama;
+	EventDispatcher*	_evdisp_detune;
+	EventDispatcher*	_evdisp_pitchbend;
+	EventDispatcher*	_evdisp_velocity_sens;
+	EventDispatcher*	_evdisp_unison_index;
+	EventDispatcher*	_evdisp_unison_spread;
+	EventDispatcher*	_evdisp_unison_init;
+	EventDispatcher*	_evdisp_unison_noise;
 
 	// Volume knobs:
-	Haruhi::Knob*				_knob_volume;
-	Haruhi::Knob*				_knob_panorama;
-	Haruhi::Knob*				_knob_detune;
-	Haruhi::Knob*				_knob_pitchbend;
-	Haruhi::Knob*				_knob_velocity_sens;
+	Haruhi::Knob*		_knob_volume;
+	Haruhi::Knob*		_knob_panorama;
+	Haruhi::Knob*		_knob_detune;
+	Haruhi::Knob*		_knob_pitchbend;
+	Haruhi::Knob*		_knob_velocity_sens;
 
 	// Unison knobs:
-	Haruhi::Knob*				_knob_unison_index;
-	Haruhi::Knob*				_knob_unison_spread;
-	Haruhi::Knob*				_knob_unison_init;
-	Haruhi::Knob*				_knob_unison_noise;
+	Haruhi::Knob*		_knob_unison_index;
+	Haruhi::Knob*		_knob_unison_spread;
+	Haruhi::Knob*		_knob_unison_init;
+	Haruhi::Knob*		_knob_unison_noise;
 
 	// Other knobs:
-	Haruhi::Knob*				_knob_portamento_time;
-	Haruhi::Knob*				_knob_phase;
-	Haruhi::Knob*				_knob_noise_level;
+	Haruhi::Knob*		_knob_portamento_time;
+	Haruhi::Knob*		_knob_phase;
+	Haruhi::Knob*		_knob_noise_level;
 
 	// Pitchbend/transposition:
-	QCheckBox*					_const_portamento_time;
-	QCheckBox*					_pitchbend_enabled;
-	QCheckBox*					_pitchbend_released;
-	QSpinBox*					_pitchbend_up_semitones;
-	QSpinBox*					_pitchbend_down_semitones;
-	QSpinBox*					_transposition_semitones;
-	QSpinBox*					_frequency_modulation_range;
-	QSpinBox*					_amplitude_modulation_smoothing;
-	QSpinBox*					_frequency_modulation_smoothing;
+	QCheckBox*			_const_portamento_time;
+	QCheckBox*			_pitchbend_enabled;
+	QCheckBox*			_pitchbend_released;
+	QSpinBox*			_pitchbend_up_semitones;
+	QSpinBox*			_pitchbend_down_semitones;
+	QSpinBox*			_transposition_semitones;
+	QSpinBox*			_frequency_modulation_range;
+	QSpinBox*			_amplitude_modulation_smoothing;
+	QSpinBox*			_frequency_modulation_smoothing;
 
 	// Monophonic:
-	QCheckBox*					_monophonic;
-	QCheckBox*					_monophonic_retrigger;
-	QComboBox*					_monophonic_key_priority;
+	QCheckBox*			_monophonic;
+	QCheckBox*			_monophonic_retrigger;
+	QComboBox*			_monophonic_key_priority;
 
 	// Other:
-	QCheckBox*					_wave_enabled;
-	QCheckBox*					_noise_enabled;
+	QCheckBox*			_wave_enabled;
+	QCheckBox*			_noise_enabled;
 };
 
 } // namespace MikuruPrivate

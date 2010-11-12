@@ -52,9 +52,9 @@ ComparableItem::operator< (QTreeWidgetItem const& other) const
 			numbers[i] = 0;
 		else if ((port_item = dynamic_cast<PortItem const*> (sources[i])))
 		{
-			if (dynamic_cast<Core::EventPort const*> (port_item->_port))
+			if (dynamic_cast<EventPort const*> (port_item->_port))
 				numbers[i] = 1;
-			else if (dynamic_cast<Core::AudioPort const*> (port_item->_port))
+			else if (dynamic_cast<AudioPort const*> (port_item->_port))
 				numbers[i] = 2;
 			else
 				numbers[i] = 3;

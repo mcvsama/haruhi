@@ -64,11 +64,11 @@ class UnitBayAware
  * UnitBay is an Unit that contains other Units inside.
  */
 class UnitBay:
-	public Core::Unit,
+	public Unit,
 	public Signal::Receiver
 {
   public:
-	typedef std::set<Core::Unit*>	Units;
+	typedef std::set<Unit*> Units;
 
   public:
 	UnitBay (Session*, std::string const& urn, std::string const& title, int id, QWidget* parent);
@@ -85,7 +85,7 @@ class UnitBay:
 	process();
 
 	/*
-	 * Core::Unit API.
+	 * Unit API.
 	 */
 
 	void
@@ -96,7 +96,7 @@ class UnitBay:
 
   private:
 	void
-	unit_unregistered (Core::Unit*);
+	unit_unregistered (Unit*);
 
   private:
 	Units _units;

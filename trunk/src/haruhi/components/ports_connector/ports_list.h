@@ -34,7 +34,6 @@ class PortsConnector;
 namespace PortsConnectorPrivate {
 
 class Panel;
-using Core::Unit;
 
 class PortsList: public QTreeWidget
 {
@@ -46,7 +45,7 @@ class PortsList: public QTreeWidget
 	typedef std::map<Unit*, UnitItem*> UnitsToItemsMap;
 
   public:
-	PortsList (Core::Port::Direction type, PortsConnectorPrivate::Panel* panel, PortsConnector* ports_connector, QWidget* parent);
+	PortsList (Port::Direction type, PortsConnectorPrivate::Panel* panel, PortsConnector* ports_connector, QWidget* parent);
 
 	~PortsList();
 
@@ -124,7 +123,7 @@ class PortsList: public QTreeWidget
 	context_menu (QTreeWidgetItem*, QPoint const&);
 
   private:
-	Core::Port::Direction			_type;
+	Port::Direction					_type;
 	PortsConnectorPrivate::Panel*	_panel;
 	PortsConnector*					_ports_connector;
 	QTreeWidgetItem*				_drag_drop_item;

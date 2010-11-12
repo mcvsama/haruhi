@@ -30,13 +30,12 @@ class Mikuru;
 
 namespace MikuruPrivate {
 
-namespace Core = Haruhi::Core;
 class VoiceManager;
 
 
 class EventDispatcher
 {
-	typedef std::map<Core::VoiceID, Core::VoiceControllerEvent const*> VCEMap;
+	typedef std::map<Haruhi::VoiceID, Haruhi::VoiceControllerEvent const*> VCEMap;
 
   public:
 	/**
@@ -47,7 +46,7 @@ class EventDispatcher
 	{
 	  public:
 		virtual void
-		receive (Core::VoiceID, int value) = 0;
+		receive (Haruhi::VoiceID, int value) = 0;
 	};
 
 	/**
@@ -65,7 +64,7 @@ class EventDispatcher
 		{ }
 
 		void
-		receive (Core::VoiceID, int value);
+		receive (Haruhi::VoiceID, int value);
 
 		void
 		receive (int value);
@@ -92,7 +91,7 @@ class EventDispatcher
 		{ }
 
 		void
-		receive (Core::VoiceID, int value);
+		receive (Haruhi::VoiceID, int value);
 
 		void
 		receive (int value);
@@ -107,12 +106,12 @@ class EventDispatcher
 	/**
 	 * Takes ownership of Receiver and deletes it upon destruction.
 	 */
-	EventDispatcher (Core::EventPort* port, Haruhi::Knob* knob, Receiver* receiver);
+	EventDispatcher (Haruhi::EventPort* port, Haruhi::Knob* knob, Receiver* receiver);
 
 	/**
 	 * Takes ownership of Receiver and deletes it upon destruction.
 	 */
-	EventDispatcher (Core::EventPort* port, int min, int max, Receiver* receiver);
+	EventDispatcher (Haruhi::EventPort* port, int min, int max, Receiver* receiver);
 
 	~EventDispatcher()
 	{
@@ -127,7 +126,7 @@ class EventDispatcher
 	load_events();
 
   public:
-	Core::EventPort*	_port;
+	Haruhi::EventPort*	_port;
 	Haruhi::Knob*		_knob;
 	Receiver*			_receiver;
 	VCEMap				_vcemap;

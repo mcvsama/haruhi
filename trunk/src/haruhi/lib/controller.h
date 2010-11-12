@@ -41,7 +41,7 @@ class Controller:
 	public ControllerProxy::Widget
 {
   public:
-	Controller (Core::EventPort* event_port, ControllerParam* controller_param);
+	Controller (EventPort* event_port, ControllerParam* controller_param);
 
 	virtual ~Controller();
 
@@ -54,7 +54,7 @@ class Controller:
 	/**
 	 * Returns associated EventPort.
 	 */
-	Core::EventPort*
+	EventPort*
 	event_port() const { return _controller_proxy.event_port(); }
 
 	/**
@@ -115,7 +115,7 @@ class Controller:
 	 * Connects given event port to this controller.
 	 */
 	void
-	learned_port (EventBackend::EventTypes, Core::EventPort*);
+	learned_port (EventBackend::EventTypes, EventPort*);
 
   private:
 	ControllerProxy	_controller_proxy;

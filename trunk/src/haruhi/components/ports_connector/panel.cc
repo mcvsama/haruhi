@@ -31,7 +31,7 @@ namespace Haruhi {
 
 namespace PortsConnectorPrivate {
 
-Panel::Panel (Core::Port::Direction type, PortsConnector* ports_connector, QWidget* parent):
+Panel::Panel (Port::Direction type, PortsConnector* ports_connector, QWidget* parent):
 	QWidget (parent),
 	_ports_connector (ports_connector)
 {

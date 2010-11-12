@@ -36,8 +36,6 @@ namespace Haruhi {
 
 class Session;
 
-namespace Core {
-
 /*
  * Implements object that has two states: synced, and ready to sync.
  * Primary object task should be processing/generating data
@@ -266,8 +264,6 @@ class Unit: private Noncopyable
 	Ports		_inputs;
 	Ports		_outputs;
 };
-
-} // namespace Core
 
 } // namespace Haruhi
 

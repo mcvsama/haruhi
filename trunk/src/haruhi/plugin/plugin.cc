@@ -25,7 +25,7 @@
 namespace Haruhi {
 
 Plugin::Plugin (Session* session, std::string const& urn, std::string const& title, int id, QWidget* parent):
-	Core::Unit (session, urn, title, id),
+	Unit (session, urn, title, id),
 	QWidget (parent)
 {
 	setSizePolicy (QSizePolicy::Minimum, QSizePolicy::Minimum);

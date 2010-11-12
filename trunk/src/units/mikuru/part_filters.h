@@ -47,7 +47,7 @@ class PartFilters:
 	Q_OBJECT
 
   public:
-	PartFilters (Part* part, Core::PortGroup* filter_ports, QString const& port_prefix, Mikuru* mikuru, QWidget* parent);
+	PartFilters (Part* part, Haruhi::PortGroup* filter_ports, QString const& port_prefix, Mikuru* mikuru, QWidget* parent);
 
 	~PartFilters();
 
@@ -70,7 +70,7 @@ class PartFilters:
 	process_events();
 
 	void
-	process_filters (Core::AudioBuffer& input, Core::AudioBuffer& buffer1, Core::AudioBuffer& buffer2, Core::AudioBuffer& output);
+	process_filters (Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer1, Haruhi::AudioBuffer& buffer2, Haruhi::AudioBuffer& output);
 
 	void
 	unit_bay_assigned();
@@ -115,7 +115,7 @@ class PartFilters:
 	Params::PartFilters		_params;
 	bool					_loading_params;
 
-	Core::PortGroup*		_filter_ports;
+	Haruhi::PortGroup*		_filter_ports;
 	DoubleFilter			_double_filter;
 
 	Filter*					_filter1;

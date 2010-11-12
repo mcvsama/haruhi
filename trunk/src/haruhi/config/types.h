@@ -14,9 +14,13 @@
 #ifndef HARUHI__CONFIG__TYPES_H__INCLUDED
 #define HARUHI__CONFIG__TYPES_H__INCLUDED
 
+#include <stdint.h>
+
+
 namespace Haruhi {
 
-typedef float Sample;
+typedef float	Sample;
+typedef int64_t	Timestamp;
 
 } // namespace Haruhi
 

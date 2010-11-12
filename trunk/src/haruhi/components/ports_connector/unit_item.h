@@ -40,30 +40,30 @@ class UnitItem:
 	public HighlightableItem
 {
   public:
-	typedef std::map<Core::Port*, PortItem*>  PortsToItemsMap;
+	typedef std::map<Port*, PortItem*>  PortsToItemsMap;
 
 	enum Graph { Audio, Event };
 
   public:
-	UnitItem (Core::Port::Direction, Core::Unit*, QTreeWidget* parent, QString const& label);
+	UnitItem (Port::Direction, Unit*, QTreeWidget* parent, QString const& label);
 
-	Core::Unit*
+	Unit*
 	unit() const;
 
 	void
 	update();
 
 	PortItem*
-	insert_port (Core::Port*);
+	insert_port (Port*);
 
 	void
-	remove_port (Core::Port*);
+	remove_port (Port*);
 
 	void
-	update_port (Core::Port*);
+	update_port (Port*);
 
 	bool
-	port_exist (Core::Port*) const;
+	port_exist (Port*) const;
 
 	template<class Predicate>
 		inline int
@@ -85,20 +85,20 @@ class UnitItem:
 	 * new if one doesn't exist.
 	 */
 	GroupItem*
-	find_or_create_group_item_for (Core::PortGroup*);
+	find_or_create_group_item_for (PortGroup*);
 
 	/**
 	 * Removes group item if it is empty.
 	 */
 	void
-	cleanup_group (Core::PortGroup*);
+	cleanup_group (PortGroup*);
 
   public:
-	PortsToItemsMap			_ports;
+	PortsToItemsMap	_ports;
 
   private:
-	Core::Port::Direction	_type;
-	Core::Unit*				_unit;
+	Port::Direction	_type;
+	Unit*			_unit;
 };
 
 } // namespace PortsConnectorPrivate

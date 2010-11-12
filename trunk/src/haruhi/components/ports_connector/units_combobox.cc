@@ -31,7 +31,7 @@ namespace Haruhi {
 
 namespace PortsConnectorPrivate {
 
-UnitsCombobox::UnitsCombobox (PortsConnector* ports_connector, Core::Port::Direction type, QWidget* parent):
+UnitsCombobox::UnitsCombobox (PortsConnector* ports_connector, Port::Direction type, QWidget* parent):
 	QComboBox (parent),
 	_ports_connector (ports_connector),
 	_type (type)
@@ -49,7 +49,7 @@ UnitsCombobox::~UnitsCombobox()
 void
 UnitsCombobox::read_units()
 {
-	QPixmap unit_icon = (_type == Core::Port::Input) ? Config::Icons16::input_unit() : Config::Icons16::output_unit();
+	QPixmap unit_icon = (_type == Port::Input) ? Config::Icons16::input_unit() : Config::Icons16::output_unit();
 
 	clear();
 	_units.clear();
@@ -61,7 +61,7 @@ UnitsCombobox::read_units()
 
 	// PortsConnector's external units:
 	list = Units (_ports_connector->_external_units.begin(), _ports_connector->_external_units.end());
-	std::sort (list.begin(), list.end(), Core::Unit::ComparePointerByTitle());
+	std::sort (list.begin(), list.end(), Unit::ComparePointerByTitle());
 	for (Units::iterator u = list.begin(); u != list.end(); ++u)
 	{
 		insertItem (unit_icon, QString::fromStdString ((*u)->title()));
@@ -70,7 +70,7 @@ UnitsCombobox::read_units()
 
 	// UnitBay's units:
 	list = Units (_ports_connector->_unit_bay->units().begin(), _ports_connector->_unit_bay->units().end());
-	std::sort (list.begin(), list.end(), Core::Unit::ComparePointerByTitle());
+	std::sort (list.begin(), list.end(), Unit::ComparePointerByTitle());
 	for (Units::iterator u = list.begin(); u != list.end(); ++u)
 	{
 		insertItem (unit_icon, QString::fromStdString ((*u)->title()), _units.size());

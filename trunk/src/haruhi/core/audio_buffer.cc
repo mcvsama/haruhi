@@ -26,11 +26,9 @@
 
 namespace Haruhi {
 
-namespace Core {
-
 POOL_ALLOCATOR_FOR (AudioBuffer)
 
-Buffer::TypeID AudioBuffer::TYPE = "Core::AudioBuffer";
+Buffer::TypeID AudioBuffer::TYPE = "Haruhi::AudioBuffer";
 
 
 AudioBuffer::AudioBuffer (std::size_t samples):
@@ -61,8 +59,6 @@ AudioBuffer::resize (std::size_t samples)
 		clear();
 	}
 }
-
-} // namespace Core
 
 } // namespace Haruhi
 

@@ -26,8 +26,6 @@ namespace Haruhi {
 
 class Session;
 
-namespace Core {
-
 int Unit::_id_counter = 0;
 
 
@@ -149,8 +147,6 @@ Unit::allocate_id()
 {
 	return _id_counter += 1;
 }
-
-} // namespace Core
 
 } // namespace Haruhi
 

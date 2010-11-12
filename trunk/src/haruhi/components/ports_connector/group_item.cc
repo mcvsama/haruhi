@@ -29,7 +29,7 @@ namespace Haruhi {
 
 namespace PortsConnectorPrivate {
 
-GroupItem::GroupItem (Core::PortGroup* group, UnitItem* parent):
+GroupItem::GroupItem (PortGroup* group, UnitItem* parent):
 	QTreeWidgetItem (parent, QStringList (QString::fromStdString (group->name()))),
 	_group (group)
 {
@@ -44,7 +44,7 @@ GroupItem::GroupItem (Core::PortGroup* group, UnitItem* parent):
 }
 
 
-Core::PortGroup*
+PortGroup*
 GroupItem::group() const
 {
 	return _group;

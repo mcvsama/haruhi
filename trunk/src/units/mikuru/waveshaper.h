@@ -44,7 +44,7 @@ class Waveshaper: public QWidget
 	friend class Patch;
 
   public:
-	Waveshaper (Part* part, Haruhi::Core::PortGroup* port_group, QString const& port_prefix, Mikuru* mikuru, QWidget* parent);
+	Waveshaper (Part* part, Haruhi::PortGroup* port_group, QString const& port_prefix, Mikuru* mikuru, QWidget* parent);
 
 	~Waveshaper();
 
@@ -52,7 +52,7 @@ class Waveshaper: public QWidget
 	params() { return &_params; }
 
 	void
-	process (Haruhi::Core::AudioBuffer* buffer1, Haruhi::Core::AudioBuffer* buffer2);
+	process (Haruhi::AudioBuffer* buffer1, Haruhi::AudioBuffer* buffer2);
 
   public slots:
 	/**

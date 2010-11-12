@@ -59,7 +59,7 @@ class Learnable
 	 * \entry	engine thread
 	 */
 	virtual void
-	learned_port (EventTypes event_types, Core::EventPort* event_port) = 0;
+	learned_port (EventTypes event_types, EventPort* event_port) = 0;
 };
 
 
@@ -89,7 +89,7 @@ class Teacher
 
   protected:
 	void
-	handle_event_for_learnables (Transport::MidiEvent const& event, Core::EventPort* port);
+	handle_event_for_learnables (Transport::MidiEvent const& event, EventPort* port);
 
   protected:
 	Learnables _learnables;

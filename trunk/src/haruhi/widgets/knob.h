@@ -142,7 +142,7 @@ class Knob:
 		float				_volume_scale_exp;
 	};
 
-	typedef std::map<int, Core::Port*> ContextMenuPortMap;
+	typedef std::map<int, Port*> ContextMenuPortMap;
 
   public:
 	/**
@@ -154,7 +154,7 @@ class Knob:
 	 * \param	step: Change step.
 	 * \param	decimals: How many decimal digits should be shown in spinbox.
 	 */
-	Knob (QWidget* parent, Core::EventPort* event_port, ControllerParam* controller_param,
+	Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param,
 		  QString const& label, float show_min, float show_max, int step, int decimals);
 
 	/**
@@ -217,7 +217,7 @@ class Knob:
 	 * Populates given menu with options for connecting knob to event ports.
 	 */
 	void
-	create_connect_menu (QMenu*, Core::Unit*, QPixmap const& pixmap_for_port_group, QPixmap const& pixmap_for_port);
+	create_connect_menu (QMenu*, Unit*, QPixmap const& pixmap_for_port_group, QPixmap const& pixmap_for_port);
 
 	// Controller API:
 	void

@@ -40,7 +40,6 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/config.h>
 #include <haruhi/haruhi.h>
 #include <haruhi/backend.h>
 #include <haruhi/core/unit.h>
@@ -66,7 +65,7 @@ namespace AudioBackend {
 
 class Backend:
 	public QWidget,
-	public Core::Unit,
+	public Unit,
 	public SaveableState,
 	public ::Haruhi::Backend
 {
@@ -94,13 +93,13 @@ class Backend:
 	~Backend();
 
 	/**
-	 * Core::Unit API
+	 * Unit API
 	 */
 	void
 	registered();
 
 	/**
-	 * Core::Unit API
+	 * Unit API
 	 */
 	void
 	unregistered();
@@ -108,10 +107,10 @@ class Backend:
 	Transport*
 	transport() const { return _transport; }
 
-	Core::EventPort*
+	EventPort*
 	master_volume_port() const { return _master_volume_port; }
 
-	Core::EventPort*
+	EventPort*
 	panic_port() const { return _panic_port; }
 
 	/**
@@ -265,8 +264,8 @@ class Backend:
 	PortsListView*		_outputs_list;
 
 	// Master volume control port:
-	Core::EventPort*	_master_volume_port;
-	Core::EventPort*	_panic_port;
+	EventPort*			_master_volume_port;
+	EventPort*			_panic_port;
 
 	// Used for graph ticks when audio backend is not running:
 	QTimer*				_dummy_timer;

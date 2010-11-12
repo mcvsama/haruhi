@@ -19,16 +19,12 @@
 #include <inttypes.h>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/pool_allocator.h>
 #include <haruhi/utility/memory.h>
 
-// Local:
-#include "core.h"
-
 
 namespace Haruhi {
-
-namespace Core {
 
 enum { OmniKey = -1, OmniVoice = -1, VoiceAuto = -1 };
 
@@ -234,8 +230,6 @@ class VoiceControllerEvent: public ControllerEvent
   private:
 	VoiceID _voice_id;
 };
-
-} // namespace Core
 
 } // namespace Haruhi
 

@@ -57,7 +57,7 @@ class DeviceWithPortItem:
 	Transport::Port*
 	transport_port() const { return _transport_port; }
 
-	Core::PortGroup*
+	PortGroup*
 	port_group() const { return _port_group; }
 
 	/**
@@ -83,7 +83,7 @@ class DeviceWithPortItem:
 	Controllers _controllers;
 
   private:
-	Core::PortGroup*	_port_group;
+	PortGroup*			_port_group;
 	Transport::Port*	_transport_port;
 };
 

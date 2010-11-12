@@ -66,8 +66,8 @@ class CommonFilters: public QWidget
 	process_events();
 
 	void
-	process_filters (Core::AudioBuffer& input1, Core::AudioBuffer& buffer1, Core::AudioBuffer& output1,
-					 Core::AudioBuffer& input2, Core::AudioBuffer& buffer2, Core::AudioBuffer& output2);
+	process_filters (Haruhi::AudioBuffer& input1, Haruhi::AudioBuffer& buffer1, Haruhi::AudioBuffer& output1,
+					 Haruhi::AudioBuffer& input2, Haruhi::AudioBuffer& buffer2, Haruhi::AudioBuffer& output2);
 
 	void
 	unit_bay_assigned();
@@ -105,7 +105,7 @@ class CommonFilters: public QWidget
 	Params::CommonFilters	_params;
 	bool					_loading_params;
 
-	Core::PortGroup*		_filter_ports;
+	Haruhi::PortGroup*		_filter_ports;
 	DoubleFilter			_double_filter_1;
 	DoubleFilter			_double_filter_2;
 

@@ -62,7 +62,7 @@ class Part: public QWidget
 	VoiceManager*
 	voice_manager() const { return _voice_manager; }
 
-	Core::PortGroup*
+	Haruhi::PortGroup*
 	port_group() const { return _port_group; }
 
 	Mikuru*
@@ -94,7 +94,7 @@ class Part: public QWidget
 	int						_id;
 
 	VoiceManager*			_voice_manager;
-	Core::PortGroup*		_port_group;
+	Haruhi::PortGroup*		_port_group;
 
 	// Widgets:
 	StyledCheckBoxLabel*	_part_enabled;

@@ -37,14 +37,14 @@ namespace PortsConnectorPrivate {
 
 class UnitsCombobox: public QComboBox
 {
-	typedef std::vector<Core::Unit*> Units;
+	typedef std::vector<Unit*> Units;
 
   public:
 	/**
 	 * Creates combobox that observed unit_bay
 	 * for inserting/removing units.
 	 */
-	UnitsCombobox (PortsConnector* ports_connector, Core::Port::Direction type, QWidget* parent);
+	UnitsCombobox (PortsConnector* ports_connector, Port::Direction type, QWidget* parent);
 
 	~UnitsCombobox();
 
@@ -59,13 +59,13 @@ class UnitsCombobox: public QComboBox
 	 * Returns currently selected Unit*
 	 * or 0 to indicate "no filtering".
 	 */
-	Core::Unit*
+	Unit*
 	unit() const { return _units[currentItem()]; }
 
   private:
-	PortsConnector*			_ports_connector;
-	Units					_units;
-	Core::Port::Direction	_type;
+	PortsConnector*	_ports_connector;
+	Units			_units;
+	Port::Direction	_type;
 };
 
 } // namespace PortsConnectorPrivate

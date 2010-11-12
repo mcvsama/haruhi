@@ -22,8 +22,6 @@
 
 namespace Haruhi {
 
-namespace Core {
-
 AudioPort::AudioPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group, Flags flags):
 	Port (unit, name, direction, new AudioBuffer (unit->graph()->buffer_size()), group, flags)
 {
@@ -49,7 +47,5 @@ AudioPort::graph_updated()
 {
 	audio_buffer()->resize (graph()->buffer_size());
 }
-
-} // namespace Core
 
 } // namespace Haruhi

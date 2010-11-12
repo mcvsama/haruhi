@@ -23,7 +23,7 @@
 
 namespace Haruhi {
 
-namespace Core {
+namespace GraphDetail {
 
 template<class Port>
 	class ConnectedTo
@@ -74,7 +74,7 @@ template<class Port>
 		return ConnectedFrom<Port> (port);
 	}
 
-} // namespace Core
+} // namespace GraphDetail
 
 } // namespace Haruhi
 

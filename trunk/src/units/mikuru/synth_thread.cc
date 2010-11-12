@@ -39,8 +39,8 @@ SynthThread::SynthThread (Mikuru* mikuru):
 		_mikuru->graph()->lock();
 	std::size_t bs = _mikuru->graph()->buffer_size();
 	_voice_commons = new VoiceCommons (bs);
-	_buffer_1 = new Haruhi::Core::AudioBuffer (bs);
-	_buffer_2 = new Haruhi::Core::AudioBuffer (bs);
+	_buffer_1 = new Haruhi::AudioBuffer (bs);
+	_buffer_2 = new Haruhi::AudioBuffer (bs);
 	if (_mikuru->graph())
 		_mikuru->graph()->unlock();
 	// 512k stack will be sufficient:

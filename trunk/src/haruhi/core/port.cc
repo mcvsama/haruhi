@@ -24,8 +24,6 @@
 
 namespace Haruhi {
 
-namespace Core {
-
 Port::Port (Unit* unit, std::string const& name, Direction direction, Buffer* buffer, PortGroup* group, Flags flags):
 	_unit (unit),
 	_name (name),
@@ -234,8 +232,6 @@ Port::unregister_me()
 	if (graph())
 		graph()->port_unregistered (this, _unit);
 }
-
-} // namespace Core
 
 } // namespace Haruhi
 

@@ -41,8 +41,6 @@ class PresetsListView;
 
 }
 
-using Core::Unit;
-
 class PresetsManager: public QWidget
 {
 	Q_OBJECT

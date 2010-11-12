@@ -53,7 +53,6 @@ namespace Haruhi {
 
 namespace MikuruPrivate {
 
-namespace Core = Haruhi::Core;
 namespace DSP = Haruhi::DSP;
 class Part;
 class WaveComputer;
@@ -130,7 +129,7 @@ class Waveform:
 	 * \param	port_prefix is prefix added to all Waveform port names.
 	 * \entry	Only UI thread.
 	 */
-	Waveform (Part* part, Core::PortGroup* port_group, QString const& port_prefix, Mikuru* mikuru, QWidget* parent);
+	Waveform (Part* part, Haruhi::PortGroup* port_group, QString const& port_prefix, Mikuru* mikuru, QWidget* parent);
 
 	~Waveform();
 
@@ -250,10 +249,10 @@ class Waveform:
 	Shared<DSP::Wave>			_plotters_wave;
 
 	// Ports:
-	Core::EventPort*			_port_wave_shape;
-	Core::EventPort*			_port_modulator_amplitude;
-	Core::EventPort*			_port_modulator_index;
-	Core::EventPort*			_port_modulator_shape;
+	Haruhi::EventPort*			_port_wave_shape;
+	Haruhi::EventPort*			_port_modulator_amplitude;
+	Haruhi::EventPort*			_port_modulator_index;
+	Haruhi::EventPort*			_port_modulator_shape;
 
 	// Widgets and knobs:
 	Haruhi::Knob*				_knob_wave_shape;

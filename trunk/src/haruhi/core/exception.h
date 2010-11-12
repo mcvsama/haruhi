@@ -24,49 +24,47 @@
 
 namespace Haruhi {
 
-namespace Core {
-
-class CoreException: public ::Haruhi::Exception
+class GraphException: public ::Haruhi::Exception
 {
   public:
-	explicit CoreException (const char* what, const char* details):
+	explicit GraphException (const char* what, const char* details):
 		Exception (what, details)
 	{ }
 };
 
 
-class MissingParameters: public CoreException
+class MissingParameters: public GraphException
 {
   public:
 	explicit MissingParameters (const char* what, const char* details):
-		CoreException (what, details)
+		GraphException (what, details)
 	{ }
 };
 
 
-class OutsideProcessingRound: public CoreException
+class OutsideProcessingRound: public GraphException
 {
   public:
 	explicit OutsideProcessingRound (const char* what, const char* details):
-		CoreException (what, details)
+		GraphException (what, details)
 	{ }
 };
 
 
-class PortException: public CoreException
+class PortException: public GraphException
 {
   public:
 	explicit PortException (const char* what, const char* details):
-		CoreException (what, details)
+		GraphException (what, details)
 	{ }
 };
 
 
-class PortIncompatible: public CoreException
+class PortIncompatible: public GraphException
 {
   public:
 	explicit PortIncompatible (const char* what, const char* details):
-		CoreException (what, details)
+		GraphException (what, details)
 	{ }
 };
 
@@ -134,15 +132,13 @@ class SelfConnection: public PortException
 };
 
 
-class Impossible: public CoreException
+class Impossible: public GraphException
 {
   public:
 	explicit Impossible (const char* what, const char* details):
-		CoreException (what, details)
+		GraphException (what, details)
 	{ }
 };
-
-} // namespace Core
 
 } // namespace Haruhi
 

@@ -73,7 +73,7 @@ class PortItem:
 	Transport::Port*
 	transport_port() const { return _transport_port; }
 
-	Core::AudioPort*
+	AudioPort*
 	port() const;
 
 	/**
@@ -101,7 +101,7 @@ class PortItem:
 
   protected:
 	Backend*			_backend;
-	Core::AudioPort*	_port;
+	AudioPort*			_port;
 	Transport::Port*	_transport_port;
 
   private:

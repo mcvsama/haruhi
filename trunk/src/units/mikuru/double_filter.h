@@ -62,14 +62,14 @@ class DoubleFilter
 	 * All buffers must be distinct.
 	 */
 	bool
-	process (Haruhi::Core::AudioBuffer& input, Haruhi::Core::AudioBuffer& buffer1, Haruhi::Core::AudioBuffer& buffer2, Haruhi::Core::AudioBuffer& output);
+	process (Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer1, Haruhi::AudioBuffer& buffer2, Haruhi::AudioBuffer& output);
 
   private:
 	/**
 	 * All buffers must be distinct.
 	 */
 	void
-	filterout (DSP::Filter* filters, int passes, Haruhi::Core::AudioBuffer& input, Haruhi::Core::AudioBuffer& buffer, Haruhi::Core::AudioBuffer& output);
+	filterout (DSP::Filter* filters, int passes, Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer, Haruhi::AudioBuffer& output);
 
   public:
 	Mikuru*						_mikuru;

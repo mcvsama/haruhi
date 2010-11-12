@@ -180,7 +180,6 @@ NODEP_SOURCES += $(VERSION_FILE)
 
 ######## /core ########
 
-SRC_HEADERS += haruhi/core/core.h
 SRC_HEADERS += haruhi/core/buffer.h
 SRC_HEADERS += haruhi/core/exception.h
 SRC_HEADERS += haruhi/core/graph.h

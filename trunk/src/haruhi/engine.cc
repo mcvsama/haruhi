@@ -82,13 +82,13 @@ void
 Engine::adjust_master_volume()
 {
 	DialControl* master_volume = _session->meter_panel()->master_volume();
-	Core::EventBuffer* buffer = _session->audio_backend()->master_volume_port()->event_buffer();
-	Core::EventBuffer::EventsMultiset const& events = buffer->events();
-	for (Core::EventBuffer::EventsMultiset::const_iterator e = events.begin(); e != events.end(); ++e)
+	EventBuffer* buffer = _session->audio_backend()->master_volume_port()->event_buffer();
+	EventBuffer::EventsMultiset const& events = buffer->events();
+	for (EventBuffer::EventsMultiset::const_iterator e = events.begin(); e != events.end(); ++e)
 	{
-		if ((*e)->event_type() == Core::Event::ControllerEventType)
+		if ((*e)->event_type() == Event::ControllerEventType)
 		{
-			Core::ControllerEvent const* controller_event = static_cast<Core::ControllerEvent const*> (e->get());
+			ControllerEvent const* controller_event = static_cast<ControllerEvent const*> (e->get());
 			// FIXME Use controller_proxy!
 			master_volume->setValue (renormalize (controller_event->value(), 0.0, 1.0, Session::MeterPanel::MinVolume, Session::MeterPanel::MaxVolume));
 		}
@@ -99,13 +99,13 @@ Engine::adjust_master_volume()
 void
 Engine::check_panic_button()
 {
-	Core::EventBuffer* buffer = _session->audio_backend()->panic_port()->event_buffer();
-	Core::EventBuffer::EventsMultiset const& events = buffer->events();
-	for (Core::EventBuffer::EventsMultiset::const_iterator e = events.begin(); e != events.end(); ++e)
+	EventBuffer* buffer = _session->audio_backend()->panic_port()->event_buffer();
+	EventBuffer::EventsMultiset const& events = buffer->events();
+	for (EventBuffer::EventsMultiset::const_iterator e = events.begin(); e != events.end(); ++e)
 	{
-		if ((*e)->event_type() == Core::Event::ControllerEventType)
+		if ((*e)->event_type() == Event::ControllerEventType)
 		{
-			Core::ControllerEvent const* controller_event = static_cast<Core::ControllerEvent const*> (e->get());
+			ControllerEvent const* controller_event = static_cast<ControllerEvent const*> (e->get());
 			if (controller_event->value() >= 0.5 && _panic_pressed == false)
 			{
 				_panic_pressed = true;

@@ -88,9 +88,9 @@ class ControllerProxy: public SaveableState
 	 * \param	param is controller param controlled by this proxy.
 	 * 			Proxy does not take ownership of the param.
 	 */
-	ControllerProxy (Core::EventPort* event_port, ControllerParam* param);
+	ControllerProxy (EventPort* event_port, ControllerParam* param);
 
-	Core::EventPort*
+	EventPort*
 	event_port() const { return _event_port; }
 
 	ControllerParam*
@@ -129,7 +129,7 @@ class ControllerProxy: public SaveableState
 	 * parameter and requests periodic-update on widget.
 	 */
 	void
-	process_event (Core::ControllerEvent const*);
+	process_event (ControllerEvent const*);
 
 	/*
 	 * SaveableState API
@@ -145,7 +145,7 @@ class ControllerProxy: public SaveableState
   private:
 	Config				_config;
 	ControllerParam*	_param;
-	Core::EventPort*	_event_port;
+	EventPort*			_event_port;
 	Widget*				_widget;
 };
 

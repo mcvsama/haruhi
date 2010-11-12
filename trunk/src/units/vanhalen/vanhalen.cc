@@ -55,14 +55,14 @@ VanHalen::~VanHalen()
 void
 VanHalen::registered()
 {
-	_input = new Haruhi::Core::EventPort (this, "Input", Haruhi::Core::Port::Input);
-	_output = new Haruhi::Core::EventPort (this, "Output", Haruhi::Core::Port::Output);
+	_input = new Haruhi::EventPort (this, "Input", Haruhi::Port::Input);
+	_output = new Haruhi::EventPort (this, "Output", Haruhi::Port::Output);
 
-	_audio_input_1 = new Haruhi::Core::AudioPort (this, "Audio L", Haruhi::Core::Port::Input);
-	_audio_input_2 = new Haruhi::Core::AudioPort (this, "Audio R", Haruhi::Core::Port::Input);
+	_audio_input_1 = new Haruhi::AudioPort (this, "Audio L", Haruhi::Port::Input);
+	_audio_input_2 = new Haruhi::AudioPort (this, "Audio R", Haruhi::Port::Input);
 
-	_audio_output_1 = new Haruhi::Core::AudioPort (this, "Audio L", Haruhi::Core::Port::Output);
-	_audio_output_2 = new Haruhi::Core::AudioPort (this, "Audio R", Haruhi::Core::Port::Output);
+	_audio_output_1 = new Haruhi::AudioPort (this, "Audio L", Haruhi::Port::Output);
+	_audio_output_2 = new Haruhi::AudioPort (this, "Audio R", Haruhi::Port::Output);
 
 	enable();
 }
@@ -96,19 +96,19 @@ VanHalen::process()
 	clear_outputs();
 
 #if 0
-	Core::EventBuffer* buffer = _input->event_buffer();
+	Haruhi::EventBuffer* buffer = _input->event_buffer();
 
 	// Keyboard events:
-	for (Core::EventBuffer::EventsMultiset::iterator e = buffer->events().begin(); e != buffer->events().end(); ++e)
+	for (Haruhi::EventBuffer::EventsMultiset::iterator e = buffer->events().begin(); e != buffer->events().end(); ++e)
 	{
-		Core::VoiceEvent const* voice_event = dynamic_cast<Core::VoiceEvent const*> (*e);
+		Haruhi::VoiceEvent const* voice_event = dynamic_cast<Haruhi::VoiceEvent const*> (*e);
 		if (voice_event)
 		{
-			if (voice_event->type() == Core::VoiceEvent::Create)
+			if (voice_event->type() == Haruhi::VoiceEvent::Create)
 			{
 				// TODO
 			}
-			else if (voice_event->type() == Core::VoiceEvent::Release || voice_event->type() == Core::VoiceEvent::Drop)
+			else if (voice_event->type() == Haruhi::VoiceEvent::Release || voice_event->type() == Haruhi::VoiceEvent::Drop)
 			{
 				// TODO
 			}
@@ -116,10 +116,10 @@ VanHalen::process()
 	}
 #endif
 
-	Haruhi::Core::AudioBuffer* i1 = _audio_input_1->audio_buffer();
-	Haruhi::Core::AudioBuffer* i2 = _audio_input_2->audio_buffer();
-	Haruhi::Core::AudioBuffer* o1 = _audio_output_1->audio_buffer();
-	Haruhi::Core::AudioBuffer* o2 = _audio_output_2->audio_buffer();
+	Haruhi::AudioBuffer* i1 = _audio_input_1->audio_buffer();
+	Haruhi::AudioBuffer* i2 = _audio_input_2->audio_buffer();
+	Haruhi::AudioBuffer* o1 = _audio_output_1->audio_buffer();
+	Haruhi::AudioBuffer* o2 = _audio_output_2->audio_buffer();
 
 #if 0
 	// Audio quantization effect:

@@ -30,7 +30,7 @@
 
 namespace MikuruPrivate {
 
-PartFilters::PartFilters (Part* part, Core::PortGroup* filter_ports, QString const& port_prefix, Mikuru* mikuru, QWidget* parent):
+PartFilters::PartFilters (Part* part, Haruhi::PortGroup* filter_ports, QString const& port_prefix, Mikuru* mikuru, QWidget* parent):
 	QWidget (parent),
 	_mikuru (mikuru),
 	_part (part),
@@ -96,7 +96,7 @@ PartFilters::process_events()
 
 
 void
-PartFilters::process_filters (Core::AudioBuffer& input, Core::AudioBuffer& buffer1, Core::AudioBuffer& buffer2, Core::AudioBuffer& output)
+PartFilters::process_filters (Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer1, Haruhi::AudioBuffer& buffer2, Haruhi::AudioBuffer& output)
 {
 	_double_filter.configure (static_cast<DoubleFilter::Configuration> (_params.filter_configuration.get()), _filter1->params(), _filter2->params());
 

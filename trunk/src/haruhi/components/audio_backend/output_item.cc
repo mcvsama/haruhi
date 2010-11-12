@@ -35,7 +35,7 @@ OutputItem::OutputItem (PortsListView* parent, QString const& name):
 	_backend->_ports_lock.unlock();
 	// Allocate new port:
 	_backend->graph()->lock();
-	_port = new Core::AudioPort (_backend, name.ascii(), Core::Port::Input);
+	_port = new AudioPort (_backend, name.ascii(), Port::Input);
 	_backend->graph()->unlock();
 	_backend->_outputs[_transport_port] = this;
 	// Configure item:

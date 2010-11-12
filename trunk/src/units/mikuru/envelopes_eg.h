@@ -41,7 +41,6 @@ class Mikuru;
 
 namespace MikuruPrivate {
 
-namespace Core = Haruhi::Core;
 namespace DSP = Haruhi::DSP;
 class Voice;
 class VoiceManager;
@@ -166,17 +165,17 @@ class EG: public Envelope
 	// all segment lengths must be recomputed to match current sample-rate.
 	DSP::Envelope				_envelope_template;
 	EGs							_egs;
-	Haruhi::Core::AudioBuffer	_buffer;
+	Haruhi::AudioBuffer			_buffer;
 	// List of Voices which has been dropped and need ADSRs to be deleted also:
 	std::list<Voice*>			_dropped_voices;
 
 	Haruhi::ControllerParam		_segment_duration;
 	Haruhi::ControllerParam		_point_value;
 
-	Haruhi::Core::PortGroup*	_port_group;
-	Haruhi::Core::EventPort*	_port_point_value;
-	Haruhi::Core::EventPort*	_port_segment_duration;
-	Haruhi::Core::EventPort*	_port_output;
+	Haruhi::PortGroup*			_port_group;
+	Haruhi::EventPort*			_port_point_value;
+	Haruhi::EventPort*			_port_segment_duration;
+	Haruhi::EventPort*			_port_output;
 
 	QCheckBox*					_enabled;
 	Haruhi::Knob*				_knob_point_value;

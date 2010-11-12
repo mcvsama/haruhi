@@ -79,7 +79,7 @@ class Oscillator
 	 * Use 0 to disable modulator.
 	 */
 	void
-	set_frequency_modulator (Core::AudioBuffer* buffer) { _frequency_modulator = buffer; }
+	set_frequency_modulator (AudioBuffer* buffer) { _frequency_modulator = buffer; }
 
 	/**
 	 * Argument: [0…1.0]
@@ -258,7 +258,7 @@ class Oscillator
 	// Cached (_unison_number - 1) / 2.0f;
 	Sample				_half_unison_number;
 	Sample				_unison_noise;
-	Core::AudioBuffer*	_frequency_modulator;
+	AudioBuffer*		_frequency_modulator;
 	DSP::Noise			_noise;
 	DSP::Noise::State	_noise_state;
 

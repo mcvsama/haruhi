@@ -20,7 +20,6 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/core/core.h>
 #include <haruhi/core/audio_buffer.h>
 
 
@@ -64,8 +63,8 @@ class Transport
 		buffer() = 0;
 
 	  private:
-		Transport*			_transport;
-		Core::AudioBuffer	_buffer;
+		Transport*	_transport;
+		AudioBuffer	_buffer;
 	};
 
   public:

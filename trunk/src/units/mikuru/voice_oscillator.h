@@ -29,7 +29,6 @@
 
 namespace MikuruPrivate {
 
-namespace Core = Haruhi::Core;
 namespace DSP = Haruhi::DSP;
 
 using Haruhi::Sample;
@@ -69,13 +68,13 @@ class VoiceOscillator
 	 * Sets frequency source buffer.
 	 */
 	void
-	set_frequency_source (Core::AudioBuffer* source) { _frequency_source = source; }
+	set_frequency_source (Haruhi::AudioBuffer* source) { _frequency_source = source; }
 
 	/**
 	 * Sets amplitude source buffer.
 	 */
 	void
-	set_amplitude_source (Core::AudioBuffer* source) { _amplitude_source = source; }
+	set_amplitude_source (Haruhi::AudioBuffer* source) { _amplitude_source = source; }
 
 	/**
 	 * Enables/disables noise generator.
@@ -130,7 +129,7 @@ class VoiceOscillator
 	 * Fills output buffer.
 	 */
 	void
-	fill (Core::AudioBuffer* output)
+	fill (Haruhi::AudioBuffer* output)
 	{
 		Sample* const o = output->begin();
 		bool mul = false;
@@ -192,7 +191,7 @@ class VoiceOscillator
 	}
 
 	void
-	fill_without_noised_unison (Core::AudioBuffer* output)
+	fill_without_noised_unison (Haruhi::AudioBuffer* output)
 	{
 		Sample f;
 		Sample* const o = output->begin();
@@ -224,7 +223,7 @@ class VoiceOscillator
 	}
 
 	void
-	fill_with_noised_unison (Core::AudioBuffer* output)
+	fill_with_noised_unison (Haruhi::AudioBuffer* output)
 	{
 		Sample f;
 		Sample* const o = output->begin();
@@ -269,37 +268,37 @@ class VoiceOscillator
 	}
 
   private:
-	bool				_wavetable_enabled;
-	DSP::Wavetable*		_wavetable;
-	Core::AudioBuffer*	_frequency_source;
-	Core::AudioBuffer*	_amplitude_source;
-	Sample				_distribution_lookup[MaxUnison];
-	Sample				_phases[MaxUnison];
+	bool					_wavetable_enabled;
+	DSP::Wavetable*			_wavetable;
+	Haruhi::AudioBuffer*	_frequency_source;
+	Haruhi::AudioBuffer*	_amplitude_source;
+	Sample					_distribution_lookup[MaxUnison];
+	Sample					_phases[MaxUnison];
 
 	// Unison:
-	Sample				_initial_phase_spread;
-	int					_unison_number;
-	Sample				_unison_spread;
-	Sample				_unison_noise;
-	Sample				_1_div_unison_number;		// Cached 1.0f / _unison_number.
-	Sample				_unison_relative_spread;	// Cached _unison_spread / _unson_number.
-	Sample				_half_unison_number;		// Cached (_unison_number - 1) / 2.0f.
+	Sample					_initial_phase_spread;
+	int						_unison_number;
+	Sample					_unison_spread;
+	Sample					_unison_noise;
+	Sample					_1_div_unison_number;		// Cached 1.0f / _unison_number.
+	Sample					_unison_relative_spread;	// Cached _unison_spread / _unson_number.
+	Sample					_half_unison_number;		// Cached (_unison_number - 1) / 2.0f.
 
 	// Used for both white noise and unison noise:
-	DSP::Noise			_noise;
-	DSP::Noise::State	_noise_state;
-	bool				_noise_enabled;
-	Sample				_noise_amplitude;
+	DSP::Noise				_noise;
+	DSP::Noise::State		_noise_state;
+	bool					_noise_enabled;
+	Sample					_noise_amplitude;
 
 	// Helpers:
-	Sample				_sum;	// Unison waves sum (multiphases sum)
-	Sample				_l;		// Unison lowest frequency
-	Sample				_c;		// Unison center frequency
-	Sample				_h;		// Unison highest frequency
-	Sample				_e;		// Noising range (extent)
-	Sample				_f;		// Frequency
-	Sample				_d;		// Unison delta
-	Sample				_z;		// Noised frequency
+	Sample					_sum;	// Unison waves sum (multiphases sum)
+	Sample					_l;		// Unison lowest frequency
+	Sample					_c;		// Unison center frequency
+	Sample					_h;		// Unison highest frequency
+	Sample					_e;		// Noising range (extent)
+	Sample					_f;		// Frequency
+	Sample					_d;		// Unison delta
+	Sample					_z;		// Noised frequency
 };
 
 } // namespace MikuruPrivate

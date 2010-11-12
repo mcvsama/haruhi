@@ -18,8 +18,6 @@
 
 namespace Haruhi {
 
-namespace Core {
-
 PortGroup::PortGroup (Graph* graph, std::string const& name):
 	_graph (graph),
 	_name (name)
@@ -48,8 +46,6 @@ PortGroup::graph() const
 {
 	return _graph;
 }
-
-} // namespace Core
 
 } // namespace Haruhi
 

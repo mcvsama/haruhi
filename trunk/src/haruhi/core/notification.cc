@@ -20,8 +20,6 @@
 
 namespace Haruhi {
 
-namespace Core {
-
 Notification::Notification():
 	_broadcast (true)
 { }
@@ -31,7 +29,5 @@ Notification::Notification (std::string const& target_urn):
 	_broadcast (false),
 	_target_urn (target_urn)
 { }
-
-} // namespace Core
 
 } // namespace Haruhi

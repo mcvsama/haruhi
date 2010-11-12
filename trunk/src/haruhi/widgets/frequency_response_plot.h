@@ -88,7 +88,7 @@ class FrequencyResponsePlot: public QWidget
 	repaint_grid();
 
   private:
-	Core::Graph*			_graph;
+	Graph*					_graph;
 	bool					_double_scale;
 	QPixmap					_double_buffer;
 	QPixmap					_grid_buffer;

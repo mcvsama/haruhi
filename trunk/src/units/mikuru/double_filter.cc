@@ -84,7 +84,7 @@ DoubleFilter::configure (Configuration configuration, Params::Filter* params1, P
 
 
 bool
-DoubleFilter::process (Core::AudioBuffer& input, Core::AudioBuffer& buffer1, Core::AudioBuffer& buffer2, Core::AudioBuffer& output)
+DoubleFilter::process (Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer1, Haruhi::AudioBuffer& buffer2, Haruhi::AudioBuffer& output)
 {
 	bool filtered = true;
 	std::size_t nsamples = std::distance (input.begin(), input.end());
@@ -169,7 +169,7 @@ DoubleFilter::process (Core::AudioBuffer& input, Core::AudioBuffer& buffer1, Cor
 
 
 void
-DoubleFilter::filterout (DSP::Filter* filters, int passes, Core::AudioBuffer& input, Core::AudioBuffer& buffer, Core::AudioBuffer& output)
+DoubleFilter::filterout (DSP::Filter* filters, int passes, Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer, Haruhi::AudioBuffer& output)
 {
 	// ↓ passes
 	// 1: in -> out
@@ -178,8 +178,8 @@ DoubleFilter::filterout (DSP::Filter* filters, int passes, Core::AudioBuffer& in
 	// 4: in -> buf -> out -> buf -> out
 	// 5: in -> out -> buf -> out -> buf -> out
 
-	Core::AudioBuffer* s = &buffer;
-	Core::AudioBuffer* t = &output;
+	Haruhi::AudioBuffer* s = &buffer;
+	Haruhi::AudioBuffer* t = &output;
 	if (passes % 2 == 0)
 		std::swap (s, t);
 	// Now for odd number of passes, s is buffer, t is output.

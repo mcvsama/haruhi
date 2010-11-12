@@ -30,14 +30,10 @@
 
 namespace Haruhi {
 
-namespace Core {
-
 class Unit;
 class Port;
 
-
 typedef std::set<Port*> Ports;
-
 
 /**
  * Represents Port in Graph. Port is a data entry point for Units.
@@ -235,8 +231,6 @@ class Port: private Noncopyable
 	Ports			_back_connections;
 	Ports			_forward_connections;
 };
-
-} // namespace Core
 
 } // namespace Haruhi
 

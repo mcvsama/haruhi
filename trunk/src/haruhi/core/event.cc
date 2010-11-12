@@ -24,8 +24,6 @@
 
 namespace Haruhi {
 
-namespace Core {
-
 POOL_ALLOCATOR_FOR (Event)
 POOL_ALLOCATOR_FOR (ControllerEvent)
 POOL_ALLOCATOR_FOR (VoiceEvent)
@@ -53,8 +51,6 @@ VoiceEvent::frequency_from_key_id (KeyID key_id, float master_tune)
 {
 	return master_tune * std::pow (2.0f, ((static_cast<float> (key_id) - 69.0f) / 12.0f));
 }
-
-} // namespace Core
 
 } // namespace Haruhi
 

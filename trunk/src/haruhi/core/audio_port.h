@@ -28,10 +28,7 @@
 
 namespace Haruhi {
 
-namespace Core {
-
 class AudioBuffer;
-
 
 class AudioPort: public Port
 {
@@ -52,8 +49,6 @@ class AudioPort: public Port
 	void
 	graph_updated();
 };
-
-} // namespace Core
 
 } // namespace Haruhi
 

@@ -18,6 +18,9 @@
 #include <QtGui/QTreeWidget>
 #include <QtGui/QHeaderView>
 
+// Haruhi:
+#include <haruhi/config.h>
+
 // Local:
 #include "ports_list_view.h"
 #include "device_with_port_item.h"

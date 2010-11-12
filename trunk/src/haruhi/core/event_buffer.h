@@ -30,9 +30,7 @@
 
 namespace Haruhi {
 
-namespace Core {
-
-class EventBuffer: public Core::Buffer
+class EventBuffer: public Buffer
 {
 	USES_POOL_ALLOCATOR (EventBuffer)
 
@@ -74,8 +72,6 @@ class EventBuffer: public Core::Buffer
   private:
 	EventsMultiset* _events;
 };
-
-} // namespace Core
 
 } // namespace Haruhi
 

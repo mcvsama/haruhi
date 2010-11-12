@@ -41,14 +41,14 @@ General::General (Mikuru* mikuru, QWidget* parent):
 {
 	Params::General p = _params;
 
-	_port_volume = new Core::EventPort (_mikuru, "Volume", Core::Port::Input, 0, Core::Port::ControlVolume);
-	_port_detune = new Core::EventPort (_mikuru, "Detune", Core::Port::Input);
-	_port_panorama = new Core::EventPort (_mikuru, "Panorama", Core::Port::Input);
-	_port_stereo_width = new Core::EventPort (_mikuru, "Stereo width", Core::Port::Input);
-	_port_input_volume = new Core::EventPort (_mikuru, "Input volume", Core::Port::Input);
-	_port_pitchbend = new Core::EventPort (_mikuru, "Pitchbend (global)", Core::Port::Input, 0, Core::Port::ControlPitchbend | Core::Port::Polyphonic);
-	_port_amplitude= new Core::EventPort (_mikuru, "Amplitude (global)", Core::Port::Input, 0, Core::Port::ControlPitchbend | Core::Port::Polyphonic);
-	_port_frequency = new Core::EventPort (_mikuru, "Frequency (global)", Core::Port::Input, 0, Core::Port::ControlPitchbend | Core::Port::Polyphonic);
+	_port_volume = new Haruhi::EventPort (_mikuru, "Volume", Haruhi::Port::Input, 0, Haruhi::Port::ControlVolume);
+	_port_detune = new Haruhi::EventPort (_mikuru, "Detune", Haruhi::Port::Input);
+	_port_panorama = new Haruhi::EventPort (_mikuru, "Panorama", Haruhi::Port::Input);
+	_port_stereo_width = new Haruhi::EventPort (_mikuru, "Stereo width", Haruhi::Port::Input);
+	_port_input_volume = new Haruhi::EventPort (_mikuru, "Input volume", Haruhi::Port::Input);
+	_port_pitchbend = new Haruhi::EventPort (_mikuru, "Pitchbend (global)", Haruhi::Port::Input, 0, Haruhi::Port::ControlPitchbend | Haruhi::Port::Polyphonic);
+	_port_amplitude= new Haruhi::EventPort (_mikuru, "Amplitude (global)", Haruhi::Port::Input, 0, Haruhi::Port::ControlPitchbend | Haruhi::Port::Polyphonic);
+	_port_frequency = new Haruhi::EventPort (_mikuru, "Frequency (global)", Haruhi::Port::Input, 0, Haruhi::Port::ControlPitchbend | Haruhi::Port::Polyphonic);
 
 	_knob_volume = new Haruhi::Knob (this, _port_volume, &_params.volume, "Volume dB",
 									 -std::numeric_limits<float>::infinity(), 0.0f,
@@ -155,9 +155,9 @@ General::process_events()
 	_knob_input_volume->controller_proxy().process_events();
 
 	// Copy values from pitchbend/amplitude/frequency ports to each part's port:
-	Core::EventBuffer* pitchbend_buffer = _port_pitchbend->event_buffer();
-	Core::EventBuffer* amplitude_buffer = _port_amplitude->event_buffer();
-	Core::EventBuffer* frequency_buffer = _port_frequency->event_buffer();
+	Haruhi::EventBuffer* pitchbend_buffer = _port_pitchbend->event_buffer();
+	Haruhi::EventBuffer* amplitude_buffer = _port_amplitude->event_buffer();
+	Haruhi::EventBuffer* frequency_buffer = _port_frequency->event_buffer();
 	for (Mikuru::Parts::iterator p = _mikuru->parts().begin(); p != _mikuru->parts().end(); ++p)
 	{
 		(*p)->oscillator()->pitchbend_port()->event_buffer()->mixin (pitchbend_buffer);

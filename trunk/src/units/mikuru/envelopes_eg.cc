@@ -97,12 +97,12 @@ EG::create_ports()
 {
 	if (_mikuru->graph())
 		_mikuru->graph()->lock();
-	_port_group = new Core::PortGroup (_mikuru->graph(), QString ("EG %1").arg (this->id()).toStdString());
+	_port_group = new Haruhi::PortGroup (_mikuru->graph(), QString ("EG %1").arg (this->id()).toStdString());
 	// Inputs:
-	_port_point_value = new Core::EventPort (_mikuru, "Value", Core::Port::Input, _port_group);
-	_port_segment_duration = new Core::EventPort (_mikuru, "Duration", Core::Port::Input, _port_group);
+	_port_point_value = new Haruhi::EventPort (_mikuru, "Value", Haruhi::Port::Input, _port_group);
+	_port_segment_duration = new Haruhi::EventPort (_mikuru, "Duration", Haruhi::Port::Input, _port_group);
 	// Outputs:
-	_port_output = new Core::EventPort (_mikuru, QString ("EG %1").arg (this->id()).toStdString(), Core::Port::Output, 0, Core::Port::Polyphonic);
+	_port_output = new Haruhi::EventPort (_mikuru, QString ("EG %1").arg (this->id()).toStdString(), Haruhi::Port::Output, 0, Haruhi::Port::Polyphonic);
 	if (_mikuru->graph())
 		_mikuru->graph()->unlock();
 }
@@ -243,7 +243,7 @@ EG::process()
 	if (_egs.empty())
 		return;
 
-	Core::Timestamp t = _mikuru->graph()->timestamp();
+	Haruhi::Timestamp t = _mikuru->graph()->timestamp();
 	Haruhi::Sample v;
 
 	// Assuming that output ports are cleared by Mikuru on beginnig of each
@@ -263,7 +263,7 @@ EG::process()
 		else
 		{
 			// Normal event on output:
-			_port_output->event_buffer()->push (new Core::VoiceControllerEvent (t, voice->voice_id(), v));
+			_port_output->event_buffer()->push (new Haruhi::VoiceControllerEvent (t, voice->voice_id(), v));
 		}
 	}
 }

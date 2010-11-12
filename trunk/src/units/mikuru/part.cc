@@ -40,7 +40,7 @@ Part::Part (Mikuru* mikuru, QWidget* parent):
 
 	Params::Part p = _params;
 	_voice_manager = new VoiceManager (this);
-	_port_group = new Core::PortGroup (_mikuru->graph(), QString ("Part %1").arg (id()).toStdString());
+	_port_group = new Haruhi::PortGroup (_mikuru->graph(), QString ("Part %1").arg (id()).toStdString());
 
 	// Tabs/widgets:
 

@@ -29,10 +29,7 @@
 
 namespace Haruhi {
 
-namespace Core {
-
 class EventBuffer;
-
 
 class EventPort: public Port
 {
@@ -53,8 +50,6 @@ class EventPort: public Port
 	void
 	graph_updated();
 };
-
-} // namespace Core
 
 } // namespace Haruhi
 

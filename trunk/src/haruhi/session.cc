@@ -298,7 +298,7 @@ Session::MeterPanel::MeterPanel (Session* session, QWidget* parent):
 
 Session::Session (QWidget* parent):
 	QWidget (parent),
-	_graph (new Core::Graph()),
+	_graph (new Graph()),
 	_audio_backend (0),
 	_event_backend (0),
 	_plugin_loader (new PluginLoader (this))
