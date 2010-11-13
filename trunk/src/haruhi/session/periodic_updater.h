@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__PERIODIC_UPDATER_H__INCLUDED
-#define HARUHI__PERIODIC_UPDATER_H__INCLUDED
+#ifndef HARUHI__SESSION__PERIODIC_UPDATER_H__INCLUDED
+#define HARUHI__SESSION__PERIODIC_UPDATER_H__INCLUDED
 
 // Standard:
 #include <cstddef>

@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__CONNECTIONS_DUMP_H__INCLUDED
-#define HARUHI__CONNECTIONS_DUMP_H__INCLUDED
+#ifndef HARUHI__GRAPH__CONNECTIONS_DUMP_H__INCLUDED
+#define HARUHI__GRAPH__CONNECTIONS_DUMP_H__INCLUDED
 
 // Qt:
 #include <QtXml/QDomElement>

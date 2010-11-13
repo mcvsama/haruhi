@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__FAIL_H__INCLUDED
-#define HARUHI__FAIL_H__INCLUDED
+#ifndef HARUHI__APPLICATION__FAIL_H__INCLUDED
+#define HARUHI__APPLICATION__FAIL_H__INCLUDED
 
 namespace Haruhi {
 
