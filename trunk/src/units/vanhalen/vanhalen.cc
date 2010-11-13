@@ -31,13 +31,22 @@
 
 VanHalen::VanHalen (Haruhi::Session* session, std::string const& urn, std::string const& title, int id, QWidget* parent):
 	Haruhi::Plugin (session, urn, title, id, parent),
-	_buf1 (session->graph()->buffer_size()),
-	_buf2 (session->graph()->buffer_size()),
-	_delay1 (16, 100000, session->graph()->buffer_size()),
-	_delay2 (16, 100000, session->graph()->buffer_size()),
-	_comb_index (0, 0, 0, 1000),
-	_comb_alpha (0, -1000, 0, 1000)
+	_buf1 (64),
+	_buf2 (64),
+	_delay1 (16, 100000, 64),
+	_delay2 (16, 100000, 64),
+	_comb_index (0, 1000, 0, 1000),
+	_comb_alpha (-1000, 1000, 0, 1000)
 {
+	_input = new Haruhi::EventPort (this, "Input", Haruhi::Port::Input);
+	_output = new Haruhi::EventPort (this, "Output", Haruhi::Port::Output);
+
+	_audio_input_1 = new Haruhi::AudioPort (this, "Audio L", Haruhi::Port::Input);
+	_audio_input_2 = new Haruhi::AudioPort (this, "Audio R", Haruhi::Port::Input);
+
+	_audio_output_1 = new Haruhi::AudioPort (this, "Audio L", Haruhi::Port::Output);
+	_audio_output_2 = new Haruhi::AudioPort (this, "Audio R", Haruhi::Port::Output);
+
 	_knob_comb_index = new Haruhi::Knob (this, 0, &_comb_index, "Index", 0, 1000, 1, 0);
 	_knob_comb_alpha = new Haruhi::Knob (this, 0, &_comb_alpha, "Alpha", -1.0, 1.0, 10, 2);
 
@@ -49,20 +58,19 @@ VanHalen::VanHalen (Haruhi::Session* session, std::string const& urn, std::strin
 
 VanHalen::~VanHalen()
 {
+	delete _input;
+	delete _output;
+	delete _audio_input_1;
+	delete _audio_input_2;
+	delete _audio_output_1;
+	delete _audio_output_2;
 }
 
 
 void
 VanHalen::registered()
 {
-	_input = new Haruhi::EventPort (this, "Input", Haruhi::Port::Input);
-	_output = new Haruhi::EventPort (this, "Output", Haruhi::Port::Output);
-
-	_audio_input_1 = new Haruhi::AudioPort (this, "Audio L", Haruhi::Port::Input);
-	_audio_input_2 = new Haruhi::AudioPort (this, "Audio R", Haruhi::Port::Input);
-
-	_audio_output_1 = new Haruhi::AudioPort (this, "Audio L", Haruhi::Port::Output);
-	_audio_output_2 = new Haruhi::AudioPort (this, "Audio R", Haruhi::Port::Output);
+	graph_updated();
 
 	enable();
 }
@@ -72,13 +80,6 @@ void
 VanHalen::unregistered()
 {
 	panic();
-
-	delete _input;
-	delete _output;
-	delete _audio_input_1;
-	delete _audio_input_2;
-	delete _audio_output_1;
-	delete _audio_output_2;
 }
 
 
@@ -176,6 +177,18 @@ VanHalen::process()
 void
 VanHalen::panic()
 {
+}
+
+
+void
+VanHalen::graph_updated()
+{
+	Unit::graph_updated();
+
+	_buf1.resize (graph()->buffer_size());
+	_buf2.resize (graph()->buffer_size());
+	_delay1.set_size (graph()->buffer_size());
+	_delay2.set_size (graph()->buffer_size());
 }
 
 

@@ -63,6 +63,9 @@ class VanHalen:
 	void
 	panic();
 
+	void
+	graph_updated();
+
   private:
 	// Drive:
 	Haruhi::EventPort*		_input;

@@ -68,6 +68,21 @@ Mikuru::Mikuru (Haruhi::Session* session, std::string const& urn, std::string co
 	_input_buffer_L (64),
 	_input_buffer_R (64)
 {
+	if (graph())
+		graph()->lock();
+
+	_audio_input_L = new Haruhi::AudioPort (this, "L input", Haruhi::Port::Input, 0, Haruhi::Port::StandardAudio);
+	_audio_input_R = new Haruhi::AudioPort (this, "R input", Haruhi::Port::Input, 0, Haruhi::Port::StandardAudio);
+
+	_audio_output_L = new Haruhi::AudioPort (this, "L output", Haruhi::Port::Output, 0, Haruhi::Port::StandardAudio);
+	_audio_output_R = new Haruhi::AudioPort (this, "R output", Haruhi::Port::Output, 0, Haruhi::Port::StandardAudio);
+
+	_port_keyboard = new Haruhi::EventPort (this, "Keyboard", Haruhi::Port::Input, 0, Haruhi::Port::ControlKeyboard);
+	_port_sustain = new Haruhi::EventPort (this, "Sustain", Haruhi::Port::Input, 0, Haruhi::Port::ControlSustain);
+
+	if (graph())
+		graph()->unlock();
+
 	// Widgets:
 
 	_enabled = new QCheckBox ("Enabled (Note On)", this);
@@ -120,48 +135,6 @@ Mikuru::Mikuru (Haruhi::Session* session, std::string const& urn, std::string co
 Mikuru::~Mikuru()
 {
 	_update_ui_timer->stop();
-}
-
-
-void
-Mikuru::registered()
-{
-	int sample_rate = graph()->sample_rate();
-
-	// Smoothers (100ms):
-	_audio_input_smoother_L.set_smoothing_samples (0.100f * sample_rate);
-	_audio_input_smoother_R.set_smoothing_samples (0.100f * sample_rate);
-	_master_volume_smoother_L.set_smoothing_samples (0.100f * sample_rate);
-	_master_volume_smoother_R.set_smoothing_samples (0.100f * sample_rate);
-
-	// Resize buffers:
-	graph_updated();
-
-	if (graph())
-		graph()->lock();
-
-	_audio_input_L = new Haruhi::AudioPort (this, "L input", Haruhi::Port::Input, 0, Haruhi::Port::StandardAudio);
-	_audio_input_R = new Haruhi::AudioPort (this, "R input", Haruhi::Port::Input, 0, Haruhi::Port::StandardAudio);
-
-	_audio_output_L = new Haruhi::AudioPort (this, "L output", Haruhi::Port::Output, 0, Haruhi::Port::StandardAudio);
-	_audio_output_R = new Haruhi::AudioPort (this, "R output", Haruhi::Port::Output, 0, Haruhi::Port::StandardAudio);
-
-	_port_keyboard = new Haruhi::EventPort (this, "Keyboard", Haruhi::Port::Input, 0, Haruhi::Port::ControlKeyboard);
-	_port_sustain = new Haruhi::EventPort (this, "Sustain", Haruhi::Port::Input, 0, Haruhi::Port::ControlSustain);
-
-	if (graph())
-		graph()->unlock();
-
-	load_config();
-
-	enable();
-}
-
-
-void
-Mikuru::unregistered()
-{
-	panic();
 
 	// Stop synthesis threads:
 	stop_threads();
@@ -179,6 +152,25 @@ Mikuru::unregistered()
 
 	delete _port_keyboard;
 	delete _port_sustain;
+}
+
+
+void
+Mikuru::registered()
+{
+	// Resize buffers:
+	graph_updated();
+
+	load_config();
+
+	enable();
+}
+
+
+void
+Mikuru::unregistered()
+{
+	panic();
 }
 
 
@@ -269,6 +261,14 @@ void
 Mikuru::graph_updated()
 {
 	Unit::graph_updated();
+
+	int sample_rate = graph()->sample_rate();
+
+	// Smoothers (100ms):
+	_audio_input_smoother_L.set_smoothing_samples (0.100f * sample_rate);
+	_audio_input_smoother_R.set_smoothing_samples (0.100f * sample_rate);
+	_master_volume_smoother_L.set_smoothing_samples (0.100f * sample_rate);
+	_master_volume_smoother_R.set_smoothing_samples (0.100f * sample_rate);
 
 	if (graph())
 		graph()->lock();
