@@ -32,6 +32,7 @@ class DelayLine
 	 * \param	buffer_size is number of samples write/read each time.
 	 * \param	delay is number of samples to delay.
 	 * \param	size is number of samples read/written each time.
+	 * 			MUST be >= than max_delay.
 	 */
 	DelayLine (std::size_t delay, std::size_t max_delay, std::size_t size);
 
@@ -44,6 +45,7 @@ class DelayLine
 
 	/**
 	 * Sets maximum delay in samples.
+	 * Max delay MUST be >= size set with set_size().
 	 */
 	void
 	set_max_delay (std::size_t max_delay);
@@ -51,6 +53,7 @@ class DelayLine
 	/**
 	 * Should be called only after read and before next write.
 	 * Sets number of samples read/written with write/read methods.
+	 * Max delay MUST be >= size.
 	 */
 	void
 	set_size (std::size_t size);

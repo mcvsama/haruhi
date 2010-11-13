@@ -34,7 +34,6 @@ DelayLine::DelayLine (std::size_t delay, std::size_t max_delay, std::size_t size
 	_wpos (0)
 {
 	assert (size > 0);
-	assert (max_delay > 0);
 	assert (max_delay > size);
 
 	set_max_delay (max_delay);
@@ -65,6 +64,16 @@ DelayLine::set_max_delay (std::size_t max_delay)
 		_delay = _max_delay;
 
 	clear();
+}
+
+
+void
+DelayLine::set_size (std::size_t size)
+{
+	assert (size > 0);
+	assert (_max_delay > size);
+
+	_size = size;
 }
 
 
