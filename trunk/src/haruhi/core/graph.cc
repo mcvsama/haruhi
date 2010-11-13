@@ -57,6 +57,7 @@ Graph::register_unit (Unit* unit)
 	lock();
 	unit->_graph = this;
 	_units.insert (unit);
+	unit->graph_updated();
 	// Signal:
 	unit_registered (unit);
 	unlock();
@@ -73,6 +74,11 @@ Graph::unregister_unit (Unit* unit)
 	unit->disable();
 	unit->unregistered();
 	lock();
+	// Disconnect ports:
+	for (Ports::iterator p = unit->inputs().begin(); p != unit->inputs().end(); ++p)
+		(*p)->disconnect();
+	for (Ports::iterator p = unit->outputs().begin(); p != unit->outputs().end(); ++p)
+		(*p)->disconnect();
 	_units.erase (f);
 	unit->_graph = 0;
 	// Signal:

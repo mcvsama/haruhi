@@ -37,7 +37,7 @@ class AudioBuffer: public Buffer
 	static TypeID TYPE;
 
   public:
-	AudioBuffer (std::size_t size);
+	AudioBuffer (std::size_t size = 256);
 
 	~AudioBuffer();
 
