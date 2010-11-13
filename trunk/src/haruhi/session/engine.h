@@ -20,7 +20,7 @@
 // Haruhi:
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/semaphore.h>
-#include <haruhi/session.h>
+#include <haruhi/session/session.h>
 
 
 namespace Haruhi {

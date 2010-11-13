@@ -40,7 +40,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/haruhi.h>
+#include <haruhi/application/haruhi.h>
 #include <haruhi/backend.h>
 #include <haruhi/graph/unit.h>
 #include <haruhi/graph/audio_buffer.h>

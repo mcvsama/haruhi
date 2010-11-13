@@ -28,10 +28,8 @@
 #include <QtGui/QComboBox>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
-#include <haruhi/config.h>
-#include <haruhi/unit_bay.h>
-#include <haruhi/presetable.h>
+#include <haruhi/config/all.h>
+#include <haruhi/application/haruhi.h>
 #include <haruhi/graph/event.h>
 #include <haruhi/graph/audio_port.h>
 #include <haruhi/graph/event_port.h>
@@ -39,10 +37,13 @@
 #include <haruhi/dsp/smoother.h>
 #include <haruhi/plugin/plugin.h>
 #include <haruhi/plugin/plugin_factory.h>
+#include <haruhi/plugin/presetable.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/widgets/knob.h>
+#include <haruhi/config.h>
+#include <haruhi/unit_bay.h>
 
 // Local:
 #include "patch.h"

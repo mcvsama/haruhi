@@ -22,7 +22,6 @@
 #include <QtGui/QCheckBox>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
 #include <haruhi/dsp/wave.h>
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/graph/port_group.h>

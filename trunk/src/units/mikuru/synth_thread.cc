@@ -16,7 +16,6 @@
 #include <set>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
 #include <haruhi/dsp/smoother.h>
 #include <haruhi/utility/thread.h>
 

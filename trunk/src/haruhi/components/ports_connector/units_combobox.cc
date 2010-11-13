@@ -20,11 +20,12 @@
 #include <QtGui/QComboBox>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/config.h>
-#include <haruhi/session.h>
 
 // Local:
 #include "units_combobox.h"
+#include "ports_connector.h"
 
 
 namespace Haruhi {

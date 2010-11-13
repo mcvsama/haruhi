@@ -24,7 +24,7 @@
 #include <haruhi/graph/event_buffer.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/delay_line.h>
-#include <haruhi/session.h>
+#include <haruhi/session/session.h>
 
 #include "vanhalen.h"
 

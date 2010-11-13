@@ -18,7 +18,7 @@
 #include <QtGui/QMessageBox>
 
 // Haruhi:
-#include <haruhi/connections_dump.h>
+#include <haruhi/graph/connections_dump.h>
 
 // Local:
 #include "mikuru.h"

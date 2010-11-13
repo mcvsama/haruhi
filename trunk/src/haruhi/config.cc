@@ -27,7 +27,7 @@
 
 // Haruhi:
 #include <haruhi/utility/filesystem.h>
-#include <haruhi/session.h>
+#include <haruhi/exception.h>
 
 // Local:
 #include "config.h"

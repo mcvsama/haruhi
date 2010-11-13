@@ -22,7 +22,6 @@
 #include <QtGui/QCheckBox>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/widgets/knob.h>
 

@@ -18,7 +18,6 @@
 #include <set>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/functions.h>
 

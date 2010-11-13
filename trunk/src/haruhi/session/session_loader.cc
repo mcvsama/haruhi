@@ -27,7 +27,7 @@
 
 // Haruhi:
 #include <haruhi/config.h>
-#include <haruhi/session.h>
+#include <haruhi/session/session.h>
 
 // Local:
 #include "session_loader.h"

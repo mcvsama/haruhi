@@ -32,15 +32,15 @@
 #include <QtXml/QDomNode>
 
 // Haruhi:
-#include <haruhi/backend.h>
+#include <haruhi/config/all.h>
+#include <haruhi/application/haruhi.h>
 #include <haruhi/components/devices_manager/device_dialog.h>
 #include <haruhi/components/devices_manager/controller_dialog.h>
-#include <haruhi/haruhi.h>
-#include <haruhi/config.h>
 #include <haruhi/graph/event.h>
 #include <haruhi/graph/event_port.h>
 #include <haruhi/graph/unit.h>
 #include <haruhi/utility/saveable_state.h>
+#include <haruhi/backend.h>
 
 // Local:
 #include "teacher.h"

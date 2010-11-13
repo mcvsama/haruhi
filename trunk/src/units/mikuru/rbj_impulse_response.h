@@ -21,7 +21,6 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/dsp/impulse_response.h>
-#include <haruhi/haruhi.h>
 
 // Local:
 #include "types.h"

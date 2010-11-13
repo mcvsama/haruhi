@@ -31,9 +31,9 @@
 
 // Haruhi:
 #include <haruhi/config.h>
-#include <haruhi/haruhi.h>
-#include <haruhi/session.h>
+#include <haruhi/application/haruhi.h>
 #include <haruhi/graph/event_buffer.h>
+#include <haruhi/session/session.h>
 #include <haruhi/utility/atomic.h>
 #include <haruhi/utility/numeric.h>
 

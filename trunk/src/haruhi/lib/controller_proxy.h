@@ -18,10 +18,10 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/periodic_updater.h>
 #include <haruhi/graph/event.h>
 #include <haruhi/graph/event_port.h>
 #include <haruhi/lib/controller_param.h>
+#include <haruhi/session/periodic_updater.h>
 #include <haruhi/utility/saveable_state.h>
 
 

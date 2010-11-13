@@ -25,7 +25,6 @@
 #include <QtGui/QComboBox>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
 #include <haruhi/graph/event.h>
 #include <haruhi/dsp/wave.h>
 #include <haruhi/dsp/wavetable.h>

@@ -30,8 +30,6 @@
 #include <Qt3Support/Q3Grid>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
-#include <haruhi/session.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/graph/event_buffer.h>
 #include <haruhi/dsp/functions.h>
@@ -39,6 +37,7 @@
 #include <haruhi/dsp/fourier_series_filler.h>
 #include <haruhi/dsp/fft_filler.h>
 #include <haruhi/dsp/noise.h>
+#include <haruhi/session/session.h>
 #include <haruhi/utility/atomic.h>
 #include <haruhi/widgets/dial_control.h>
 #include <haruhi/widgets/knob.h>

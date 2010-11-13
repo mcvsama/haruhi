@@ -22,12 +22,12 @@
 #include <QtGui/QMenu>
 
 // Haruhi:
+#include <haruhi/config/all.h>
+#include <haruhi/application/haruhi.h>
 #include <haruhi/components/devices_manager/device_dialog.h>
 #include <haruhi/components/devices_manager/controller_dialog.h>
 #include <haruhi/graph/event_buffer.h>
-#include <haruhi/config.h>
-#include <haruhi/haruhi.h>
-#include <haruhi/session.h>
+#include <haruhi/session/session.h>
 
 // Local:
 #include "transports/alsa_transport.h"

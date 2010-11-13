@@ -17,11 +17,11 @@
 #include <string>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
-#include <haruhi/exception.h>
+#include <haruhi/application/haruhi.h>
 #include <haruhi/plugin/plugin.h>
 #include <haruhi/plugin/plugin_factory.h>
 #include <haruhi/utility/memory.h>
+#include <haruhi/exception.h>
 
 // Factories:
 #include <units/mikuru/mikuru.h>

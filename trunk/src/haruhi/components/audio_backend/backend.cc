@@ -27,8 +27,8 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/haruhi.h>
-#include <haruhi/session.h>
+#include <haruhi/application/haruhi.h>
+#include <haruhi/session/session.h>
 #include <haruhi/utility/numeric.h>
 
 // Local:

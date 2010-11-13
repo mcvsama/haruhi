@@ -18,7 +18,6 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
 #include <haruhi/graph/event_port.h>
 #include <haruhi/widgets/knob.h>
 

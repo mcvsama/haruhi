@@ -24,11 +24,11 @@
 #include <Qt3Support/Q3PopupMenu>
 
 // Haruhi:
+#include <haruhi/config/all.h>
+#include <haruhi/graph/connections_dump.h>
 #include <haruhi/plugin/plugin_factory.h>
-#include <haruhi/config.h>
-#include <haruhi/session.h>
-#include <haruhi/presetable.h>
-#include <haruhi/connections_dump.h>
+#include <haruhi/plugin/presetable.h>
+#include <haruhi/session/session.h>
 #include <haruhi/components/presets_manager/presets_manager.h>
 
 // Local:

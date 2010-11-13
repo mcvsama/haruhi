@@ -24,7 +24,6 @@
 #include <QtGui/QCheckBox>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
 #include <haruhi/dsp/parametric_wave.h>
 #include <haruhi/dsp/noise.h>
 #include <haruhi/lib/controller_proxy.h>

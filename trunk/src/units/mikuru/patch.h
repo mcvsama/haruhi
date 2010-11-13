@@ -20,14 +20,13 @@
 #include <list>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
+#include <haruhi/application/haruhi.h>
 #include <haruhi/lib/param.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/widgets/knob.h>
 
 
 class Mikuru;
-
 
 namespace MikuruPrivate {
 

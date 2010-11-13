@@ -35,12 +35,12 @@
 #include <haruhi/components/event_backend/backend.h>
 #include <haruhi/components/devices_manager/panel.h>
 #include <haruhi/plugin/plugin_loader.h>
+#include <haruhi/session/engine.h>
+#include <haruhi/session/program.h>
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/widgets/level_meter.h>
 #include <haruhi/widgets/dial_control.h>
-#include <haruhi/engine.h>
-#include <haruhi/program.h>
 
 
 namespace Haruhi {

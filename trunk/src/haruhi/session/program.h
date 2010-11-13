@@ -23,7 +23,7 @@
 
 // Haruhi:
 #include <haruhi/utility/saveable_state.h>
-#include <haruhi/patch.h>
+#include <haruhi/session/patch.h>
 
 
 namespace Haruhi {

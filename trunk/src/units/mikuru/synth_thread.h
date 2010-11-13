@@ -19,7 +19,6 @@
 #include <set>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/semaphore.h>

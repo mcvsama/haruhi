@@ -35,9 +35,9 @@
 #include <haruhi/graph/graph.h>
 #include <haruhi/components/audio_backend/backend.h>
 #include <haruhi/components/event_backend/backend.h>
+#include <haruhi/session/periodic_updater.h>
 #include <haruhi/widgets/clickable_label.h>
 #include <haruhi/utility/numeric.h>
-#include <haruhi/periodic_updater.h>
 
 // Local:
 #include "session.h"

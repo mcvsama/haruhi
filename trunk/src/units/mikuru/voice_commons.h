@@ -18,7 +18,6 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
 #include <haruhi/graph/audio_buffer.h>
 
 

@@ -23,7 +23,7 @@
 #include <QtGui/QCheckBox>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
+#include <haruhi/application/haruhi.h>
 #include <haruhi/dsp/wave.h>
 
 // Local:

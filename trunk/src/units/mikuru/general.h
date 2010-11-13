@@ -24,7 +24,6 @@
 #include <QtGui/QCheckBox>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/knob.h>
 

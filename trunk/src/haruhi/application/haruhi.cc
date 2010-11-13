@@ -25,10 +25,10 @@
 #include <QtGui/QLayout>
 
 // Haruhi:
-#include <haruhi/config.h>
-#include <haruhi/session.h>
-#include <haruhi/session_loader.h>
-#include <haruhi/periodic_updater.h>
+#include <haruhi/config/all.h>
+#include <haruhi/session/session.h>
+#include <haruhi/session/session_loader.h>
+#include <haruhi/session/periodic_updater.h>
 
 // Local:
 #include "haruhi.h"

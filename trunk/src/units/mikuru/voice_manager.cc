@@ -16,7 +16,6 @@
 #include <numeric>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
 #include <haruhi/utility/atomic.h>
 #include <haruhi/utility/memory.h>
 

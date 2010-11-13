@@ -15,8 +15,7 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/config.h>
-#include <haruhi/session.h>
+#include <haruhi/session/session.h>
 
 // Local:
 #include "unit_bay.h"

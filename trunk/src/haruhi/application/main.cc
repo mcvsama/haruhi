@@ -20,8 +20,8 @@
 
 // Haruhi:
 #include <haruhi/config/version.h>
-#include <haruhi/haruhi.h>
-#include <haruhi/fail.h>
+#include <haruhi/application/haruhi.h>
+#include <haruhi/application/fail.h>
 #include <haruhi/utility/backtrace.h>
 
 

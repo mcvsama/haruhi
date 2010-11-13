@@ -25,7 +25,6 @@
 #include <QtGui/QStackedWidget>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
 #include <haruhi/utility/mutex.h>
 
 // Local:
