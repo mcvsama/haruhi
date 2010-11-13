@@ -32,10 +32,6 @@ namespace Haruhi {
  * PeriodicUpdater calls periodically update() method
  * on all queued widgets. It's useful for UI updates
  * where no instant reaction is needed (knobs and other MIDI controls).
- *
- * For performance reasons it doesn't use mutexes for locking but instead has
- * two queues to be used from within Qt thread and JACK thread
- * (schedule_for_update_from_qt_thread() and schedule_for_update_from_graph_thread()).
  */
 class PeriodicUpdater: public QObject
 {
