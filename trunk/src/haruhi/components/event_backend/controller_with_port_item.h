@@ -23,7 +23,7 @@
 // Haruhi:
 #include <haruhi/components/devices_manager/controller_item.h>
 #include <haruhi/components/devices_manager/controller_dialog.h>
-#include <haruhi/core/event_port.h>
+#include <haruhi/graph/event_port.h>
 #include <haruhi/utility/saveable_state.h>
 
 // Local:

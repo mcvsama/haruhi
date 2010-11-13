@@ -20,7 +20,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/core/audio_buffer.h>
+#include <haruhi/graph/audio_buffer.h>
 
 
 namespace Haruhi {

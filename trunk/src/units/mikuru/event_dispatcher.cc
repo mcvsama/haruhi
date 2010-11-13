@@ -16,8 +16,8 @@
 #include <map>
 
 // Haruhi:
-#include <haruhi/core/event.h>
-#include <haruhi/core/event_port.h>
+#include <haruhi/graph/event.h>
+#include <haruhi/graph/event_port.h>
 #include <haruhi/widgets/knob.h>
 
 // Local:

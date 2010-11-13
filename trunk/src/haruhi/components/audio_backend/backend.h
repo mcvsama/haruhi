@@ -42,9 +42,9 @@
 #include <haruhi/config/all.h>
 #include <haruhi/haruhi.h>
 #include <haruhi/backend.h>
-#include <haruhi/core/unit.h>
-#include <haruhi/core/audio_buffer.h>
-#include <haruhi/core/event_port.h>
+#include <haruhi/graph/unit.h>
+#include <haruhi/graph/audio_buffer.h>
+#include <haruhi/graph/event_port.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/mutex.h>
 

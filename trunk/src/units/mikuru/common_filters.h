@@ -23,7 +23,7 @@
 
 // Haruhi:
 #include <haruhi/haruhi.h>
-#include <haruhi/core/port_group.h>
+#include <haruhi/graph/port_group.h>
 #include <haruhi/widgets/knob.h>
 
 // Local:

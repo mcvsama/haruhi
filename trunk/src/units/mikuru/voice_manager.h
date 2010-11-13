@@ -20,7 +20,7 @@
 
 // Haruhi:
 #include <haruhi/haruhi.h>
-#include <haruhi/core/event_buffer.h>
+#include <haruhi/graph/event_buffer.h>
 #include <haruhi/lib/controller_param.h>
 
 // Local:

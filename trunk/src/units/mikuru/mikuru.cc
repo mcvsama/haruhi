@@ -32,8 +32,8 @@
 // Haruhi:
 #include <haruhi/haruhi.h>
 #include <haruhi/session.h>
-#include <haruhi/core/audio_buffer.h>
-#include <haruhi/core/event_buffer.h>
+#include <haruhi/graph/audio_buffer.h>
+#include <haruhi/graph/event_buffer.h>
 #include <haruhi/dsp/functions.h>
 #include <haruhi/dsp/wavetable.h>
 #include <haruhi/dsp/fourier_series_filler.h>

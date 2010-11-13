@@ -25,7 +25,7 @@
 #include <haruhi/haruhi.h>
 #include <haruhi/dsp/wave.h>
 #include <haruhi/lib/controller_proxy.h>
-#include <haruhi/core/port_group.h>
+#include <haruhi/graph/port_group.h>
 #include <haruhi/widgets/knob.h>
 #include <haruhi/widgets/frequency_response_plot.h>
 #include <haruhi/utility/signal.h>

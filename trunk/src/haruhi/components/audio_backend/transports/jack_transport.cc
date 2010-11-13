@@ -23,7 +23,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/core/graph.h>
+#include <haruhi/graph/graph.h>
 #include <haruhi/components/audio_backend/backend.h>
 #include <haruhi/components/audio_backend/transport.h>
 

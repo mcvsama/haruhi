@@ -24,7 +24,7 @@
 
 // Haruhi:
 #include <haruhi/utility/signal.h>
-#include <haruhi/core/unit.h>
+#include <haruhi/graph/unit.h>
 
 
 namespace Haruhi {

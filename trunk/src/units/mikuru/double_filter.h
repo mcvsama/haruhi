@@ -18,7 +18,7 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/core/audio_buffer.h>
+#include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/filter.h>
 #include <haruhi/dsp/smoother.h>
 

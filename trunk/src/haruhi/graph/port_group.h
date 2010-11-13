@@ -11,43 +11,45 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__CORE__AUDIO_PORT_H__INCLUDED
-#define HARUHI__CORE__AUDIO_PORT_H__INCLUDED
+#ifndef HARUHI__GRAPH__PORT_GROUP_H__INCLUDED
+#define HARUHI__GRAPH__PORT_GROUP_H__INCLUDED
 
 // Standard:
 #include <cstddef>
 #include <string>
 
-// Haruhi:
-#include <haruhi/utility/noncopyable.h>
-
-// Local:
-#include "port.h"
-#include "port_group.h"
-
 
 namespace Haruhi {
 
-class AudioBuffer;
+class Graph;
 
-class AudioPort: public Port
+class PortGroup
 {
   public:
-	AudioPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group = 0, Flags flags = 0);
+	struct CompareByName
+	{
+		bool
+		operator() (PortGroup* a, PortGroup* b)
+		{
+			return a->name() < b->name();
+		}
+	};
 
-	~AudioPort();
+  public:
+	PortGroup (Graph* graph, std::string const& name);
 
-	/**
-	 * Helper that casts Buffer to AudioBuffer.
-	 */
-	AudioBuffer*
-	audio_buffer() const;
+	std::string
+	name() const;
 
-	/**
-	 * Implementation of Port::graph_updated().
-	 */
 	void
-	graph_updated();
+	set_name (std::string const&);
+
+	Graph*
+	graph() const;
+
+  private:
+	Graph*		_graph;
+	std::string	_name;
 };
 
 } // namespace Haruhi

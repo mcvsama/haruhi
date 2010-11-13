@@ -19,7 +19,7 @@
 
 // Haruhi:
 #include <haruhi/haruhi.h>
-#include <haruhi/core/event_port.h>
+#include <haruhi/graph/event_port.h>
 #include <haruhi/widgets/knob.h>
 
 // Local:

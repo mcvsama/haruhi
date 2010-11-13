@@ -19,7 +19,7 @@
 
 // Haruhi:
 #include <haruhi/haruhi.h>
-#include <haruhi/core/audio_buffer.h>
+#include <haruhi/graph/audio_buffer.h>
 
 
 class Mikuru;

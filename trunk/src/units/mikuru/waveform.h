@@ -28,8 +28,8 @@
 
 // Haruhi:
 #include <haruhi/haruhi.h>
-#include <haruhi/core/port_group.h>
-#include <haruhi/core/event_port.h>
+#include <haruhi/graph/port_group.h>
+#include <haruhi/graph/event_port.h>
 #include <haruhi/dsp/wavetable.h>
 #include <haruhi/dsp/functions.h>
 #include <haruhi/dsp/harmonics_wave.h>

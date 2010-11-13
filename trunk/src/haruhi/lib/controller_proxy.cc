@@ -15,8 +15,8 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/core/event.h>
-#include <haruhi/core/event_port.h>
+#include <haruhi/graph/event.h>
+#include <haruhi/graph/event_port.h>
 #include <haruhi/utility/numeric.h>
 
 // Local:

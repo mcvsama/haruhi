@@ -31,7 +31,7 @@
 #include <QtGui/QMenu>
 
 // Haruhi:
-#include <haruhi/core/predicates.h>
+#include <haruhi/graph/predicates.h>
 #include <haruhi/utility/signal.h>
 #include <haruhi/unit_bay.h>
 

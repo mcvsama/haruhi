@@ -24,7 +24,7 @@
 // Haruhi:
 #include <haruhi/components/devices_manager/device_dialog.h>
 #include <haruhi/components/devices_manager/controller_dialog.h>
-#include <haruhi/core/event_buffer.h>
+#include <haruhi/graph/event_buffer.h>
 #include <haruhi/config.h>
 #include <haruhi/haruhi.h>
 #include <haruhi/session.h>

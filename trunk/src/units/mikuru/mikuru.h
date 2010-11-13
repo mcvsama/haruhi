@@ -32,10 +32,10 @@
 #include <haruhi/config.h>
 #include <haruhi/unit_bay.h>
 #include <haruhi/presetable.h>
-#include <haruhi/core/event.h>
-#include <haruhi/core/audio_port.h>
-#include <haruhi/core/event_port.h>
-#include <haruhi/core/notification.h>
+#include <haruhi/graph/event.h>
+#include <haruhi/graph/audio_port.h>
+#include <haruhi/graph/event_port.h>
+#include <haruhi/graph/notification.h>
 #include <haruhi/dsp/smoother.h>
 #include <haruhi/plugin/plugin.h>
 #include <haruhi/plugin/plugin_factory.h>

@@ -23,9 +23,9 @@
 #include <QtGui/QComboBox>
 
 // Haruhi:
-#include <haruhi/core/graph.h>
-#include <haruhi/core/port.h>
-#include <haruhi/core/unit.h>
+#include <haruhi/graph/graph.h>
+#include <haruhi/graph/port.h>
+#include <haruhi/graph/unit.h>
 #include <haruhi/unit_bay.h>
 
 

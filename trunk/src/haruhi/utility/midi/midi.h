@@ -18,12 +18,8 @@
 #include <string>
 #include <cstddef>
 
-// Local:
-#include <core/event/buffer_event.h>
 
-
-namespace Core {
-namespace Event {
+namespace Haruhi {
 namespace MIDI {
 
 class Event
@@ -203,8 +199,7 @@ class PitchbendEvent: public ChannelEvent
 };
 
 } // namespace MIDI
-} // namespace Event
-} // namespace Core
+} // namespace Haruhi
 
 #endif
 

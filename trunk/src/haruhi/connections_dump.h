@@ -25,7 +25,7 @@
 
 // Haruhi:
 #include <haruhi/utility/saveable_state.h>
-#include <haruhi/core/unit.h>
+#include <haruhi/graph/unit.h>
 
 
 namespace Haruhi {

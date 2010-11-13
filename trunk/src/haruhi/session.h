@@ -30,7 +30,7 @@
 #include <QtXml/QDomNode>
 
 // Haruhi:
-#include <haruhi/core/graph.h>
+#include <haruhi/graph/graph.h>
 #include <haruhi/components/audio_backend/backend.h>
 #include <haruhi/components/event_backend/backend.h>
 #include <haruhi/components/devices_manager/panel.h>

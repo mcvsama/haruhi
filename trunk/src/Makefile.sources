@@ -178,33 +178,33 @@ SRC_MOCHDRS += haruhi/components/presets_manager/presets_manager.h
 
 NODEP_SOURCES += $(VERSION_FILE)
 
-######## /core ########
+######## /graph ########
 
-SRC_HEADERS += haruhi/core/buffer.h
-SRC_HEADERS += haruhi/core/exception.h
-SRC_HEADERS += haruhi/core/graph.h
-SRC_HEADERS += haruhi/core/notification.h
-SRC_HEADERS += haruhi/core/port.h
-SRC_HEADERS += haruhi/core/port_group.h
-SRC_HEADERS += haruhi/core/predicates.h
-SRC_HEADERS += haruhi/core/predicates.tcc
-SRC_HEADERS += haruhi/core/unit.h
-SRC_HEADERS += haruhi/core/event.h
-SRC_HEADERS += haruhi/core/audio_port.h
-SRC_HEADERS += haruhi/core/event_port.h
-SRC_HEADERS += haruhi/core/audio_buffer.h
-SRC_HEADERS += haruhi/core/event_buffer.h
+SRC_HEADERS += haruhi/graph/buffer.h
+SRC_HEADERS += haruhi/graph/exception.h
+SRC_HEADERS += haruhi/graph/graph.h
+SRC_HEADERS += haruhi/graph/notification.h
+SRC_HEADERS += haruhi/graph/port.h
+SRC_HEADERS += haruhi/graph/port_group.h
+SRC_HEADERS += haruhi/graph/predicates.h
+SRC_HEADERS += haruhi/graph/predicates.tcc
+SRC_HEADERS += haruhi/graph/unit.h
+SRC_HEADERS += haruhi/graph/event.h
+SRC_HEADERS += haruhi/graph/audio_port.h
+SRC_HEADERS += haruhi/graph/event_port.h
+SRC_HEADERS += haruhi/graph/audio_buffer.h
+SRC_HEADERS += haruhi/graph/event_buffer.h
 
-SRC_SOURCES += haruhi/core/graph.cc
-SRC_SOURCES += haruhi/core/notification.cc
-SRC_SOURCES += haruhi/core/port.cc
-SRC_SOURCES += haruhi/core/port_group.cc
-SRC_SOURCES += haruhi/core/unit.cc
-SRC_SOURCES += haruhi/core/event.cc
-SRC_SOURCES += haruhi/core/audio_port.cc
-SRC_SOURCES += haruhi/core/event_port.cc
-SRC_SOURCES += haruhi/core/audio_buffer.cc
-SRC_SOURCES += haruhi/core/event_buffer.cc
+SRC_SOURCES += haruhi/graph/graph.cc
+SRC_SOURCES += haruhi/graph/notification.cc
+SRC_SOURCES += haruhi/graph/port.cc
+SRC_SOURCES += haruhi/graph/port_group.cc
+SRC_SOURCES += haruhi/graph/unit.cc
+SRC_SOURCES += haruhi/graph/event.cc
+SRC_SOURCES += haruhi/graph/audio_port.cc
+SRC_SOURCES += haruhi/graph/event_port.cc
+SRC_SOURCES += haruhi/graph/audio_buffer.cc
+SRC_SOURCES += haruhi/graph/event_buffer.cc
 
 ######## /dsp ########
 

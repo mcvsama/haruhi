@@ -21,7 +21,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/core/audio_buffer.h>
+#include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/wavetable.h>
 #include <haruhi/dsp/noise.h>
 #include <haruhi/utility/numeric.h>

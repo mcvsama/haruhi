@@ -11,45 +11,44 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__CORE__PORT_GROUP_H__INCLUDED
-#define HARUHI__CORE__PORT_GROUP_H__INCLUDED
+#ifndef HARUHI__GRAPH__EVENT_PORT_H__INCLUDED
+#define HARUHI__GRAPH__EVENT_PORT_H__INCLUDED
 
 // Standard:
 #include <cstddef>
 #include <string>
 
+// Haruhi:
+#include <haruhi/utility/noncopyable.h>
+
+// Local:
+#include "graph.h"
+#include "port.h"
+#include "port_group.h"
+
 
 namespace Haruhi {
 
-class Graph;
+class EventBuffer;
 
-class PortGroup
+class EventPort: public Port
 {
   public:
-	struct CompareByName
-	{
-		bool
-		operator() (PortGroup* a, PortGroup* b)
-		{
-			return a->name() < b->name();
-		}
-	};
+	EventPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group = 0, Flags flags = 0);
 
-  public:
-	PortGroup (Graph* graph, std::string const& name);
+	~EventPort();
 
-	std::string
-	name() const;
+	/**
+	 * Helper that casts Buffer to EventBuffer.
+	 */
+	EventBuffer*
+	event_buffer() const;
 
+	/**
+	 * Implementation of Port::graph_updated().
+	 */
 	void
-	set_name (std::string const&);
-
-	Graph*
-	graph() const;
-
-  private:
-	Graph*		_graph;
-	std::string	_name;
+	graph_updated();
 };
 
 } // namespace Haruhi

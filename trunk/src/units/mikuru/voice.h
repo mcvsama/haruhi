@@ -26,7 +26,7 @@
 
 // Haruhi:
 #include <haruhi/haruhi.h>
-#include <haruhi/core/event.h>
+#include <haruhi/graph/event.h>
 #include <haruhi/dsp/wave.h>
 #include <haruhi/dsp/wavetable.h>
 #include <haruhi/dsp/filter.h>

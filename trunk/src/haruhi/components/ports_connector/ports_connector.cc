@@ -42,8 +42,8 @@
 #include <Qt3Support/Q3ListView> // Required due to Qt4 bug in which normally QScrollBar is not QWidget.
 
 // Haruhi:
-#include <haruhi/core/audio_buffer.h>
-#include <haruhi/core/event_buffer.h>
+#include <haruhi/graph/audio_buffer.h>
+#include <haruhi/graph/event_buffer.h>
 #include <haruhi/config.h>
 #include <haruhi/session.h>
 

@@ -20,7 +20,7 @@
 #include <set>
 
 // Haruhi:
-#include <haruhi/core/event_port.h>
+#include <haruhi/graph/event_port.h>
 
 // Local:
 #include "transport.h"

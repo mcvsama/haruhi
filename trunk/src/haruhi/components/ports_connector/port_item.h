@@ -22,8 +22,8 @@
 #include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
-#include <haruhi/core/port.h>
-#include <haruhi/core/port_group.h>
+#include <haruhi/graph/port.h>
+#include <haruhi/graph/port_group.h>
 
 // Local:
 #include "comparable_item.h"

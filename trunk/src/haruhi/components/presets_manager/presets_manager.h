@@ -27,7 +27,7 @@
 #include <Qt3Support/Q3PopupMenu>
 
 // Haruhi:
-#include <haruhi/core/unit.h>
+#include <haruhi/graph/unit.h>
 #include <haruhi/utility/saveable_state.h>
 
 

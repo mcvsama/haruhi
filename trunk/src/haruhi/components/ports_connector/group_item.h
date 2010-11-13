@@ -18,7 +18,7 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/core/port_group.h>
+#include <haruhi/graph/port_group.h>
 
 // Local:
 #include "comparable_item.h"

@@ -21,8 +21,8 @@
 
 // Local:
 #include <haruhi/config/system.h>
-#include <haruhi/core/event_buffer.h>
-#include <haruhi/core/audio_buffer.h>
+#include <haruhi/graph/event_buffer.h>
+#include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/delay_line.h>
 #include <haruhi/session.h>
 

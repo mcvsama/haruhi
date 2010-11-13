@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__CORE__EVENT_PORT_H__INCLUDED
-#define HARUHI__CORE__EVENT_PORT_H__INCLUDED
+#ifndef HARUHI__GRAPH__AUDIO_PORT_H__INCLUDED
+#define HARUHI__GRAPH__AUDIO_PORT_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -22,27 +22,26 @@
 #include <haruhi/utility/noncopyable.h>
 
 // Local:
-#include "graph.h"
 #include "port.h"
 #include "port_group.h"
 
 
 namespace Haruhi {
 
-class EventBuffer;
+class AudioBuffer;
 
-class EventPort: public Port
+class AudioPort: public Port
 {
   public:
-	EventPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group = 0, Flags flags = 0);
+	AudioPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group = 0, Flags flags = 0);
 
-	~EventPort();
+	~AudioPort();
 
 	/**
-	 * Helper that casts Buffer to EventBuffer.
+	 * Helper that casts Buffer to AudioBuffer.
 	 */
-	EventBuffer*
-	event_buffer() const;
+	AudioBuffer*
+	audio_buffer() const;
 
 	/**
 	 * Implementation of Port::graph_updated().

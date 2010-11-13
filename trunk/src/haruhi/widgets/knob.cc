@@ -33,7 +33,7 @@
 #include <haruhi/config.h>
 #include <haruhi/haruhi.h>
 #include <haruhi/session.h>
-#include <haruhi/core/event_buffer.h>
+#include <haruhi/graph/event_buffer.h>
 #include <haruhi/utility/atomic.h>
 #include <haruhi/utility/numeric.h>
 

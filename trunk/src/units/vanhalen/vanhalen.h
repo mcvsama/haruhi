@@ -21,10 +21,10 @@
 #include <QtGui/QWidget>
 
 // Local:
-#include <haruhi/core/event.h>
-#include <haruhi/core/event_port.h>
-#include <haruhi/core/audio_port.h>
-#include <haruhi/core/audio_buffer.h>
+#include <haruhi/graph/event.h>
+#include <haruhi/graph/event_port.h>
+#include <haruhi/graph/audio_port.h>
+#include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/delay_line.h>
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/plugin/plugin.h>

@@ -37,9 +37,9 @@
 #include <haruhi/components/devices_manager/controller_dialog.h>
 #include <haruhi/haruhi.h>
 #include <haruhi/config.h>
-#include <haruhi/core/event.h>
-#include <haruhi/core/event_port.h>
-#include <haruhi/core/unit.h>
+#include <haruhi/graph/event.h>
+#include <haruhi/graph/event_port.h>
+#include <haruhi/graph/unit.h>
 #include <haruhi/utility/saveable_state.h>
 
 // Local:

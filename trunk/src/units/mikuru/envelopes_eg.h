@@ -25,8 +25,8 @@
 
 // Haruhi:
 #include <haruhi/haruhi.h>
-#include <haruhi/core/event.h>
-#include <haruhi/core/audio_buffer.h>
+#include <haruhi/graph/event.h>
+#include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/envelope.h>
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/knob.h>
