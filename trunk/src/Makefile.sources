@@ -29,16 +29,6 @@ CXXFLAGS		+= -pthread -rdynamic -I. -Wall $(CXXFLAGS_$(DIST)) $(PROFILING_CXXFLA
 CXXFLAGS_s		:= $(CXXFLAGS)
 CXXFLAGS		+= -DCXXFLAGS='"$(CXXFLAGS_s)"'
 
-######## /tests ########
-
-TESTS += haruhi/tests/core
-TESTS += haruhi/tests/shared
-TESTS += haruhi/tests/signal
-
-#SRC_SOURCES += tests/core.cc
-#SRC_SOURCES += tests/shared.cc
-#SRC_SOURCES += tests/signal.cc
-
 ######## /components/audio_backend/transports ########
 
 SRC_HEADERS += haruhi/components/audio_backend/transports/jack_transport.h
