@@ -94,19 +94,19 @@ class Port: private Noncopyable
 	 * \returns	owner of this port.
 	 */
 	Unit*
-	unit() const;
+	unit() const { return _unit; }
 
 	/**
 	 * \returns	name of this port.
 	 */
 	std::string
-	name() const;
+	name() const { return _name; }
 
 	/**
 	 * \returns	comment for this port.
 	 */
 	std::string
-	comment() const;
+	comment() const { return _comment; }
 
 	/**
 	 * \returns	fully qualified name (ie. group-name:port-name)
@@ -118,7 +118,7 @@ class Port: private Noncopyable
 	 * \returns	port direction.
 	 */
 	Direction
-	direction() const;
+	direction() const { return _direction; }
 
 	/**
 	 * \returns	port's flags.
@@ -156,19 +156,19 @@ class Port: private Noncopyable
 	 * \returns	group for this port.
 	 */
 	PortGroup*
-	group() const;
+	group() const { return _group; }
 
 	/**
 	 * \returns	set of back connections.
 	 */
 	Ports const&
-	back_connections() const;
+	back_connections() const { return _back_connections; }
 
 	/**
 	 * \returns	set of forward connections.
 	 */
 	Ports const&
-	forward_connections() const;
+	forward_connections() const { return _forward_connections; }
 
 	/**
 	 * \returns	true if given ports are connected.

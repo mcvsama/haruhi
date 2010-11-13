@@ -40,38 +40,10 @@ Port::~Port()
 }
 
 
-Unit*
-Port::unit() const
-{
-	return _unit;
-}
-
-
-std::string
-Port::name() const
-{
-	return _name;
-}
-
-
-std::string
-Port::comment() const
-{
-	return _comment;
-}
-
-
 std::string
 Port::full_name() const
 {
 	return (_group ? _group->name() + ":" : "") + _name;
-}
-
-
-Port::Direction
-Port::direction() const
-{
-	return _direction;
 }
 
 
@@ -90,27 +62,6 @@ Port::set_comment (std::string const& comment)
 	_comment = comment;
 	if (graph())
 		graph()->port_renamed (this);
-}
-
-
-PortGroup*
-Port::group() const
-{
-	return _group;
-}
-
-
-Ports const&
-Port::back_connections() const
-{
-	return _back_connections;
-}
-
-
-Ports const&
-Port::forward_connections() const
-{
-	return _forward_connections;
 }
 
 
