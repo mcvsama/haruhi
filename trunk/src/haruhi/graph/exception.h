@@ -24,7 +24,7 @@
 
 namespace Haruhi {
 
-class GraphException: public ::Haruhi::Exception
+class GraphException: public Exception
 {
   public:
 	explicit GraphException (const char* what, const char* details):
