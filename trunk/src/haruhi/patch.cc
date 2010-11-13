@@ -359,11 +359,13 @@ Patch::save_state (QDomElement& element) const
 
 	QDomElement connections = element.ownerDocument().createElement ("connections");
 	ConnectionsDump connections_dump;
+	graph()->lock();
 	connections_dump.insert_units (this->units().begin(), this->units().end());
 	connections_dump.insert_unit (session()->audio_backend());
 	connections_dump.insert_unit (session()->event_backend());
 	connections_dump.save();
 	connections_dump.save_state (connections);
+	graph()->unlock();
 
 	element.appendChild (plugins);
 	element.appendChild (connections);
@@ -408,11 +410,13 @@ Patch::load_state (QDomElement const& element)
 	if (!connections.isNull())
 	{
 		ConnectionsDump connections_dump;
+		graph()->lock();
 		connections_dump.insert_units (this->units().begin(), this->units().end());
 		connections_dump.insert_unit (session()->audio_backend());
 		connections_dump.insert_unit (session()->event_backend());
 		connections_dump.load_state (connections);
 		connections_dump.load();
+		graph()->unlock();
 	}
 }
 
