@@ -665,7 +665,6 @@ Session::stop_audio_backend()
 {
 	if (_audio_backend)
 	{
-		_audio_backend->disable();
 		_audio_backend->disconnect();
 		_audio_backend->hide();
 		_graph->unregister_unit (_audio_backend);
@@ -680,7 +679,6 @@ Session::stop_event_backend()
 {
 	if (_event_backend)
 	{
-		_event_backend->disable();
 		_event_backend->disconnect();
 		_event_backend->hide();
 		_graph->unregister_unit (_event_backend);
@@ -698,7 +696,6 @@ Session::start_audio_backend()
 		_graph->register_unit (_audio_backend);
 		_audio_backend->show();
 		_audio_backend->connect();
-		_audio_backend->enable();
 	}
 	catch (Exception const& e)
 	{
@@ -715,7 +712,6 @@ Session::start_event_backend()
 		_graph->register_unit (_event_backend);
 		_event_backend->show();
 		_event_backend->connect();
-		_event_backend->enable();
 	}
 	catch (Exception const& e)
 	{

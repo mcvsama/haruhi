@@ -272,6 +272,7 @@ Backend::connect()
 		dummy_stop();
 		_transport->connect (_client_name.toStdString());
 		_transport->activate();
+		enable();
 	}
 	catch (Exception const& e)
 	{
@@ -285,6 +286,7 @@ Backend::connect()
 void
 Backend::disconnect()
 {
+	disable();
 	_transport->deactivate();
 	_transport->disconnect();
 	dummy_start();

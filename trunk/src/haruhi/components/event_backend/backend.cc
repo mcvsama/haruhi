@@ -200,6 +200,7 @@ Backend::connect()
 {
 	try {
 		_transport->connect (_client_name.toStdString());
+		enable();
 	}
 	catch (Exception const& e)
 	{
@@ -211,6 +212,7 @@ Backend::connect()
 void
 Backend::disconnect()
 {
+	disable();
 	_transport->disconnect();
 }
 
