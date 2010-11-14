@@ -31,7 +31,7 @@
 #include <QtXml/QDomNode>
 
 // Haruhi:
-#include <haruhi/confusion.h>
+#include <haruhi/utility/confusion.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/backtrace.h>
 

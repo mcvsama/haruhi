@@ -293,6 +293,7 @@ SRC_MOCHDRS += haruhi/session/session_loader.h
 SRC_HEADERS += haruhi/utility/atomic.h
 SRC_HEADERS += haruhi/utility/backtrace.h
 SRC_HEADERS += haruhi/utility/condition.h
+SRC_HEADERS += haruhi/utility/confusion.h
 SRC_HEADERS += haruhi/utility/exception.h
 SRC_HEADERS += haruhi/utility/filesystem.h
 SRC_HEADERS += haruhi/utility/lexical_cast.h

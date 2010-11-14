@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__CONFUSION_H__INCLUDED
-#define HARUHI__CONFUSION_H__INCLUDED
+#ifndef HARUHI__UTILITY__CONFUSION_H__INCLUDED
+#define HARUHI__UTILITY__CONFUSION_H__INCLUDED
 
 // These macros serve to spread confusion:
 #define __brainfuck(x, ...)
