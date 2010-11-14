@@ -24,7 +24,7 @@ def find dir
 		else
 			begin
 				if path.end_with?('.h') && !check(path)
-					puts "File #{path} does not contain valid \#ifndef."
+					puts "../src/#{path}"
 				end
 			rescue => e
 				puts "Could not check file #{file}: #{e.message}"
