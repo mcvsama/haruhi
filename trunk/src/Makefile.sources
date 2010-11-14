@@ -284,6 +284,7 @@ SRC_HEADERS += haruhi/session/periodic_updater.h
 SRC_HEADERS += haruhi/session/program.h
 SRC_HEADERS += haruhi/session/session.h
 SRC_HEADERS += haruhi/session/session_loader.h
+SRC_HEADERS += haruhi/session/unit_bay.h
 
 SRC_SOURCES += haruhi/session/engine.cc
 SRC_SOURCES += haruhi/session/patch.cc
@@ -291,6 +292,7 @@ SRC_SOURCES += haruhi/session/periodic_updater.cc
 SRC_SOURCES += haruhi/session/program.cc
 SRC_SOURCES += haruhi/session/session.cc
 SRC_SOURCES += haruhi/session/session_loader.cc
+SRC_SOURCES += haruhi/session/unit_bay.cc
 
 SRC_MOCHDRS += haruhi/session/patch.h
 SRC_MOCHDRS += haruhi/session/periodic_updater.h
@@ -353,12 +355,6 @@ SRC_MOCHDRS += haruhi/widgets/envelope_plot.h
 SRC_MOCHDRS += haruhi/widgets/frequency_response_plot.h
 SRC_MOCHDRS += haruhi/widgets/knob.h
 SRC_MOCHDRS += haruhi/widgets/level_meter.h
-
-######## / ########
-
-SRC_HEADERS += haruhi/unit_bay.h
-
-SRC_SOURCES += haruhi/unit_bay.cc
 
 ######## /units/mikuru ########
 

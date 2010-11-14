@@ -20,7 +20,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/unit_bay.h>
+#include <haruhi/session/unit_bay.h>
 
 // Local:
 #include "unit_item.h"

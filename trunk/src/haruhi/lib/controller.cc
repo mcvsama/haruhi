@@ -17,8 +17,8 @@
 // Haruhi:
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/session/session.h>
+#include <haruhi/session/unit_bay.h>
 #include <haruhi/utility/atomic.h>
-#include <haruhi/unit_bay.h>
 
 // Local:
 #include "controller.h"

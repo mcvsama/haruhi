@@ -32,8 +32,8 @@
 
 // Haruhi:
 #include <haruhi/graph/predicates.h>
+#include <haruhi/session/unit_bay.h>
 #include <haruhi/utility/signal.h>
-#include <haruhi/unit_bay.h>
 
 // Local:
 #include "create_port_dialog.h"

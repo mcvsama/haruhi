@@ -26,7 +26,7 @@
 #include <haruhi/graph/graph.h>
 #include <haruhi/graph/port.h>
 #include <haruhi/graph/unit.h>
-#include <haruhi/unit_bay.h>
+#include <haruhi/session/unit_bay.h>
 
 
 namespace Haruhi {

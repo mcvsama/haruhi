@@ -32,8 +32,8 @@
 // Haruhi:
 #include <haruhi/components/ports_connector/ports_connector.h>
 #include <haruhi/plugin/plugin.h>
+#include <haruhi/session/unit_bay.h>
 #include <haruhi/utility/saveable_state.h>
-#include <haruhi/unit_bay.h>
 
 
 namespace Haruhi {

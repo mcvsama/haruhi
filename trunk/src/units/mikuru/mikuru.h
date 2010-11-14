@@ -38,11 +38,11 @@
 #include <haruhi/plugin/plugin.h>
 #include <haruhi/plugin/plugin_factory.h>
 #include <haruhi/plugin/presetable.h>
+#include <haruhi/session/unit_bay.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/widgets/knob.h>
-#include <haruhi/unit_bay.h>
 
 // Local:
 #include "patch.h"
