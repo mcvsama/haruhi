@@ -30,7 +30,7 @@
 #include <QtGui/QMenu>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 #include <haruhi/application/haruhi.h>
 #include <haruhi/graph/event_buffer.h>
 #include <haruhi/session/session.h>
@@ -54,12 +54,12 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	Knob::SpinBox* s = knob->_spin_box;
 	ControllerProxy::Config& c = _knob->controller_proxy().config();
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::dialog_margin, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::DialogMargin, Config::Spacing);
 	layout->setResizeMode (QLayout::Fixed);
 
-	QGridLayout* grid_layout = new QGridLayout (layout, 2, 2, Config::spacing);
-	layout->addItem (new QSpacerItem (0, Config::spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
-	QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::spacing);
+	QGridLayout* grid_layout = new QGridLayout (layout, 2, 2, Config::Spacing);
+	layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
+	QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::Spacing);
 
 	QLabel* curve_label = new QLabel ("Response curve:", this);
 	Knob::SpinBox* curve_spinbox = new Knob::SpinBox (this, _knob, -1000, 1000, -1.0, 1.0, 100, 1);
@@ -263,7 +263,7 @@ Knob::Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_
 	_context_menu = new QMenu (this);
 	_std_text_color = _label->paletteForegroundColor();
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing + 2);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing + 2);
 	QHBoxLayout* label_layout = new QHBoxLayout (layout, 0);
 	QHBoxLayout* dial_layout = new QHBoxLayout (layout, 0);
 

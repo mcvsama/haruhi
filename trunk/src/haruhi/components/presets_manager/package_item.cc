@@ -16,10 +16,10 @@
 
 // Qt:
 #include <QtCore/QTextStream>
-#include <Qt3Support/Q3ListView>
+#include <QtCore/QFile>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 #include <haruhi/utility/filesystem.h>
 
 // Local:

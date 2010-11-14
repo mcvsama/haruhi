@@ -56,8 +56,8 @@ CommonFilters::CommonFilters (Mikuru* mikuru, QWidget* parent):
 
 	// Layouts:
 
-	QVBoxLayout* v1 = new QVBoxLayout (this, Config::margin, Config::spacing);
-	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::spacing);
+	QVBoxLayout* v1 = new QVBoxLayout (this, Config::Margin, Config::Spacing);
+	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
 	h1->addWidget (new QLabel ("Configuration:", this));
 	h1->addWidget (_filter_configuration);
 	h1->addItem (new QSpacerItem (20, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));

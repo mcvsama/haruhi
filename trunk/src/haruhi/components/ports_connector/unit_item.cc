@@ -19,7 +19,7 @@
 #include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 #include <haruhi/unit_bay.h>
 
 // Local:

@@ -87,12 +87,12 @@ Backend::Backend (Session* session, QString const& client_name, int id, QWidget*
 	_stack->addWidget (_controller_dialog);
 	_stack->setCurrentWidget (_device_dialog);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
-	QHBoxLayout* input_buttons_layout = new QHBoxLayout (layout, Config::spacing);
-	QHBoxLayout* panels_layout = new QHBoxLayout (layout, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
+	QHBoxLayout* input_buttons_layout = new QHBoxLayout (layout, Config::Spacing);
+	QHBoxLayout* panels_layout = new QHBoxLayout (layout, Config::Spacing);
 
 	QLabel* info = new QLabel ("Devices used in current session. Each device corresponds to external MIDI port.", this);
-	info->setMargin (Config::margin);
+	info->setMargin (Config::Margin);
 	layout->addWidget (info);
 
 	panels_layout->addWidget (_tree);
@@ -354,10 +354,10 @@ Backend::save_selected_item()
 		DeviceWithPortItem* input_item = dynamic_cast<DeviceWithPortItem*> (item);
 		if (input_item)
 		{
-			Config::EventHardwareTemplate tpl (input_item->name());
+			Settings::EventHardwareTemplate tpl (input_item->name());
 			input_item->save_state (tpl.element);
-			Config::event_hardware_templates().push_back (tpl);
-			Config::save_event_hardware_templates();
+			Settings::event_hardware_templates().push_back (tpl);
+			Settings::save_event_hardware_templates();
 			QMessageBox::information (this, "Created template", "Created new template \"" + input_item->name() + "\".");
 		}
 	}
@@ -415,14 +415,14 @@ Backend::create_templates_menu (QMenu* menu)
 
 	int action_id = 0;
 	_templates.clear();
-	for (Config::EventHardwareTemplates::iterator t = Config::event_hardware_templates().begin(); t != Config::event_hardware_templates().end(); ++t)
+	for (Settings::EventHardwareTemplates::iterator t = Settings::event_hardware_templates().begin(); t != Settings::event_hardware_templates().end(); ++t)
 	{
 		action_id += 1;
 		QAction* a = menu->addAction (Config::Icons16::template_(), t->name, _insert_template_signal_mapper, SLOT (map()));
 		_insert_template_signal_mapper->setMapping (a, action_id);
 		_templates[action_id] = *t;
 	}
-	menu->setEnabled (!Config::event_hardware_templates().empty());
+	menu->setEnabled (!Settings::event_hardware_templates().empty());
 }
 
 

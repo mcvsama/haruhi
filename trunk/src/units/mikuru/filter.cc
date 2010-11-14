@@ -57,7 +57,7 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 	plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_response_plot = new Haruhi::FrequencyResponsePlot (plot_frame);
-	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::spacing);
+	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::Spacing);
 	plot_frame_layout->addWidget (_response_plot);
 
 	if (_mikuru->graph())
@@ -134,25 +134,25 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 
 	// Layouts:
 
-	QVBoxLayout* layout = new QVBoxLayout (this, 0, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, 0, Config::Spacing);
 	layout->addWidget (_filter_label);
 	layout->addWidget (_panel);
 
-	QHBoxLayout* panel_layout = new QHBoxLayout (_panel, 0, Config::spacing);
+	QHBoxLayout* panel_layout = new QHBoxLayout (_panel, 0, Config::Spacing);
 
-	QHBoxLayout* hor1_layout = new QHBoxLayout (panel_layout, Config::spacing);
+	QHBoxLayout* hor1_layout = new QHBoxLayout (panel_layout, Config::Spacing);
 	hor1_layout->addWidget (plot_frame);
 
-	QVBoxLayout* ver1_layout = new QVBoxLayout (hor1_layout, Config::spacing);
+	QVBoxLayout* ver1_layout = new QVBoxLayout (hor1_layout, Config::Spacing);
 
-	QHBoxLayout* hor2_layout = new QHBoxLayout (ver1_layout, Config::spacing);
+	QHBoxLayout* hor2_layout = new QHBoxLayout (ver1_layout, Config::Spacing);
 	hor2_layout->addWidget (_filter_type);
 	hor2_layout->addWidget (_passes);
 	hor2_layout->addWidget (_limiter_enabled);
 
-	QHBoxLayout* hor3_layout = new QHBoxLayout (ver1_layout, Config::spacing);
+	QHBoxLayout* hor3_layout = new QHBoxLayout (ver1_layout, Config::Spacing);
 
-	QHBoxLayout* params_layout = new QHBoxLayout (hor3_layout, Config::spacing);
+	QHBoxLayout* params_layout = new QHBoxLayout (hor3_layout, Config::Spacing);
 	params_layout->addWidget (_knob_frequency);
 	params_layout->addWidget (_knob_resonance);
 	params_layout->addWidget (_knob_gain);

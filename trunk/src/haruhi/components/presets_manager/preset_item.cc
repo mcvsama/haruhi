@@ -21,7 +21,7 @@
 #include <Qt3Support/Q3ListView>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "category_item.h"

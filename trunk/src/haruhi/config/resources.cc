@@ -1,6 +1,6 @@
 /* vim:ts=4
  *
- * Copyleft 2010  Michał Gawron
+ * Copyleft 2008…2010  Michał Gawron
  * Marduk Unix Labs, http://mulabs.org/
  *
  * This program is free software: you can redistribute it and/or modify
@@ -11,25 +11,28 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__HARUHI_TCC__INCLUDED
-#define HARUHI__HARUHI_TCC__INCLUDED
-
 // Standard:
 #include <cstddef>
 
-// Haruhi:
-#include <haruhi/utility/lexical_cast.h>
+// Qt:
+#include <QtGui/QFont>
+#include <QtGui/QApplication>
+
+// Local:
+#include "resources.h"
 
 
-template<class T>
-	T
-	Config::option (QString const& option_name)
-	{
-		StringsMap::const_iterator f = _map.find (option_name);
-		if (f != _map.end())
-			return lexical_cast<T> (static_cast<const char*> (f->second.toUtf8()));
-		return T();
-	}
+namespace Config {
 
-#endif
+QFont SmallFont;
+
+
+void
+initialize()
+{
+	SmallFont = QApplication::font();
+	SmallFont.setPointSize (8);
+}
+
+} // namespace Config
 

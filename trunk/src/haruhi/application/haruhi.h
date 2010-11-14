@@ -30,7 +30,6 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/config.h>
 #include <haruhi/utility/noncopyable.h>
 #include <haruhi/utility/backtrace.h>
 

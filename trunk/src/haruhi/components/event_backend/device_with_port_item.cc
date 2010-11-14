@@ -17,9 +17,6 @@
 // Qt:
 #include <QtGui/QTreeWidgetItem>
 
-// Haruhi:
-#include <haruhi/config.h>
-
 // Local:
 #include "device_with_port_item.h"
 #include "controller_with_port_item.h"

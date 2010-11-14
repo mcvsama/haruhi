@@ -34,8 +34,9 @@
 #include <Qt3Support/Q3ListView>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 #include <haruhi/graph/unit.h>
+#include <haruhi/settings/unit_settings.h>
 #include <haruhi/utility/filesystem.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/memory.h>
@@ -99,19 +100,19 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 
 	// Layouts:
 
-	QVBoxLayout* v1 = new QVBoxLayout (this, 0, Config::spacing);
-	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::spacing);
+	QVBoxLayout* v1 = new QVBoxLayout (this, 0, Config::Spacing);
+	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
 	h1->addWidget (_tabs);
 	h1->addWidget (right_panel);
-	QVBoxLayout* v2 = new QVBoxLayout (right_panel, 0, Config::spacing);
-	QHBoxLayout* h2 = new QHBoxLayout (v2, Config::spacing);
+	QVBoxLayout* v2 = new QVBoxLayout (right_panel, 0, Config::Spacing);
+	QHBoxLayout* h2 = new QHBoxLayout (v2, Config::Spacing);
 	h2->addWidget (_load_button);
 	h2->addWidget (_save_button);
 	h2->addWidget (_create_button);
 	h2->addWidget (_destroy_button);
 	v2->addWidget (_editor);
 
-	QString all_presets_dir = Config::data_home() + "/presets";
+	QString all_presets_dir = Settings::data_home() + "/presets";
 	mkpath (all_presets_dir.toStdString(), 0700);
 
 	std::string dir = sanitize_urn (_unit->urn());
@@ -133,9 +134,9 @@ PresetsManager::~PresetsManager()
 bool
 PresetsManager::is_favorite (QString const& uuid)
 {
-	Config::UnitConfiguration& uc = Config::unit_configuration (QString::fromStdString (_unit->urn()));
-	Config::UnitConfiguration::FavoritePresets& list = uc.favorite_presets();
-	for (Config::UnitConfiguration::FavoritePresets::iterator f = list.begin(); f != list.end(); ++f)
+	Settings::UnitSettings& uc = Settings::unit_settings (QString::fromStdString (_unit->urn()));
+	Settings::UnitSettings::FavoritePresets& list = uc.favorite_presets();
+	for (Settings::UnitSettings::FavoritePresets::iterator f = list.begin(); f != list.end(); ++f)
 		if (f->uuid == uuid)
 			return true;
 	return false;
@@ -145,13 +146,13 @@ PresetsManager::is_favorite (QString const& uuid)
 void
 PresetsManager::set_favorite (QString const& uuid, QString const& name, bool set)
 {
-	Config::UnitConfiguration& uc = Config::unit_configuration (QString::fromStdString (_unit->urn()));
+	Settings::UnitSettings& uc = Settings::unit_settings (QString::fromStdString (_unit->urn()));
 	if (set)
-		uc.favorite_presets().push_back (Config::FavoritePreset (uuid, name));
+		uc.favorite_presets().push_back (Settings::FavoritePreset (uuid, name));
 	else
 	{
-		Config::UnitConfiguration::FavoritePresets& list = uc.favorite_presets();
-		for (Config::UnitConfiguration::FavoritePresets::iterator f = list.begin(); f != list.end(); )
+		Settings::UnitSettings::FavoritePresets& list = uc.favorite_presets();
+		for (Settings::UnitSettings::FavoritePresets::iterator f = list.begin(); f != list.end(); )
 		{
 			if (f->uuid == uuid)
 				f = list.erase (f);
@@ -160,7 +161,7 @@ PresetsManager::set_favorite (QString const& uuid, QString const& name, bool set
 		}
 	}
 	uc.uniq_favorite_presets();
-	Config::save_unit_configurations();
+	uc.save();
 }
 
 

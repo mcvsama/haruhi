@@ -20,7 +20,7 @@
 #include <QtGui/QPixmap>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 #include <haruhi/graph/audio_port.h>
 #include <haruhi/graph/event_port.h>
 

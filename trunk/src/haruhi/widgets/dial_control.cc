@@ -22,7 +22,7 @@
 #include <Qt3Support/Q3RangeControl>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 #include <haruhi/utility/numeric.h>
 
 // Local:

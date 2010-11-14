@@ -22,7 +22,7 @@
 #include <QtGui/QDragEnterEvent>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "ports_list.h"

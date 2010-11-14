@@ -22,7 +22,7 @@
 #include <QtGui/QMenu>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "panel.h"
@@ -69,12 +69,12 @@ Panel::Panel (QWidget* parent):
 	_stack->addWidget (_controller_dialog);
 	_stack->setCurrentWidget (_device_dialog);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
-	QHBoxLayout* input_buttons_layout = new QHBoxLayout (layout, Config::spacing);
-	QHBoxLayout* panels_layout = new QHBoxLayout (layout, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
+	QHBoxLayout* input_buttons_layout = new QHBoxLayout (layout, Config::Spacing);
+	QHBoxLayout* panels_layout = new QHBoxLayout (layout, Config::Spacing);
 
 	QLabel* info = new QLabel ("Device templates.", this);
-	info->setMargin (Config::margin);
+	info->setMargin (Config::Margin);
 	layout->addWidget (info);
 
 	panels_layout->addWidget (_tree);

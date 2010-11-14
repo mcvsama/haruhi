@@ -31,11 +31,12 @@
 #include <QtGui/QGroupBox>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 #include <haruhi/graph/graph.h>
 #include <haruhi/components/audio_backend/backend.h>
 #include <haruhi/components/event_backend/backend.h>
 #include <haruhi/session/periodic_updater.h>
+#include <haruhi/settings/recent_session.h>
 #include <haruhi/widgets/clickable_label.h>
 #include <haruhi/utility/numeric.h>
 
@@ -55,10 +56,10 @@ Private::SettingsDialog::SettingsDialog (QWidget* parent, Session* session):
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	setMinimumWidth (300);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::dialog_margin, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::DialogMargin, Config::Spacing);
 	layout->setResizeMode (QLayout::FreeResize);
 
-		QHBoxLayout* name_layout = new QHBoxLayout (layout, Config::spacing);
+		QHBoxLayout* name_layout = new QHBoxLayout (layout, Config::Spacing);
 
 			QLabel* name_label = new QLabel ("Session name:", this);
 
@@ -69,7 +70,7 @@ Private::SettingsDialog::SettingsDialog (QWidget* parent, Session* session):
 		name_layout->addWidget (name_label);
 		name_layout->addWidget (_name);
 
-		QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::spacing);
+		QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::Spacing);
 
 			_accept_button = new QPushButton ("&Ok", this);
 			_accept_button->setDefault (true);
@@ -285,7 +286,7 @@ Session::MeterPanel::MeterPanel (Session* session, QWidget* parent):
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
 	setFrameStyle (QFrame::StyledPanel | QFrame::Raised);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
 
 		_level_meters_group = new LevelMetersGroup (this);
 		_master_volume = new DialControl (this, MinVolume, MaxVolume, 0.75 * ZeroVolume);
@@ -311,7 +312,7 @@ Session::Session (QWidget* parent):
 
 	create_main_menu();
 
-	_layout = new QVBoxLayout (this, Config::window_margin, Config::spacing);
+	_layout = new QVBoxLayout (this, Config::WindowMargin, Config::Spacing);
 
 		QFrame* header = new QFrame (this);
 		header->setAutoFillBackground (true);
@@ -319,7 +320,7 @@ Session::Session (QWidget* parent):
 		header->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 		header->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
-		QHBoxLayout* header_layout = new QHBoxLayout (header, Config::margin);
+		QHBoxLayout* header_layout = new QHBoxLayout (header, Config::Margin);
 
 		QWidget* inner_header = new QWidget (header);
 		inner_header->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
@@ -358,12 +359,12 @@ Session::Session (QWidget* parent):
 		_main_menu_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 		_main_menu_button->setPopup (_main_menu);
 
-		QHBoxLayout* inner_header_layout = new QHBoxLayout (inner_header, 0, Config::spacing);
+		QHBoxLayout* inner_header_layout = new QHBoxLayout (inner_header, 0, Config::Spacing);
 		inner_header_layout->addWidget (_session_name);
 		inner_header_layout->addItem (new QSpacerItem (0, 0));
 		inner_header_layout->addWidget (tempo_note);
 		inner_header_layout->addWidget (_tempo_spinbox);
-		inner_header_layout->addItem (new QSpacerItem (2 * Config::spacing, 0, QSizePolicy::Maximum, QSizePolicy::Minimum));
+		inner_header_layout->addItem (new QSpacerItem (2 * Config::Spacing, 0, QSizePolicy::Maximum, QSizePolicy::Minimum));
 		inner_header_layout->addWidget (_panic_button);
 		inner_header_layout->addWidget (_main_menu_button);
 
@@ -371,7 +372,7 @@ Session::Session (QWidget* parent):
 
 	_layout->addWidget (header);
 
-		QHBoxLayout* bottom_layout = new QHBoxLayout (_layout, Config::spacing + 1);
+		QHBoxLayout* bottom_layout = new QHBoxLayout (_layout, Config::Spacing + 1);
 
 		_meter_panel = new MeterPanel (this, this);
 		_stack = new QStackedWidget (this);
@@ -454,8 +455,8 @@ Session::load_session (QString const& file_name)
 		_file_name = file_name;
 
 		// Add session to recent sessions list:
-		Config::recent_sessions().push_back (Config::RecentSession (_name, file_name, ::time (0)));
-		Config::update_recent_sessions();
+		Settings::recent_sessions().push_back (Settings::RecentSession (_name, file_name, ::time (0)));
+		Settings::update_recent_sessions();
 	}
 	catch (Exception const& e)
 	{
@@ -484,8 +485,8 @@ Session::save_session (QString const& file_name)
 		::rename ((file_name + "~").toUtf8(), file_name.toUtf8());
 
 		// Add session to recent sessions list:
-		Config::recent_sessions().push_back (Config::RecentSession (_name, file_name, ::time (0)));
-		Config::update_recent_sessions();
+		Settings::recent_sessions().push_back (Settings::RecentSession (_name, file_name, ::time (0)));
+		Settings::update_recent_sessions();
 	}
 	catch (Exception const& e)
 	{

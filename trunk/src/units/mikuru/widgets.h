@@ -24,7 +24,7 @@
 #include <QtGui/QLayout>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 
 namespace MikuruPrivate {

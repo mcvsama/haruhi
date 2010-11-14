@@ -22,7 +22,7 @@
 #include <QtGui/QMessageBox>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "device_dialog.h"
@@ -39,10 +39,10 @@ DeviceDialog::DeviceDialog (QWidget* parent):
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	setMinimumWidth (300);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::dialog_margin, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::DialogMargin, Config::Spacing);
 	layout->setResizeMode (QLayout::FreeResize);
 
-		QHBoxLayout* name_layout = new QHBoxLayout (layout, Config::spacing);
+		QHBoxLayout* name_layout = new QHBoxLayout (layout, Config::Spacing);
 
 			QLabel* name_label = new QLabel ("Device name:", this);
 
@@ -51,7 +51,7 @@ DeviceDialog::DeviceDialog (QWidget* parent):
 		name_layout->addWidget (name_label);
 		name_layout->addWidget (_name);
 
-		QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::spacing);
+		QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::Spacing);
 
 			_save_button = new QPushButton (Config::Icons16::ok(), "&Apply", this);
 

@@ -18,7 +18,7 @@
 #include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "group_item.h"

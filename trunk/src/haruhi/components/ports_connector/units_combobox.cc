@@ -21,7 +21,6 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/config.h>
 
 // Local:
 #include "units_combobox.h"

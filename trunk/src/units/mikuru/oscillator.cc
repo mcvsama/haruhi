@@ -162,9 +162,9 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	Q3GroupBox* grid2 = new Q3GroupBox (2, Qt::Horizontal, "", _panel);
 	Q3GroupBox* grid4 = new Q3GroupBox (2, Qt::Horizontal, "", _panel);
 
-	grid1->setInsideMargin (3 * Config::margin);
-	grid2->setInsideMargin (3 * Config::margin);
-	grid4->setInsideMargin (3 * Config::margin);
+	grid1->setInsideMargin (3 * Config::Margin);
+	grid2->setInsideMargin (3 * Config::Margin);
+	grid4->setInsideMargin (3 * Config::Margin);
 
 	// Monophonic:
 	_monophonic = new QCheckBox ("Monophonic", grid1);
@@ -200,7 +200,7 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	// Pitchbend down/up:
 	new QLabel ("Pitchbend down/up range:", grid2);
 	QWidget* pitchbends_panel = new QWidget (grid2);
-	QHBoxLayout* pitchbends_layout = new QHBoxLayout (pitchbends_panel, 0, Config::spacing);
+	QHBoxLayout* pitchbends_layout = new QHBoxLayout (pitchbends_panel, 0, Config::Spacing);
 
 	_pitchbend_down_semitones = new QSpinBox (0, 60, 1, pitchbends_panel);
 	_pitchbend_down_semitones->setValue (po.pitchbend_down_semitones);
@@ -260,29 +260,29 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 
 	// Layouts:
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
 	layout->addWidget (_panel);
 
-	QVBoxLayout* panel_layout = new QVBoxLayout (_panel, 0, Config::spacing);
+	QVBoxLayout* panel_layout = new QVBoxLayout (_panel, 0, Config::Spacing);
 
-	QHBoxLayout* layout2 = new QHBoxLayout (panel_layout, Config::spacing);
-	QVBoxLayout* controls_layout = new QVBoxLayout (layout2, Config::spacing);
+	QHBoxLayout* layout2 = new QHBoxLayout (panel_layout, Config::Spacing);
+	QVBoxLayout* controls_layout = new QVBoxLayout (layout2, Config::Spacing);
 
-	QHBoxLayout* volumes_layout = new QHBoxLayout (controls_layout, Config::spacing);
+	QHBoxLayout* volumes_layout = new QHBoxLayout (controls_layout, Config::Spacing);
 	volumes_layout->addWidget (_knob_volume);
 	volumes_layout->addWidget (_knob_panorama);
 	volumes_layout->addWidget (_knob_detune);
 	volumes_layout->addWidget (_knob_pitchbend);
 
-	QHBoxLayout* unisons_layout = new QHBoxLayout (controls_layout, Config::spacing);
+	QHBoxLayout* unisons_layout = new QHBoxLayout (controls_layout, Config::Spacing);
 	unisons_layout->addWidget (_knob_unison_index);
 	unisons_layout->addWidget (_knob_unison_spread);
 	unisons_layout->addWidget (_knob_unison_init);
 	unisons_layout->addWidget (_knob_unison_noise);
 
-	QHBoxLayout* third_layout = new QHBoxLayout (controls_layout, Config::spacing);
-	QVBoxLayout* third_v_layout = new QVBoxLayout (third_layout, Config::spacing);
-	QHBoxLayout* third_h_layout = new QHBoxLayout (third_v_layout, Config::spacing);
+	QHBoxLayout* third_layout = new QHBoxLayout (controls_layout, Config::Spacing);
+	QVBoxLayout* third_v_layout = new QVBoxLayout (third_layout, Config::Spacing);
+	QHBoxLayout* third_h_layout = new QHBoxLayout (third_v_layout, Config::Spacing);
 
 	third_h_layout->addWidget (_knob_velocity_sens);
 	third_h_layout->addWidget (_knob_portamento_time);
@@ -292,7 +292,7 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 
 	controls_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
-	QVBoxLayout* widgets_layout = new QVBoxLayout (layout2, Config::spacing);
+	QVBoxLayout* widgets_layout = new QVBoxLayout (layout2, Config::Spacing);
 	widgets_layout->addWidget (grid1);
 	widgets_layout->addWidget (grid2);
 	widgets_layout->addWidget (grid4);

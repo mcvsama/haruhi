@@ -16,6 +16,7 @@
 
 #include "system.h"
 #include "types.h"
+#include "resources.h"
 #include "version.h"
 
 #endif

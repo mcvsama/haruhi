@@ -24,7 +24,7 @@
 #include <Qt3Support/Q3GroupBox>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 #include <haruhi/dsp/functions.h>
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/wave_plot.h>
@@ -271,12 +271,12 @@ LFO::create_widgets (QWidget* knobs_panel)
 	plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_plot = new Haruhi::WavePlot (plot_frame);
-	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::spacing);
+	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::Spacing);
 	plot_frame_layout->addWidget (_plot);
 
 	Q3GroupBox* grid1 = new Q3GroupBox (2, Qt::Horizontal, "", this);
 	grid1->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
-	grid1->setInsideMargin (3 * Config::margin);
+	grid1->setInsideMargin (3 * Config::Margin);
 
 	_enabled = new QCheckBox ("Enabled", grid1);
 	_enabled->setChecked (p.enabled);
@@ -302,7 +302,7 @@ LFO::create_widgets (QWidget* knobs_panel)
 	QObject::connect (_tempo_sync, SIGNAL (toggled (bool)), this, SLOT (update_widgets()));
 
 	QWidget* tempo_grid = new QWidget (grid1);
-	QHBoxLayout* tempo_layout = new QHBoxLayout (tempo_grid, 0, Config::spacing);
+	QHBoxLayout* tempo_layout = new QHBoxLayout (tempo_grid, 0, Config::Spacing);
 	tempo_layout->setAutoAdd (true);
 
 	_tempo_numerator = new QSpinBox (1, 64, 1, tempo_grid);
@@ -350,23 +350,23 @@ LFO::create_widgets (QWidget* knobs_panel)
 
 	// Layout:
 
-	QVBoxLayout* v1 = new QVBoxLayout (knobs_panel, 0, Config::spacing);
-	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::spacing);
+	QVBoxLayout* v1 = new QVBoxLayout (knobs_panel, 0, Config::Spacing);
+	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
 	h1->addWidget (_knob_fade_in);
 	h1->addWidget (_knob_frequency);
 	h1->addWidget (_knob_level);
 	h1->addWidget (_knob_depth);
 	h1->addWidget (_knob_fade_out);
-	QHBoxLayout* h2 = new QHBoxLayout (v1, Config::spacing);
+	QHBoxLayout* h2 = new QHBoxLayout (v1, Config::Spacing);
 	h2->addWidget (_knob_delay);
 	h2->addWidget (plot_frame);
 	h2->addWidget (_knob_wave_shape);
 	h2->addWidget (_knob_phase);
 	v1->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
-	QHBoxLayout* h3 = new QHBoxLayout (this, Config::margin, Config::spacing);
+	QHBoxLayout* h3 = new QHBoxLayout (this, Config::Margin, Config::Spacing);
 	h3->addWidget (knobs_panel);
-	QVBoxLayout* v2 = new QVBoxLayout (h3, Config::spacing);
+	QVBoxLayout* v2 = new QVBoxLayout (h3, Config::Spacing);
 	v2->addWidget (grid1);
 	v2->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }

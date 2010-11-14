@@ -26,8 +26,9 @@
 #include <QtGui/QHeaderView>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 #include <haruhi/session/session.h>
+#include <haruhi/settings/recent_session.h>
 
 // Local:
 #include "session_loader.h"
@@ -43,7 +44,7 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	setIcon (QPixmap ("share/images/haruhi.png"));
 
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::dialog_margin, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::DialogMargin, Config::Spacing);
 	layout->setResizeMode (QLayout::Fixed);
 
 	_tabs = new QTabWidget (this);
@@ -56,8 +57,8 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 
 	_new_tab = new QWidget (_tabs);
 	_tabs->addTab (_new_tab, "&New session");
-	QVBoxLayout* new_layout = new QVBoxLayout (_new_tab, 2 * Config::margin, Config::spacing);
-	QGridLayout* new_grid = new QGridLayout (new_layout, 0, 2, Config::spacing);
+	QVBoxLayout* new_layout = new QVBoxLayout (_new_tab, 2 * Config::Margin, Config::Spacing);
+	QGridLayout* new_grid = new QGridLayout (new_layout, 0, 2, Config::Spacing);
 	new_grid->setColSpacing (0, 100);
 	new_grid->setColSpacing (1, 150);
 
@@ -89,9 +90,9 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	_open_tab = new QWidget (_tabs);
 	_tabs->addTab (_open_tab, "&Open session");
 
-	QVBoxLayout* open_layout = new QVBoxLayout (_open_tab, 2 * Config::margin, Config::spacing);
+	QVBoxLayout* open_layout = new QVBoxLayout (_open_tab, 2 * Config::Margin, Config::Spacing);
 
-	open_layout->addItem (new QSpacerItem (0, Config::spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
+	open_layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
 	open_layout->addWidget (new QLabel ("Recent sessions:", _open_tab));
 	_recent_listview = new QTreeWidget (_open_tab);
 	_recent_listview->header()->hide();
@@ -104,10 +105,10 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	QObject::connect (_recent_listview, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (open_recent (QTreeWidgetItem*, int)));
 	open_layout->addWidget (_recent_listview);
 
-	QHBoxLayout* open_file_layout = new QHBoxLayout (open_layout, Config::spacing);
+	QHBoxLayout* open_file_layout = new QHBoxLayout (open_layout, Config::Spacing);
 
 	open_file_layout->addWidget (new QLabel ("Load from file:", _open_tab));
-	open_file_layout->addItem (new QSpacerItem (Config::spacing, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
+	open_file_layout->addItem (new QSpacerItem (Config::Spacing, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
 	QPushButton* browse_button = new QPushButton ("Browse", _open_tab);
 	browse_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QObject::connect (browse_button, SIGNAL (clicked()), this, SLOT (browse_file()));
@@ -115,7 +116,7 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	open_file_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
 	// Populate recent_listview:
-	for (Config::RecentSessions::iterator rs = Config::recent_sessions().begin(); rs != Config::recent_sessions().end(); ++rs)
+	for (Settings::RecentSessions::iterator rs = Settings::recent_sessions().begin(); rs != Settings::recent_sessions().end(); ++rs)
 		new RecentSessionItem (_recent_listview, *rs);
 
 	if (_recent_listview->invisibleRootItem()->childCount() > 0)
@@ -125,7 +126,7 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	// Buttons
 	//
 
-	QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::spacing);
+	QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::Spacing);
 	buttons_layout->addItem (new QSpacerItem (0, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 
 	_open_button = new QPushButton (Config::Icons16::new_(), "Open", this);

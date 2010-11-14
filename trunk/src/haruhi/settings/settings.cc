@@ -24,49 +24,44 @@
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
 #include <QtGui/QApplication>
+#include <QtGui/QPixmapCache>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/exception.h>
 #include <haruhi/utility/filesystem.h>
 
 // Local:
-#include "config.h"
+#include "settings.h"
 
 
 /**
- * Config statics
+ * Settings statics
  */
 
-const char*						Config::xmlns = "http://mcv.mulabs.org/projects/haruhi/local-configuration";
-QDomDocument					Config::document;
-int								Config::spacing;
-int								Config::margin;
-int								Config::small_spacing;
-int								Config::window_margin;
-int								Config::dialog_margin;
-QFont							Config::small_font;
-const char*						Config::haruhi_dir_name = "haruhi";
+QDomDocument						Settings::document;
+const char*							Settings::haruhi_dir_name = "haruhi";
 
-QString							Config::_home;
-QString							Config::_xdg_config_home;
-QString							Config::_xdg_data_home;
-QString							Config::_file_name;
-QString							Config::_application_name;
-Config::StringsMap  			Config::_map;
-Config::RecentSessions			Config::_recent_sessions;
-Config::EventHardwareTemplates	Config::_event_hardware_templates;
-Config::UnitConfigurations		Config::_unit_configurations;
+QString								Settings::_home;
+QString								Settings::_xdg_config_home;
+QString								Settings::_xdg_data_home;
+QString								Settings::_file_name;
+QString								Settings::_application_name;
+Settings::StringsMap  				Settings::_map;
+Settings::RecentSessions			Settings::_recent_sessions;
+Settings::EventHardwareTemplates	Settings::_event_hardware_templates;
+Settings::UnitSettingsList			Settings::_unit_settings_list;
 
 
-Config::UnitConfiguration::UnitConfiguration (QString const& urn):
+Settings::UnitSettings::UnitSettings (QString const& urn):
 	_urn (urn)
 {
-	_config_element = Config::document.createElement ("config");
+	_config_element = Settings::document.createElement ("config");
 }
 
 
 void
-Config::UnitConfiguration::uniq_favorite_presets()
+Settings::UnitSettings::uniq_favorite_presets()
 {
 	std::sort (favorite_presets().begin(), favorite_presets().end());
 	FavoritePresets::iterator e = std::unique (favorite_presets().begin(), favorite_presets().end(), FavoritePreset::eq_by_uuid);
@@ -75,7 +70,7 @@ Config::UnitConfiguration::uniq_favorite_presets()
 
 
 void
-Config::UnitConfiguration::save_state (QDomElement& element) const
+Settings::UnitSettings::save_state (QDomElement& element) const
 {
 	QDomDocument document = element.ownerDocument();
 
@@ -94,7 +89,7 @@ Config::UnitConfiguration::save_state (QDomElement& element) const
 	element.appendChild (favorite_presets_element);
 
 	//
-	// Config
+	// Settings
 	//
 
 	element.appendChild (_config_element);
@@ -102,7 +97,7 @@ Config::UnitConfiguration::save_state (QDomElement& element) const
 
 
 void
-Config::UnitConfiguration::load_state (QDomElement const& element)
+Settings::UnitSettings::load_state (QDomElement const& element)
 {
 	favorite_presets().clear();
 	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
@@ -114,7 +109,7 @@ Config::UnitConfiguration::load_state (QDomElement const& element)
 			{
 				QDomElement e = n.toElement();
 				if (!e.isNull() && e.tagName() == "preset")
-					favorite_presets().push_back (Config::FavoritePreset (e.attribute ("uuid"), e.attribute ("name")));
+					favorite_presets().push_back (Settings::FavoritePreset (e.attribute ("uuid"), e.attribute ("name")));
 			}
 		}
 		else if (e.tagName() == "config")
@@ -124,45 +119,31 @@ Config::UnitConfiguration::load_state (QDomElement const& element)
 
 
 void
-Config::initialize (QString const& application_name)
+Settings::initialize (QString const& application_name)
 {
 	QPixmapCache::setCacheLimit (2048); // 2MB cache
 
 	_application_name = application_name;
 	_file_name = _application_name + ".conf";
 
-	_map["presentation.default-spacing"] = "3";
-	_map["presentation.default-margin"] = "2";
-	_map["presentation.default-small-spacing"] = "2";
-	_map["presentation.default-window-margin"] = "4";
-	_map["presentation.default-dialog-margin"] = "6";
-
-	Config::spacing = Config::option<int> ("presentation.default-spacing");
-	Config::margin = Config::option<int> ("presentation.default-margin");
-	Config::small_spacing = Config::option<int> ("presentation.default-small-spacing");
-	Config::window_margin = Config::option<int> ("presentation.default-window-margin");
-	Config::dialog_margin = Config::option<int> ("presentation.default-dialog-margin");
-	Config::small_font = QApplication::font();
-	Config::small_font.setPointSize (8);
-
-	Config::load();
+	Settings::load();
 }
 
 
 void
-Config::deinitialize()
+Settings::deinitialize()
 {
-	Config::save();
+	Settings::save();
 }
 
 
 void
-Config::load()
+Settings::load()
 {
-	Config::_recent_sessions.clear();
+	Settings::_recent_sessions.clear();
 
 	//
-	// Config directories
+	// Settings directories
 	//
 
 	char const* HOME = getenv ("HOME");
@@ -188,12 +169,12 @@ Config::load()
 	mkpath (data_home().toStdString(), 0700);
 
 	// Load file:
-	QFile file (config_home() + "/" + Config::_file_name);
+	QFile file (config_home() + "/" + Settings::_file_name);
 	if (!file.exists())
-		QFile (HARUHI_SHARED_DIRECTORY "/config/haruhi.conf").copy (config_home() + "/" + Config::_file_name);
+		QFile (HARUHI_SHARED_DIRECTORY "/config/haruhi.conf").copy (config_home() + "/" + Settings::_file_name);
 	if (!file.open (IO_ReadOnly))
 		std::cerr << "Warning: failed to open configuration file." << std::endl;
-	else if (!Config::document.setContent (&file, true))
+	else if (!Settings::document.setContent (&file, true))
 		std::cerr << "Warning: failed to parse configuration file." << std::endl;
 	file.close();
 
@@ -213,7 +194,7 @@ Config::load()
 						if (!e.isNull())
 						{
 							if (e.tagName() == "recent-session")
-								Config::_recent_sessions.push_back (Config::RecentSession (e.attribute ("name", "<Unknown name>"), e.attribute ("file-name", ""), e.attribute ("timestamp", "0").toInt()));
+								Settings::_recent_sessions.push_back (Settings::RecentSession (e.attribute ("name", "<Unknown name>"), e.attribute ("file-name", ""), e.attribute ("timestamp", "0").toInt()));
 						}
 					}
 				}
@@ -225,7 +206,7 @@ Config::load()
 						if (!e.isNull())
 						{
 							if (e.tagName() == "event-hardware-template")
-								Config::_event_hardware_templates.push_back (Config::EventHardwareTemplate (e.attribute ("name", "<Unknown name>"), e));
+								Settings::_event_hardware_templates.push_back (Settings::EventHardwareTemplate (e.attribute ("name", "<Unknown name>"), e));
 						}
 					}
 				}
@@ -238,7 +219,7 @@ Config::load()
 						{
 							QString unit_urn = e.attribute ("urn");
 							if (!unit_urn.isNull())
-								unit_configuration (unit_urn).load_state (e);
+								unit_settings (unit_urn).load_state (e);
 						}
 					}
 				}
@@ -253,10 +234,10 @@ Config::load()
 
 
 void
-Config::save()
+Settings::save()
 {
 	// Create document:
-	Config::document = QDomDocument();
+	Settings::document = QDomDocument();
 	QDomElement root = document.createElement ("haruhi-configuration");
 	document.appendChild (root);
 
@@ -293,30 +274,30 @@ Config::save()
 	// Unit configurations:
 	//
 
-	QDomElement unit_configurations_element = document.createElement ("unit-configurations");
-	for (UnitConfigurations::iterator uc = _unit_configurations.begin(); uc != _unit_configurations.end(); ++uc)
+	QDomElement unit_settings_list_element = document.createElement ("unit-configurations");
+	for (UnitSettingsList::iterator uc = _unit_settings_list.begin(); uc != _unit_settings_list.end(); ++uc)
 	{
 		QDomElement uc_element = document.createElement ("unit-configuration");
 		uc->second.save_state (uc_element);
 		uc_element.setAttribute ("urn", uc->second.urn());
-		unit_configurations_element.appendChild (uc_element);
+		unit_settings_list_element.appendChild (uc_element);
 	}
-	root.appendChild (unit_configurations_element);
+	root.appendChild (unit_settings_list_element);
 
 	// Save file:
-	QFile file (config_home() + "/" + Config::_file_name + "~");
+	QFile file (config_home() + "/" + Settings::_file_name + "~");
 	if (!file.open (IO_WriteOnly))
 		throw Exception (QString ("Could not save configuration file: ") + file.errorString());
 	QTextStream ts (&file);
 	ts << document.toString();
 	file.flush();
 	file.close();
-	::rename ((config_home() + "/" + Config::_file_name + "~").toUtf8(), (config_home() + "/" + Config::_file_name).toUtf8());
+	::rename ((config_home() + "/" + Settings::_file_name + "~").toUtf8(), (config_home() + "/" + Settings::_file_name).toUtf8());
 }
 
 
 void
-Config::update_recent_sessions()
+Settings::update_recent_sessions()
 {
 	RecentSessions::iterator e;
 	// Remove non-existent files:
@@ -333,13 +314,13 @@ Config::update_recent_sessions()
 }
 
 
-Config::UnitConfiguration&
-Config::unit_configuration (QString const& urn)
+Settings::UnitSettings&
+Settings::unit_settings (QString const& urn)
 {
-	UnitConfigurations::iterator uc = _unit_configurations.find (urn);
-	if (uc != _unit_configurations.end())
+	UnitSettingsList::iterator uc = _unit_settings_list.find (urn);
+	if (uc != _unit_settings_list.end())
 		return uc->second;
 	else
-		return _unit_configurations.insert (std::make_pair (urn, UnitConfiguration (urn))).first->second;
+		return _unit_settings_list.insert (std::make_pair (urn, UnitSettings (urn))).first->second;
 }
 

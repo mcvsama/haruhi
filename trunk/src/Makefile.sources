@@ -177,6 +177,13 @@ SRC_MOCHDRS += haruhi/components/presets_manager/presets_manager.h
 
 ######## /config ########
 
+SRC_HEADERS += haruhi/config/all.h
+SRC_HEADERS += haruhi/config/resources.h
+SRC_HEADERS += haruhi/config/system.h
+SRC_HEADERS += haruhi/config/types.h
+
+SRC_SOURCES += haruhi/config/resources.cc
+
 NODEP_SOURCES += $(VERSION_FILE)
 
 ######## /dsp ########
@@ -248,27 +255,29 @@ SRC_SOURCES += haruhi/graph/unit.cc
 
 ######## /lib ########
 
-SRC_SOURCES += haruhi/lib/controller.cc
+SRC_HEADERS += haruhi/lib/controller.h
 SRC_HEADERS += haruhi/lib/controller_param.h
 SRC_HEADERS += haruhi/lib/controller_proxy.h
 SRC_HEADERS += haruhi/lib/param.h
 
-SRC_HEADERS += haruhi/lib/controller.h
+SRC_SOURCES += haruhi/lib/controller.cc
 SRC_SOURCES += haruhi/lib/controller_param.cc
 SRC_SOURCES += haruhi/lib/controller_proxy.cc
 
 ######## /plugin ########
 
+SRC_HEADERS += haruhi/plugin/plugin.h
+SRC_HEADERS += haruhi/plugin/plugin_factory.h
+SRC_HEADERS += haruhi/plugin/plugin_loader.h
+SRC_HEADERS += haruhi/plugin/presetable.h
+
 SRC_SOURCES += haruhi/plugin/plugin.cc
 SRC_SOURCES += haruhi/plugin/plugin_factory.cc
 SRC_SOURCES += haruhi/plugin/plugin_loader.cc
 
-SRC_HEADERS += haruhi/plugin/plugin.h
-SRC_HEADERS += haruhi/plugin/plugin_factory.h
-SRC_HEADERS += haruhi/plugin/plugin_loader.h
-
 ######## /session ########
 
+SRC_HEADERS += haruhi/session/backend.h
 SRC_HEADERS += haruhi/session/engine.h
 SRC_HEADERS += haruhi/session/patch.h
 SRC_HEADERS += haruhi/session/periodic_updater.h
@@ -287,6 +296,12 @@ SRC_MOCHDRS += haruhi/session/patch.h
 SRC_MOCHDRS += haruhi/session/periodic_updater.h
 SRC_MOCHDRS += haruhi/session/session.h
 SRC_MOCHDRS += haruhi/session/session_loader.h
+
+######## /settings ########
+
+SRC_HEADERS += haruhi/settings/settings.h
+
+SRC_SOURCES += haruhi/settings/settings.cc
 
 ######## /utility ########
 
@@ -341,12 +356,8 @@ SRC_MOCHDRS += haruhi/widgets/level_meter.h
 
 ######## / ########
 
-SRC_HEADERS += haruhi/backend.h
-SRC_HEADERS += haruhi/config.h
-SRC_HEADERS += haruhi/presetable.h
 SRC_HEADERS += haruhi/unit_bay.h
 
-SRC_SOURCES += haruhi/config.cc
 SRC_SOURCES += haruhi/unit_bay.cc
 
 ######## /units/mikuru ########

@@ -15,7 +15,7 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "program.h"
@@ -28,7 +28,7 @@ Program::Program (Session* session, QWidget* parent):
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-	_layout = new QVBoxLayout (this, 0, Config::spacing);
+	_layout = new QVBoxLayout (this, 0, Config::Spacing);
 
 		_patch = new Patch (session, "Test patch", this);
 

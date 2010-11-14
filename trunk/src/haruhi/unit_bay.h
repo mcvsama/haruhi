@@ -32,7 +32,6 @@ namespace Haruhi {
 class UnitBay;
 class Session;
 
-
 /**
  * Mixin class.
  * Objects of this class can have assigned unit bay

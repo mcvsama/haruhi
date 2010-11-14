@@ -66,7 +66,7 @@ General::General (Mikuru* mikuru, QWidget* parent):
 	QToolTip::add (_knob_stereo_width, "Stereo width");
 
 	Q3GroupBox* grid1 = new Q3GroupBox (2, Qt::Horizontal, "", this);
-	grid1->setInsideMargin (3 * Config::margin);
+	grid1->setInsideMargin (3 * Config::Margin);
 
 	// Threads:
 
@@ -97,8 +97,8 @@ General::General (Mikuru* mikuru, QWidget* parent):
 
 	// Layouts:
 
-	QVBoxLayout* v1_layout = new QVBoxLayout (this, Config::margin, Config::spacing);
-	QHBoxLayout* h1_layout = new QHBoxLayout (v1_layout, Config::spacing);
+	QVBoxLayout* v1_layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
+	QHBoxLayout* h1_layout = new QHBoxLayout (v1_layout, Config::Spacing);
 	h1_layout->addWidget (_knob_volume);
 	h1_layout->addWidget (_knob_detune);
 	h1_layout->addWidget (_knob_panorama);

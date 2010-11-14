@@ -24,7 +24,7 @@
 #include <QtGui/QPolygonF>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 #include <haruhi/dsp/utility.h>
 #include <haruhi/utility/atomic.h>
 
@@ -136,7 +136,7 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 		_double_buffer.resize (w, h);
 		QPainter painter (&_double_buffer);
 		painter.fillRect (rect(), isEnabled() ? QColor (0xff, 0xff, 0xff) : QColor (0xfa, 0xfa, 0xfa));
-		painter.setFont (Config::small_font);
+		painter.setFont (Config::SmallFont);
 		// Collect envelope points on canvas:
 		std::vector<QPointF> envelope_points;
 

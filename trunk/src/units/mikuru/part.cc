@@ -63,7 +63,7 @@ Part::Part (Mikuru* mikuru, QWidget* parent):
 	tabs->addTab (_filters, "Filters");
 	tabs->showPage (_oscillator);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
 	layout->addWidget (_part_enabled);
 	layout->addWidget (tabs);
 }

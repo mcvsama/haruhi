@@ -15,9 +15,6 @@
 #include <cstddef>
 #include <map>
 
-// Haruhi:
-#include <haruhi/config.h>
-
 // Local:
 #include "conn_set.h"
 

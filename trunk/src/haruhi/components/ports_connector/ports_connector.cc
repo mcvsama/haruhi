@@ -66,7 +66,7 @@ PortsConnector::PortsConnector (UnitBay* unit_bay, QWidget* parent):
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-	_layout = new QVBoxLayout (this, 0, Config::spacing);
+	_layout = new QVBoxLayout (this, 0, Config::Spacing);
 
 		_splitter = new QSplitter (Qt::Horizontal, this);
 		_splitter->setChildrenCollapsible (false);
@@ -81,7 +81,7 @@ PortsConnector::PortsConnector (UnitBay* unit_bay, QWidget* parent):
 
 	_layout->addWidget (_splitter);
 
-		QHBoxLayout* buttons_layout = new QHBoxLayout (_layout, Config::spacing);
+		QHBoxLayout* buttons_layout = new QHBoxLayout (_layout, Config::Spacing);
 
 		_connect_button = new QPushButton (Config::Icons16::connect(), "&Connect", this);
 		_connect_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);

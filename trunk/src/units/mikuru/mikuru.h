@@ -42,7 +42,6 @@
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/widgets/knob.h>
-#include <haruhi/config.h>
 #include <haruhi/unit_bay.h>
 
 // Local:

@@ -14,9 +14,6 @@
 // Standard:
 #include <cstddef>
 
-// Haruhi:
-#include <haruhi/config.h>
-
 // Local:
 #include "parametric_wave.h"
 

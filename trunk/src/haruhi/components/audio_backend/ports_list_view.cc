@@ -19,7 +19,7 @@
 #include <QtGui/QHeaderView>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "ports_list_view.h"

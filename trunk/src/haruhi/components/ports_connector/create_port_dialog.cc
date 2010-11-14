@@ -20,7 +20,7 @@
 #include <Qt3Support/Q3ButtonGroup>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "create_port_dialog.h"
@@ -40,7 +40,7 @@ CreatePortDialog::CreatePortDialog (QWidget* parent):
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	setMinimumWidth (300);
 
-	_layout = new QVBoxLayout (this, Config::dialog_margin, Config::spacing);
+	_layout = new QVBoxLayout (this, Config::DialogMargin, Config::Spacing);
 	_layout->setResizeMode (QLayout::FreeResize);
 
 		Q3ButtonGroup* group1 = new Q3ButtonGroup (2, Qt::Vertical, "Port type", this);
@@ -64,7 +64,7 @@ CreatePortDialog::CreatePortDialog (QWidget* parent):
 		QWidget* buttons = new QWidget (this);
 		buttons->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
-		QHBoxLayout* buttons_layout = new QHBoxLayout (buttons, 0, Config::spacing);
+		QHBoxLayout* buttons_layout = new QHBoxLayout (buttons, 0, Config::Spacing);
 
 			_accept_button = new QPushButton ("&Ok", buttons);
 			_accept_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Maximum);

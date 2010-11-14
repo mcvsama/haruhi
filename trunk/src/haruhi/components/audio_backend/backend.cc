@@ -48,11 +48,11 @@ Backend::Backend (Session* session, QString const& client_name, int id, QWidget*
 {
 	_transport = new JackTransport (this);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
-	QHBoxLayout* top_layout = new QHBoxLayout (layout, Config::spacing);
-	QHBoxLayout* lists_layout = new QHBoxLayout (layout, Config::spacing);
-	QVBoxLayout* inputs_layout = new QVBoxLayout (lists_layout, Config::spacing);
-	QVBoxLayout* outputs_layout = new QVBoxLayout (lists_layout, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
+	QHBoxLayout* top_layout = new QHBoxLayout (layout, Config::Spacing);
+	QHBoxLayout* lists_layout = new QHBoxLayout (layout, Config::Spacing);
+	QVBoxLayout* inputs_layout = new QVBoxLayout (lists_layout, Config::Spacing);
+	QVBoxLayout* outputs_layout = new QVBoxLayout (lists_layout, Config::Spacing);
 
 	_disconnect_button = new QPushButton (Config::Icons16::connect(), "Disconnect from JACK", this);
 	_disconnect_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -74,7 +74,7 @@ Backend::Backend (Session* session, QString const& client_name, int id, QWidget*
 	QObject::connect (_inputs_list, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (double_click_on_inputs (QTreeWidgetItem*, int)));
 	QObject::connect (_inputs_list, SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
 
-	QHBoxLayout* input_buttons_layout = new QHBoxLayout (inputs_layout, Config::spacing);
+	QHBoxLayout* input_buttons_layout = new QHBoxLayout (inputs_layout, Config::Spacing);
 
 		_create_input_button = new QPushButton (Config::Icons16::add(), "New input", this);
 		_create_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -99,7 +99,7 @@ Backend::Backend (Session* session, QString const& client_name, int id, QWidget*
 	QObject::connect (_outputs_list, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (double_click_on_outputs (QTreeWidgetItem*, int)));
 	QObject::connect (_outputs_list, SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
 
-	QHBoxLayout* output_buttons_layout = new QHBoxLayout (outputs_layout, Config::spacing);
+	QHBoxLayout* output_buttons_layout = new QHBoxLayout (outputs_layout, Config::Spacing);
 
 		_create_output_button = new QPushButton (Config::Icons16::add(), "New output", this);
 		_create_output_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);

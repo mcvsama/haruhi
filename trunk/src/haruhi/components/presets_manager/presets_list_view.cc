@@ -24,7 +24,7 @@
 #include <Qt3Support/Q3TextDrag>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "presets_list_view.h"

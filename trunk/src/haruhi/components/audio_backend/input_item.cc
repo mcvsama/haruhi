@@ -15,7 +15,7 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "input_item.h"

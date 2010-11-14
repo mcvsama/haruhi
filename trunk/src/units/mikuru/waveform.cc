@@ -95,7 +95,7 @@ Waveform::Waveform (Part* part, Haruhi::PortGroup* port_group, QString const& q_
 	base_plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_base_wave_plot = new Haruhi::WavePlot (base_plot_frame);
 	QToolTip::add (_base_wave_plot, "Base wave");
-	QVBoxLayout* base_plot_frame_layout = new QVBoxLayout (base_plot_frame, 0, Config::spacing);
+	QVBoxLayout* base_plot_frame_layout = new QVBoxLayout (base_plot_frame, 0, Config::Spacing);
 	base_plot_frame_layout->addWidget (_base_wave_plot);
 
 	QFrame* harmonics_plot_frame = new QFrame (top_frame);
@@ -103,7 +103,7 @@ Waveform::Waveform (Part* part, Haruhi::PortGroup* port_group, QString const& q_
 	harmonics_plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_final_wave_plot = new Haruhi::WavePlot (harmonics_plot_frame);
 	QToolTip::add (_final_wave_plot, "Wave with harmonics and modulation");
-	QVBoxLayout* harmonics_plot_frame_layout = new QVBoxLayout (harmonics_plot_frame, 0, Config::spacing);
+	QVBoxLayout* harmonics_plot_frame_layout = new QVBoxLayout (harmonics_plot_frame, 0, Config::Spacing);
 	harmonics_plot_frame_layout->addWidget (_final_wave_plot);
 
 	// Wave type:
@@ -234,22 +234,22 @@ Waveform::Waveform (Part* part, Haruhi::PortGroup* port_group, QString const& q_
 
 	// Layouts:
 
-	QHBoxLayout* hor1_layout = new QHBoxLayout (top_frame, 0, Config::spacing);
+	QHBoxLayout* hor1_layout = new QHBoxLayout (top_frame, 0, Config::Spacing);
 	hor1_layout->addWidget (base_plot_frame);
 	hor1_layout->addWidget (harmonics_plot_frame);
-	QVBoxLayout* ver1_layout = new QVBoxLayout (hor1_layout, Config::spacing);
-	QHBoxLayout* hor2_layout = new QHBoxLayout (ver1_layout, Config::spacing);
+	QVBoxLayout* ver1_layout = new QVBoxLayout (hor1_layout, Config::Spacing);
+	QHBoxLayout* hor2_layout = new QHBoxLayout (ver1_layout, Config::Spacing);
 	hor2_layout->addWidget (_wave_type);
 	hor2_layout->addWidget (_modulator_type);
 	hor2_layout->addWidget (_modulator_wave_type);
-	QHBoxLayout* hor3_layout = new QHBoxLayout (ver1_layout, Config::spacing);
+	QHBoxLayout* hor3_layout = new QHBoxLayout (ver1_layout, Config::Spacing);
 	hor3_layout->addWidget (_knob_wave_shape);
 	hor3_layout->addWidget (_knob_modulator_amplitude);
 	hor3_layout->addWidget (_knob_modulator_index);
 	hor3_layout->addWidget (_knob_modulator_shape);
 	hor3_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
 	layout->addWidget (top_frame);
 	layout->addWidget (harmonics_and_phases_tabs);
 

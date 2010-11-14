@@ -18,7 +18,7 @@
 #include <QtGui/QMessageBox>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "port_item.h"

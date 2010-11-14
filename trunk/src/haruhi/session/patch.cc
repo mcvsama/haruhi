@@ -44,10 +44,10 @@ ConnectionsTab::ConnectionsTab (Patch* patch, QWidget* parent):
 	_patch (patch)
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	setContentsMargins (Config::margin, Config::margin, Config::margin, Config::margin);
+	setContentsMargins (Config::Margin, Config::Margin, Config::Margin, Config::Margin);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, 0, Config::spacing);
-	QHBoxLayout* top_layout = new QHBoxLayout (layout, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, 0, Config::Spacing);
+	QHBoxLayout* top_layout = new QHBoxLayout (layout, Config::Spacing);
 
 	top_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
@@ -122,8 +122,8 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	}
 
 	// Layouts:
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
-	QHBoxLayout* bar_layout = new QHBoxLayout (bar, 0, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
+	QHBoxLayout* bar_layout = new QHBoxLayout (bar, 0, Config::Spacing);
 	bar->setPaletteForegroundColor (QColor (0xff, 0xff, 0xff));
 	bar->setPaletteBackgroundColor (QColor (0x00, 0x2A, 0x5B));
 	bar->setAutoFillBackground (true);
@@ -231,10 +231,10 @@ Patch::Patch (Session* session, std::string const& title, QWidget* parent):
 	add_plugin_button->setPopup (_plugins_menu);
 
 	QVBoxLayout* add_plugin_layout = new QVBoxLayout (add_plugin_frame, 0, 0);
-	add_plugin_layout->addItem (new QSpacerItem (0, Config::spacing, QSizePolicy::Fixed, QSizePolicy::Expanding));
+	add_plugin_layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Expanding));
 	add_plugin_layout->addWidget (add_plugin_button);
 
-	_layout = new QVBoxLayout (this, 0, Config::spacing);
+	_layout = new QVBoxLayout (this, 0, Config::Spacing);
 
 		_tabs = new QTabWidget (this);
 		_tabs->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);

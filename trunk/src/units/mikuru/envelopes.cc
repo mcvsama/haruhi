@@ -24,7 +24,7 @@
 #include <Qt3Support/Q3GroupBox>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 #include <haruhi/utility/memory.h>
 
 // Local:
@@ -73,8 +73,8 @@ Envelopes::Envelopes (Mikuru* mikuru, QWidget* parent):
 
 	// Layouts:
 
-	QVBoxLayout* v1 = new QVBoxLayout (this, 0, Config::spacing);
-	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::spacing);
+	QVBoxLayout* v1 = new QVBoxLayout (this, 0, Config::Spacing);
+	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
 	h1->addWidget (_add_adsr);
 	h1->addWidget (_add_envelope);
 	h1->addWidget (_add_lfo);
@@ -166,7 +166,7 @@ Envelopes::update_widgets()
 	else
 		_stack->setCurrentWidget (_placeholder);
 	_remove_envelope->setEnabled (_tabs->currentPage());
-	_tabs->setMargin (Config::spacing - 1);
+	_tabs->setMargin (Config::Spacing - 1);
 }
 
 

@@ -110,10 +110,10 @@ Mikuru::Mikuru (Haruhi::Session* session, std::string const& urn, std::string co
 	_tabs_widget->addTab (_general, "Main && LFO/EG");
 	_tabs_widget->addTab (_common_filters, "Filters");
 
-	QVBoxLayout* layout = new QVBoxLayout (this, 0, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, 0, Config::Spacing);
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-	QHBoxLayout* hor_layout = new QHBoxLayout (layout, Config::spacing);
+	QHBoxLayout* hor_layout = new QHBoxLayout (layout, Config::Spacing);
 	hor_layout->addWidget (_enabled);
 	hor_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 	hor_layout->addWidget (polyphony_label);
@@ -446,7 +446,7 @@ Mikuru::update_ui()
 void
 Mikuru::save_config()
 {
-	Config::UnitConfiguration& uc = Config::unit_configuration (QString::fromStdString (urn()));
+	Settings::UnitSettings& uc = Settings::unit_settings (QString::fromStdString (urn()));
 	uc.config_element().setAttribute ("threads-number", _general->threads_number());
 	uc.save();
 }
@@ -455,7 +455,7 @@ Mikuru::save_config()
 void
 Mikuru::load_config()
 {
-	Config::UnitConfiguration& uc = Config::unit_configuration (QString::fromStdString (urn()));
+	Settings::UnitSettings& uc = Settings::unit_settings (QString::fromStdString (urn()));
 	QString threads_number = uc.config_element().attribute ("threads-number");
 	_general->set_threads_number (threads_number.isNull() ? 0 : threads_number.toInt());
 }

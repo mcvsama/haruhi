@@ -23,7 +23,7 @@
 #include <QtGui/QToolTip>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 #include <haruhi/utility/memory.h>
 #include <haruhi/dsp/utility.h>
 
@@ -211,7 +211,7 @@ LevelMetersGroup::Scale::paintEvent (QPaintEvent* event)
 {
 	QPainter painter (this);
 	painter.setPen (QColorGroup::Text);
-	painter.setFont (Config::small_font);
+	painter.setFont (Config::SmallFont);
 
 	int h = height();
 
@@ -234,11 +234,11 @@ LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper
 	_peak_sample (0),
 	_timer (0)
 {
-	QVBoxLayout* layout1 = new QVBoxLayout (this, 0, Config::spacing);
+	QVBoxLayout* layout1 = new QVBoxLayout (this, 0, Config::Spacing);
 
 		_peak_button = new QPushButton ("-inf dB", this);
-		_peak_button->setFont (Config::small_font);
-		_peak_button->setFixedHeight (2 * Config::small_font.pointSize());
+		_peak_button->setFont (Config::SmallFont);
+		_peak_button->setFixedHeight (2 * Config::SmallFont.pointSize());
 		_peak_button->setFixedWidth (35);
 		_peak_button_bg = _peak_button->paletteBackgroundColor();
 		_peak_button_fg = _peak_button->paletteForegroundColor();
