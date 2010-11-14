@@ -19,33 +19,33 @@
 #include <haruhi/config.h>
 
 // Local:
-#include "connections_dump.h"
+#include "conn_set.h"
 
 
 namespace Haruhi {
 
-ConnectionsDump::ConnectionsDump (bool only_internal):
+ConnSet::ConnSet (bool only_internal):
 	_only_internal (only_internal)
 {
 }
 
 
 void
-ConnectionsDump::insert_unit (Unit* unit)
+ConnSet::insert_unit (Unit* unit)
 {
 	_units.insert (unit);
 }
 
 
 void
-ConnectionsDump::remove_unit (Unit* unit)
+ConnSet::remove_unit (Unit* unit)
 {
 	_units.erase (unit);
 }
 
 
 void
-ConnectionsDump::save()
+ConnSet::save()
 {
 	_connections.clear();
 	for (Units::iterator u = _units.begin(); u != _units.end(); ++u)
@@ -66,7 +66,7 @@ ConnectionsDump::save()
 
 
 void
-ConnectionsDump::load() const
+ConnSet::load() const
 {
 	typedef std::map<QString, Unit*> Map;
 	Map map;
@@ -102,7 +102,7 @@ ConnectionsDump::load() const
 
 
 void
-ConnectionsDump::save_state (QDomElement& element) const
+ConnSet::save_state (QDomElement& element) const
 {
 	for (Connections::const_iterator c = _connections.begin(); c != _connections.end(); ++c)
 	{
@@ -117,7 +117,7 @@ ConnectionsDump::save_state (QDomElement& element) const
 
 
 void
-ConnectionsDump::load_state (QDomElement const& element)
+ConnSet::load_state (QDomElement const& element)
 {
 	_connections.clear();
 	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())

@@ -25,7 +25,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/graph/connections_dump.h>
+#include <haruhi/graph/conn_set.h>
 #include <haruhi/plugin/plugin_factory.h>
 #include <haruhi/plugin/presetable.h>
 #include <haruhi/session/session.h>
@@ -358,13 +358,13 @@ Patch::save_state (QDomElement& element) const
 		plugins.appendChild (u->second);
 
 	QDomElement connections = element.ownerDocument().createElement ("connections");
-	ConnectionsDump connections_dump;
+	ConnSet conn_set;
 	graph()->lock();
-	connections_dump.insert_units (this->units().begin(), this->units().end());
-	connections_dump.insert_unit (session()->audio_backend());
-	connections_dump.insert_unit (session()->event_backend());
-	connections_dump.save();
-	connections_dump.save_state (connections);
+	conn_set.insert_units (this->units().begin(), this->units().end());
+	conn_set.insert_unit (session()->audio_backend());
+	conn_set.insert_unit (session()->event_backend());
+	conn_set.save();
+	conn_set.save_state (connections);
 	graph()->unlock();
 
 	element.appendChild (plugins);
@@ -409,13 +409,13 @@ Patch::load_state (QDomElement const& element)
 	// Setup connections between plugins:
 	if (!connections.isNull())
 	{
-		ConnectionsDump connections_dump;
+		ConnSet conn_set;
 		graph()->lock();
-		connections_dump.insert_units (this->units().begin(), this->units().end());
-		connections_dump.insert_unit (session()->audio_backend());
-		connections_dump.insert_unit (session()->event_backend());
-		connections_dump.load_state (connections);
-		connections_dump.load();
+		conn_set.insert_units (this->units().begin(), this->units().end());
+		conn_set.insert_unit (session()->audio_backend());
+		conn_set.insert_unit (session()->event_backend());
+		conn_set.load_state (connections);
+		conn_set.load();
 		graph()->unlock();
 	}
 }

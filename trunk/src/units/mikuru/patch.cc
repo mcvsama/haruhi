@@ -18,7 +18,7 @@
 #include <QtGui/QMessageBox>
 
 // Haruhi:
-#include <haruhi/graph/connections_dump.h>
+#include <haruhi/graph/conn_set.h>
 
 // Local:
 #include "mikuru.h"
@@ -333,10 +333,10 @@ Patch::save_state (QDomElement& element) const
 	// Connections:
 	{
 		QDomElement connections_element = element.ownerDocument().createElement ("connections");
-		Haruhi::ConnectionsDump cdump (true);
-		cdump.insert_unit (_mikuru);
-		cdump.save();
-		cdump.save_state (connections_element);
+		Haruhi::ConnSet cset (true);
+		cset.insert_unit (_mikuru);
+		cset.save();
+		cset.save_state (connections_element);
 		element.appendChild (connections_element);
 	}
 }
@@ -664,10 +664,10 @@ Patch::load_state (QDomElement const& element)
 
 	// Connections:
 	{
-		Haruhi::ConnectionsDump cdump;
-		cdump.insert_unit (_mikuru);
-		cdump.load_state (connections_element);
-		cdump.load();
+		Haruhi::ConnSet cset;
+		cset.insert_unit (_mikuru);
+		cset.load_state (connections_element);
+		cset.load();
 	}
 }
 

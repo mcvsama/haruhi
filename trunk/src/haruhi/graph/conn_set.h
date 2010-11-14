@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__GRAPH__CONNECTIONS_DUMP_H__INCLUDED
-#define HARUHI__GRAPH__CONNECTIONS_DUMP_H__INCLUDED
+#ifndef HARUHI__GRAPH__CONN_SET_H__INCLUDED
+#define HARUHI__GRAPH__CONN_SET_H__INCLUDED
 
 // Qt:
 #include <QtXml/QDomElement>
@@ -30,7 +30,7 @@
 
 namespace Haruhi {
 
-class ConnectionsDump: public SaveableState
+class ConnSet: public SaveableState
 {
 	class Connection
 	{
@@ -58,7 +58,7 @@ class ConnectionsDump: public SaveableState
 	 * \param	only_internal: Dump only connections between inserted units,
 	 * 			and no other.
 	 */
-	ConnectionsDump (bool only_internal = false);
+	ConnSet (bool only_internal = false);
 
 	void
 	insert_unit (Unit*);
