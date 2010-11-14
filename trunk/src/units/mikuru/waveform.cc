@@ -65,22 +65,22 @@ Waveform::Waveform (Part* part, Haruhi::PortGroup* port_group, QString const& q_
 
 	// Wave types:
 
-	_waves.push_back (WaveInfo (Config::Icons16::wave_sine(),		"Sine",		new DSP::ParametricWaves::Sine()));
-	_waves.push_back (WaveInfo (Config::Icons16::wave_triangle(),	"Triangle",	new DSP::ParametricWaves::Triangle()));
-	_waves.push_back (WaveInfo (Config::Icons16::wave_square(),		"Square",	new DSP::ParametricWaves::Square()));
-	_waves.push_back (WaveInfo (Config::Icons16::wave_sawtooth(),	"Sawtooth",	new DSP::ParametricWaves::Sawtooth()));
-	_waves.push_back (WaveInfo (Config::Icons16::wave_pulse(),		"Pulse",	new DSP::ParametricWaves::Pulse()));
-	_waves.push_back (WaveInfo (Config::Icons16::wave_power(),		"Power",	new DSP::ParametricWaves::Power()));
-	_waves.push_back (WaveInfo (Config::Icons16::wave_gauss(),		"Gauss",	new DSP::ParametricWaves::Gauss()));
-	_waves.push_back (WaveInfo (Config::Icons16::wave_diode(),		"Diode",	new DSP::ParametricWaves::Diode()));
-	_waves.push_back (WaveInfo (Config::Icons16::wave_chirp(),		"Chirp",	new DSP::ParametricWaves::Chirp()));
+	_waves.push_back (WaveInfo (Resources::Icons16::wave_sine(),		"Sine",		new DSP::ParametricWaves::Sine()));
+	_waves.push_back (WaveInfo (Resources::Icons16::wave_triangle(),	"Triangle",	new DSP::ParametricWaves::Triangle()));
+	_waves.push_back (WaveInfo (Resources::Icons16::wave_square(),		"Square",	new DSP::ParametricWaves::Square()));
+	_waves.push_back (WaveInfo (Resources::Icons16::wave_sawtooth(),	"Sawtooth",	new DSP::ParametricWaves::Sawtooth()));
+	_waves.push_back (WaveInfo (Resources::Icons16::wave_pulse(),		"Pulse",	new DSP::ParametricWaves::Pulse()));
+	_waves.push_back (WaveInfo (Resources::Icons16::wave_power(),		"Power",	new DSP::ParametricWaves::Power()));
+	_waves.push_back (WaveInfo (Resources::Icons16::wave_gauss(),		"Gauss",	new DSP::ParametricWaves::Gauss()));
+	_waves.push_back (WaveInfo (Resources::Icons16::wave_diode(),		"Diode",	new DSP::ParametricWaves::Diode()));
+	_waves.push_back (WaveInfo (Resources::Icons16::wave_chirp(),		"Chirp",	new DSP::ParametricWaves::Chirp()));
 
 	// Modulator waves:
 
-	_modulator_waves.push_back (WaveInfo (Config::Icons16::wave_sine(),		"Sine",		new DSP::ParametricWaves::Sine()));
-	_modulator_waves.push_back (WaveInfo (Config::Icons16::wave_triangle(),	"Triangle",	new DSP::ParametricWaves::Triangle()));
-	_modulator_waves.push_back (WaveInfo (Config::Icons16::wave_square(),	"Square",	new DSP::ParametricWaves::Square()));
-	_modulator_waves.push_back (WaveInfo (Config::Icons16::wave_sawtooth(),	"Sawtooth",	new DSP::ParametricWaves::Sawtooth()));
+	_modulator_waves.push_back (WaveInfo (Resources::Icons16::wave_sine(),		"Sine",		new DSP::ParametricWaves::Sine()));
+	_modulator_waves.push_back (WaveInfo (Resources::Icons16::wave_triangle(),	"Triangle",	new DSP::ParametricWaves::Triangle()));
+	_modulator_waves.push_back (WaveInfo (Resources::Icons16::wave_square(),	"Square",	new DSP::ParametricWaves::Square()));
+	_modulator_waves.push_back (WaveInfo (Resources::Icons16::wave_sawtooth(),	"Sawtooth",	new DSP::ParametricWaves::Sawtooth()));
 
 	_wave_computer = new WaveComputer();
 	_wave_computer->finished.connect (this, &Waveform::update_wave_plot);
@@ -119,8 +119,8 @@ Waveform::Waveform (Part* part, Haruhi::PortGroup* port_group, QString const& q_
 	// Modulator type:
 
 	_modulator_type = new QComboBox (top_frame);
-	_modulator_type->insertItem (Config::Icons16::modulator_ring(), "Ring", DSP::ModulatedWave::Ring);
-	_modulator_type->insertItem (Config::Icons16::modulator_fm(), "FM", DSP::ModulatedWave::Frequency);
+	_modulator_type->insertItem (Resources::Icons16::modulator_ring(), "Ring", DSP::ModulatedWave::Ring);
+	_modulator_type->insertItem (Resources::Icons16::modulator_fm(), "FM", DSP::ModulatedWave::Frequency);
 	_modulator_type->setCurrentItem (p.modulator_type);
 	QObject::connect (_modulator_type, SIGNAL (activated (int)), this, SLOT (update_params()));
 	QToolTip::add (_modulator_type, "Modulator type");

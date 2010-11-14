@@ -360,23 +360,23 @@ Knob::create_context_menu()
 	_disconnect_signal_mapper = new QSignalMapper (this);
 	QObject::connect (_disconnect_signal_mapper, SIGNAL (mapped (int)), this, SLOT (disconnect_port (int)));
 
-	QPixmap pixmap_for_unit (Config::Icons16::unit());
-	QPixmap pixmap_for_port (Config::Icons16::event_output_port());
-	QPixmap pixmap_for_port_group (Config::Icons16::port_group());
+	QPixmap pixmap_for_unit (Resources::Icons16::unit());
+	QPixmap pixmap_for_port (Resources::Icons16::event_output_port());
+	QPixmap pixmap_for_port_group (Resources::Icons16::port_group());
 
 	_context_menu->addAction ("&Reset", this, SLOT (reset()));
 	if (learning())
-		_context_menu->addAction (Config::Icons16::colorpicker(), "Stop learning", this, SLOT (stop_learning_slot()));
+		_context_menu->addAction (Resources::Icons16::colorpicker(), "Stop learning", this, SLOT (stop_learning_slot()));
 	else
-		_context_menu->addAction (Config::Icons16::colorpicker(), "&Learn", this, SLOT (start_learning_slot()));
-	_context_menu->addAction (Config::Icons16::configure(), "Con&figure", this, SLOT (configure()));
+		_context_menu->addAction (Resources::Icons16::colorpicker(), "&Learn", this, SLOT (start_learning_slot()));
+	_context_menu->addAction (Resources::Icons16::configure(), "Con&figure", this, SLOT (configure()));
 
 	// Add Connect/Disconnect menu items:
 	if (unit_bay())
 	{
 		_context_menu->addSeparator();
-		_connect_menu = _context_menu->addMenu (Config::Icons16::connect(), "&Connect");
-		_disconnect_menu = _context_menu->addMenu (Config::Icons16::disconnect(), "&Disconnect");
+		_connect_menu = _context_menu->addMenu (Resources::Icons16::connect(), "&Connect");
+		_disconnect_menu = _context_menu->addMenu (Resources::Icons16::disconnect(), "&Disconnect");
 
 		unit_bay()->graph()->lock();
 

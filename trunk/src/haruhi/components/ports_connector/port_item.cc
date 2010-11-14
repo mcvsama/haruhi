@@ -50,8 +50,8 @@ PortItem::PortItem (Port::Direction type, Port* port, QTreeWidgetItem* parent, Q
 	{
 		switch (_type)
 		{
-			case Port::Input:	setIcon (0, Config::Icons16::audio_input_port()); break;
-			case Port::Output:	setIcon (0, Config::Icons16::audio_output_port()); break;
+			case Port::Input:	setIcon (0, Resources::Icons16::audio_input_port()); break;
+			case Port::Output:	setIcon (0, Resources::Icons16::audio_output_port()); break;
 		}
 	}
 	else
@@ -60,16 +60,16 @@ PortItem::PortItem (Port::Direction type, Port* port, QTreeWidgetItem* parent, Q
 		{
 			switch (_type)
 			{
-				case Port::Input:	setIcon (0, Config::Icons16::event_polyphonic_input_port()); break;
-				case Port::Output:	setIcon (0, Config::Icons16::event_polyphonic_output_port()); break;
+				case Port::Input:	setIcon (0, Resources::Icons16::event_polyphonic_input_port()); break;
+				case Port::Output:	setIcon (0, Resources::Icons16::event_polyphonic_output_port()); break;
 			}
 		}
 		else
 		{
 			switch (_type)
 			{
-				case Port::Input:	setIcon (0, Config::Icons16::event_input_port()); break;
-				case Port::Output:	setIcon (0, Config::Icons16::event_output_port()); break;
+				case Port::Input:	setIcon (0, Resources::Icons16::event_input_port()); break;
+				case Port::Output:	setIcon (0, Resources::Icons16::event_output_port()); break;
 			}
 		}
 	}

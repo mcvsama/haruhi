@@ -54,11 +54,11 @@ Backend::Backend (Session* session, QString const& client_name, int id, QWidget*
 	QVBoxLayout* inputs_layout = new QVBoxLayout (lists_layout, Config::Spacing);
 	QVBoxLayout* outputs_layout = new QVBoxLayout (lists_layout, Config::Spacing);
 
-	_disconnect_button = new QPushButton (Config::Icons16::connect(), "Disconnect from JACK", this);
+	_disconnect_button = new QPushButton (Resources::Icons16::connect(), "Disconnect from JACK", this);
 	_disconnect_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QObject::connect (_disconnect_button, SIGNAL (clicked()), this, SLOT (disconnect()));
 
-	_reconnect_button = new QPushButton (Config::Icons16::connect(), "Reconnect to JACK", this);
+	_reconnect_button = new QPushButton (Resources::Icons16::connect(), "Reconnect to JACK", this);
 	_reconnect_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QObject::connect (_reconnect_button, SIGNAL (clicked()), this, SLOT (connect()));
 
@@ -76,11 +76,11 @@ Backend::Backend (Session* session, QString const& client_name, int id, QWidget*
 
 	QHBoxLayout* input_buttons_layout = new QHBoxLayout (inputs_layout, Config::Spacing);
 
-		_create_input_button = new QPushButton (Config::Icons16::add(), "New input", this);
+		_create_input_button = new QPushButton (Resources::Icons16::add(), "New input", this);
 		_create_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 		QToolTip::add (_create_input_button, "Create new input port");
 
-		_destroy_input_button = new QPushButton (Config::Icons16::remove(), "Destroy", this);
+		_destroy_input_button = new QPushButton (Resources::Icons16::remove(), "Destroy", this);
 		_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 		QToolTip::add (_destroy_input_button, "Destroy selected port");
 
@@ -101,11 +101,11 @@ Backend::Backend (Session* session, QString const& client_name, int id, QWidget*
 
 	QHBoxLayout* output_buttons_layout = new QHBoxLayout (outputs_layout, Config::Spacing);
 
-		_create_output_button = new QPushButton (Config::Icons16::add(), "New output", this);
+		_create_output_button = new QPushButton (Resources::Icons16::add(), "New output", this);
 		_create_output_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 		QToolTip::add (_create_output_button, "Create new output port");
 
-		_destroy_output_button = new QPushButton (Config::Icons16::remove(), "Destroy", this);
+		_destroy_output_button = new QPushButton (Resources::Icons16::remove(), "Destroy", this);
 		_destroy_output_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 		QToolTip::add (_destroy_output_button, "Destroy selected port");
 
@@ -375,17 +375,17 @@ Backend::context_menu_for_inputs (QPoint const& pos)
 	{
 		if (dynamic_cast<InputItem*> (item) != 0)
 		{
-			i = menu->insertItem (Config::Icons16::rename(), "&Rename", this, SLOT (rename_selected_input()));
+			i = menu->insertItem (Resources::Icons16::rename(), "&Rename", this, SLOT (rename_selected_input()));
 			menu->insertSeparator();
-			i = menu->insertItem (Config::Icons16::add(), "&New port", this, SLOT (create_input()));
+			i = menu->insertItem (Resources::Icons16::add(), "&New port", this, SLOT (create_input()));
 			menu->setItemEnabled (i, false);
-			i = menu->insertItem (Config::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_input()));
+			i = menu->insertItem (Resources::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_input()));
 		}
 	}
 	else
 	{
-		i = menu->insertItem (Config::Icons16::add(), "&New port", this, SLOT (create_input()));
-		i = menu->insertItem (Config::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_input()));
+		i = menu->insertItem (Resources::Icons16::add(), "&New port", this, SLOT (create_input()));
+		i = menu->insertItem (Resources::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_input()));
 		menu->setItemEnabled (i, false);
 	}
 
@@ -405,17 +405,17 @@ Backend::context_menu_for_outputs (QPoint const& pos)
 	{
 		if (dynamic_cast<OutputItem*> (item) != 0)
 		{
-			i = menu->insertItem (Config::Icons16::rename(), "&Rename", this, SLOT (rename_selected_output()));
+			i = menu->insertItem (Resources::Icons16::rename(), "&Rename", this, SLOT (rename_selected_output()));
 			menu->insertSeparator();
-			i = menu->insertItem (Config::Icons16::add(), "&New port", this, SLOT (create_output()));
+			i = menu->insertItem (Resources::Icons16::add(), "&New port", this, SLOT (create_output()));
 			menu->setItemEnabled (i, false);
-			i = menu->insertItem (Config::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_output()));
+			i = menu->insertItem (Resources::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_output()));
 		}
 	}
 	else
 	{
-		i = menu->insertItem (Config::Icons16::add(), "&New port", this, SLOT (create_output()));
-		i = menu->insertItem (Config::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_output()));
+		i = menu->insertItem (Resources::Icons16::add(), "&New port", this, SLOT (create_output()));
+		i = menu->insertItem (Resources::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_output()));
 		menu->setItemEnabled (i, false);
 	}
 

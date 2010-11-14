@@ -387,10 +387,10 @@ Session::Session (QWidget* parent):
 		_devices_manager_tab = new DevicesManager::Panel (this);
 
 		// Add tabs:
-		_backends->addTab (_global, Config::Icons22::configure(), "Global");
-		_backends->addTab (_audio_tab, Config::Icons22::show_audio(), "Audio backend");
-		_backends->addTab (_event_tab, Config::Icons22::show_event(), "Input devices");
-		_backends->addTab (_devices_manager_tab, Config::Icons22::show_event(), "Devices manager");
+		_backends->addTab (_global, Resources::Icons22::configure(), "Global");
+		_backends->addTab (_audio_tab, Resources::Icons22::show_audio(), "Audio backend");
+		_backends->addTab (_event_tab, Resources::Icons22::show_event(), "Input devices");
+		_backends->addTab (_devices_manager_tab, Resources::Icons22::show_event(), "Devices manager");
 
 		// Start engine and backends before program is loaded:
 		_engine = new Engine (this);
@@ -648,16 +648,16 @@ Session::create_main_menu()
 {
 	_main_menu = new QMenu (this);
 
-	_main_menu->addAction (Config::Icons16::show_program(), "Show &program", this, SLOT (show_program()), Qt::Key_F1);
-	_main_menu->addAction (Config::Icons16::show_backends(), "Show &backends", this, SLOT (show_backends()), Qt::Key_F2);
+	_main_menu->addAction (Resources::Icons16::show_program(), "Show &program", this, SLOT (show_program()), Qt::Key_F1);
+	_main_menu->addAction (Resources::Icons16::show_backends(), "Show &backends", this, SLOT (show_backends()), Qt::Key_F2);
 	_main_menu->addSeparator();
-	_main_menu->addAction (Config::Icons16::session_manager(), "Session &manager…", this, SLOT (session_loader()), Qt::CTRL + Qt::Key_M);
-	_main_menu->addAction (Config::Icons16::save(), "&Save", this, SLOT (save_session()), Qt::CTRL + Qt::Key_S);
-	_main_menu->addAction (Config::Icons16::save_as(), "Sa&ve as…", this, SLOT (save_session_as()), Qt::CTRL + Qt::SHIFT + Qt::Key_S);
+	_main_menu->addAction (Resources::Icons16::session_manager(), "Session &manager…", this, SLOT (session_loader()), Qt::CTRL + Qt::Key_M);
+	_main_menu->addAction (Resources::Icons16::save(), "&Save", this, SLOT (save_session()), Qt::CTRL + Qt::Key_S);
+	_main_menu->addAction (Resources::Icons16::save_as(), "Sa&ve as…", this, SLOT (save_session_as()), Qt::CTRL + Qt::SHIFT + Qt::Key_S);
 	_main_menu->addSeparator();
-	_main_menu->addAction (Config::Icons16::disconnect(), "&Reconnect to JACK", this, SLOT (reconnect_to_jack()), Qt::CTRL + Qt::Key_J);
+	_main_menu->addAction (Resources::Icons16::disconnect(), "&Reconnect to JACK", this, SLOT (reconnect_to_jack()), Qt::CTRL + Qt::Key_J);
 	_main_menu->addSeparator();
-	_main_menu->addAction (Config::Icons16::exit(), "&Quit", Haruhi::haruhi()->application(), SLOT (quit()), Qt::CTRL + Qt::Key_Q);
+	_main_menu->addAction (Resources::Icons16::exit(), "&Quit", Haruhi::haruhi()->application(), SLOT (quit()), Qt::CTRL + Qt::Key_Q);
 }
 
 

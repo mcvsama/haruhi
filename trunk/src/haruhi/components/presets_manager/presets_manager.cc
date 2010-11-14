@@ -66,9 +66,9 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 	right_panel->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
 
 	_create_menu = new Q3PopupMenu (this);
-	_create_menu->insertItem (Config::Icons16::presets_package(), "Package", this, SLOT (create_package()), 0, CreatePackage);
-	_create_menu->insertItem (Config::Icons16::presets_category(), "Category", this, SLOT (create_category()), 0, CreateCategory);
-	_create_menu->insertItem (Config::Icons16::preset(), "Preset", this, SLOT (create_preset()), 0, CreatePreset);
+	_create_menu->insertItem (Resources::Icons16::presets_package(), "Package", this, SLOT (create_package()), 0, CreatePackage);
+	_create_menu->insertItem (Resources::Icons16::presets_category(), "Category", this, SLOT (create_category()), 0, CreateCategory);
+	_create_menu->insertItem (Resources::Icons16::preset(), "Preset", this, SLOT (create_preset()), 0, CreatePreset);
 
 	_tabs = new QTabWidget (this);
 	_tabs->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -83,16 +83,16 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 
 	_editor = new Private::PresetEditor (right_panel);
 
-	_load_button = new QPushButton (Config::Icons16::load(), "Load", right_panel);
+	_load_button = new QPushButton (Resources::Icons16::load(), "Load", right_panel);
 	QObject::connect (_load_button, SIGNAL (clicked()), this, SLOT (load_preset()));
 
-	_save_button = new QPushButton (Config::Icons16::save(), "Save patch", right_panel);
+	_save_button = new QPushButton (Resources::Icons16::save(), "Save patch", right_panel);
 	QObject::connect (_save_button, SIGNAL (clicked()), this, SLOT (save_preset()));
 
-	_create_button = new QPushButton (Config::Icons16::save_as(), "Create", right_panel);
+	_create_button = new QPushButton (Resources::Icons16::save_as(), "Create", right_panel);
 	_create_button->setPopup (_create_menu);
 
-	_destroy_button = new QPushButton (Config::Icons16::remove(), "Destroy…", right_panel);
+	_destroy_button = new QPushButton (Resources::Icons16::remove(), "Destroy…", right_panel);
 	QObject::connect (_destroy_button, SIGNAL (clicked()), this, SLOT (destroy()));
 
 	_tabs->addTab (_list, "Presets");

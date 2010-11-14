@@ -129,12 +129,12 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::Spacing);
 	buttons_layout->addItem (new QSpacerItem (0, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 
-	_open_button = new QPushButton (Config::Icons16::new_(), "Open", this);
+	_open_button = new QPushButton (Resources::Icons16::new_(), "Open", this);
 	_open_button->setDefault (true);
 	QObject::connect (_open_button, SIGNAL (clicked()), this, SLOT (validate_and_accept()));
 	buttons_layout->addWidget (_open_button);
 
-	_quit_button = new QPushButton (Config::Icons16::exit(), reject_button == CancelButton ? "Cancel" : "Quit", this);
+	_quit_button = new QPushButton (Resources::Icons16::exit(), reject_button == CancelButton ? "Cancel" : "Quit", this);
 	QObject::connect (_quit_button, SIGNAL (clicked()), this, SLOT (reject()));
 	buttons_layout->addWidget (_quit_button);
 

@@ -22,17 +22,22 @@
 #include "resources.h"
 
 
-namespace Config {
+namespace Resources {
 
-QFont SmallFont;
-
-
-void
-initialize()
+QFont&
+small_font()
 {
-	SmallFont = QApplication::font();
-	SmallFont.setPointSize (8);
+	static QFont sf;
+	static bool sf_initialized = false;
+
+	if (!sf_initialized)
+	{
+		sf = QApplication::font();
+		sf.setPointSize (8);
+	}
+
+	return sf;
 }
 
-} // namespace Config
+} // namespace Resources
 

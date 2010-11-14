@@ -53,7 +53,7 @@ DeviceDialog::DeviceDialog (QWidget* parent):
 
 		QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::Spacing);
 
-			_save_button = new QPushButton (Config::Icons16::ok(), "&Apply", this);
+			_save_button = new QPushButton (Resources::Icons16::ok(), "&Apply", this);
 
 		buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 		buttons_layout->addWidget (_save_button);

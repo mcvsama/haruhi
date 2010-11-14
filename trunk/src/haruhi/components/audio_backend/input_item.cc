@@ -39,7 +39,7 @@ InputItem::InputItem (PortsListView* parent, QString const& name):
 	_backend->graph()->unlock();
 	_backend->_inputs[_transport_port] = this;
 	// Configure item:
-	setIcon (0, Config::Icons16::audio_input_port());
+	setIcon (0, Resources::Icons16::audio_input_port());
 	// Fully constructed:
 	set_ready (true);
 }

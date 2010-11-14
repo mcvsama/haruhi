@@ -47,16 +47,16 @@ UnitItem::UnitItem (Port::Direction type, Unit* unit, QTreeWidget* parent, QStri
 	{
 		switch (type)
 		{
-			case Port::Input:	setIcon (0, Config::Icons16::input_unit_bay()); break;
-			case Port::Output:	setIcon (0, Config::Icons16::output_unit_bay()); break;
+			case Port::Input:	setIcon (0, Resources::Icons16::input_unit_bay()); break;
+			case Port::Output:	setIcon (0, Resources::Icons16::output_unit_bay()); break;
 		}
 	}
 	else
 	{
 		switch (type)
 		{
-			case Port::Input:	setIcon (0, Config::Icons16::input_unit()); break;
-			case Port::Output:	setIcon (0, Config::Icons16::output_unit()); break;
+			case Port::Input:	setIcon (0, Resources::Icons16::input_unit()); break;
+			case Port::Output:	setIcon (0, Resources::Icons16::output_unit()); break;
 		}
 	}
 }

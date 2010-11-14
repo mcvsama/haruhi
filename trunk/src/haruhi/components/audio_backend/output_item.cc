@@ -39,7 +39,7 @@ OutputItem::OutputItem (PortsListView* parent, QString const& name):
 	_backend->graph()->unlock();
 	_backend->_outputs[_transport_port] = this;
 	// Configure item:
-	setIcon (0, Config::Icons16::audio_output_port());
+	setIcon (0, Resources::Icons16::audio_output_port());
 	graph_updated();
 	// Fully constructed:
 	set_ready (true);

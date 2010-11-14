@@ -71,7 +71,7 @@ PackageItem::PackageItem (PresetsListView* parent):
 	Q3ListViewItem (parent),
 	_presets_manager (parent->presets_manager())
 {
-	setPixmap (0, Config::Icons16::presets_package());
+	setPixmap (0, Resources::Icons16::presets_package());
 }
 
 

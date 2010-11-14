@@ -91,11 +91,11 @@ Mikuru::Mikuru (Haruhi::Session* session, std::string const& urn, std::string co
 	QLabel* polyphony_label = new QLabel ("Voices number:", this);
 	_current_polyphony = new QLabel ("0", this);
 
-	_add_part = new QPushButton (Config::Icons16::add(), "Add part", this);
+	_add_part = new QPushButton (Resources::Icons16::add(), "Add part", this);
 	QObject::connect (_add_part, SIGNAL (clicked()), this, SLOT (add_part()));
 	QObject::connect (_add_part, SIGNAL (clicked()), this, SLOT (update_widgets()));
 
-	_del_part = new QPushButton (Config::Icons16::remove(), "Remove part", this);
+	_del_part = new QPushButton (Resources::Icons16::remove(), "Remove part", this);
 	QObject::connect (_del_part, SIGNAL (clicked()), this, SLOT (del_part()));
 	QObject::connect (_del_part, SIGNAL (clicked()), this, SLOT (update_widgets()));
 

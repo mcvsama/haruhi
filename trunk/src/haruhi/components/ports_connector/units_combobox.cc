@@ -49,13 +49,13 @@ UnitsCombobox::~UnitsCombobox()
 void
 UnitsCombobox::read_units()
 {
-	QPixmap unit_icon = (_type == Port::Input) ? Config::Icons16::input_unit() : Config::Icons16::output_unit();
+	QPixmap unit_icon = (_type == Port::Input) ? Resources::Icons16::input_unit() : Resources::Icons16::output_unit();
 
 	clear();
 	_units.clear();
 
 	_units.push_back (0); // 0 is for "All units".
-	insertItem (Config::Icons16::all(), "All units", 0);
+	insertItem (Resources::Icons16::all(), "All units", 0);
 
 	Units list;
 

@@ -211,7 +211,7 @@ LevelMetersGroup::Scale::paintEvent (QPaintEvent* event)
 {
 	QPainter painter (this);
 	painter.setPen (QColorGroup::Text);
-	painter.setFont (Config::SmallFont);
+	painter.setFont (Resources::small_font());
 
 	int h = height();
 
@@ -237,8 +237,8 @@ LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper
 	QVBoxLayout* layout1 = new QVBoxLayout (this, 0, Config::Spacing);
 
 		_peak_button = new QPushButton ("-inf dB", this);
-		_peak_button->setFont (Config::SmallFont);
-		_peak_button->setFixedHeight (2 * Config::SmallFont.pointSize());
+		_peak_button->setFont (Resources::small_font());
+		_peak_button->setFixedHeight (2 * Resources::small_font().pointSize());
 		_peak_button->setFixedWidth (35);
 		_peak_button_bg = _peak_button->paletteBackgroundColor();
 		_peak_button_fg = _peak_button->paletteForegroundColor();

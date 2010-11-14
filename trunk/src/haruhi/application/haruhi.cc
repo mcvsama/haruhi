@@ -52,7 +52,6 @@ Haruhi::Haruhi (int argc, char** argv, char** envp):
 
 	_haruhi = this;
 
-	Config::initialize();
 	Settings::initialize ("haruhi");
 	this->run_ui();
 	Settings::deinitialize();

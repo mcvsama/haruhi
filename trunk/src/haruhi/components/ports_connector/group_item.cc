@@ -40,7 +40,7 @@ GroupItem::GroupItem (PortGroup* group, UnitItem* parent):
 		setSizeHint (0, s);
 	}
 
-	setIcon (0, Config::Icons16::port_group());
+	setIcon (0, Resources::Icons16::port_group());
 }
 
 

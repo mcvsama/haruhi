@@ -83,10 +83,10 @@ PortsConnector::PortsConnector (UnitBay* unit_bay, QWidget* parent):
 
 		QHBoxLayout* buttons_layout = new QHBoxLayout (_layout, Config::Spacing);
 
-		_connect_button = new QPushButton (Config::Icons16::connect(), "&Connect", this);
+		_connect_button = new QPushButton (Resources::Icons16::connect(), "&Connect", this);
 		_connect_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
 
-		_disconnect_button = new QPushButton (Config::Icons16::disconnect(), "&Disconnect", this);
+		_disconnect_button = new QPushButton (Resources::Icons16::disconnect(), "&Disconnect", this);
 		_disconnect_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
 
 		buttons_layout->addWidget (_connect_button);
@@ -216,23 +216,23 @@ PortsConnector::context_menu (QTreeWidgetItem* item, QPoint const& pos)
 	else
 		_context_menu->clear();
 
-	QAction* connect_action = _context_menu->addAction (Config::Icons16::connect(), "&Connect", this, SLOT (connect_selected()));
+	QAction* connect_action = _context_menu->addAction (Resources::Icons16::connect(), "&Connect", this, SLOT (connect_selected()));
 	connect_action->setEnabled (can_connect_selected());
 
-	QAction* disconnect_action = _context_menu->addAction (Config::Icons16::disconnect(), "&Disconnect", this, SLOT (disconnect_selected()));
+	QAction* disconnect_action = _context_menu->addAction (Resources::Icons16::disconnect(), "&Disconnect", this, SLOT (disconnect_selected()));
 	disconnect_action->setEnabled (can_disconnect_selected());
 
-	QAction* disconnect_all_action = _context_menu->addAction (Config::Icons16::disconnect(), "Disconnect all", this, SLOT (disconnect_all_from_selected()));
+	QAction* disconnect_all_action = _context_menu->addAction (Resources::Icons16::disconnect(), "Disconnect all", this, SLOT (disconnect_all_from_selected()));
 	disconnect_all_action->setEnabled (port_item &&
 									   ((port_item->treeWidget() == _ipanel->list() && !port_item->port()->back_connections().empty()) ||
 									    (port_item->treeWidget() == _opanel->list() && !port_item->port()->forward_connections().empty())));
 
 	_context_menu->addSeparator();
 
-	QAction* create_port_action = _context_menu->addAction (Config::Icons16::add(), "&Create port", this, SLOT (create_port()));
+	QAction* create_port_action = _context_menu->addAction (Resources::Icons16::add(), "&Create port", this, SLOT (create_port()));
 	create_port_action->setEnabled (dynamic_cast<UnitItem*> (item) && dynamic_cast<UnitItem*> (item)->unit() == _unit_bay);
 
-	QAction* destroy_port_action = _context_menu->addAction (Config::Icons16::remove(), "Dest&roy port", this, SLOT (destroy_port()));
+	QAction* destroy_port_action = _context_menu->addAction (Resources::Icons16::remove(), "Dest&roy port", this, SLOT (destroy_port()));
 	destroy_port_action->setEnabled (dynamic_cast<PortItem*> (item) && dynamic_cast<UnitItem*> (item->parent()) && dynamic_cast<UnitItem*> (item->parent())->unit() == _unit_bay);
 
 	_context_item = item;

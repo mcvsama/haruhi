@@ -24,10 +24,6 @@
 
 namespace Config {
 
-#ifndef HARUHI_SHARED_DIRECTORY
-#define HARUHI_SHARED_DIRECTORY "share"
-#endif
-
 enum {
 	Spacing			= 3,
 	Margin			= 2,
@@ -36,15 +32,17 @@ enum {
 	DialogMargin	= 6
 };
 
-extern QFont SmallFont;
+} // namespace Config
 
 
-/**
- * Must be called when QApplication is initialized.
- */
-void
-initialize();
+#ifndef HARUHI_SHARED_DIRECTORY
+#define HARUHI_SHARED_DIRECTORY "share"
+#endif
 
+namespace Resources {
+
+QFont&
+small_font();
 
 /*
  * Icons resources

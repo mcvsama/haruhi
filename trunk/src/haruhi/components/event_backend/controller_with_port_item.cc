@@ -59,9 +59,9 @@ ControllerWithPortItem::learn()
 {
 	_learning = !_learning;
 	if (_learning)
-		setIcon (0, Config::Icons16::colorpicker());
+		setIcon (0, Resources::Icons16::colorpicker());
 	else
-		setIcon (0, Config::Icons16::event_output_port());
+		setIcon (0, Resources::Icons16::event_output_port());
 }
 
 

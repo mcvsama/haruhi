@@ -60,7 +60,7 @@ PresetEditor::PresetEditor (QWidget* parent):
 	new QLabel ("Version:", grid);
 	_version = new QLineEdit (grid);
 
-	_update_details_button = new QPushButton (Config::Icons16::save(), "Update de&tails", this);
+	_update_details_button = new QPushButton (Resources::Icons16::save(), "Update de&tails", this);
 	_update_details_button->setAccel (Qt::CTRL + Qt::Key_T);
 	QToolTip::add (_update_details_button, "Saves metadata without current patch");
 	QObject::connect (_update_details_button, SIGNAL (clicked()), this, SLOT (update_details()));

@@ -46,7 +46,7 @@ ControllerItem::ControllerItem (DeviceItem* parent, QString const& name):
 	_key_pressure_invert (false)
 {
 	// Configure item:
-	setIcon (0, Config::Icons16::event_output_port());
+	setIcon (0, Resources::Icons16::event_output_port());
 	update_minimum_size();
 }
 

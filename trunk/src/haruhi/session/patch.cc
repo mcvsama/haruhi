@@ -78,7 +78,7 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	_stack = new QStackedWidget (this);
 
 	_menu = new Q3PopupMenu (this);
-	_menu->insertItem (Config::Icons16::remove(), "Unload", this, SLOT (unload()));
+	_menu->insertItem (Resources::Icons16::remove(), "Unload", this, SLOT (unload()));
 
 	// Title/menu button:
 	QPushButton* title_button = new QPushButton (QString::fromStdString (_plugin->title()), bar);
@@ -225,7 +225,7 @@ Patch::Patch (Session* session, std::string const& title, QWidget* parent):
 
 	QWidget* add_plugin_frame = new QWidget (this);
 
-	QPushButton* add_plugin_button = new QPushButton (Config::Icons16::add(), "Load plugin", add_plugin_frame);
+	QPushButton* add_plugin_button = new QPushButton (Resources::Icons16::add(), "Load plugin", add_plugin_frame);
 	add_plugin_button->setFlat (true);
 	add_plugin_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
 	add_plugin_button->setPopup (_plugins_menu);
@@ -245,7 +245,7 @@ Patch::Patch (Session* session, std::string const& title, QWidget* parent):
 
 			_connections_tab = new Private::ConnectionsTab (this, _tabs);
 
-		_tabs->addTab (_connections_tab, Config::Icons22::connections(), "Connections");
+		_tabs->addTab (_connections_tab, Resources::Icons22::connections(), "Connections");
 
 	_layout->addWidget (_tabs);
 }
@@ -293,7 +293,7 @@ Patch::load_plugin (QString const& urn)
 		// Create unit frame:
 		Private::PluginTab* plugin_tab = new Private::PluginTab (this, _tabs, plugin);
 		// TODO patch should give a hint to plugin how should it call itself in Core::Graph:
-		_tabs->addTab (plugin_tab, Config::Icons22::spacer(), QString ("%1: %2").arg (1).arg (QString::fromStdString (plugin->title())));
+		_tabs->addTab (plugin_tab, Resources::Icons22::spacer(), QString ("%1: %2").arg (1).arg (QString::fromStdString (plugin->title())));
 		_plugins_to_frames_map[plugin] = plugin_tab;
 		_session->graph()->register_unit (plugin);
 	}

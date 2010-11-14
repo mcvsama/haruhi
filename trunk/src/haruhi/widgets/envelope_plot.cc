@@ -136,7 +136,7 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 		_double_buffer.resize (w, h);
 		QPainter painter (&_double_buffer);
 		painter.fillRect (rect(), isEnabled() ? QColor (0xff, 0xff, 0xff) : QColor (0xfa, 0xfa, 0xfa));
-		painter.setFont (Config::SmallFont);
+		painter.setFont (Resources::small_font());
 		// Collect envelope points on canvas:
 		std::vector<QPointF> envelope_points;
 

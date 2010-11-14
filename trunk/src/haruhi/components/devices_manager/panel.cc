@@ -44,15 +44,15 @@ Panel::Panel (QWidget* parent):
 	QObject::connect (_tree, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_items (const QPoint&)));
 	QObject::connect (_tree, SIGNAL (itemSelectionChanged()), this, SLOT (selection_changed()));
 
-	_create_device_button = new QPushButton (Config::Icons16::add(), "Add device", this);
+	_create_device_button = new QPushButton (Resources::Icons16::add(), "Add device", this);
 	_create_device_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QToolTip::add (_create_device_button, "Add new device and external input port");
 
-	_create_controller_button = new QPushButton (Config::Icons16::add(), "Add controller", this);
+	_create_controller_button = new QPushButton (Resources::Icons16::add(), "Add controller", this);
 	_create_controller_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QToolTip::add (_create_controller_button, "Add new controller and internal output port");
 
-	_destroy_input_button = new QPushButton (Config::Icons16::remove(), "Destroy device", this);
+	_destroy_input_button = new QPushButton (Resources::Icons16::remove(), "Destroy device", this);
 	_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QToolTip::add (_destroy_input_button, "Destroy selected device or controller");
 
@@ -222,23 +222,23 @@ Panel::context_menu_for_items (QPoint const& pos)
 	{
 		if (dynamic_cast<ControllerItem*> (item) != 0)
 		{
-			menu->addAction (Config::Icons16::colorpicker(), "&Learn", this, SLOT (learn_from_midi()));
+			menu->addAction (Resources::Icons16::colorpicker(), "&Learn", this, SLOT (learn_from_midi()));
 			menu->addSeparator();
-			menu->addAction (Config::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
-			menu->addAction (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
+			menu->addAction (Resources::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
+			menu->addAction (Resources::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
 		}
 		else if (dynamic_cast<DeviceItem*> (item) != 0)
 		{
-			menu->addAction (Config::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
+			menu->addAction (Resources::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
 			menu->addSeparator();
-			menu->addAction (Config::Icons16::add(), "&Add device", this, SLOT (create_device()));
-			menu->addAction (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
+			menu->addAction (Resources::Icons16::add(), "&Add device", this, SLOT (create_device()));
+			menu->addAction (Resources::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
 		}
 	}
 	else
 	{
-		menu->addAction (Config::Icons16::add(), "&Add device", this, SLOT (create_device()));
-		a = menu->addAction (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
+		menu->addAction (Resources::Icons16::add(), "&Add device", this, SLOT (create_device()));
+		a = menu->addAction (Resources::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
 		a->setEnabled (false);
 	}
 

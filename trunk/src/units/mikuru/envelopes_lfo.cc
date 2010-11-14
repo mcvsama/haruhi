@@ -317,13 +317,13 @@ LFO::create_widgets (QWidget* knobs_panel)
 
 	new QLabel ("Wave:", grid1);
 	_wave_type = new QComboBox (grid1);
-	_wave_type->insertItem (Config::Icons16::wave_sine(), "Sine", Params::LFO::Sine);
-	_wave_type->insertItem (Config::Icons16::wave_triangle(), "Triangle", Params::LFO::Triangle);
-	_wave_type->insertItem (Config::Icons16::wave_square(), "Square", Params::LFO::Square);
-	_wave_type->insertItem (Config::Icons16::wave_sawtooth(), "Sawtooth", Params::LFO::Sawtooth);
-	_wave_type->insertItem (Config::Icons16::wave_pulse(), "Pulse", Params::LFO::Pulse);
-	_wave_type->insertItem (Config::Icons16::wave_random_square(), "Random square", Params::LFO::RandomSquare);
-	_wave_type->insertItem (Config::Icons16::wave_random_triangle(), "Random triangle", Params::LFO::RandomTriangle);
+	_wave_type->insertItem (Resources::Icons16::wave_sine(), "Sine", Params::LFO::Sine);
+	_wave_type->insertItem (Resources::Icons16::wave_triangle(), "Triangle", Params::LFO::Triangle);
+	_wave_type->insertItem (Resources::Icons16::wave_square(), "Square", Params::LFO::Square);
+	_wave_type->insertItem (Resources::Icons16::wave_sawtooth(), "Sawtooth", Params::LFO::Sawtooth);
+	_wave_type->insertItem (Resources::Icons16::wave_pulse(), "Pulse", Params::LFO::Pulse);
+	_wave_type->insertItem (Resources::Icons16::wave_random_square(), "Random square", Params::LFO::RandomSquare);
+	_wave_type->insertItem (Resources::Icons16::wave_random_triangle(), "Random triangle", Params::LFO::RandomTriangle);
 	_wave_type->setCurrentItem (p.wave_type);
 	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (update_params()));
 	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (update_plot()));

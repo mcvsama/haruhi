@@ -184,7 +184,7 @@ FrequencyResponsePlot::repaint_grid()
 
 	QPainter painter (&_grid_buffer);
 	painter.fillRect (rect(), isEnabled() ? QColor (0xff, 0xff, 0xff) : QColor (0xfa, 0xfa, 0xfa, 0xff));
-	painter.setFont (Config::SmallFont);
+	painter.setFont (Resources::small_font());
 
 	QColor grid_color = isEnabled() ? QColor (0xcc, 0xcc, 0xcc) : QColor (0xe0, 0xe0, 0xe0);
 

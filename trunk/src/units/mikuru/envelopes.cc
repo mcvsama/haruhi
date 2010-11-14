@@ -61,14 +61,14 @@ Envelopes::Envelopes (Mikuru* mikuru, QWidget* parent):
 	_stack->addWidget (_tabs);
 	_stack->addWidget (_placeholder);
 
-	_add_adsr = new QPushButton (Config::Icons16::adsr(), "Add ADSR", this);
+	_add_adsr = new QPushButton (Resources::Icons16::adsr(), "Add ADSR", this);
 	QObject::connect (_add_adsr, SIGNAL (clicked()), this, SLOT (add_adsr()));
-	_add_envelope = new QPushButton (Config::Icons16::adsr(), "Add envelope", this);
+	_add_envelope = new QPushButton (Resources::Icons16::adsr(), "Add envelope", this);
 	QObject::connect (_add_envelope, SIGNAL (clicked()), this, SLOT (add_eg()));
-	_add_lfo = new QPushButton (Config::Icons16::lfo(), "Add LFO", this);
+	_add_lfo = new QPushButton (Resources::Icons16::lfo(), "Add LFO", this);
 	QObject::connect (_add_lfo, SIGNAL (clicked()), this, SLOT (add_lfo()));
 
-	_remove_envelope = new QPushButton (Config::Icons16::remove(), "Remove", this);
+	_remove_envelope = new QPushButton (Resources::Icons16::remove(), "Remove", this);
 	QObject::connect (_remove_envelope, SIGNAL (clicked()), this, SLOT (destroy_envelope()));
 
 	// Layouts:
