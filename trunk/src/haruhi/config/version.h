@@ -17,6 +17,10 @@
 namespace Haruhi {
 namespace Version {
 
+/**
+ * References to dynamically created commit ID and branch name.
+ * File version.cc will be made and compiled by build system.
+ */
 extern const char* commit;
 extern const char* branch;
 

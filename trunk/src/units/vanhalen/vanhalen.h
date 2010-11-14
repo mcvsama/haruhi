@@ -21,24 +21,38 @@
 #include <QtGui/QWidget>
 
 // Local:
-#include <haruhi/core/event.h>
-#include <haruhi/core/event_port.h>
-#include <haruhi/core/audio_port.h>
+#include <haruhi/graph/event.h>
+#include <haruhi/graph/event_port.h>
+#include <haruhi/graph/audio_port.h>
+#include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/delay_line.h>
 #include <haruhi/lib/controller_proxy.h>
+#include <haruhi/plugin/plugin.h>
+#include <haruhi/plugin/plugin_factory.h>
 #include <haruhi/widgets/knob.h>
-#include <haruhi/unit.h>
 
 
 class VanHalen:
-	public Haruhi::Unit
+	public Haruhi::Plugin
 {
 	Q_OBJECT
 
   public:
-	VanHalen (Haruhi::UnitFactory*, Haruhi::Session*, std::string const& urn, std::string const& title, int id, QWidget* parent);
+	VanHalen (Haruhi::Session*, std::string const& urn, std::string const& title, int id, QWidget* parent);
 
 	virtual ~VanHalen();
+
+	/**
+	 * Unit API
+	 */
+	void
+	registered();
+
+	/**
+	 * Unit API
+	 */
+	void
+	unregistered();
 
 	std::string
 	name() const;
@@ -49,42 +63,42 @@ class VanHalen:
 	void
 	panic();
 
+	void
+	graph_updated();
+
   private:
 	// Drive:
-	Haruhi::Core::EventPort*			_input;
-	Haruhi::Core::EventPort*			_output;
-	Haruhi::Core::AudioPort*			_audio_input_1;
-	Haruhi::Core::AudioPort*			_audio_input_2;
-	Haruhi::Core::AudioPort*			_audio_output_1;
-	Haruhi::Core::AudioPort*			_audio_output_2;
+	Haruhi::EventPort*		_input;
+	Haruhi::EventPort*		_output;
+	Haruhi::AudioPort*		_audio_input_1;
+	Haruhi::AudioPort*		_audio_input_2;
+	Haruhi::AudioPort*		_audio_output_1;
+	Haruhi::AudioPort*		_audio_output_2;
 
-	Haruhi::Core::AudioBuffer			_buf1;
-	Haruhi::Core::AudioBuffer			_buf2;
+	Haruhi::AudioBuffer		_buf1;
+	Haruhi::AudioBuffer		_buf2;
 
-	Haruhi::DSP::DelayLine				_delay1;
-	Haruhi::DSP::DelayLine				_delay2;
+	Haruhi::DSP::DelayLine	_delay1;
+	Haruhi::DSP::DelayLine	_delay2;
 
-	Haruhi::ControllerProxy*	_proxy_comb_index;
-	Haruhi::ControllerProxy*	_proxy_comb_alpha;
+	Haruhi::Knob*			_knob_comb_index;
+	Haruhi::Knob*			_knob_comb_alpha;
 
-	Haruhi::Knob*				_knob_comb_index;
-	Haruhi::Knob*				_knob_comb_alpha;
-
-	Haruhi::ControllerParam		_comb_index;
-	Haruhi::ControllerParam		_comb_alpha;
+	Haruhi::ControllerParam	_comb_index;
+	Haruhi::ControllerParam	_comb_alpha;
 };
 
 
-class VanHalenFactory: public Haruhi::UnitFactory
+class VanHalenFactory: public Haruhi::PluginFactory
 {
   public:
 	VanHalenFactory();
 
-	Haruhi::Unit*
-	create_unit (Haruhi::Session*, int id, QWidget* parent);
+	Haruhi::Plugin*
+	create_plugin (Haruhi::Session*, int id, QWidget* parent);
 
 	void
-	destroy_unit (Haruhi::Unit* unit);
+	destroy_plugin (Haruhi::Plugin* plugin);
 
 	InformationMap const&
 	information() const;

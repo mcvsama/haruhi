@@ -24,7 +24,7 @@
 #include <Qt3Support/Q3GroupBox>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 #include <haruhi/dsp/functions.h>
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/wave_plot.h>
@@ -60,7 +60,7 @@ LFO::Osc::reset (float start_phase)
 }
 
 
-Core::Sample
+Haruhi::Sample
 LFO::Osc::advance (unsigned int samples)
 {
 	if (!_wave)
@@ -118,8 +118,8 @@ LFO::RandomWave::next_step()
 }
 
 
-Core::Sample
-LFO::RandomWave::operator() (Core::Sample register phase, Core::Sample) const
+Haruhi::Sample
+LFO::RandomWave::operator() (Haruhi::Sample register phase, Haruhi::Sample) const
 {
 	switch (_type)
 	{
@@ -152,7 +152,6 @@ LFO::LFO (int id, Mikuru* mikuru, QWidget* parent):
 	knobs_panel->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
 
 	create_ports();
-	create_proxies();
 	create_knobs (knobs_panel);
 	create_widgets (knobs_panel);
 	update_plot();
@@ -164,28 +163,20 @@ LFO::LFO (int id, Mikuru* mikuru, QWidget* parent):
 LFO::~LFO()
 {
 	// Delete knobs before ControllerProxies:
-	delete _control_delay;
-	delete _control_fade_in;
-	delete _control_frequency;
-	delete _control_level;
-	delete _control_depth;
-	delete _control_phase;
-	delete _control_wave_shape;
-	delete _control_fade_out;
-
-	delete _proxy_delay;
-	delete _proxy_fade_in;
-	delete _proxy_frequency;
-	delete _proxy_level;
-	delete _proxy_depth;
-	delete _proxy_phase;
-	delete _proxy_wave_shape;
-	delete _proxy_fade_out;
+	delete _knob_delay;
+	delete _knob_fade_in;
+	delete _knob_frequency;
+	delete _knob_level;
+	delete _knob_depth;
+	delete _knob_phase;
+	delete _knob_wave_shape;
+	delete _knob_fade_out;
 
 	_plot->assign_wave (0);
 	_mikuru->free_id ("lfos", _id);
 
-	_mikuru->graph()->lock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
 	delete _port_delay;
 	delete _port_fade_in;
 	delete _port_frequency;
@@ -198,7 +189,8 @@ LFO::~LFO()
 	// Delete remaining Oscs:
 	for (Oscs::iterator x = _oscs.begin(); x != _oscs.end(); ++x)
 		delete x->second;
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 
 	// Delete waves:
 	for (Waves::iterator w = _waves.begin(); w != _waves.end(); ++w)
@@ -209,68 +201,61 @@ LFO::~LFO()
 void
 LFO::create_ports()
 {
-	_mikuru->graph()->lock();
-	_port_group = new Core::PortGroup (_mikuru->graph(), QString ("LFO %1").arg (this->id()).toStdString());
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
+	_port_group = new Haruhi::PortGroup (_mikuru->graph(), QString ("LFO %1").arg (this->id()).toStdString());
 	// Inputs:
-	_port_delay = new Core::EventPort (_mikuru, "Delay", Core::Port::Input, _port_group);
-	_port_fade_in = new Core::EventPort (_mikuru, "Fade in", Core::Port::Input, _port_group);
-	_port_frequency = new Core::EventPort (_mikuru, "Frequency", Core::Port::Input, _port_group);
-	_port_level = new Core::EventPort (_mikuru, "Level", Core::Port::Input, _port_group);
-	_port_depth = new Core::EventPort (_mikuru, "Depth", Core::Port::Input, _port_group);
-	_port_phase = new Core::EventPort (_mikuru, "Start phase", Core::Port::Input, _port_group);
-	_port_wave_shape = new Core::EventPort (_mikuru, "Wave shape", Core::Port::Input, _port_group);
-	_port_fade_out = new Core::EventPort (_mikuru, "Fade out", Core::Port::Input, _port_group);
+	_port_delay = new Haruhi::EventPort (_mikuru, "Delay", Haruhi::Port::Input, _port_group);
+	_port_fade_in = new Haruhi::EventPort (_mikuru, "Fade in", Haruhi::Port::Input, _port_group);
+	_port_frequency = new Haruhi::EventPort (_mikuru, "Frequency", Haruhi::Port::Input, _port_group);
+	_port_level = new Haruhi::EventPort (_mikuru, "Level", Haruhi::Port::Input, _port_group);
+	_port_depth = new Haruhi::EventPort (_mikuru, "Depth", Haruhi::Port::Input, _port_group);
+	_port_phase = new Haruhi::EventPort (_mikuru, "Start phase", Haruhi::Port::Input, _port_group);
+	_port_wave_shape = new Haruhi::EventPort (_mikuru, "Wave shape", Haruhi::Port::Input, _port_group);
+	_port_fade_out = new Haruhi::EventPort (_mikuru, "Fade out", Haruhi::Port::Input, _port_group);
 	// Outputs:
-	_port_output = new Core::EventPort (_mikuru, QString ("LFO %1").arg (this->id()).toStdString(), Core::Port::Output, 0, Core::Port::Polyphonic);
-	_mikuru->graph()->unlock();
-}
-
-
-void
-LFO::create_proxies()
-{
-	_proxy_delay = new Haruhi::ControllerProxy (_port_delay, &_params.delay);
-	_proxy_delay->config()->curve = 1.0;
-	_proxy_delay->apply_config();
-	_proxy_fade_in = new Haruhi::ControllerProxy (_port_fade_in, &_params.fade_in);
-	_proxy_fade_in->config()->curve = 1.0;
-	_proxy_fade_in->apply_config();
-	_proxy_frequency = new Haruhi::ControllerProxy (_port_frequency, &_params.frequency);
-	_proxy_frequency->config()->curve = 0.5;
-	_proxy_frequency->apply_config();
-	_proxy_level = new Haruhi::ControllerProxy (_port_level, &_params.level);
-	_proxy_depth = new Haruhi::ControllerProxy (_port_depth, &_params.depth);
-	_proxy_phase = new Haruhi::ControllerProxy (_port_phase, &_params.phase);
-	_proxy_wave_shape = new Haruhi::ControllerProxy (_port_wave_shape, &_params.wave_shape);
-	_proxy_fade_out = new Haruhi::ControllerProxy (_port_fade_out, &_params.fade_out);
-	_proxy_fade_out->config()->curve = 1.0;
-	_proxy_fade_out->apply_config();
+	_port_output = new Haruhi::EventPort (_mikuru, QString ("LFO %1").arg (this->id()).toStdString(), Haruhi::Port::Output, 0, Haruhi::Port::Polyphonic);
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 }
 
 
 void
 LFO::create_knobs (QWidget* parent)
 {
-	_control_delay = new Haruhi::Knob (parent, _proxy_delay, "Delay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Delay, 1000), 2);
-	_control_delay->set_unit_bay (_mikuru->unit_bay());
-	_control_fade_in = new Haruhi::Knob (parent, _proxy_fade_in, "Fade in", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::FadeIn, 1000), 2);
-	_control_fade_in->set_unit_bay (_mikuru->unit_bay());
-	_control_frequency = new Haruhi::Knob (parent, _proxy_frequency, "Frequency", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Frequency, 3000), 3);
-	_control_frequency->set_unit_bay (_mikuru->unit_bay());
-	_control_level = new Haruhi::Knob (parent, _proxy_level, "Level", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Level, 100), 2);
-	_control_level->set_unit_bay (_mikuru->unit_bay());
-	_control_depth = new Haruhi::Knob (parent, _proxy_depth, "Depth", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Depth, 100), 2);
-	_control_depth->set_unit_bay (_mikuru->unit_bay());
-	_control_phase = new Haruhi::Knob (parent, _proxy_phase, "Phase", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Phase, 1000), 3);
-	_control_phase->set_unit_bay (_mikuru->unit_bay());
-	_control_wave_shape = new Haruhi::Knob (parent, _proxy_wave_shape, "W.shape", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::WaveShape, 1000), 3);
-	_control_wave_shape->set_unit_bay (_mikuru->unit_bay());
-	_control_fade_out = new Haruhi::Knob (parent, _proxy_fade_out, "Fade out", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::FadeOut, 100), 2);
-	_control_fade_out->set_unit_bay (_mikuru->unit_bay());
+	_knob_delay = new Haruhi::Knob (parent, _port_delay, &_params.delay, "Delay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Delay, 1000), 2);
+	_knob_fade_in = new Haruhi::Knob (parent, _port_fade_in, &_params.fade_in, "Fade in", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::FadeIn, 1000), 2);
+	_knob_frequency = new Haruhi::Knob (parent, _port_frequency, &_params.frequency, "Frequency", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Frequency, 3000), 3);
+	_knob_level = new Haruhi::Knob (parent, _port_level, &_params.level, "Level", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Level, 100), 2);
+	_knob_depth = new Haruhi::Knob (parent, _port_depth, &_params.depth, "Depth", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Depth, 100), 2);
+	_knob_phase = new Haruhi::Knob (parent, _port_phase, &_params.phase, "Phase", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Phase, 1000), 3);
+	_knob_wave_shape = new Haruhi::Knob (parent, _port_wave_shape, &_params.wave_shape, "W.shape", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::WaveShape, 1000), 3);
+	_knob_fade_out = new Haruhi::Knob (parent, _port_fade_out, &_params.fade_out, "Fade out", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::FadeOut, 100), 2);
 
-	QObject::connect (_control_fade_out, SIGNAL (changed (int)), this, SLOT (update_plot()));
-	QObject::connect (_control_wave_shape, SIGNAL (changed (int)), this, SLOT (update_plot()));
-	QObject::connect (_control_phase, SIGNAL (changed (int)), this, SLOT (update_plot()));
+	// Proxy configs:
+	Haruhi::Knob* curved_knobs[] = {
+		_knob_delay, _knob_fade_in, _knob_fade_out
+	};
+	for (Haruhi::Knob** k = curved_knobs; k != curved_knobs + sizeof (curved_knobs) / sizeof (*curved_knobs); ++k)
+	{
+		(*k)->controller_proxy().config().curve = 1.0;
+		(*k)->controller_proxy().apply_config();
+	}
+
+	_knob_frequency->controller_proxy().config().curve = 0.5;
+	_knob_frequency->controller_proxy().apply_config();
+
+	// Set unit bay:
+	Haruhi::Knob* all_knobs[] = {
+		_knob_delay, _knob_fade_in, _knob_frequency, _knob_level,
+		_knob_depth, _knob_phase, _knob_wave_shape, _knob_fade_out
+	};
+	for (Haruhi::Knob** k = all_knobs; k != all_knobs + sizeof (all_knobs) / sizeof (*all_knobs); ++k)
+		(*k)->set_unit_bay (_mikuru->unit_bay());
+
+	QObject::connect (_knob_fade_out, SIGNAL (changed (int)), this, SLOT (update_plot()));
+	QObject::connect (_knob_wave_shape, SIGNAL (changed (int)), this, SLOT (update_plot()));
+	QObject::connect (_knob_phase, SIGNAL (changed (int)), this, SLOT (update_plot()));
 }
 
 
@@ -279,19 +264,19 @@ LFO::create_widgets (QWidget* knobs_panel)
 {
 	Params::LFO p = _params;
 
-	QToolTip::add (_control_wave_shape, "Wave shape");
-	QToolTip::add (_control_phase, "Start phase");
+	QToolTip::add (_knob_wave_shape, "Wave shape");
+	QToolTip::add (_knob_phase, "Start phase");
 
 	QFrame* plot_frame = new QFrame (knobs_panel);
 	plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_plot = new Haruhi::WavePlot (plot_frame);
-	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::spacing);
+	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::Spacing);
 	plot_frame_layout->addWidget (_plot);
 
 	Q3GroupBox* grid1 = new Q3GroupBox (2, Qt::Horizontal, "", this);
 	grid1->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
-	grid1->setInsideMargin (3 * Config::margin);
+	grid1->setInsideMargin (3 * Config::Margin);
 
 	_enabled = new QCheckBox ("Enabled", grid1);
 	_enabled->setChecked (p.enabled);
@@ -317,7 +302,7 @@ LFO::create_widgets (QWidget* knobs_panel)
 	QObject::connect (_tempo_sync, SIGNAL (toggled (bool)), this, SLOT (update_widgets()));
 
 	QWidget* tempo_grid = new QWidget (grid1);
-	QHBoxLayout* tempo_layout = new QHBoxLayout (tempo_grid, 0, Config::spacing);
+	QHBoxLayout* tempo_layout = new QHBoxLayout (tempo_grid, 0, Config::Spacing);
 	tempo_layout->setAutoAdd (true);
 
 	_tempo_numerator = new QSpinBox (1, 64, 1, tempo_grid);
@@ -332,13 +317,13 @@ LFO::create_widgets (QWidget* knobs_panel)
 
 	new QLabel ("Wave:", grid1);
 	_wave_type = new QComboBox (grid1);
-	_wave_type->insertItem (Config::Icons16::wave_sine(), "Sine", Params::LFO::Sine);
-	_wave_type->insertItem (Config::Icons16::wave_triangle(), "Triangle", Params::LFO::Triangle);
-	_wave_type->insertItem (Config::Icons16::wave_square(), "Square", Params::LFO::Square);
-	_wave_type->insertItem (Config::Icons16::wave_sawtooth(), "Sawtooth", Params::LFO::Sawtooth);
-	_wave_type->insertItem (Config::Icons16::wave_pulse(), "Pulse", Params::LFO::Pulse);
-	_wave_type->insertItem (Config::Icons16::wave_random_square(), "Random square", Params::LFO::RandomSquare);
-	_wave_type->insertItem (Config::Icons16::wave_random_triangle(), "Random triangle", Params::LFO::RandomTriangle);
+	_wave_type->insertItem (Resources::Icons16::wave_sine(), "Sine", Params::LFO::Sine);
+	_wave_type->insertItem (Resources::Icons16::wave_triangle(), "Triangle", Params::LFO::Triangle);
+	_wave_type->insertItem (Resources::Icons16::wave_square(), "Square", Params::LFO::Square);
+	_wave_type->insertItem (Resources::Icons16::wave_sawtooth(), "Sawtooth", Params::LFO::Sawtooth);
+	_wave_type->insertItem (Resources::Icons16::wave_pulse(), "Pulse", Params::LFO::Pulse);
+	_wave_type->insertItem (Resources::Icons16::wave_random_square(), "Random square", Params::LFO::RandomSquare);
+	_wave_type->insertItem (Resources::Icons16::wave_random_triangle(), "Random triangle", Params::LFO::RandomTriangle);
 	_wave_type->setCurrentItem (p.wave_type);
 	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (update_params()));
 	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (update_plot()));
@@ -365,23 +350,23 @@ LFO::create_widgets (QWidget* knobs_panel)
 
 	// Layout:
 
-	QVBoxLayout* v1 = new QVBoxLayout (knobs_panel, 0, Config::spacing);
-	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::spacing);
-	h1->addWidget (_control_fade_in);
-	h1->addWidget (_control_frequency);
-	h1->addWidget (_control_level);
-	h1->addWidget (_control_depth);
-	h1->addWidget (_control_fade_out);
-	QHBoxLayout* h2 = new QHBoxLayout (v1, Config::spacing);
-	h2->addWidget (_control_delay);
+	QVBoxLayout* v1 = new QVBoxLayout (knobs_panel, 0, Config::Spacing);
+	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
+	h1->addWidget (_knob_fade_in);
+	h1->addWidget (_knob_frequency);
+	h1->addWidget (_knob_level);
+	h1->addWidget (_knob_depth);
+	h1->addWidget (_knob_fade_out);
+	QHBoxLayout* h2 = new QHBoxLayout (v1, Config::Spacing);
+	h2->addWidget (_knob_delay);
 	h2->addWidget (plot_frame);
-	h2->addWidget (_control_wave_shape);
-	h2->addWidget (_control_phase);
+	h2->addWidget (_knob_wave_shape);
+	h2->addWidget (_knob_phase);
 	v1->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
-	QHBoxLayout* h3 = new QHBoxLayout (this, Config::margin, Config::spacing);
+	QHBoxLayout* h3 = new QHBoxLayout (this, Config::Margin, Config::Spacing);
 	h3->addWidget (knobs_panel);
-	QVBoxLayout* v2 = new QVBoxLayout (h3, Config::spacing);
+	QVBoxLayout* v2 = new QVBoxLayout (h3, Config::Spacing);
 	v2->addWidget (grid1);
 	v2->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }
@@ -450,21 +435,21 @@ LFO::process()
 	_port_fade_out->sync();
 
 	// Process ports events:
-	_proxy_delay->process_events();
-	_proxy_fade_in->process_events();
-	_proxy_frequency->process_events();
-	_proxy_level->process_events();
-	_proxy_depth->process_events();
-	_proxy_phase->process_events();
-	_proxy_wave_shape->process_events();
-	_proxy_fade_out->process_events();
+	_knob_delay->controller_proxy().process_events();
+	_knob_fade_in->controller_proxy().process_events();
+	_knob_frequency->controller_proxy().process_events();
+	_knob_level->controller_proxy().process_events();
+	_knob_depth->controller_proxy().process_events();
+	_knob_phase->controller_proxy().process_events();
+	_knob_wave_shape->controller_proxy().process_events();
+	_knob_fade_out->controller_proxy().process_events();
 
 	// Skip if disabled or not connected:
 	if (!_params.enabled.get() || _port_output->forward_connections().empty())
 		return;
 
 	int wave_type = _params.wave_type.get();
-	Core::Timestamp t = _mikuru->graph()->timestamp();
+	Haruhi::Timestamp t = _mikuru->graph()->timestamp();
 	unsigned int sample_rate = _mikuru->graph()->sample_rate();
 	unsigned int buffer_size = _mikuru->graph()->buffer_size();
 	DSP::ParametricWave* wave = _waves[wave_type];
@@ -487,7 +472,7 @@ LFO::process()
 		osc->set_level (level);
 		osc->set_depth (depth);
 		osc->set_invert (invert);
-		_port_output->event_buffer()->push (new Core::VoiceControllerEvent (t, voice->voice_id(), apply_function (osc->advance (buffer_size))));
+		_port_output->event_buffer()->push (new Haruhi::VoiceControllerEvent (t, voice->voice_id(), apply_function (osc->advance (buffer_size))));
 	}
 
 	int mode = _params.mode.get();
@@ -498,7 +483,7 @@ LFO::process()
 		_common_osc.set_level (level);
 		_common_osc.set_depth (depth);
 		_common_osc.set_invert (invert);
-		_port_output->event_buffer()->push (new Core::ControllerEvent (t, apply_function (_common_osc.advance (buffer_size))));
+		_port_output->event_buffer()->push (new Haruhi::ControllerEvent (t, apply_function (_common_osc.advance (buffer_size))));
 	}
 }
 
@@ -587,11 +572,11 @@ LFO::update_widgets()
 {
 	bool random = _params.wave_type.get() == Params::LFO::RandomSquare || _params.wave_type.get() == Params::LFO::RandomTriangle;
 	bool continuous = _params.mode.get() == Params::LFO::CommonContinuous;
-	_control_delay->setEnabled (!continuous);
-	_control_fade_in->setEnabled (!continuous);
-	_control_fade_out->setEnabled (!continuous && _params.fade_out_enabled);
-	_control_phase->setEnabled (!continuous);
-	_control_wave_shape->setEnabled (!random);
+	_knob_delay->setEnabled (!continuous);
+	_knob_fade_in->setEnabled (!continuous);
+	_knob_fade_out->setEnabled (!continuous && _params.fade_out_enabled);
+	_knob_phase->setEnabled (!continuous);
+	_knob_wave_shape->setEnabled (!random);
 	_plot->setEnabled (!random);
 	_tempo_numerator->setEnabled (_tempo_sync->isChecked());
 	_tempo_denominator->setEnabled (_tempo_sync->isChecked());
@@ -628,8 +613,8 @@ LFO::set_common_osc()
 }
 
 
-Core::Sample
-LFO::apply_function (Core::Sample v) const
+Haruhi::Sample
+LFO::apply_function (Haruhi::Sample v) const
 {
 	switch (_params.function.get())
 	{

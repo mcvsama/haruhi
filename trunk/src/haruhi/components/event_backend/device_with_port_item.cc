@@ -17,9 +17,6 @@
 // Qt:
 #include <QtGui/QTreeWidgetItem>
 
-// Haruhi:
-#include <haruhi/config.h>
-
 // Local:
 #include "device_with_port_item.h"
 #include "controller_with_port_item.h"
@@ -38,7 +35,7 @@ DeviceWithPortItem::DeviceWithPortItem (Backend* p_backend, PortsListView* paren
 	backend()->_inputs[_transport_port] = this;
 	// Allocate port group:
 	backend()->graph()->lock();
-	_port_group = new Core::PortGroup (backend()->graph(), name.ascii());
+	_port_group = new PortGroup (backend()->graph(), name.ascii());
 	backend()->graph()->unlock();
 	// Ready for handling events:
 	set_ready (true);

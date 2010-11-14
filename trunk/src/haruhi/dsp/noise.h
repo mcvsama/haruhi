@@ -21,6 +21,7 @@
 #include <map>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/thread.h>
 
@@ -58,8 +59,8 @@ class Noise: public Wave
 	 * \param	phase is ignored.
 	 * \param	frequency is ignored.
 	 */
-	virtual Core::Sample
-	operator() (Core::Sample register phase, Core::Sample frequency) const
+	virtual Sample
+	operator() (Sample register phase, Sample frequency) const
 	{
 		return get();
 	}
@@ -67,7 +68,7 @@ class Noise: public Wave
 	/**
 	 * Faster getter of noise value (not polymorphic).
 	 */
-	Core::Sample
+	Sample
 	get() const
 	{
 		return get (_states[Thread::id()]);
@@ -76,7 +77,7 @@ class Noise: public Wave
 	/**
 	 * Faster equivalent of get().
 	 */
-	Core::Sample
+	Sample
 	get (State& s) const
 	{
 		s.w *= 16807;

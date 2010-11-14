@@ -32,7 +32,7 @@ namespace MikuruPrivate {
 /*
  * Methods for updating individual Voice parameters
  * instead of all parameters at once.
- * TODO create own ControllerProxy that will override set_value and call _part->voice_manager()->set_voice_param (Core::OmniVoice, …)
+ * TODO create own ControllerProxy that will override set_value and call _part->voice_manager()->set_voice_param (Haruhi::OmniVoice, …)
  */
 
 #define UPDATE_VOICE(param_name) \
@@ -40,7 +40,7 @@ namespace MikuruPrivate {
 	{ \
 		if (_loading_params) \
 			return; \
-		_part->voice_manager()->set_voice_param (Core::OmniVoice, &Params::Voice::param_name, _voice_params.param_name.get()); \
+		_part->voice_manager()->set_voice_param (Haruhi::OmniVoice, &Params::Voice::param_name, _voice_params.param_name.get()); \
 	}
 
 UPDATE_VOICE (panorama)
@@ -55,7 +55,7 @@ UPDATE_VOICE (velocity_sens)
 #undef UPDATE_VOICE
 
 
-Oscillator::Oscillator (Part* part, Core::PortGroup* port_group, QString const& q_port_prefix, Mikuru* mikuru, QWidget* parent):
+Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const& q_port_prefix, Mikuru* mikuru, QWidget* parent):
 	QWidget (parent),
 	_mikuru (mikuru),
 	_part (part),
@@ -69,102 +69,102 @@ Oscillator::Oscillator (Part* part, Core::PortGroup* port_group, QString const& 
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_panel = new QWidget (this);
 
-	_mikuru->graph()->lock();
-	_port_volume = new Core::EventPort (_mikuru, port_prefix + " - Volume", Core::Port::Input, port_group);
-	_port_amplitude = new Core::EventPort (_mikuru, port_prefix + " - Amplitude modulation", Core::Port::Input, port_group, Core::Port::Polyphonic);
-	_port_frequency = new Core::EventPort (_mikuru, port_prefix + " - Frequency modulation", Core::Port::Input, port_group, Core::Port::Polyphonic);
-	_port_panorama = new Core::EventPort (_mikuru, port_prefix + " - Panorama", Core::Port::Input, port_group, Core::Port::Polyphonic);
-	_port_detune = new Core::EventPort (_mikuru, port_prefix + " - Detune", Core::Port::Input, port_group, Core::Port::Polyphonic);
-	_port_pitchbend = new Core::EventPort (_mikuru, port_prefix + " - Pitchbend", Core::Port::Input, port_group, Core::Port::Polyphonic);
-	_port_velocity_sens = new Core::EventPort (_mikuru, port_prefix + " - Velocity sensitivity", Core::Port::Input, port_group, Core::Port::Polyphonic);
-	_port_unison_index = new Core::EventPort (_mikuru, port_prefix + " - Unison index", Core::Port::Input, port_group, Core::Port::Polyphonic);
-	_port_unison_spread = new Core::EventPort (_mikuru, port_prefix + " - Unison spread", Core::Port::Input, port_group, Core::Port::Polyphonic);
-	_port_unison_init = new Core::EventPort (_mikuru, port_prefix + " - Unison init. φ", Core::Port::Input, port_group, Core::Port::Polyphonic);
-	_port_unison_noise = new Core::EventPort (_mikuru, port_prefix + " - Unison noise", Core::Port::Input, port_group, Core::Port::Polyphonic);
-	_port_portamento_time = new Core::EventPort (_mikuru, port_prefix + " - Portamento time", Core::Port::Input, port_group);
-	_port_phase = new Core::EventPort (_mikuru, port_prefix + " - Phase", Core::Port::Input, port_group);
-	_port_noise_level = new Core::EventPort (_mikuru, port_prefix + " - Noise level", Core::Port::Input, port_group);
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
+	_port_volume = new Haruhi::EventPort (_mikuru, port_prefix + " - Volume", Haruhi::Port::Input, port_group);
+	_port_amplitude = new Haruhi::EventPort (_mikuru, port_prefix + " - Amplitude modulation", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_frequency = new Haruhi::EventPort (_mikuru, port_prefix + " - Frequency modulation", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_panorama = new Haruhi::EventPort (_mikuru, port_prefix + " - Panorama", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_detune = new Haruhi::EventPort (_mikuru, port_prefix + " - Detune", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_pitchbend = new Haruhi::EventPort (_mikuru, port_prefix + " - Pitchbend", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_velocity_sens = new Haruhi::EventPort (_mikuru, port_prefix + " - Velocity sensitivity", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_unison_index = new Haruhi::EventPort (_mikuru, port_prefix + " - Unison index", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_unison_spread = new Haruhi::EventPort (_mikuru, port_prefix + " - Unison spread", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_unison_init = new Haruhi::EventPort (_mikuru, port_prefix + " - Unison init. φ", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_unison_noise = new Haruhi::EventPort (_mikuru, port_prefix + " - Unison noise", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_portamento_time = new Haruhi::EventPort (_mikuru, port_prefix + " - Portamento time", Haruhi::Port::Input, port_group);
+	_port_phase = new Haruhi::EventPort (_mikuru, port_prefix + " - Phase", Haruhi::Port::Input, port_group);
+	_port_noise_level = new Haruhi::EventPort (_mikuru, port_prefix + " - Noise level", Haruhi::Port::Input, port_group);
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 
-	_proxy_volume = new Haruhi::ControllerProxy (_port_volume, &_oscillator_params.volume);
-	_proxy_panorama = new Haruhi::ControllerProxy (_port_panorama, &_voice_params.panorama);
-	_proxy_detune = new Haruhi::ControllerProxy (_port_detune, &_voice_params.detune);
-	_proxy_pitchbend = new Haruhi::ControllerProxy (_port_pitchbend, &_voice_params.pitchbend);
-	_proxy_unison_index = new Haruhi::ControllerProxy (_port_unison_index, &_voice_params.unison_index);
-	_proxy_unison_spread = new Haruhi::ControllerProxy (_port_unison_spread, &_voice_params.unison_spread);
-	_proxy_unison_init = new Haruhi::ControllerProxy (_port_unison_init, &_voice_params.unison_init);
-	_proxy_unison_noise = new Haruhi::ControllerProxy (_port_unison_noise, &_voice_params.unison_noise);
-	_proxy_velocity_sens = new Haruhi::ControllerProxy (_port_velocity_sens, &_voice_params.velocity_sens);
-	_proxy_portamento_time = new Haruhi::ControllerProxy (_port_portamento_time, &_oscillator_params.portamento_time);
-	_proxy_portamento_time->config()->curve = 1.0;
-	_proxy_portamento_time->config()->user_limit_max = 0.5f * Params::Oscillator::PortamentoTimeDenominator;
-	_proxy_portamento_time->apply_config();
-	_proxy_phase = new Haruhi::ControllerProxy (_port_phase, &_oscillator_params.phase);
-	_proxy_noise_level = new Haruhi::ControllerProxy (_port_noise_level, &_oscillator_params.noise_level);
+	_knob_volume			= new Haruhi::Knob (_panel, _port_volume, &_oscillator_params.volume, "Volume dB",
+												-std::numeric_limits<float>::infinity(), 0.0f,
+												(Params::Oscillator::VolumeMax - Params::Oscillator::VolumeMin) / 500, 2);
+	_knob_panorama			= new Haruhi::Knob (_panel, _port_panorama, &_voice_params.panorama, "Panorama",
+												HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Voice::Panorama, 100), 2);
+	_knob_detune			= new Haruhi::Knob (_panel, _port_detune, &_voice_params.detune, "Detune",
+												HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Voice::Detune, 100), 2);
+	_knob_pitchbend			= new Haruhi::Knob (_panel, _port_pitchbend, &_voice_params.pitchbend, "Pitch",
+												HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Voice::Pitchbend, 100), 2);
+	_knob_unison_index		= new Haruhi::Knob (_panel, _port_unison_index, &_voice_params.unison_index, "Unison",
+												HARUHI_MIKURU_PARAMS_FOR_KNOB (Params::Voice::UnisonIndex), 1, 0);
+	_knob_unison_spread		= new Haruhi::Knob (_panel, _port_unison_spread, &_voice_params.unison_spread, "U.spread",
+												HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Voice::UnisonSpread, 100), 2);
+	_knob_unison_init		= new Haruhi::Knob (_panel, _port_unison_init, &_voice_params.unison_init, "U.init.φ",
+												HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Voice::UnisonInit, 200), 2);
+	_knob_unison_noise		= new Haruhi::Knob (_panel, _port_unison_noise, &_voice_params.unison_noise, "U.noise",
+												HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Voice::UnisonNoise, 100), 2);
+	_knob_velocity_sens		= new Haruhi::Knob (_panel, _port_velocity_sens, &_voice_params.velocity_sens, "Vel.sens.",
+												HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Voice::VelocitySens, 100), 2);
+	_knob_portamento_time	= new Haruhi::Knob (_panel, _port_portamento_time, &_oscillator_params.portamento_time, "Glide",
+												HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Oscillator::PortamentoTime, 100), 2);
+	_knob_phase				= new Haruhi::Knob (_panel, _port_phase, &_oscillator_params.phase, "Phase",
+												HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Oscillator::Phase, 200), 2);
+	_knob_noise_level		= new Haruhi::Knob (_panel, _port_noise_level, &_oscillator_params.noise_level, "Noise lvl",
+												HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Oscillator::NoiseLevel, 200), 2);
 
-	_control_volume = new Haruhi::Knob (_panel, _proxy_volume, "Volume dB", -std::numeric_limits<float>::infinity(), 0.0f, (Params::Oscillator::VolumeMax - Params::Oscillator::VolumeMin) / 500, 2);
-	_control_volume->set_volume_scale (true, M_E);
-	_control_volume->set_unit_bay (_mikuru->unit_bay());
-	_control_panorama = new Haruhi::Knob (_panel, _proxy_panorama, "Panorama", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Voice::Panorama, 100), 2);
-	_control_panorama->set_unit_bay (_mikuru->unit_bay());
-	_control_detune = new Haruhi::Knob (_panel, _proxy_detune, "Detune", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Voice::Detune, 100), 2);
-	_control_detune->set_unit_bay (_mikuru->unit_bay());
-	_control_pitchbend = new Haruhi::Knob (_panel, _proxy_pitchbend, "Pitch", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Voice::Pitchbend, 100), 2);
-	_control_pitchbend->set_unit_bay (_mikuru->unit_bay());
-	_control_unison_index = new Haruhi::Knob (_panel, _proxy_unison_index, "Unison", HARUHI_MIKURU_PARAMS_FOR_KNOB (Params::Voice::UnisonIndex), 1, 0);
-	_control_unison_index->set_unit_bay (_mikuru->unit_bay());
-	_control_unison_spread = new Haruhi::Knob (_panel, _proxy_unison_spread, "U.spread", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Voice::UnisonSpread, 100), 2);
-	_control_unison_spread->set_unit_bay (_mikuru->unit_bay());
-	_control_unison_init = new Haruhi::Knob (_panel, _proxy_unison_init, "U.init.φ", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Voice::UnisonInit, 200), 2);
-	_control_unison_init->set_unit_bay (_mikuru->unit_bay());
-	_control_unison_noise = new Haruhi::Knob (_panel, _proxy_unison_noise, "U.noise", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Voice::UnisonNoise, 100), 2);
-	_control_unison_noise->set_unit_bay (_mikuru->unit_bay());
-	_control_velocity_sens = new Haruhi::Knob (_panel, _proxy_velocity_sens, "Vel.sens.", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Voice::VelocitySens, 100), 2);
-	_control_velocity_sens->set_unit_bay (_mikuru->unit_bay());
-	_control_portamento_time = new Haruhi::Knob (_panel, _proxy_portamento_time, "Glide", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Oscillator::PortamentoTime, 100), 2);
-	_control_portamento_time->set_unit_bay (_mikuru->unit_bay());
-	_control_phase = new Haruhi::Knob (_panel, _proxy_phase, "Phase", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Oscillator::Phase, 200), 2);
-	_control_phase->set_unit_bay (_mikuru->unit_bay());
-	_control_noise_level = new Haruhi::Knob (_panel, _proxy_noise_level, "Noise lvl", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Oscillator::NoiseLevel, 200), 2);
-	_control_noise_level->set_unit_bay (_mikuru->unit_bay());
+	// Set unit bay:
+	Haruhi::Knob* all_knobs[] = {
+		_knob_volume, _knob_panorama, _knob_detune, _knob_pitchbend, _knob_unison_index, _knob_unison_spread,
+		_knob_unison_init, _knob_unison_noise, _knob_velocity_sens, _knob_portamento_time, _knob_phase, _knob_noise_level
+	};
+	for (Haruhi::Knob** k = all_knobs; k != all_knobs+ sizeof (all_knobs) / sizeof (*all_knobs); ++k)
+		(*k)->set_unit_bay (_mikuru->unit_bay());
 
-	QObject::connect (_control_panorama, SIGNAL (changed (int)), this, SLOT (update_voice_panorama()));
-	QObject::connect (_control_detune, SIGNAL (changed (int)), this, SLOT (update_voice_detune()));
-	QObject::connect (_control_pitchbend, SIGNAL (changed (int)), this, SLOT (update_voice_pitchbend()));
-	QObject::connect (_control_unison_index, SIGNAL (changed (int)), this, SLOT (update_voice_unison_index()));
-	QObject::connect (_control_unison_spread, SIGNAL (changed (int)), this, SLOT (update_voice_unison_spread()));
-	QObject::connect (_control_unison_init, SIGNAL (changed (int)), this, SLOT (update_voice_unison_init()));
-	QObject::connect (_control_unison_noise, SIGNAL (changed (int)), this, SLOT (update_voice_unison_noise()));
-	QObject::connect (_control_velocity_sens, SIGNAL (changed (int)), this, SLOT (update_voice_velocity_sens()));
+	_knob_portamento_time->controller_proxy().config().curve = 1.0;
+	_knob_portamento_time->controller_proxy().config().user_limit_max = 0.5f * Params::Oscillator::PortamentoTimeDenominator;
+	_knob_portamento_time->controller_proxy().apply_config();
 
-	QToolTip::add (_control_unison_index, "Number of voices playing in unison");
-	QToolTip::add (_control_unison_spread, "Unison frequencies spread");
-	QToolTip::add (_control_unison_init, "Unison initial phases spread");
-	QToolTip::add (_control_unison_noise, "Unison noise");
-	QToolTip::add (_control_velocity_sens, "Velocity sensitivity (-1 for reverse, 0 for none)");
+	_knob_volume->set_volume_scale (true, M_E);
+
+	QObject::connect (_knob_panorama, SIGNAL (changed (int)), this, SLOT (update_voice_panorama()));
+	QObject::connect (_knob_detune, SIGNAL (changed (int)), this, SLOT (update_voice_detune()));
+	QObject::connect (_knob_pitchbend, SIGNAL (changed (int)), this, SLOT (update_voice_pitchbend()));
+	QObject::connect (_knob_unison_index, SIGNAL (changed (int)), this, SLOT (update_voice_unison_index()));
+	QObject::connect (_knob_unison_spread, SIGNAL (changed (int)), this, SLOT (update_voice_unison_spread()));
+	QObject::connect (_knob_unison_init, SIGNAL (changed (int)), this, SLOT (update_voice_unison_init()));
+	QObject::connect (_knob_unison_noise, SIGNAL (changed (int)), this, SLOT (update_voice_unison_noise()));
+	QObject::connect (_knob_velocity_sens, SIGNAL (changed (int)), this, SLOT (update_voice_velocity_sens()));
+
+	QToolTip::add (_knob_unison_index, "Number of voices playing in unison");
+	QToolTip::add (_knob_unison_spread, "Unison frequencies spread");
+	QToolTip::add (_knob_unison_init, "Unison initial phases spread");
+	QToolTip::add (_knob_unison_noise, "Unison noise");
+	QToolTip::add (_knob_velocity_sens, "Velocity sensitivity (-1 for reverse, 0 for none)");
 
 	// EventDispatchers for polyphonic controls:
 
 	VoiceManager* vm = _part->voice_manager();
 	_evdisp_amplitude = new EventDispatcher (_port_amplitude, Params::Voice::AmplitudeMin, Params::Voice::AmplitudeMax, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::amplitude));
 	_evdisp_frequency = new EventDispatcher (_port_frequency, Params::Voice::FrequencyMin, Params::Voice::FrequencyMax, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::frequency));
-	_evdisp_panorama = new EventDispatcher (_port_panorama, _control_panorama, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::panorama));
-	_evdisp_detune = new EventDispatcher (_port_detune, _control_detune, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::detune));
-	_evdisp_pitchbend = new EventDispatcher (_port_pitchbend, _control_pitchbend, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::pitchbend));
-	_evdisp_velocity_sens = new EventDispatcher (_port_velocity_sens, _control_velocity_sens, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::velocity_sens));
-	_evdisp_unison_index = new EventDispatcher (_port_unison_index, _control_unison_index, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::unison_index));
-	_evdisp_unison_spread = new EventDispatcher (_port_unison_spread, _control_unison_spread, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::unison_spread));
-	_evdisp_unison_init = new EventDispatcher (_port_unison_init, _control_unison_init, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::unison_init));
-	_evdisp_unison_noise = new EventDispatcher (_port_unison_noise, _control_unison_noise, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::unison_noise));
+	_evdisp_panorama = new EventDispatcher (_port_panorama, _knob_panorama, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::panorama));
+	_evdisp_detune = new EventDispatcher (_port_detune, _knob_detune, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::detune));
+	_evdisp_pitchbend = new EventDispatcher (_port_pitchbend, _knob_pitchbend, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::pitchbend));
+	_evdisp_velocity_sens = new EventDispatcher (_port_velocity_sens, _knob_velocity_sens, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::velocity_sens));
+	_evdisp_unison_index = new EventDispatcher (_port_unison_index, _knob_unison_index, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::unison_index));
+	_evdisp_unison_spread = new EventDispatcher (_port_unison_spread, _knob_unison_spread, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::unison_spread));
+	_evdisp_unison_init = new EventDispatcher (_port_unison_init, _knob_unison_init, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::unison_init));
+	_evdisp_unison_noise = new EventDispatcher (_port_unison_noise, _knob_unison_noise, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::unison_noise));
 
 	// Grids:
 	Q3GroupBox* grid1 = new Q3GroupBox (2, Qt::Horizontal, "", _panel);
 	Q3GroupBox* grid2 = new Q3GroupBox (2, Qt::Horizontal, "", _panel);
 	Q3GroupBox* grid4 = new Q3GroupBox (2, Qt::Horizontal, "", _panel);
 
-	grid1->setInsideMargin (3 * Config::margin);
-	grid2->setInsideMargin (3 * Config::margin);
-	grid4->setInsideMargin (3 * Config::margin);
+	grid1->setInsideMargin (3 * Config::Margin);
+	grid2->setInsideMargin (3 * Config::Margin);
+	grid4->setInsideMargin (3 * Config::Margin);
 
 	// Monophonic:
 	_monophonic = new QCheckBox ("Monophonic", grid1);
@@ -200,7 +200,7 @@ Oscillator::Oscillator (Part* part, Core::PortGroup* port_group, QString const& 
 	// Pitchbend down/up:
 	new QLabel ("Pitchbend down/up range:", grid2);
 	QWidget* pitchbends_panel = new QWidget (grid2);
-	QHBoxLayout* pitchbends_layout = new QHBoxLayout (pitchbends_panel, 0, Config::spacing);
+	QHBoxLayout* pitchbends_layout = new QHBoxLayout (pitchbends_panel, 0, Config::Spacing);
 
 	_pitchbend_down_semitones = new QSpinBox (0, 60, 1, pitchbends_panel);
 	_pitchbend_down_semitones->setValue (po.pitchbend_down_semitones);
@@ -260,39 +260,39 @@ Oscillator::Oscillator (Part* part, Core::PortGroup* port_group, QString const& 
 
 	// Layouts:
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
 	layout->addWidget (_panel);
 
-	QVBoxLayout* panel_layout = new QVBoxLayout (_panel, 0, Config::spacing);
+	QVBoxLayout* panel_layout = new QVBoxLayout (_panel, 0, Config::Spacing);
 
-	QHBoxLayout* layout2 = new QHBoxLayout (panel_layout, Config::spacing);
-	QVBoxLayout* controls_layout = new QVBoxLayout (layout2, Config::spacing);
+	QHBoxLayout* layout2 = new QHBoxLayout (panel_layout, Config::Spacing);
+	QVBoxLayout* controls_layout = new QVBoxLayout (layout2, Config::Spacing);
 
-	QHBoxLayout* volumes_layout = new QHBoxLayout (controls_layout, Config::spacing);
-	volumes_layout->addWidget (_control_volume);
-	volumes_layout->addWidget (_control_panorama);
-	volumes_layout->addWidget (_control_detune);
-	volumes_layout->addWidget (_control_pitchbend);
+	QHBoxLayout* volumes_layout = new QHBoxLayout (controls_layout, Config::Spacing);
+	volumes_layout->addWidget (_knob_volume);
+	volumes_layout->addWidget (_knob_panorama);
+	volumes_layout->addWidget (_knob_detune);
+	volumes_layout->addWidget (_knob_pitchbend);
 
-	QHBoxLayout* unisons_layout = new QHBoxLayout (controls_layout, Config::spacing);
-	unisons_layout->addWidget (_control_unison_index);
-	unisons_layout->addWidget (_control_unison_spread);
-	unisons_layout->addWidget (_control_unison_init);
-	unisons_layout->addWidget (_control_unison_noise);
+	QHBoxLayout* unisons_layout = new QHBoxLayout (controls_layout, Config::Spacing);
+	unisons_layout->addWidget (_knob_unison_index);
+	unisons_layout->addWidget (_knob_unison_spread);
+	unisons_layout->addWidget (_knob_unison_init);
+	unisons_layout->addWidget (_knob_unison_noise);
 
-	QHBoxLayout* third_layout = new QHBoxLayout (controls_layout, Config::spacing);
-	QVBoxLayout* third_v_layout = new QVBoxLayout (third_layout, Config::spacing);
-	QHBoxLayout* third_h_layout = new QHBoxLayout (third_v_layout, Config::spacing);
+	QHBoxLayout* third_layout = new QHBoxLayout (controls_layout, Config::Spacing);
+	QVBoxLayout* third_v_layout = new QVBoxLayout (third_layout, Config::Spacing);
+	QHBoxLayout* third_h_layout = new QHBoxLayout (third_v_layout, Config::Spacing);
 
-	third_h_layout->addWidget (_control_velocity_sens);
-	third_h_layout->addWidget (_control_portamento_time);
-	third_h_layout->addWidget (_control_phase);
-	third_h_layout->addWidget (_control_noise_level);
+	third_h_layout->addWidget (_knob_velocity_sens);
+	third_h_layout->addWidget (_knob_portamento_time);
+	third_h_layout->addWidget (_knob_phase);
+	third_h_layout->addWidget (_knob_noise_level);
 	third_v_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
 	controls_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
-	QVBoxLayout* widgets_layout = new QVBoxLayout (layout2, Config::spacing);
+	QVBoxLayout* widgets_layout = new QVBoxLayout (layout2, Config::Spacing);
 	widgets_layout->addWidget (grid1);
 	widgets_layout->addWidget (grid2);
 	widgets_layout->addWidget (grid4);
@@ -303,20 +303,6 @@ Oscillator::Oscillator (Part* part, Core::PortGroup* port_group, QString const& 
 
 Oscillator::~Oscillator()
 {
-	// Delete knobs before ControllerProxies:
-	delete _control_volume;
-	delete _control_panorama;
-	delete _control_detune;
-	delete _control_pitchbend;
-	delete _control_velocity_sens;
-	delete _control_unison_index;
-	delete _control_unison_spread;
-	delete _control_unison_init;
-	delete _control_unison_noise;
-	delete _control_portamento_time;
-	delete _control_phase;
-	delete _control_noise_level;
-
 	delete _evdisp_amplitude;
 	delete _evdisp_frequency;
 	delete _evdisp_panorama;
@@ -328,20 +314,21 @@ Oscillator::~Oscillator()
 	delete _evdisp_unison_init;
 	delete _evdisp_unison_noise;
 
-	delete _proxy_volume;
-	delete _proxy_portamento_time;
-	delete _proxy_phase;
-	delete _proxy_panorama;
-	delete _proxy_detune;
-	delete _proxy_pitchbend;
-	delete _proxy_velocity_sens;
-	delete _proxy_unison_index;
-	delete _proxy_unison_spread;
-	delete _proxy_unison_init;
-	delete _proxy_unison_noise;
-	delete _proxy_noise_level;
+	delete _knob_volume;
+	delete _knob_panorama;
+	delete _knob_detune;
+	delete _knob_pitchbend;
+	delete _knob_velocity_sens;
+	delete _knob_unison_index;
+	delete _knob_unison_spread;
+	delete _knob_unison_init;
+	delete _knob_unison_noise;
+	delete _knob_portamento_time;
+	delete _knob_phase;
+	delete _knob_noise_level;
 
-	_mikuru->graph()->lock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
 	delete _port_volume;
 	delete _port_amplitude;
 	delete _port_frequency;
@@ -356,7 +343,8 @@ Oscillator::~Oscillator()
 	delete _port_portamento_time;
 	delete _port_phase;
 	delete _port_noise_level;
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 }
 
 
@@ -364,10 +352,10 @@ void
 Oscillator::process_events()
 {
 	// Oscillator:
-	_proxy_volume->process_events();
-	_proxy_portamento_time->process_events();
-	_proxy_phase->process_events();
-	_proxy_noise_level->process_events();
+	_knob_volume->controller_proxy().process_events();
+	_knob_portamento_time->controller_proxy().process_events();
+	_knob_phase->controller_proxy().process_events();
+	_knob_noise_level->controller_proxy().process_events();
 	// Voice:
 	_evdisp_amplitude->load_events();
 	_evdisp_frequency->load_events();

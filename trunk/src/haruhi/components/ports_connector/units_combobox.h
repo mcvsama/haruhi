@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__COMPONENTS__UNITS_COMBOBOX__PANEL_H__INCLUDED
-#define HARUHI__COMPONENTS__UNITS_COMBOBOX__PANEL_H__INCLUDED
+#ifndef HARUHI__COMPONENTS__PORTS_CONNECTOR__UNITS_COMBOBOX_H__INCLUDED
+#define HARUHI__COMPONENTS__PORTS_CONNECTOR__UNITS_COMBOBOX_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -23,9 +23,10 @@
 #include <QtGui/QComboBox>
 
 // Haruhi:
-#include <haruhi/core/graph.h>
-#include <haruhi/core/port.h>
-#include <haruhi/unit_bay.h>
+#include <haruhi/graph/graph.h>
+#include <haruhi/graph/port.h>
+#include <haruhi/graph/unit.h>
+#include <haruhi/session/unit_bay.h>
 
 
 namespace Haruhi {
@@ -43,12 +44,12 @@ class UnitsCombobox: public QComboBox
 	 * Creates combobox that observed unit_bay
 	 * for inserting/removing units.
 	 */
-	UnitsCombobox (UnitBay* unit_bay, Core::Port::Direction type, QWidget* parent);
+	UnitsCombobox (PortsConnector* ports_connector, Port::Direction type, QWidget* parent);
 
 	~UnitsCombobox();
 
 	/**
-	 * Reads list of units registered in graph
+	 * Reads list of units registered in unit_bay
 	 * and updates list.
 	 */
 	void
@@ -62,9 +63,9 @@ class UnitsCombobox: public QComboBox
 	unit() const { return _units[currentItem()]; }
 
   private:
-	UnitBay*				_unit_bay;
-	Units					_units;
-	Core::Port::Direction	_type;
+	PortsConnector*	_ports_connector;
+	Units			_units;
+	Port::Direction	_type;
 };
 
 } // namespace PortsConnectorPrivate

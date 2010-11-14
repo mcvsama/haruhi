@@ -19,8 +19,7 @@
 #include <set>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
-#include <haruhi/core/audio_buffer.h>
+#include <haruhi/graph/audio_buffer.h>
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/semaphore.h>
 
@@ -33,6 +32,10 @@ class Mikuru;
 
 
 namespace MikuruPrivate {
+
+class SynthThread;
+
+typedef std::set<SynthThread*> SynthThreads;
 
 /**
  * Thread for synthesizing Voices (used for synth. on multiple CPUs/cores).
@@ -94,7 +97,7 @@ class SynthThread: public Thread
 	 * \entry	Any thread
 	 * \threadsafe
 	 */
-	Core::AudioBuffer*
+	Haruhi::AudioBuffer*
 	buffer1() const { return _buffer_1; }
 
 	/**
@@ -102,7 +105,7 @@ class SynthThread: public Thread
 	 * \entry	Any thread
 	 * \threadsafe
 	 */
-	Core::AudioBuffer*
+	Haruhi::AudioBuffer*
 	buffer2() const { return _buffer_2; }
 
 	/**
@@ -126,23 +129,20 @@ class SynthThread: public Thread
 	run();
 
   private:
-	Mikuru*				_mikuru;
-	Voices				_voices;
-	VoiceCommons*		_voice_commons;
-	Mutex				_processing_voices;
+	Mikuru*					_mikuru;
+	Voices					_voices;
+	VoiceCommons*			_voice_commons;
+	Mutex					_processing_voices;
 
-	Semaphore			_exit;
-	Semaphore			_start;
-	Semaphore			_done;
+	Semaphore				_exit;
+	Semaphore				_start;
+	Semaphore				_done;
 
-	Core::AudioBuffer*	_buffer_1;
-	Core::AudioBuffer*	_buffer_2;
-	DSP::Smoother		_panorama_smoother_1;
-	DSP::Smoother		_panorama_smoother_2;
+	Haruhi::AudioBuffer*	_buffer_1;
+	Haruhi::AudioBuffer*	_buffer_2;
+	DSP::Smoother			_panorama_smoother_1;
+	DSP::Smoother			_panorama_smoother_2;
 };
-
-
-typedef std::set<SynthThread*>  SynthThreads;
 
 } // namespace MikuruPrivate
 

@@ -18,6 +18,9 @@
 #include <QtGui/QTreeWidget>
 #include <QtGui/QHeaderView>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 // Local:
 #include "ports_list_view.h"
 #include "device_with_port_item.h"
@@ -63,7 +66,7 @@ PortsListView::customEvent (QEvent* event)
 		lp->item->setSelected (false);
 		lp->item->setSelected (true);
 		// Reset icon:
-		lp->item->setIcon (0, Config::Icons16::event_output_port());
+		lp->item->setIcon (0, Resources::Icons16::event_output_port());
 	}
 }
 

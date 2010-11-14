@@ -25,8 +25,7 @@
 #include <QtGui/QComboBox>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
-#include <haruhi/core/event.h>
+#include <haruhi/graph/event.h>
 #include <haruhi/dsp/wave.h>
 #include <haruhi/dsp/wavetable.h>
 #include <haruhi/dsp/filter.h>
@@ -42,13 +41,13 @@
 
 class Mikuru;
 
-
 namespace MikuruPrivate {
 
 class Part;
 class SynthThread;
 class VoiceManager;
 
+using Haruhi::Sample;
 
 class Voice
 {
@@ -69,7 +68,7 @@ class Voice
 	/**
 	 * Voice automatically assigns itself to specified thread.
 	 */
-	Voice (VoiceManager*, SynthThread*, Core::KeyID key_id, Core::VoiceID voice_id, Core::Sample frequency, Core::Sample amplitude, Core::Timestamp timestamp);
+	Voice (VoiceManager*, SynthThread*, Haruhi::KeyID key_id, Haruhi::VoiceID voice_id, Sample frequency, Sample amplitude, Haruhi::Timestamp timestamp);
 
 	/**
 	 * Automatically deassigns itself from specified thread, so thread will no longer
@@ -99,10 +98,10 @@ class Voice
 	set_thread (SynthThread* thread);
 
 	void
-	set_amplitude (Core::Sample amplitude) { _amplitude = amplitude; }
+	set_amplitude (Sample amplitude) { _amplitude = amplitude; }
 
 	void
-	set_frequency (Core::Sample frequency);
+	set_frequency (Sample frequency);
 
 	/**
 	 * Sets voice to tracked state, that means VoiceManager should not
@@ -124,13 +123,13 @@ class Voice
 	Params::Filter*
 	filter2_params() { return &_filter2_params; }
 
-	Core::KeyID
+	Haruhi::KeyID
 	key_id() const { return _key_id; }
 
-	Core::VoiceID
+	Haruhi::VoiceID
 	voice_id() const { return _voice_id; }
 
-	Core::Timestamp
+	Haruhi::Timestamp
 	timestamp() const { return _timestamp; }
 
 	/**
@@ -140,7 +139,7 @@ class Voice
 	 * May be called only when Voice is assigned to existing thread.
 	 */
 	void
-	mixin (Core::AudioBuffer* output1, Core::AudioBuffer* output2);
+	mixin (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2);
 
 	void
 	release();
@@ -187,15 +186,15 @@ class Voice
 	SynthThread*				_synth_thread;
 	VoiceCommons*				_commons;
 
-	Core::KeyID					_key_id;
-	Core::VoiceID				_voice_id;
-	Core::Timestamp				_timestamp;
+	Haruhi::KeyID				_key_id;
+	Haruhi::VoiceID				_voice_id;
+	Haruhi::Timestamp			_timestamp;
 
 	// Parameters:
-	Core::Sample				_frequency;
-	Core::Sample				_target_frequency;
-	Core::Sample				_frequency_change;
-	Core::Sample				_amplitude;
+	Sample						_frequency;
+	Sample						_target_frequency;
+	Sample						_frequency_change;
+	Sample						_amplitude;
 
 	// Components:
 	VoiceOscillator				_oscillator;

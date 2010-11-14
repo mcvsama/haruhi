@@ -15,12 +15,12 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "output_item.h"
 #include "ports_list_view.h"
-#include "audio_backend.h"
+#include "backend.h"
 
 
 namespace Haruhi {
@@ -35,11 +35,11 @@ OutputItem::OutputItem (PortsListView* parent, QString const& name):
 	_backend->_ports_lock.unlock();
 	// Allocate new port:
 	_backend->graph()->lock();
-	_port = new Core::AudioPort (_backend, name.ascii(), Core::Port::Input);
+	_port = new AudioPort (_backend, name.ascii(), Port::Input);
 	_backend->graph()->unlock();
 	_backend->_outputs[_transport_port] = this;
 	// Configure item:
-	setIcon (0, Config::Icons16::audio_output_port());
+	setIcon (0, Resources::Icons16::audio_output_port());
 	graph_updated();
 	// Fully constructed:
 	set_ready (true);
@@ -95,7 +95,7 @@ OutputItem::graph_updated()
 
 
 void
-OutputItem::attenuate (Core::Sample value)
+OutputItem::attenuate (Sample value)
 {
 	_smoother.set_value (value);
 	_smoother.multiply (port()->audio_buffer()->begin(), port()->audio_buffer()->end());

@@ -26,8 +26,8 @@
 #include <QtGui/QDialog>
 
 // Haruhi:
+#include <haruhi/lib/controller.h>
 #include <haruhi/lib/controller_proxy.h>
-#include <haruhi/widgets/controller.h>
 #include <haruhi/widgets/dial_control.h>
 
 
@@ -36,6 +36,9 @@ namespace Haruhi {
 class Knob;
 
 
+/**
+ * Can't insert it into Knob namespace due to Qt's MOC restrictions.
+ */
 class KnobProperties: public QDialog
 {
 	Q_OBJECT
@@ -104,8 +107,8 @@ class Knob:
 		set_volume_scale (bool setting, float exp = 1.0f);
 
 		/**
-		 * Detached knob works like a simple QDoubleSpinBox.
-		 * Set as deatched when spin box is not main Knob's spin box.
+		 * Detached knob works like a simple QDoubleSpinBox,
+		 * that is it does not care about any knob.
 		 */
 		void
 		set_detached (bool setting) { _detached = setting; }
@@ -139,29 +142,31 @@ class Knob:
 		float				_volume_scale_exp;
 	};
 
-	typedef std::map<int, Core::Port*> ContextMenuPortMap;
+	typedef std::map<int, Port*> ContextMenuPortMap;
 
   public:
 	/**
 	 * Creates Knob.
 	 *
 	 * \param	parent: Parent widget.
-	 * \param	controller_proxy: ControllerProxy object, must be present.
 	 * \param	label: Displayed label.
 	 * \param	show_min, show_max: Values range shown in spinbox.
 	 * \param	step: Change step.
 	 * \param	decimals: How many decimal digits should be shown in spinbox.
 	 */
-	Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& label, float show_min, float show_max, int step, int decimals);
+	Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param,
+		  QString const& label, float show_min, float show_max, int step, int decimals);
 
-	~Knob();
-
+	/**
+	 * Enables/disables volume scale (shown in dB).
+	 * \param	exp is power value, usually M_E.
+	 */
 	void
 	set_volume_scale (bool setting, float exp = 1.0f) { _spin_box->set_volume_scale (setting, exp); }
 
 	/**
 	 * Reads ControllerProxy::Config and updates widgets.
-	 * \entry	Qt thread only.
+	 * \entry	UI thread only.
 	 */
 	void
 	read_config();
@@ -186,14 +191,14 @@ class Knob:
   public slots:
 	/**
 	 * Reset Knob to default value.
-	 * \entry	Qt thread only.
+	 * \entry	UI thread only.
 	 */
 	void
 	reset();
 
 	/**
 	 * Call configuration dialog.
-	 * \entry	Qt thread only.
+	 * \entry	UI thread only.
 	 */
 	void
 	configure();
@@ -212,7 +217,7 @@ class Knob:
 	 * Populates given menu with options for connecting knob to event ports.
 	 */
 	void
-	create_connect_menu (QMenu*, Core::Unit*, QPixmap const& pixmap_for_port_group, QPixmap const& pixmap_for_port);
+	create_connect_menu (QMenu*, Unit*, QPixmap const& pixmap_for_port_group, QPixmap const& pixmap_for_port);
 
 	// Controller API:
 	void

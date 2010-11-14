@@ -15,7 +15,7 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "voice_commons.h"

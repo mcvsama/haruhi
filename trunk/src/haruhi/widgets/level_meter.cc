@@ -23,7 +23,7 @@
 #include <QtGui/QToolTip>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 #include <haruhi/utility/memory.h>
 #include <haruhi/dsp/utility.h>
 
@@ -67,11 +67,11 @@ LevelMeter::~LevelMeter()
 
 
 void
-LevelMeter::process (Core::Sample* begin, Core::Sample* end)
+LevelMeter::process (Sample* begin, Sample* end)
 {
 	// Find maximum:
-	Core::Sample register max = 0;
-	for (Core::Sample* s = begin; s != end;  ++s)
+	Sample register max = 0;
+	for (Sample* s = begin; s != end;  ++s)
 		if (std::abs (*s) > max)
 			max = std::abs (*s);
 	// Compare to current value:
@@ -211,7 +211,7 @@ LevelMetersGroup::Scale::paintEvent (QPaintEvent* event)
 {
 	QPainter painter (this);
 	painter.setPen (QColorGroup::Text);
-	painter.setFont (Config::small_font);
+	painter.setFont (Resources::small_font());
 
 	int h = height();
 
@@ -234,11 +234,11 @@ LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper
 	_peak_sample (0),
 	_timer (0)
 {
-	QVBoxLayout* layout1 = new QVBoxLayout (this, 0, Config::spacing);
+	QVBoxLayout* layout1 = new QVBoxLayout (this, 0, Config::Spacing);
 
 		_peak_button = new QPushButton ("-inf dB", this);
-		_peak_button->setFont (Config::small_font);
-		_peak_button->setFixedHeight (2 * Config::small_font.pointSize());
+		_peak_button->setFont (Resources::small_font());
+		_peak_button->setFixedHeight (2 * Resources::small_font().pointSize());
 		_peak_button->setFixedWidth (35);
 		_peak_button_bg = _peak_button->paletteBackgroundColor();
 		_peak_button_fg = _peak_button->paletteForegroundColor();
@@ -283,7 +283,7 @@ LevelMetersGroup::meter (Vector::size_type index)
 
 
 void
-LevelMetersGroup::update_peak (Core::Sample sample)
+LevelMetersGroup::update_peak (Sample sample)
 {
 	sample = std::abs (sample);
 	if (_peak_sample < sample)

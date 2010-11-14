@@ -18,7 +18,7 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/core/audio.h>
+#include <haruhi/config/all.h>
 
 
 namespace Haruhi {
@@ -32,6 +32,7 @@ class DelayLine
 	 * \param	buffer_size is number of samples write/read each time.
 	 * \param	delay is number of samples to delay.
 	 * \param	size is number of samples read/written each time.
+	 * 			MUST be >= than max_delay.
 	 */
 	DelayLine (std::size_t delay, std::size_t max_delay, std::size_t size);
 
@@ -44,6 +45,7 @@ class DelayLine
 
 	/**
 	 * Sets maximum delay in samples.
+	 * Max delay MUST be >= size set with set_size().
 	 */
 	void
 	set_max_delay (std::size_t max_delay);
@@ -51,6 +53,7 @@ class DelayLine
 	/**
 	 * Should be called only after read and before next write.
 	 * Sets number of samples read/written with write/read methods.
+	 * Max delay MUST be >= size.
 	 */
 	void
 	set_size (std::size_t size);
@@ -61,7 +64,7 @@ class DelayLine
 	 * \param	data is pointer to source buffer.
 	 */
 	void
-	write (Core::Sample const* data);
+	write (Sample const* data);
 
 	/**
 	 * Reads delayed buffer-size samples from delay line.
@@ -69,7 +72,7 @@ class DelayLine
 	 * \param	data is pointer to output buffer.
 	 */
 	void
-	read (Core::Sample* data);
+	read (Sample* data);
 
 	/**
 	 * Clears data buffer.
@@ -78,11 +81,11 @@ class DelayLine
 	clear();
 
   private:
-	Core::Sample*	_data;
-	std::size_t		_max_delay;		// Whole buffer size (number of samples).
-	std::size_t		_size;			// Number of samples read/written on each round.
-	std::size_t		_delay;
-	std::size_t		_wpos;
+	Sample*		_data;
+	std::size_t	_max_delay;		// Whole buffer size (number of samples).
+	std::size_t	_size;			// Number of samples read/written on each round.
+	std::size_t	_delay;
+	std::size_t	_wpos;
 };
 
 } // namespace DSP

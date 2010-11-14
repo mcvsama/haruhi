@@ -13,9 +13,10 @@
 
 // Standard:
 #include <cstddef>
+#include <algorithm>
 
 // Haruhi:
-#include <haruhi/config/system.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "delay_line.h"
@@ -33,7 +34,6 @@ DelayLine::DelayLine (std::size_t delay, std::size_t max_delay, std::size_t size
 	_wpos (0)
 {
 	assert (size > 0);
-	assert (max_delay > 0);
 	assert (max_delay > size);
 
 	set_max_delay (max_delay);
@@ -57,7 +57,7 @@ DelayLine::set_max_delay (std::size_t max_delay)
 	assert (max_delay > 0);
 
 	delete _data;
-	_data = new Core::Sample[sizeof (Core::Sample) * max_delay];
+	_data = new Sample[sizeof (Sample) * max_delay];
 	_max_delay = max_delay;
 
 	if (_delay > _max_delay)
@@ -68,7 +68,17 @@ DelayLine::set_max_delay (std::size_t max_delay)
 
 
 void
-DelayLine::write (Core::Sample const* data)
+DelayLine::set_size (std::size_t size)
+{
+	assert (size > 0);
+	assert (_max_delay > size);
+
+	_size = size;
+}
+
+
+void
+DelayLine::write (Sample const* data)
 {
 	if (_wpos + _size < _max_delay)
 	{
@@ -86,7 +96,7 @@ DelayLine::write (Core::Sample const* data)
 
 
 void
-DelayLine::read (Core::Sample* data)
+DelayLine::read (Sample* data)
 {
 	// Delayed pos:
 	const std::size_t pos = _wpos > _delay

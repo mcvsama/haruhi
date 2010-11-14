@@ -24,8 +24,8 @@
 #include <QtGui/QCheckBox>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
-#include <haruhi/core/event.h>
+#include <haruhi/graph/event.h>
+#include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/envelope.h>
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/knob.h>
@@ -40,7 +40,6 @@ class Mikuru;
 
 namespace MikuruPrivate {
 
-namespace Core = Haruhi::Core;
 namespace DSP = Haruhi::DSP;
 class Voice;
 class VoiceManager;
@@ -65,9 +64,6 @@ class EG: public Envelope
   private:
 	void
 	create_ports();
-
-	void
-	create_proxies();
 
 	void
 	create_knobs (QWidget* parent);
@@ -168,24 +164,21 @@ class EG: public Envelope
 	// all segment lengths must be recomputed to match current sample-rate.
 	DSP::Envelope				_envelope_template;
 	EGs							_egs;
-	Core::AudioBuffer			_buffer;
+	Haruhi::AudioBuffer			_buffer;
 	// List of Voices which has been dropped and need ADSRs to be deleted also:
 	std::list<Voice*>			_dropped_voices;
 
 	Haruhi::ControllerParam		_segment_duration;
 	Haruhi::ControllerParam		_point_value;
 
-	Core::PortGroup*			_port_group;
-	Core::EventPort*			_port_point_value;
-	Core::EventPort*			_port_segment_duration;
-	Core::EventPort*			_port_output;
-
-	Haruhi::ControllerProxy*	_proxy_point_value;
-	Haruhi::ControllerProxy*	_proxy_segment_duration;
+	Haruhi::PortGroup*			_port_group;
+	Haruhi::EventPort*			_port_point_value;
+	Haruhi::EventPort*			_port_segment_duration;
+	Haruhi::EventPort*			_port_output;
 
 	QCheckBox*					_enabled;
-	Haruhi::Knob*				_control_point_value;
-	Haruhi::Knob*				_control_segment_duration;
+	Haruhi::Knob*				_knob_point_value;
+	Haruhi::Knob*				_knob_segment_duration;
 	QSpinBox*					_active_point;
 	Haruhi::EnvelopePlot*		_plot;
 	QSpinBox*					_sustain_point;

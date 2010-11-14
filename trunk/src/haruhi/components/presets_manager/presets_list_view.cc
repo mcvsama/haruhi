@@ -24,7 +24,7 @@
 #include <Qt3Support/Q3TextDrag>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "presets_list_view.h"
@@ -118,32 +118,32 @@ PresetsListView::context_menu (Q3ListViewItem* item, QPoint const& pos, int col)
 
 	if (item == 0)
 	{
-		menu->insertItem (Config::Icons16::presets_package(), "New pac&kage", _presets_manager, SLOT (create_package()));
+		menu->insertItem (Resources::Icons16::presets_package(), "New pac&kage", _presets_manager, SLOT (create_package()));
 	}
 	else if (dynamic_cast<PackageItem*> (item))
 	{
-		menu->insertItem (Config::Icons16::presets_category(), "New &category", _presets_manager, SLOT (create_category()));
-		menu->insertItem (Config::Icons16::presets_package(), "New pac&kage", _presets_manager, SLOT (create_package()));
+		menu->insertItem (Resources::Icons16::presets_category(), "New &category", _presets_manager, SLOT (create_category()));
+		menu->insertItem (Resources::Icons16::presets_package(), "New pac&kage", _presets_manager, SLOT (create_package()));
 		menu->insertSeparator();
-		menu->insertItem (Config::Icons16::remove(), "Destroy package", _presets_manager, SLOT (destroy()));
+		menu->insertItem (Resources::Icons16::remove(), "Destroy package", _presets_manager, SLOT (destroy()));
 	}
 	else if (dynamic_cast<CategoryItem*> (item))
 	{
-		menu->insertItem (Config::Icons16::preset(), "New &preset", _presets_manager, SLOT (create_preset()));
-		menu->insertItem (Config::Icons16::presets_category(), "New &category", _presets_manager, SLOT (create_category()));
-		menu->insertItem (Config::Icons16::presets_package(), "New pac&kage", _presets_manager, SLOT (create_package()));
+		menu->insertItem (Resources::Icons16::preset(), "New &preset", _presets_manager, SLOT (create_preset()));
+		menu->insertItem (Resources::Icons16::presets_category(), "New &category", _presets_manager, SLOT (create_category()));
+		menu->insertItem (Resources::Icons16::presets_package(), "New pac&kage", _presets_manager, SLOT (create_package()));
 		menu->insertSeparator();
-		menu->insertItem (Config::Icons16::remove(), "Destroy category", _presets_manager, SLOT (destroy()));
+		menu->insertItem (Resources::Icons16::remove(), "Destroy category", _presets_manager, SLOT (destroy()));
 	}
 	else if (dynamic_cast<PresetItem*> (item))
 	{
-		menu->insertItem (Config::Icons16::load(), "&Load preset", _presets_manager, SLOT (load_preset()));
+		menu->insertItem (Resources::Icons16::load(), "&Load preset", _presets_manager, SLOT (load_preset()));
 		menu->insertSeparator();
-		menu->insertItem (Config::Icons16::preset(), "New &preset", _presets_manager, SLOT (create_preset()));
-		menu->insertItem (Config::Icons16::presets_category(), "New &category", _presets_manager, SLOT (create_category()));
-		menu->insertItem (Config::Icons16::presets_package(), "New pac&kage", _presets_manager, SLOT (create_package()));
+		menu->insertItem (Resources::Icons16::preset(), "New &preset", _presets_manager, SLOT (create_preset()));
+		menu->insertItem (Resources::Icons16::presets_category(), "New &category", _presets_manager, SLOT (create_category()));
+		menu->insertItem (Resources::Icons16::presets_package(), "New pac&kage", _presets_manager, SLOT (create_package()));
 		menu->insertSeparator();
-		menu->insertItem (Config::Icons16::remove(), "Destroy preset", _presets_manager, SLOT (destroy()));
+		menu->insertItem (Resources::Icons16::remove(), "Destroy preset", _presets_manager, SLOT (destroy()));
 	}
 
 	menu->exec (pos);

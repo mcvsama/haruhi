@@ -21,7 +21,7 @@
 #include <QtGui/QLabel>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "input_dialog.h"
@@ -38,10 +38,10 @@ InputDialog::InputDialog (QWidget* parent, Backend* backend):
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	setMinimumWidth (300);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::dialog_margin, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::DialogMargin, Config::Spacing);
 	layout->setResizeMode (QLayout::FreeResize);
 
-		QHBoxLayout* name_layout = new QHBoxLayout (layout, Config::spacing);
+		QHBoxLayout* name_layout = new QHBoxLayout (layout, Config::Spacing);
 
 			QLabel* name_label = new QLabel ("Port name:", this);
 
@@ -50,7 +50,7 @@ InputDialog::InputDialog (QWidget* parent, Backend* backend):
 		name_layout->addWidget (name_label);
 		name_layout->addWidget (_name);
 
-		QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::spacing);
+		QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::Spacing);
 
 			_accept_button = new QPushButton ("&Ok", this);
 			_accept_button->setDefault (true);

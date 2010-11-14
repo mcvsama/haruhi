@@ -19,16 +19,16 @@
 #include <cmath>
 
 // Haruhi:
-#include <haruhi/core/audio.h>
+#include <haruhi/config/all.h>
 #include <haruhi/dsp/impulse_response.h>
-#include <haruhi/haruhi.h>
+
+// Local:
+#include "types.h"
 
 
 namespace MikuruPrivate {
 
-using Haruhi::Core::Sample;
 namespace DSP = Haruhi::DSP;
-
 
 /*
  * Implementation of IIR filters described in

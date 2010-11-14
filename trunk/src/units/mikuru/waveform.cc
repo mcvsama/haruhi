@@ -43,7 +43,7 @@
 
 namespace MikuruPrivate {
 
-Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_port_prefix, Mikuru* mikuru, QWidget* parent):
+Waveform::Waveform (Part* part, Haruhi::PortGroup* port_group, QString const& q_port_prefix, Mikuru* mikuru, QWidget* parent):
 	QWidget (parent),
 	_mikuru (mikuru),
 	_part (part),
@@ -51,34 +51,36 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 {
 	std::string port_prefix = q_port_prefix.toStdString();
 
-	_mikuru->graph()->lock();
-	_port_wave_shape = new Core::EventPort (_mikuru, port_prefix + " - Wave shape", Core::Port::Input, port_group);
-	_port_modulator_amplitude = new Core::EventPort (_mikuru, port_prefix + " - Modulator amplitude", Core::Port::Input, port_group);
-	_port_modulator_index = new Core::EventPort (_mikuru, port_prefix + " - Modulator index", Core::Port::Input, port_group);
-	_port_modulator_shape = new Core::EventPort (_mikuru, port_prefix + " - Modulator shape", Core::Port::Input, port_group);
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
+	_port_wave_shape = new Haruhi::EventPort (_mikuru, port_prefix + " - Wave shape", Haruhi::Port::Input, port_group);
+	_port_modulator_amplitude = new Haruhi::EventPort (_mikuru, port_prefix + " - Modulator amplitude", Haruhi::Port::Input, port_group);
+	_port_modulator_index = new Haruhi::EventPort (_mikuru, port_prefix + " - Modulator index", Haruhi::Port::Input, port_group);
+	_port_modulator_shape = new Haruhi::EventPort (_mikuru, port_prefix + " - Modulator shape", Haruhi::Port::Input, port_group);
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 
 	Params::Waveform p = _params;
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 	// Wave types:
 
-	_waves.push_back (WaveInfo (Config::Icons16::wave_sine(),		"Sine",		new DSP::ParametricWaves::Sine()));
-	_waves.push_back (WaveInfo (Config::Icons16::wave_triangle(),	"Triangle",	new DSP::ParametricWaves::Triangle()));
-	_waves.push_back (WaveInfo (Config::Icons16::wave_square(),		"Square",	new DSP::ParametricWaves::Square()));
-	_waves.push_back (WaveInfo (Config::Icons16::wave_sawtooth(),	"Sawtooth",	new DSP::ParametricWaves::Sawtooth()));
-	_waves.push_back (WaveInfo (Config::Icons16::wave_pulse(),		"Pulse",	new DSP::ParametricWaves::Pulse()));
-	_waves.push_back (WaveInfo (Config::Icons16::wave_power(),		"Power",	new DSP::ParametricWaves::Power()));
-	_waves.push_back (WaveInfo (Config::Icons16::wave_gauss(),		"Gauss",	new DSP::ParametricWaves::Gauss()));
-	_waves.push_back (WaveInfo (Config::Icons16::wave_diode(),		"Diode",	new DSP::ParametricWaves::Diode()));
-	_waves.push_back (WaveInfo (Config::Icons16::wave_chirp(),		"Chirp",	new DSP::ParametricWaves::Chirp()));
+	_waves.push_back (WaveInfo (Resources::Icons16::wave_sine(),		"Sine",		new DSP::ParametricWaves::Sine()));
+	_waves.push_back (WaveInfo (Resources::Icons16::wave_triangle(),	"Triangle",	new DSP::ParametricWaves::Triangle()));
+	_waves.push_back (WaveInfo (Resources::Icons16::wave_square(),		"Square",	new DSP::ParametricWaves::Square()));
+	_waves.push_back (WaveInfo (Resources::Icons16::wave_sawtooth(),	"Sawtooth",	new DSP::ParametricWaves::Sawtooth()));
+	_waves.push_back (WaveInfo (Resources::Icons16::wave_pulse(),		"Pulse",	new DSP::ParametricWaves::Pulse()));
+	_waves.push_back (WaveInfo (Resources::Icons16::wave_power(),		"Power",	new DSP::ParametricWaves::Power()));
+	_waves.push_back (WaveInfo (Resources::Icons16::wave_gauss(),		"Gauss",	new DSP::ParametricWaves::Gauss()));
+	_waves.push_back (WaveInfo (Resources::Icons16::wave_diode(),		"Diode",	new DSP::ParametricWaves::Diode()));
+	_waves.push_back (WaveInfo (Resources::Icons16::wave_chirp(),		"Chirp",	new DSP::ParametricWaves::Chirp()));
 
 	// Modulator waves:
 
-	_modulator_waves.push_back (WaveInfo (Config::Icons16::wave_sine(),		"Sine",		new DSP::ParametricWaves::Sine()));
-	_modulator_waves.push_back (WaveInfo (Config::Icons16::wave_triangle(),	"Triangle",	new DSP::ParametricWaves::Triangle()));
-	_modulator_waves.push_back (WaveInfo (Config::Icons16::wave_square(),	"Square",	new DSP::ParametricWaves::Square()));
-	_modulator_waves.push_back (WaveInfo (Config::Icons16::wave_sawtooth(),	"Sawtooth",	new DSP::ParametricWaves::Sawtooth()));
+	_modulator_waves.push_back (WaveInfo (Resources::Icons16::wave_sine(),		"Sine",		new DSP::ParametricWaves::Sine()));
+	_modulator_waves.push_back (WaveInfo (Resources::Icons16::wave_triangle(),	"Triangle",	new DSP::ParametricWaves::Triangle()));
+	_modulator_waves.push_back (WaveInfo (Resources::Icons16::wave_square(),	"Square",	new DSP::ParametricWaves::Square()));
+	_modulator_waves.push_back (WaveInfo (Resources::Icons16::wave_sawtooth(),	"Sawtooth",	new DSP::ParametricWaves::Sawtooth()));
 
 	_wave_computer = new WaveComputer();
 	_wave_computer->finished.connect (this, &Waveform::update_wave_plot);
@@ -93,7 +95,7 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 	base_plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_base_wave_plot = new Haruhi::WavePlot (base_plot_frame);
 	QToolTip::add (_base_wave_plot, "Base wave");
-	QVBoxLayout* base_plot_frame_layout = new QVBoxLayout (base_plot_frame, 0, Config::spacing);
+	QVBoxLayout* base_plot_frame_layout = new QVBoxLayout (base_plot_frame, 0, Config::Spacing);
 	base_plot_frame_layout->addWidget (_base_wave_plot);
 
 	QFrame* harmonics_plot_frame = new QFrame (top_frame);
@@ -101,7 +103,7 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 	harmonics_plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_final_wave_plot = new Haruhi::WavePlot (harmonics_plot_frame);
 	QToolTip::add (_final_wave_plot, "Wave with harmonics and modulation");
-	QVBoxLayout* harmonics_plot_frame_layout = new QVBoxLayout (harmonics_plot_frame, 0, Config::spacing);
+	QVBoxLayout* harmonics_plot_frame_layout = new QVBoxLayout (harmonics_plot_frame, 0, Config::Spacing);
 	harmonics_plot_frame_layout->addWidget (_final_wave_plot);
 
 	// Wave type:
@@ -117,8 +119,8 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 	// Modulator type:
 
 	_modulator_type = new QComboBox (top_frame);
-	_modulator_type->insertItem (Config::Icons16::modulator_ring(), "Ring", DSP::ModulatedWave::Ring);
-	_modulator_type->insertItem (Config::Icons16::modulator_fm(), "FM", DSP::ModulatedWave::Frequency);
+	_modulator_type->insertItem (Resources::Icons16::modulator_ring(), "Ring", DSP::ModulatedWave::Ring);
+	_modulator_type->insertItem (Resources::Icons16::modulator_fm(), "FM", DSP::ModulatedWave::Frequency);
 	_modulator_type->setCurrentItem (p.modulator_type);
 	QObject::connect (_modulator_type, SIGNAL (activated (int)), this, SLOT (update_params()));
 	QToolTip::add (_modulator_type, "Modulator type");
@@ -132,26 +134,26 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 	QObject::connect (_modulator_wave_type, SIGNAL (activated (int)), this, SLOT (update_params()));
 	QToolTip::add (_modulator_wave_type, "Modulator wave type");
 
-	// Wave parameters:
+	_knob_wave_shape			= new Haruhi::Knob (top_frame, _port_wave_shape, &_params.wave_shape, "Shape",
+													HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::WaveShape, 100), 2);
+	_knob_modulator_amplitude	= new Haruhi::Knob (top_frame, _port_modulator_amplitude, &_params.modulator_amplitude, "Mod.amp.",
+													HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::ModulatorAmplitude, 100), 2);
+	_knob_modulator_index		= new Haruhi::Knob (top_frame, _port_modulator_index, &_params.modulator_index, "Mod.index",
+													HARUHI_MIKURU_PARAMS_FOR_KNOB (Params::Waveform::ModulatorIndex), 1, 0);
+	_knob_modulator_shape		= new Haruhi::Knob (top_frame, _port_modulator_shape, &_params.modulator_shape, "Mod.shape",
+													HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::ModulatorShape, 100), 2);
 
-	_proxy_wave_shape = new Haruhi::ControllerProxy (_port_wave_shape, &_params.wave_shape);
-	_proxy_modulator_amplitude = new Haruhi::ControllerProxy (_port_modulator_amplitude, &_params.modulator_amplitude);
-	_proxy_modulator_index = new Haruhi::ControllerProxy (_port_modulator_index, &_params.modulator_index);
-	_proxy_modulator_shape = new Haruhi::ControllerProxy (_port_modulator_shape, &_params.modulator_shape);
+	// Set unit bay:
+	Haruhi::Knob* all_knobs[] = {
+		_knob_wave_shape, _knob_modulator_amplitude, _knob_modulator_index, _knob_modulator_shape
+	};
+	for (Haruhi::Knob** k = all_knobs; k != all_knobs+ sizeof (all_knobs) / sizeof (*all_knobs); ++k)
+		(*k)->set_unit_bay (_mikuru->unit_bay());
 
-	_control_wave_shape = new Haruhi::Knob (top_frame, _proxy_wave_shape, "Shape", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::WaveShape, 100), 2);
-	_control_wave_shape->set_unit_bay (_mikuru->unit_bay());
-	_control_modulator_amplitude = new Haruhi::Knob (top_frame, _proxy_modulator_amplitude, "Mod.amp.", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::ModulatorAmplitude, 100), 2);
-	_control_modulator_amplitude->set_unit_bay (_mikuru->unit_bay());
-	_control_modulator_index = new Haruhi::Knob (top_frame, _proxy_modulator_index, "Mod.index", HARUHI_MIKURU_PARAMS_FOR_KNOB (Params::Waveform::ModulatorIndex), 1, 0);
-	_control_modulator_index->set_unit_bay (_mikuru->unit_bay());
-	_control_modulator_shape = new Haruhi::Knob (top_frame, _proxy_modulator_shape, "Mod.shape", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveform::ModulatorShape, 100), 2);
-	_control_modulator_shape->set_unit_bay (_mikuru->unit_bay());
-
-	QObject::connect (_control_wave_shape, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
-	QObject::connect (_control_modulator_amplitude, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
-	QObject::connect (_control_modulator_index, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
-	QObject::connect (_control_modulator_shape, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
+	QObject::connect (_knob_wave_shape, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
+	QObject::connect (_knob_modulator_amplitude, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
+	QObject::connect (_knob_modulator_index, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
+	QObject::connect (_knob_modulator_shape, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
 
 	// Tabs:
 
@@ -232,22 +234,22 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 
 	// Layouts:
 
-	QHBoxLayout* hor1_layout = new QHBoxLayout (top_frame, 0, Config::spacing);
+	QHBoxLayout* hor1_layout = new QHBoxLayout (top_frame, 0, Config::Spacing);
 	hor1_layout->addWidget (base_plot_frame);
 	hor1_layout->addWidget (harmonics_plot_frame);
-	QVBoxLayout* ver1_layout = new QVBoxLayout (hor1_layout, Config::spacing);
-	QHBoxLayout* hor2_layout = new QHBoxLayout (ver1_layout, Config::spacing);
+	QVBoxLayout* ver1_layout = new QVBoxLayout (hor1_layout, Config::Spacing);
+	QHBoxLayout* hor2_layout = new QHBoxLayout (ver1_layout, Config::Spacing);
 	hor2_layout->addWidget (_wave_type);
 	hor2_layout->addWidget (_modulator_type);
 	hor2_layout->addWidget (_modulator_wave_type);
-	QHBoxLayout* hor3_layout = new QHBoxLayout (ver1_layout, Config::spacing);
-	hor3_layout->addWidget (_control_wave_shape);
-	hor3_layout->addWidget (_control_modulator_amplitude);
-	hor3_layout->addWidget (_control_modulator_index);
-	hor3_layout->addWidget (_control_modulator_shape);
+	QHBoxLayout* hor3_layout = new QHBoxLayout (ver1_layout, Config::Spacing);
+	hor3_layout->addWidget (_knob_wave_shape);
+	hor3_layout->addWidget (_knob_modulator_amplitude);
+	hor3_layout->addWidget (_knob_modulator_index);
+	hor3_layout->addWidget (_knob_modulator_shape);
 	hor3_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
 	layout->addWidget (top_frame);
 	layout->addWidget (harmonics_and_phases_tabs);
 
@@ -261,33 +263,30 @@ Waveform::Waveform (Part* part, Core::PortGroup* port_group, QString const& q_po
 Waveform::~Waveform()
 {
 	// Delete knobs before ControllerProxies:
-	delete _control_wave_shape;
-	delete _control_modulator_amplitude;
-	delete _control_modulator_index;
-	delete _control_modulator_shape;
+	delete _knob_wave_shape;
+	delete _knob_modulator_amplitude;
+	delete _knob_modulator_index;
+	delete _knob_modulator_shape;
 
-	delete _proxy_wave_shape;
-	delete _proxy_modulator_amplitude;
-	delete _proxy_modulator_index;
-	delete _proxy_modulator_shape;
-
-	_mikuru->graph()->lock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
 	delete _wave_computer;
 	delete _port_wave_shape;
 	delete _port_modulator_amplitude;
 	delete _port_modulator_index;
 	delete _port_modulator_shape;
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 }
 
 
 void
 Waveform::process_events()
 {
-	_proxy_wave_shape->process_events();
-	_proxy_modulator_amplitude->process_events();
-	_proxy_modulator_index->process_events();
-	_proxy_modulator_shape->process_events();
+	_knob_wave_shape->controller_proxy().process_events();
+	_knob_modulator_amplitude->controller_proxy().process_events();
+	_knob_modulator_index->controller_proxy().process_events();
+	_knob_modulator_shape->controller_proxy().process_events();
 }
 
 
@@ -359,10 +358,10 @@ void
 Waveform::update_widgets()
 {
 	bool immutable = active_wave().wave.get()->immutable();
-	_control_wave_shape->setEnabled (immutable);
-	_control_modulator_amplitude->setEnabled (immutable);
-	_control_modulator_index->setEnabled (immutable);
-	_control_modulator_shape->setEnabled (immutable);
+	_knob_wave_shape->setEnabled (immutable);
+	_knob_modulator_amplitude->setEnabled (immutable);
+	_knob_modulator_index->setEnabled (immutable);
+	_knob_modulator_shape->setEnabled (immutable);
 	_modulator_type->setEnabled (immutable);
 	_modulator_wave_type->setEnabled (immutable);
 	_harmonics_tab->setEnabled (immutable);

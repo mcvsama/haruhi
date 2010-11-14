@@ -24,7 +24,6 @@
 #include <QtGui/QCheckBox>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
 #include <haruhi/dsp/parametric_wave.h>
 #include <haruhi/dsp/noise.h>
 #include <haruhi/lib/controller_proxy.h>
@@ -40,7 +39,6 @@ class Mikuru;
 
 namespace MikuruPrivate {
 
-namespace Core = Haruhi::Core;
 namespace DSP = Haruhi::DSP;
 class Voice;
 class VoiceManager;
@@ -116,7 +114,7 @@ class LFO: public Envelope
 		 * \param	samples is number of samples to advance.
 		 * \returns	new sample after advancing LFO a number of samples.
 		 */
-		Core::Sample
+		Haruhi::Sample
 		advance (unsigned int samples);
 
 	  private:
@@ -155,8 +153,8 @@ class LFO: public Envelope
 		 * DSP::Wave API.
 		 */
 
-		Core::Sample
-		operator() (Core::Sample register phase, Core::Sample frequency) const;
+		Haruhi::Sample
+		operator() (Haruhi::Sample register phase, Haruhi::Sample frequency) const;
 
 	  private:
 		float
@@ -181,9 +179,6 @@ class LFO: public Envelope
   private:
 	void
 	create_ports();
-
-	void
-	create_proxies();
 
 	void
 	create_knobs (QWidget* parent);
@@ -254,64 +249,55 @@ class LFO: public Envelope
 	void
 	set_common_osc();
 
-	Core::Sample
-	apply_function (Core::Sample v) const;
+	Haruhi::Sample
+	apply_function (Haruhi::Sample v) const;
 
 	float
 	get_phase() const;
 
   private:
-	Mikuru*						_mikuru;
-	Params::LFO					_params;
-	bool						_loading_params;
-	int							_id;
-	int							_pressed_keys;
+	Mikuru*				_mikuru;
+	Params::LFO			_params;
+	bool				_loading_params;
+	int					_id;
+	int					_pressed_keys;
 
-	Core::PortGroup*			_port_group;
-	Core::EventPort*			_port_delay;
-	Core::EventPort*			_port_fade_in;
-	Core::EventPort*			_port_frequency;
-	Core::EventPort*			_port_level;
-	Core::EventPort*			_port_depth;
-	Core::EventPort*			_port_phase;
-	Core::EventPort*			_port_output;
-	Core::EventPort*			_port_wave_shape;
-	Core::EventPort*			_port_fade_out;
+	Haruhi::PortGroup*	_port_group;
+	Haruhi::EventPort*	_port_delay;
+	Haruhi::EventPort*	_port_fade_in;
+	Haruhi::EventPort*	_port_frequency;
+	Haruhi::EventPort*	_port_level;
+	Haruhi::EventPort*	_port_depth;
+	Haruhi::EventPort*	_port_phase;
+	Haruhi::EventPort*	_port_output;
+	Haruhi::EventPort*	_port_wave_shape;
+	Haruhi::EventPort*	_port_fade_out;
 
-	Oscs						_oscs;
-	Osc							_common_osc;
-	Waves						_waves;
-	DSP::Noise					_noise;
+	Oscs				_oscs;
+	Osc					_common_osc;
+	Waves				_waves;
+	DSP::Noise			_noise;
 
-	Haruhi::ControllerProxy*	_proxy_delay;
-	Haruhi::ControllerProxy*	_proxy_fade_in;
-	Haruhi::ControllerProxy*	_proxy_frequency;
-	Haruhi::ControllerProxy*	_proxy_level;
-	Haruhi::ControllerProxy*	_proxy_depth;
-	Haruhi::ControllerProxy*	_proxy_phase;
-	Haruhi::ControllerProxy*	_proxy_wave_shape;
-	Haruhi::ControllerProxy*	_proxy_fade_out;
+	Haruhi::Knob*		_knob_delay;
+	Haruhi::Knob*		_knob_fade_in;
+	Haruhi::Knob*		_knob_frequency;
+	Haruhi::Knob*		_knob_level;
+	Haruhi::Knob*		_knob_depth;
+	Haruhi::Knob*		_knob_phase;
+	Haruhi::Knob*		_knob_wave_shape;
+	Haruhi::Knob*		_knob_fade_out;
 
-	Haruhi::Knob*				_control_delay;
-	Haruhi::Knob*				_control_fade_in;
-	Haruhi::Knob*				_control_frequency;
-	Haruhi::Knob*				_control_level;
-	Haruhi::Knob*				_control_depth;
-	Haruhi::Knob*				_control_phase;
-	Haruhi::Knob*				_control_wave_shape;
-	Haruhi::Knob*				_control_fade_out;
-
-	QCheckBox*					_enabled;
-	QComboBox*					_wave_type;
-	QCheckBox*					_wave_invert;
-	QComboBox*					_function;
-	QComboBox*					_mode;
-	QCheckBox*					_tempo_sync;
-	QSpinBox*					_tempo_numerator;
-	QSpinBox*					_tempo_denominator;
-	QCheckBox*					_random_start_phase;
-	QCheckBox*					_fade_out_enabled;
-	Haruhi::WavePlot*			_plot;
+	QCheckBox*			_enabled;
+	QComboBox*			_wave_type;
+	QCheckBox*			_wave_invert;
+	QComboBox*			_function;
+	QComboBox*			_mode;
+	QCheckBox*			_tempo_sync;
+	QSpinBox*			_tempo_numerator;
+	QSpinBox*			_tempo_denominator;
+	QCheckBox*			_random_start_phase;
+	QCheckBox*			_fade_out_enabled;
+	Haruhi::WavePlot*	_plot;
 };
 
 } // namespace MikuruPrivate

@@ -18,7 +18,7 @@
 #include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "device_item.h"
@@ -33,7 +33,7 @@ DeviceItem::DeviceItem (PortsListView* parent, QString const& name):
 	Item (parent, name)
 {
 	// Configure item:
-	setIcon (0, Config::Icons16::keyboard());
+	setIcon (0, Resources::Icons16::keyboard());
 	update_minimum_size();
 }
 

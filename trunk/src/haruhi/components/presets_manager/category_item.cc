@@ -18,7 +18,7 @@
 #include <Qt3Support/Q3ListView>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "package_item.h"
@@ -32,7 +32,7 @@ namespace PresetsManagerPrivate {
 CategoryItem::CategoryItem (QString const& name, Q3ListViewItem* parent):
 	Q3ListViewItem (parent, name)
 {
-	setPixmap (0, Config::Icons16::presets_category());
+	setPixmap (0, Resources::Icons16::presets_category());
 	setDragEnabled (true);
 }
 

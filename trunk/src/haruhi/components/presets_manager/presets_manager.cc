@@ -34,8 +34,9 @@
 #include <Qt3Support/Q3ListView>
 
 // Haruhi:
-#include <haruhi/config.h>
-#include <haruhi/unit.h>
+#include <haruhi/config/all.h>
+#include <haruhi/graph/unit.h>
+#include <haruhi/settings/unit_settings.h>
 #include <haruhi/utility/filesystem.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/memory.h>
@@ -65,9 +66,9 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 	right_panel->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
 
 	_create_menu = new Q3PopupMenu (this);
-	_create_menu->insertItem (Config::Icons16::presets_package(), "Package", this, SLOT (create_package()), 0, CreatePackage);
-	_create_menu->insertItem (Config::Icons16::presets_category(), "Category", this, SLOT (create_category()), 0, CreateCategory);
-	_create_menu->insertItem (Config::Icons16::preset(), "Preset", this, SLOT (create_preset()), 0, CreatePreset);
+	_create_menu->insertItem (Resources::Icons16::presets_package(), "Package", this, SLOT (create_package()), 0, CreatePackage);
+	_create_menu->insertItem (Resources::Icons16::presets_category(), "Category", this, SLOT (create_category()), 0, CreateCategory);
+	_create_menu->insertItem (Resources::Icons16::preset(), "Preset", this, SLOT (create_preset()), 0, CreatePreset);
 
 	_tabs = new QTabWidget (this);
 	_tabs->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -82,16 +83,16 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 
 	_editor = new Private::PresetEditor (right_panel);
 
-	_load_button = new QPushButton (Config::Icons16::load(), "Load", right_panel);
+	_load_button = new QPushButton (Resources::Icons16::load(), "Load", right_panel);
 	QObject::connect (_load_button, SIGNAL (clicked()), this, SLOT (load_preset()));
 
-	_save_button = new QPushButton (Config::Icons16::save(), "Save patch", right_panel);
+	_save_button = new QPushButton (Resources::Icons16::save(), "Save patch", right_panel);
 	QObject::connect (_save_button, SIGNAL (clicked()), this, SLOT (save_preset()));
 
-	_create_button = new QPushButton (Config::Icons16::save_as(), "Create", right_panel);
+	_create_button = new QPushButton (Resources::Icons16::save_as(), "Create", right_panel);
 	_create_button->setPopup (_create_menu);
 
-	_destroy_button = new QPushButton (Config::Icons16::remove(), "Destroy…", right_panel);
+	_destroy_button = new QPushButton (Resources::Icons16::remove(), "Destroy…", right_panel);
 	QObject::connect (_destroy_button, SIGNAL (clicked()), this, SLOT (destroy()));
 
 	_tabs->addTab (_list, "Presets");
@@ -99,28 +100,24 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 
 	// Layouts:
 
-	QVBoxLayout* v1 = new QVBoxLayout (this, 0, Config::spacing);
-	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::spacing);
+	QVBoxLayout* v1 = new QVBoxLayout (this, 0, Config::Spacing);
+	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
 	h1->addWidget (_tabs);
 	h1->addWidget (right_panel);
-	QVBoxLayout* v2 = new QVBoxLayout (right_panel, 0, Config::spacing);
-	QHBoxLayout* h2 = new QHBoxLayout (v2, Config::spacing);
+	QVBoxLayout* v2 = new QVBoxLayout (right_panel, 0, Config::Spacing);
+	QHBoxLayout* h2 = new QHBoxLayout (v2, Config::Spacing);
 	h2->addWidget (_load_button);
 	h2->addWidget (_save_button);
 	h2->addWidget (_create_button);
 	h2->addWidget (_destroy_button);
 	v2->addWidget (_editor);
 
-	QString all_presets_dir = Config::data_home() + "/presets";
+	QString all_presets_dir = Settings::data_home() + "/presets";
 	mkpath (all_presets_dir.toStdString(), 0700);
 
-	UnitFactory::InformationMap::const_iterator i = _unit->factory()->information().find ("haruhi:presets.directory");
-	_packages_dir = "-";
-	if (i != _unit->factory()->information().end())
-	{
-		_packages_dir = all_presets_dir + "/" + QString::fromStdString (i->second);
-		read();
-	}
+	std::string dir = sanitize_urn (_unit->urn());
+	_packages_dir = all_presets_dir + "/" + QString::fromStdString (dir);
+	read();
 
 	update_widgets();
 }
@@ -137,9 +134,9 @@ PresetsManager::~PresetsManager()
 bool
 PresetsManager::is_favorite (QString const& uuid)
 {
-	Config::UnitConfiguration& uc = Config::unit_configuration (QString::fromStdString (_unit->urn()));
-	Config::UnitConfiguration::FavoritePresets& list = uc.favorite_presets();
-	for (Config::UnitConfiguration::FavoritePresets::iterator f = list.begin(); f != list.end(); ++f)
+	Settings::UnitSettings& uc = Settings::unit_settings (QString::fromStdString (_unit->urn()));
+	Settings::UnitSettings::FavoritePresets& list = uc.favorite_presets();
+	for (Settings::UnitSettings::FavoritePresets::iterator f = list.begin(); f != list.end(); ++f)
 		if (f->uuid == uuid)
 			return true;
 	return false;
@@ -149,13 +146,13 @@ PresetsManager::is_favorite (QString const& uuid)
 void
 PresetsManager::set_favorite (QString const& uuid, QString const& name, bool set)
 {
-	Config::UnitConfiguration& uc = Config::unit_configuration (QString::fromStdString (_unit->urn()));
+	Settings::UnitSettings& uc = Settings::unit_settings (QString::fromStdString (_unit->urn()));
 	if (set)
-		uc.favorite_presets().push_back (Config::FavoritePreset (uuid, name));
+		uc.favorite_presets().push_back (Settings::FavoritePreset (uuid, name));
 	else
 	{
-		Config::UnitConfiguration::FavoritePresets& list = uc.favorite_presets();
-		for (Config::UnitConfiguration::FavoritePresets::iterator f = list.begin(); f != list.end(); )
+		Settings::UnitSettings::FavoritePresets& list = uc.favorite_presets();
+		for (Settings::UnitSettings::FavoritePresets::iterator f = list.begin(); f != list.end(); )
 		{
 			if (f->uuid == uuid)
 				f = list.erase (f);
@@ -164,7 +161,7 @@ PresetsManager::set_favorite (QString const& uuid, QString const& name, bool set
 		}
 	}
 	uc.uniq_favorite_presets();
-	Config::save_unit_configurations();
+	uc.save();
 }
 
 
@@ -485,6 +482,17 @@ QString
 PresetsManager::lock_file_name() const
 {
 	return _packages_dir + "/" + ".haruhi-lock.pid";
+}
+
+
+std::string
+PresetsManager::sanitize_urn (std::string const& urn) const
+{
+	std::string r = urn;
+	for (std::string::size_type i = 0; i < r.size(); ++i)
+		if (r[i] == '/')
+			r[i] = '_';
+	return r;
 }
 
 } // namespace Haruhi

@@ -19,9 +19,9 @@
 #include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
-#include <haruhi/config.h>
-#include <haruhi/core/audio_port.h>
-#include <haruhi/core/event_port.h>
+#include <haruhi/config/all.h>
+#include <haruhi/graph/audio_port.h>
+#include <haruhi/graph/event_port.h>
 
 // Local:
 #include "comparable_item.h"

@@ -33,12 +33,12 @@
 #include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
-#include <haruhi/core/audio_port.h>
+#include <haruhi/graph/audio_port.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/atomic.h>
 
 // Local:
-#include "audio_transport.h"
+#include "transport.h"
 
 
 namespace Haruhi {
@@ -70,10 +70,10 @@ class PortItem:
 	QString
 	name() const;
 
-	AudioTransport::Port*
+	Transport::Port*
 	transport_port() const { return _transport_port; }
 
-	Core::AudioPort*
+	AudioPort*
 	port() const;
 
 	/**
@@ -100,13 +100,13 @@ class PortItem:
 	set_ready (bool r) { atomic (_ready) = r; }
 
   protected:
-	Backend*				_backend;
-	Core::AudioPort*		_port;
-	AudioTransport::Port*	_transport_port;
+	Backend*			_backend;
+	AudioPort*			_port;
+	Transport::Port*	_transport_port;
 
   private:
 	// Set when port is fully constructed:
-	bool					_ready;
+	bool				_ready;
 };
 
 } // namespace AudioBackend

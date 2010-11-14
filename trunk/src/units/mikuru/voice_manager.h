@@ -19,8 +19,7 @@
 #include <set>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
-#include <haruhi/core/event_buffer.h>
+#include <haruhi/graph/event_buffer.h>
 #include <haruhi/lib/controller_param.h>
 
 // Local:
@@ -44,7 +43,7 @@ class VoiceManager
 	class Key
 	{
 	  public:
-		Key (Core::Timestamp timestamp, Core::KeyID key_id, Core::VoiceEvent::Frequency frequency, Core::ControllerEvent::Value value):
+		Key (Haruhi::Timestamp timestamp, Haruhi::KeyID key_id, Haruhi::VoiceEvent::Frequency frequency, Haruhi::ControllerEvent::Value value):
 			timestamp (timestamp),
 			key_id (key_id),
 			frequency (frequency),
@@ -58,10 +57,10 @@ class VoiceManager
 		}
 
 	  public:
-		Core::Timestamp							timestamp;
-		mutable Core::VoiceID					key_id;
-		mutable Core::VoiceEvent::Frequency		frequency;
-		mutable Core::ControllerEvent::Value	value;
+		Haruhi::Timestamp						timestamp;
+		mutable Haruhi::VoiceID					key_id;
+		mutable Haruhi::VoiceEvent::Frequency	frequency;
+		mutable Haruhi::ControllerEvent::Value	value;
 	};
 
 	typedef std::multiset<Key> Keys;
@@ -108,14 +107,14 @@ class VoiceManager
 	 * Processes new VoiceEvent.
 	 */
 	void
-	voice_event (Core::VoiceEvent const*);
+	voice_event (Haruhi::VoiceEvent const*);
 
 	/**
 	 * Adds VoiceEvent to local buffer.
 	 * It will be processed upon call to process_buffered_events().
 	 */
 	void
-	buffer_voice_event (Core::VoiceEvent*);
+	buffer_voice_event (Haruhi::VoiceEvent*);
 
 	/**
 	 * Processes and deletes buffered events.
@@ -130,13 +129,13 @@ class VoiceManager
 	set_sustain (bool enabled);
 
 	void
-	set_voice_param (Core::VoiceID, Haruhi::ControllerParam (Params::Voice::* param), int value);
+	set_voice_param (Haruhi::VoiceID, Haruhi::ControllerParam (Params::Voice::* param), int value);
 
 	void
-	set_filter1_param (Core::VoiceID, Haruhi::ControllerParam (Params::Filter::* param), int value);
+	set_filter1_param (Haruhi::VoiceID, Haruhi::ControllerParam (Params::Filter::* param), int value);
 
 	void
-	set_filter2_param (Core::VoiceID, Haruhi::ControllerParam (Params::Filter::* param), int value);
+	set_filter2_param (Haruhi::VoiceID, Haruhi::ControllerParam (Params::Filter::* param), int value);
 
 	void
 	set_all_voices_params (Params::Voice& params);
@@ -149,7 +148,7 @@ class VoiceManager
 
   private:
 	void
-	poly_create (Core::VoiceEvent const*);
+	poly_create (Haruhi::VoiceEvent const*);
 
 	void
 	poly_sustain (Voice*);
@@ -161,7 +160,7 @@ class VoiceManager
 	poly_drop (Voice*);
 
 	void
-	mono_update (Core::VoiceEvent const* = 0);
+	mono_update (Haruhi::VoiceEvent const* = 0);
 
 	void
 	mono_release();
@@ -170,13 +169,13 @@ class VoiceManager
 	mono_drop();
 
 	Voice*
-	find_voice_by_id (Voices& where, Core::VoiceID) const;
+	find_voice_by_id (Voices& where, Haruhi::VoiceID) const;
 
 	void
-	find_voices_by_key_id (Voices& where, Core::KeyID, Voices& result) const;
+	find_voices_by_key_id (Voices& where, Haruhi::KeyID, Voices& result) const;
 
 	Keys::iterator
-	find_key_by_key_id (Core::VoiceID);
+	find_key_by_key_id (Haruhi::VoiceID);
 
 	Keys::iterator
 	find_key_with_lowest_key_id();
@@ -185,7 +184,7 @@ class VoiceManager
 	find_key_with_highest_key_id();
 
 	Voice*
-	find_voice_by_id (Core::VoiceID) const;
+	find_voice_by_id (Haruhi::VoiceID) const;
 
 	Voice*
 	select_pressed_voice_to_drop() const;
@@ -214,7 +213,7 @@ class VoiceManager
 	Voices				_released_voices;
 	Voices				_dropped_voices;
 	Voice*				_mono_voice;
-	Core::EventBuffer	_events_buffer;
+	Haruhi::EventBuffer	_events_buffer;
 	bool				_sustain_notes;
 };
 

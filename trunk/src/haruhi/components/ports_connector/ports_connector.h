@@ -31,9 +31,9 @@
 #include <QtGui/QMenu>
 
 // Haruhi:
-#include <haruhi/core/predicates.h>
+#include <haruhi/graph/predicates.h>
+#include <haruhi/session/unit_bay.h>
 #include <haruhi/utility/signal.h>
-#include <haruhi/unit_bay.h>
 
 // Local:
 #include "create_port_dialog.h"
@@ -42,6 +42,7 @@
 #include "ports_list.h"
 #include "unit_item.h"
 #include "comparable_item.h"
+#include "units_combobox.h"
 
 
 namespace Haruhi {
@@ -62,7 +63,7 @@ class PortsConnector:
 
 	typedef std::set<Unit*> UnitsSet;
 	typedef std::set<PortsConnectorPrivate::PortItem*> PortItems;
-	typedef std::map<Core::Port*, PortsConnectorPrivate::PortItem*> PortsToItemsMap;
+	typedef std::map<Port*, PortsConnectorPrivate::PortItem*> PortsToItemsMap;
 
   public:
 	typedef PortsConnectorPrivate::Connector	Connector;
@@ -79,6 +80,7 @@ class PortsConnector:
 	friend class PortsConnectorPrivate::UnitItem;
 	friend class PortsConnectorPrivate::GroupItem;
 	friend class PortsConnectorPrivate::PortItem;
+	friend class PortsConnectorPrivate::UnitsCombobox;
 
   public:
 	PortsConnector (UnitBay* unit_bay, QWidget* parent = 0);
@@ -98,6 +100,13 @@ class PortsConnector:
 	 */
 	void
 	forget_item (PortItem*);
+
+	/**
+	 * Adds Unit that will be always inserted into list.
+	 * Useful for Audio/Event backend units, etc.
+	 */
+	void
+	add_external_unit (Unit*);
 
   public slots:
 	void
@@ -142,31 +151,31 @@ class PortsConnector:
 	 */
 
 	void
-	unit_registered (Core::Unit*);
+	unit_registered (Unit*);
 
 	void
-	unit_unregistered (Core::Unit*);
+	unit_unregistered (Unit*);
 
 	void
-	unit_retitled (Core::Unit*);
+	unit_retitled (Unit*);
 
 	void
-	port_renamed (Core::Port*);
+	port_renamed (Port*);
 
 	void
-	port_connected_to (Core::Port*, Core::Port*);
+	port_connected_to (Port*, Port*);
 
 	void
-	port_disconnected_from (Core::Port*, Core::Port*);
+	port_disconnected_from (Port*, Port*);
 
 	void
-	port_registered (Core::Port*, Core::Unit*);
+	port_registered (Port*, Unit*);
 
 	void
-	port_unregistered (Core::Port*, Core::Unit*);
+	port_unregistered (Port*, Unit*);
 
 	void
-	port_group_renamed (Core::PortGroup*);
+	port_group_renamed (PortGroup*);
 
   private:
 	template<class Port>
@@ -198,10 +207,10 @@ class PortsConnector:
 	highlight_connected();
 
 	UnitItem*
-	find_unit_item (Core::Port::Direction direction, Core::Unit*) const;
+	find_unit_item (Port::Direction direction, Unit*) const;
 
 	PortItem*
-	find_port_item (Core::Port* port) const;
+	find_port_item (Port* port) const;
 
   private:
 	UnitsSet							_external_units;		// External Units to UnitBay that are included in lists.

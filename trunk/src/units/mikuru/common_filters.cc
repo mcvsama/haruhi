@@ -38,7 +38,7 @@ CommonFilters::CommonFilters (Mikuru* mikuru, QWidget* parent):
 {
 	Params::CommonFilters p = _params;
 
-	_filter_ports = new Core::PortGroup (_mikuru->graph(), "Common filters");
+	_filter_ports = new Haruhi::PortGroup (_mikuru->graph(), "Common filters");
 
 	_filter1 = new Filter (Filter::Filter1, _filter_ports, "Filter 1", "Filter 1 (2-pole IIR)", 0, _mikuru, this);
 	_filter2 = new Filter (Filter::Filter2, _filter_ports, "Filter 2", "Filter 2 (2-pole IIR)", 0, _mikuru, this);
@@ -56,8 +56,8 @@ CommonFilters::CommonFilters (Mikuru* mikuru, QWidget* parent):
 
 	// Layouts:
 
-	QVBoxLayout* v1 = new QVBoxLayout (this, Config::margin, Config::spacing);
-	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::spacing);
+	QVBoxLayout* v1 = new QVBoxLayout (this, Config::Margin, Config::Spacing);
+	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
 	h1->addWidget (new QLabel ("Configuration:", this));
 	h1->addWidget (_filter_configuration);
 	h1->addItem (new QSpacerItem (20, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
@@ -100,8 +100,8 @@ CommonFilters::process_events()
 
 
 void
-CommonFilters::process_filters (Core::AudioBuffer& input1, Core::AudioBuffer& buffer1, Core::AudioBuffer& output1,
-								Core::AudioBuffer& input2, Core::AudioBuffer& buffer2, Core::AudioBuffer& output2)
+CommonFilters::process_filters (Haruhi::AudioBuffer& input1, Haruhi::AudioBuffer& buffer1, Haruhi::AudioBuffer& output1,
+								Haruhi::AudioBuffer& input2, Haruhi::AudioBuffer& buffer2, Haruhi::AudioBuffer& output2)
 {
 	_double_filter_1.configure (static_cast<DoubleFilter::Configuration> (_params.filter_configuration.get()), _filter1->params(), _filter2->params());
 	_double_filter_2.configure (static_cast<DoubleFilter::Configuration> (_params.filter_configuration.get()), _filter1->params(), _filter2->params());

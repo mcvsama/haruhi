@@ -20,14 +20,13 @@
 #include <list>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
+#include <haruhi/application/haruhi.h>
 #include <haruhi/lib/param.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/widgets/knob.h>
 
 
 class Mikuru;
-
 
 namespace MikuruPrivate {
 
@@ -78,13 +77,13 @@ class Patch: public SaveableState
 		}
 
 	/**
-	 * Saves parameters like save_parameter adding Knob config. parameters.
+	 * Saves parameters just like template version of save_parameter(), but adds Controller config. parameters.
 	 */
 	void
-	save_parameter (QDomElement& parameters, QString const& name, Haruhi::ControllerProxy* proxy) const
+	save_parameter (QDomElement& parameters, QString const& name, Haruhi::Knob* knob) const
 	{
 		QDomElement param = parameters.ownerDocument().createElement (name);
-		proxy->save_state (param);
+		knob->controller_proxy().save_state (param);
 		parameters.appendChild (param);
 	}
 
@@ -104,11 +103,11 @@ class Patch: public SaveableState
 	 * Loads value from parameters map and sets up Knob configuration.
 	 */
 	void
-	load_parameter (Parameters const& parameters, QString const& name, Haruhi::ControllerProxy* proxy) const
+	load_parameter (Parameters const& parameters, QString const& name, Haruhi::Knob* knob) const
 	{
 		Parameters::const_iterator p = parameters.find (name);
 		if (p != parameters.end())
-			proxy->load_state (p->second);
+			knob->controller_proxy().load_state (p->second);
 	}
 
 	/**

@@ -24,7 +24,7 @@
 #include <QtGui/QPixmap>
 
 // Haruhi:
-#include <haruhi/core/graph.h>
+#include <haruhi/graph/graph.h>
 #include <haruhi/dsp/wave.h>
 #include <haruhi/utility/mutex.h>
 

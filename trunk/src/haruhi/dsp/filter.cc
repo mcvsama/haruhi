@@ -78,8 +78,8 @@ Filter::assign_impulse_response (ImpulseResponse* impulse_response)
 		_a = _impulse_response->a();
 		_b = _impulse_response->b();
 		_size = _impulse_response->size();
-		_px = new Core::Sample[_size];
-		_py = new Core::Sample[_size];
+		_px = new Sample[_size];
+		_py = new Sample[_size];
 
 		std::fill (_px, _px + _size, 0.0);
 		std::fill (_py, _py + _size, 0.0);

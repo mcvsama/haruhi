@@ -40,7 +40,7 @@ Part::Part (Mikuru* mikuru, QWidget* parent):
 
 	Params::Part p = _params;
 	_voice_manager = new VoiceManager (this);
-	_port_group = new Core::PortGroup (_mikuru->graph(), QString ("Part %1").arg (id()).toStdString());
+	_port_group = new Haruhi::PortGroup (_mikuru->graph(), QString ("Part %1").arg (id()).toStdString());
 
 	// Tabs/widgets:
 
@@ -63,7 +63,7 @@ Part::Part (Mikuru* mikuru, QWidget* parent):
 	tabs->addTab (_filters, "Filters");
 	tabs->showPage (_oscillator);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
 	layout->addWidget (_part_enabled);
 	layout->addWidget (tabs);
 }
@@ -72,11 +72,13 @@ Part::Part (Mikuru* mikuru, QWidget* parent):
 Part::~Part()
 {
 	_mikuru->free_id ("parts", _id);
-	_mikuru->graph()->lock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
 	delete _voice_manager;
 	delete _port_group;
 	_filters->delete_ports();
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 }
 
 

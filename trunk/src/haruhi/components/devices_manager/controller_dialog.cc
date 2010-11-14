@@ -23,7 +23,7 @@
 #include <Qt3Support/Q3GroupBox>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "controller_dialog.h"
@@ -40,12 +40,12 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	setMinimumWidth (300);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::dialog_margin, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::DialogMargin, Config::Spacing);
 	layout->setResizeMode (QLayout::FreeResize);
 
 		// Port name:
 
-		QHBoxLayout* name_layout = new QHBoxLayout (layout, Config::spacing);
+		QHBoxLayout* name_layout = new QHBoxLayout (layout, Config::Spacing);
 
 			QLabel* name_label = new QLabel ("Controller name:", this);
 
@@ -66,7 +66,7 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 
 			_note_params = new QWidget (filters);
 			{
-				QHBoxLayout* l = new QHBoxLayout (_note_params, 0, Config::spacing);
+				QHBoxLayout* l = new QHBoxLayout (_note_params, 0, Config::Spacing);
 
 				QLabel* channel_label = new QLabel ("Channel:", _note_params);
 				_note_channel = new QComboBox (_note_params);
@@ -87,9 +87,9 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 
 			_controller_params = new QWidget (filters);
 			{
-				QVBoxLayout* v1 = new QVBoxLayout (_controller_params, 0, Config::spacing);
-				QHBoxLayout* h1 = new QHBoxLayout (v1, Config::spacing);
-				QHBoxLayout* h2 = new QHBoxLayout (v1, Config::spacing);
+				QVBoxLayout* v1 = new QVBoxLayout (_controller_params, 0, Config::Spacing);
+				QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
+				QHBoxLayout* h2 = new QHBoxLayout (v1, Config::Spacing);
 
 				QLabel* channel_label = new QLabel ("Channel:", _controller_params);
 				_controller_channel = new QComboBox (_controller_params);
@@ -118,7 +118,7 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 
 			_pitchbend_params = new QWidget (filters);
 			{
-				QHBoxLayout* l = new QHBoxLayout (_pitchbend_params, 0, Config::spacing);
+				QHBoxLayout* l = new QHBoxLayout (_pitchbend_params, 0, Config::Spacing);
 
 				QLabel* channel_label = new QLabel ("Channel:", _pitchbend_params);
 				_pitchbend_channel = new QComboBox (_pitchbend_params);
@@ -139,9 +139,9 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 
 			_channel_pressure_params = new QWidget (filters);
 			{
-				QVBoxLayout* v1 = new QVBoxLayout (_channel_pressure_params, 0, Config::spacing);
-				QHBoxLayout* h1 = new QHBoxLayout (v1, Config::spacing);
-				QHBoxLayout* h2 = new QHBoxLayout (v1, Config::spacing);
+				QVBoxLayout* v1 = new QVBoxLayout (_channel_pressure_params, 0, Config::Spacing);
+				QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
+				QHBoxLayout* h2 = new QHBoxLayout (v1, Config::Spacing);
 
 				QLabel* channel_label = new QLabel ("Channel:", _channel_pressure_params);
 				_channel_pressure_channel = new QComboBox (_channel_pressure_params);
@@ -166,9 +166,9 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 
 			_key_pressure_params = new QWidget (filters);
 			{
-				QVBoxLayout* v1 = new QVBoxLayout (_key_pressure_params, 0, Config::spacing);
-				QHBoxLayout* h1 = new QHBoxLayout (v1, Config::spacing);
-				QHBoxLayout* h2 = new QHBoxLayout (v1, Config::spacing);
+				QVBoxLayout* v1 = new QVBoxLayout (_key_pressure_params, 0, Config::Spacing);
+				QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
+				QHBoxLayout* h2 = new QHBoxLayout (v1, Config::Spacing);
 
 				QLabel* key_label = new QLabel ("Channel:", _key_pressure_params);
 				_key_pressure_channel = new QComboBox (_key_pressure_params);
@@ -186,13 +186,13 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 				h2->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 			}
 
-		layout->addItem (new QSpacerItem (0, Config::spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
+		layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
 
 		// Buttons:
 
-		QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::spacing);
+		QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::Spacing);
 
-			_save_button = new QPushButton (Config::Icons16::ok(), "&Apply", this);
+			_save_button = new QPushButton (Resources::Icons16::ok(), "&Apply", this);
 
 		buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 		buttons_layout->addWidget (_save_button);

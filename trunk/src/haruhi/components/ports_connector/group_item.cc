@@ -18,7 +18,7 @@
 #include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "group_item.h"
@@ -29,7 +29,7 @@ namespace Haruhi {
 
 namespace PortsConnectorPrivate {
 
-GroupItem::GroupItem (Core::PortGroup* group, UnitItem* parent):
+GroupItem::GroupItem (PortGroup* group, UnitItem* parent):
 	QTreeWidgetItem (parent, QStringList (QString::fromStdString (group->name()))),
 	_group (group)
 {
@@ -40,11 +40,11 @@ GroupItem::GroupItem (Core::PortGroup* group, UnitItem* parent):
 		setSizeHint (0, s);
 	}
 
-	setIcon (0, Config::Icons16::port_group());
+	setIcon (0, Resources::Icons16::port_group());
 }
 
 
-Core::PortGroup*
+PortGroup*
 GroupItem::group() const
 {
 	return _group;

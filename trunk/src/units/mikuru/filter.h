@@ -22,10 +22,9 @@
 #include <QtGui/QCheckBox>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
 #include <haruhi/dsp/wave.h>
 #include <haruhi/lib/controller_proxy.h>
-#include <haruhi/core/port_group.h>
+#include <haruhi/graph/port_group.h>
 #include <haruhi/widgets/knob.h>
 #include <haruhi/widgets/frequency_response_plot.h>
 #include <haruhi/utility/signal.h>
@@ -39,12 +38,10 @@
 
 class Mikuru;
 
-
 namespace MikuruPrivate {
 
 class Part;
 class EventDispatcher;
-
 
 class Filter: public QWidget
 {
@@ -59,7 +56,7 @@ class Filter: public QWidget
 	/**
 	 * \param	part can be null, if this is common filter.
 	 */
-	Filter (FilterID filter_id, Core::PortGroup* port_group, QString const& port_prefix, QString const& label, Part* part, Mikuru* mikuru, QWidget* parent);
+	Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const& port_prefix, QString const& label, Part* part, Mikuru* mikuru, QWidget* parent);
 
 	~Filter();
 
@@ -117,17 +114,11 @@ class Filter: public QWidget
 	RBJImpulseResponse				_impulse_response;
 	bool							_polyphonic_control;
 
-	// Proxies:
-	Haruhi::ControllerProxy*		_proxy_frequency;
-	Haruhi::ControllerProxy*		_proxy_resonance;
-	Haruhi::ControllerProxy*		_proxy_gain;
-	Haruhi::ControllerProxy*		_proxy_attenuation;
-
 	// Ports:
-	Core::EventPort*				_port_frequency;
-	Core::EventPort*				_port_resonance;
-	Core::EventPort*				_port_gain;
-	Core::EventPort*				_port_attenuation;
+	Haruhi::EventPort*				_port_frequency;
+	Haruhi::EventPort*				_port_resonance;
+	Haruhi::EventPort*				_port_gain;
+	Haruhi::EventPort*				_port_attenuation;
 
 	// Event dispatchers for polyphonic-input ports:
 	EventDispatcher*				_evdisp_frequency;
@@ -145,10 +136,10 @@ class Filter: public QWidget
 	QComboBox*						_filter_type;
 	QComboBox*						_passes;
 	QCheckBox*						_limiter_enabled;
-	Haruhi::Knob*					_control_frequency;
-	Haruhi::Knob*					_control_resonance;
-	Haruhi::Knob*					_control_gain;
-	Haruhi::Knob*					_control_attenuation;
+	Haruhi::Knob*					_knob_frequency;
+	Haruhi::Knob*					_knob_resonance;
+	Haruhi::Knob*					_knob_gain;
+	Haruhi::Knob*					_knob_attenuation;
 };
 
 } // namespace MikuruPrivate

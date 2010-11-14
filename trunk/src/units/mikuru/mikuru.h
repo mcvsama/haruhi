@@ -28,15 +28,17 @@
 #include <QtGui/QComboBox>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
-#include <haruhi/config.h>
-#include <haruhi/unit_bay.h>
-#include <haruhi/presetable.h>
-#include <haruhi/core/event.h>
-#include <haruhi/core/audio_port.h>
-#include <haruhi/core/event_port.h>
+#include <haruhi/config/all.h>
+#include <haruhi/application/haruhi.h>
+#include <haruhi/graph/event.h>
+#include <haruhi/graph/audio_port.h>
+#include <haruhi/graph/event_port.h>
+#include <haruhi/graph/notification.h>
 #include <haruhi/dsp/smoother.h>
-#include <haruhi/unit.h>
+#include <haruhi/plugin/plugin.h>
+#include <haruhi/plugin/plugin_factory.h>
+#include <haruhi/plugin/presetable.h>
+#include <haruhi/session/unit_bay.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/saveable_state.h>
@@ -56,10 +58,10 @@
 /**
  * Mikuru virtual-analog synthesizer.
  *
- * Mutexes acquiring order: Core::Graph mutex, _parts_mutex, _synth_threads_mutex.
+ * Mutexes acquiring order: Haruhi::Graph mutex, _parts_mutex, _synth_threads_mutex.
  */
 class Mikuru:
-	public Haruhi::Unit,
+	public Haruhi::Plugin,
 	public Haruhi::UnitBayAware,
 	public Haruhi::Presetable,
 	public SaveableState
@@ -78,11 +80,11 @@ class Mikuru:
 	 * Notification sent to other Mikurus
 	 * when user changes global configuration.
 	 */
-	class UpdateConfig: public Core::Notification
+	class UpdateConfig: public Haruhi::Notification
 	{
 	  public:
 		UpdateConfig (Mikuru* sender, std::string const& urn):
-			Core::Notification (urn),
+			Haruhi::Notification (urn),
 			_sender (sender)
 		{ }
 
@@ -97,9 +99,21 @@ class Mikuru:
 	typedef std::set<int>  IDs;
 
   public:
-	Mikuru (Haruhi::UnitFactory*, Haruhi::Session*, std::string const& urn, std::string const& title, int id, QWidget* parent);
+	Mikuru (Haruhi::Session*, std::string const& urn, std::string const& title, int id, QWidget* parent);
 
 	virtual ~Mikuru();
+
+	/**
+	 * Unit API
+	 */
+	void
+	registered();
+
+	/**
+	 * Unit API
+	 */
+	void
+	unregistered();
 
 	std::string
 	name() const;
@@ -113,7 +127,7 @@ class Mikuru:
 	void
 	graph_updated();
 
-	Core::EventPort*
+	Haruhi::EventPort*
 	keyboard_port() const { return _port_keyboard; }
 
 	/**
@@ -153,10 +167,10 @@ class Mikuru:
 	part_tab_position (MikuruPrivate::Part* part) const { return _tabs_widget->indexOf (part); }
 
 	/**
-	 * Core::Unit::notify implementation.
+	 * Unit::notify implementation.
 	 */
 	void
-	notify (Core::Notification*);
+	notify (Haruhi::Notification*);
 
 	/*
 	 * Haruhi::UnitBayAware implementation.
@@ -323,24 +337,24 @@ class Mikuru:
 	// Synthesizer ports
 	//
 
-	Core::AudioBuffer				_mix_L;
-	Core::AudioBuffer				_mix_R;
-	Core::AudioBuffer				_filter_buffer_L;
-	Core::AudioBuffer				_filter_buffer_R;
-	Core::AudioBuffer				_input_buffer_L;
-	Core::AudioBuffer				_input_buffer_R;
+	Haruhi::AudioBuffer				_mix_L;
+	Haruhi::AudioBuffer				_mix_R;
+	Haruhi::AudioBuffer				_filter_buffer_L;
+	Haruhi::AudioBuffer				_filter_buffer_R;
+	Haruhi::AudioBuffer				_input_buffer_L;
+	Haruhi::AudioBuffer				_input_buffer_R;
 
 	// Audio inputs:
-	Core::AudioPort*				_audio_input_L;
-	Core::AudioPort*				_audio_input_R;
+	Haruhi::AudioPort*				_audio_input_L;
+	Haruhi::AudioPort*				_audio_input_R;
 
 	// Audio outputs:
-	Core::AudioPort*				_audio_output_L;
-	Core::AudioPort*				_audio_output_R;
+	Haruhi::AudioPort*				_audio_output_L;
+	Haruhi::AudioPort*				_audio_output_R;
 
 	// Drive:
-	Core::EventPort*				_port_keyboard;
-	Core::EventPort*				_port_sustain;
+	Haruhi::EventPort*				_port_keyboard;
+	Haruhi::EventPort*				_port_sustain;
 
 	//
 	// Other
@@ -351,16 +365,16 @@ class Mikuru:
 };
 
 
-class MikuruFactory: public Haruhi::UnitFactory
+class MikuruFactory: public Haruhi::PluginFactory
 {
   public:
 	MikuruFactory();
 
-	Haruhi::Unit*
-	create_unit (Haruhi::Session*, int id, QWidget* parent);
+	Haruhi::Plugin*
+	create_plugin (Haruhi::Session*, int id, QWidget* parent);
 
 	void
-	destroy_unit (Haruhi::Unit* unit);
+	destroy_plugin (Haruhi::Plugin* plugin);
 
 	InformationMap const&
 	information() const;

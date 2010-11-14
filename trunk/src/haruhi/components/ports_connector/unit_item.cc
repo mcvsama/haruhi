@@ -19,8 +19,8 @@
 #include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
-#include <haruhi/config.h>
-#include <haruhi/unit_bay.h>
+#include <haruhi/config/all.h>
+#include <haruhi/session/unit_bay.h>
 
 // Local:
 #include "unit_item.h"
@@ -31,7 +31,7 @@ namespace Haruhi {
 
 namespace PortsConnectorPrivate {
 
-UnitItem::UnitItem (Core::Port::Direction type, Unit* unit, QTreeWidget* parent, QString const& label):
+UnitItem::UnitItem (Port::Direction type, Unit* unit, QTreeWidget* parent, QString const& label):
 	QTreeWidgetItem (parent, QStringList (label)),
 	_type (type),
 	_unit (unit)
@@ -47,16 +47,16 @@ UnitItem::UnitItem (Core::Port::Direction type, Unit* unit, QTreeWidget* parent,
 	{
 		switch (type)
 		{
-			case Core::Port::Input:		setIcon (0, Config::Icons16::input_unit_bay()); break;
-			case Core::Port::Output:	setIcon (0, Config::Icons16::output_unit_bay()); break;
+			case Port::Input:	setIcon (0, Resources::Icons16::input_unit_bay()); break;
+			case Port::Output:	setIcon (0, Resources::Icons16::output_unit_bay()); break;
 		}
 	}
 	else
 	{
 		switch (type)
 		{
-			case Core::Port::Input:		setIcon (0, Config::Icons16::input_unit()); break;
-			case Core::Port::Output:	setIcon (0, Config::Icons16::output_unit()); break;
+			case Port::Input:	setIcon (0, Resources::Icons16::input_unit()); break;
+			case Port::Output:	setIcon (0, Resources::Icons16::output_unit()); break;
 		}
 	}
 }
@@ -77,7 +77,7 @@ UnitItem::update()
 
 
 PortItem*
-UnitItem::insert_port (Core::Port* port)
+UnitItem::insert_port (Port* port)
 {
 	if (!port_exist (port))
 	{
@@ -92,7 +92,7 @@ UnitItem::insert_port (Core::Port* port)
 
 
 void
-UnitItem::remove_port (Core::Port* port)
+UnitItem::remove_port (Port* port)
 {
 	if (port_exist (port))
 	{
@@ -110,21 +110,21 @@ UnitItem::remove_port (Core::Port* port)
 
 
 void
-UnitItem::update_port (Core::Port* port)
+UnitItem::update_port (Port* port)
 {
 	_ports[port]->update();
 }
 
 
 bool
-UnitItem::port_exist (Core::Port* port) const
+UnitItem::port_exist (Port* port) const
 {
 	return _ports.find (port) != _ports.end();
 }
 
 
 GroupItem*
-UnitItem::find_or_create_group_item_for (Core::PortGroup* group)
+UnitItem::find_or_create_group_item_for (PortGroup* group)
 {
 	GroupItem* item = 0;
 	for (int i = 0; i < childCount(); ++i)
@@ -141,7 +141,7 @@ UnitItem::find_or_create_group_item_for (Core::PortGroup* group)
 
 
 void
-UnitItem::cleanup_group (Core::PortGroup* group)
+UnitItem::cleanup_group (PortGroup* group)
 {
 	GroupItem* item = find_or_create_group_item_for (group);
 	if (item->childCount() == 0)

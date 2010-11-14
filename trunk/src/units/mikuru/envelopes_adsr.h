@@ -24,8 +24,8 @@
 #include <QtGui/QCheckBox>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
-#include <haruhi/core/event.h>
+#include <haruhi/graph/event.h>
+#include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/adsr.h>
 #include <haruhi/dsp/wave.h>
 #include <haruhi/lib/controller_proxy.h>
@@ -41,11 +41,9 @@ class Mikuru;
 
 namespace MikuruPrivate {
 
-namespace Core = Haruhi::Core;
 class Voice;
 class VoiceManager;
 class Part;
-
 
 class ADSR: public Envelope
 {
@@ -63,9 +61,6 @@ class ADSR: public Envelope
   private:
 	void
 	create_ports();
-
-	void
-	create_proxies();
 
 	void
 	create_knobs (QWidget* parent);
@@ -125,48 +120,40 @@ class ADSR: public Envelope
 	sweep();
 
   private:
-	Mikuru*						_mikuru;
-	Params::ADSR				_params;
-	bool						_loading_params;
-	int							_id;
-	DSP::Envelope				_envelope_for_plot;
-	ADSRs						_adsrs;
-	Core::AudioBuffer			_buffer;
+	Mikuru*					_mikuru;
+	Params::ADSR			_params;
+	bool					_loading_params;
+	int						_id;
+	DSP::Envelope			_envelope_for_plot;
+	ADSRs					_adsrs;
+	Haruhi::AudioBuffer		_buffer;
 	// List of Voices which has been dropped and need ADSRs to be deleted also:
-	std::list<Voice*>			_dropped_voices;
+	std::list<Voice*>		_dropped_voices;
 
-	Core::PortGroup*			_port_group;
-	Core::EventPort*			_port_delay;
-	Core::EventPort*			_port_attack;
-	Core::EventPort*			_port_attack_hold;
-	Core::EventPort*			_port_decay;
-	Core::EventPort*			_port_sustain;
-	Core::EventPort*			_port_sustain_hold;
-	Core::EventPort*			_port_release;
-	Core::EventPort*			_port_output;
+	Haruhi::PortGroup*		_port_group;
+	Haruhi::EventPort*		_port_delay;
+	Haruhi::EventPort*		_port_attack;
+	Haruhi::EventPort*		_port_attack_hold;
+	Haruhi::EventPort*		_port_decay;
+	Haruhi::EventPort*		_port_sustain;
+	Haruhi::EventPort*		_port_sustain_hold;
+	Haruhi::EventPort*		_port_release;
+	Haruhi::EventPort*		_port_output;
 
-	Haruhi::ControllerProxy*	_proxy_delay;
-	Haruhi::ControllerProxy*	_proxy_attack;
-	Haruhi::ControllerProxy*	_proxy_attack_hold;
-	Haruhi::ControllerProxy*	_proxy_decay;
-	Haruhi::ControllerProxy*	_proxy_sustain;
-	Haruhi::ControllerProxy*	_proxy_sustain_hold;
-	Haruhi::ControllerProxy*	_proxy_release;
-
-	QCheckBox*					_enabled;
-	QCheckBox*					_direct_adsr;
-	QCheckBox*					_forced_release;
-	QCheckBox*					_sustain_enabled;
-	Haruhi::Knob*				_control_delay;
-	Haruhi::Knob*				_control_attack;
-	Haruhi::Knob*				_control_attack_hold;
-	Haruhi::Knob*				_control_decay;
-	Haruhi::Knob*				_control_sustain;
-	Haruhi::Knob*				_control_sustain_hold;
-	Haruhi::Knob*				_control_release;
-	QComboBox*					_function;
-	QComboBox*					_mode;
-	Haruhi::EnvelopePlot*		_plot;
+	QCheckBox*				_enabled;
+	QCheckBox*				_direct_adsr;
+	QCheckBox*				_forced_release;
+	QCheckBox*				_sustain_enabled;
+	Haruhi::Knob*			_knob_delay;
+	Haruhi::Knob*			_knob_attack;
+	Haruhi::Knob*			_knob_attack_hold;
+	Haruhi::Knob*			_knob_decay;
+	Haruhi::Knob*			_knob_sustain;
+	Haruhi::Knob*			_knob_sustain_hold;
+	Haruhi::Knob*			_knob_release;
+	QComboBox*				_function;
+	QComboBox*				_mode;
+	Haruhi::EnvelopePlot*	_plot;
 };
 
 } // namespace MikuruPrivate

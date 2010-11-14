@@ -18,12 +18,10 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
-#include <haruhi/core/audio_buffer.h>
+#include <haruhi/graph/audio_buffer.h>
 
 
 class Mikuru;
-
 
 namespace MikuruPrivate {
 
@@ -37,15 +35,15 @@ class VoiceCommons
 
   public:
 	// Buffers:
-	Haruhi::Core::AudioBuffer	temp1;
-	Haruhi::Core::AudioBuffer	frequency_buffer;
-	Haruhi::Core::AudioBuffer	amplitude_buffer;
-	Haruhi::Core::AudioBuffer	oscillator_buffer;
-	Haruhi::Core::AudioBuffer	filter_buffer1;
-	Haruhi::Core::AudioBuffer	filter_buffer2;
-	Haruhi::Core::AudioBuffer	output_buffer;
-	Haruhi::Core::AudioBuffer	output_buffer1;
-	Haruhi::Core::AudioBuffer	output_buffer2;
+	Haruhi::AudioBuffer	temp1;
+	Haruhi::AudioBuffer	frequency_buffer;
+	Haruhi::AudioBuffer	amplitude_buffer;
+	Haruhi::AudioBuffer	oscillator_buffer;
+	Haruhi::AudioBuffer	filter_buffer1;
+	Haruhi::AudioBuffer	filter_buffer2;
+	Haruhi::AudioBuffer	output_buffer;
+	Haruhi::AudioBuffer	output_buffer1;
+	Haruhi::AudioBuffer	output_buffer2;
 };
 
 } // namespace MikuruPrivate

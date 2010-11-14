@@ -23,9 +23,9 @@
 #include <Qt3Support/Q3GroupBox>
 
 // Haruhi:
-#include <haruhi/config.h>
-#include <haruhi/lib/controller_proxy.h>
+#include <haruhi/config/all.h>
 #include <haruhi/widgets/envelope_plot.h>
+#include <haruhi/widgets/knob.h>
 
 // Local:
 #include "mikuru.h"
@@ -50,7 +50,6 @@ ADSR::ADSR (int id, Mikuru* mikuru, QWidget* parent):
 	knobs_panel->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
 
 	create_ports();
-	create_proxies();
 	create_knobs (knobs_panel);
 	create_widgets (knobs_panel);
 	update_plot();
@@ -63,23 +62,16 @@ ADSR::~ADSR()
 	_mikuru->free_id ("adsrs", _id);
 
 	// Delete knobs before ControllerProxies:
-	delete _control_delay;
-	delete _control_attack;
-	delete _control_attack_hold;
-	delete _control_decay;
-	delete _control_sustain;
-	delete _control_sustain_hold;
-	delete _control_release;
+	delete _knob_delay;
+	delete _knob_attack;
+	delete _knob_attack_hold;
+	delete _knob_decay;
+	delete _knob_sustain;
+	delete _knob_sustain_hold;
+	delete _knob_release;
 
-	delete _proxy_delay;
-	delete _proxy_attack;
-	delete _proxy_attack_hold;
-	delete _proxy_decay;
-	delete _proxy_sustain;
-	delete _proxy_sustain_hold;
-	delete _proxy_release;
-
-	_mikuru->graph()->lock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
 	delete _port_output;
 	delete _port_delay;
 	delete _port_attack;
@@ -97,79 +89,64 @@ ADSR::~ADSR()
 		x->first->set_tracked (false);
 		delete x->second;
 	}
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 }
 
 
 void
 ADSR::create_ports()
 {
-	_mikuru->graph()->lock();
-	_port_group = new Core::PortGroup (_mikuru->graph(), QString ("ADSR %1").arg (this->id()).toStdString());
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
+	_port_group = new Haruhi::PortGroup (_mikuru->graph(), QString ("ADSR %1").arg (this->id()).toStdString());
 	// Inputs:
-	_port_delay = new Core::EventPort (_mikuru, "Delay", Core::Port::Input, _port_group);
-	_port_attack = new Core::EventPort (_mikuru, "Attack", Core::Port::Input, _port_group);
-	_port_attack_hold = new Core::EventPort (_mikuru, "Attack hold", Core::Port::Input, _port_group);
-	_port_decay = new Core::EventPort (_mikuru, "Decay", Core::Port::Input, _port_group);
-	_port_sustain = new Core::EventPort (_mikuru, "Sustain", Core::Port::Input, _port_group);
-	_port_sustain_hold = new Core::EventPort (_mikuru, "Sustain hold", Core::Port::Input, _port_group);
-	_port_release = new Core::EventPort (_mikuru, "Release", Core::Port::Input, _port_group);
+	_port_delay = new Haruhi::EventPort (_mikuru, "Delay", Haruhi::Port::Input, _port_group);
+	_port_attack = new Haruhi::EventPort (_mikuru, "Attack", Haruhi::Port::Input, _port_group);
+	_port_attack_hold = new Haruhi::EventPort (_mikuru, "Attack hold", Haruhi::Port::Input, _port_group);
+	_port_decay = new Haruhi::EventPort (_mikuru, "Decay", Haruhi::Port::Input, _port_group);
+	_port_sustain = new Haruhi::EventPort (_mikuru, "Sustain", Haruhi::Port::Input, _port_group);
+	_port_sustain_hold = new Haruhi::EventPort (_mikuru, "Sustain hold", Haruhi::Port::Input, _port_group);
+	_port_release = new Haruhi::EventPort (_mikuru, "Release", Haruhi::Port::Input, _port_group);
 	// Outputs:
-	_port_output = new Core::EventPort (_mikuru, QString ("ADSR %1").arg (this->id()).toStdString(), Core::Port::Output, 0, Core::Port::Polyphonic);
-	_mikuru->graph()->unlock();
-}
-
-
-void
-ADSR::create_proxies()
-{
-	_proxy_delay = new Haruhi::ControllerProxy (_port_delay, &_params.delay);
-	_proxy_delay->config()->curve = 1.0;
-	_proxy_delay->apply_config();
-	_proxy_attack = new Haruhi::ControllerProxy (_port_attack, &_params.attack);
-	_proxy_attack->config()->curve = 1.0;
-	_proxy_attack->apply_config();
-	_proxy_attack_hold = new Haruhi::ControllerProxy (_port_attack_hold, &_params.attack_hold);
-	_proxy_attack_hold->config()->curve = 1.0;
-	_proxy_attack_hold->apply_config();
-	_proxy_decay = new Haruhi::ControllerProxy (_port_decay, &_params.decay);
-	_proxy_decay->config()->curve = 1.0;
-	_proxy_decay->apply_config();
-	_proxy_sustain = new Haruhi::ControllerProxy (_port_sustain, &_params.sustain);
-	_proxy_sustain_hold = new Haruhi::ControllerProxy (_port_sustain_hold, &_params.sustain_hold);
-	_proxy_sustain_hold->config()->curve = 1.0;
-	_proxy_sustain_hold->apply_config();
-	_proxy_release = new Haruhi::ControllerProxy (_port_release, &_params.release);
-	_proxy_release->config()->curve = 1.0;
-	_proxy_release->apply_config();
+	_port_output = new Haruhi::EventPort (_mikuru, QString ("ADSR %1").arg (this->id()).toStdString(), Haruhi::Port::Output, 0, Haruhi::Port::Polyphonic);
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 }
 
 
 void
 ADSR::create_knobs (QWidget* parent)
 {
-	_control_delay = new Haruhi::Knob (parent, _proxy_delay, "Delay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Delay, 100), 2);
-	_control_delay->set_unit_bay (_mikuru->unit_bay());
-	_control_attack = new Haruhi::Knob (parent, _proxy_attack, "Attack", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Attack, 100), 2);
-	_control_attack->set_unit_bay (_mikuru->unit_bay());
-	_control_attack_hold = new Haruhi::Knob (parent, _proxy_attack_hold, "Att.hold", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::AttackHold, 100), 2);
-	_control_attack_hold->set_unit_bay (_mikuru->unit_bay());
-	_control_decay = new Haruhi::Knob (parent, _proxy_decay, "Decay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Decay, 100), 2);
-	_control_decay->set_unit_bay (_mikuru->unit_bay());
-	_control_sustain = new Haruhi::Knob (parent, _proxy_sustain, "Sustain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Sustain, 100), 2);
-	_control_sustain->set_unit_bay (_mikuru->unit_bay());
-	_control_sustain_hold = new Haruhi::Knob (parent, _proxy_sustain_hold, "Sus.hold", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::SustainHold, 100), 2);
-	_control_sustain_hold->set_unit_bay (_mikuru->unit_bay());
-	_control_release = new Haruhi::Knob (parent, _proxy_release, "Release", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Release, 100), 2);
-	_control_release->set_unit_bay (_mikuru->unit_bay());
+	_knob_delay = new Haruhi::Knob (parent, _port_delay, &_params.delay, "Delay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Delay, 100), 2);
+	_knob_attack = new Haruhi::Knob (parent, _port_attack, &_params.attack, "Attack", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Attack, 100), 2);
+	_knob_attack_hold = new Haruhi::Knob (parent, _port_attack_hold, &_params.attack_hold, "Att.hold", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::AttackHold, 100), 2);
+	_knob_decay = new Haruhi::Knob (parent, _port_decay, &_params.decay, "Decay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Decay, 100), 2);
+	_knob_sustain = new Haruhi::Knob (parent, _port_sustain, &_params.sustain, "Sustain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Sustain, 100), 2);
+	_knob_sustain_hold = new Haruhi::Knob (parent, _port_sustain_hold, &_params.sustain_hold, "Sus.hold", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::SustainHold, 100), 2);
+	_knob_release = new Haruhi::Knob (parent, _port_release, &_params.release, "Release", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Release, 100), 2);
 
-	QObject::connect (_control_delay, SIGNAL (changed (int)), this, SLOT (update_plot()));
-	QObject::connect (_control_attack, SIGNAL (changed (int)), this, SLOT (update_plot()));
-	QObject::connect (_control_attack_hold, SIGNAL (changed (int)), this, SLOT (update_plot()));
-	QObject::connect (_control_decay, SIGNAL (changed (int)), this, SLOT (update_plot()));
-	QObject::connect (_control_sustain, SIGNAL (changed (int)), this, SLOT (update_plot()));
-	QObject::connect (_control_sustain_hold, SIGNAL (changed (int)), this, SLOT (update_plot()));
-	QObject::connect (_control_release, SIGNAL (changed (int)), this, SLOT (update_plot()));
+	// Some knobs need curve setup:
+	Haruhi::Knob* curved_knobs[] = {
+		_knob_delay, _knob_attack, _knob_attack_hold,
+		_knob_decay, _knob_sustain_hold, _knob_release
+	};
+	for (Haruhi::Knob** k = curved_knobs; k != curved_knobs + sizeof (curved_knobs) / sizeof (*curved_knobs); ++k)
+	{
+		(*k)->controller_proxy().config().curve = 1.0;
+		(*k)->controller_proxy().apply_config();
+	}
+
+	// All knobs have set unit_bay:
+	Haruhi::Knob* all_knobs[] = {
+		_knob_delay, _knob_attack, _knob_attack_hold,
+		_knob_decay, _knob_sustain, _knob_sustain_hold, _knob_release
+	};
+	for (Haruhi::Knob** k = all_knobs; k != all_knobs + sizeof (all_knobs) / sizeof (*all_knobs); ++k)
+	{
+		(*k)->set_unit_bay (_mikuru->unit_bay());
+		QObject::connect (*k, SIGNAL (changed (int)), this, SLOT (update_plot()));
+	}
 }
 
 
@@ -182,12 +159,12 @@ ADSR::create_widgets (QWidget* knobs_panel)
 	plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_plot = new Haruhi::EnvelopePlot (plot_frame);
-	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::spacing);
+	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::Spacing);
 	plot_frame_layout->addWidget (_plot);
 
 	Q3GroupBox* grid1 = new Q3GroupBox (2, Qt::Horizontal, "", this);
 	grid1->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
-	grid1->setInsideMargin (3 * Config::margin);
+	grid1->setInsideMargin (3 * Config::Margin);
 
 	_enabled = new QCheckBox ("Enabled", grid1);
 	_enabled->setChecked (p.enabled);
@@ -225,22 +202,22 @@ ADSR::create_widgets (QWidget* knobs_panel)
 	_mode->setCurrentItem (Params::ADSR::Polyphonic);
 	QObject::connect (_mode, SIGNAL (activated (int)), this, SLOT (update_params()));
 
-	QVBoxLayout* v1 = new QVBoxLayout (knobs_panel, 0, Config::spacing);
-	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::spacing);
-	h1->addWidget (_control_delay);
-	h1->addWidget (_control_attack);
-	h1->addWidget (_control_decay);
-	h1->addWidget (_control_sustain);
-	h1->addWidget (_control_release);
-	QHBoxLayout* h2 = new QHBoxLayout (v1, Config::spacing);
-	h2->addWidget (_control_attack_hold);
-	h2->addWidget (_control_sustain_hold);
+	QVBoxLayout* v1 = new QVBoxLayout (knobs_panel, 0, Config::Spacing);
+	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
+	h1->addWidget (_knob_delay);
+	h1->addWidget (_knob_attack);
+	h1->addWidget (_knob_decay);
+	h1->addWidget (_knob_sustain);
+	h1->addWidget (_knob_release);
+	QHBoxLayout* h2 = new QHBoxLayout (v1, Config::Spacing);
+	h2->addWidget (_knob_attack_hold);
+	h2->addWidget (_knob_sustain_hold);
 	h2->addWidget (plot_frame);
 	v1->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
-	QHBoxLayout* h3 = new QHBoxLayout (this, Config::margin, Config::spacing);
+	QHBoxLayout* h3 = new QHBoxLayout (this, Config::Margin, Config::Spacing);
 	h3->addWidget (knobs_panel);
-	QVBoxLayout* v2 = new QVBoxLayout (h3, Config::spacing);
+	QVBoxLayout* v2 = new QVBoxLayout (h3, Config::Spacing);
 	v2->addWidget (grid1);
 	v2->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }
@@ -304,20 +281,20 @@ ADSR::process()
 	_port_release->sync();
 
 	// Process ports events:
-	_proxy_delay->process_events();
-	_proxy_attack->process_events();
-	_proxy_attack_hold->process_events();
-	_proxy_decay->process_events();
-	_proxy_sustain->process_events();
-	_proxy_sustain_hold->process_events();
-	_proxy_release->process_events();
+	_knob_delay->controller_proxy().process_events();
+	_knob_attack->controller_proxy().process_events();
+	_knob_attack_hold->controller_proxy().process_events();
+	_knob_decay->controller_proxy().process_events();
+	_knob_sustain->controller_proxy().process_events();
+	_knob_sustain_hold->controller_proxy().process_events();
+	_knob_release->controller_proxy().process_events();
 
 	// Nothing to process?
 	if (_adsrs.empty())
 		return;
 
-	Core::Timestamp t = _mikuru->graph()->timestamp();
-	Core::Sample v;
+	Haruhi::Timestamp t = _mikuru->graph()->timestamp();
+	Haruhi::Sample v;
 	const bool direct_adsr = _params.direct_adsr.get();
 
 	// Assuming that output ports are cleared by Mikuru on beginnig of each
@@ -344,10 +321,10 @@ ADSR::process()
 			if (direct_adsr)
 				voice->voice_manager()->set_voice_param (voice->voice_id(), &Params::Voice::adsr, Params::Voice::AdsrMin);
 			// Mute sound completely:
-			_port_output->event_buffer()->push (new Core::VoiceControllerEvent (t, voice->voice_id(), 0.0f));
+			_port_output->event_buffer()->push (new Haruhi::VoiceControllerEvent (t, voice->voice_id(), 0.0f));
 			// Don't call VoiceManager#voice_event() directly, because it will callback our methods. Use buffer.
 			if (direct_adsr)
-				voice->voice_manager()->buffer_voice_event (new Core::VoiceEvent (t, Core::OmniKey, voice->voice_id(), Core::VoiceEvent::Drop, 0.0, 0.0));
+				voice->voice_manager()->buffer_voice_event (new Haruhi::VoiceEvent (t, Haruhi::OmniKey, voice->voice_id(), Haruhi::VoiceEvent::Drop, 0.0, 0.0));
 		}
 		else
 		{
@@ -355,7 +332,7 @@ ADSR::process()
 			if (direct_adsr)
 				voice->voice_manager()->set_voice_param (voice->voice_id(), &Params::Voice::adsr, Params::Voice::AdsrMax * v);
 			// Normal event on output:
-			_port_output->event_buffer()->push (new Core::VoiceControllerEvent (t, voice->voice_id(), v));
+			_port_output->event_buffer()->push (new Haruhi::VoiceControllerEvent (t, voice->voice_id(), v));
 		}
 	}
 }

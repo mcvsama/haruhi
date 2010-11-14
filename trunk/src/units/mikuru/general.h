@@ -24,7 +24,6 @@
 #include <QtGui/QCheckBox>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/knob.h>
 
@@ -37,9 +36,6 @@
 class Mikuru;
 
 namespace MikuruPrivate {
-
-namespace Core = Haruhi::Core;
-
 
 class General: public QWidget
 {
@@ -102,40 +98,33 @@ class General: public QWidget
 	update_threads (int threads);
 
   private:
-	Mikuru*						_mikuru;
-	Params::General				_params;
-	bool						_loading_params;
+	Mikuru*				_mikuru;
+	Params::General		_params;
+	bool				_loading_params;
 
-	bool						_dont_notify_threads_number;
-	QSpinBox*					_threads_number;
-	QSpinBox*					_polyphony;
-	QCheckBox*					_enable_audio_input;
+	bool				_dont_notify_threads_number;
+	QSpinBox*			_threads_number;
+	QSpinBox*			_polyphony;
+	QCheckBox*			_enable_audio_input;
 
 	// Ports:
-	Core::EventPort*			_port_volume;
-	Core::EventPort*			_port_detune;
-	Core::EventPort*			_port_panorama;
-	Core::EventPort*			_port_stereo_width;
-	Core::EventPort*			_port_input_volume;
-	Core::EventPort*			_port_pitchbend;
-	Core::EventPort*			_port_amplitude;
-	Core::EventPort*			_port_frequency;
-
-	// Controller proxies:
-	Haruhi::ControllerProxy*	_proxy_volume;
-	Haruhi::ControllerProxy*	_proxy_detune;
-	Haruhi::ControllerProxy*	_proxy_panorama;
-	Haruhi::ControllerProxy*	_proxy_stereo_width;
-	Haruhi::ControllerProxy*	_proxy_input_volume;
+	Haruhi::EventPort*	_port_volume;
+	Haruhi::EventPort*	_port_detune;
+	Haruhi::EventPort*	_port_panorama;
+	Haruhi::EventPort*	_port_stereo_width;
+	Haruhi::EventPort*	_port_input_volume;
+	Haruhi::EventPort*	_port_pitchbend;
+	Haruhi::EventPort*	_port_amplitude;
+	Haruhi::EventPort*	_port_frequency;
 
 	// Knobs:
-	Haruhi::Knob*				_control_volume;
-	Haruhi::Knob*				_control_detune;
-	Haruhi::Knob*				_control_panorama;
-	Haruhi::Knob*				_control_stereo_width;
-	Haruhi::Knob*				_control_input_volume;
+	Haruhi::Knob*		_knob_volume;
+	Haruhi::Knob*		_knob_detune;
+	Haruhi::Knob*		_knob_panorama;
+	Haruhi::Knob*		_knob_stereo_width;
+	Haruhi::Knob*		_knob_input_volume;
 
-	Envelopes*					_envelopes;
+	Envelopes*			_envelopes;
 };
 
 } // namespace MikuruPrivate

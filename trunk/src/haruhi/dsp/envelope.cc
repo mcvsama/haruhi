@@ -15,6 +15,7 @@
 #include <cstddef>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/numeric.h>
 
 // Local:
@@ -69,9 +70,9 @@ Envelope::finished() const
 
 
 void
-Envelope::fill (Core::Sample* begin, Core::Sample* end)
+Envelope::fill (Sample* begin, Sample* end)
 {
-	Core::Sample* cur = begin;
+	Sample* cur = begin;
 	while (cur != end)
 	{
 		if (_sustain)

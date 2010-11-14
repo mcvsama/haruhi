@@ -27,7 +27,7 @@ HorizontalLine::HorizontalLine (QWidget* parent):
 	QFrame (parent, "<hr>", 0)
 {
 	setFrameStyle (QFrame::Sunken + QFrame::HLine);
-	setFixedHeight (2 * Config::spacing + 2);
+	setFixedHeight (2 * Config::Spacing + 2);
 }
 
 
@@ -42,7 +42,7 @@ StyledLabel::StyledLabel (QString const& text, QWidget* parent):
 	setForegroundRole (QPalette::Text);
 	setBackgroundRole (QPalette::Dark);
 	setFixedHeight (font.pointSize() + 10);
-	setContentsMargins (2 * Config::margin, Config::margin + 1, 2 * Config::margin, Config::margin);
+	setContentsMargins (2 * Config::Margin, Config::Margin + 1, 2 * Config::Margin, Config::Margin);
 }
 
 

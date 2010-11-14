@@ -24,7 +24,7 @@
 #include <Qt3Support/Q3GroupBox>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "preset_editor.h"
@@ -60,14 +60,14 @@ PresetEditor::PresetEditor (QWidget* parent):
 	new QLabel ("Version:", grid);
 	_version = new QLineEdit (grid);
 
-	_update_details_button = new QPushButton (Config::Icons16::save(), "Update de&tails", this);
+	_update_details_button = new QPushButton (Resources::Icons16::save(), "Update de&tails", this);
 	_update_details_button->setAccel (Qt::CTRL + Qt::Key_T);
 	QToolTip::add (_update_details_button, "Saves metadata without current patch");
 	QObject::connect (_update_details_button, SIGNAL (clicked()), this, SLOT (update_details()));
 
-	QVBoxLayout* v1 = new QVBoxLayout (this, 0, Config::spacing);
+	QVBoxLayout* v1 = new QVBoxLayout (this, 0, Config::Spacing);
 	v1->addWidget (grid);
-	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::spacing);
+	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
 	h1->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 	h1->addWidget (_update_details_button);
 	v1->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));

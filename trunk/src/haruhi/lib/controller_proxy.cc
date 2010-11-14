@@ -15,8 +15,8 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/core/event.h>
-#include <haruhi/core/event_port.h>
+#include <haruhi/graph/event.h>
+#include <haruhi/graph/event_port.h>
 #include <haruhi/utility/numeric.h>
 
 // Local:
@@ -71,7 +71,7 @@ ControllerProxy::Config::decurve (int in) const
 }
 
 
-ControllerProxy::ControllerProxy (Core::EventPort* event_port, ControllerParam* param):
+ControllerProxy::ControllerProxy (EventPort* event_port, ControllerParam* param):
 	_config (param->minimum(), param->maximum()),
 	_param (param),
 	_event_port (event_port),
@@ -91,18 +91,18 @@ ControllerProxy::apply_config()
 void
 ControllerProxy::process_events()
 {
-	Core::EventBuffer* buffer = _event_port->event_buffer();
+	EventBuffer* buffer = _event_port->event_buffer();
 
 	if (!buffer->events().empty())
 	{
 		// Use last controller value from buffer:
-		for (Core::EventBuffer::EventsMultiset::reverse_iterator e = buffer->events().rbegin(); e != buffer->events().rend(); ++e)
+		for (EventBuffer::EventsMultiset::reverse_iterator e = buffer->events().rbegin(); e != buffer->events().rend(); ++e)
 		{
 			if (e != buffer->events().rend())
 			{
-				if ((*e)->event_type() == Core::Event::ControllerEventType)
+				if ((*e)->event_type() == Event::ControllerEventType)
 				{
-					process_event (static_cast<Core::ControllerEvent const*> (e->get()));
+					process_event (static_cast<ControllerEvent const*> (e->get()));
 					break;
 				}
 			}
@@ -112,7 +112,7 @@ ControllerProxy::process_events()
 
 
 void
-ControllerProxy::process_event (Core::ControllerEvent const* event)
+ControllerProxy::process_event (ControllerEvent const* event)
 {
 	// Update parameter:
 	param()->set (_config.forward (renormalize (event->value(), 0.0f, 1.0f, 1.0f * _config.hard_limit_min, 1.0f * _config.hard_limit_max)));

@@ -11,19 +11,15 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__UTILITY__MIDI__FUNCTIONS_H__INCLUDED
-#define HARUHI__UTILITY__MIDI__FUNCTIONS_H__INCLUDED
+#ifndef HARUHI__UTILITY__MIDI__MIDI_H__INCLUDED
+#define HARUHI__UTILITY__MIDI__MIDI_H__INCLUDED
 
 // Standard:
 #include <string>
 #include <cstddef>
 
-// Local:
-#include <core/event/buffer_event.h>
 
-
-namespace Core {
-namespace Event {
+namespace Haruhi {
 namespace MIDI {
 
 class Event
@@ -203,8 +199,7 @@ class PitchbendEvent: public ChannelEvent
 };
 
 } // namespace MIDI
-} // namespace Event
-} // namespace Core
+} // namespace Haruhi
 
 #endif
 

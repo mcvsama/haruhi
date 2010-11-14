@@ -18,11 +18,11 @@
 #include <set>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
-#include <haruhi/core/audio_buffer.h>
+#include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/functions.h>
 
 // Local:
+#include "types.h"
 #include "mikuru.h"
 #include "voice.h"
 #include "oscillator.h"
@@ -38,7 +38,7 @@
 
 namespace MikuruPrivate {
 
-Voice::Voice (VoiceManager* voice_manager, SynthThread* thread, Core::KeyID key_id, Core::VoiceID voice_id, Core::Sample frequency, Core::Sample amplitude, Core::Timestamp timestamp):
+Voice::Voice (VoiceManager* voice_manager, SynthThread* thread, Haruhi::KeyID key_id, Haruhi::VoiceID voice_id, Sample frequency, Sample amplitude, Haruhi::Timestamp timestamp):
 	_mikuru (voice_manager->part()->mikuru()),
 	_params (*voice_manager->part()->oscillator()->voice_params()),
 	_part (voice_manager->part()),
@@ -115,7 +115,7 @@ Voice::set_thread (SynthThread* thread)
 
 
 void
-Voice::set_frequency (Core::Sample frequency)
+Voice::set_frequency (Sample frequency)
 {
 	_target_frequency = frequency;
 	update_glide_parameters();
@@ -123,7 +123,7 @@ Voice::set_frequency (Core::Sample frequency)
 
 
 void
-Voice::mixin (Core::AudioBuffer* output1, Core::AudioBuffer* output2)
+Voice::mixin (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
 {
 	process_frequency();
 	process_amplitude();
@@ -142,7 +142,7 @@ Voice::mixin (Core::AudioBuffer* output1, Core::AudioBuffer* output2)
 
 	_double_filter.configure (static_cast<DoubleFilter::Configuration> (static_cast<int> (_part->filters()->params()->filter_configuration.get())), &_filter1_params, &_filter2_params);
 	bool filtered = _double_filter.process (_commons->oscillator_buffer, _commons->filter_buffer1, _commons->filter_buffer2, _commons->output_buffer);
-	Core::AudioBuffer& filters_output = filtered ? _commons->output_buffer : _commons->oscillator_buffer;
+	Haruhi::AudioBuffer& filters_output = filtered ? _commons->output_buffer : _commons->oscillator_buffer;
 
 	// Attacking or dropping? Multiply samples.
 	if (_attack_sample < _attack_samples)
@@ -230,7 +230,7 @@ Voice::process_frequency()
 	// Glide:
 	if (_frequency_change != 1.0f)
 	{
-		for (Core::Sample *s = _commons->frequency_buffer.begin(), *e = _commons->frequency_buffer.end(); s != e; ++s)
+		for (Sample *s = _commons->frequency_buffer.begin(), *e = _commons->frequency_buffer.end(); s != e; ++s)
 		{
 			if ((_frequency_change > 1.0f && _frequency >= _target_frequency) || (_frequency_change < 1.0f && _frequency <= _target_frequency))
 				_frequency_change = 1.0f;
@@ -270,8 +270,8 @@ Voice::process_frequency()
 		_smoother_frequency.set_value (frq_mod);
 		_smoother_frequency.fill (_commons->temp1.begin(), _commons->temp1.end());
 
-		Core::Sample* tb = _commons->temp1.begin();
-		Core::Sample* fb = _commons->frequency_buffer.begin();
+		Sample* tb = _commons->temp1.begin();
+		Sample* fb = _commons->frequency_buffer.begin();
 		float range = 1.0f * oscillator_params->frequency_mod_range.get();
 
 		for (std::size_t i = 0; i < buffer_size; ++i)
@@ -279,7 +279,7 @@ Voice::process_frequency()
 	}
 
 	// Multiply buffer by static frequency value:
-	for (Core::Sample *s = _commons->frequency_buffer.begin(), *e = _commons->frequency_buffer.end(); s != e; ++s)
+	for (Sample *s = _commons->frequency_buffer.begin(), *e = _commons->frequency_buffer.end(); s != e; ++s)
 		*s *= frequency;
 }
 
@@ -301,7 +301,7 @@ Voice::process_amplitude()
 	_smoother_amplitude.set_value (oscillator_params->volume.to_f() * _params.amplitude.to_f() * _params.adsr.to_f());
 	_smoother_amplitude.multiply (_commons->amplitude_buffer.begin(), _commons->amplitude_buffer.end());
 
-	for (Core::Sample *s = _commons->amplitude_buffer.begin(), *e = _commons->amplitude_buffer.end(); s != e; ++s)
+	for (Sample *s = _commons->amplitude_buffer.begin(), *e = _commons->amplitude_buffer.end(); s != e; ++s)
 		*s = std::pow (*s, M_E);
 }
 
@@ -322,7 +322,7 @@ Voice::update_glide_parameters()
 		else
 		{
 			// 2 octaves per portamento time:
-			Core::Sample difference = _target_frequency - source_frequency > 0 ? 2.0f : 0.5f;
+			Sample difference = _target_frequency - source_frequency > 0 ? 2.0f : 0.5f;
 			_frequency_change = std::pow (difference,
 										  1.0f / (1.0f / Params::Oscillator::PortamentoTimeDenominator * portamento_time * _mikuru->graph()->sample_rate()));
 		}

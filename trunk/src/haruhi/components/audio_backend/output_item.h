@@ -21,6 +21,7 @@
 #include <cstddef>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/dsp/smoother.h>
 
@@ -55,7 +56,7 @@ class OutputItem: public PortItem
 	 * Attenuates buffer using internal smoother.
 	 */
 	void
-	attenuate (Core::Sample value);
+	attenuate (Sample value);
 
   private:
 	DSP::Smoother	_smoother;

@@ -18,26 +18,34 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/periodic_updater.h>
-#include <haruhi/core/event.h>
-#include <haruhi/core/event_port.h>
+#include <haruhi/graph/event.h>
+#include <haruhi/graph/event_port.h>
 #include <haruhi/lib/controller_param.h>
+#include <haruhi/session/periodic_updater.h>
 #include <haruhi/utility/saveable_state.h>
 
 
 namespace Haruhi {
 
 /**
- * Proxy between event port and int parameter.
- * Also handles UI widget.
+ * Proxy between event port, ui widget and controller parameter.
+ *
+ * When there is event coming from event port, controlled parameter is
+ * updated right away, and UI widget is updated from UI thread with PeriodicUpdater
+ * (that means it will be updated on next PeriodicUpdater round).
+ * When UI widget sends change events, controlled parameter is updated right away.
  */
 class ControllerProxy: public SaveableState
 {
   public:
 	/**
 	 * Client class. Knobs and other controls
-	 * must derive this class in order to be able to be paired
+	 * must inherit this class in order to be able to be paired
 	 * with ControllerProxy.
+	 *
+	 * This means that class inheriting Widget effectively
+	 * become PeriodicUpdater's receiver and will periodically
+	 * receive periodic_update() events from UI thread.
 	 */
 	class Widget: public PeriodicUpdater::Receiver
 	{
@@ -80,19 +88,23 @@ class ControllerProxy: public SaveableState
 	 * \param	param is controller param controlled by this proxy.
 	 * 			Proxy does not take ownership of the param.
 	 */
-	ControllerProxy (Core::EventPort* event_port, ControllerParam* param);
+	ControllerProxy (EventPort* event_port, ControllerParam* param);
 
-	Core::EventPort*
+	EventPort*
 	event_port() const { return _event_port; }
 
 	ControllerParam*
 	param() const { return _param; }
 
-	Config*
-	config() { return &_config; }
+	Config&
+	config() { return _config; }
+
+	Config const&
+	config() const { return _config; }
 
 	/**
 	 * Assigns Widget to be notified of parameter updates.
+	 * \entry	any thread
 	 */
 	void
 	set_widget (Widget* widget) { _widget = widget; }
@@ -107,16 +119,17 @@ class ControllerProxy: public SaveableState
 
 	/**
 	 * Processes events from assigned EventPort.
-	 * Calls process_event() for the last controller value in the buffer.
+	 * Calls process_event() for the most recent controller value in the buffer.
 	 */
 	void
 	process_events();
 
 	/**
-	 * Processes given event.
+	 * Processes given event - propagates changes to controlled
+	 * parameter and requests periodic-update on widget.
 	 */
 	void
-	process_event (Core::ControllerEvent const*);
+	process_event (ControllerEvent const*);
 
 	/*
 	 * SaveableState API
@@ -132,7 +145,7 @@ class ControllerProxy: public SaveableState
   private:
 	Config				_config;
 	ControllerParam*	_param;
-	Core::EventPort*	_event_port;
+	EventPort*			_event_port;
 	Widget*				_widget;
 };
 

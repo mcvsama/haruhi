@@ -27,9 +27,8 @@
 #include <Qt3Support/Q3ScrollView>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
-#include <haruhi/core/port_group.h>
-#include <haruhi/core/event_port.h>
+#include <haruhi/graph/port_group.h>
+#include <haruhi/graph/event_port.h>
 #include <haruhi/dsp/wavetable.h>
 #include <haruhi/dsp/functions.h>
 #include <haruhi/dsp/harmonics_wave.h>
@@ -53,7 +52,6 @@ namespace Haruhi {
 
 namespace MikuruPrivate {
 
-namespace Core = Haruhi::Core;
 namespace DSP = Haruhi::DSP;
 class Part;
 class WaveComputer;
@@ -130,7 +128,7 @@ class Waveform:
 	 * \param	port_prefix is prefix added to all Waveform port names.
 	 * \entry	Only UI thread.
 	 */
-	Waveform (Part* part, Core::PortGroup* port_group, QString const& port_prefix, Mikuru* mikuru, QWidget* parent);
+	Waveform (Part* part, Haruhi::PortGroup* port_group, QString const& port_prefix, Mikuru* mikuru, QWidget* parent);
 
 	~Waveform();
 
@@ -250,22 +248,16 @@ class Waveform:
 	Shared<DSP::Wave>			_plotters_wave;
 
 	// Ports:
-	Core::EventPort*			_port_wave_shape;
-	Core::EventPort*			_port_modulator_amplitude;
-	Core::EventPort*			_port_modulator_index;
-	Core::EventPort*			_port_modulator_shape;
-
-	// Proxies:
-	Haruhi::ControllerProxy*	_proxy_wave_shape;
-	Haruhi::ControllerProxy*	_proxy_modulator_amplitude;
-	Haruhi::ControllerProxy*	_proxy_modulator_index;
-	Haruhi::ControllerProxy*	_proxy_modulator_shape;
+	Haruhi::EventPort*			_port_wave_shape;
+	Haruhi::EventPort*			_port_modulator_amplitude;
+	Haruhi::EventPort*			_port_modulator_index;
+	Haruhi::EventPort*			_port_modulator_shape;
 
 	// Widgets and knobs:
-	Haruhi::Knob*				_control_wave_shape;
-	Haruhi::Knob*				_control_modulator_amplitude;
-	Haruhi::Knob*				_control_modulator_index;
-	Haruhi::Knob*				_control_modulator_shape;
+	Haruhi::Knob*				_knob_wave_shape;
+	Haruhi::Knob*				_knob_modulator_amplitude;
+	Haruhi::Knob*				_knob_modulator_index;
+	Haruhi::Knob*				_knob_modulator_shape;
 	QWidget*					_panel;
 	Haruhi::WavePlot*			_base_wave_plot;
 	Haruhi::WavePlot*			_final_wave_plot;

@@ -21,7 +21,7 @@
 #include <Qt3Support/Q3ListView>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "category_item.h"
@@ -63,7 +63,7 @@ PresetItem::Meta::load_state (QDomElement const& element)
 PresetItem::PresetItem (CategoryItem* parent):
 	Q3ListViewItem (parent)
 {
-	setPixmap (0, Config::Icons16::preset());
+	setPixmap (0, Resources::Icons16::preset());
 	setDragEnabled (true);
 }
 

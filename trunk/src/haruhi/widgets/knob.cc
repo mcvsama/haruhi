@@ -30,10 +30,10 @@
 #include <QtGui/QMenu>
 
 // Haruhi:
-#include <haruhi/config.h>
-#include <haruhi/haruhi.h>
-#include <haruhi/session.h>
-#include <haruhi/core/event_buffer.h>
+#include <haruhi/config/all.h>
+#include <haruhi/application/haruhi.h>
+#include <haruhi/graph/event_buffer.h>
+#include <haruhi/session/session.h>
 #include <haruhi/utility/atomic.h>
 #include <haruhi/utility/numeric.h>
 
@@ -52,40 +52,40 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 	Knob::SpinBox* s = knob->_spin_box;
-	ControllerProxy::Config* c = _knob->controller_proxy()->config();
+	ControllerProxy::Config& c = _knob->controller_proxy().config();
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::dialog_margin, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::DialogMargin, Config::Spacing);
 	layout->setResizeMode (QLayout::Fixed);
 
-	QGridLayout* grid_layout = new QGridLayout (layout, 2, 2, Config::spacing);
-	layout->addItem (new QSpacerItem (0, Config::spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
-	QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::spacing);
+	QGridLayout* grid_layout = new QGridLayout (layout, 2, 2, Config::Spacing);
+	layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
+	QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::Spacing);
 
 	QLabel* curve_label = new QLabel ("Response curve:", this);
 	Knob::SpinBox* curve_spinbox = new Knob::SpinBox (this, _knob, -1000, 1000, -1.0, 1.0, 100, 1);
 	curve_spinbox->set_detached (true);
-	curve_spinbox->setValue (c->curve * 1000.0);
+	curve_spinbox->setValue (c.curve * 1000.0);
 	curve_spinbox->setFixedWidth (80);
 	_curve_spinbox = curve_spinbox;
 
 	QLabel* range_min_label = new QLabel ("Range minimum:", this);
-	Knob::SpinBox* user_limit_min_spinbox = new Knob::SpinBox (this, _knob, c->hard_limit_min, c->hard_limit_max, s->show_min(), s->show_max(), s->singleStep(), s->decimals());
+	Knob::SpinBox* user_limit_min_spinbox = new Knob::SpinBox (this, _knob, c.hard_limit_min, c.hard_limit_max, s->show_min(), s->show_max(), s->singleStep(), s->decimals());
 	user_limit_min_spinbox->set_detached (true);
-	user_limit_min_spinbox->setValue (c->user_limit_min);
+	user_limit_min_spinbox->setValue (c.user_limit_min);
 	user_limit_min_spinbox->setFixedWidth (80);
 	QObject::connect (user_limit_min_spinbox, SIGNAL (valueChanged (int)), this, SLOT (limit_min_updated()));
 	_user_limit_min_spinbox = user_limit_min_spinbox;
 
 	QLabel* range_max_label = new QLabel ("Range maximum:", this);
-	Knob::SpinBox* user_limit_max_spinbox = new Knob::SpinBox (this, _knob, c->hard_limit_min, c->hard_limit_max, s->show_min(), s->show_max(), s->singleStep(), s->decimals());
+	Knob::SpinBox* user_limit_max_spinbox = new Knob::SpinBox (this, _knob, c.hard_limit_min, c.hard_limit_max, s->show_min(), s->show_max(), s->singleStep(), s->decimals());
 	user_limit_max_spinbox->set_detached (true);
-	user_limit_max_spinbox->setValue (c->user_limit_max);
+	user_limit_max_spinbox->setValue (c.user_limit_max);
 	user_limit_max_spinbox->setFixedWidth (80);
 	QObject::connect (user_limit_max_spinbox, SIGNAL (valueChanged (int)), this, SLOT (limit_max_updated()));
 	_user_limit_max_spinbox = user_limit_max_spinbox;
 
 	QLabel* smoothing_label = 0;
-	if (_knob->controller_proxy()->param()->smoothing_enabled())
+	if (_knob->param()->smoothing_enabled())
 	{
 		smoothing_label = new QLabel ("Smoothing:", this);
 		_smoothing_spinbox = new QSpinBox (this);
@@ -95,7 +95,7 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 		_smoothing_spinbox->setSuffix (" ms");
 		_smoothing_spinbox->setSpecialValueText ("Off");
 		_smoothing_spinbox->setMinimumWidth (65);
-		_smoothing_spinbox->setValue (_knob->controller_proxy()->param()->smoothing());
+		_smoothing_spinbox->setValue (_knob->param()->smoothing());
 		_smoothing_spinbox->setFixedWidth (80);
 	}
 
@@ -105,7 +105,7 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	grid_layout->addWidget (_curve_spinbox, 0, 1, Qt::AlignRight);
 	grid_layout->addWidget (_user_limit_min_spinbox, 1, 1, Qt::AlignRight);
 	grid_layout->addWidget (_user_limit_max_spinbox, 2, 1, Qt::AlignRight);
-	if (_knob->controller_proxy()->param()->smoothing_enabled())
+	if (_knob->param()->smoothing_enabled())
 	{
 		grid_layout->addWidget (smoothing_label, 3, 0, Qt::AlignLeft);
 		grid_layout->addWidget (_smoothing_spinbox, 3, 1, Qt::AlignRight);
@@ -131,13 +131,13 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 void
 KnobProperties::apply()
 {
-	int value = _knob->controller_proxy()->param()->get();
-	_knob->controller_proxy()->config()->curve = _curve_spinbox->value() / 1000.0;
-	_knob->controller_proxy()->config()->user_limit_min = _user_limit_min_spinbox->value();
-	_knob->controller_proxy()->config()->user_limit_max = _user_limit_max_spinbox->value();
-	_knob->controller_proxy()->param()->set (value);
+	int value = _knob->param()->get();
+	_knob->controller_proxy().config().curve = _curve_spinbox->value() / 1000.0;
+	_knob->controller_proxy().config().user_limit_min = _user_limit_min_spinbox->value();
+	_knob->controller_proxy().config().user_limit_max = _user_limit_max_spinbox->value();
+	_knob->param()->set (value);
 	if (_smoothing_spinbox)
-		_knob->controller_proxy()->param()->set_smoothing (_smoothing_spinbox->value());
+		_knob->param()->set_smoothing (_smoothing_spinbox->value());
 }
 
 
@@ -195,8 +195,8 @@ Knob::SpinBox::textFromValue (int value) const
 {
 	if (_volume_scale)
 	{
-		int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy()->config()->hard_limit_min;
-		int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy()->config()->hard_limit_max;
+		int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy().config().hard_limit_min;
+		int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy().config().hard_limit_max;
 		double x = static_cast<double> (value - hard_limit_min) / static_cast<double> (hard_limit_max - hard_limit_min);
 		return QString ("%1").arg (20.0 * std::log10 (std::pow (x, _volume_scale_exp)), 0, 'f', 1);
 	}
@@ -210,8 +210,8 @@ Knob::SpinBox::valueFromText (QString const& string) const
 {
 	if (_volume_scale)
 	{
-		int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy()->config()->hard_limit_min;
-		int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy()->config()->hard_limit_max;
+		int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy().config().hard_limit_min;
+		int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy().config().hard_limit_max;
 		return std::pow (std::pow (10.0, string.toFloat() / 20.0), 1.0 / _volume_scale_exp) * static_cast<double> (hard_limit_max - hard_limit_min);
 	}
 	else
@@ -222,8 +222,8 @@ Knob::SpinBox::valueFromText (QString const& string) const
 float
 Knob::SpinBox::int_to_float (int x) const
 {
-	int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy()->config()->hard_limit_min;
-	int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy()->config()->hard_limit_max;
+	int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy().config().hard_limit_min;
+	int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy().config().hard_limit_max;
 	float f = renormalize (x, hard_limit_min, hard_limit_max, _show_min, _show_max);
 	if (f < 0.0 && f > 0.5 * -std::pow (0.1, _decimals))
 		f = 0.0;
@@ -234,35 +234,36 @@ Knob::SpinBox::int_to_float (int x) const
 int
 Knob::SpinBox::float_to_int (float y) const
 {
-	int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy()->config()->hard_limit_min;
-	int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy()->config()->hard_limit_max;
+	int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy().config().hard_limit_min;
+	int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy().config().hard_limit_max;
 	return renormalize (y, _show_min, _show_max, hard_limit_min, hard_limit_max);
 }
 
 
-Knob::Knob (QWidget* parent, ControllerProxy* controller_proxy_, QString const& label, float show_min, float show_max, int step, int decimals):
+Knob::Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param,
+			QString const& label, float show_min, float show_max, int step, int decimals):
 	QFrame (parent),
-	Controller (controller_proxy_),
+	Controller (event_port, controller_param),
 	_prevent_recursion (false),
 	_connect_signal_mapper (0),
 	_disconnect_signal_mapper (0)
 {
-	int const hard_limit_min = controller_proxy()->config()->hard_limit_min;
-	int const hard_limit_max = controller_proxy()->config()->hard_limit_max;
-	int const user_limit_min = controller_proxy()->config()->user_limit_min;
-	int const user_limit_max = controller_proxy()->config()->user_limit_max;
+	int const hard_limit_min = controller_proxy().config().hard_limit_min;
+	int const hard_limit_max = controller_proxy().config().hard_limit_max;
+	int const user_limit_min = controller_proxy().config().user_limit_min;
+	int const user_limit_max = controller_proxy().config().user_limit_max;
 
 	setFrameStyle (QFrame::StyledPanel | QFrame::Raised);
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 	_label = new QLabel (label, this);
-	_dial_control = new DialControl (this, hard_limit_min, hard_limit_max, controller_proxy()->config()->reverse (controller_proxy()->param()->get()));
+	_dial_control = new DialControl (this, hard_limit_min, hard_limit_max, controller_proxy().config().reverse (controller_proxy().param()->get()));
 	_spin_box = new SpinBox (this, this, user_limit_min, user_limit_max, show_min, show_max, step, decimals);
 	_label->setBuddy (_spin_box);
 	_context_menu = new QMenu (this);
 	_std_text_color = _label->paletteForegroundColor();
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing + 2);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing + 2);
 	QHBoxLayout* label_layout = new QHBoxLayout (layout, 0);
 	QHBoxLayout* dial_layout = new QHBoxLayout (layout, 0);
 
@@ -279,23 +280,14 @@ Knob::Knob (QWidget* parent, ControllerProxy* controller_proxy_, QString const& 
 	QObject::connect (_dial_control, SIGNAL (valueChanged (int)), this, SLOT (dial_changed (int)));
 	QObject::connect (_spin_box, SIGNAL (valueChanged (int)), this, SLOT (spin_changed (int)));
 
-	controller_proxy()->set_widget (this);
-	schedule_for_update();
-}
-
-
-Knob::~Knob()
-{
-	controller_proxy()->set_widget (0);
-	forget_about_update();
 }
 
 
 void
 Knob::read_config()
 {
-	_spin_box->setMinimum (controller_proxy()->config()->user_limit_min);
-	_spin_box->setMaximum (controller_proxy()->config()->user_limit_max);
+	_spin_box->setMinimum (controller_proxy().config().user_limit_min);
+	_spin_box->setMaximum (controller_proxy().config().user_limit_max);
 	schedule_for_update();
 }
 
@@ -303,9 +295,9 @@ Knob::read_config()
 void
 Knob::read()
 {
-	int value = controller_proxy()->param()->get();
+	int value = controller_proxy().param()->get();
 	_prevent_recursion = true;
-	_dial_control->setValue (controller_proxy()->config()->reverse (value));
+	_dial_control->setValue (controller_proxy().config().reverse (value));
 	_spin_box->setValue (value);
 	emit changed (value);
 	_prevent_recursion = false;
@@ -323,7 +315,7 @@ Knob::periodic_update()
 void
 Knob::reset()
 {
-	controller_proxy()->param()->reset();
+	controller_proxy().param()->reset();
 	schedule_for_update();
 }
 
@@ -368,23 +360,23 @@ Knob::create_context_menu()
 	_disconnect_signal_mapper = new QSignalMapper (this);
 	QObject::connect (_disconnect_signal_mapper, SIGNAL (mapped (int)), this, SLOT (disconnect_port (int)));
 
-	QPixmap pixmap_for_unit (Config::Icons16::unit());
-	QPixmap pixmap_for_port (Config::Icons16::event_output_port());
-	QPixmap pixmap_for_port_group (Config::Icons16::port_group());
+	QPixmap pixmap_for_unit (Resources::Icons16::unit());
+	QPixmap pixmap_for_port (Resources::Icons16::event_output_port());
+	QPixmap pixmap_for_port_group (Resources::Icons16::port_group());
 
 	_context_menu->addAction ("&Reset", this, SLOT (reset()));
 	if (learning())
-		_context_menu->addAction (Config::Icons16::colorpicker(), "Stop learning", this, SLOT (stop_learning_slot()));
+		_context_menu->addAction (Resources::Icons16::colorpicker(), "Stop learning", this, SLOT (stop_learning_slot()));
 	else
-		_context_menu->addAction (Config::Icons16::colorpicker(), "&Learn", this, SLOT (start_learning_slot()));
-	_context_menu->addAction (Config::Icons16::configure(), "Con&figure", this, SLOT (configure()));
+		_context_menu->addAction (Resources::Icons16::colorpicker(), "&Learn", this, SLOT (start_learning_slot()));
+	_context_menu->addAction (Resources::Icons16::configure(), "Con&figure", this, SLOT (configure()));
 
 	// Add Connect/Disconnect menu items:
 	if (unit_bay())
 	{
 		_context_menu->addSeparator();
-		_connect_menu = _context_menu->addMenu (Config::Icons16::connect(), "&Connect");
-		_disconnect_menu = _context_menu->addMenu (Config::Icons16::disconnect(), "&Disconnect");
+		_connect_menu = _context_menu->addMenu (Resources::Icons16::connect(), "&Connect");
+		_disconnect_menu = _context_menu->addMenu (Resources::Icons16::disconnect(), "&Disconnect");
 
 		unit_bay()->graph()->lock();
 
@@ -404,13 +396,13 @@ Knob::create_context_menu()
 		}
 
 		// Iterate over all connected ports and create Disconnect menu:
-		Core::Ports const& back_connections = controller_proxy()->event_port()->back_connections();
+		Ports const& back_connections = event_port()->back_connections();
 		if (!back_connections.empty())
 		{
 			_context_menu->addSeparator();
 			_context_menu->addAction ("Disconnect from all", this, SLOT (disconnect_from_all()));
 		}
-		for (Core::Ports::iterator p = back_connections.begin(); p != back_connections.end(); ++p)
+		for (Ports::iterator p = back_connections.begin(); p != back_connections.end(); ++p)
 		{
 			_action_id += 1;
 			QAction* action = _disconnect_menu->addAction (pixmap_for_port,
@@ -431,19 +423,19 @@ Knob::create_context_menu()
 
 
 void
-Knob::create_connect_menu (QMenu* unit_menu, Core::Unit* unit, QPixmap const& pixmap_for_port_group, QPixmap const& pixmap_for_port)
+Knob::create_connect_menu (QMenu* unit_menu, Unit* unit, QPixmap const& pixmap_for_port_group, QPixmap const& pixmap_for_port)
 {
-	typedef std::vector<Core::Port*> PortsVector;
-	typedef std::vector<Core::PortGroup*> GroupsVector;
-	typedef std::map<Core::PortGroup*, PortsVector> GroupsMap;
+	typedef std::vector<Port*> PortsVector;
+	typedef std::vector<PortGroup*> GroupsVector;
+	typedef std::map<PortGroup*, PortsVector> GroupsMap;
 
 	GroupsMap groups;
 	PortsVector ports;
 
 	// Collect ports and groups:
-	for (Core::Ports::iterator p = unit->outputs().begin(); p != unit->outputs().end(); ++p)
+	for (Ports::iterator p = unit->outputs().begin(); p != unit->outputs().end(); ++p)
 	{
-		Core::EventPort* ep = dynamic_cast<Core::EventPort*> (*p);
+		EventPort* ep = dynamic_cast<EventPort*> (*p);
 		if (ep)
 		{
 			if (ep->group())
@@ -457,24 +449,24 @@ Knob::create_connect_menu (QMenu* unit_menu, Core::Unit* unit, QPixmap const& pi
 	for (GroupsMap::iterator g = groups.begin(); g != groups.end(); ++g)
 	{
 		QMenu* group_menu = unit_menu->addMenu (pixmap_for_port_group, QString::fromStdString (g->first->name()));
-		std::sort (g->second.begin(), g->second.end(), Core::Port::CompareByName());
+		std::sort (g->second.begin(), g->second.end(), Port::CompareByName());
 		for (PortsVector::iterator p = g->second.begin(); p != g->second.end(); ++p)
 		{
 			_action_id += 1;
 			QAction* action = group_menu->addAction (pixmap_for_port, QString::fromStdString ((*p)->name()), _connect_signal_mapper, SLOT (map()));
-			action->setEnabled (!(*p)->connected_to (controller_proxy()->event_port()));
+			action->setEnabled (!(*p)->connected_to (event_port()));
 			_connect_signal_mapper->setMapping (action, _action_id);
 			_context_menu_port_map[_action_id] = *p;
 		}
 	}
 
 	// Add port items:
-	std::sort (ports.begin(), ports.end(), Core::Port::CompareByName());
+	std::sort (ports.begin(), ports.end(), Port::CompareByName());
 	for (PortsVector::iterator p = ports.begin(); p != ports.end(); ++p)
 	{
 		_action_id += 1;
 		QAction* action = unit_menu->addAction (pixmap_for_port, QString::fromStdString ((*p)->name()), _connect_signal_mapper, SLOT (map()));
-		action->setEnabled (!(*p)->connected_to (controller_proxy()->event_port()));
+		action->setEnabled (!(*p)->connected_to (event_port()));
 		_connect_signal_mapper->setMapping (action, _action_id);
 		_context_menu_port_map[_action_id] = *p;
 	}
@@ -523,7 +515,7 @@ Knob::dial_changed (int value)
 {
 	if (_prevent_recursion)
 		return;
-	controller_proxy()->param()->set (controller_proxy()->config()->forward (value));
+	param()->set (controller_proxy().config().forward (value));
 	schedule_for_update();
 }
 
@@ -533,7 +525,7 @@ Knob::spin_changed (int value)
 {
 	if (_prevent_recursion)
 		return;
-	controller_proxy()->param()->set (value);
+	param()->set (value);
 	schedule_for_update();
 }
 
@@ -547,7 +539,7 @@ Knob::connect_port (int action_id)
 		ContextMenuPortMap::iterator a = _context_menu_port_map.find (action_id);
 		// FIXME If port is deleted between menu popup and action exec, connect_to() will be executed on singular object.
 		if (a != _context_menu_port_map.end())
-			a->second->connect_to (controller_proxy()->event_port());
+			a->second->connect_to (event_port());
 		unit_bay()->graph()->unlock();
 	}
 }
@@ -562,7 +554,7 @@ Knob::disconnect_port (int action_id)
 		ContextMenuPortMap::iterator a = _context_menu_port_map.find (action_id);
 		// FIXME If port is deleted between menu popup and action exec, connect_to() will be executed on singular object.
 		if (a != _context_menu_port_map.end())
-			a->second->disconnect_from (controller_proxy()->event_port());
+			a->second->disconnect_from (event_port());
 		unit_bay()->graph()->unlock();
 	}
 }
@@ -574,7 +566,7 @@ Knob::disconnect_from_all()
 	if (unit_bay())
 	{
 		unit_bay()->graph()->lock();
-		controller_proxy()->event_port()->disconnect();
+		event_port()->disconnect();
 		unit_bay()->graph()->unlock();
 	}
 }

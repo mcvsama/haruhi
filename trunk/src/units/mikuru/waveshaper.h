@@ -22,7 +22,7 @@
 #include <QtGui/QCheckBox>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
+#include <haruhi/graph/audio_buffer.h>
 #include <haruhi/widgets/knob.h>
 
 // Local:
@@ -34,7 +34,6 @@ class Mikuru;
 
 namespace MikuruPrivate {
 
-namespace Core = Haruhi::Core;
 class Part;
 
 class Waveshaper: public QWidget
@@ -44,7 +43,7 @@ class Waveshaper: public QWidget
 	friend class Patch;
 
   public:
-	Waveshaper (Part* part, Core::PortGroup* port_group, QString const& port_prefix, Mikuru* mikuru, QWidget* parent);
+	Waveshaper (Part* part, Haruhi::PortGroup* port_group, QString const& port_prefix, Mikuru* mikuru, QWidget* parent);
 
 	~Waveshaper();
 
@@ -52,7 +51,7 @@ class Waveshaper: public QWidget
 	params() { return &_params; }
 
 	void
-	process (Core::AudioBuffer* buffer1, Core::AudioBuffer* buffer2);
+	process (Haruhi::AudioBuffer* buffer1, Haruhi::AudioBuffer* buffer2);
 
   public slots:
 	/**

@@ -18,6 +18,7 @@
 #include <cstddef>
 
 // Haruhi:
+#include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/filter.h>
 #include <haruhi/dsp/smoother.h>
 
@@ -61,14 +62,14 @@ class DoubleFilter
 	 * All buffers must be distinct.
 	 */
 	bool
-	process (Core::AudioBuffer& input, Core::AudioBuffer& buffer1, Core::AudioBuffer& buffer2, Core::AudioBuffer& output);
+	process (Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer1, Haruhi::AudioBuffer& buffer2, Haruhi::AudioBuffer& output);
 
   private:
 	/**
 	 * All buffers must be distinct.
 	 */
 	void
-	filterout (DSP::Filter* filters, int passes, Core::AudioBuffer& input, Core::AudioBuffer& buffer, Core::AudioBuffer& output);
+	filterout (DSP::Filter* filters, int passes, Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer, Haruhi::AudioBuffer& output);
 
   public:
 	Mikuru*						_mikuru;

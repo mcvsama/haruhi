@@ -32,23 +32,25 @@
 #include <QtXml/QDomNode>
 
 // Haruhi:
-#include <haruhi/backend.h>
+#include <haruhi/config/all.h>
+#include <haruhi/application/haruhi.h>
 #include <haruhi/components/devices_manager/device_dialog.h>
 #include <haruhi/components/devices_manager/controller_dialog.h>
-#include <haruhi/haruhi.h>
-#include <haruhi/config.h>
-#include <haruhi/core/event.h>
-#include <haruhi/core/event_port.h>
+#include <haruhi/graph/event.h>
+#include <haruhi/graph/event_port.h>
+#include <haruhi/graph/unit.h>
+#include <haruhi/session/backend.h>
+#include <haruhi/settings/settings.h> // XXX EventHardwareTemplate
 #include <haruhi/utility/saveable_state.h>
-#include <haruhi/unit.h>
+#include <haruhi/utility/exception.h>
 
 // Local:
-#include "event_transport.h"
 #include "teacher.h"
 #include "ports_list_view.h"
 #include "port_item.h"
 #include "device_with_port_item.h"
 #include "controller_with_port_item.h"
+#include "transport.h"
 
 
 namespace Haruhi {
@@ -59,6 +61,7 @@ class DeviceWithPortDialog;
 class ControllerWithPortDialog;
 
 class Backend:
+	public QWidget,
 	public Unit,
 	public Teacher,
 	public SaveableState,
@@ -70,15 +73,27 @@ class Backend:
 	friend class ControllerWithPortItem;
 
   private:
-	typedef std::map<EventTransport::Port*, DeviceWithPortItem*> InputsMap;
-	typedef std::map<int, Config::EventHardwareTemplate> Templates;
+	typedef std::map<Transport::Port*, DeviceWithPortItem*> InputsMap;
+	typedef std::map<int, Settings::EventHardwareTemplate> Templates;
 
   public:
 	Backend (Session*, QString const& client_name, int id, QWidget* parent);
 
 	~Backend();
 
-	EventTransport*
+	/**
+	 * Unit API
+	 */
+	void
+	registered();
+
+	/**
+	 * Unit API
+	 */
+	void
+	unregistered();
+
+	Transport*
 	transport() const { return _transport; }
 
 	/*
@@ -177,7 +192,7 @@ class Backend:
 
   private:
 	QString						_client_name;
-	EventTransport*				_transport;
+	Transport*					_transport;
 	InputsMap					_inputs;
 	QSignalMapper*				_insert_template_signal_mapper;
 
@@ -199,11 +214,11 @@ class Backend:
 /**
  * Exception
  */
-class Exception: public ::Haruhi::Exception
+class Exception: public ::Exception
 {
   public:
 	explicit Exception (const char* what, const char* details):
-		::Haruhi::Exception (what, details)
+		::Exception (what, details)
 	{ }
 };
 

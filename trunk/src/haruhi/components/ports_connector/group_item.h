@@ -18,7 +18,7 @@
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/core/port_group.h>
+#include <haruhi/graph/port_group.h>
 
 // Local:
 #include "comparable_item.h"
@@ -36,16 +36,16 @@ class GroupItem:
 	public HighlightableItem
 {
   public:
-	GroupItem (Core::PortGroup*, UnitItem* parent);
+	GroupItem (PortGroup*, UnitItem* parent);
 
-	Core::PortGroup*
+	PortGroup*
 	group() const;
 
 	void
 	update();
 
   private:
-	Core::PortGroup* _group;
+	PortGroup* _group;
 };
 
 } // namespace PortsConnectorPrivate

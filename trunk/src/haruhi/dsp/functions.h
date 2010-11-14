@@ -21,6 +21,7 @@
 #include <limits>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/dsp/wave.h>
 #include <haruhi/dsp/parametric_wave.h>
 #include <haruhi/utility/numeric.h>
@@ -83,8 +84,8 @@ namespace ParametricWaves {
 			ParametricWave (true)
 		{ }
 
-		Core::Sample
-		operator() (Core::Sample x, Core::Sample) const
+		Sample
+		operator() (Sample x, Sample) const
 		{
 			x = x * 2.0f - 1.0f;
 			float a = std::pow (1.0f + param(), 4.0f);
@@ -104,8 +105,8 @@ namespace ParametricWaves {
 			ParametricWave (true)
 		{ }
 
-		Core::Sample
-		operator() (Core::Sample x, Core::Sample) const
+		Sample
+		operator() (Sample x, Sample) const
 		{
 			x = x * 2.0f - 1.0f;
 			float sgn = 1.0f;
@@ -134,8 +135,8 @@ namespace ParametricWaves {
 			ParametricWave (true)
 		{ }
 
-		Core::Sample
-		operator() (Core::Sample x, Core::Sample) const
+		Sample
+		operator() (Sample x, Sample) const
 		{
 			x = x * 2.0f - 1.0f;
 			float sgn = 1.0f;
@@ -160,8 +161,8 @@ namespace ParametricWaves {
 			ParametricWave (true)
 		{ }
 
-		Core::Sample
-		operator() (Core::Sample x, Core::Sample) const
+		Sample
+		operator() (Sample x, Sample) const
 		{
 			x = mod1 (x);
 			float a = param();
@@ -187,8 +188,8 @@ namespace ParametricWaves {
 			ParametricWave (true)
 		{ }
 
-		Core::Sample
-		operator() (Core::Sample x, Core::Sample) const
+		Sample
+		operator() (Sample x, Sample) const
 		{
 			float a = param();
 			if (a < 0.005f)
@@ -210,11 +211,11 @@ namespace ParametricWaves {
 			ParametricWave (true)
 		{ }
 
-		Core::Sample
-		operator() (Core::Sample x, Core::Sample) const
+		Sample
+		operator() (Sample x, Sample) const
 		{
 			x = x * 2.0f - 1.0f;
-			Core::Sample sgn = x >= 0.0 ? 1.0 : -1.0;
+			Sample sgn = x >= 0.0 ? 1.0 : -1.0;
 			return sgn * std::pow (mod1 (sgn * x), 50.0 * param() * param() * param());
 		}
 	};
@@ -230,8 +231,8 @@ namespace ParametricWaves {
 			ParametricWave (true)
 		{ }
 
-		Core::Sample
-		operator() (Core::Sample x, Core::Sample) const
+		Sample
+		operator() (Sample x, Sample) const
 		{
 			float a = param();
 			x = mod1 (x) * 2.0f - 1.0f;
@@ -252,8 +253,8 @@ namespace ParametricWaves {
 			ParametricWave (true)
 		{ }
 
-		Core::Sample
-		operator() (Core::Sample x, Core::Sample) const
+		Sample
+		operator() (Sample x, Sample) const
 		{
 			float a = param();
 			if (a < 0.001f)
@@ -279,8 +280,8 @@ namespace ParametricWaves {
 			ParametricWave (true)
 		{ }
 
-		Core::Sample
-		operator() (Core::Sample x, Core::Sample) const
+		Sample
+		operator() (Sample x, Sample) const
 		{
 			float a = renormalize (param(), 0.0f, 1.0f, 0.25f, 1.0f);
 			x = mod1 (x) * 2.0f * M_PI;

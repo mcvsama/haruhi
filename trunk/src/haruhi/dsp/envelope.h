@@ -20,7 +20,7 @@
 #include <vector>
 
 // Haruhi:
-#include <haruhi/core/audio.h>
+#include <haruhi/config/all.h>
 
 
 namespace Haruhi {
@@ -85,7 +85,7 @@ class Envelope
 	finished() const;
 
 	void
-	fill (Core::Sample* begin, Core::Sample* end);
+	fill (Sample* begin, Sample* end);
 
   private:
 	Points				_points;

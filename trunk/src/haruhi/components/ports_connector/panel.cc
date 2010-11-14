@@ -18,7 +18,7 @@
 #include <QtGui/QLayout>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "panel.h"
@@ -31,15 +31,15 @@ namespace Haruhi {
 
 namespace PortsConnectorPrivate {
 
-Panel::Panel (Core::Port::Direction type, PortsConnector* ports_connector, QWidget* parent):
+Panel::Panel (Port::Direction type, PortsConnector* ports_connector, QWidget* parent):
 	QWidget (parent),
 	_ports_connector (ports_connector)
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-	_layout = new QVBoxLayout (this, 0, Config::spacing);
+	_layout = new QVBoxLayout (this, 0, Config::Spacing);
 
-		_filter = new UnitsCombobox (ports_connector->unit_bay(), type, this);
+		_filter = new UnitsCombobox (ports_connector, type, this);
 		_list = new PortsList (type, this, ports_connector, this);
 
 		QObject::connect (_filter, SIGNAL (activated (int)), this, SLOT (filter_updated()));

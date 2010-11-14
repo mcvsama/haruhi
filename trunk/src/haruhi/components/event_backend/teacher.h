@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__EVENT_TEACHER_H__INCLUDED
-#define HARUHI__COMPONENTS__EVENT_BACKEND__EVENT_TEACHER_H__INCLUDED
+#ifndef HARUHI__COMPONENTS__EVENT_BACKEND__TEACHER_H__INCLUDED
+#define HARUHI__COMPONENTS__EVENT_BACKEND__TEACHER_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -20,10 +20,10 @@
 #include <set>
 
 // Haruhi:
-#include <haruhi/core/event_port.h>
+#include <haruhi/graph/event_port.h>
 
 // Local:
-#include "event_transport.h"
+#include "transport.h"
 
 
 namespace Haruhi {
@@ -55,11 +55,11 @@ class Learnable
 {
   public:
 	/**
-	 * Will be called when port is learned.
-	 * \entry	Synth thread.
+	 * Will be called from within engine thread when port is learned.
+	 * \entry	engine thread
 	 */
 	virtual void
-	learned_port (EventTypes event_types, Core::EventPort* event_port) = 0;
+	learned_port (EventTypes event_types, EventPort* event_port) = 0;
 };
 
 
@@ -89,7 +89,7 @@ class Teacher
 
   protected:
 	void
-	handle_event_for_learnables (EventTransport::MidiEvent const& event, Core::EventPort* port);
+	handle_event_for_learnables (Transport::MidiEvent const& event, EventPort* port);
 
   protected:
 	Learnables _learnables;

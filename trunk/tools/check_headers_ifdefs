@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+
+require 'find'
+
+def ifdef path
+	path.gsub('/', '__').gsub('.', '_').upcase
+end
+
+def check file
+	for line in File.open(file).readlines
+		return true if line.chomp == "\#ifndef #{ifdef file}__INCLUDED"
+	end
+	false
+end
+
+def find dir
+	Find.find(dir) do |path|
+		if File.directory? path
+			if path == '.'
+				Find.prune
+			else
+				next
+			end
+		else
+			begin
+				if path.end_with?('.h') && !check(path)
+					puts "../src/#{path}"
+				end
+			rescue => e
+				puts "Could not check file #{file}: #{e.message}"
+			end
+		end
+	end
+end
+
+Dir.chdir '../src'
+find 'haruhi'

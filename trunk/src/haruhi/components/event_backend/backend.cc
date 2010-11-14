@@ -22,15 +22,15 @@
 #include <QtGui/QMenu>
 
 // Haruhi:
+#include <haruhi/config/all.h>
+#include <haruhi/application/haruhi.h>
 #include <haruhi/components/devices_manager/device_dialog.h>
 #include <haruhi/components/devices_manager/controller_dialog.h>
-#include <haruhi/core/event_buffer.h>
-#include <haruhi/config.h>
-#include <haruhi/haruhi.h>
-#include <haruhi/session.h>
+#include <haruhi/graph/event_buffer.h>
+#include <haruhi/session/session.h>
 
 // Local:
-#include "transports/alsa_event_transport.h"
+#include "transports/alsa_transport.h"
 #include "backend.h"
 #include "device_with_port_dialog.h"
 #include "controller_with_port_dialog.h"
@@ -42,13 +42,14 @@ namespace Haruhi {
 namespace EventBackend {
 
 Backend::Backend (Session* session, QString const& client_name, int id, QWidget* parent):
-	Unit (0, session, "urn://haruhi.mulabs.org/backend/event-backend/1", "• Event", id, parent),
+	QWidget (parent),
+	Unit (session, "urn://haruhi.mulabs.org/backend/event-backend/1", "• Event", id),
 	_client_name (client_name),
 	_insert_template_signal_mapper (0),
 	_tree (0),
 	_templates_menu (0)
 {
-	_transport = new ALSAEventTransport (this);
+	_transport = new AlsaTransport (this);
 
 	//
 	// Widgets
@@ -61,15 +62,15 @@ Backend::Backend (Session* session, QString const& client_name, int id, QWidget*
 	QObject::connect (_tree, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_items (const QPoint&)));
 	QObject::connect (_tree, SIGNAL (itemSelectionChanged()), this, SLOT (selection_changed()));
 
-	_create_device_button = new QPushButton (Config::Icons16::add(), "Add device", this);
+	_create_device_button = new QPushButton (Resources::Icons16::add(), "Add device", this);
 	_create_device_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QToolTip::add (_create_device_button, "Add new device and external input port");
 
-	_create_controller_button = new QPushButton (Config::Icons16::add(), "Add controller", this);
+	_create_controller_button = new QPushButton (Resources::Icons16::add(), "Add controller", this);
 	_create_controller_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QToolTip::add (_create_controller_button, "Add new controller and internal output port");
 
-	_destroy_input_button = new QPushButton (Config::Icons16::remove(), "Destroy device", this);
+	_destroy_input_button = new QPushButton (Resources::Icons16::remove(), "Destroy device", this);
 	_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QToolTip::add (_destroy_input_button, "Destroy selected device or controller");
 
@@ -86,12 +87,12 @@ Backend::Backend (Session* session, QString const& client_name, int id, QWidget*
 	_stack->addWidget (_controller_dialog);
 	_stack->setCurrentWidget (_device_dialog);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::margin, Config::spacing);
-	QHBoxLayout* input_buttons_layout = new QHBoxLayout (layout, Config::spacing);
-	QHBoxLayout* panels_layout = new QHBoxLayout (layout, Config::spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
+	QHBoxLayout* input_buttons_layout = new QHBoxLayout (layout, Config::Spacing);
+	QHBoxLayout* panels_layout = new QHBoxLayout (layout, Config::Spacing);
 
 	QLabel* info = new QLabel ("Devices used in current session. Each device corresponds to external MIDI port.", this);
-	info->setMargin (Config::margin);
+	info->setMargin (Config::Margin);
 	layout->addWidget (info);
 
 	panels_layout->addWidget (_tree);
@@ -103,27 +104,34 @@ Backend::Backend (Session* session, QString const& client_name, int id, QWidget*
 	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 
 	selection_changed();
-	register_unit();
 	update_widgets();
 }
 
 
 Backend::~Backend()
 {
-	disable();
-
-	_tree->clear();
-
-	if (connected())
-		disconnect();
-	unregister_unit();
-
 	delete _templates_menu;
 
 	_tree->disconnect();
 	_create_device_button->disconnect();
 	_create_controller_button->disconnect();
 	_destroy_input_button->disconnect();
+}
+
+
+void
+Backend::registered()
+{
+}
+
+
+void
+Backend::unregistered()
+{
+	if (connected())
+		disconnect();
+
+	_tree->clear();
 }
 
 
@@ -139,7 +147,7 @@ Backend::process()
 
 	for (InputsMap::iterator h = _inputs.begin(); h != _inputs.end(); ++h)
 	{
-		EventTransport::Port* transport_port = h->first;
+		Transport::Port* transport_port = h->first;
 		if (transport_port->buffer().empty())
 			continue;
 		DeviceWithPortItem* device_item = h->second;
@@ -147,7 +155,7 @@ Backend::process()
 		{
 			if ((*iii)->ready())
 			{
-				for (EventTransport::MidiBuffer::iterator m = transport_port->buffer().begin(); m != transport_port->buffer().end(); ++m)
+				for (Transport::MidiBuffer::iterator m = transport_port->buffer().begin(); m != transport_port->buffer().end(); ++m)
 				{
 					if ((*iii)->handle_event (*m))
 						handle_event_for_learnables (*m, (*iii)->port());
@@ -192,6 +200,7 @@ Backend::connect()
 {
 	try {
 		_transport->connect (_client_name.toStdString());
+		enable();
 	}
 	catch (Exception const& e)
 	{
@@ -203,6 +212,7 @@ Backend::connect()
 void
 Backend::disconnect()
 {
+	disable();
 	_transport->disconnect();
 }
 
@@ -344,10 +354,10 @@ Backend::save_selected_item()
 		DeviceWithPortItem* input_item = dynamic_cast<DeviceWithPortItem*> (item);
 		if (input_item)
 		{
-			Config::EventHardwareTemplate tpl (input_item->name());
+			Settings::EventHardwareTemplate tpl (input_item->name());
 			input_item->save_state (tpl.element);
-			Config::event_hardware_templates().push_back (tpl);
-			Config::save_event_hardware_templates();
+			Settings::event_hardware_templates().push_back (tpl);
+			Settings::save_event_hardware_templates();
 			QMessageBox::information (this, "Created template", "Created new template \"" + input_item->name() + "\".");
 		}
 	}
@@ -365,29 +375,29 @@ Backend::context_menu_for_items (QPoint const& pos)
 	{
 		if (dynamic_cast<ControllerItem*> (item) != 0)
 		{
-			menu->addAction (Config::Icons16::colorpicker(), "&Learn", this, SLOT (learn_from_midi()));
+			menu->addAction (Resources::Icons16::colorpicker(), "&Learn", this, SLOT (learn_from_midi()));
 			menu->addSeparator();
-			menu->addAction (Config::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
-			menu->addAction (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
+			menu->addAction (Resources::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
+			menu->addAction (Resources::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
 		}
 		else if (dynamic_cast<DeviceItem*> (item) != 0)
 		{
-			menu->addAction (Config::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
+			menu->addAction (Resources::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
 			menu->addSeparator();
-			menu->addAction (Config::Icons16::save(), "&Save as template", this, SLOT (save_selected_item()));
+			menu->addAction (Resources::Icons16::save(), "&Save as template", this, SLOT (save_selected_item()));
 			menu->addSeparator();
-			menu->addAction (Config::Icons16::add(), "&Add device", this, SLOT (create_device()));
-			menu->addAction (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
+			menu->addAction (Resources::Icons16::add(), "&Add device", this, SLOT (create_device()));
+			menu->addAction (Resources::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
 		}
 	}
 	else
 	{
-		menu->addAction (Config::Icons16::add(), "&Add device", this, SLOT (create_device()));
-		a = menu->addAction (Config::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
+		menu->addAction (Resources::Icons16::add(), "&Add device", this, SLOT (create_device()));
+		a = menu->addAction (Resources::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
 		a->setEnabled (false);
 	}
 	menu->addSeparator();
-	QMenu* templates_menu = menu->addMenu (Config::Icons16::insert(), "&Insert template");
+	QMenu* templates_menu = menu->addMenu (Resources::Icons16::insert(), "&Insert template");
 	create_templates_menu (templates_menu);
 
 	menu->exec (QCursor::pos());
@@ -405,14 +415,14 @@ Backend::create_templates_menu (QMenu* menu)
 
 	int action_id = 0;
 	_templates.clear();
-	for (Config::EventHardwareTemplates::iterator t = Config::event_hardware_templates().begin(); t != Config::event_hardware_templates().end(); ++t)
+	for (Settings::EventHardwareTemplates::iterator t = Settings::event_hardware_templates().begin(); t != Settings::event_hardware_templates().end(); ++t)
 	{
 		action_id += 1;
-		QAction* a = menu->addAction (Config::Icons16::template_(), t->name, _insert_template_signal_mapper, SLOT (map()));
+		QAction* a = menu->addAction (Resources::Icons16::template_(), t->name, _insert_template_signal_mapper, SLOT (map()));
 		_insert_template_signal_mapper->setMapping (a, action_id);
 		_templates[action_id] = *t;
 	}
-	menu->setEnabled (!Config::event_hardware_templates().empty());
+	menu->setEnabled (!Settings::event_hardware_templates().empty());
 }
 
 

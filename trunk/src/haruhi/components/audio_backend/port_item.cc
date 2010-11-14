@@ -18,12 +18,12 @@
 #include <QtGui/QMessageBox>
 
 // Haruhi:
-#include <haruhi/config.h>
+#include <haruhi/config/all.h>
 
 // Local:
 #include "port_item.h"
 #include "ports_list_view.h"
-#include "audio_backend.h"
+#include "backend.h"
 
 
 namespace Haruhi {
@@ -61,7 +61,7 @@ PortItem::name() const
 }
 
 
-Core::AudioPort*
+AudioPort*
 PortItem::port() const
 {
 	return _port;

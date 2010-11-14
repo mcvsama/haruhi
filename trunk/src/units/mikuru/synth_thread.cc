@@ -16,7 +16,6 @@
 #include <set>
 
 // Haruhi:
-#include <haruhi/haruhi.h>
 #include <haruhi/dsp/smoother.h>
 #include <haruhi/utility/thread.h>
 
@@ -35,12 +34,14 @@ SynthThread::SynthThread (Mikuru* mikuru):
 	_start (0),
 	_done (0)
 {
-	_mikuru->graph()->lock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
 	std::size_t bs = _mikuru->graph()->buffer_size();
 	_voice_commons = new VoiceCommons (bs);
-	_buffer_1 = new Core::AudioBuffer (bs);
-	_buffer_2 = new Core::AudioBuffer (bs);
-	_mikuru->graph()->unlock();
+	_buffer_1 = new Haruhi::AudioBuffer (bs);
+	_buffer_2 = new Haruhi::AudioBuffer (bs);
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 	// 512k stack will be sufficient:
 	set_stack_size (512 * 1024);
 	set_sched (Thread::SchedRR, 50);
@@ -50,10 +51,12 @@ SynthThread::SynthThread (Mikuru* mikuru):
 SynthThread::~SynthThread()
 {
 	wait();
-	_mikuru->graph()->lock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
 	while (!_voices.empty())
 		(*_voices.begin())->set_thread (0);
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 	delete _buffer_1;
 	delete _buffer_2;
 	delete _voice_commons;
@@ -85,11 +88,13 @@ SynthThread::exit()
 void
 SynthThread::resize_buffers (std::size_t buffers_size)
 {
-	_mikuru->graph()->lock();
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
 	voice_commons()->resize_buffers (buffers_size);
 	_buffer_1->resize (buffers_size);
 	_buffer_2->resize (buffers_size);
-	_mikuru->graph()->unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 }
 
 
@@ -116,8 +121,8 @@ SynthThread::run()
 		// Stereo width:
 		// TODO smoothing
 		float w = std::pow (1.0f - _mikuru->general()->params()->stereo_width.to_f(), M_E);
-		Core::Sample o1, o2;
-		for (Core::Sample *s1 = _buffer_1->begin(), *s2 = _buffer_2->begin(); s1 != _buffer_1->end(); ++s1, ++s2)
+		Sample o1, o2;
+		for (Sample *s1 = _buffer_1->begin(), *s2 = _buffer_2->begin(); s1 != _buffer_1->end(); ++s1, ++s2)
 		{
 			o1 = *s1;
 			o2 = *s2;

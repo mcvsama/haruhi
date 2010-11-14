@@ -19,7 +19,7 @@
 
 // Local:
 #include "dummy_thread.h"
-#include "audio_backend.h"
+#include "backend.h"
 
 
 namespace Haruhi {

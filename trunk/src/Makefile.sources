@@ -29,26 +29,26 @@ CXXFLAGS		+= -pthread -rdynamic -I. -Wall $(CXXFLAGS_$(DIST)) $(PROFILING_CXXFLA
 CXXFLAGS_s		:= $(CXXFLAGS)
 CXXFLAGS		+= -DCXXFLAGS='"$(CXXFLAGS_s)"'
 
-######## /tests ########
+######## /application ########
 
-TESTS += haruhi/tests/core
-TESTS += haruhi/tests/shared
-TESTS += haruhi/tests/signal
+SRC_HEADERS += haruhi/application/fail.h
+SRC_HEADERS += haruhi/application/haruhi.h
 
-#SRC_SOURCES += tests/core.cc
-#SRC_SOURCES += tests/shared.cc
-#SRC_SOURCES += tests/signal.cc
+SRC_SOURCES += haruhi/application/fail.cc
+SRC_SOURCES += haruhi/application/haruhi.cc
+SRC_SOURCES += haruhi/application/main.cc
+
+SRC_MOCHDRS += haruhi/application/haruhi.h
 
 ######## /components/audio_backend/transports ########
 
-SRC_HEADERS += haruhi/components/audio_backend/transports/jack_audio_transport.h
+SRC_HEADERS += haruhi/components/audio_backend/transports/jack_transport.h
 
-SRC_SOURCES += haruhi/components/audio_backend/transports/jack_audio_transport.cc
+SRC_SOURCES += haruhi/components/audio_backend/transports/jack_transport.cc
 
 ######## /components/audio_backend ########
 
-SRC_HEADERS += haruhi/components/audio_backend/audio_backend.h
-SRC_HEADERS += haruhi/components/audio_backend/audio_transport.h
+SRC_HEADERS += haruhi/components/audio_backend/backend.h
 SRC_HEADERS += haruhi/components/audio_backend/dummy_thread.h
 SRC_HEADERS += haruhi/components/audio_backend/input_dialog.h
 SRC_HEADERS += haruhi/components/audio_backend/input_item.h
@@ -57,8 +57,9 @@ SRC_HEADERS += haruhi/components/audio_backend/output_item.h
 SRC_HEADERS += haruhi/components/audio_backend/port_dialog.h
 SRC_HEADERS += haruhi/components/audio_backend/port_item.h
 SRC_HEADERS += haruhi/components/audio_backend/ports_list_view.h
+SRC_HEADERS += haruhi/components/audio_backend/transport.h
 
-SRC_SOURCES += haruhi/components/audio_backend/audio_backend.cc
+SRC_SOURCES += haruhi/components/audio_backend/backend.cc
 SRC_SOURCES += haruhi/components/audio_backend/dummy_thread.cc
 SRC_SOURCES += haruhi/components/audio_backend/input_dialog.cc
 SRC_SOURCES += haruhi/components/audio_backend/input_item.cc
@@ -68,15 +69,15 @@ SRC_SOURCES += haruhi/components/audio_backend/port_dialog.cc
 SRC_SOURCES += haruhi/components/audio_backend/port_item.cc
 SRC_SOURCES += haruhi/components/audio_backend/ports_list_view.cc
 
-SRC_MOCHDRS += haruhi/components/audio_backend/audio_backend.h
+SRC_MOCHDRS += haruhi/components/audio_backend/backend.h
 SRC_MOCHDRS += haruhi/components/audio_backend/input_dialog.h
 SRC_MOCHDRS += haruhi/components/audio_backend/output_dialog.h
 
 ######## /components/event_backend/transports ########
 
-SRC_HEADERS += haruhi/components/event_backend/transports/alsa_event_transport.h
+SRC_HEADERS += haruhi/components/event_backend/transports/alsa_transport.h
 
-SRC_SOURCES += haruhi/components/event_backend/transports/alsa_event_transport.cc
+SRC_SOURCES += haruhi/components/event_backend/transports/alsa_transport.cc
 
 ######## /components/event_backend ########
 
@@ -85,10 +86,10 @@ SRC_HEADERS += haruhi/components/event_backend/controller_with_port_dialog.h
 SRC_HEADERS += haruhi/components/event_backend/controller_with_port_item.h
 SRC_HEADERS += haruhi/components/event_backend/device_with_port_dialog.h
 SRC_HEADERS += haruhi/components/event_backend/device_with_port_item.h
-SRC_HEADERS += haruhi/components/event_backend/event_transport.h
 SRC_HEADERS += haruhi/components/event_backend/ports_list_view.h
 SRC_HEADERS += haruhi/components/event_backend/port_item.h
 SRC_HEADERS += haruhi/components/event_backend/teacher.h
+SRC_HEADERS += haruhi/components/audio_backend/transport.h
 
 SRC_SOURCES += haruhi/components/event_backend/backend.cc
 SRC_SOURCES += haruhi/components/event_backend/controller_with_port_dialog.cc
@@ -176,38 +177,14 @@ SRC_MOCHDRS += haruhi/components/presets_manager/presets_manager.h
 
 ######## /config ########
 
+SRC_HEADERS += haruhi/config/all.h
+SRC_HEADERS += haruhi/config/resources.h
+SRC_HEADERS += haruhi/config/system.h
+SRC_HEADERS += haruhi/config/types.h
+
+SRC_SOURCES += haruhi/config/resources.cc
+
 NODEP_SOURCES += $(VERSION_FILE)
-
-######## /core ########
-
-SRC_HEADERS += haruhi/core/core.h
-SRC_HEADERS += haruhi/core/buffer.h
-SRC_HEADERS += haruhi/core/exception.h
-SRC_HEADERS += haruhi/core/graph.h
-SRC_HEADERS += haruhi/core/notification.h
-SRC_HEADERS += haruhi/core/port.h
-SRC_HEADERS += haruhi/core/port_group.h
-SRC_HEADERS += haruhi/core/predicates.h
-SRC_HEADERS += haruhi/core/predicates.tcc
-SRC_HEADERS += haruhi/core/unit.h
-SRC_HEADERS += haruhi/core/audio.h
-SRC_HEADERS += haruhi/core/event.h
-SRC_HEADERS += haruhi/core/audio_port.h
-SRC_HEADERS += haruhi/core/event_port.h
-SRC_HEADERS += haruhi/core/audio_buffer.h
-SRC_HEADERS += haruhi/core/event_buffer.h
-
-SRC_SOURCES += haruhi/core/graph.cc
-SRC_SOURCES += haruhi/core/notification.cc
-SRC_SOURCES += haruhi/core/port.cc
-SRC_SOURCES += haruhi/core/port_group.cc
-SRC_SOURCES += haruhi/core/unit.cc
-SRC_SOURCES += haruhi/core/audio.cc
-SRC_SOURCES += haruhi/core/event.cc
-SRC_SOURCES += haruhi/core/audio_port.cc
-SRC_SOURCES += haruhi/core/event_port.cc
-SRC_SOURCES += haruhi/core/audio_buffer.cc
-SRC_SOURCES += haruhi/core/event_buffer.cc
 
 ######## /dsp ########
 
@@ -246,20 +223,95 @@ SRC_SOURCES += haruhi/dsp/smoother.cc
 SRC_SOURCES += haruhi/dsp/wavetable.cc
 SRC_SOURCES += haruhi/dsp/wave.cc
 
+######## /graph ########
+
+SRC_HEADERS += haruhi/graph/audio_buffer.h
+SRC_HEADERS += haruhi/graph/audio_port.h
+SRC_HEADERS += haruhi/graph/buffer.h
+SRC_HEADERS += haruhi/graph/conn_set.h
+SRC_HEADERS += haruhi/graph/event.h
+SRC_HEADERS += haruhi/graph/event_buffer.h
+SRC_HEADERS += haruhi/graph/event_port.h
+SRC_HEADERS += haruhi/graph/exception.h
+SRC_HEADERS += haruhi/graph/graph.h
+SRC_HEADERS += haruhi/graph/notification.h
+SRC_HEADERS += haruhi/graph/port.h
+SRC_HEADERS += haruhi/graph/port_group.h
+SRC_HEADERS += haruhi/graph/predicates.h
+SRC_HEADERS += haruhi/graph/predicates.tcc
+SRC_HEADERS += haruhi/graph/unit.h
+
+SRC_SOURCES += haruhi/graph/audio_buffer.cc
+SRC_SOURCES += haruhi/graph/audio_port.cc
+SRC_SOURCES += haruhi/graph/conn_set.cc
+SRC_SOURCES += haruhi/graph/event.cc
+SRC_SOURCES += haruhi/graph/event_buffer.cc
+SRC_SOURCES += haruhi/graph/event_port.cc
+SRC_SOURCES += haruhi/graph/graph.cc
+SRC_SOURCES += haruhi/graph/notification.cc
+SRC_SOURCES += haruhi/graph/port.cc
+SRC_SOURCES += haruhi/graph/port_group.cc
+SRC_SOURCES += haruhi/graph/unit.cc
+
 ######## /lib ########
 
+SRC_HEADERS += haruhi/lib/controller.h
 SRC_HEADERS += haruhi/lib/controller_param.h
 SRC_HEADERS += haruhi/lib/controller_proxy.h
 SRC_HEADERS += haruhi/lib/param.h
 
+SRC_SOURCES += haruhi/lib/controller.cc
 SRC_SOURCES += haruhi/lib/controller_param.cc
 SRC_SOURCES += haruhi/lib/controller_proxy.cc
+
+######## /plugin ########
+
+SRC_HEADERS += haruhi/plugin/plugin.h
+SRC_HEADERS += haruhi/plugin/plugin_factory.h
+SRC_HEADERS += haruhi/plugin/plugin_loader.h
+SRC_HEADERS += haruhi/plugin/presetable.h
+
+SRC_SOURCES += haruhi/plugin/plugin.cc
+SRC_SOURCES += haruhi/plugin/plugin_factory.cc
+SRC_SOURCES += haruhi/plugin/plugin_loader.cc
+
+######## /session ########
+
+SRC_HEADERS += haruhi/session/backend.h
+SRC_HEADERS += haruhi/session/engine.h
+SRC_HEADERS += haruhi/session/patch.h
+SRC_HEADERS += haruhi/session/periodic_updater.h
+SRC_HEADERS += haruhi/session/program.h
+SRC_HEADERS += haruhi/session/session.h
+SRC_HEADERS += haruhi/session/session_loader.h
+SRC_HEADERS += haruhi/session/unit_bay.h
+
+SRC_SOURCES += haruhi/session/engine.cc
+SRC_SOURCES += haruhi/session/patch.cc
+SRC_SOURCES += haruhi/session/periodic_updater.cc
+SRC_SOURCES += haruhi/session/program.cc
+SRC_SOURCES += haruhi/session/session.cc
+SRC_SOURCES += haruhi/session/session_loader.cc
+SRC_SOURCES += haruhi/session/unit_bay.cc
+
+SRC_MOCHDRS += haruhi/session/patch.h
+SRC_MOCHDRS += haruhi/session/periodic_updater.h
+SRC_MOCHDRS += haruhi/session/session.h
+SRC_MOCHDRS += haruhi/session/session_loader.h
+
+######## /settings ########
+
+SRC_HEADERS += haruhi/settings/settings.h
+
+SRC_SOURCES += haruhi/settings/settings.cc
 
 ######## /utility ########
 
 SRC_HEADERS += haruhi/utility/atomic.h
 SRC_HEADERS += haruhi/utility/backtrace.h
 SRC_HEADERS += haruhi/utility/condition.h
+SRC_HEADERS += haruhi/utility/confusion.h
+SRC_HEADERS += haruhi/utility/exception.h
 SRC_HEADERS += haruhi/utility/filesystem.h
 SRC_HEADERS += haruhi/utility/lexical_cast.h
 SRC_HEADERS += haruhi/utility/memory.h
@@ -282,7 +334,6 @@ SRC_SOURCES += haruhi/utility/thread.cc
 ######### /widgets ########
 
 SRC_HEADERS += haruhi/widgets/clickable_label.h
-SRC_HEADERS += haruhi/widgets/controller.h
 SRC_HEADERS += haruhi/widgets/dial_control.h
 SRC_HEADERS += haruhi/widgets/envelope_plot.h
 SRC_HEADERS += haruhi/widgets/frequency_response_plot.h
@@ -291,7 +342,6 @@ SRC_HEADERS += haruhi/widgets/level_meter.h
 SRC_HEADERS += haruhi/widgets/wave_plot.h
 
 SRC_SOURCES += haruhi/widgets/clickable_label.cc
-SRC_SOURCES += haruhi/widgets/controller.cc
 SRC_SOURCES += haruhi/widgets/dial_control.cc
 SRC_SOURCES += haruhi/widgets/envelope_plot.cc
 SRC_SOURCES += haruhi/widgets/frequency_response_plot.cc
@@ -305,45 +355,6 @@ SRC_MOCHDRS += haruhi/widgets/envelope_plot.h
 SRC_MOCHDRS += haruhi/widgets/frequency_response_plot.h
 SRC_MOCHDRS += haruhi/widgets/knob.h
 SRC_MOCHDRS += haruhi/widgets/level_meter.h
-
-######## / ########
-
-SRC_HEADERS += haruhi/backend.h
-SRC_HEADERS += haruhi/config.h
-SRC_HEADERS += haruhi/connections_dump.h
-SRC_HEADERS += haruhi/engine.h
-SRC_HEADERS += haruhi/fail.h
-SRC_HEADERS += haruhi/haruhi.h
-SRC_HEADERS += haruhi/patch.h
-SRC_HEADERS += haruhi/periodic_updater.h
-SRC_HEADERS += haruhi/presetable.h
-SRC_HEADERS += haruhi/program.h
-SRC_HEADERS += haruhi/session.h
-SRC_HEADERS += haruhi/session_loader.h
-SRC_HEADERS += haruhi/unit.h
-SRC_HEADERS += haruhi/unit_bay.h
-SRC_HEADERS += haruhi/unit_loader.h
-
-SRC_SOURCES += haruhi/config.cc
-SRC_SOURCES += haruhi/connections_dump.cc
-SRC_SOURCES += haruhi/engine.cc
-SRC_SOURCES += haruhi/fail.cc
-SRC_SOURCES += haruhi/haruhi.cc
-SRC_SOURCES += haruhi/main.cc
-SRC_SOURCES += haruhi/patch.cc
-SRC_SOURCES += haruhi/periodic_updater.cc
-SRC_SOURCES += haruhi/program.cc
-SRC_SOURCES += haruhi/session.cc
-SRC_SOURCES += haruhi/session_loader.cc
-SRC_SOURCES += haruhi/unit.cc
-SRC_SOURCES += haruhi/unit_bay.cc
-SRC_SOURCES += haruhi/unit_loader.cc
-
-SRC_MOCHDRS += haruhi/haruhi.h
-SRC_MOCHDRS += haruhi/patch.h
-SRC_MOCHDRS += haruhi/periodic_updater.h
-SRC_MOCHDRS += haruhi/session.h
-SRC_MOCHDRS += haruhi/session_loader.h
 
 ######## /units/mikuru ########
 
