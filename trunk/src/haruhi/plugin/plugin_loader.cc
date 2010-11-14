@@ -21,7 +21,7 @@
 #include <haruhi/plugin/plugin.h>
 #include <haruhi/plugin/plugin_factory.h>
 #include <haruhi/utility/memory.h>
-#include <haruhi/exception.h>
+#include <haruhi/utility/exception.h>
 
 // Factories:
 #include <units/mikuru/mikuru.h>

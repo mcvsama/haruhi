@@ -40,6 +40,7 @@
 #include <haruhi/graph/event_port.h>
 #include <haruhi/graph/unit.h>
 #include <haruhi/utility/saveable_state.h>
+#include <haruhi/utility/exception.h>
 #include <haruhi/backend.h>
 
 // Local:
@@ -212,11 +213,11 @@ class Backend:
 /**
  * Exception
  */
-class Exception: public ::Haruhi::Exception
+class Exception: public ::Exception
 {
   public:
 	explicit Exception (const char* what, const char* details):
-		::Haruhi::Exception (what, details)
+		::Exception (what, details)
 	{ }
 };
 

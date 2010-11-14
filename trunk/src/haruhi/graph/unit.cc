@@ -16,7 +16,7 @@
 #include <algorithm>
 
 // Haruhi:
-#include <haruhi/exception.h>
+#include <haruhi/utility/exception.h>
 
 // Local:
 #include "unit.h"
@@ -47,12 +47,12 @@ Unit::~Unit()
 	_processing_mutex.lock();
 	// Check if unit is properly disabled when destroyed:
 	if (enabled())
-		throw Haruhi::Exception ("disable unit before deletion");
+		throw Exception ("disable unit before deletion");
 	if (graph())
-		throw Haruhi::Exception ("unregisted unit before deletion");
+		throw Exception ("unregisted unit before deletion");
 	// Check if all ports have been unregistered:
 	if (_inputs.size() > 0 || _outputs.size() > 0)
-		throw Haruhi::Exception ("delete all ports before deleting unit");
+		throw Exception ("delete all ports before deleting unit");
 	_processing_mutex.unlock();
 }
 

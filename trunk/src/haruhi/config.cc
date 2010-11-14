@@ -26,8 +26,8 @@
 #include <QtGui/QApplication>
 
 // Haruhi:
+#include <haruhi/utility/exception.h>
 #include <haruhi/utility/filesystem.h>
-#include <haruhi/exception.h>
 
 // Local:
 #include "config.h"
@@ -306,7 +306,7 @@ Config::save()
 	// Save file:
 	QFile file (config_home() + "/" + Config::_file_name + "~");
 	if (!file.open (IO_WriteOnly))
-		throw Haruhi::Exception (QString ("Could not save configuration file: ") + file.errorString());
+		throw Exception (QString ("Could not save configuration file: ") + file.errorString());
 	QTextStream ts (&file);
 	ts << document.toString();
 	file.flush();

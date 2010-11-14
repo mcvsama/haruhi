@@ -19,8 +19,8 @@
 #include <QtCore/QTimer>
 
 // Haruhi:
-#include <haruhi/exception.h>
 #include <haruhi/utility/atomic.h>
+#include <haruhi/utility/exception.h>
 
 // Local:
 #include "periodic_updater.h"

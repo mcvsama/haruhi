@@ -19,7 +19,7 @@
 #include <stdexcept>
 
 // Haruhi:
-#include <haruhi/exception.h>
+#include <haruhi/utility/exception.h>
 
 
 namespace Haruhi {

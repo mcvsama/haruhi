@@ -16,8 +16,8 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/exception.h>
 #include <haruhi/dsp/fft.h>
+#include <haruhi/utility/exception.h>
 
 // Local:
 #include "fft_filler.h"
@@ -38,7 +38,7 @@ void
 FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 {
 	if (samples < 4096)
-		throw new Haruhi::Exception ("samples number must be at least 4096");
+		throw Exception ("samples number must be at least 4096");
 
 	const unsigned int oversampling = 1;
 	const unsigned int number = Wavetable::Number;

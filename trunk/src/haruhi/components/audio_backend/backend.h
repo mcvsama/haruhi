@@ -47,6 +47,7 @@
 #include <haruhi/graph/event_port.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/mutex.h>
+#include <haruhi/utility/exception.h>
 
 // Local:
 #include "ports_list_view.h"
@@ -279,11 +280,11 @@ class Backend:
 /**
  * Exception
  */
-class Exception: public ::Haruhi::Exception
+class Exception: public ::Exception
 {
   public:
 	explicit Exception (const char* what, const char* details):
-		::Haruhi::Exception (what, details)
+		::Exception (what, details)
 	{ }
 };
 

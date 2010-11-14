@@ -15,7 +15,7 @@
 #include <string>
 
 // Haruhi:
-#include <haruhi/exception.h>
+#include <haruhi/utility/exception.h>
 
 // Local:
 #include "port.h"

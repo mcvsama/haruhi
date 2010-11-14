@@ -16,7 +16,7 @@
 
 // Haruhi:
 #include <haruhi/config/system.h>
-#include <haruhi/exception.h>
+#include <haruhi/utility/exception.h>
 #include <haruhi/utility/mutex.h>
 
 // Local:

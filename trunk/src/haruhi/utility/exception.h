@@ -11,15 +11,13 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__EXCEPTION_H__INCLUDED
-#define HARUHI__EXCEPTION_H__INCLUDED
+#ifndef HARUHI__UTILITY__EXCEPTION_H__INCLUDED
+#define HARUHI__UTILITY__EXCEPTION_H__INCLUDED
 
 // Standard:
 #include <cstddef>
 #include <stdexcept>
 
-
-namespace Haruhi {
 
 class Exception: public std::runtime_error
 {
@@ -40,8 +38,6 @@ class Exception: public std::runtime_error
   private:
 	std::string _details;
 };
-
-} // namespace Haruhi
 
 #endif
 
