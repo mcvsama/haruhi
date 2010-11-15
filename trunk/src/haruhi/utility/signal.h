@@ -88,6 +88,18 @@ class Receiver
   public:
 	virtual ~Receiver()
 	{
+		disconnect_all_signals();
+	}
+
+  protected:
+	/**
+	 * Disconnects all signals pointing to this receiver. Useful in multithreaded
+	 * programs when one would want to ensure that Receiver is "disconnected"
+	 * at the beginning of its destructor.
+	 */
+	virtual void
+	disconnect_all_signals()
+	{
 		Private::Connections::iterator i = _connections.begin();
 		// Receiver doesn't manage its _connections. Signals do.
 		while (i != _connections.end())
