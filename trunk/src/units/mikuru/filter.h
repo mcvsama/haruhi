@@ -104,7 +104,7 @@ class Filter: public QWidget
 	update_frequency_response();
 
   public:
-	Signal::Signal0					params_updated;
+	Signal::Emiter0					params_updated;
 
   private:
 	Mikuru*							_mikuru;

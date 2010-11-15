@@ -66,7 +66,7 @@ class WaveComputer: public Thread
 
   public:
 	// Emited when calculations are finished:
-	Signal::Signal1<Shared<DSP::Wave> const&> finished;
+	Signal::Emiter1<Shared<DSP::Wave> const&> finished;
 
   protected:
 	void

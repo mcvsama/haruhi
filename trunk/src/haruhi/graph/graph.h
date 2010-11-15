@@ -162,16 +162,16 @@ class Graph: public RecursiveMutex
 
   public:
 	// Signals:
-	Signal::Signal1<Unit*>			unit_registered;
-	Signal::Signal1<Unit*>			unit_unregistered;
-	Signal::Signal1<Unit*>			unit_retitled;
+	Signal::Emiter1<Unit*>			unit_registered;
+	Signal::Emiter1<Unit*>			unit_unregistered;
+	Signal::Emiter1<Unit*>			unit_retitled;
 	// Called also when port's comment is changed:
-	Signal::Signal1<Port*>			port_renamed;
-	Signal::Signal2<Port*, Port*>	port_connected_to;
-	Signal::Signal2<Port*, Port*>	port_disconnected_from;
-	Signal::Signal2<Port*, Unit*>	port_registered;
-	Signal::Signal2<Port*, Unit*>	port_unregistered;
-	Signal::Signal1<PortGroup*>		port_group_renamed;
+	Signal::Emiter1<Port*>			port_renamed;
+	Signal::Emiter2<Port*, Port*>	port_connected_to;
+	Signal::Emiter2<Port*, Port*>	port_disconnected_from;
+	Signal::Emiter2<Port*, Unit*>	port_registered;
+	Signal::Emiter2<Port*, Unit*>	port_unregistered;
+	Signal::Emiter1<PortGroup*>		port_group_renamed;
 
   private:
 	// Set of all registered synces:
