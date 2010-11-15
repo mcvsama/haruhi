@@ -25,8 +25,8 @@
 namespace Haruhi {
 
 /**
- * Object deriving this class supports loading and saving
- * presets.
+ * Object inheriting this class supports
+ * loading and saving presets.
  */
 class Presetable
 {
