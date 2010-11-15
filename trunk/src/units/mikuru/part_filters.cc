@@ -69,6 +69,7 @@ PartFilters::PartFilters (Part* part, Haruhi::PortGroup* filter_ports, QString c
 
 PartFilters::~PartFilters()
 {
+	Signal::Receiver::disconnect_all_signals();
 }
 
 

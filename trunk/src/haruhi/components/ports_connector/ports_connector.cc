@@ -132,6 +132,8 @@ PortsConnector::PortsConnector (UnitBay* unit_bay, QWidget* parent):
 
 PortsConnector::~PortsConnector()
 {
+	Signal::Receiver::disconnect_all_signals();
+
 	_highlighted_items.clear();
 	_highlight_connected = false;
 

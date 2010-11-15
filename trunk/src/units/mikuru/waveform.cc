@@ -262,6 +262,8 @@ Waveform::Waveform (Part* part, Haruhi::PortGroup* port_group, QString const& q_
 
 Waveform::~Waveform()
 {
+	Signal::Receiver::disconnect_all_signals();
+
 	// Delete knobs before ControllerProxies:
 	delete _knob_wave_shape;
 	delete _knob_modulator_amplitude;
