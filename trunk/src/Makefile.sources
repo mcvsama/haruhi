@@ -227,6 +227,7 @@ SRC_SOURCES += haruhi/dsp/wave.cc
 
 SRC_HEADERS += haruhi/graph/audio_buffer.h
 SRC_HEADERS += haruhi/graph/audio_port.h
+SRC_HEADERS += haruhi/graph/backend.h
 SRC_HEADERS += haruhi/graph/buffer.h
 SRC_HEADERS += haruhi/graph/conn_set.h
 SRC_HEADERS += haruhi/graph/event.h
@@ -277,7 +278,6 @@ SRC_SOURCES += haruhi/plugin/plugin_loader.cc
 
 ######## /session ########
 
-SRC_HEADERS += haruhi/session/backend.h
 SRC_HEADERS += haruhi/session/engine.h
 SRC_HEADERS += haruhi/session/patch.h
 SRC_HEADERS += haruhi/session/periodic_updater.h

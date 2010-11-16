@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__SESSION__BACKEND_H__INCLUDED
-#define HARUHI__SESSION__BACKEND_H__INCLUDED
+#ifndef HARUHI__GRAPH__BACKEND_H__INCLUDED
+#define HARUHI__GRAPH__BACKEND_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -24,13 +24,13 @@ class Backend
 {
   public:
 	/**
-	 * Connects object to backend.
+	 * Connects backend object to system backend.
 	 */
 	virtual void
 	connect() = 0;
 
 	/**
-	 * Disconnects from backend.
+	 * Disconnects backend from system.
 	 */
 	virtual void
 	disconnect() = 0;

@@ -41,10 +41,10 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/application/haruhi.h>
-#include <haruhi/graph/unit.h>
+#include <haruhi/graph/backend.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/graph/event_port.h>
-#include <haruhi/session/backend.h>
+#include <haruhi/graph/unit.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/exception.h>
