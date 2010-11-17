@@ -24,7 +24,6 @@
 
 namespace Haruhi {
 
-// TODO perhaps move to separate file.
 class EventTeacher
 {
   public:
