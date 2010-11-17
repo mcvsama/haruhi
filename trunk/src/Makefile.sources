@@ -89,7 +89,7 @@ SRC_HEADERS += haruhi/components/event_backend/device_with_port_item.h
 SRC_HEADERS += haruhi/components/event_backend/ports_list_view.h
 SRC_HEADERS += haruhi/components/event_backend/port_item.h
 SRC_HEADERS += haruhi/components/event_backend/teacher.h
-SRC_HEADERS += haruhi/components/audio_backend/transport.h
+SRC_HEADERS += haruhi/components/event_backend/transport.h
 
 SRC_SOURCES += haruhi/components/event_backend/backend.cc
 SRC_SOURCES += haruhi/components/event_backend/controller_with_port_dialog.cc
