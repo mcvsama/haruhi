@@ -551,13 +551,6 @@ Session::load_state (QDomElement const& element)
 		}
 	}
 
-	if (!parameters_element.isNull())
-	{
-		parameters().load_state (parameters_element);
-		_global->load_params();
-		apply_parameters();
-	}
-
 	if (!audio_backend_element.isNull() && !event_backend_element.isNull() && !program_element.isNull())
 	{
 		// Components must be restored in given order (backends must get their
@@ -573,6 +566,13 @@ Session::load_state (QDomElement const& element)
 	}
 	else
 		QMessageBox::warning (this, "Error while loading session", "Could not load session due to missing information in session file.");
+
+	if (!parameters_element.isNull())
+	{
+		parameters().load_state (parameters_element);
+		_global->load_params();
+		apply_parameters();
+	}
 }
 
 
