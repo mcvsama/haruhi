@@ -20,6 +20,7 @@
 // Haruhi:
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/functions.h>
+#include <haruhi/utility/confusion.h>
 
 // Local:
 #include "types.h"
