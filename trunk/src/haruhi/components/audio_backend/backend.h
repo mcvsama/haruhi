@@ -42,6 +42,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/application/haruhi.h>
 #include <haruhi/graph/backend.h>
+#include <haruhi/graph/audio_backend.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/graph/event_port.h>
 #include <haruhi/graph/unit.h>
@@ -62,13 +63,13 @@
 
 namespace Haruhi {
 
-namespace AudioBackend {
+namespace AudioBackendImpl {
 
 class Backend:
 	public QWidget,
 	public Unit,
 	public SaveableState,
-	public ::Haruhi::Backend
+	public AudioBackend
 {
 	Q_OBJECT
 
@@ -115,33 +116,38 @@ class Backend:
 	panic_port() const { return _panic_port; }
 
 	/**
-	 * Starts processing.
+	 * Starts processing, that is: enables ticks from audio subsystem.
+	 * After this call engine should call periodically data_ready().
 	 */
 	void
 	enable();
 
 	/**
-	 * Stops processing. Backend must not enter processing round after this call ends.
+	 * Stops processing. Backend must not enter processing round after this call starts.
 	 * Otherwise system behavior is undefined.
 	 */
 	void
 	disable();
 
-	/**
-	 * Transports data between graph's ports and Transport's ports.
+	/*
+	 * AudioBackend API
 	 */
+
 	void
-	transfer();
+	data_ready();
+
+	void
+	peak_levels (LevelsMap& levels_map);
 
 	/*
-	 * Haruhi::Unit methods:
+	 * Haruhi::Unit API
 	 */
 
 	void
 	process();
 
 	/*
-	 * SaveableState methods:
+	 * SaveableState API
 	 */
 
 	/**
@@ -300,7 +306,7 @@ class PortException: public Exception
 	{ }
 };
 
-} // namespace AudioBackend
+} // namespace AudioBackendImpl
 
 } // namespace Haruhi
 

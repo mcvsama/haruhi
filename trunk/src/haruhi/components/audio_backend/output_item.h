@@ -31,7 +31,7 @@
 
 namespace Haruhi {
 
-namespace AudioBackend {
+namespace AudioBackendImpl {
 
 class OutputItem: public PortItem
 {
@@ -62,7 +62,7 @@ class OutputItem: public PortItem
 	DSP::Smoother	_smoother;
 };
 
-} // namespace AudioBackend
+} // namespace AudioBackendImpl
 
 } // namespace Haruhi
 

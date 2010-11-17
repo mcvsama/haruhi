@@ -24,7 +24,7 @@
 
 namespace Haruhi {
 
-namespace AudioBackend {
+namespace AudioBackendImpl {
 
 DummyThread::DummyThread (Backend* backend):
 	_backend (backend),
@@ -61,7 +61,7 @@ DummyThread::run()
 	}
 }
 
-} // namespace AudioBackend
+} // namespace AudioBackendImpl
 
 } // namespace Haruhi
 

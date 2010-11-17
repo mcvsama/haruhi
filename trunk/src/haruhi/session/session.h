@@ -181,7 +181,7 @@ class Session: public QWidget
 
 	virtual ~Session();
 
-	AudioBackend::Backend*
+	AudioBackendImpl::Backend*
 	audio_backend() const { return _audio_backend; }
 
 	EventBackend::Backend*
@@ -294,36 +294,36 @@ class Session: public QWidget
 	create_container (QWidget* parent);
 
   private:
-	QString					_name;
-	QString					_file_name;
-	Parameters				_parameters;
+	QString						_name;
+	QString						_file_name;
+	Parameters					_parameters;
 
-	Graph*					_graph;
+	Graph*						_graph;
 
-	QVBoxLayout*			_layout;
-	MeterPanel*				_meter_panel;
-	QStackedWidget*			_stack;
-	QLabel*					_session_name;
-	QPushButton*			_panic_button;
-	QPushButton*			_main_menu_button;
+	QVBoxLayout*				_layout;
+	MeterPanel*					_meter_panel;
+	QStackedWidget*				_stack;
+	QLabel*						_session_name;
+	QPushButton*				_panic_button;
+	QPushButton*				_main_menu_button;
 
-	Program*				_program;
-	QTabWidget*				_backends;
+	Program*					_program;
+	QTabWidget*					_backends;
 
-	SessionPrivate::Global*	_global;
-	QWidget*				_audio_tab;
-	QWidget*				_event_tab;
-	QWidget*				_devices_manager_tab;
+	SessionPrivate::Global*		_global;
+	QWidget*					_audio_tab;
+	QWidget*					_event_tab;
+	QWidget*					_devices_manager_tab;
 
 	// Links to main session components:
-	AudioBackend::Backend*	_audio_backend;
-	EventBackend::Backend*	_event_backend;
-	Engine*					_engine;
-	PluginLoader*			_plugin_loader;
-	DevicesManager::Panel*	_devices_manager;
+	AudioBackendImpl::Backend*	_audio_backend;
+	EventBackend::Backend*		_event_backend;
+	Engine*						_engine;
+	PluginLoader*				_plugin_loader;
+	DevicesManager::Panel*		_devices_manager;
 
-	QDoubleSpinBox*			_tempo_spinbox;
-	QMenu*					_main_menu;
+	QDoubleSpinBox*				_tempo_spinbox;
+	QMenu*						_main_menu;
 };
 
 } // namespace Haruhi

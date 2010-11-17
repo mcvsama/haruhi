@@ -25,7 +25,7 @@
 
 namespace Haruhi {
 
-namespace AudioBackend {
+namespace AudioBackendImpl {
 
 InputItem::InputItem (PortsListView* parent, QString const& name):
 	PortItem (parent, name)
@@ -84,7 +84,7 @@ InputItem::load_state (QDomElement const& element)
 	update_name();
 }
 
-} // namespace AudioBackend
+} // namespace AudioBackendImpl
 
 } // namespace Haruhi
 

@@ -19,7 +19,6 @@
 
 // Haruhi:
 #include <haruhi/utility/thread.h>
-#include <haruhi/utility/semaphore.h>
 #include <haruhi/session/session.h>
 
 
@@ -30,32 +29,17 @@ class Engine: public Thread
   public:
 	Engine (Session* session);
 
+	/**
+	 * Normal way to stop Engine is to delete it.
+	 * Destructor will wait for all operations to stop.
+	 */
 	~Engine();
-
-	/**
-	 * Waits for processing round completion,
-	 * which is done at end of each round inside
-	 * run() loop.
-	 */
-	void
-	wait_for_data();
-
-	/**
-	 * Tells engine that it should perform processing round
-	 * on graph, that is it should execute one run() loop
-	 * round.
-	 * Returns immediately.
-	 *
-	 * \threadsafe
-	 */
-	void
-	continue_processing();
 
   protected:
 	/**
-	 * Main engine loop. Loops until _quit is set.
-	 * Syncs audio backend on each round and
-	 * signals wait_for_data() semaphore.
+	 * Main engine loop. Loops until destructor is called.
+	 * Syncs audio backend on each round and tells audio backend
+	 * that data is ready for consumption.
 	 */
 	void
 	run();
@@ -77,8 +61,6 @@ class Engine: public Thread
 
   private:
 	Session*	_session;
-	Semaphore	_semaphore;
-	Semaphore	_wait_semaphore;
 	bool		_quit;
 	bool		_panic_pressed;
 };

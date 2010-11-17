@@ -25,11 +25,12 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/components/audio_backend/transport.h>
+#include <haruhi/utility/semaphore.h>
 
 
 namespace Haruhi {
 
-namespace AudioBackend {
+namespace AudioBackendImpl {
 
 /**
  * JACK audio transport.
@@ -95,6 +96,10 @@ class JackTransport: public Transport
 
 	~JackTransport();
 
+	/*
+	 * Transport API
+	 */
+
 	void
 	connect (std::string const& client_name);
 
@@ -109,6 +114,12 @@ class JackTransport: public Transport
 
 	void
 	deactivate();
+
+	void
+	wait_for_tick();
+
+	void
+	data_ready();
 
 	bool
 	active() const { return _active; }
@@ -186,9 +197,11 @@ class JackTransport: public Transport
 	jack_client_t*	_jack_client;
 	Ports			_ports;
 	bool			_active;
+	Semaphore		_wait_for_tick;
+	Semaphore		_data_ready;
 };
 
-} // namespace AudioBackend
+} // namespace AudioBackendImpl
 
 } // namespace Haruhi
 

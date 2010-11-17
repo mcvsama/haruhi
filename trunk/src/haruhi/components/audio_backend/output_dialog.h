@@ -37,7 +37,7 @@
 
 namespace Haruhi {
 
-namespace AudioBackend {
+namespace AudioBackendImpl {
 
 class OutputDialog: public PortDialog
 {
@@ -68,7 +68,7 @@ class OutputDialog: public PortDialog
 	QPushButton*	_reject_button;
 };
 
-} // namespace AudioBackend
+} // namespace AudioBackendImpl
 
 } // namespace Haruhi
 

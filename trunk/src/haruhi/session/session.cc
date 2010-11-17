@@ -302,6 +302,7 @@ Session::Session (QWidget* parent):
 	_graph (new Graph()),
 	_audio_backend (0),
 	_event_backend (0),
+	_engine (0),
 	_plugin_loader (new PluginLoader (this))
 {
 	_name = "";
@@ -416,10 +417,9 @@ Session::~Session()
 	delete _program;
 	delete _plugin_loader;
 
+	delete _engine;
 	stop_audio_backend();
 	stop_event_backend();
-
-	delete _engine;
 	delete _graph;
 }
 
@@ -528,6 +528,9 @@ Session::save_state (QDomElement& element) const
 void
 Session::load_state (QDomElement const& element)
 {
+	// Stop processing, if any runs:
+	delete _engine;
+
 	set_name (element.attribute ("name", "").ascii());
 
 	QDomElement parameters_element;
@@ -563,6 +566,10 @@ Session::load_state (QDomElement const& element)
 		event_backend()->set_id (event_backend_element.attribute ("id").toInt());
 
 		_program->load_state (program_element);
+
+		// Restart processing:
+		_engine = new Engine (this);
+		_engine->start();
 	}
 	else
 		QMessageBox::warning (this, "Error while loading session", "Could not load session due to missing information in session file.");
@@ -693,7 +700,7 @@ void
 Session::start_audio_backend()
 {
 	try {
-		_audio_backend = new AudioBackend::Backend (this, "Haruhi", 1, _audio_tab);
+		_audio_backend = new AudioBackendImpl::Backend (this, "Haruhi", 1, _audio_tab);
 		_graph->register_unit (_audio_backend);
 		_audio_backend->show();
 		_audio_backend->connect();

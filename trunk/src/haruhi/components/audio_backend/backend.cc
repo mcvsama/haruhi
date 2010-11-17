@@ -39,7 +39,7 @@
 // TODO handle dummy_timer and faked sample_rate+buffer_size when transport disconnects.
 namespace Haruhi {
 
-namespace AudioBackend {
+namespace AudioBackendImpl {
 
 Backend::Backend (Session* session, QString const& client_name, int id, QWidget* parent):
 	QWidget (parent),
@@ -172,12 +172,12 @@ Backend::disable()
 
 
 void
-Backend::transfer()
+Backend::data_ready()
 {
-	session()->engine()->wait_for_data();
+	_transport->wait_for_tick();
 
 	_ports_lock.lock();
-	// Transport -> Haruhi:
+	// Copy data from transport to graph (input):
 	for (InputsMap::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
 	{
 		Sample* src_buffer = p->first->buffer();
@@ -189,13 +189,13 @@ Backend::transfer()
 	}
 
 	// Use Master Volume control to adjust volume of outputs:
-	// FIXME not-secure, use exported int value (controller_proxy->value()):
+	// TODO FIXME use master_volume().
 	DialControl* master_volume = session()->meter_panel()->master_volume();
 	Sample v = std::pow (master_volume->value() / static_cast<float> (Session::MeterPanel::ZeroVolume), M_E);
 	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
 		p->second->attenuate (v);
 
-	// Haruhi -> Transport:
+	// Copy data from graph to transport (output):
 	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
 	{
 		AudioBuffer* src_buffer = p->second->port()->audio_buffer();
@@ -212,8 +212,15 @@ Backend::transfer()
 	update_level_meter();
 	_ports_lock.unlock();
 
-	// Tell engine to continue processing:
-	session()->engine()->continue_processing();
+	_transport->data_ready();
+}
+
+
+void
+Backend::peak_levels (LevelsMap& levels)
+{
+	levels.clear();
+	// TODO
 }
 
 
@@ -536,9 +543,10 @@ Backend::dummy_stop()
 void
 Backend::dummy_round()
 {
-	session()->engine()->wait_for_data();
+	// TODO refactor dummy thread functionality
+	//session()->engine()->wait_for_data();
 	update_level_meter();
-	session()->engine()->continue_processing();
+	//session()->engine()->continue_processing();
 }
 
 
@@ -581,7 +589,7 @@ Backend::graph_updated()
 		p->second->graph_updated();
 }
 
-} // namespace AudioBackend
+} // namespace AudioBackendImpl
 
 } // namespace Haruhi
 

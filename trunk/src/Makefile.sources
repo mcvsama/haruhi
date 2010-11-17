@@ -225,6 +225,7 @@ SRC_SOURCES += haruhi/dsp/wave.cc
 
 ######## /graph ########
 
+SRC_HEADERS += haruhi/graph/audio_backend.h
 SRC_HEADERS += haruhi/graph/audio_buffer.h
 SRC_HEADERS += haruhi/graph/audio_port.h
 SRC_HEADERS += haruhi/graph/backend.h
@@ -242,6 +243,7 @@ SRC_HEADERS += haruhi/graph/predicates.h
 SRC_HEADERS += haruhi/graph/predicates.tcc
 SRC_HEADERS += haruhi/graph/unit.h
 
+SRC_SOURCES += haruhi/graph/audio_backend.cc
 SRC_SOURCES += haruhi/graph/audio_buffer.cc
 SRC_SOURCES += haruhi/graph/audio_port.cc
 SRC_SOURCES += haruhi/graph/conn_set.cc

@@ -12,23 +12,31 @@
  */
 
 // Standard:
-#include <cstddef>
+#include <algorithm>
+#include <functional>
+#include <memory.h>
+
+// Haruhi:
+#include <haruhi/utility/atomic.h>
 
 // Local:
-#include "port_dialog.h"
+#include "audio_backend.h"
 
 
 namespace Haruhi {
 
-namespace AudioBackendImpl {
-
-PortDialog::PortDialog (QWidget* parent, Backend* backend):
-	QDialog (parent),
-	_backend (backend)
+Sample
+AudioBackend::master_volume() const
 {
+	return atomic (_master_volume);
 }
 
-} // namespace AudioBackendImpl
+
+void
+AudioBackend::set_master_volume (Sample volume)
+{
+	atomic (_master_volume) = volume;
+}
 
 } // namespace Haruhi
 

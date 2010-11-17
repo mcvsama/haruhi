@@ -34,7 +34,7 @@
 
 namespace Haruhi {
 
-namespace AudioBackend {
+namespace AudioBackendImpl {
 
 JackTransport::JackPort::JackPort (Transport* transport, Direction direction, std::string const& name):
 	Port (transport),
@@ -103,7 +103,9 @@ JackTransport::JackPort::destroy()
 JackTransport::JackTransport (Backend* backend):
 	Transport (backend),
 	_jack_client (0),
-	_active (false)
+	_active (false),
+	_wait_for_tick (0),
+	_data_ready (0)
 {
 	ignore_sigpipe();
 }
@@ -191,9 +193,26 @@ JackTransport::deactivate()
 {
 	if (connected())
 	{
+		// Ensure that Jack is not stuck in process() function:
+		_data_ready.post();
+		// Deactivate:
 		jack_deactivate (_jack_client);
 		_active = false;
 	}
+}
+
+
+void
+JackTransport::wait_for_tick()
+{
+	_wait_for_tick.wait();
+}
+
+
+void
+JackTransport::data_ready()
+{
+	_data_ready.post();
 }
 
 
@@ -236,7 +255,8 @@ JackTransport::ignore_sigpipe()
 int
 JackTransport::c_process (jack_nframes_t samples)
 {
-	backend()->transfer();
+	_wait_for_tick.post();
+	_data_ready.wait();
 	return 0;
 }
 
@@ -283,7 +303,7 @@ JackTransport::s_log_info (const char* message)
 	std::clog << "INFO[JACK] " << message << std::endl;
 }
 
-} // namespace AudioBackend
+} // namespace AudioBackendImpl
 
 } // namespace Haruhi
 

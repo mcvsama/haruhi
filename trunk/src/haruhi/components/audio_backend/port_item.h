@@ -43,7 +43,7 @@
 
 namespace Haruhi {
 
-namespace AudioBackend {
+namespace AudioBackendImpl {
 
 class Backend;
 class PortsListView;
@@ -109,7 +109,7 @@ class PortItem:
 	bool				_ready;
 };
 
-} // namespace AudioBackend
+} // namespace AudioBackendImpl
 
 } // namespace Haruhi
 

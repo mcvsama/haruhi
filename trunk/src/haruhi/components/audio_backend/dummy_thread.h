@@ -24,7 +24,7 @@
 
 namespace Haruhi {
 
-namespace AudioBackend {
+namespace AudioBackendImpl {
 
 class Backend;
 
@@ -62,7 +62,7 @@ class DummyThread: public Thread
 	bool		_quit;
 };
 
-} // namespace AudioBackend
+} // namespace AudioBackendImpl
 
 } // namespace Haruhi
 

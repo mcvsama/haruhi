@@ -25,7 +25,7 @@
 
 namespace Haruhi {
 
-namespace AudioBackend {
+namespace AudioBackendImpl {
 
 class Backend;
 
@@ -117,6 +117,19 @@ class Transport
 	active() const = 0;
 
 	/**
+	 * Waits for audio subsystem request for audio data.
+	 */
+	virtual void
+	wait_for_tick() = 0;
+
+	/**
+	 * Tells audio subsystem that new data is available, so
+	 * it can continue processing.
+	 */
+	virtual void
+	data_ready() = 0;
+
+	/**
 	 * Creates input port with given name.
 	 * Should never return 0, instead it should throw
 	 * an exception.
@@ -142,7 +155,7 @@ class Transport
 	Backend* _backend;
 };
 
-} // namespace AudioBackend
+} // namespace AudioBackendImpl
 
 } // namespace Haruhi
 

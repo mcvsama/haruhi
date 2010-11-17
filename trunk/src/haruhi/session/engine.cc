@@ -27,8 +27,6 @@ namespace Haruhi {
 
 Engine::Engine (Session* session):
 	_session (session),
-	_semaphore (0),
-	_wait_semaphore (0),
 	_quit (false),
 	_panic_pressed (false)
 {
@@ -39,22 +37,7 @@ Engine::Engine (Session* session):
 Engine::~Engine()
 {
 	_quit = true;
-	_semaphore.post();
 	wait();
-}
-
-
-void
-Engine::wait_for_data()
-{
-	_wait_semaphore.wait();
-}
-
-
-void
-Engine::continue_processing()
-{
-	_semaphore.post();
 }
 
 
@@ -68,13 +51,10 @@ Engine::run()
 		adjust_master_volume();
 		check_panic_button();
 		_session->graph()->leave_processing_round();
-		_wait_semaphore.post();
-		_semaphore.wait();
+		_session->audio_backend()->data_ready();
 		if (_quit)
 			break;
 	}
-	while (!_wait_semaphore.try_wait())
-		_wait_semaphore.post();
 }
 
 

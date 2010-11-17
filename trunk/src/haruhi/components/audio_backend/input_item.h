@@ -29,7 +29,7 @@
 
 namespace Haruhi {
 
-namespace AudioBackend {
+namespace AudioBackendImpl {
 
 class InputItem: public PortItem
 {
@@ -48,7 +48,7 @@ class InputItem: public PortItem
 	load_state (QDomElement const&);
 };
 
-} // namespace AudioBackend
+} // namespace AudioBackendImpl
 
 } // namespace Haruhi
 

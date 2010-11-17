@@ -28,7 +28,7 @@
 
 namespace Haruhi {
 
-namespace AudioBackend {
+namespace AudioBackendImpl {
 
 PortItem::PortItem (PortsListView* parent, QString const& name):
 	QTreeWidgetItem (parent, QStringList (name)),
@@ -77,7 +77,7 @@ PortItem::update_name()
 	_backend->graph()->unlock();
 }
 
-} // namespace AudioBackend
+} // namespace AudioBackendImpl
 
 } // namespace Haruhi
 
