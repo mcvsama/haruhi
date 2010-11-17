@@ -28,7 +28,7 @@
 
 namespace Haruhi {
 
-namespace EventBackend {
+namespace EventBackendImpl {
 
 PortsListView::PortsListView (QWidget* parent, Backend* backend):
 	DevicesManager::PortsListView (parent),
@@ -70,7 +70,7 @@ PortsListView::customEvent (QEvent* event)
 	}
 }
 
-} // namespace EventBackend
+} // namespace EventBackendImpl
 
 } // namespace Haruhi
 

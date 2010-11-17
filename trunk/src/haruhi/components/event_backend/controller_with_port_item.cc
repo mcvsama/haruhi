@@ -27,7 +27,7 @@
 
 namespace Haruhi {
 
-namespace EventBackend {
+namespace EventBackendImpl {
 
 ControllerWithPortItem::ControllerWithPortItem (DeviceWithPortItem* parent, QString const& name):
 	ControllerItem (parent, name),
@@ -226,7 +226,7 @@ ControllerWithPortItem::load_state (QDomElement const& element)
 	update_name();
 }
 
-} // namespace EventBackend
+} // namespace EventBackendImpl
 
 } // namespace Haruhi
 

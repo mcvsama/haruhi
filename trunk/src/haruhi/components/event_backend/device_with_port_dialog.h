@@ -23,7 +23,7 @@
 
 namespace Haruhi {
 
-namespace EventBackend {
+namespace EventBackendImpl {
 
 using DevicesManager::DeviceItem;
 
@@ -36,7 +36,7 @@ class DeviceWithPortDialog: public DevicesManager::DeviceDialog
 	apply (DeviceItem*) const;
 };
 
-} // namespace EventBackend
+} // namespace EventBackendImpl
 
 } // namespace Haruhi
 

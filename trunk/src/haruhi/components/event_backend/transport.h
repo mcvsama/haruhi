@@ -24,7 +24,7 @@
 
 namespace Haruhi {
 
-namespace EventBackend {
+namespace EventBackendImpl {
 
 class Backend;
 
@@ -182,7 +182,7 @@ class Transport
 	Backend* _backend;
 };
 
-} // namespace EventBackend
+} // namespace EventBackendImpl
 
 } // namespace Haruhi
 

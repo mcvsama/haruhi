@@ -41,7 +41,6 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/application/haruhi.h>
-#include <haruhi/graph/backend.h>
 #include <haruhi/graph/audio_backend.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/graph/event_port.h>

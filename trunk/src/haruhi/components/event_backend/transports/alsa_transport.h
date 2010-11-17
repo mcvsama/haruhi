@@ -29,7 +29,7 @@
 
 namespace Haruhi {
 
-namespace EventBackend {
+namespace EventBackendImpl {
 
 /**
  * ALSA event transport.
@@ -123,7 +123,7 @@ class AlsaTransport: public Transport
 	Ports		_ports;
 };
 
-} // namespace EventBackend
+} // namespace EventBackendImpl
 
 } // namespace Haruhi
 

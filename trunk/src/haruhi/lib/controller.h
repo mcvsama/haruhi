@@ -18,8 +18,8 @@
 #include <cstddef>
 
 // Haruhi:
+#include <haruhi/graph/event_backend.h>
 #include <haruhi/lib/controller_proxy.h>
-#include <haruhi/components/event_backend/backend.h>
 
 
 namespace Haruhi {

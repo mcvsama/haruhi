@@ -36,8 +36,8 @@
 #include <haruhi/application/haruhi.h>
 #include <haruhi/components/devices_manager/device_dialog.h>
 #include <haruhi/components/devices_manager/controller_dialog.h>
-#include <haruhi/graph/backend.h>
 #include <haruhi/graph/event.h>
+#include <haruhi/graph/event_backend.h>
 #include <haruhi/graph/event_port.h>
 #include <haruhi/graph/unit.h>
 #include <haruhi/settings/settings.h> // XXX EventHardwareTemplate
@@ -45,7 +45,6 @@
 #include <haruhi/utility/exception.h>
 
 // Local:
-#include "teacher.h"
 #include "ports_list_view.h"
 #include "port_item.h"
 #include "device_with_port_item.h"
@@ -55,7 +54,7 @@
 
 namespace Haruhi {
 
-namespace EventBackend {
+namespace EventBackendImpl {
 
 class DeviceWithPortDialog;
 class ControllerWithPortDialog;
@@ -63,9 +62,8 @@ class ControllerWithPortDialog;
 class Backend:
 	public QWidget,
 	public Unit,
-	public Teacher,
 	public SaveableState,
-	public ::Haruhi::Backend
+	public EventBackend
 {
 	Q_OBJECT
 
@@ -182,6 +180,9 @@ class Backend:
 	void
 	create_templates_menu (QMenu* menu);
 
+	void
+	handle_event_for_learnables (Transport::MidiEvent const& event, EventPort* port);
+
   private slots:
 	/**
 	 * Inserts new input hardware template into list.
@@ -234,7 +235,7 @@ class PortException: public Exception
 	{ }
 };
 
-} // namespace EventBackend
+} // namespace EventBackendImpl
 
 } // namespace Haruhi
 

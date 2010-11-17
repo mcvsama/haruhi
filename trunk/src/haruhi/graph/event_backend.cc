@@ -14,27 +14,24 @@
 // Standard:
 #include <cstddef>
 
-// Qt:
-#include <QtGui/QMessageBox>
-#include <QtGui/QHeaderView>
-#include <QtGui/QTreeWidgetItem>
-
 // Local:
-#include "port_item.h"
-#include "backend.h"
+#include "event_backend.h"
 
 
 namespace Haruhi {
 
-namespace EventBackendImpl {
-
-PortItem::PortItem (Backend* backend):
-	_backend (backend),
-	_ready (false)
+void
+EventTeacher::start_learning (Learnable* learnable, EventTypes event_types)
 {
+	_learnables.insert (std::make_pair (learnable, event_types));
 }
 
-} // namespace EventBackendImpl
+
+void
+EventTeacher::stop_learning (Learnable* learnable, EventTypes event_types)
+{
+	_learnables.erase (std::make_pair (learnable, event_types));
+}
 
 } // namespace Haruhi
 

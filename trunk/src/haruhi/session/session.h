@@ -184,7 +184,7 @@ class Session: public QWidget
 	AudioBackendImpl::Backend*
 	audio_backend() const { return _audio_backend; }
 
-	EventBackend::Backend*
+	EventBackendImpl::Backend*
 	event_backend() const { return _event_backend; }
 
 	Engine*
@@ -317,7 +317,7 @@ class Session: public QWidget
 
 	// Links to main session components:
 	AudioBackendImpl::Backend*	_audio_backend;
-	EventBackend::Backend*		_event_backend;
+	EventBackendImpl::Backend*	_event_backend;
 	Engine*						_engine;
 	PluginLoader*				_plugin_loader;
 	DevicesManager::Panel*		_devices_manager;

@@ -716,7 +716,7 @@ void
 Session::start_event_backend()
 {
 	try {
-		_event_backend = new EventBackend::Backend (this, "Haruhi", 2, _event_tab);
+		_event_backend = new EventBackendImpl::Backend (this, "Haruhi", 2, _event_tab);
 		_graph->register_unit (_event_backend);
 		_event_backend->show();
 		_event_backend->connect();

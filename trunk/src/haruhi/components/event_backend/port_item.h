@@ -30,7 +30,7 @@
 
 namespace Haruhi {
 
-namespace EventBackend {
+namespace EventBackendImpl {
 
 class Backend;
 
@@ -69,7 +69,7 @@ class PortItem
 	bool		_ready;
 };
 
-} // namespace EventBackend
+} // namespace EventBackendImpl
 
 } // namespace Haruhi
 

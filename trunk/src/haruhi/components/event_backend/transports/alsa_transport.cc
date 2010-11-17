@@ -28,7 +28,7 @@
 
 namespace Haruhi {
 
-namespace EventBackend {
+namespace EventBackendImpl {
 
 AlsaTransport::ALSAPort::ALSAPort (Transport* transport, Direction direction, std::string const& name):
 	Port (transport),
@@ -263,7 +263,7 @@ AlsaTransport::map_alsa_to_internal (MidiEvent& midi, ::snd_seq_event_t* event)
 	return true;
 }
 
-} // namespace EventBackend
+} // namespace EventBackendImpl
 
 } // namespace Haruhi
 

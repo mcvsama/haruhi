@@ -39,7 +39,7 @@
 
 namespace Haruhi {
 
-namespace EventBackend {
+namespace EventBackendImpl {
 
 Backend::Backend (Session* session, QString const& client_name, int id, QWidget* parent):
 	QWidget (parent),
@@ -427,6 +427,31 @@ Backend::create_templates_menu (QMenu* menu)
 
 
 void
+Backend::handle_event_for_learnables (Transport::MidiEvent const& event, EventPort* port)
+{
+	Learnables::iterator lnext;
+	for (Learnables::iterator l = learnables().begin(); l != learnables().end(); l = lnext)
+	{
+		lnext = l;
+		++lnext;
+
+		bool learned = false;
+		learned |= (l->second & Keyboard) && (event.type == Transport::MidiEvent::NoteOn || event.type == Transport::MidiEvent::NoteOff);
+		learned |= (l->second & Controller) && event.type == Transport::MidiEvent::Controller;
+		learned |= (l->second & Pitchbend) && event.type == Transport::MidiEvent::Pitchbend;
+		learned |= (l->second & ChannelPressure) && event.type == Transport::MidiEvent::ChannelPressure;
+		learned |= (l->second & KeyPressure) && event.type == Transport::MidiEvent::KeyPressure;
+
+		if (learned)
+		{
+			l->first->learned_port (l->second, port);
+			learnables().erase (l);
+		}
+	}
+}
+
+
+void
 Backend::insert_template (int menu_item_id)
 {
 	Templates::iterator t = _templates.find (menu_item_id);
@@ -440,7 +465,7 @@ Backend::insert_template (int menu_item_id)
 	}
 }
 
-} // namespace EventBackend
+} // namespace EventBackendImpl
 
 } // namespace Haruhi
 

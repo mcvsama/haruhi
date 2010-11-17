@@ -28,7 +28,7 @@
 
 namespace Haruhi {
 
-namespace EventBackend {
+namespace EventBackendImpl {
 
 using DevicesManager::DeviceItem;
 class Backend;
@@ -75,7 +75,7 @@ class PortsListView: public DevicesManager::PortsListView
 	Backend* _backend;
 };
 
-} // namespace EventBackend
+} // namespace EventBackendImpl
 
 } // namespace Haruhi
 

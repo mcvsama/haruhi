@@ -21,7 +21,7 @@
 
 namespace Haruhi {
 
-namespace EventBackend {
+namespace EventBackendImpl {
 
 DeviceWithPortDialog::DeviceWithPortDialog (QWidget* parent):
 	DeviceDialog (parent)
@@ -38,7 +38,7 @@ DeviceWithPortDialog::apply (DeviceItem* item) const
 		device_item->update_name();
 }
 
-} // namespace EventBackend
+} // namespace EventBackendImpl
 
 } // namespace Haruhi
 

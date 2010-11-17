@@ -30,7 +30,7 @@
 
 namespace Haruhi {
 
-namespace EventBackend {
+namespace EventBackendImpl {
 
 using DevicesManager::DeviceItem;
 using DevicesManager::ControllerItem;
@@ -87,7 +87,7 @@ class DeviceWithPortItem:
 	Transport::Port*	_transport_port;
 };
 
-} // namespace EventBackend
+} // namespace EventBackendImpl
 
 } // namespace Haruhi
 
