@@ -77,9 +77,9 @@ LevelMeter::process (Sample* begin, Sample* end)
 	// Compare to current value:
 	if (_sample < max)
 		_sample = max;
-	if (_peak < _sample || _peak_decounter < 0)
+	if (atomic (_peak) < _sample || _peak_decounter < 0)
 	{
-		_peak = _sample;
+		atomic (_peak) = _sample;
 		_peak_decounter = LevelMeter::PEAK_DECOUNTER;
 	}
 }
@@ -91,9 +91,9 @@ LevelMeter::set (Sample value)
 	// Compare to current value:
 	if (_sample < value)
 		_sample = value;
-	if (_peak < _sample || _peak_decounter < 0)
+	if (atomic (_peak) < _sample || _peak_decounter < 0)
 	{
-		_peak = _sample;
+		atomic (_peak) = _sample;
 		_peak_decounter = LevelMeter::PEAK_DECOUNTER;
 	}
 }
@@ -104,7 +104,7 @@ LevelMeter::update()
 {
 	QWidget::update();
 	if (_group)
-		_group->update_peak (_peak);
+		_group->update_peak (atomic (_peak));
 }
 
 
@@ -122,7 +122,7 @@ void
 LevelMeter::reset_peak()
 {
 	_sample = 0.0;
-	_peak = 0.0;
+	atomic (_peak) = 0.0;
 }
 
 
@@ -140,7 +140,7 @@ LevelMeter::paintEvent (QPaintEvent* event)
 	const int k = h - _z_top + 1;
 
 	const float sample_z = log_meter (20 * std::log10 (_sample_prev), _lower_db, _upper_db);
-	const float peak_z = log_meter (20 * std::log10 (_peak), _lower_db, _upper_db);
+	const float peak_z = log_meter (20 * std::log10 (atomic (_peak)), _lower_db, _upper_db);
 
 	_z_top = h * sample_z;
 	_z_peak = h * peak_z;
