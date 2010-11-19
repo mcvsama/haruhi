@@ -44,10 +44,9 @@ class WaveComputer: public Thread
 	/**
 	 * Returns wavetable to use or 0 if not yet available.
 	 * \entry	Any thread.
-	 * \threadsafe
 	 */
 	DSP::Wavetable*
-	wavetable() const { return atomic (_current); }
+	wavetable() const { return _current; }
 
 	/**
 	 * Recomputes wavetables for new wave.

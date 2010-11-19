@@ -80,10 +80,9 @@ class WavePlot: public QWidget
 	/**
 	 * \returns	currently assigned Wave object (0 if none).
 	 * \entry	Any thread.
-	 * \threadsafe
 	 */
 	DSP::Wave*
-	wave() const { return atomic (_wave); }
+	wave() const { return _wave; }
 
 	/**
 	 * Replots the wave.

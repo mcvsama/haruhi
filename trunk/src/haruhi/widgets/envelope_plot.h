@@ -81,10 +81,9 @@ class EnvelopePlot: public QWidget
 	/**
 	 * \returns	currently assigned Envelope object (0 if none).
 	 * \entry	Any thread.
-	 * \threadsafe
 	 */
 	DSP::Envelope*
-	envelope() const { return atomic (_envelope); }
+	envelope() const { return _envelope; }
 
 	/**
 	 * Sets editable mode of the plot.

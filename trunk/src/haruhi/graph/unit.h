@@ -126,7 +126,7 @@ class Unit: private Noncopyable
 	 * May not be called inside of processing round.
 	 */
 	void
-	enable() { atomic (_enabled) = true; }
+	enable() { _enabled = true; }
 
 	/**
 	 * Disables unit. Disabled units aren't synced.
@@ -139,7 +139,7 @@ class Unit: private Noncopyable
 	 * Tells whether unit is enabled. May not be called inside of processing round.
 	 */
 	bool
-	enabled() const { return atomic (_enabled); }
+	enabled() const { return _enabled; }
 
 	/**
 	 * Returns Unit's URN that identifies unit type.

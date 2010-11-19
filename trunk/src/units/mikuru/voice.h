@@ -86,10 +86,9 @@ class Voice
 	/**
 	 * \returns	currently used SynthThread.
 	 * \entry	Any thread.
-	 * \threadsafe
 	 */
 	SynthThread*
-	thread() const { return atomic (_synth_thread); }
+	thread() const { return _synth_thread; }
 
 	/**
 	 * Moves Voice to another thread.

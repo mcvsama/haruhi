@@ -85,7 +85,7 @@ Unit::disable()
 {
 	// Wait for processing end:
 	_processing_mutex.lock();
-	atomic (_enabled) = false;
+	_enabled = false;
 	_processing_mutex.unlock();
 }
 

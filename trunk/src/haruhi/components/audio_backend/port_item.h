@@ -97,7 +97,7 @@ class PortItem:
 
   protected:
 	void
-	set_ready (bool r) { atomic (_ready) = r; }
+	set_ready (bool r) { _ready = r; }
 
   protected:
 	Backend*			_backend;
