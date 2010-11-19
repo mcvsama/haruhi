@@ -412,17 +412,20 @@ Mikuru::del_part()
 void
 Mikuru::del_part (Private::Part* part)
 {
+	graph()->lock();
 	_parts_mutex.lock();
 	_parts.remove (part);
 	_parts_mutex.unlock();
 	_tabs_widget->removePage (part);
 	delete part;
+	graph()->unlock();
 }
 
 
 void
 Mikuru::del_all_parts()
 {
+	graph()->lock();
 	_parts_mutex.lock();
 	while (_parts.size() > 0)
 	{
@@ -430,6 +433,7 @@ Mikuru::del_all_parts()
 		_parts_mutex.yield();
 	}
 	_parts_mutex.unlock();
+	graph()->unlock();
 }
 
 

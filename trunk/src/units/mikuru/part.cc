@@ -72,13 +72,9 @@ Part::Part (Mikuru* mikuru, QWidget* parent):
 Part::~Part()
 {
 	_mikuru->free_id ("parts", _id);
-	if (_mikuru->graph())
-		_mikuru->graph()->lock();
 	delete _voice_manager;
 	delete _port_group;
 	_filters->delete_ports();
-	if (_mikuru->graph())
-		_mikuru->graph()->unlock();
 }
 
 
