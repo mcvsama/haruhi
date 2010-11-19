@@ -36,7 +36,6 @@
 #include "backend.h"
 
 
-// TODO handle dummy_timer and faked sample_rate+buffer_size when transport disconnects.
 namespace Haruhi {
 
 class Session; // XXX
@@ -132,18 +131,12 @@ Backend::registered()
 {
 	_master_volume_port = new EventPort (this, "Master Volume", Port::Input);
 	_panic_port = new EventPort (this, "Panic", Port::Input);
-
-	// Graph ticks emulator:
-	_dummy_timer = new QTimer (this);
-	QObject::connect (_dummy_timer, SIGNAL (timeout()), this, SLOT (dummy_round()));
-	dummy_start();
 }
 
 
 void
 Backend::unregistered()
 {
-	dummy_stop();
 	if (connected())
 		disconnect();
 
@@ -151,7 +144,6 @@ Backend::unregistered()
 	_inputs_list->clear();
 	_outputs_list->clear();
 
-	delete _dummy_timer;
 	delete _master_volume_port;
 	delete _panic_port;
 }
@@ -176,6 +168,12 @@ Backend::disable()
 void
 Backend::data_ready()
 {
+	if (!_transport->connected())
+	{
+		dummy_round();
+		return;
+	}
+
 	_transport->wait_for_tick();
 
 	_ports_lock.lock();
@@ -277,7 +275,6 @@ void
 Backend::connect()
 {
 	try {
-		dummy_stop();
 		_transport->connect (_client_name.toStdString());
 		_transport->activate();
 		enable();
@@ -285,7 +282,6 @@ Backend::connect()
 	catch (Exception const& e)
 	{
 		QMessageBox::warning (this, "Audio backend", QString ("Can't connect to audio backend: ") + e.what());
-		dummy_start();
 	}
 	update_widgets();
 }
@@ -297,7 +293,6 @@ Backend::disconnect()
 	disable();
 	_transport->deactivate();
 	_transport->disconnect();
-	dummy_start();
 	update_widgets();
 }
 
@@ -521,45 +516,14 @@ Backend::destroy_selected_output()
 
 
 void
-Backend::dummy_start()
-{
-	const int DummyPeriodTime = 33; // ms
-	const int DummySampleRate = 48000;
-	const int DummyBufferSize = DummySampleRate / (1000.0 / DummyPeriodTime);
-	graph()->lock();
-	graph()->set_sample_rate (DummySampleRate);
-	graph()->set_buffer_size (DummyBufferSize);
-	graph()->unlock();
-	_dummy_timer->start (DummyPeriodTime);
-}
-
-
-void
-Backend::dummy_stop()
-{
-	_dummy_timer->stop();
-}
-
-
-void
-Backend::dummy_round()
-{
-	// TODO refactor dummy thread functionality
-	//session()->engine()->wait_for_data();
-	//session()->engine()->continue_processing();
-}
-
-
-void
 Backend::customEvent (QEvent* event)
 {
 	OfflineNotification* offline_notification = dynamic_cast<OfflineNotification*> (event);
 	if (offline_notification)
 	{
-		dummy_start();
 		update_widgets();
 		// Show message to user:
-		QMessageBox::warning (this, "Audio backend", "Audio transport disconnected. :[\nUse \"Reconnect\" button on Audio backend tab (or press C-j) to reconnect.");
+		QMessageBox::warning (this, "Audio backend", "Audio transport disconnected.\nUse «Reconnect» button on Audio backend tab (or press C-j) to reconnect.");
 	}
 }
 
@@ -571,6 +535,20 @@ Backend::graph_updated()
 	// Update smoothers for all OutputItems:
 	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
 		p->second->graph_updated();
+}
+
+
+void
+Backend::dummy_round()
+{
+	const int DummyPeriodTime = 33; // ms
+	const int DummySampleRate = 48000;
+	const int DummyBufferSize = DummySampleRate / (1000.0 / DummyPeriodTime);
+	graph()->lock();
+	graph()->set_sample_rate (DummySampleRate);
+	graph()->set_buffer_size (DummyBufferSize);
+	graph()->unlock();
+	usleep (33 * 1000); // Sleep for 33ms
 }
 
 

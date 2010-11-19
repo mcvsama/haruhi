@@ -193,8 +193,9 @@ JackTransport::deactivate()
 {
 	if (connected())
 	{
-		// Ensure that Jack is not stuck in process() function:
+		// Ensure that neither Jack or Engine is stuck:
 		_data_ready.post();
+		_wait_for_tick.post();
 		// Deactivate:
 		jack_deactivate (_jack_client);
 		_active = false;

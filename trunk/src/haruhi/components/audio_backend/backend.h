@@ -230,16 +230,6 @@ class Backend:
 	void
 	destroy_selected_output();
 
-  private slots:
-	void
-	dummy_start();
-
-	void
-	dummy_stop();
-
-	void
-	dummy_round();
-
   protected:
 	void
 	customEvent (QEvent* event);
@@ -248,6 +238,9 @@ class Backend:
 	graph_updated();
 
   private:
+	void
+	dummy_round();
+
 	void
 	update_peak_levels();
 
@@ -271,9 +264,6 @@ class Backend:
 	// Master volume control port:
 	EventPort*			_master_volume_port;
 	EventPort*			_panic_port;
-
-	// Used for graph ticks when audio backend is not running:
-	QTimer*				_dummy_timer;
 
 	// Ports sets:
 	InputsMap			_inputs;
