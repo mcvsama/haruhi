@@ -19,30 +19,49 @@
 #undef assert
 
 #if HARUHI_ENABLE_ASSERT
-
-#include <signal.h>
-
-#undef assert
+# include <signal.h>
+# undef assert
 
 inline void
 assert (bool expression)
 {
 	if (!expression)
 	{
-#if HARUHI_ENABLE_FATAL_ASSERT
+# if HARUHI_ENABLE_FATAL_ASSERT
 		raise (SIGTRAP);
-#endif
+# endif
 	}
 }
 
 #else // HARUHI_ENABLE_ASSERT
-
-#undef assert
-#define assert
-
+# undef assert
+# define assert
 #endif // HARUHI_ENABLE_ASSERT
 
+
+/**
+ * Returns size (number of elements) of an array.
+ */
 #define ARRAY_SIZE(x) (sizeof (x) / sizeof (*x))
+
+
+/**
+ * Statically asserts that x is true. If it's not, there will
+ * be error at compile time.
+ * \param	msg must be valid C++ identifier.
+ */
+#define static_assert(x, msg)								\
+	do {													\
+		struct StaticAssertFailure_##msg { };				\
+		typedef StaticAssert::Check<(x) != 0> Check;		\
+		Check check = Check (StaticAssertFailure_##msg());	\
+		check.f();											\
+	} while (0);
+
+namespace StaticAssert {
+	template<bool>	struct Check		{ void f() { }; Check (...) { }; };
+	template<>		struct Check<false>	{ void f() { }};
+} // namespace StaticAssert
 
 #endif
 
