@@ -138,6 +138,12 @@ class JackTransport: public Transport
 
   private:
 	/**
+	 * Calls post on semaphores to avoid death locks.
+	 */
+	void
+	deactivated();
+
+	/**
 	 * Blocks SIGPIPE to avoid terminating program due to failure on JACK read.
 	 */
 	void

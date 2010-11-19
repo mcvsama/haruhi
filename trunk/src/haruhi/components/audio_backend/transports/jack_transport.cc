@@ -193,10 +193,7 @@ JackTransport::deactivate()
 {
 	if (connected())
 	{
-		// Ensure that neither Jack or Engine is stuck:
-		_data_ready.post();
-		_wait_for_tick.post();
-		// Deactivate:
+		deactivated();
 		jack_deactivate (_jack_client);
 		_active = false;
 	}
@@ -244,6 +241,15 @@ JackTransport::destroy_port (Port* port)
 
 
 void
+JackTransport::deactivated()
+{
+	// Ensure that neither Jack or Engine is stuck:
+	_data_ready.post();
+	_wait_for_tick.post();
+}
+
+
+void
 JackTransport::ignore_sigpipe()
 {
 	sigset_t set;
@@ -287,6 +293,7 @@ JackTransport::c_shutdown()
 {
 	_jack_client = 0;
 	_active = false;
+	deactivated();
 	backend()->notify_disconnected();
 }
 
