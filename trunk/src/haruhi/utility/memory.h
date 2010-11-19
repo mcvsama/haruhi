@@ -17,6 +17,9 @@
 // Standard:
 #include <cstddef>
 
+// Haruhi:
+#include <haruhi/utility/mutex.h>
+
 
 template<class Type>
 	void delete_operator (Type element)
@@ -34,7 +37,15 @@ template<class Type>
  * second Shared object is to copy existing Shared (by use of assignment
  * operator or copy constructor).
  *
- * This class is not thread safe.
+ * This class is not completely thread safe, although
+ * reference counting is handled in thread safe manner (using Mutex).
+ *
+ * So it is safe to simultaneously read (accessed using const methods/operators)
+ * the same Shared from multiple threads.
+ *
+ * It is safe to write (access using mutable methods/operators) to _different_
+ * Shareds in multiple threads simultaneously, even if these Shareds are copies
+ * (hold reference to the same data).
  */
 template<class T>
 	class Shared
@@ -43,7 +54,7 @@ template<class T>
 		typedef T Type;
 
 	  private:
-		struct Data
+		struct Data: public Mutex
 		{
 			Type*	object;
 			int		references;
@@ -55,15 +66,27 @@ template<class T>
 
 			~Data()
 			{
-				if (empty() && object != 0)
+				lock();
+				if (empty())
 					delete object;
+				unlock();
 			}
 
 			void
-			increase() { ++references; }
+			increase()
+			{
+				lock();
+				++references;
+				unlock();
+			}
 
 			void
-			decrease() { --references; }
+			decrease()
+			{
+				lock();
+				--references;
+				unlock();
+			}
 
 			bool
 			empty() const { return references == 0; }
@@ -128,9 +151,11 @@ template<class T>
 		void
 		leave_data()
 		{
+			_data->lock();
 			_data->decrease();
 			if (_data->empty())
 				delete _data;
+			_data->unlock();
 		}
 
 		void
