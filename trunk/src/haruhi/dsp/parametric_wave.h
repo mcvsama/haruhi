@@ -20,6 +20,7 @@
 
 // Haruhi:
 #include <haruhi/dsp/wave.h>
+#include <haruhi/utility/atomic.h>
 
 
 namespace Haruhi {
@@ -34,14 +35,20 @@ class ParametricWave: public Wave
   public:
 	ParametricWave (bool immutable);
 
+	/**
+	 * \threadsafe
+	 */
 	void
-	set_param (float param) { _param = param; }
+	set_param (float param) { atomic (_param) = param; }
 
+	/**
+	 * \threadsafe
+	 */
 	float
-	param() const { return _param; }
+	param() const { return atomic (_param); }
 
   private:
-	float	_param;
+	float _param;
 };
 
 } // namespace DSP

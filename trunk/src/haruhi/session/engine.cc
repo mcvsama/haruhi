@@ -15,9 +15,10 @@
 #include <cstddef>
 
 // Haruhi:
+#include <haruhi/session/session.h>
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/semaphore.h>
-#include <haruhi/session/session.h>
+#include <haruhi/utility/atomic.h>
 
 // Local:
 #include "engine.h"
@@ -36,7 +37,7 @@ Engine::Engine (Session* session):
 
 Engine::~Engine()
 {
-	_quit = true;
+	atomic (_quit) = true;
 	wait();
 }
 
@@ -53,7 +54,7 @@ Engine::run()
 		_session->graph()->leave_processing_round();
 		_session->update_level_meters();
 		_session->audio_backend()->data_ready();
-		if (_quit)
+		if (atomic (_quit))
 			break;
 	}
 }
