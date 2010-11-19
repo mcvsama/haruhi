@@ -54,7 +54,7 @@ template<class T>
 		typedef T Type;
 
 	  private:
-		struct Data: public Mutex
+		struct Data: public RecursiveMutex
 		{
 			Type*	object;
 			int		references;
