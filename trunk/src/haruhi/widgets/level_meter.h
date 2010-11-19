@@ -48,6 +48,9 @@ class LevelMeter: public QWidget
 	process (Sample* begin, Sample* end);
 
 	void
+	set (Sample value);
+
+	void
 	update();
 
 	void

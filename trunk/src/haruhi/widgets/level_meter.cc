@@ -71,12 +71,26 @@ LevelMeter::process (Sample* begin, Sample* end)
 {
 	// Find maximum:
 	Sample register max = 0;
-	for (Sample* s = begin; s != end;  ++s)
+	for (Sample* s = begin; s != end; ++s)
 		if (std::abs (*s) > max)
 			max = std::abs (*s);
 	// Compare to current value:
 	if (_sample < max)
 		_sample = max;
+	if (_peak < _sample || _peak_decounter < 0)
+	{
+		_peak = _sample;
+		_peak_decounter = LevelMeter::PEAK_DECOUNTER;
+	}
+}
+
+
+void
+LevelMeter::set (Sample value)
+{
+	// Compare to current value:
+	if (_sample < value)
+		_sample = value;
 	if (_peak < _sample || _peak_decounter < 0)
 	{
 		_peak = _sample;

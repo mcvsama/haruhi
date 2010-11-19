@@ -245,6 +245,7 @@ SRC_HEADERS += haruhi/graph/unit.h
 SRC_SOURCES += haruhi/graph/audio_backend.cc
 SRC_SOURCES += haruhi/graph/audio_buffer.cc
 SRC_SOURCES += haruhi/graph/audio_port.cc
+SRC_SOURCES += haruhi/graph/backend.cc
 SRC_SOURCES += haruhi/graph/conn_set.cc
 SRC_SOURCES += haruhi/graph/event.cc
 SRC_SOURCES += haruhi/graph/event_backend.cc

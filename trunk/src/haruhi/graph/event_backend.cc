@@ -20,6 +20,12 @@
 
 namespace Haruhi {
 
+EventBackend::EventBackend (std::string const& title, int id):
+	Backend ("urn://haruhi.mulabs.org/backend/event-backend/1", title, id)
+{
+}
+
+
 void
 EventTeacher::start_learning (Learnable* learnable, EventTypes event_types)
 {

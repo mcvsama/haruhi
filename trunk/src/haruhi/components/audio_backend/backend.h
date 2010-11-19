@@ -44,7 +44,6 @@
 #include <haruhi/graph/audio_backend.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/graph/event_port.h>
-#include <haruhi/graph/unit.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/exception.h>
@@ -66,7 +65,6 @@ namespace AudioBackendImpl {
 
 class Backend:
 	public QWidget,
-	public Unit,
 	public SaveableState,
 	public AudioBackend
 {
@@ -242,15 +240,16 @@ class Backend:
 	void
 	dummy_round();
 
-	void
-	update_level_meter();
-
   protected:
 	void
 	customEvent (QEvent* event);
 
 	void
 	graph_updated();
+
+  private:
+	void
+	update_peak_levels();
 
   private:
 	QString				_client_name;
@@ -279,6 +278,10 @@ class Backend:
 	// Ports sets:
 	InputsMap			_inputs;
 	OutputsMap			_outputs;
+
+	// Peak levels helper:
+	Mutex				_peak_levels_mutex;
+	LevelsMap			_peak_levels;
 };
 
 

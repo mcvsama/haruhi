@@ -24,11 +24,11 @@
 #include <QtGui/QApplication>
 #include <QtGui/QMessageBox>
 #include <QtGui/QToolTip>
+#include <Qt3Support/Q3PopupMenu>
 
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/application/haruhi.h>
-#include <haruhi/session/session.h>
 #include <haruhi/utility/numeric.h>
 
 // Local:
@@ -39,11 +39,13 @@
 // TODO handle dummy_timer and faked sample_rate+buffer_size when transport disconnects.
 namespace Haruhi {
 
+class Session; // XXX
+
 namespace AudioBackendImpl {
 
 Backend::Backend (Session* session, QString const& client_name, int id, QWidget* parent):
 	QWidget (parent),
-	Unit (session, "urn://haruhi.mulabs.org/backend/jack-audio-backend/1", "• Audio", id),
+	AudioBackend ("• Audio", id),
 	_client_name (client_name)
 {
 	_transport = new JackTransport (this);
@@ -189,9 +191,7 @@ Backend::data_ready()
 	}
 
 	// Use Master Volume control to adjust volume of outputs:
-	// TODO FIXME use master_volume().
-	DialControl* master_volume = session()->meter_panel()->master_volume();
-	Sample v = std::pow (master_volume->value() / static_cast<float> (Session::MeterPanel::ZeroVolume), M_E);
+	Sample v = master_volume();
 	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
 		p->second->attenuate (v);
 
@@ -209,7 +209,7 @@ Backend::data_ready()
 		}
 	}
 
-	update_level_meter();
+	update_peak_levels();
 	_ports_lock.unlock();
 
 	_transport->data_ready();
@@ -219,8 +219,9 @@ Backend::data_ready()
 void
 Backend::peak_levels (LevelsMap& levels)
 {
-	levels.clear();
-	// TODO
+	_peak_levels_mutex.lock();
+	levels = _peak_levels;
+	_peak_levels_mutex.unlock();
 }
 
 
@@ -545,24 +546,7 @@ Backend::dummy_round()
 {
 	// TODO refactor dummy thread functionality
 	//session()->engine()->wait_for_data();
-	update_level_meter();
 	//session()->engine()->continue_processing();
-}
-
-
-void
-Backend::update_level_meter()
-{
-	// Level meter:
-	std::vector<OutputItem*> ovec;
-	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
-		ovec.push_back (p->second);
-	std::sort (ovec.begin(), ovec.end(), PortItem::CompareByPortName());
-	for (unsigned int i = 0; i < std::min (ovec.size(), static_cast<std::vector<OutputItem*>::size_type> (2u)); ++i)
-	{
-		AudioBuffer* abuf = ovec[i]->port()->audio_buffer();
-		session()->meter_panel()->level_meters_group()->meter (i)->process (abuf->begin(), abuf->end());
-	}
 }
 
 
@@ -587,6 +571,28 @@ Backend::graph_updated()
 	// Update smoothers for all OutputItems:
 	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
 		p->second->graph_updated();
+}
+
+
+void
+Backend::update_peak_levels()
+{
+	_peak_levels_mutex.lock();
+
+	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
+	{
+		Sample register max = 0;
+		AudioPort* port = p->second->port();
+		AudioBuffer* buf = port->audio_buffer();
+
+		for (Sample* s = buf->begin(); s != buf->end(); ++s)
+			if (std::abs (*s) > max)
+				max = std::abs (*s);
+
+		_peak_levels[port] = max;
+	}
+
+	_peak_levels_mutex.unlock();
 }
 
 } // namespace AudioBackendImpl

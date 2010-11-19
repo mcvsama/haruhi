@@ -16,6 +16,7 @@
 
 // Standard:
 #include <cstddef>
+#include <string>
 
 // Local:
 #include "backend.h"
@@ -94,6 +95,8 @@ class EventBackend:
 	public Backend,
 	public EventTeacher
 {
+  public:
+	EventBackend (std::string const& title, int id);
 };
 
 } // namespace Haruhi

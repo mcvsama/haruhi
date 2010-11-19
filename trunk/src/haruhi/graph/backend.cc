@@ -11,46 +11,19 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__GRAPH__BACKEND_H__INCLUDED
-#define HARUHI__GRAPH__BACKEND_H__INCLUDED
-
 // Standard:
 #include <cstddef>
 #include <string>
 
 // Local:
-#include "unit.h"
+#include "backend.h"
 
 
 namespace Haruhi {
 
-class Session;
-
-class Backend: public Unit
+Backend::Backend (std::string const& urn, std::string const& title, int id):
+	Unit (0, urn, title, id)
 {
-  public:
-	Backend (std::string const& urn, std::string const& title, int id);
-
-	/**
-	 * Connects backend object to system backend.
-	 */
-	virtual void
-	connect() = 0;
-
-	/**
-	 * Disconnects backend from system.
-	 */
-	virtual void
-	disconnect() = 0;
-
-	/**
-	 * \returns	true if backend is connected.
-	 */
-	virtual bool
-	connected() const = 0;
-};
+}
 
 } // namespace Haruhi
-
-#endif
-

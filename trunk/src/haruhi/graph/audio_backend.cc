@@ -12,9 +12,7 @@
  */
 
 // Standard:
-#include <algorithm>
-#include <functional>
-#include <memory.h>
+#include <cstddef>
 
 // Haruhi:
 #include <haruhi/utility/atomic.h>
@@ -24,6 +22,12 @@
 
 
 namespace Haruhi {
+
+AudioBackend::AudioBackend (std::string const& title, int id):
+	Backend ("urn://haruhi.mulabs.org/backend/audio-backend/1", title, id)
+{
+}
+
 
 Sample
 AudioBackend::master_volume() const

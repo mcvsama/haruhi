@@ -39,7 +39,6 @@
 #include <haruhi/graph/event.h>
 #include <haruhi/graph/event_backend.h>
 #include <haruhi/graph/event_port.h>
-#include <haruhi/graph/unit.h>
 #include <haruhi/settings/settings.h> // XXX EventHardwareTemplate
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/exception.h>
@@ -61,7 +60,6 @@ class ControllerWithPortDialog;
 
 class Backend:
 	public QWidget,
-	public Unit,
 	public SaveableState,
 	public EventBackend
 {

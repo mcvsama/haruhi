@@ -34,6 +34,8 @@ class Port;
 class Unit;
 class PortGroup;
 class Notification;
+class AudioBackend;
+class EventBackend;
 
 class Graph: public RecursiveMutex
 {
@@ -46,6 +48,46 @@ class Graph: public RecursiveMutex
 	Graph();
 
 	virtual ~Graph();
+
+	/**
+	 * Registers unit as audio backend in graph.
+	 * Graph does not take ownership of the unit.
+	 */
+	void
+	register_audio_backend (AudioBackend*);
+
+	/**
+	 * Deregisters audio backend.
+	 * Does nothing if there's no audio backend registered.
+	 */
+	void
+	unregister_audio_backend();
+
+	/**
+	 * Registers unit as event backend in graph.
+	 * Graph does not take ownership of the unit.
+	 */
+	void
+	register_event_backend (EventBackend*);
+
+	/**
+	 * Deregisters event backend.
+	 * Does nothing if there's no event backend registered.
+	 */
+	void
+	unregister_event_backend();
+
+	/**
+	 * Returns currently registered audio backend (or 0 if there's none).
+	 */
+	AudioBackend*
+	audio_backend() const { return _audio_backend; }
+
+	/**
+	 * Returns currently registered event backend (or 0 if there's none).
+	 */
+	EventBackend*
+	event_backend() const { return _event_backend; }
 
 	/**
 	 * Registers unit in this graph.
@@ -189,6 +231,10 @@ class Graph: public RecursiveMutex
 	std::size_t		_sample_rate;
 	float			_tempo;
 	float			_master_tune;
+
+	// Registered backends:
+	AudioBackend*	_audio_backend;
+	EventBackend*	_event_backend;
 };
 
 } // namespace Haruhi

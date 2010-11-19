@@ -288,12 +288,13 @@ Session::MeterPanel::MeterPanel (Session* session, QWidget* parent):
 
 	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
 
-		_level_meters_group = new LevelMetersGroup (this);
-		_master_volume = new DialControl (this, MinVolume, MaxVolume, 0.75 * ZeroVolume);
-		QToolTip::add (_master_volume, "Master Volume");
+	_level_meters_group = new LevelMetersGroup (this);
+	_master_volume = new DialControl (this, MinVolume, MaxVolume, 0.75 * ZeroVolume);
+	QObject::connect (_master_volume, SIGNAL (valueChanged (int)), session, SLOT (master_volume_changed (int)));
+	QToolTip::add (_master_volume, "Master Volume");
 
-		layout->addWidget (_level_meters_group);
-		layout->addWidget (_master_volume);
+	layout->addWidget (_level_meters_group);
+	layout->addWidget (_master_volume);
 }
 
 
@@ -591,6 +592,28 @@ Session::master_tune() const
 
 
 void
+Session::update_level_meters()
+{
+	if (_audio_backend)
+	{
+		AudioBackend::LevelsMap levels_map;
+		std::vector<AudioPort*> ports;
+
+		_audio_backend->peak_levels (levels_map);
+
+		// Sort ports by name:
+		for (AudioBackend::LevelsMap::iterator p = levels_map.begin(); p != levels_map.end(); ++p)
+			ports.push_back (p->first);
+		std::sort (ports.begin(), ports.end(), AudioPort::CompareByName());
+
+		// Update level meter widget:
+		for (unsigned int i = 0; i < std::min (ports.size(), static_cast<std::vector<AudioPort*>::size_type> (2u)); ++i)
+			meter_panel()->level_meters_group()->meter (i)->set (levels_map[ports[i]]);
+	}
+}
+
+
+void
 Session::session_loader()
 {
 	Haruhi::haruhi()->session_loader();	
@@ -675,7 +698,7 @@ Session::stop_audio_backend()
 	{
 		_audio_backend->disconnect();
 		_audio_backend->hide();
-		_graph->unregister_unit (_audio_backend);
+		_graph->unregister_audio_backend();
 		delete _audio_backend;
 	}
 	_audio_backend = 0;
@@ -689,7 +712,7 @@ Session::stop_event_backend()
 	{
 		_event_backend->disconnect();
 		_event_backend->hide();
-		_graph->unregister_unit (_event_backend);
+		_graph->unregister_event_backend();
 		delete _event_backend;
 	}
 	_event_backend = 0;
@@ -701,7 +724,7 @@ Session::start_audio_backend()
 {
 	try {
 		_audio_backend = new AudioBackendImpl::Backend (this, "Haruhi", 1, _audio_tab);
-		_graph->register_unit (_audio_backend);
+		_graph->register_audio_backend (_audio_backend);
 		_audio_backend->show();
 		_audio_backend->connect();
 	}
@@ -717,13 +740,24 @@ Session::start_event_backend()
 {
 	try {
 		_event_backend = new EventBackendImpl::Backend (this, "Haruhi", 2, _event_tab);
-		_graph->register_unit (_event_backend);
+		_graph->register_event_backend (_event_backend);
 		_event_backend->show();
 		_event_backend->connect();
 	}
 	catch (Exception const& e)
 	{
 		QMessageBox::warning (this, "Could not create event backend", QString ("Could not start event backend: ") + e.what());
+	}
+}
+
+
+void
+Session::master_volume_changed (int value)
+{
+	if (_audio_backend)
+	{
+		Sample v = std::pow (value / static_cast<float> (Session::MeterPanel::ZeroVolume), M_E);
+		_audio_backend->set_master_volume (v);
 	}
 }
 

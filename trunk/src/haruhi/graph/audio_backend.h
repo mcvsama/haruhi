@@ -16,6 +16,7 @@
 
 // Standard:
 #include <cstddef>
+#include <string>
 #include <map>
 
 // Haruhi:
@@ -35,6 +36,8 @@ class AudioBackend: public Backend
 	typedef std::map<AudioPort*, Sample> LevelsMap;
 
   public:
+	AudioBackend (std::string const& title, int id);
+
 	/**
 	 * Tells audio backend that data have been processed and are ready to copy
 	 * to audio subsystem. This calls blocks until audio subsystem requests the

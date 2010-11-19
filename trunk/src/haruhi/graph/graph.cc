@@ -23,6 +23,8 @@
 // Local:
 #include "graph.h"
 #include "notification.h"
+#include "audio_backend.h"
+#include "event_backend.h"
 
 
 namespace Haruhi {
@@ -33,7 +35,9 @@ Graph::Graph():
 	_buffer_size (0),
 	_sample_rate (0),
 	_tempo (120.0),
-	_master_tune (440.0)
+	_master_tune (440.0),
+	_audio_backend (0),
+	_event_backend (0)
 {
 	set_buffer_size (1);
 }
@@ -41,6 +45,46 @@ Graph::Graph():
 
 Graph::~Graph()
 {
+}
+
+
+void
+Graph::register_audio_backend (AudioBackend* audio_backend)
+{
+	unregister_audio_backend();
+	_audio_backend = audio_backend;
+	register_unit (_audio_backend);
+}
+
+
+void
+Graph::unregister_audio_backend()
+{
+	if (_audio_backend)
+	{
+		unregister_unit (_audio_backend);
+		_audio_backend = 0;
+	}
+}
+
+
+void
+Graph::register_event_backend (EventBackend* event_backend)
+{
+	unregister_event_backend();
+	_event_backend = event_backend;
+	register_unit (_event_backend);
+}
+
+
+void
+Graph::unregister_event_backend()
+{
+	if (_event_backend)
+	{
+		unregister_unit (_event_backend);
+		_event_backend = 0;
+	}
 }
 
 

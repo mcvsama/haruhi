@@ -43,7 +43,7 @@ namespace EventBackendImpl {
 
 Backend::Backend (Session* session, QString const& client_name, int id, QWidget* parent):
 	QWidget (parent),
-	Unit (session, "urn://haruhi.mulabs.org/backend/event-backend/1", "• Event", id),
+	EventBackend ("• Event", id),
 	_client_name (client_name),
 	_insert_template_signal_mapper (0),
 	_tree (0),

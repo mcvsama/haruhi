@@ -17,7 +17,7 @@
 // Standard:
 #include <cstddef>
 #include <string>
-#include <map>
+#include <set>
 
 // Libs:
 #include <jack/jack.h>

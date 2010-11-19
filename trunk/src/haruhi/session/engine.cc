@@ -51,6 +51,7 @@ Engine::run()
 		adjust_master_volume();
 		check_panic_button();
 		_session->graph()->leave_processing_round();
+		_session->update_level_meters();
 		_session->audio_backend()->data_ready();
 		if (_quit)
 			break;

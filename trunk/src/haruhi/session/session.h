@@ -242,6 +242,9 @@ class Session: public QWidget
 	float
 	master_tune() const;
 
+	void
+	update_level_meters();
+
   private slots:
 	void
 	session_loader();
@@ -284,6 +287,9 @@ class Session: public QWidget
 
 	void
 	reconnect_to_jack() { audio_backend()->connect(); }
+
+	void
+	master_volume_changed (int);
 
   protected:
 	void
