@@ -42,5 +42,7 @@ assert (bool expression)
 
 #endif // HARUHI_ENABLE_ASSERT
 
+#define ARRAY_SIZE(x) (sizeof (x) / sizeof (*x))
+
 #endif
 
