@@ -24,8 +24,9 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/utility/memory.h>
 #include <haruhi/dsp/utility.h>
+#include <haruhi/utility/memory.h>
+#include <haruhi/utility/atomic.h>
 
 // Local:
 #include "level_meter.h"
