@@ -20,6 +20,7 @@
 // Haruhi:
 #include <haruhi/graph/event_backend.h>
 #include <haruhi/lib/controller_proxy.h>
+#include <haruhi/utility/atomic.h>
 
 
 namespace Haruhi {
@@ -107,7 +108,7 @@ class Controller:
 	 * Returns true if Controller is in 'learning' mode.
 	 */
 	bool
-	learning() { return atomic (_learning); }
+	learning() { return _learning.load(); }
 
   private:
 	/**
@@ -120,7 +121,7 @@ class Controller:
   private:
 	ControllerProxy	_controller_proxy;
 	UnitBay*		_unit_bay;
-	bool			_learning;
+	Atomic<bool>	_learning;
 };
 
 } // namespace Haruhi

@@ -51,7 +51,7 @@ class Semaphore
 	post() const;
 
   private:
-	mutable ::sem_t _semaphore;
+	::sem_t mutable _semaphore;
 };
 
 #endif

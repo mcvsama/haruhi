@@ -20,6 +20,7 @@
 // Haruhi:
 #include <haruhi/utility/atomic.h>
 #include <haruhi/utility/saveable_state.h>
+#include <haruhi/utility/atomic.h>
 #include <haruhi/lib/param.h>
 
 
@@ -89,9 +90,9 @@ class ControllerParam:
     load_state (QDomElement const&);
 
   private:
-	int				_denominator;
-	bool			_smoothing_enabled;
-	volatile int	_smoothing_parameter;
+	int						_denominator;
+	bool					_smoothing_enabled;
+	int volatile mutable	_smoothing_parameter; // Mutable for atomic().
 };
 
 } // namespace Haruhi

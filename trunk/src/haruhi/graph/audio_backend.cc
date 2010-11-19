@@ -32,14 +32,14 @@ AudioBackend::AudioBackend (std::string const& title, int id):
 Sample
 AudioBackend::master_volume() const
 {
-	return atomic (_master_volume);
+	return _master_volume.load();
 }
 
 
 void
 AudioBackend::set_master_volume (Sample volume)
 {
-	atomic (_master_volume) = volume;
+	_master_volume.store (volume);
 }
 
 } // namespace Haruhi

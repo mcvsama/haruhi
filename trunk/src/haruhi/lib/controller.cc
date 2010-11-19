@@ -53,7 +53,7 @@ Controller::~Controller()
 void
 Controller::start_learning()
 {
-	atomic (_learning) = true;
+	_learning.store (true);
 	unit_bay()->session()->event_backend()->start_learning (this, EventBackend::Controller | EventBackend::Pitchbend);
 	learning_state_changed();
 }
@@ -62,7 +62,7 @@ Controller::start_learning()
 void
 Controller::stop_learning()
 {
-	atomic (_learning) = false;
+	_learning.store (false);
 	unit_bay()->session()->event_backend()->stop_learning (this, EventBackend::Controller | EventBackend::Pitchbend);
 	learning_state_changed();
 }
@@ -73,7 +73,7 @@ Controller::learned_port (EventBackend::EventTypes, EventPort* event_port)
 {
 	if (unit_bay())
 	{
-		atomic (_learning) = false;
+		_learning.store (false);
 		unit_bay()->graph()->lock();
 		event_port->connect_to (controller_proxy().event_port());
 		unit_bay()->graph()->unlock();

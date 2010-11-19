@@ -37,7 +37,7 @@ Engine::Engine (Session* session):
 
 Engine::~Engine()
 {
-	atomic (_quit) = true;
+	_quit.store (true);
 	wait();
 }
 
@@ -54,7 +54,7 @@ Engine::run()
 		_session->graph()->leave_processing_round();
 		_session->update_level_meters();
 		_session->audio_backend()->data_ready();
-		if (atomic (_quit))
+		if (_quit.load())
 			break;
 	}
 }

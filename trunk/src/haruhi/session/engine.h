@@ -19,6 +19,7 @@
 
 // Haruhi:
 #include <haruhi/utility/thread.h>
+#include <haruhi/utility/atomic.h>
 #include <haruhi/session/session.h>
 
 
@@ -60,9 +61,9 @@ class Engine: public Thread
 	check_panic_button();
 
   private:
-	Session*	_session;
-	bool		_quit;
-	bool		_panic_pressed;
+	Session*		_session;
+	Atomic<bool>	_quit;
+	bool			_panic_pressed;
 };
 
 } // namespace Haruhi

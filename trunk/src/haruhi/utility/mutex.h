@@ -124,7 +124,7 @@ class Mutex
 		}
 
   private:
-	mutable ::pthread_mutex_t  _mutex;
+	::pthread_mutex_t mutable _mutex;
 };
 
 

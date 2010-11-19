@@ -212,7 +212,7 @@ class VoiceManager
 	Voices				_sustained_voices;
 	Voices				_released_voices;
 	Voices				_dropped_voices;
-	Voice*				_mono_voice;
+	Voice mutable* 		_mono_voice; // Mutable for atomic().
 	Haruhi::EventBuffer	_events_buffer;
 	bool				_sustain_notes;
 };

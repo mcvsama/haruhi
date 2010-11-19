@@ -120,6 +120,7 @@ VoiceManager::hard_panic()
 	{
 		notify_voice_dropped (_mono_voice);
 		delete _mono_voice;
+		_mono_voice = 0;
 	}
 }
 

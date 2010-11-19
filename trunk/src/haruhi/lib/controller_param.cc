@@ -16,7 +16,6 @@
 
 // Haruhi:
 #include <haruhi/utility/saveable_state.h>
-#include <haruhi/utility/atomic.h>
 #include <haruhi/utility/numeric.h>
 
 // Local:
@@ -28,7 +27,6 @@ namespace Haruhi {
 ControllerParam::ControllerParam():
 	_denominator (1),
 	_smoothing_enabled (false),
-	// No need to use atomic during construction:
 	_smoothing_parameter (0)
 { }
 
@@ -37,7 +35,6 @@ ControllerParam::ControllerParam (int minimum, int maximum, int default_value, i
 	Param (minimum, maximum, default_value),
 	_denominator (denominator),
 	_smoothing_enabled (false),
-	// No need to use atomic during construction:
 	_smoothing_parameter (0)
 { }
 
@@ -49,7 +46,7 @@ ControllerParam::operator= (ControllerParam const& other)
 
 	_denominator = other._denominator;
 	_smoothing_enabled = other._smoothing_enabled;
-	atomic (_smoothing_parameter) = atomic (other._smoothing_parameter);
+	atomic (_smoothing_parameter) = static_cast<int> (atomic (other._smoothing_parameter));
 
 	return *this;
 }

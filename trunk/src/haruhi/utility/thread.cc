@@ -24,8 +24,6 @@
 #include <errno.h>
 
 // Local:
-#include <haruhi/utility/atomic.h>
-
 #include "thread.h"
 
 
@@ -83,7 +81,7 @@ Thread::cancel()
 bool
 Thread::finished()
 {
-	return atomic (_finished);
+	return _finished.load();
 }
 
 
@@ -128,7 +126,7 @@ Thread::wait()
 void
 Thread::set_sched()
 {
-	if (_started && !_finished)
+	if (_started.load() && !_finished.load())
 	{
 		struct sched_param p;
 		p.sched_priority = _priority;
@@ -141,12 +139,12 @@ void*
 Thread::callback (void* arg)
 {
 	Thread *k = reinterpret_cast<Thread*> (arg);
-	atomic (k->_started) = true;
+	k->_started.store (true);
 	k->set_sched();
 	k->_wait.lock();
-	atomic (k->_finished) = false;
+	k->_finished.store (false);
 	k->run();
-	atomic (k->_finished) = true;
+	k->_finished.store (true);
 	k->_wait.unlock();
 	return 0;
 }

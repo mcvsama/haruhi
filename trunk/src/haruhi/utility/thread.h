@@ -22,6 +22,7 @@
 
 // Haruhi:
 #include <haruhi/utility/mutex.h>
+#include <haruhi/utility/atomic.h>
 
 
 /**
@@ -114,13 +115,13 @@ class Thread
 	static void*
 	callback (void *arg);
 
-	pthread_t	_pthread;
-	SchedType	_sched_type;
-	int			_priority;
-	std::size_t	_stack_size;
-	bool		_started;
-	bool		_finished;
-	Mutex		_wait;
+	pthread_t		_pthread;
+	SchedType		_sched_type;
+	int				_priority;
+	std::size_t		_stack_size;
+	Atomic<bool>	_started;
+	Atomic<bool>	_finished;
+	Mutex			_wait;
 };
 
 #endif

@@ -21,6 +21,7 @@
 
 // Haruhi:
 #include <haruhi/config/types.h>
+#include <haruhi/utility/atomic.h>
 
 // Local:
 #include "backend.h"
@@ -71,7 +72,7 @@ class AudioBackend: public Backend
 	set_master_volume (Sample volume);
 
   private:
-	Sample	_master_volume;
+	Atomic<Sample> _master_volume;
 };
 
 } // namespace Haruhi

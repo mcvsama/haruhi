@@ -67,10 +67,10 @@ template<class tType>
 		operator= (Type const& value) { set (value); }
 
 		Type
-		get() const { return atomic (_value); }
+		get() const { return _value.load(); }
 
 		void
-		set (Type const& value) { atomic (_value) = value; }
+		set (Type const& value) { _value.store (value); }
 
 		Type
 		minimum() const { return _minimum; }
@@ -103,7 +103,7 @@ template<class tType>
 		Type			_minimum;
 		Type			_maximum;
 		Type			_default_value;
-		Type volatile	_value;
+		Atomic<Type>	_value;
 	};
 
 } // namespace Haruhi

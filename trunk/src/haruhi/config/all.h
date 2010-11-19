@@ -14,8 +14,8 @@
 #ifndef HARUHI__CONFIG__ALL_H__INCLUDED
 #define HARUHI__CONFIG__ALL_H__INCLUDED
 
-#include "system.h"
 #include "types.h"
+#include "system.h"
 #include "resources.h"
 #include "version.h"
 
