@@ -38,11 +38,9 @@
 
 namespace Haruhi {
 
-class Session; // XXX
-
 namespace AudioBackendImpl {
 
-Backend::Backend (Session* session, QString const& client_name, int id, QWidget* parent):
+Backend::Backend (QString const& client_name, int id, QWidget* parent):
 	QWidget (parent),
 	AudioBackend ("• Audio", id),
 	_client_name (client_name)

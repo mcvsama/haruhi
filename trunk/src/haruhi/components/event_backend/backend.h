@@ -73,7 +73,7 @@ class Backend:
 	typedef std::map<int, Settings::EventHardwareTemplate> Templates;
 
   public:
-	Backend (Session*, QString const& client_name, int id, QWidget* parent);
+	Backend (QString const& client_name, int id, QWidget* parent);
 
 	~Backend();
 

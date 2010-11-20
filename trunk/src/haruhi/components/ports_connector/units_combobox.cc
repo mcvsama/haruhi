@@ -37,7 +37,7 @@ UnitsCombobox::UnitsCombobox (PortsConnector* ports_connector, Port::Direction t
 	_type (type)
 {
 	read_units();
-	setFixedHeight (27); // XXX fix for ugly Qt style (QtCurve)
+	setFixedHeight (27); // Fix for ugly Qt style (QtCurve)
 }
 
 

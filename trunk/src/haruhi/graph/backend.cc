@@ -22,7 +22,7 @@
 namespace Haruhi {
 
 Backend::Backend (std::string const& urn, std::string const& title, int id):
-	Unit (0, urn, title, id)
+	Unit (urn, title, id)
 {
 }
 

@@ -24,13 +24,10 @@
 
 namespace Haruhi {
 
-class Session;
-
 int Unit::_id_counter = 0;
 
 
-Unit::Unit (Session* session, std::string const& urn, std::string const& title, int id):
-	_session (session),
+Unit::Unit (std::string const& urn, std::string const& title, int id):
 	_graph (0),
 	_synced (true),
 	_enabled (false),

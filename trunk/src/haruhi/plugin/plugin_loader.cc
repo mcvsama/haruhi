@@ -33,8 +33,7 @@
 
 namespace Haruhi {
 
-PluginLoader::PluginLoader (Session* session):
-	_session (session)
+PluginLoader::PluginLoader()
 {
 	_plugin_factories.push_back (new MikuruFactory());
 	_plugin_factories.push_back (new VanHalenFactory());
@@ -53,7 +52,7 @@ PluginLoader::load (std::string const& urn, int id)
 	PluginFactory* factory = find_factory (urn);
 	if (factory)
 	{
-		Plugin* plugin = factory->create_plugin (_session, id, 0);
+		Plugin* plugin = factory->create_plugin (id, 0);
 		plugin->hide();
 		return plugin;
 	}

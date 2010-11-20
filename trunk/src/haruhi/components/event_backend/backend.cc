@@ -27,7 +27,6 @@
 #include <haruhi/components/devices_manager/device_dialog.h>
 #include <haruhi/components/devices_manager/controller_dialog.h>
 #include <haruhi/graph/event_buffer.h>
-#include <haruhi/session/session.h>
 
 // Local:
 #include "transports/alsa_transport.h"
@@ -41,7 +40,7 @@ namespace Haruhi {
 
 namespace EventBackendImpl {
 
-Backend::Backend (Session* session, QString const& client_name, int id, QWidget* parent):
+Backend::Backend (QString const& client_name, int id, QWidget* parent):
 	QWidget (parent),
 	EventBackend ("• Event", id),
 	_client_name (client_name),

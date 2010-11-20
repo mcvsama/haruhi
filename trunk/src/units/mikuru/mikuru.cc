@@ -37,8 +37,9 @@
 #include <haruhi/dsp/fourier_series_filler.h>
 #include <haruhi/dsp/fft_filler.h>
 #include <haruhi/dsp/noise.h>
-#include <haruhi/session/session.h>
+#include <haruhi/settings/unit_settings.h>
 #include <haruhi/utility/atomic.h>
+#include <haruhi/utility/confusion.h>
 #include <haruhi/widgets/dial_control.h>
 #include <haruhi/widgets/knob.h>
 
@@ -55,8 +56,8 @@
 namespace Private = MikuruPrivate;
 
 
-Mikuru::Mikuru (Haruhi::Session* session, std::string const& urn, std::string const& title, int id, QWidget* parent):
-	Haruhi::Plugin (session, urn, title, id, parent),
+Mikuru::Mikuru (std::string const& urn, std::string const& title, int id, QWidget* parent):
+	Haruhi::Plugin (urn, title, id, parent),
 	_patch (this),
 	_general (0),
 	_common_filters (0),
@@ -668,9 +669,9 @@ MikuruFactory::MikuruFactory():
 
 
 Haruhi::Plugin*
-MikuruFactory::create_plugin (Haruhi::Session* session, int id, QWidget* parent)
+MikuruFactory::create_plugin (int id, QWidget* parent)
 {
-	return new Mikuru (session, _information["haruhi:urn"], _information["haruhi:title"], id, parent);
+	return new Mikuru (_information["haruhi:urn"], _information["haruhi:title"], id, parent);
 }
 
 

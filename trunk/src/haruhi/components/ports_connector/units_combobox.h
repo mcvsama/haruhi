@@ -41,7 +41,7 @@ class UnitsCombobox: public QComboBox
 
   public:
 	/**
-	 * Creates combobox that observed unit_bay
+	 * Creates combobox that observes unit_bay
 	 * for inserting/removing units.
 	 */
 	UnitsCombobox (PortsConnector* ports_connector, Port::Direction type, QWidget* parent);

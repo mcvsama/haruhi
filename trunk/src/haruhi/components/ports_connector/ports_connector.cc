@@ -43,9 +43,8 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/graph/audio_buffer.h>
-#include <haruhi/graph/event_buffer.h>
-#include <haruhi/session/session.h>
+#include <haruhi/graph/audio_port.h>
+#include <haruhi/graph/event_port.h>
 
 // Local:
 #include "ports_connector.h"

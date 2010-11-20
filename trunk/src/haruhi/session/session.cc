@@ -292,7 +292,6 @@ Session::MeterPanel::MeterPanel (Session* session, QWidget* parent):
 	_master_volume = new DialControl (this, MinVolume, MaxVolume, 0.75 * ZeroVolume);
 	QObject::connect (_master_volume, SIGNAL (valueChanged (int)), session, SLOT (master_volume_changed (int)));
 	QToolTip::add (_master_volume, "Master Volume");
-	session->master_volume_changed (_master_volume->value());
 
 	layout->addWidget (_level_meters_group);
 	layout->addWidget (_master_volume);
@@ -305,7 +304,7 @@ Session::Session (QWidget* parent):
 	_audio_backend (0),
 	_event_backend (0),
 	_engine (0),
-	_plugin_loader (new PluginLoader (this))
+	_plugin_loader (new PluginLoader())
 {
 	_name = "";
 
@@ -724,10 +723,12 @@ void
 Session::start_audio_backend()
 {
 	try {
-		_audio_backend = new AudioBackendImpl::Backend (this, "Haruhi", 1, _audio_tab);
+		_audio_backend = new AudioBackendImpl::Backend ("Haruhi", 1, _audio_tab);
 		_graph->register_audio_backend (_audio_backend);
 		_audio_backend->show();
 		_audio_backend->connect();
+		// Update master volume:
+		master_volume_changed (meter_panel()->master_volume()->value());
 	}
 	catch (Exception const& e)
 	{
@@ -740,7 +741,7 @@ void
 Session::start_event_backend()
 {
 	try {
-		_event_backend = new EventBackendImpl::Backend (this, "Haruhi", 2, _event_tab);
+		_event_backend = new EventBackendImpl::Backend ("Haruhi", 2, _event_tab);
 		_graph->register_event_backend (_event_backend);
 		_event_backend->show();
 		_event_backend->connect();

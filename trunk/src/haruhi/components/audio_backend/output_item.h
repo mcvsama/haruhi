@@ -9,9 +9,6 @@
  * (at your option) any later version.
  *
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
- *
- * As there is assumption that in processing round graph cannot be modified you should only
- * acquire graph lock when changing core objects (ports, unit attributes, connecting ports, etc.).
  */
 
 #ifndef HARUHI__COMPONENTS__AUDIO_BACKEND__OUTPUT_ITEM_H__INCLUDED

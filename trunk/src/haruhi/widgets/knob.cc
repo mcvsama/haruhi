@@ -32,8 +32,10 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/application/haruhi.h>
+#include <haruhi/graph/audio_backend.h>
+#include <haruhi/graph/event_backend.h>
 #include <haruhi/graph/event_buffer.h>
-#include <haruhi/session/session.h>
+#include <haruhi/session/unit_bay.h>
 #include <haruhi/utility/atomic.h>
 #include <haruhi/utility/numeric.h>
 

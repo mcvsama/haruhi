@@ -24,8 +24,6 @@
 
 namespace Haruhi {
 
-class Session;
-
 class Backend: public Unit
 {
   public:

@@ -34,8 +34,6 @@
 
 namespace Haruhi {
 
-class Session;
-
 /*
  * Implements object that has two states: synced, and ready to sync.
  * Primary object task should be processing/generating data
@@ -63,14 +61,13 @@ class Unit: private Noncopyable
   public:
 	/**
 	 * Creates Unit.
-	 * \param	session is user data. No special meaning.
 	 * \param	urn identifies Unit type. Used by notification system.
 	 * \param	title is Unit's name visible to user.
 	 * \param	id is Unit ID. It's not used internally by Unit, but might be useful
 	 * 			for other objects. It's not verified to be unique. If 0, then new ID
 	 * 			will be automatically assigned.
 	 */
-	Unit (Session* session, std::string const& urn, std::string const& title, int id = 0);
+	Unit (std::string const& urn, std::string const& title, int id = 0);
 
 	/**
 	 * Dtor
@@ -84,14 +81,6 @@ class Unit: private Noncopyable
 	 */
 	void
 	sync();
-
-	/**
-	 * Returns pointer to associated session.
-	 * Used as 'user data', Session doesn't have any special meaning
-	 * to Unit.
-	 */
-	Session*
-	session() const { return _session; }
 
 	/**
 	 * Returns Graph that owns this Unit.
@@ -248,7 +237,6 @@ class Unit: private Noncopyable
   private:
 	static int	_id_counter;
 
-	Session*	_session;
 	Graph*		_graph;
 	bool		_synced;
 	bool		_enabled;

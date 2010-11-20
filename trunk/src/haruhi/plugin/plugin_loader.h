@@ -26,7 +26,6 @@ namespace Haruhi {
 
 class Plugin;
 class PluginFactory;
-class Session;
 
 /**
  * Manages units factories.
@@ -37,7 +36,7 @@ class PluginLoader
 	typedef std::list<PluginFactory*> PluginFactories;
 
   public:
-	PluginLoader (Session*);
+	PluginLoader();
 
 	~PluginLoader();
 
@@ -55,7 +54,6 @@ class PluginLoader
 	find_factory (std::string const& urn) const;
 
   private:
-	Session*		_session;
 	PluginFactories	_plugin_factories;
 };
 

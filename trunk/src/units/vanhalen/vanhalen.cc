@@ -24,13 +24,12 @@
 #include <haruhi/graph/event_buffer.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/delay_line.h>
-#include <haruhi/session/session.h>
 
 #include "vanhalen.h"
 
 
-VanHalen::VanHalen (Haruhi::Session* session, std::string const& urn, std::string const& title, int id, QWidget* parent):
-	Haruhi::Plugin (session, urn, title, id, parent),
+VanHalen::VanHalen (std::string const& urn, std::string const& title, int id, QWidget* parent):
+	Haruhi::Plugin (urn, title, id, parent),
 	_buf1 (64),
 	_buf2 (64),
 	_delay1 (16, 100000, 64),
@@ -206,9 +205,9 @@ VanHalenFactory::VanHalenFactory():
 
 
 Haruhi::Plugin*
-VanHalenFactory::create_plugin (Haruhi::Session* session, int id, QWidget* parent)
+VanHalenFactory::create_plugin (int id, QWidget* parent)
 {
-	return new VanHalen (session, _information["haruhi:urn"], _information["haruhi:title"], id, parent);
+	return new VanHalen (_information["haruhi:urn"], _information["haruhi:title"], id, parent);
 }
 
 

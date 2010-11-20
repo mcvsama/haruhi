@@ -9,15 +9,6 @@
  * (at your option) any later version.
  *
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
- *
- * NOTES
- *
- * Never call JACK functions when session's graph lock is acquired. This may lead to deadlock
- * when JACK will wait for end of its graph processing, and process() function will wait
- * on session's graph lock.
- *
- * As there is assumption that in processing round graph cannot be modified you should only
- * acquire graph lock when changing core objects (ports, unit attributes, connecting ports, etc.).
  */
 
 #ifndef HARUHI__COMPONENTS__AUDIO_BACKEND__BACKEND_H__INCLUDED
@@ -87,7 +78,7 @@ class Backend:
 	typedef std::map<Transport::Port*, OutputItem*>	OutputsMap;
 
   public:
-	Backend (Session* session, QString const& client_name, int id, QWidget* parent);
+	Backend (QString const& client_name, int id, QWidget* parent);
 
 	~Backend();
 

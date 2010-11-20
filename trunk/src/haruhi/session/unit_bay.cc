@@ -14,9 +14,6 @@
 // Standard:
 #include <cstddef>
 
-// Haruhi:
-#include <haruhi/session/session.h>
-
 // Local:
 #include "unit_bay.h"
 
@@ -36,8 +33,8 @@ UnitBayAware::set_unit_bay (UnitBay* unit_bay)
 }
 
 
-UnitBay::UnitBay (Session* session, std::string const& urn, std::string const& title, int id, QWidget* parent):
-	Unit (session, urn, title, id)
+UnitBay::UnitBay (std::string const& urn, std::string const& title, int id, QWidget* parent):
+	Unit (urn, title, id)
 {
 }
 

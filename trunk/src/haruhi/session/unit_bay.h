@@ -30,7 +30,6 @@
 namespace Haruhi {
 
 class UnitBay;
-class Session;
 
 /**
  * Mixin class.
@@ -70,7 +69,7 @@ class UnitBay:
 	typedef std::set<Unit*> Units;
 
   public:
-	UnitBay (Session*, std::string const& urn, std::string const& title, int id, QWidget* parent);
+	UnitBay (std::string const& urn, std::string const& title, int id, QWidget* parent);
 
 	virtual ~UnitBay();
 

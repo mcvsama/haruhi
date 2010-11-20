@@ -38,7 +38,7 @@ class VanHalen:
 	Q_OBJECT
 
   public:
-	VanHalen (Haruhi::Session*, std::string const& urn, std::string const& title, int id, QWidget* parent);
+	VanHalen (std::string const& urn, std::string const& title, int id, QWidget* parent);
 
 	virtual ~VanHalen();
 
@@ -95,7 +95,7 @@ class VanHalenFactory: public Haruhi::PluginFactory
 	VanHalenFactory();
 
 	Haruhi::Plugin*
-	create_plugin (Haruhi::Session*, int id, QWidget* parent);
+	create_plugin (int id, QWidget* parent);
 
 	void
 	destroy_plugin (Haruhi::Plugin* plugin);

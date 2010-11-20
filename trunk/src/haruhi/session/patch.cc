@@ -213,7 +213,7 @@ namespace Private = PatchPrivate;
 
 
 Patch::Patch (Session* session, std::string const& title, QWidget* parent):
-	UnitBay (session, "", title, 0, parent),
+	UnitBay ("", title, 0, parent),
 	_session (session)
 {
 	// Register itself:

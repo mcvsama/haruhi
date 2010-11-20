@@ -40,7 +40,7 @@ namespace Haruhi {
 
 class Patch;
 class PresetsManager;
-
+class Session;
 
 namespace PatchPrivate {
 

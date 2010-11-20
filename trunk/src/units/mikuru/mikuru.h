@@ -99,7 +99,7 @@ class Mikuru:
 	typedef std::set<int>  IDs;
 
   public:
-	Mikuru (Haruhi::Session*, std::string const& urn, std::string const& title, int id, QWidget* parent);
+	Mikuru (std::string const& urn, std::string const& title, int id, QWidget* parent);
 
 	virtual ~Mikuru();
 
@@ -371,7 +371,7 @@ class MikuruFactory: public Haruhi::PluginFactory
 	MikuruFactory();
 
 	Haruhi::Plugin*
-	create_plugin (Haruhi::Session*, int id, QWidget* parent);
+	create_plugin (int id, QWidget* parent);
 
 	void
 	destroy_plugin (Haruhi::Plugin* plugin);

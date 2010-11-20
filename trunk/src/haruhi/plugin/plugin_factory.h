@@ -23,7 +23,6 @@
 namespace Haruhi {
 
 class Plugin;
-class Session;
 
 class PluginFactory
 {
@@ -40,7 +39,7 @@ class PluginFactory
 	 * Created plugin must be destroyed with destroy_plugin().
 	 */
 	virtual Plugin*
-	create_plugin (Session*, int id, QWidget* parent) = 0;
+	create_plugin (int id, QWidget* parent) = 0;
 
 	/**
 	 * Destroys given plugin.

@@ -27,14 +27,12 @@
 
 namespace Haruhi {
 
-class Session;
-
 class Plugin:
 	public Unit,
 	public QWidget
 {
   public:
-	Plugin (Session*, std::string const& urn, std::string const& title, int id, QWidget* parent);
+	Plugin (std::string const& urn, std::string const& title, int id, QWidget* parent);
 };
 
 } // namespace Haruhi
