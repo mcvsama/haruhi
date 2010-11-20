@@ -54,7 +54,7 @@ void
 Controller::start_learning()
 {
 	_learning.store (true);
-	unit_bay()->session()->event_backend()->start_learning (this, EventBackend::Controller | EventBackend::Pitchbend);
+	unit_bay()->session()->graph()->event_backend()->start_learning (this, EventBackend::Controller | EventBackend::Pitchbend);
 	learning_state_changed();
 }
 
@@ -63,7 +63,7 @@ void
 Controller::stop_learning()
 {
 	_learning.store (false);
-	unit_bay()->session()->event_backend()->stop_learning (this, EventBackend::Controller | EventBackend::Pitchbend);
+	unit_bay()->session()->graph()->event_backend()->stop_learning (this, EventBackend::Controller | EventBackend::Pitchbend);
 	learning_state_changed();
 }
 

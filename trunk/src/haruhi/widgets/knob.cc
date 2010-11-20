@@ -378,15 +378,17 @@ Knob::create_context_menu()
 		_connect_menu = _context_menu->addMenu (Resources::Icons16::connect(), "&Connect");
 		_disconnect_menu = _context_menu->addMenu (Resources::Icons16::disconnect(), "&Disconnect");
 
-		unit_bay()->graph()->lock();
+		Graph* graph = unit_bay()->graph();
+
+		graph->lock();
 
 		// Connect AudioBackend:
-		QMenu* audio_backend_menu = _connect_menu->addMenu (pixmap_for_unit, QString::fromStdString (unit_bay()->session()->audio_backend()->title()));
-		create_connect_menu (audio_backend_menu, unit_bay()->session()->audio_backend(), pixmap_for_port_group, pixmap_for_port);
+		QMenu* audio_backend_menu = _connect_menu->addMenu (pixmap_for_unit, QString::fromStdString (graph->audio_backend()->title()));
+		create_connect_menu (audio_backend_menu, graph->audio_backend(), pixmap_for_port_group, pixmap_for_port);
 
 		// Connect EventBackend:
-		QMenu* event_backend_menu = _connect_menu->addMenu (pixmap_for_unit, QString::fromStdString (unit_bay()->session()->event_backend()->title()));
-		create_connect_menu (event_backend_menu, unit_bay()->session()->event_backend(), pixmap_for_port_group, pixmap_for_port);
+		QMenu* event_backend_menu = _connect_menu->addMenu (pixmap_for_unit, QString::fromStdString (graph->event_backend()->title()));
+		create_connect_menu (event_backend_menu, graph->event_backend(), pixmap_for_port_group, pixmap_for_port);
 
 		// Iterate over all Units from UnitBay and create PopupMenus for their EventPorts:
 		for (UnitBay::Units::iterator u = unit_bay()->units().begin(); u != unit_bay()->units().end(); ++u)

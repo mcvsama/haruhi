@@ -48,12 +48,12 @@ Engine::run()
 	for (;;)
 	{
 		_session->graph()->enter_processing_round();
-		_session->audio_backend()->sync();
+		_session->graph()->audio_backend()->sync();
 		adjust_master_volume();
 		check_panic_button();
 		_session->graph()->leave_processing_round();
 		_session->update_level_meters();
-		_session->audio_backend()->data_ready();
+		_session->graph()->audio_backend()->data_ready();
 		if (_quit.load())
 			break;
 	}
@@ -64,7 +64,7 @@ void
 Engine::adjust_master_volume()
 {
 	DialControl* master_volume = _session->meter_panel()->master_volume();
-	EventBuffer* buffer = _session->audio_backend()->master_volume_port()->event_buffer();
+	EventBuffer* buffer = _session->graph()->audio_backend()->master_volume_port()->event_buffer();
 	EventBuffer::EventsMultiset const& events = buffer->events();
 	for (EventBuffer::EventsMultiset::const_iterator e = events.begin(); e != events.end(); ++e)
 	{
@@ -81,7 +81,7 @@ Engine::adjust_master_volume()
 void
 Engine::check_panic_button()
 {
-	EventBuffer* buffer = _session->audio_backend()->panic_port()->event_buffer();
+	EventBuffer* buffer = _session->graph()->audio_backend()->panic_port()->event_buffer();
 	EventBuffer::EventsMultiset const& events = buffer->events();
 	for (EventBuffer::EventsMultiset::const_iterator e = events.begin(); e != events.end(); ++e)
 	{

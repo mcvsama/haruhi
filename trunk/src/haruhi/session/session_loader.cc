@@ -162,9 +162,9 @@ SessionLoader::apply (Session* session)
 			session->set_name (_new_session_name->text());
 			// Create audio inputs/outputs:
 			for (int i = 0, n = _new_session_audio_inputs->value(); i < n; ++i)
-				session->audio_backend()->create_input (QString ("in %1").arg (i + 1));
+				session->graph()->audio_backend()->create_input (QString ("in %1").arg (i + 1));
 			for (int i = 0, n = _new_session_audio_outputs->value(); i < n; ++i)
-				session->audio_backend()->create_output (QString ("out %1").arg (i + 1));
+				session->graph()->audio_backend()->create_output (QString ("out %1").arg (i + 1));
 			break;
 
 		case OpenSession:

@@ -509,12 +509,12 @@ Session::save_state (QDomElement& element) const
 	// Save audio-backend:
 	QDomElement audio_backend = element.ownerDocument().createElement ("audio-backend");
 	_audio_backend->save_state (audio_backend);
-	audio_backend.setAttribute ("id", this->audio_backend()->id());
+	audio_backend.setAttribute ("id", _audio_backend->id());
 
 	// Save event-backend:
 	QDomElement event_backend = element.ownerDocument().createElement ("event-backend");
 	_event_backend->save_state (event_backend);
-	event_backend.setAttribute ("id", this->event_backend()->id());
+	event_backend.setAttribute ("id", _event_backend->id());
 
 	// Save programs:
 	QDomElement program = element.ownerDocument().createElement ("program");
@@ -561,11 +561,11 @@ Session::load_state (QDomElement const& element)
 		// Components must be restored in given order (backends must get their
 		// IDs before program and connections between units are restored):
 
-		audio_backend()->load_state (audio_backend_element);
-		audio_backend()->set_id (audio_backend_element.attribute ("id").toInt());
+		_audio_backend->load_state (audio_backend_element);
+		_audio_backend->set_id (audio_backend_element.attribute ("id").toInt());
 
-		event_backend()->load_state (event_backend_element);
-		event_backend()->set_id (event_backend_element.attribute ("id").toInt());
+		_event_backend->load_state (event_backend_element);
+		_event_backend->set_id (event_backend_element.attribute ("id").toInt());
 
 		_program->load_state (program_element);
 

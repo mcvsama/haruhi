@@ -53,8 +53,8 @@ ConnectionsTab::ConnectionsTab (Patch* patch, QWidget* parent):
 
 	_ports_connector = new PortsConnector (_patch, this);
 	_ports_connector->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	_ports_connector->add_external_unit (_patch->session()->audio_backend());
-	_ports_connector->add_external_unit (_patch->session()->event_backend());
+	_ports_connector->add_external_unit (_patch->session()->graph()->audio_backend());
+	_ports_connector->add_external_unit (_patch->session()->graph()->event_backend());
 
 	layout->addWidget (_ports_connector);
 }
@@ -361,8 +361,8 @@ Patch::save_state (QDomElement& element) const
 	ConnSet conn_set;
 	graph()->lock();
 	conn_set.insert_units (this->units().begin(), this->units().end());
-	conn_set.insert_unit (session()->audio_backend());
-	conn_set.insert_unit (session()->event_backend());
+	conn_set.insert_unit (session()->graph()->audio_backend());
+	conn_set.insert_unit (session()->graph()->event_backend());
 	conn_set.save();
 	conn_set.save_state (connections);
 	graph()->unlock();
@@ -412,8 +412,8 @@ Patch::load_state (QDomElement const& element)
 		ConnSet conn_set;
 		graph()->lock();
 		conn_set.insert_units (this->units().begin(), this->units().end());
-		conn_set.insert_unit (session()->audio_backend());
-		conn_set.insert_unit (session()->event_backend());
+		conn_set.insert_unit (session()->graph()->audio_backend());
+		conn_set.insert_unit (session()->graph()->event_backend());
 		conn_set.load_state (connections);
 		conn_set.load();
 		graph()->unlock();

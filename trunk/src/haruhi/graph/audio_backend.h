@@ -26,6 +26,7 @@
 // Local:
 #include "backend.h"
 #include "audio_port.h"
+#include "event_port.h"
 
 
 namespace Haruhi {
@@ -70,6 +71,42 @@ class AudioBackend: public Backend
 	 */
 	virtual void
 	set_master_volume (Sample volume);
+
+	/**
+	 * Returns pointer to master volume port.
+	 */
+	virtual EventPort*
+	master_volume_port() const = 0;
+
+	/**
+	 * Returns pointer to panic port.
+	 */
+	virtual EventPort*
+	panic_port() const = 0;
+
+	/**
+	 * Creates input port with default name.
+	 */
+	virtual void
+	create_input() = 0;
+
+	/**
+	 * Creates input port with given name.
+	 */
+	virtual void
+	create_input (QString const& name) = 0;
+
+	/**
+	 * Creates output port with default name.
+	 */
+	virtual void
+	create_output() = 0;
+
+	/**
+	 * Creates output port with given name.
+	 */
+	virtual void
+	create_output (QString const& name) = 0;
 
   private:
 	Atomic<Sample> _master_volume;

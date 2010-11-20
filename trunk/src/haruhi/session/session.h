@@ -181,12 +181,6 @@ class Session: public QWidget
 
 	virtual ~Session();
 
-	AudioBackendImpl::Backend*
-	audio_backend() const { return _audio_backend; }
-
-	EventBackendImpl::Backend*
-	event_backend() const { return _event_backend; }
-
 	Engine*
 	engine() const { return _engine; }
 
@@ -286,7 +280,7 @@ class Session: public QWidget
 	show_backends() { _stack->setCurrentWidget (_backends); }
 
 	void
-	reconnect_to_jack() { audio_backend()->connect(); }
+	reconnect_to_jack() { _audio_backend->connect(); }
 
 	void
 	master_volume_changed (int);
