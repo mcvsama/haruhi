@@ -33,15 +33,6 @@ class GraphException: public Exception
 };
 
 
-class MissingParameters: public GraphException
-{
-  public:
-	explicit MissingParameters (const char* what, const char* details):
-		GraphException (what, details)
-	{ }
-};
-
-
 class OutsideProcessingRound: public GraphException
 {
   public:
@@ -60,64 +51,19 @@ class PortException: public GraphException
 };
 
 
-class PortIncompatible: public GraphException
+class PortIncompatible: public PortException
 {
   public:
 	explicit PortIncompatible (const char* what, const char* details):
-		GraphException (what, details)
-	{ }
-};
-
-
-class BufferSizeMismatch: public PortIncompatible
-{
-  public:
-	explicit BufferSizeMismatch (const char* what, const char* details):
-		PortIncompatible (what, details)
-	{ }
-};
-
-
-class BayNotFound: public PortException
-{
-  public:
-	explicit BayNotFound (const char* what, const char* details):
 		PortException (what, details)
 	{ }
 };
 
 
-class PortNotFound: public PortException
+class GraphNotFound: public PortException
 {
   public:
-	explicit PortNotFound (const char* what, const char* details):
-		PortException (what, details)
-	{ }
-};
-
-
-class BayExists: public PortException
-{
-  public:
-	explicit BayExists (const char* what, const char* details):
-		PortException (what, details)
-	{ }
-};
-
-
-class PortExists: public PortException
-{
-  public:
-	explicit PortExists (const char* what, const char* details):
-		PortException (what, details)
-	{ }
-};
-
-
-class InvalidAccess: public PortException
-{
-  public:
-	explicit InvalidAccess (const char* what, const char* details):
+	explicit GraphNotFound (const char* what, const char* details):
 		PortException (what, details)
 	{ }
 };
@@ -128,15 +74,6 @@ class SelfConnection: public PortException
   public:
 	explicit SelfConnection (const char* what, const char* details):
 		PortException (what, details)
-	{ }
-};
-
-
-class Impossible: public GraphException
-{
-  public:
-	explicit Impossible (const char* what, const char* details):
-		GraphException (what, details)
 	{ }
 };
 
