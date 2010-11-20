@@ -54,7 +54,7 @@ template<class T>
 		typedef T Type;
 
 	  private:
-		struct Data: public RecursiveMutex
+		struct Data: public Mutex
 		{
 			Type*	object;
 			int		references;
@@ -66,10 +66,8 @@ template<class T>
 
 			~Data()
 			{
-				lock();
 				if (empty())
 					delete object;
-				unlock();
 			}
 
 			void
@@ -89,7 +87,13 @@ template<class T>
 			}
 
 			bool
-			empty() const { return references == 0; }
+			empty() const
+			{
+				lock();
+				int r = references;
+				unlock();
+				return r == 0;
+			}
 		};
 
 	  public:
@@ -151,11 +155,9 @@ template<class T>
 		void
 		leave_data()
 		{
-			_data->lock();
 			_data->decrease();
 			if (_data->empty())
 				delete _data;
-			_data->unlock();
 		}
 
 		void
