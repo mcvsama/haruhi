@@ -292,6 +292,7 @@ Session::MeterPanel::MeterPanel (Session* session, QWidget* parent):
 	_master_volume = new DialControl (this, MinVolume, MaxVolume, 0.75 * ZeroVolume);
 	QObject::connect (_master_volume, SIGNAL (valueChanged (int)), session, SLOT (master_volume_changed (int)));
 	QToolTip::add (_master_volume, "Master Volume");
+	session->master_volume_changed (_master_volume->value());
 
 	layout->addWidget (_level_meters_group);
 	layout->addWidget (_master_volume);
