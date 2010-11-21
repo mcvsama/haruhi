@@ -45,6 +45,9 @@ Backend::Backend (QString const& client_name, int id, QWidget* parent):
 	AudioBackend ("• Audio", id),
 	_client_name (client_name)
 {
+	_master_volume_port = new EventPort (this, "Master Volume", Port::Input);
+	_panic_port = new EventPort (this, "Panic", Port::Input);
+
 	_transport = new JackTransport (this);
 
 	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
@@ -121,15 +124,14 @@ Backend::Backend (QString const& client_name, int id, QWidget* parent):
 
 Backend::~Backend()
 {
+	delete _master_volume_port;
+	delete _panic_port;
 }
 
 
 void
 Backend::registered()
 {
-	_master_volume_port = new EventPort (this, "Master Volume", Port::Input);
-	_panic_port = new EventPort (this, "Panic", Port::Input);
-
 	connect();
 }
 
@@ -143,9 +145,6 @@ Backend::unregistered()
 	// Deallocate all ports:
 	_inputs_list->clear();
 	_outputs_list->clear();
-
-	delete _master_volume_port;
-	delete _panic_port;
 }
 
 
