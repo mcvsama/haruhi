@@ -24,7 +24,7 @@
 #include <QtGui/QApplication>
 #include <QtGui/QMessageBox>
 #include <QtGui/QToolTip>
-#include <Qt3Support/Q3PopupMenu>
+#include <QtGui/QMenu>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -370,26 +370,26 @@ Backend::create_output (QString const& name)
 void
 Backend::context_menu_for_inputs (QPoint const& pos)
 {
-	Q3PopupMenu* menu = new Q3PopupMenu (this);
 	QTreeWidgetItem* item = _inputs_list->itemAt (pos);
-	int i;
+	QMenu* menu = new QMenu (this);
+	QAction* a;
 
 	if (item != 0)
 	{
 		if (dynamic_cast<InputItem*> (item) != 0)
 		{
-			i = menu->insertItem (Resources::Icons16::rename(), "&Rename", this, SLOT (rename_selected_input()));
-			menu->insertSeparator();
-			i = menu->insertItem (Resources::Icons16::add(), "&New port", this, SLOT (create_input()));
-			menu->setItemEnabled (i, false);
-			i = menu->insertItem (Resources::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_input()));
+			menu->addAction (Resources::Icons16::rename(), "&Rename", this, SLOT (rename_selected_input()));
+			menu->addSeparator();
+			a = menu->addAction (Resources::Icons16::add(), "&New port", this, SLOT (create_input()));
+			a->setEnabled (false);
+			menu->addAction (Resources::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_input()));
 		}
 	}
 	else
 	{
-		i = menu->insertItem (Resources::Icons16::add(), "&New port", this, SLOT (create_input()));
-		i = menu->insertItem (Resources::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_input()));
-		menu->setItemEnabled (i, false);
+		menu->addAction (Resources::Icons16::add(), "&New port", this, SLOT (create_input()));
+		a = menu->addAction (Resources::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_input()));
+		a->setEnabled (false);
 	}
 
 	menu->exec (QCursor::pos());
@@ -400,26 +400,26 @@ Backend::context_menu_for_inputs (QPoint const& pos)
 void
 Backend::context_menu_for_outputs (QPoint const& pos)
 {
-	Q3PopupMenu* menu = new Q3PopupMenu (this);
 	QTreeWidgetItem* item = _outputs_list->itemAt (pos);
-	int i;
+	QMenu* menu = new QMenu (this);
+	QAction* a;
 
 	if (item != 0)
 	{
 		if (dynamic_cast<OutputItem*> (item) != 0)
 		{
-			i = menu->insertItem (Resources::Icons16::rename(), "&Rename", this, SLOT (rename_selected_output()));
-			menu->insertSeparator();
-			i = menu->insertItem (Resources::Icons16::add(), "&New port", this, SLOT (create_output()));
-			menu->setItemEnabled (i, false);
-			i = menu->insertItem (Resources::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_output()));
+			menu->addAction (Resources::Icons16::rename(), "&Rename", this, SLOT (rename_selected_output()));
+			menu->addSeparator();
+			a = menu->addAction (Resources::Icons16::add(), "&New port", this, SLOT (create_output()));
+			a->setEnabled (false);
+			menu->addAction (Resources::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_output()));
 		}
 	}
 	else
 	{
-		i = menu->insertItem (Resources::Icons16::add(), "&New port", this, SLOT (create_output()));
-		i = menu->insertItem (Resources::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_output()));
-		menu->setItemEnabled (i, false);
+		menu->addAction (Resources::Icons16::add(), "&New port", this, SLOT (create_output()));
+		a = menu->addAction (Resources::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_output()));
+		a->setEnabled (false);
 	}
 
 	menu->exec (QCursor::pos());
