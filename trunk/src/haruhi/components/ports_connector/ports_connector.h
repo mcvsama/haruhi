@@ -36,7 +36,6 @@
 #include <haruhi/utility/signal.h>
 
 // Local:
-#include "create_port_dialog.h"
 #include "connector.h"
 #include "panel.h"
 #include "ports_list.h"
@@ -109,12 +108,6 @@ class PortsConnector:
 	add_external_unit (Unit*);
 
   public slots:
-	void
-	create_port();
-
-	void
-	destroy_port();
-
 	void
 	context_menu (QTreeWidgetItem* item, QPoint const& pos);
 

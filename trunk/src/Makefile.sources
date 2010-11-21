@@ -124,7 +124,6 @@ SRC_MOCHDRS += haruhi/components/devices_manager/controller_dialog.h
 
 SRC_HEADERS += haruhi/components/ports_connector/panel.h
 SRC_HEADERS += haruhi/components/ports_connector/ports_connector.h
-SRC_HEADERS += haruhi/components/ports_connector/create_port_dialog.h
 SRC_HEADERS += haruhi/components/ports_connector/connector.h
 SRC_HEADERS += haruhi/components/ports_connector/ports_list.h
 SRC_HEADERS += haruhi/components/ports_connector/comparable_item.h
@@ -136,7 +135,6 @@ SRC_HEADERS += haruhi/components/ports_connector/units_combobox.h
 
 SRC_SOURCES += haruhi/components/ports_connector/panel.cc
 SRC_SOURCES += haruhi/components/ports_connector/ports_connector.cc
-SRC_SOURCES += haruhi/components/ports_connector/create_port_dialog.cc
 SRC_SOURCES += haruhi/components/ports_connector/connector.cc
 SRC_SOURCES += haruhi/components/ports_connector/ports_list.cc
 SRC_SOURCES += haruhi/components/ports_connector/comparable_item.cc
@@ -148,7 +146,6 @@ SRC_SOURCES += haruhi/components/ports_connector/units_combobox.cc
 
 SRC_MOCHDRS += haruhi/components/ports_connector/panel.h
 SRC_MOCHDRS += haruhi/components/ports_connector/ports_connector.h
-SRC_MOCHDRS += haruhi/components/ports_connector/create_port_dialog.h
 SRC_MOCHDRS += haruhi/components/ports_connector/ports_list.h
 
 ######## /components/presets_manager ########

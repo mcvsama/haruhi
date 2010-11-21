@@ -36,8 +36,6 @@
 #include <QtGui/QHeaderView>
 #include <QtGui/QSplitter>
 #include <QtGui/QMenu>
-#include <Qt3Support/Q3GroupBox>
-#include <Qt3Support/Q3ButtonGroup>
 #include <Qt3Support/Q3ListView> // Required due to Qt4 bug in which normally QScrollBar is not QWidget.
 
 // Haruhi:
@@ -166,44 +164,6 @@ PortsConnector::add_external_unit (Unit* unit)
 
 
 void
-PortsConnector::create_port()
-{
-	Private::CreatePortDialog* dialog = new Private::CreatePortDialog (this);
-
-	try {
-		UnitItem* unit_item = dynamic_cast<UnitItem*> (_context_item);
-		if (unit_item && dialog->exec() == Private::CreatePortDialog::Accepted)
-		{
-			Port::Direction dir =
-				(unit_item->treeWidget() == _opanel->list())
-					? Port::Output
-					: Port::Input;
-			_unit_bay->graph()->lock();
-			if (dialog->port_type() == Private::CreatePortDialog::Audio)
-				new AudioPort (_unit_bay, dialog->port_name().ascii(), dir);
-			else
-				new EventPort (_unit_bay, dialog->port_name().ascii(), dir);
-			_unit_bay->graph()->unlock();
-		}
-	}
-	catch (Exception& e)
-	{
-		QMessageBox::warning (this, "Warning", e.what());
-	}
-}
-
-
-void
-PortsConnector::destroy_port()
-{
-	PortItem* item = dynamic_cast<PortItem*> (_context_item);
-	// Only Unit Bay's ports can be destroyed:
-	if (item && item->port()->unit() == _unit_bay)
-		delete item->port();
-}
-
-
-void
 PortsConnector::context_menu (QTreeWidgetItem* item, QPoint const& pos)
 {
 	if (!item)
@@ -228,12 +188,6 @@ PortsConnector::context_menu (QTreeWidgetItem* item, QPoint const& pos)
 									    (port_item->treeWidget() == _opanel->list() && !port_item->port()->forward_connections().empty())));
 
 	_context_menu->addSeparator();
-
-	QAction* create_port_action = _context_menu->addAction (Resources::Icons16::add(), "&Create port", this, SLOT (create_port()));
-	create_port_action->setEnabled (dynamic_cast<UnitItem*> (item) && dynamic_cast<UnitItem*> (item)->unit() == _unit_bay);
-
-	QAction* destroy_port_action = _context_menu->addAction (Resources::Icons16::remove(), "Dest&roy port", this, SLOT (destroy_port()));
-	destroy_port_action->setEnabled (dynamic_cast<PortItem*> (item) && dynamic_cast<UnitItem*> (item->parent()) && dynamic_cast<UnitItem*> (item->parent())->unit() == _unit_bay);
 
 	_context_item = item;
 	_context_menu->exec (pos);
