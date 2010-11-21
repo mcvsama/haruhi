@@ -29,7 +29,6 @@
 #include <QtGui/QFileDialog>
 #include <QtGui/QCloseEvent>
 #include <QtGui/QGridLayout>
-#include <QtGui/QGroupBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>

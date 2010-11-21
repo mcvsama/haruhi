@@ -19,7 +19,6 @@
 #include <set>
 
 // Qt:
-#include <QtGui/QGroupBox>
 #include <QtGui/QToolTip>
 #include <Qt3Support/Q3GroupBox>
 
