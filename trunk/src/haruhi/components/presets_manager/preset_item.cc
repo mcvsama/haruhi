@@ -18,7 +18,7 @@
 #include <uuid/uuid.h>
 
 // Qt:
-#include <Qt3Support/Q3ListView>
+#include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -61,17 +61,29 @@ PresetItem::Meta::load_state (QDomElement const& element)
 
 
 PresetItem::PresetItem (CategoryItem* parent):
-	Q3ListViewItem (parent)
+	QTreeWidgetItem (parent, QStringList(), Qt::ItemIsDragEnabled)
 {
-	setPixmap (0, Resources::Icons16::preset());
-	setDragEnabled (true);
+	setup();
+}
+
+
+void
+PresetItem::setup()
+{
+	setIcon (0, Resources::Icons16::preset());
+	QSize s = sizeHint (0);
+	if (s.height() < 18)
+	{
+		s.setHeight (18);
+		setSizeHint (0, s);
+	}
 }
 
 
 CategoryItem*
 PresetItem::category_item() const
 {
-	Q3ListViewItem* p = parent();
+	QTreeWidgetItem* p = parent();
 	if (p)
 	{
 		CategoryItem* c = dynamic_cast<CategoryItem*> (p);

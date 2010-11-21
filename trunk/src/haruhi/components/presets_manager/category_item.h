@@ -18,7 +18,7 @@
 #include <cstddef>
 
 // Qt:
-#include <Qt3Support/Q3ListView>
+#include <QtGui/QTreeWidgetItem>
 
 // Local:
 #include "presets_manager.h"
@@ -30,10 +30,13 @@ namespace PresetsManagerPrivate {
 
 class PackageItem;
 
-class CategoryItem: public Q3ListViewItem
+class CategoryItem: public QTreeWidgetItem
 {
   public:
-	CategoryItem (QString const& name, Q3ListViewItem* parent);
+	CategoryItem (QString const& name, QTreeWidgetItem* parent);
+
+	void
+	setup();
 
 	/**
 	 * Returns PackageItem as a parent or 0.

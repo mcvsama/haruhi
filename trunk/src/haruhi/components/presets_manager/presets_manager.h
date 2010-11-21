@@ -24,7 +24,7 @@
 #include <QtGui/QTabWidget>
 #include <QtGui/QPushButton>
 #include <QtGui/QMenu>
-#include <Qt3Support/Q3ListView>
+#include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
 #include <haruhi/graph/unit.h>
@@ -73,7 +73,7 @@ class PresetsManager: public QWidget
 	load_preset();
 
  	void
-	load_preset (Q3ListViewItem*);
+	load_preset (QTreeWidgetItem*);
 
 	/**
 	 * Save as current.

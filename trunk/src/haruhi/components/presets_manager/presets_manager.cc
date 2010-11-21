@@ -31,7 +31,6 @@
 #include <QtGui/QTabWidget>
 #include <QtGui/QPushButton>
 #include <QtGui/QMessageBox>
-#include <Qt3Support/Q3ListView>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -76,11 +75,11 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 	QObject::connect (_tabs, SIGNAL (currentChanged (QWidget*)), this, SLOT (update_widgets()));
 
 	_list = new Private::PresetsListView (this, this);
-	QObject::connect (_list, SIGNAL (selectionChanged()), this, SLOT (update_widgets()));
-	QObject::connect (_list, SIGNAL (doubleClicked (Q3ListViewItem*)), this, SLOT (load_preset (Q3ListViewItem*)));
+	QObject::connect (_list, SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
+	QObject::connect (_list, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (load_preset (QTreeWidgetItem*)));
 
 	_favs = new Private::PresetsListView (this, this);
-	QObject::connect (_favs, SIGNAL (selectionChanged()), this, SLOT (update_widgets()));
+	QObject::connect (_favs, SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
 
 	_editor = new Private::PresetEditor (right_panel);
 
@@ -181,9 +180,10 @@ PresetsManager::load_preset()
 
 
 void
-PresetsManager::load_preset (Q3ListViewItem* item)
+PresetsManager::load_preset (QTreeWidgetItem* item)
 {
-	item->listView()->setSelected (item, true);
+	_list->clearSelection();
+	item->setSelected (true);
 	load_preset();
 }
 
@@ -204,9 +204,10 @@ void
 PresetsManager::create_package()
 {
 	Private::PackageItem* package_item = new Private::PackageItem (_list);
+	_list->clearSelection();
 	package_item->meta().name = "<new package>";
 	package_item->reload();
-	_list->setSelected (package_item, true);
+	package_item->setSelected (true);
 	_editor->focus_package();
 }
 
@@ -231,10 +232,11 @@ PresetsManager::create_category()
 	if (package_item)
 	{
 		Private::CategoryItem* category_item = new Private::CategoryItem ("<new category>", package_item);
+		_list->clearSelection();
 		category_item->reload();
-		_list->setSelected (category_item, true);
+		category_item->setSelected (true);
 		_editor->focus_category();
-		package_item->setOpen (true);
+		package_item->setExpanded (true);
 	}
 }
 
@@ -253,12 +255,13 @@ PresetsManager::create_preset()
 	if (category_item)
 	{
 		Private::PresetItem* preset_item = new Private::PresetItem (category_item);
+		_list->clearSelection();
 		preset_item->meta().name = "<new preset>";
 		preset_item->reload();
-		_list->setSelected (preset_item, true);
+		preset_item->setSelected (true);
 		_editor->focus_name();
-		category_item->setOpen (true);
-		category_item->package_item()->setOpen (true);
+		category_item->setExpanded (true);
+		category_item->package_item()->setExpanded (true);
 	}
 }
 
@@ -273,7 +276,7 @@ PresetsManager::destroy()
 								   QMessageBox::Yes | QMessageBox::Default, QMessageBox::Cancel | QMessageBox::Escape) == QMessageBox::Yes)
 		{
 			package_item->remove_file();
-			_list->takeItem (package_item);
+			_list->invisibleRootItem()->takeChild (_list->invisibleRootItem()->indexOfChild (package_item));
 			delete package_item;
 		}
 	}
@@ -285,7 +288,7 @@ PresetsManager::destroy()
 								   QMessageBox::Yes | QMessageBox::Default, QMessageBox::Cancel | QMessageBox::Escape) == QMessageBox::Yes)
 		{
 			Private::PackageItem* package_item = category_item->package_item();
-			package_item->takeItem (category_item);
+			package_item->takeChild (package_item->indexOfChild (category_item));
 			delete category_item;
 			try {
 				package_item->save_file();
@@ -304,7 +307,7 @@ PresetsManager::destroy()
 								   QMessageBox::Yes | QMessageBox::Default, QMessageBox::Cancel | QMessageBox::Escape) == QMessageBox::Yes)
 		{
 			Private::CategoryItem* category_item = preset_item->category_item();
-			category_item->takeItem (preset_item);
+			category_item->takeChild (category_item->indexOfChild (preset_item));
 			delete preset_item;
 			try {
 				category_item->package_item()->save_file();

@@ -17,6 +17,8 @@
 // Qt:
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
+#include <QtGui/QTreeWidgetItem>
+#include <QtGui/QTreeWidgetItemIterator>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -69,10 +71,23 @@ PackageItem::Meta::load_state (QDomElement const& element)
 
 
 PackageItem::PackageItem (PresetsListView* parent):
-	Q3ListViewItem (parent),
+	QTreeWidgetItem (parent),
 	_presets_manager (parent->presets_manager())
 {
-	setPixmap (0, Resources::Icons16::presets_package());
+	setup();
+}
+
+
+void
+PackageItem::setup()
+{
+	setIcon (0, Resources::Icons16::presets_package());
+	QSize s = sizeHint (0);
+	if (s.height() < 18)
+	{
+		s.setHeight (18);
+		setSizeHint (0, s);
+	}
 }
 
 
@@ -156,17 +171,18 @@ PackageItem::save_state (QDomElement& element) const
 	QDomElement meta_element = document.createElement ("meta");
 	_meta.save_state (meta_element);
 	element.appendChild (meta_element);
-	for (Q3ListViewItem* item = firstChild(); item; item = item->nextSibling())
+
+	for (int i = 0; i < childCount(); ++i)
 	{
-		CategoryItem* category_item = dynamic_cast<CategoryItem*> (item);
+		CategoryItem* category_item = dynamic_cast<CategoryItem*> (child (i));
 		if (category_item)
 		{
 			QDomElement presets_element = document.createElement ("presets");
 			presets_element.setAttribute ("category", category_item->name());
 
-			for (Q3ListViewItem* item = category_item->firstChild(); item; item = item->nextSibling())
+			for (int j = 0; j < category_item->childCount(); ++j)
 			{
-				PresetItem* preset_item = dynamic_cast<PresetItem*> (item);
+				PresetItem* preset_item = dynamic_cast<PresetItem*> (category_item->child (j));
 				if (preset_item)
 				{
 					QDomElement preset_element = document.createElement ("preset");
@@ -219,9 +235,9 @@ PackageItem::load_state (QDomElement const& element)
 CategoryItem*
 PackageItem::find_or_create_category (QString const& name)
 {
-	for (Q3ListViewItem* item = firstChild(); item; item = item->nextSibling())
+	for (QTreeWidgetItemIterator item (this, QTreeWidgetItemIterator::NoChildren); *item; ++item)
 	{
-		CategoryItem* category_item = dynamic_cast<CategoryItem*> (item);
+		CategoryItem* category_item = dynamic_cast<CategoryItem*> (*item);
 		if (category_item && category_item->name() == name)
 			return category_item;
 	}

@@ -16,12 +16,13 @@
 #include <map>
 
 // Qt:
+#include <QtGui/QApplication>
 #include <QtGui/QDragEnterEvent>
+#include <QtGui/QTreeWidget>
+#include <QtGui/QTreeWidgetItem>
+#include <QtGui/QHeaderView>
 #include <QtGui/QMenu>
-#include <Qt3Support/Q3Header>
-#include <Qt3Support/Q3DragObject>
-#include <Qt3Support/Q3ListView>
-#include <Qt3Support/Q3TextDrag>
+#include <QtGui/QDragEnterEvent>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -39,29 +40,30 @@ namespace Haruhi {
 namespace PresetsManagerPrivate {
 
 PresetsListView::PresetsListView (PresetsManager* presets_manager, QWidget* parent):
-	Q3ListView (parent),
+	QTreeWidget (parent),
 	_presets_manager (presets_manager),
 	_dragged_item (0),
 	_dropped_on_item (0)
 {
-	header()->setClickEnabled (false);
-	header()->setResizeEnabled (false);
+	header()->setClickable (false);
+	header()->setResizeMode (QHeaderView::Stretch);
 	header()->hide();
+	sortByColumn (0, Qt::AscendingOrder);
 	setMinimumWidth (160);
-	setSorting (0);
-	setSelectionMode (Q3ListView::Single);
+	setSortingEnabled (true);
+	setSelectionMode (QTreeWidget::SingleSelection);
 	setRootIsDecorated (true);
 	setAllColumnsShowFocus (true);
-	setColumnWidthMode (0, Q3ListView::Maximum);
-	setResizeMode (Q3ListView::AllColumns);
-	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	setMultiSelection (false);
-	addColumn ("Presets");
 	setAcceptDrops (true);
+	setAutoScroll (true);
+	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+	setVerticalScrollMode (QAbstractItemView::ScrollPerPixel);
+	setContextMenuPolicy (Qt::CustomContextMenu);
+	setHeaderLabel ("Presets");
 
 	_auto_open_timer = new QTimer (this);
 	QObject::connect (_auto_open_timer, SIGNAL (timeout()), this, SLOT (auto_open_selected()));
-	QObject::connect (this, SIGNAL (contextMenuRequested (Q3ListViewItem*, const QPoint&, int)), this, SLOT (context_menu (Q3ListViewItem*, const QPoint&, int)));
+	QObject::connect (this, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu (const QPoint&)));
 }
 
 
@@ -71,10 +73,18 @@ PresetsListView::~PresetsListView()
 }
 
 
+QTreeWidgetItem*
+PresetsListView::selected_item() const
+{
+	QList<QTreeWidgetItem*> list = selectedItems();
+	return list.empty() ? 0 : list.front();
+}
+
+
 PackageItem*
 PresetsListView::current_package_item() const
 {
-	Q3ListViewItem* item = selectedItem();
+	QTreeWidgetItem* item = selected_item();
 	if (item)
 		return dynamic_cast<PackageItem*> (item);
 	return 0;
@@ -84,7 +94,7 @@ PresetsListView::current_package_item() const
 CategoryItem*
 PresetsListView::current_category_item() const
 {
-	Q3ListViewItem* item = selectedItem();
+	QTreeWidgetItem* item = selected_item();
 	if (item)
 		return dynamic_cast<CategoryItem*> (item);
 	return 0;
@@ -94,7 +104,7 @@ PresetsListView::current_category_item() const
 PresetItem*
 PresetsListView::current_preset_item() const
 {
-	Q3ListViewItem* item = selectedItem();
+	QTreeWidgetItem* item = selected_item();
 	if (item)
 		return dynamic_cast<PresetItem*> (item);
 	return 0;
@@ -104,17 +114,21 @@ PresetsListView::current_preset_item() const
 void
 PresetsListView::auto_open_selected()
 {
-	Q3ListViewItem* item = selectedItem();
+	QTreeWidgetItem* item = selected_item();
 	if (item)
-		setOpen (item, true);
+		item->setExpanded (true);
 }
 
 
 void
-PresetsListView::context_menu (Q3ListViewItem* item, QPoint const& pos, int col)
+PresetsListView::context_menu (QPoint const& pos)
 {
+	QTreeWidgetItem* item = itemAt (pos);
+	if (!item)
+		return;
+
 	QMenu* menu = new QMenu (this);
-	setSelected (item, true);
+	item->setSelected (true);
 
 	if (item == 0)
 	{
@@ -146,7 +160,7 @@ PresetsListView::context_menu (Q3ListViewItem* item, QPoint const& pos, int col)
 		menu->addAction (Resources::Icons16::remove(), "Destroy preset", _presets_manager, SLOT (destroy()));
 	}
 
-	menu->exec (pos);
+	menu->exec (QCursor::pos());
 	delete menu;
 }
 
@@ -155,13 +169,10 @@ void
 PresetsListView::dragEnterEvent (QDragEnterEvent* event)
 {
 	PresetsListView* source;
-	if (event->source() && (source = dynamic_cast<PresetsListView*> (event->source())) && source == this && Q3TextDrag::canDecode (event))
+	if (event->source() && (source = dynamic_cast<PresetsListView*> (event->source())) &&
+		source == this && event->mimeData()->hasText())
 	{
-		Q3ListViewItem* to = drag_drop_item (event->pos());
-		if (to && can_drop (_dragged_item, to))
-			event->accept (itemRect (to));
-		else
-			event->ignore();
+		event->accept();
 	}
 	else
 		event->ignore();
@@ -172,11 +183,12 @@ void
 PresetsListView::dragMoveEvent (QDragMoveEvent* event)
 {
 	PresetsListView* source;
-	if (event->source() && (source = dynamic_cast<PresetsListView*> (event->source())) && source == this && Q3TextDrag::canDecode (event))
+	if (event->source() && (source = dynamic_cast<PresetsListView*> (event->source())) &&
+		source == this && event->mimeData()->hasText())
 	{
-		Q3ListViewItem* to = drag_drop_item (event->pos());
+		QTreeWidgetItem* to = drag_drop_item (event->pos());
 		if (to && can_drop (_dragged_item, to))
-			event->accept (itemRect (to));
+			event->accept();
 		else
 			event->ignore();
 	}
@@ -189,7 +201,6 @@ void
 PresetsListView::dragLeaveEvent (QDragLeaveEvent*)
 {
 	_dropped_on_item = 0;
-	_dragged_item = 0;
 }
 
 
@@ -197,9 +208,10 @@ void
 PresetsListView::dropEvent (QDropEvent* event)
 {
 	PresetsListView* source;
-	if (event->source() && (source = dynamic_cast<PresetsListView*> (event->source())) && source == this && Q3TextDrag::canDecode (event))
+	if (event->source() && (source = dynamic_cast<PresetsListView*> (event->source())) &&
+		source == this && event->mimeData()->hasText())
 	{
-		Q3ListViewItem* to = drag_drop_item (event->pos());
+		QTreeWidgetItem* to = drag_drop_item (event->pos());
 		if (_dragged_item && to)
 		{
 			PackageItem* package_item;
@@ -211,10 +223,10 @@ PresetsListView::dropEvent (QDropEvent* event)
 			{
 				CategoryItem* old_category_item = preset_item->category_item();
 				CategoryItem* new_category_item = category_item;
-				old_category_item->takeItem (preset_item);
-				new_category_item->insertItem (preset_item);
-				new_category_item->setOpen (true);
-				setSelected (preset_item, true);
+				old_category_item->takeChild (old_category_item->indexOfChild (preset_item));
+				new_category_item->addChild (preset_item);
+				new_category_item->setExpanded (true);
+				preset_item->setSelected (true);
 				// Save one or two files:
 				old_category_item->package_item()->save_file();
 				if (new_category_item->package_item() != old_category_item->package_item())
@@ -225,10 +237,10 @@ PresetsListView::dropEvent (QDropEvent* event)
 			{
 				PackageItem* old_package_item = category_item->package_item();
 				PackageItem* new_package_item = package_item;
-				old_package_item->takeItem (category_item);
-				new_package_item->insertItem (category_item);
-				new_package_item->setOpen (true);
-				setSelected (category_item, true);
+				old_package_item->takeChild (old_package_item->indexOfChild (category_item));
+				new_package_item->addChild (category_item);
+				new_package_item->setExpanded (true);
+				category_item->setSelected (true);
 				// Save one or two files:
 				old_package_item->save_file();
 				if (new_package_item != old_package_item)
@@ -236,49 +248,67 @@ PresetsListView::dropEvent (QDropEvent* event)
 			}
 		}
 	}
+	event->acceptProposedAction();
 	dragLeaveEvent (0);
 }
 
 
+void
+PresetsListView::mousePressEvent (QMouseEvent* mouse_event)
+{
+	QTreeWidget::mousePressEvent (mouse_event);
+
+	if (mouse_event->button() == Qt::LeftButton)
+	{
+		_drag_pos = mouse_event->pos();
+		QTreeWidgetItem* item = itemAt (_drag_pos);
+		if (item && item->flags() & Qt::ItemIsDragEnabled)
+			_dragged_item = itemAt (_drag_pos);
+	}
+}
+
+
+void
+PresetsListView::mouseMoveEvent (QMouseEvent* mouse_event)
+{
+	QTreeWidget::mouseMoveEvent (mouse_event);
+
+	if ((mouse_event->buttons() & Qt::LeftButton) && _dragged_item &&
+		((mouse_event->pos() - _drag_pos).manhattanLength() >= QApplication::startDragDistance()))
+	{
+		QMimeData* mime_data = new QMimeData();
+		mime_data->setText (_dragged_item->text (0));
+		QDrag* drag = new QDrag (this);
+		drag->setMimeData (mime_data);
+		drag->setPixmap (_dragged_item->icon (0).pixmap (16));
+		drag->setHotSpot (QPoint (-4, -12));
+		drag->start (Qt::LinkAction);
+		// We've dragged and maybe dropped it by now...
+		_dragged_item = 0;
+	}
+}
+
+
 bool
-PresetsListView::can_drop (Q3ListViewItem* from, Q3ListViewItem* to)
+PresetsListView::can_drop (QTreeWidgetItem* from, QTreeWidgetItem* to)
 {
 	return (dynamic_cast<PresetItem*> (from) && dynamic_cast<CategoryItem*> (to) && from->parent() != to)
 		|| (dynamic_cast<CategoryItem*> (from) && dynamic_cast<PackageItem*> (to) && from->parent() != to);
 }
 
 
-Q3DragObject*
-PresetsListView::dragObject()
-{
-	Q3TextDrag* drag = 0;
-	_dragged_item = currentItem();
-	if (_dragged_item && _dragged_item->dragEnabled())
-	{
-		drag = new Q3TextDrag (_dragged_item->text (0), this);
-		QPixmap const* pixmap = _dragged_item->pixmap (0);
-		if (pixmap)
-			drag->setPixmap (*pixmap, QPoint (-4, -12));
-	}
-	return drag;
-}
-
-
-Q3ListViewItem*
+QTreeWidgetItem*
 PresetsListView::drag_drop_item (QPoint const& epos)
 {
-	Q3ListViewItem *item = itemAt (epos);
-	int m = 0;
+	QTreeWidgetItem* item = itemAt (epos);
 	if (item)
 	{
-		m = item->height();
 		if (item != _dropped_on_item)
 		{
-			setSelected (item, true);
+			clearSelection();
+			item->setSelected (true);
 			_dropped_on_item = item;
 			_auto_open_timer->start (750, true);
-			if (!item->dropEnabled())
-				item = 0;
 		}
 	}
 	else
@@ -286,8 +316,6 @@ PresetsListView::drag_drop_item (QPoint const& epos)
 		_dropped_on_item = 0;
 		_auto_open_timer->stop();
 	}
-	QPoint vpos = viewportToContents (epos);
-	ensureVisible (vpos.x(), vpos.y(), m, m);
 	return item;
 }
 

@@ -15,7 +15,7 @@
 #include <cstddef>
 
 // Qt:
-#include <Qt3Support/Q3ListView>
+#include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -29,18 +29,30 @@ namespace Haruhi {
 
 namespace PresetsManagerPrivate {
 
-CategoryItem::CategoryItem (QString const& name, Q3ListViewItem* parent):
-	Q3ListViewItem (parent, name)
+CategoryItem::CategoryItem (QString const& name, QTreeWidgetItem* parent):
+	QTreeWidgetItem (parent, QStringList (name), Qt::ItemIsDragEnabled)
 {
-	setPixmap (0, Resources::Icons16::presets_category());
-	setDragEnabled (true);
+	setup();
+}
+
+
+void
+CategoryItem::setup()
+{
+	setIcon (0, Resources::Icons16::presets_category());
+	QSize s = sizeHint (0);
+	if (s.height() < 18)
+	{
+		s.setHeight (18);
+		setSizeHint (0, s);
+	}
 }
 
 
 PackageItem*
 CategoryItem::package_item() const
 {
-	Q3ListViewItem* p = parent();
+	QTreeWidgetItem* p = parent();
 	if (p)
 	{
 		PackageItem* c = dynamic_cast<PackageItem*> (p);

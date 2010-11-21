@@ -19,8 +19,8 @@
 
 // Qt:
 #include <QtCore/QTimer>
-#include <Qt3Support/Q3DragObject>
-#include <Qt3Support/Q3ListView>
+#include <QtGui/QTreeWidget>
+#include <QtGui/QTreeWidgetItem>
 
 // Local:
 #include "presets_manager.h"
@@ -36,7 +36,7 @@ class PackageItem;
 class CategoryItem;
 class PresetItem;
 
-class PresetsListView: public Q3ListView
+class PresetsListView: public QTreeWidget
 {
 	Q_OBJECT
 
@@ -44,6 +44,9 @@ class PresetsListView: public Q3ListView
 	PresetsListView (PresetsManager* manager, QWidget* parent);
 
 	~PresetsListView();
+
+	QTreeWidgetItem*
+	selected_item() const;
 
 	PackageItem*
 	current_package_item() const;
@@ -62,7 +65,7 @@ class PresetsListView: public Q3ListView
 	auto_open_selected();
 
 	void
-	context_menu (Q3ListViewItem* item, QPoint const& pos, int col);
+	context_menu (QPoint const& pos);
 
   protected:
 	/**
@@ -81,20 +84,24 @@ class PresetsListView: public Q3ListView
 	void
 	dropEvent (QDropEvent*);
 
+	void
+	mousePressEvent (QMouseEvent*);
+
+	void
+	mouseMoveEvent (QMouseEvent*);
+
 	bool
-	can_drop (Q3ListViewItem* from, Q3ListViewItem* to);
+	can_drop (QTreeWidgetItem* from, QTreeWidgetItem* to);
 
-	Q3DragObject*
-	dragObject();
-
-	Q3ListViewItem*
+	QTreeWidgetItem*
 	drag_drop_item (QPoint const& epos);
 
   private:
-	PresetsManager*	_presets_manager;
-	Q3ListViewItem*	_dragged_item;
-	Q3ListViewItem*	_dropped_on_item;
-	QTimer*			_auto_open_timer;
+	PresetsManager*		_presets_manager;
+	QPoint				_drag_pos;			// Drag init point.
+	QTreeWidgetItem*	_dragged_item;
+	QTreeWidgetItem*	_dropped_on_item;
+	QTimer*				_auto_open_timer;
 };
 
 } // namespace PresetsManagerPrivate

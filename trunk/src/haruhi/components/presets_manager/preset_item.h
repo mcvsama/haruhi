@@ -18,7 +18,7 @@
 #include <cstddef>
 
 // Qt:
-#include <Qt3Support/Q3ListView>
+#include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
 #include <haruhi/utility/saveable_state.h>
@@ -33,7 +33,7 @@ namespace PresetsManagerPrivate {
 
 class CategoryItem;
 
-class PresetItem: public Q3ListViewItem
+class PresetItem: public QTreeWidgetItem
 {
   public:
 	class Meta: public SaveableState
@@ -53,6 +53,9 @@ class PresetItem: public Q3ListViewItem
 
   public:
 	PresetItem (CategoryItem* parent);
+
+	void
+	setup();
 
 	CategoryItem*
 	category_item() const;

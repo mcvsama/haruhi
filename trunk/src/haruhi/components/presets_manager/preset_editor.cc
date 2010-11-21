@@ -21,7 +21,8 @@
 #include <QtGui/QLabel>
 #include <QtGui/QToolTip>
 #include <QtGui/QMessageBox>
-#include <Qt3Support/Q3GroupBox>
+#include <QtGui/QGroupBox>
+#include <QtGui/QGridLayout>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -46,20 +47,21 @@ PresetEditor::PresetEditor (QWidget* parent):
 {
 	setSizePolicy (QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
 
-	Q3GroupBox* grid = new Q3GroupBox (2, Qt::Horizontal, "", this);
+	QGroupBox* grid = new QGroupBox (this);
 	grid->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
+	QGridLayout* grid_layout = new QGridLayout (grid);
 
-	new QLabel ("Package:", grid);
-	_package = new QLineEdit (grid);
+	grid_layout->addWidget (new QLabel ("Package:", grid), 0, 0);
+	grid_layout->addWidget (_package = new QLineEdit (grid), 0, 1);
 
-	new QLabel ("Category:", grid);
-	_category = new QLineEdit (grid);
+	grid_layout->addWidget (new QLabel ("Category:", grid), 1, 0);
+	grid_layout->addWidget (_category = new QLineEdit (grid), 1, 1);
 
-	new QLabel ("Preset name:", grid);
-	_name = new QLineEdit (grid);
+	grid_layout->addWidget (new QLabel ("Preset name:", grid), 2, 0);
+	grid_layout->addWidget (_name = new QLineEdit (grid), 2, 1);
 
-	new QLabel ("Version:", grid);
-	_version = new QLineEdit (grid);
+	grid_layout->addWidget (new QLabel ("Version:", grid), 3, 0);
+	grid_layout->addWidget (_version = new QLineEdit (grid), 3, 1);
 
 	_update_details_button = new QPushButton (Resources::Icons16::save(), "Update de&tails", this);
 	_update_details_button->setAccel (Qt::CTRL + Qt::Key_T);
