@@ -23,8 +23,8 @@
 #include <QtXml/QDomNode>
 #include <QtGui/QTabWidget>
 #include <QtGui/QPushButton>
+#include <QtGui/QMenu>
 #include <Qt3Support/Q3ListView>
-#include <Qt3Support/Q3PopupMenu>
 
 // Haruhi:
 #include <haruhi/graph/unit.h>
@@ -46,12 +46,6 @@ class PresetsManager: public QWidget
 	Q_OBJECT
 
 	friend class PresetsManagerPrivate::PresetsListView;
-
-	enum {
-		CreatePackage	= 0,
-		CreateCategory	= 1,
-		CreatePreset	= 2,
-	};
 
   public:
 	PresetsManager (Unit*, QWidget* parent = 0);
@@ -134,7 +128,10 @@ class PresetsManager: public QWidget
 	QPushButton*							_save_button;
 	QPushButton*							_create_button;
 	QPushButton*							_destroy_button;
-	Q3PopupMenu*							_create_menu;
+	QMenu*									_create_menu;
+	QAction*								_create_package_action;
+	QAction*								_create_category_action;
+	QAction*								_create_preset_action;
 	int										_lock_file;
 };
 

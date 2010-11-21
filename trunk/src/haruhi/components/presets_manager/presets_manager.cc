@@ -66,10 +66,10 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 	QWidget* right_panel = new QWidget (this);
 	right_panel->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
 
-	_create_menu = new Q3PopupMenu (this);
-	_create_menu->insertItem (Resources::Icons16::presets_package(), "Package", this, SLOT (create_package()), 0, CreatePackage);
-	_create_menu->insertItem (Resources::Icons16::presets_category(), "Category", this, SLOT (create_category()), 0, CreateCategory);
-	_create_menu->insertItem (Resources::Icons16::preset(), "Preset", this, SLOT (create_preset()), 0, CreatePreset);
+	_create_menu = new QMenu (this);
+	_create_package_action = _create_menu->addAction (Resources::Icons16::presets_package(), "Package", this, SLOT (create_package()));
+	_create_category_action = _create_menu->addAction (Resources::Icons16::presets_category(), "Category", this, SLOT (create_category()));
+	_create_preset_action = _create_menu->addAction (Resources::Icons16::preset(), "Preset", this, SLOT (create_preset()));
 
 	_tabs = new QTabWidget (this);
 	_tabs->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -128,7 +128,6 @@ PresetsManager::~PresetsManager()
 {
 	if (_lock_file != -1)
 		::unlink (lock_file_name());
-	delete _create_menu;
 }
 
 
@@ -348,31 +347,31 @@ PresetsManager::update_widgets()
 	if (package_item)
 	{
 		_editor->load_package (package_item);
-		_create_menu->setItemEnabled (CreatePackage, true);
-		_create_menu->setItemEnabled (CreateCategory, true);
-		_create_menu->setItemEnabled (CreatePreset, false);
+		_create_package_action->setEnabled (true);
+		_create_category_action->setEnabled (true);
+		_create_preset_action->setEnabled (false);
 	}
 	else if (category_item)
 	{
 		_editor->load_category (category_item);
-		_create_menu->setItemEnabled (CreatePackage, true);
-		_create_menu->setItemEnabled (CreateCategory, true);
-		_create_menu->setItemEnabled (CreatePreset, true);
+		_create_package_action->setEnabled (true);
+		_create_category_action->setEnabled (true);
+		_create_preset_action->setEnabled (true);
 	}
 	else if (preset_item)
 	{
 		_editor->load_preset (preset_item);
-		_create_menu->setItemEnabled (CreatePackage, true);
-		_create_menu->setItemEnabled (CreateCategory, true);
-		_create_menu->setItemEnabled (CreatePreset, true);
+		_create_package_action->setEnabled (true);
+		_create_category_action->setEnabled (true);
+		_create_preset_action->setEnabled (true);
 	}
 	else
 	{
 		_editor->setEnabled (false);
 		_editor->clear();
-		_create_menu->setItemEnabled (CreatePackage, true);
-		_create_menu->setItemEnabled (CreateCategory, false);
-		_create_menu->setItemEnabled (CreatePreset, false);
+		_create_package_action->setEnabled (true);
+		_create_category_action->setEnabled (false);
+		_create_preset_action->setEnabled (false);
 	}
 }
 
