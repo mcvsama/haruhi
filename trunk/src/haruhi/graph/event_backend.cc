@@ -20,9 +20,12 @@
 
 namespace Haruhi {
 
-EventBackend::EventBackend (std::string const& title, int id):
-	Backend ("urn://haruhi.mulabs.org/backend/event-backend/1", title, id)
+EventTeacher::~EventTeacher()
 {
+	// Stop learning all learnables:
+	Learnables lcopy = _learnables;
+	for (Learnables::iterator l = lcopy.begin(); l != lcopy.end(); ++l)
+		stop_learning (l->first);
 }
 
 
@@ -34,9 +37,15 @@ EventTeacher::start_learning (Learnable* learnable, EventTypes event_types)
 
 
 void
-EventTeacher::stop_learning (Learnable* learnable, EventTypes event_types)
+EventTeacher::stop_learning (Learnable* learnable)
 {
-	_learnables.erase (std::make_pair (learnable, event_types));
+	_learnables.erase (learnable);
+}
+
+
+EventBackend::EventBackend (std::string const& title, int id):
+	Backend ("urn://haruhi.mulabs.org/backend/event-backend/1", title, id)
+{
 }
 
 } // namespace Haruhi

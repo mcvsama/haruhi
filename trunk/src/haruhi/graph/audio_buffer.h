@@ -62,6 +62,7 @@ class AudioBuffer: public Buffer
 	{
 		assert (other->type() == AudioBuffer::TYPE);
 		AudioBuffer* buf = static_cast<AudioBuffer*> (other);
+		assert (buf->size() == size());
 		std::copy (buf->begin(), buf->end(), begin());
 	}
 
@@ -83,6 +84,7 @@ class AudioBuffer: public Buffer
 	{
 		assert (other->type() == AudioBuffer::TYPE);
 		AudioBuffer const* buf = static_cast<AudioBuffer*> (other);
+		assert (buf->size() == size());
 		std::transform (buf->begin(), buf->end(), begin(), begin(), std::plus<Sample>());
 	}
 
@@ -95,6 +97,7 @@ class AudioBuffer: public Buffer
 	{
 		assert (other->type() == AudioBuffer::TYPE);
 		AudioBuffer const* buf = static_cast<AudioBuffer*> (other);
+		assert (buf->size() == size());
 		std::transform (buf->begin(), buf->end(), begin(), begin(), std::minus<Sample>());
 	}
 

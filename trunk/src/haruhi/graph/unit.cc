@@ -19,6 +19,11 @@
 #include <haruhi/utility/exception.h>
 
 // Local:
+#include "exception.h"
+#include "buffer.h"
+#include "graph.h"
+#include "port.h"
+#include "notification.h"
 #include "unit.h"
 
 
@@ -143,6 +148,24 @@ int
 Unit::allocate_id()
 {
 	return _id_counter += 1;
+}
+
+
+void
+Unit::sync_inputs()
+{
+	for (Ports::const_iterator i = _inputs.begin();  i != _inputs.end();  ++i)
+		(*i)->sync();
+}
+
+/**
+ * Clears (prepares) buffers of all output ports.
+ */
+void
+Unit::clear_outputs()
+{
+	for (Ports::const_iterator o = _outputs.begin();  o != _outputs.end();  ++o)
+		(*o)->buffer()->clear();
 }
 
 } // namespace Haruhi

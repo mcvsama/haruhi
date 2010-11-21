@@ -25,14 +25,13 @@
 #include <haruhi/utility/mutex.h>
 
 // Local:
-#include "port.h"
-#include "graph.h"
-#include "buffer.h"
-#include "exception.h"
-#include "notification.h"
+#include "ports.h"
 
 
 namespace Haruhi {
+
+class Graph;
+class Notification;
 
 /*
  * Implements object that has two states: synced, and ready to sync.
@@ -49,7 +48,7 @@ class Unit: private Noncopyable
 
   public:
 	// Shorthand types:
-	typedef std::set<Unit*>  Set;
+	typedef std::set<Unit*> Set;
 
 	class ComparePointerByTitle
 	{
@@ -193,21 +192,13 @@ class Unit: private Noncopyable
 	 * May be only called inside of processing round.
 	 */
 	void
-	sync_inputs()
-	{
-		for (Ports::const_iterator i = _inputs.begin();  i != _inputs.end();  ++i)
-			(*i)->sync();
-	}
+	sync_inputs();
 
 	/**
 	 * Clears (prepares) buffers of all output ports.
 	 */
 	void
-	clear_outputs()
-	{
-		for (Ports::const_iterator o = _outputs.begin();  o != _outputs.end();  ++o)
-			(*o)->buffer()->clear();
-	}
+	clear_outputs();
 
 	/**
 	 * This method should synchronize Unit, that is:

@@ -14,6 +14,9 @@
 // Standard:
 #include <cstddef>
 
+// Haruhi:
+#include <haruhi/graph/graph.h>
+
 // Local:
 #include "unit_bay.h"
 

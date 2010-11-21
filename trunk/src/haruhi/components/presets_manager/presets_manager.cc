@@ -37,6 +37,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/graph/unit.h>
 #include <haruhi/settings/unit_settings.h>
+#include <haruhi/utility/exception.h>
 #include <haruhi/utility/filesystem.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/memory.h>

@@ -69,6 +69,15 @@ class GraphNotFound: public PortException
 };
 
 
+class EventBackendNotFound: public PortException
+{
+  public:
+	explicit EventBackendNotFound (const char* what, const char* details):
+		PortException (what, details)
+	{ }
+};
+
+
 class SelfConnection: public PortException
 {
   public:

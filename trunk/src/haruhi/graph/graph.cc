@@ -118,11 +118,11 @@ Graph::unregister_unit (Unit* unit)
 	unit->disable();
 	unit->unregistered();
 	lock();
-	// Disconnect ports:
+	// Notify ports about Unit unregistration:
 	for (Ports::iterator p = unit->inputs().begin(); p != unit->inputs().end(); ++p)
-		(*p)->disconnect();
+		(*p)->unit_unregistered();
 	for (Ports::iterator p = unit->outputs().begin(); p != unit->outputs().end(); ++p)
-		(*p)->disconnect();
+		(*p)->unit_unregistered();
 	_units.erase (f);
 	unit->_graph = 0;
 	// Signal:

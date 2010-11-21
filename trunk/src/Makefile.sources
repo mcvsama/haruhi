@@ -235,6 +235,7 @@ SRC_HEADERS += haruhi/graph/exception.h
 SRC_HEADERS += haruhi/graph/graph.h
 SRC_HEADERS += haruhi/graph/notification.h
 SRC_HEADERS += haruhi/graph/port.h
+SRC_HEADERS += haruhi/graph/ports.h
 SRC_HEADERS += haruhi/graph/port_group.h
 SRC_HEADERS += haruhi/graph/predicates.h
 SRC_HEADERS += haruhi/graph/predicates.tcc

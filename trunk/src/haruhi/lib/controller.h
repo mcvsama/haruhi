@@ -38,8 +38,8 @@ class UnitBay;
  * that should read controlled param and update itself according to its value.
  */
 class Controller:
-	public EventBackend::Learnable,
-	public ControllerProxy::Widget
+	public ControllerProxy::Widget,
+	public Signal::Receiver
 {
   public:
 	Controller (EventPort* event_port, ControllerParam* controller_param);
@@ -82,7 +82,7 @@ class Controller:
 
 	/**
 	 * Puts controller into (MIDI) learning mode.
-	 * Requires that controller has assigned UnitBay.
+	 * Requires that controller has assigned EventPort.
 	 * \entry	UI thread only.
 	 */
 	void
@@ -90,7 +90,7 @@ class Controller:
 
 	/**
 	 * Stops learning mode.
-	 * Requires that controller has assigned UnitBay.
+	 * Requires that controller has assigned EventPort.
 	 * \entry	UI thread only.
 	 */
 	void
@@ -112,11 +112,12 @@ class Controller:
 
   private:
 	/**
-	 * EventBackend::Learnable API.
-	 * Connects given event port to this controller.
+	 * Callback from Port's learned_connection_signal.
+	 * Updates UI and learning state. It's not defined from within
+	 * what thread this method will be called.
 	 */
 	void
-	learned_port (EventBackend::EventTypes, EventPort*);
+	learned_connection (EventBackend::EventTypes, EventPort*);
 
   private:
 	ControllerProxy	_controller_proxy;

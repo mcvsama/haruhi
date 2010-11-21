@@ -443,7 +443,7 @@ Backend::handle_event_for_learnables (Transport::MidiEvent const& event, EventPo
 
 		if (learned)
 		{
-			l->first->learned_port (l->second, port);
+			l->first->learned_connection (l->second, port);
 			learnables().erase (l);
 		}
 	}

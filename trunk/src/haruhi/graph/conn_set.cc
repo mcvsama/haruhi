@@ -17,6 +17,7 @@
 
 // Local:
 #include "conn_set.h"
+#include "port.h"
 
 
 namespace Haruhi {

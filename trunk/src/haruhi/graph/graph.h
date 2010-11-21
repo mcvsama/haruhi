@@ -203,11 +203,12 @@ class Graph: public RecursiveMutex
 	dummy() const { return _dummy_syncing; }
 
   public:
-	// Signals:
+	// Signals.
+	// It is not defined from within what thread these signals will be emited.
 	Signal::Emiter1<Unit*>			unit_registered;
 	Signal::Emiter1<Unit*>			unit_unregistered;
 	Signal::Emiter1<Unit*>			unit_retitled;
-	// Called also when port's comment is changed:
+	// port_renamed is called also when port's comment is changed:
 	Signal::Emiter1<Port*>			port_renamed;
 	Signal::Emiter2<Port*, Port*>	port_connected_to;
 	Signal::Emiter2<Port*, Port*>	port_disconnected_from;

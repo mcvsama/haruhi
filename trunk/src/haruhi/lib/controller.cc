@@ -31,6 +31,8 @@ Controller::Controller (EventPort* event_port, ControllerParam* controller_param
 	_unit_bay (0),
 	_learning (false)
 {
+	if (event_port)
+		event_port->learned_connection_signal.connect (this, &Controller::learned_connection);
 	_controller_proxy.set_widget (this);
 	schedule_for_update();
 }
@@ -38,10 +40,7 @@ Controller::Controller (EventPort* event_port, ControllerParam* controller_param
 
 Controller::~Controller()
 {
-	// Ensure that engine thread will not notify us about
-	// learned port:
-	if (unit_bay())
-		stop_learning();
+	Signal::Receiver::disconnect_all_signals();
 	// Ensure that ControllerProxy will not request periodic-update
 	// on this widget anymore:
 	_controller_proxy.set_widget (0);
@@ -53,33 +52,35 @@ Controller::~Controller()
 void
 Controller::start_learning()
 {
-	_learning.store (true);
-	unit_bay()->graph()->event_backend()->start_learning (this, EventBackend::Controller | EventBackend::Pitchbend);
-	learning_state_changed();
+	EventPort* port = _controller_proxy.event_port();
+	if (port)
+	{
+		port->start_learning (EventBackend::Controller | EventBackend::Pitchbend);
+		_learning.store (true);
+		learning_state_changed();
+	}
 }
 
 
 void
 Controller::stop_learning()
 {
-	_learning.store (false);
-	unit_bay()->graph()->event_backend()->stop_learning (this, EventBackend::Controller | EventBackend::Pitchbend);
-	learning_state_changed();
+	EventPort* port = _controller_proxy.event_port();
+	if (port)
+	{
+		port->stop_learning();
+		_learning.store (false);
+		learning_state_changed();
+	}
 }
 
 
 void
-Controller::learned_port (EventBackend::EventTypes, EventPort* event_port)
+Controller::learned_connection (EventBackend::EventTypes, EventPort* learned_port)
 {
-	if (unit_bay())
-	{
-		_learning.store (false);
-		unit_bay()->graph()->lock();
-		event_port->connect_to (controller_proxy().event_port());
-		unit_bay()->graph()->unlock();
-		// We're in engine thread, not UI thread, so use safe update method:
-		schedule_for_update();
-	}
+	_learning.store (false);
+	// We're callback from engine thread, not UI thread, so use safe update method:
+	schedule_for_update();
 }
 
 } // namespace Haruhi

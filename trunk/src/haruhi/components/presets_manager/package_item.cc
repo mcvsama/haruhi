@@ -21,6 +21,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/filesystem.h>
+#include <haruhi/utility/exception.h>
 
 // Local:
 #include "package_item.h"

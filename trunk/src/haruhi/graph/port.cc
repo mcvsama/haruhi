@@ -18,7 +18,12 @@
 #include <haruhi/utility/exception.h>
 
 // Local:
+#include "buffer.h"
+#include "exception.h"
+#include "graph.h"
 #include "port.h"
+#include "port_group.h"
+#include "event_port.h"
 #include "unit.h"
 
 
@@ -90,7 +95,8 @@ Port::connect_to (Port* port)
 	// Skip if ports are already connected:
 	if (!connected_to (port))
 	{
-		// TODO assert port types/buffers are compatible
+		if (buffer()->type() != port->buffer()->type())
+			throw PortIncompatible ("can't connect due to incompatible ports' buffers", __func__);
 		// Add connections to maps:
 		_forward_connections.insert (port);
 		port->_back_connections.insert (this);
@@ -146,6 +152,32 @@ Port::sync()
 }
 
 
+void
+Port::start_learning (EventBackend::EventTypes event_types)
+{
+	Graph* graph = this->graph();
+	if (!graph)
+		throw GraphNotFound ("port must be registered to graph before it can learn/stop learning connections", __func__);
+	EventBackend* event_backend = graph->event_backend();
+	if (!event_backend)
+		throw EventBackendNotFound ("graph must have event backend registered before port can learn/stop learning connections", __func__);
+	event_backend->start_learning (this, EventBackend::Controller | EventBackend::Pitchbend);
+}
+
+
+void
+Port::stop_learning()
+{
+	Graph* graph = this->graph();
+	if (!graph)
+		throw GraphNotFound ("port must be registered to graph before it can learn/stop learning connections", __func__);
+	EventBackend* event_backend = graph->event_backend();
+	if (!event_backend)
+		return;
+	event_backend->stop_learning (this);
+}
+
+
 Graph*
 Port::graph() const
 {
@@ -182,6 +214,28 @@ Port::unregister_me()
 	// Send notification:
 	if (graph())
 		graph()->port_unregistered (this, _unit);
+}
+
+
+void
+Port::learned_connection (EventBackend::EventTypes event_types, EventPort* learned_port)
+{
+	if (graph() && graph() == learned_port->graph())
+	{
+		graph()->lock();
+		learned_port->connect_to (this);
+		graph()->unlock();
+	}
+	// Emit signal:
+	learned_connection_signal (event_types, learned_port);
+}
+
+
+void
+Port::unit_unregistered()
+{
+	disconnect();
+	stop_learning();
 }
 
 } // namespace Haruhi

@@ -22,18 +22,18 @@
 // Haruhi:
 #include <haruhi/utility/noncopyable.h>
 #include <haruhi/utility/mutex.h>
+#include <haruhi/utility/signal.h>
 
 // Local:
-#include "buffer.h"
-#include "port_group.h"
+#include "ports.h"
+#include "event_backend.h"
 
 
 namespace Haruhi {
 
 class Unit;
-class Port;
-
-typedef std::set<Port*> Ports;
+class PortGroup;
+class Buffer;
 
 /**
  * Represents Port in Graph. Port is a data entry point for Units.
@@ -43,9 +43,12 @@ typedef std::set<Port*> Ports;
  * No method is thread-safe. You must lock graph
  * before using port's methods.
  */
-class Port: private Noncopyable
+class Port:
+	public EventBackend::Learnable,
+	private Noncopyable
 {
 	friend class Unit;
+	friend class Graph;
 
   public:
 	/**
@@ -201,6 +204,29 @@ class Port: private Noncopyable
 	sync();
 
 	/**
+	 * Puts port into 'learning' mode (as it is EventBackend::Learnable).
+	 * It is required that port is owned by unit registered in Graph,
+	 * and there is EventBackend registered in that Graph. If these conditions
+	 * are not met, this method will throw GraphNotFound or EventBackendNotFound
+	 * exceptions.
+	 *
+	 * \param	event_types Types of events that trigger 'learned' method.
+	 */
+	void
+	start_learning (EventBackend::EventTypes event_types);
+
+	/**
+	 * Resets port from 'learning' mode (see start_learning()).
+	 * It is required that port is owned by unit registered in Graph.
+	 * If EventBackend is not registered in Graph, nothing will happen.
+	 *
+	 * \param	event_types Types of events that no longer will trigger 'learned' method.
+	 * \throws	GraphNotFound if unit is not registered to any graph.
+	 */
+	void
+	stop_learning();
+
+	/**
 	 * Shortcut for unit()->graph()
 	 */
 	Graph*
@@ -218,6 +244,32 @@ class Port: private Noncopyable
 
 	void
 	unregister_me();
+
+  private:
+	/**
+	 * Callback of EventTeacher API.
+	 * Connects learned port to this port, if Unit of this Port is still registered in Graph,
+	 * and the Graph is the same as learned port's Graph.
+	 */
+	void
+	learned_connection (EventBackend::EventTypes, EventPort* learned_port);
+
+	/**
+	 * Called by friendly Graph when Unit is unregistered. Causes total disconnection
+	 * of this port and stops it from learning.
+	 */
+	void
+	unit_unregistered();
+
+  public:
+	/**
+	 * Called when port, after being in learning mode, is finally learned connection
+	 * by EventBackend. Called always, even if actual connection hasn't been made
+	 * because of distinct Graphs or other reasons.
+	 *
+	 * It is not defined from within what thread this signal will be emited.
+	 */
+	Signal::Emiter2<EventBackend::EventTypes, EventPort*> learned_connection_signal;
 
   private:
 	Unit*			_unit;

@@ -17,13 +17,18 @@
 // Standard:
 #include <cstddef>
 #include <string>
+#include <map>
+
+// Haruhi:
+#include <haruhi/config/types.h>
 
 // Local:
 #include "backend.h"
-#include "event_port.h"
 
 
 namespace Haruhi {
+
+class EventPort;
 
 class EventTeacher
 {
@@ -46,23 +51,30 @@ class EventTeacher
 	 * Objects deriving this class can use EventBackend
 	 * to automatically learn which event port to use
 	 * for eg. given knob.
-	 * See start_learning() and stop_learning() methods.
+	 *
+	 * Object of this class must ensure that it's not registered in EventTeacher
+	 * for learning when it's destructed. Otherwise it will result in segfaults.
+	 *
+	 * See EventTeacher::start_learning() and EventTeacher::stop_learning() methods.
 	 */
 	class Learnable
 	{
 	  public:
 		/**
 		 * Will be called from within engine thread when port is learned.
+		 * \param	event_types Original mask of event types passed to EventTeacher::start_learning().
 		 * \entry	engine thread
 		 */
 		virtual void
-		learned_port (EventTypes event_types, EventPort* event_port) = 0;
+		learned_connection (EventTypes event_types, EventPort* event_port) = 0;
 	};
 
   protected:
-	typedef std::set<std::pair<Learnable*, EventTypes> > Learnables;
+	typedef std::map<Learnable*, EventTypes> Learnables;
 
   public:
+	~EventTeacher();
+
 	/**
 	 * Starts listening for specified event types.
 	 * When specified event arrive on any input port Learnable
@@ -76,7 +88,7 @@ class EventTeacher
 	 * eg. when user changes his mind.
 	 */
 	void
-	stop_learning (Learnable*, EventTypes);
+	stop_learning (Learnable*);
 
   protected:
 	/**
