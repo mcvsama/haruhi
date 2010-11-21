@@ -52,6 +52,7 @@ class Graph: public RecursiveMutex
 	/**
 	 * Registers unit as audio backend in graph.
 	 * Graph does not take ownership of the unit.
+	 * Registered backend is also registered as regular Unit in Graph.
 	 */
 	void
 	register_audio_backend (AudioBackend*);
@@ -66,6 +67,7 @@ class Graph: public RecursiveMutex
 	/**
 	 * Registers unit as event backend in graph.
 	 * Graph does not take ownership of the unit.
+	 * Registered backend is also registered as regular Unit in Graph.
 	 */
 	void
 	register_event_backend (EventBackend*);
@@ -217,7 +219,7 @@ class Graph: public RecursiveMutex
 	Signal::Emiter1<PortGroup*>		port_group_renamed;
 
   private:
-	// Set of all registered synces:
+	// Set of all registered units:
 	Units			_units;
 
 	// True between calls of start_/finish_processing_round:

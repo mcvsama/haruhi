@@ -1,3 +1,7 @@
+======
+Haruhi
+======
+
 Haruhi is a GPL3 host for its plugins written for GNU, using JACK for audio and
 ALSA for MIDI. Currently there is only one developed plugin: Mikuru, virtual analog synthesizer.
 There are plans for LADSPA support and some MIDI effects.
