@@ -127,19 +127,12 @@ DialControl::mouseDoubleClickEvent (QMouseEvent* event)
 
 
 void
-DialControl::valueChange()
+DialControl::sliderChange (SliderChange change)
 {
 	_to_update = true;
 	update();
-	emit valueChanged (value());
-}
-
-
-void
-DialControl::rangeChange()
-{
-	_to_update = true;
-	update();
+	if (change == SliderValueChange)
+		emit valueChanged (value());
 }
 
 } // namespace Haruhi

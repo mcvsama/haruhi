@@ -57,10 +57,7 @@ class DialControl: public QAbstractSlider
 	mouseDoubleClickEvent (QMouseEvent*);
 
 	void
-	valueChange();
-
-	void
-	rangeChange();
+	sliderChange (SliderChange change);
 
   private:
 	QPixmap		_dial_pixmap;
