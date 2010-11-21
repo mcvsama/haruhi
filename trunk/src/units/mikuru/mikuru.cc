@@ -26,8 +26,6 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QPixmap>
 #include <QtGui/QToolTip>
-#include <Qt3Support/Q3GroupBox>
-#include <Qt3Support/Q3Grid>
 
 // Haruhi:
 #include <haruhi/graph/audio_buffer.h>

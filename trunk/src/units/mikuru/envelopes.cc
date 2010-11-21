@@ -20,7 +20,6 @@
 
 // Qt:
 #include <QtGui/QToolTip>
-#include <Qt3Support/Q3GroupBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>

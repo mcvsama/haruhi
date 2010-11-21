@@ -24,7 +24,6 @@
 #include <QtGui/QCheckBox>
 #include <QtGui/QSlider>
 #include <QtGui/QPushButton>
-#include <Qt3Support/Q3ScrollView>
 
 // Haruhi:
 #include <haruhi/graph/port_group.h>

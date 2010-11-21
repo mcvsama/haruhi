@@ -22,7 +22,6 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QCheckBox>
 #include <QtGui/QMenu>
-#include <Qt3Support/Q3Header>
 
 // Haruhi:
 #include <haruhi/config/all.h>

@@ -17,7 +17,6 @@
 
 // Qt:
 #include <QtGui/QWhatsThis>
-#include <Qt3Support/Q3GroupBox>
 
 // Local:
 #include "mikuru.h"

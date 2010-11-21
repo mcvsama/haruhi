@@ -21,8 +21,6 @@
 #include <QtGui/QTabWidget>
 #include <QtGui/QLabel>
 #include <QtGui/QPushButton>
-#include <Qt3Support/Q3GroupBox>
-#include <Qt3Support/Q3Grid>
 
 // Haruhi:
 #include <haruhi/dsp/functions.h>
