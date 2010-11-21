@@ -56,7 +56,7 @@ class PortsList: public QTreeWidget
 	ports_connector() { return _ports_connector; }
 
 	QTreeWidgetItem*
-	selected_item();
+	selected_item() const;
 
   public slots:
 	void

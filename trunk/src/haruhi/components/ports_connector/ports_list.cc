@@ -76,7 +76,7 @@ PortsList::~PortsList()
 
 
 QTreeWidgetItem*
-PortsList::selected_item()
+PortsList::selected_item() const
 {
 	QList<QTreeWidgetItem*> list = selectedItems();
 	return list.empty() ? 0 : list.front();
@@ -148,8 +148,8 @@ PortsList::auto_open_selected()
 void
 PortsList::dragEnterEvent (QDragEnterEvent* event)
 {
-	QTreeWidget* source;
-	if (event->source() && (source = dynamic_cast<QTreeWidget*> (event->source())) &&
+	PortsList* source;
+	if (event->source() && (source = dynamic_cast<PortsList*> (event->source())) &&
 		source != this && event->mimeData()->hasText() && drag_drop_item (event->pos()))
 	{
 		event->accept();
@@ -162,8 +162,8 @@ PortsList::dragEnterEvent (QDragEnterEvent* event)
 void
 PortsList::dragMoveEvent (QDragMoveEvent* event)
 {
-	QTreeWidget* source;
-	if (event->source() && (source = dynamic_cast<QTreeWidget*> (event->source())) && source != this && event->mimeData()->hasText())
+	PortsList* source;
+	if (event->source() && (source = dynamic_cast<PortsList*> (event->source())) && source != this && event->mimeData()->hasText())
 	{
 		QTreeWidgetItem* oitem = source->selectedItems().empty() ? 0 : source->selectedItems().front();
 		QTreeWidgetItem* iitem = drag_drop_item (event->pos());

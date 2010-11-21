@@ -36,7 +36,6 @@
 #include <QtGui/QHeaderView>
 #include <QtGui/QSplitter>
 #include <QtGui/QMenu>
-#include <Qt3Support/Q3DragObject>
 #include <Qt3Support/Q3GroupBox>
 #include <Qt3Support/Q3ButtonGroup>
 #include <Qt3Support/Q3ListView> // Required due to Qt4 bug in which normally QScrollBar is not QWidget.
