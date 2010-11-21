@@ -20,6 +20,7 @@
 #include <map>
 
 // Qt:
+#include <QtCore/QSignalMapper>
 #include <QtGui/QWidget>
 #include <QtGui/QLayout>
 #include <QtGui/QTabWidget>
@@ -27,7 +28,7 @@
 #include <QtGui/QFrame>
 #include <QtGui/QLabel>
 #include <QtGui/QCheckBox>
-#include <Qt3Support/Q3PopupMenu>
+#include <QtGui/QMenu>
 
 // Haruhi:
 #include <haruhi/components/ports_connector/ports_connector.h>
@@ -99,7 +100,7 @@ namespace PatchPrivate {
 		QLabel*			_preset_name;
 		QPushButton*	_presets_button;
 		PresetsManager*	_presets_manager;
-		Q3PopupMenu*	_menu;
+		QMenu*			_menu;
 	};
 
 } // namespace PatchPrivate
@@ -154,7 +155,10 @@ class Patch:
 	plugin_tab_position (Plugin*) const;
 
   private:
-	Q3PopupMenu*
+	/**
+	 * Creates _plugins_menu. May be called only once.
+	 */
+	void
 	create_plugins_menu();
 
   private slots:
@@ -167,7 +171,8 @@ class Patch:
 	QTabWidget*						_tabs;
 	PatchPrivate::ConnectionsTab*	_connections_tab;
 	PluginsToFramesMap				_plugins_to_frames_map;
-	Q3PopupMenu*					_plugins_menu;
+	QMenu*							_plugins_menu;
+	QSignalMapper*					_plugins_mapper;
 	std::map<int, QString>			_urns;
 };
 

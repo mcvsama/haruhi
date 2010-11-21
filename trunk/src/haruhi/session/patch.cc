@@ -17,11 +17,12 @@
 #include <map>
 
 // Qt:
+#include <QtCore/QSignalMapper>
 #include <QtGui/QApplication>
 #include <QtGui/QPushButton>
 #include <QtGui/QCheckBox>
+#include <QtGui/QMenu>
 #include <Qt3Support/Q3Header>
-#include <Qt3Support/Q3PopupMenu>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -77,8 +78,8 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	QWidget* bar = new QWidget (this);
 	_stack = new QStackedWidget (this);
 
-	_menu = new Q3PopupMenu (this);
-	_menu->insertItem (Resources::Icons16::remove(), "Unload", this, SLOT (unload()));
+	_menu = new QMenu (this);
+	_menu->addAction (Resources::Icons16::remove(), "Unload", this, SLOT (unload()));
 
 	// Title/menu button:
 	QPushButton* title_button = new QPushButton (QString::fromStdString (_plugin->title()), bar);
@@ -155,7 +156,6 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 
 PluginTab::~PluginTab()
 {
-	delete _menu;
 }
 
 
@@ -220,8 +220,7 @@ Patch::Patch (Session* session, std::string const& title, QWidget* parent):
 	_session->graph()->register_unit (this);
 
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-
-	_plugins_menu = create_plugins_menu();
+	create_plugins_menu();
 
 	QWidget* add_plugin_frame = new QWidget (this);
 
@@ -432,10 +431,14 @@ Patch::plugin_tab_position (Plugin* plugin) const
 }
 
 
-Q3PopupMenu*
+void
 Patch::create_plugins_menu()
 {
-	Q3PopupMenu* menu = new Q3PopupMenu (this);
+	QAction* action;
+	int action_id = 0;
+
+	_plugins_menu = new QMenu (this);
+	_plugins_mapper = new QSignalMapper (this);
 
 	_urns.clear();
 
@@ -444,12 +447,17 @@ Patch::create_plugins_menu()
 	{
 		PluginFactory::InformationMap::const_iterator title = (*u)->information().find ("haruhi:title");
 		PluginFactory::InformationMap::const_iterator urn = (*u)->information().find ("haruhi:urn");
-		if (title != (*u)->information().end() && urn != (*u)->information().end())
-			_urns[menu->insertItem (QString::fromStdString (title->second))] = QString::fromStdString (urn->second);
-	}
-	QObject::connect (menu, SIGNAL (activated (int)), this, SLOT (load_plugin_request (int)));
 
-	return menu;
+		if (title != (*u)->information().end() && urn != (*u)->information().end())
+		{
+			action_id += 1;
+			action = _plugins_menu->addAction (QString::fromStdString (title->second), _plugins_mapper, SLOT (map()));
+			_plugins_mapper->setMapping (action, action_id);
+			_urns[action_id] = QString::fromStdString (urn->second);
+		}
+	}
+
+	QObject::connect (_plugins_mapper, SIGNAL (mapped (int)), this, SLOT (load_plugin_request (int)));
 }
 
 
