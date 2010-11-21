@@ -18,16 +18,13 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QWidget>
+#include <QtGui/QAbstractSlider>
 #include <QtGui/QPixmap>
-#include <Qt3Support/Q3RangeControl>
 
 
 namespace Haruhi {
 
-class DialControl:
-	public QWidget,
-	public Q3RangeControl
+class DialControl: public QAbstractSlider
 {
 	Q_OBJECT
 

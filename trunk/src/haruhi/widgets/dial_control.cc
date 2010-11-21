@@ -15,11 +15,10 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QWidget>
+#include <QtGui/QAbstractSlider>
 #include <QtGui/QLayout>
 #include <QtGui/QPainter>
 #include <QtGui/QPaintEvent>
-#include <Qt3Support/Q3RangeControl>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -32,16 +31,22 @@
 namespace Haruhi {
 
 DialControl::DialControl (QWidget* parent, int value_min, int value_max, int value):
-	QWidget (parent, 0, Qt::WRepaintNoErase),
-	Q3RangeControl (value_min, value_max, 1, 1, value),
+	QAbstractSlider (parent),
 	_dial_pixmap ("share/images/dial.png"),
 	_disabled_dial_pixmap ("share/images/dial:disabled.png"),
 	_mouse_press_value (0),
 	_to_update (false),
 	_last_enabled_state (isEnabled())
 {
+	setWindowFlags (Qt::WRepaintNoErase);
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	setFixedSize (33, 33);
+
+	setMinimum (value_min);
+	setMaximum (value_max);
+	setValue (value);
+	setPageStep (1);
+	setSingleStep (1);
 }
 
 
