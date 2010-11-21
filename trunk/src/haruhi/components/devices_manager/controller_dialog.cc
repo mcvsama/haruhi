@@ -20,7 +20,8 @@
 #include <QtGui/QLineEdit>
 #include <QtGui/QPushButton>
 #include <QtGui/QMessageBox>
-#include <Qt3Support/Q3GroupBox>
+#include <QtGui/QGridLayout>
+#include <QtGui/QGroupBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -56,7 +57,8 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 
 		// Filters:
 
-		Q3GroupBox* filters = new Q3GroupBox (1, Qt::Horizontal, "MIDI filters", this);
+		QGroupBox* filters = new QGroupBox ("MIDI filters", this);
+		QGridLayout* filters_layout = new QGridLayout (filters);
 		layout->addWidget (filters);
 
 			// Note filters:
@@ -185,6 +187,17 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 				h2->addWidget (_key_pressure_invert);
 				h2->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 			}
+
+		filters_layout->addWidget (_note_checkbox, 0, 0);
+		filters_layout->addWidget (_note_params, 1, 0);
+		filters_layout->addWidget (_controller_checkbox, 2, 0);
+		filters_layout->addWidget (_controller_params, 3, 0);
+		filters_layout->addWidget (_pitchbend_checkbox, 5, 0);
+		filters_layout->addWidget (_pitchbend_params, 6, 0);
+		filters_layout->addWidget (_channel_pressure_checkbox, 7, 0);
+		filters_layout->addWidget (_channel_pressure_params, 8, 0);
+		filters_layout->addWidget (_key_pressure_checkbox, 9, 0);
+		filters_layout->addWidget (_key_pressure_params, 10, 0);
 
 		layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
 
