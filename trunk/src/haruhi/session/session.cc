@@ -616,12 +616,17 @@ Session::update_level_meters()
 		AudioBackend::LevelsMap levels_map;
 		std::vector<AudioPort*> ports;
 
+		// Hold lock until we finish operations on Ports (sorting by name):
+		graph()->lock();
+
 		_audio_backend->peak_levels (levels_map);
 
 		// Sort ports by name:
 		for (AudioBackend::LevelsMap::iterator p = levels_map.begin(); p != levels_map.end(); ++p)
 			ports.push_back (p->first);
 		std::sort (ports.begin(), ports.end(), AudioPort::CompareByName());
+
+		graph()->unlock();
 
 		// Update level meter widget:
 		for (unsigned int i = 0; i < std::min (ports.size(), static_cast<std::vector<AudioPort*>::size_type> (2u)); ++i)

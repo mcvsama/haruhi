@@ -54,6 +54,9 @@ class AudioBackend: public Backend
 	 * Initially they are set to 0.
 	 * \param	levels_map will be cleared and peak output level for each port
 	 * 			will be inserted. Level values will be always non-negative.
+	 * \entry	Any thread.
+	 * 			Caller must lock Graph lock before calling this method and hold
+	 * 			it until it finishes operations on resulting levels_map.
 	 */
 	virtual void
 	peak_levels (LevelsMap& levels_map) = 0;

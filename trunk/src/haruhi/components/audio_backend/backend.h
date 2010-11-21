@@ -232,9 +232,6 @@ class Backend:
 	void
 	dummy_round();
 
-	void
-	update_peak_levels();
-
   private:
 	QString				_client_name;
 	Transport*			_transport;
@@ -259,10 +256,6 @@ class Backend:
 	// Ports sets:
 	InputsMap			_inputs;
 	OutputsMap			_outputs;
-
-	// Peak levels helper:
-	Mutex				_peak_levels_mutex;
-	LevelsMap			_peak_levels;
 };
 
 

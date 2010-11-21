@@ -206,7 +206,6 @@ Backend::data_ready()
 		}
 	}
 
-	update_peak_levels();
 	_ports_lock.unlock();
 
 	_transport->data_ready();
@@ -216,9 +215,24 @@ Backend::data_ready()
 void
 Backend::peak_levels (LevelsMap& levels)
 {
-	_peak_levels_mutex.lock();
-	levels = _peak_levels;
-	_peak_levels_mutex.unlock();
+	levels.clear();
+
+	_ports_lock.lock();
+
+	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
+	{
+		Sample register max = 0;
+		AudioPort* port = p->second->port();
+		AudioBuffer* buf = port->audio_buffer();
+
+		for (Sample* s = buf->begin(); s != buf->end(); ++s)
+			if (std::abs (*s) > max)
+				max = std::abs (*s);
+
+		levels[port] = max;
+	}
+
+	_ports_lock.unlock();
 }
 
 
@@ -548,28 +562,6 @@ Backend::dummy_round()
 	graph()->set_buffer_size (DummyBufferSize);
 	graph()->unlock();
 	usleep (33 * 1000); // Sleep for 33ms
-}
-
-
-void
-Backend::update_peak_levels()
-{
-	_peak_levels_mutex.lock();
-
-	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
-	{
-		Sample register max = 0;
-		AudioPort* port = p->second->port();
-		AudioBuffer* buf = port->audio_buffer();
-
-		for (Sample* s = buf->begin(); s != buf->end(); ++s)
-			if (std::abs (*s) > max)
-				max = std::abs (*s);
-
-		_peak_levels[port] = max;
-	}
-
-	_peak_levels_mutex.unlock();
 }
 
 } // namespace AudioBackendImpl
