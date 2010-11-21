@@ -17,7 +17,8 @@
 
 // Qt:
 #include <QtGui/QToolTip>
-#include <Qt3Support/Q3GroupBox>
+#include <QtGui/QGroupBox>
+#include <QtGui/QGridLayout>
 
 // Haruhi:
 #include <haruhi/lib/controller_proxy.h>
@@ -65,31 +66,35 @@ General::General (Mikuru* mikuru, QWidget* parent):
 
 	QToolTip::add (_knob_stereo_width, "Stereo width");
 
-	Q3GroupBox* grid1 = new Q3GroupBox (2, Qt::Horizontal, "", this);
-	grid1->setInsideMargin (3 * Config::Margin);
+	QGroupBox* grid1 = new QGroupBox (this);
+	QGridLayout* grid1_layout = new QGridLayout (grid1);
+	grid1_layout->setMargin (3 * Config::Margin);
+	grid1_layout->setSpacing (Config::Spacing);
 
 	// Threads:
 
-	new QLabel ("CPU threads:", grid1);
+	grid1_layout->addWidget (new QLabel ("CPU threads:", grid1), 0, 0);
 	_threads_number = new QSpinBox (0, 16, 1, grid1);
 	_threads_number->setSpecialValueText ("Auto");
 	_threads_number->setValue (0);
+	grid1_layout->addWidget (_threads_number, 0, 1);
 	QObject::connect (_threads_number, SIGNAL (valueChanged (int)), this, SLOT (update_threads (int)));
 
 	// Polyphony:
 
-	new QLabel ("Polyphony (each part):", grid1);
+	grid1_layout->addWidget (new QLabel ("Polyphony (each part):", grid1), 1, 0);
 	_polyphony = new QSpinBox (1, 256, 1, grid1);
 	_polyphony->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_polyphony->setValue (_params.polyphony.get());
+	grid1_layout->addWidget (_polyphony, 1, 1);
 	QObject::connect (_polyphony, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 
 	// Enable audio input:
 
 	_enable_audio_input = new QCheckBox ("Enable audio input", grid1);
 	_enable_audio_input->setChecked (_params.enable_audio_input);
+	grid1_layout->addWidget (_enable_audio_input, 2, 0);
 	QObject::connect (_enable_audio_input, SIGNAL (toggled (bool)), this, SLOT (update_params()));
-	grid1->addSpace (0);
 
 	// Envelopes:
 

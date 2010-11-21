@@ -18,7 +18,8 @@
 
 // Qt:
 #include <QtGui/QToolTip>
-#include <Qt3Support/Q3GroupBox>
+#include <QtGui/QGroupBox>
+#include <QtGui/QGridLayout>
 
 // Local:
 #include "mikuru.h"
@@ -158,48 +159,58 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	_evdisp_unison_noise = new EventDispatcher (_port_unison_noise, _knob_unison_noise, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::unison_noise));
 
 	// Grids:
-	Q3GroupBox* grid1 = new Q3GroupBox (2, Qt::Horizontal, "", _panel);
-	Q3GroupBox* grid2 = new Q3GroupBox (2, Qt::Horizontal, "", _panel);
-	Q3GroupBox* grid4 = new Q3GroupBox (2, Qt::Horizontal, "", _panel);
+	QGroupBox* grid1 = new QGroupBox (_panel);
+	QGroupBox* grid2 = new QGroupBox (_panel);
+	QGroupBox* grid4 = new QGroupBox (_panel);
 
-	grid1->setInsideMargin (3 * Config::Margin);
-	grid2->setInsideMargin (3 * Config::Margin);
-	grid4->setInsideMargin (3 * Config::Margin);
+	QGridLayout* grid1_layout = new QGridLayout (grid1);
+	QGridLayout* grid2_layout = new QGridLayout (grid2);
+	QGridLayout* grid4_layout = new QGridLayout (grid4);
+
+	grid1_layout->setMargin (3 * Config::Margin);
+	grid2_layout->setMargin (3 * Config::Margin);
+	grid4_layout->setMargin (3 * Config::Margin);
 
 	// Monophonic:
 	_monophonic = new QCheckBox ("Monophonic", grid1);
 	_monophonic->setChecked (po.monophonic);
+	grid1_layout->addWidget (_monophonic, 0, 0);
 	QObject::connect (_monophonic, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 
 	// Monophonic retrigger:
 	_monophonic_retrigger = new QCheckBox ("Monophonic retrigger", grid1);
 	_monophonic_retrigger->setChecked (po.monophonic_retrigger);
+	grid1_layout->addWidget (_monophonic_retrigger, 0, 1);
 	QObject::connect (_monophonic_retrigger, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 
 	// Key priority:
-	new QLabel ("Monophonic key priority:", grid1);
+	grid1_layout->addWidget (new QLabel ("Monophonic key priority:", grid1), 1, 0);
 	_monophonic_key_priority = new QComboBox (grid1);
 	_monophonic_key_priority->insertItem ("Last pressed", Params::Oscillator::LastPressed);
 	_monophonic_key_priority->insertItem ("First pressed", Params::Oscillator::FirstPressed);
 	_monophonic_key_priority->insertItem ("Lowest", Params::Oscillator::LowestPressed);
 	_monophonic_key_priority->insertItem ("Highest", Params::Oscillator::HighestPressed);
 	_monophonic_key_priority->setCurrentItem (po.monophonic_key_priority);
+	grid1_layout->addWidget (_monophonic_key_priority, 1, 1);
 	QObject::connect (_monophonic_key_priority, SIGNAL (activated (int)), this, SLOT (update_params()));
 
 	// Transposition:
-	new QLabel ("Transposition:", grid1);
+	grid1_layout->addWidget (new QLabel ("Transposition:", grid1), 2, 0);
 	_transposition_semitones = new QSpinBox (-60, 60, 1, grid1);
 	_transposition_semitones->setValue (po.transposition_semitones);
+	grid1_layout->addWidget (_transposition_semitones, 2, 1);
 	QObject::connect (_transposition_semitones, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 
 	// Glide:
 	_const_portamento_time = new QCheckBox ("Const. portamento", grid1);
 	_const_portamento_time->setChecked (po.const_portamento_time);
+	grid1_layout->addWidget (_const_portamento_time, 3, 0);
 	QObject::connect (_const_portamento_time, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 
 	// Pitchbend down/up:
-	new QLabel ("Pitchbend down/up range:", grid2);
+	grid2_layout->addWidget (new QLabel ("Pitchbend down/up range:", grid2), 0, 0);
 	QWidget* pitchbends_panel = new QWidget (grid2);
+	grid2_layout->addWidget (pitchbends_panel, 0, 1);
 	QHBoxLayout* pitchbends_layout = new QHBoxLayout (pitchbends_panel, 0, Config::Spacing);
 
 	_pitchbend_down_semitones = new QSpinBox (0, 60, 1, pitchbends_panel);
@@ -216,46 +227,53 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	// Pitchbend enabled:
 	_pitchbend_enabled = new QCheckBox ("Pitchbend enabled", grid2);
 	_pitchbend_enabled->setChecked (po.pitchbend_enabled);
+	grid2_layout->addWidget (_pitchbend_enabled, 1, 0);
 	QObject::connect (_pitchbend_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 
 	// Pitchbend released:
 	_pitchbend_released = new QCheckBox ("Bend released", grid2);
 	_pitchbend_released->setChecked (po.pitchbend_released);
+	grid2_layout->addWidget (_pitchbend_released, 1, 1);
 	QObject::connect (_pitchbend_released, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 	QToolTip::add (_pitchbend_released, "Alter pitch of already released voices");
 
 	// Frequency modulation range:
-	new QLabel ("Frequency mod. range:", grid2);
+	grid2_layout->addWidget (new QLabel ("Frequency mod. range:", grid2), 2, 0);
 	_frequency_modulation_range = new QSpinBox (1, 60, 1, grid2);
 	_frequency_modulation_range->setValue (po.frequency_mod_range);
+	grid2_layout->addWidget (_frequency_modulation_range, 2, 1);
 	QObject::connect (_frequency_modulation_range, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 
 	// Amplitude modulation smoothing:
-	new QLabel ("Amp. mod. smoothing:", grid4);
+	grid4_layout->addWidget (new QLabel ("Amp. mod. smoothing:", grid4), 0, 0);
 	_amplitude_modulation_smoothing = new QSpinBox (0, 500, 5, grid4);
 	_amplitude_modulation_smoothing->setSuffix (" ms");
 	_amplitude_modulation_smoothing->setSpecialValueText ("Off");
 	_amplitude_modulation_smoothing->setMinimumWidth (65);
 	_amplitude_modulation_smoothing->setValue (po.amplitude_smoothing);
+	grid4_layout->addWidget (_amplitude_modulation_smoothing, 0, 1);
 	QObject::connect (_amplitude_modulation_smoothing, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 
 	// Frequency modulation smoothing:
-	new QLabel ("Freq. mod. smoothing:", grid4);
+	grid4_layout->addWidget (new QLabel ("Freq. mod. smoothing:", grid4), 1, 0);
 	_frequency_modulation_smoothing = new QSpinBox (0, 500, 5, grid4);
 	_frequency_modulation_smoothing->setSuffix (" ms");
 	_frequency_modulation_smoothing->setSpecialValueText ("Off");
 	_frequency_modulation_smoothing->setMinimumWidth (65);
 	_frequency_modulation_smoothing->setValue (po.frequency_smoothing);
+	grid4_layout->addWidget (_frequency_modulation_smoothing, 1, 1);
 	QObject::connect (_frequency_modulation_smoothing, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 
 	// Wave enabled:
 	_wave_enabled = new QCheckBox ("Wave enabled", grid4);
 	_wave_enabled->setChecked (po.wave_enabled);
+	grid4_layout->addWidget (_wave_enabled, 2, 0);
 	QObject::connect (_wave_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 
 	// Noise enabled:
 	_noise_enabled = new QCheckBox ("Noise enabled", grid4);
 	_noise_enabled->setChecked (po.noise_enabled);
+	grid4_layout->addWidget (_noise_enabled, 2, 1);
 	QObject::connect (_noise_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 
 	// Layouts:

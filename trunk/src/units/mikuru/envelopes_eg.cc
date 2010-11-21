@@ -20,7 +20,8 @@
 
 // Qt:
 #include <QtGui/QToolTip>
-#include <Qt3Support/Q3GroupBox>
+#include <QtGui/QGroupBox>
+#include <QtGui/QGridLayout>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -152,27 +153,29 @@ EG::create_widgets()
 	_active_point->setMinimum (0);
 	QObject::connect (_active_point, SIGNAL (valueChanged (int)), this, SLOT (changed_active_point()));
 
-	Q3GroupBox* grid1 = new Q3GroupBox (2, Qt::Horizontal, "", this);
+	QGroupBox* grid1 = new QGroupBox (this);
+	QGridLayout* grid1_layout = new QGridLayout (grid1);
 	grid1->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
-	grid1->setInsideMargin (3 * Config::Margin);
+	grid1_layout->setMargin (3 * Config::Margin);
 
 	_enabled = new QCheckBox ("Enabled", grid1);
 	_enabled->setChecked (p.enabled);
+	grid1_layout->addWidget (_enabled, 0, 0);
 	QObject::connect (_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 
-	grid1->addSpace (0);
-
-	new QLabel ("Sustain point:", grid1);
+	grid1_layout->addWidget (new QLabel ("Sustain point:", grid1), 1, 0);
 	_sustain_point = new QSpinBox (grid1);
 	_sustain_point->setMinimum (1);
+	grid1_layout->addWidget (_sustain_point, 1, 1);
 	QObject::connect (_sustain_point, SIGNAL (valueChanged (int)), this, SLOT (update_widgets()));
 	QObject::connect (_sustain_point, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 	QObject::connect (_sustain_point, SIGNAL (valueChanged (int)), this, SLOT (update_plot()));
 
-	new QLabel ("Segments:", grid1);
+	grid1_layout->addWidget (new QLabel ("Segments:", grid1), 2, 0);
 	_segments = new QSpinBox (grid1);
 	_segments->setMinimum (2);
 	_segments->setMaximum (Params::EG::MaxPoints - 1);
+	grid1_layout->addWidget (_segments, 2, 1);
 	QObject::connect (_segments, SIGNAL (valueChanged (int)), this, SLOT (update_widgets()));
 	QObject::connect (_segments, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 	QObject::connect (_segments, SIGNAL (valueChanged (int)), this, SLOT (update_plot()));

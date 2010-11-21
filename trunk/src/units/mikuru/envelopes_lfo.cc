@@ -21,7 +21,8 @@
 // Qt:
 #include <QtGui/QToolTip>
 #include <QtGui/QPushButton>
-#include <Qt3Support/Q3GroupBox>
+#include <QtGui/QGroupBox>
+#include <QtGui/QGridLayout>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -274,36 +275,43 @@ LFO::create_widgets (QWidget* knobs_panel)
 	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::Spacing);
 	plot_frame_layout->addWidget (_plot);
 
-	Q3GroupBox* grid1 = new Q3GroupBox (2, Qt::Horizontal, "", this);
+	QGroupBox* grid1 = new QGroupBox (this);
+	QGridLayout* grid1_layout = new QGridLayout (grid1);
 	grid1->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
-	grid1->setInsideMargin (3 * Config::Margin);
+	grid1_layout->setMargin (3 * Config::Margin);
 
 	_enabled = new QCheckBox ("Enabled", grid1);
 	_enabled->setChecked (p.enabled);
+	grid1_layout->addWidget (_enabled, 0, 0);
 	QObject::connect (_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 
 	_wave_invert = new QCheckBox ("Invert wave", grid1);
 	_wave_invert->setChecked (p.wave_invert);
+	grid1_layout->addWidget (_wave_invert, 0, 1);
 	QObject::connect (_wave_invert, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 	QObject::connect (_wave_invert, SIGNAL (toggled (bool)), this, SLOT (update_plot()));
 
 	_random_start_phase = new QCheckBox ("Random phase", grid1);
 	_random_start_phase->setChecked (p.random_start_phase);
+	grid1_layout->addWidget (_random_start_phase, 1, 0);
 	QObject::connect (_random_start_phase, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 
 	_fade_out_enabled = new QCheckBox ("Fade out", grid1);
 	_fade_out_enabled->setChecked (p.fade_out_enabled);
+	grid1_layout->addWidget (_fade_out_enabled, 1, 1);
 	QObject::connect (_fade_out_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 	QObject::connect (_fade_out_enabled, SIGNAL (toggled (bool)), this, SLOT (update_widgets()));
 
 	_tempo_sync = new QCheckBox ("Sync with tempo", grid1);
 	_tempo_sync->setChecked (p.tempo_sync);
+	grid1_layout->addWidget (_tempo_sync, 2, 0);
 	QObject::connect (_tempo_sync, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 	QObject::connect (_tempo_sync, SIGNAL (toggled (bool)), this, SLOT (update_widgets()));
 
 	QWidget* tempo_grid = new QWidget (grid1);
 	QHBoxLayout* tempo_layout = new QHBoxLayout (tempo_grid, 0, Config::Spacing);
 	tempo_layout->setAutoAdd (true);
+	grid1_layout->addWidget (tempo_grid, 2, 1);
 
 	_tempo_numerator = new QSpinBox (1, 64, 1, tempo_grid);
 	_tempo_numerator->setValue (p.tempo_numerator);
@@ -315,7 +323,7 @@ LFO::create_widgets (QWidget* knobs_panel)
 	QToolTip::add (_tempo_denominator, "Tempo divider denonimator");
 	QObject::connect (_tempo_denominator, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 
-	new QLabel ("Wave:", grid1);
+	grid1_layout->addWidget (new QLabel ("Wave:", grid1), 3, 0);
 	_wave_type = new QComboBox (grid1);
 	_wave_type->insertItem (Resources::Icons16::wave_sine(), "Sine", Params::LFO::Sine);
 	_wave_type->insertItem (Resources::Icons16::wave_triangle(), "Triangle", Params::LFO::Triangle);
@@ -325,11 +333,12 @@ LFO::create_widgets (QWidget* knobs_panel)
 	_wave_type->insertItem (Resources::Icons16::wave_random_square(), "Random square", Params::LFO::RandomSquare);
 	_wave_type->insertItem (Resources::Icons16::wave_random_triangle(), "Random triangle", Params::LFO::RandomTriangle);
 	_wave_type->setCurrentItem (p.wave_type);
+	grid1_layout->addWidget (_wave_type, 3, 1);
 	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (update_params()));
 	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (update_plot()));
 	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (update_widgets()));
 
-	new QLabel ("Function:", grid1);
+	grid1_layout->addWidget (new QLabel ("Function:", grid1), 4, 0);
 	_function = new QComboBox (grid1);
 	_function->insertItem ("Log. E", Params::LFO::LogarithmicE);
 	_function->insertItem ("Log. 2", Params::LFO::Logarithmic2);
@@ -337,14 +346,16 @@ LFO::create_widgets (QWidget* knobs_panel)
 	_function->insertItem ("Exp. 2", Params::LFO::Expotential2);
 	_function->insertItem ("Exp. E", Params::LFO::ExpotentialE);
 	_function->setCurrentItem (p.function);
+	grid1_layout->addWidget (_function, 4, 1);
 	QObject::connect (_function, SIGNAL (activated (int)), this, SLOT (update_params()));
 
-	new QLabel ("Mode:", grid1);
+	grid1_layout->addWidget (new QLabel ("Mode:", grid1), 5, 0);
 	_mode = new QComboBox (grid1);
 	_mode->insertItem ("Polyphonic", Params::LFO::Polyphonic);
 	_mode->insertItem ("Common Keysync", Params::LFO::CommonKeySync);
 	_mode->insertItem ("Common Continuous", Params::LFO::CommonContinuous);
 	_mode->setCurrentItem (p.mode);
+	grid1_layout->addWidget (_mode, 5, 1);
 	QObject::connect (_mode, SIGNAL (activated (int)), this, SLOT (update_params()));
 	QObject::connect (_mode, SIGNAL (activated (int)), this, SLOT (update_widgets()));
 

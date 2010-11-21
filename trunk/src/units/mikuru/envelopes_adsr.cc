@@ -20,7 +20,8 @@
 
 // Qt:
 #include <QtGui/QToolTip>
-#include <Qt3Support/Q3GroupBox>
+#include <QtGui/QGroupBox>
+#include <QtGui/QGridLayout>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -162,30 +163,35 @@ ADSR::create_widgets (QWidget* knobs_panel)
 	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::Spacing);
 	plot_frame_layout->addWidget (_plot);
 
-	Q3GroupBox* grid1 = new Q3GroupBox (2, Qt::Horizontal, "", this);
+	QGroupBox* grid1 = new QGroupBox (this);
+	QGridLayout* grid1_layout = new QGridLayout (grid1);
 	grid1->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
-	grid1->setInsideMargin (3 * Config::Margin);
+	grid1_layout->setMargin (3 * Config::Margin);
 
 	_enabled = new QCheckBox ("Enabled", grid1);
 	_enabled->setChecked (p.enabled);
+	grid1_layout->addWidget (_enabled, 0, 0);
 	QObject::connect (_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 
 	_direct_adsr = new QCheckBox ("Main ADSR", grid1);
 	_direct_adsr->setChecked (p.direct_adsr);
+	grid1_layout->addWidget (_direct_adsr, 0, 1);
 	QObject::connect (_direct_adsr, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 	QToolTip::add (_direct_adsr, "Act as all parts main ADSR");
 
 	_forced_release = new QCheckBox ("Forced Release", grid1);
 	_forced_release->setChecked (p.forced_release);
+	grid1_layout->addWidget (_forced_release, 1, 0);
 	QObject::connect (_forced_release, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 	QToolTip::add (_forced_release, "Starts releasing even when no sustain point has been reached");
 
 	_sustain_enabled = new QCheckBox ("Sustain", grid1);
 	_sustain_enabled->setChecked (p.sustain_enabled);
+	grid1_layout->addWidget (_sustain_enabled, 1, 1);
 	QObject::connect (_sustain_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 	QToolTip::add (_sustain_enabled, "Sustaining enabled");
 
-	new QLabel ("Function:", grid1);
+	grid1_layout->addWidget (new QLabel ("Function:", grid1), 2, 0);
 	_function = new QComboBox (grid1);
 	_function->insertItem ("Log. E", Params::ADSR::LogarithmicE);
 	_function->insertItem ("Log. 2", Params::ADSR::Logarithmic2);
@@ -193,13 +199,15 @@ ADSR::create_widgets (QWidget* knobs_panel)
 	_function->insertItem ("Exp. 2", Params::ADSR::Expotential2);
 	_function->insertItem ("Exp. E", Params::ADSR::ExpotentialE);
 	_function->setCurrentItem (Params::ADSR::Linear);
+	grid1_layout->addWidget (_function, 2, 1);
 	QObject::connect (_function, SIGNAL (activated (int)), this, SLOT (update_params()));
 
-	new QLabel ("Mode:", grid1);
+	grid1_layout->addWidget (new QLabel ("Mode:", grid1), 3, 0);
 	_mode = new QComboBox (grid1);
 	_mode->insertItem ("Polyphonic", Params::ADSR::Polyphonic);
 	_mode->insertItem ("Common Keysync", Params::ADSR::CommonKeySync);
 	_mode->setCurrentItem (Params::ADSR::Polyphonic);
+	grid1_layout->addWidget (_mode, 3, 1);
 	QObject::connect (_mode, SIGNAL (activated (int)), this, SLOT (update_params()));
 
 	QVBoxLayout* v1 = new QVBoxLayout (knobs_panel, 0, Config::Spacing);
