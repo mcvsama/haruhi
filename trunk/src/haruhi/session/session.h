@@ -316,8 +316,8 @@ class Session: public QWidget
 	QWidget*					_devices_manager_tab;
 
 	// Links to main session components:
-	AudioBackendImpl::Backend*	_audio_backend;
-	EventBackendImpl::Backend*	_event_backend;
+	AudioBackend*				_audio_backend;
+	EventBackend*				_event_backend;
 	Engine*						_engine;
 	PluginLoader*				_plugin_loader;
 	DevicesManager::Panel*		_devices_manager;

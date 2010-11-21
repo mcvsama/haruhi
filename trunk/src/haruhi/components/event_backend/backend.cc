@@ -121,6 +121,7 @@ Backend::~Backend()
 void
 Backend::registered()
 {
+	connect();
 }
 
 

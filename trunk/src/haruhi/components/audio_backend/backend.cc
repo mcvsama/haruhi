@@ -129,6 +129,8 @@ Backend::registered()
 {
 	_master_volume_port = new EventPort (this, "Master Volume", Port::Input);
 	_panic_port = new EventPort (this, "Panic", Port::Input);
+
+	connect();
 }
 
 

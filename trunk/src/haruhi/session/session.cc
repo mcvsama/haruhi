@@ -13,6 +13,7 @@
 
 // Standard:
 #include <cstddef>
+#include <typeinfo>
 
 // Qt:
 #include <QtCore/QFile>
@@ -507,13 +508,21 @@ Session::save_state (QDomElement& element) const
 
 	// Save audio-backend:
 	QDomElement audio_backend = element.ownerDocument().createElement ("audio-backend");
-	_audio_backend->save_state (audio_backend);
-	audio_backend.setAttribute ("id", _audio_backend->id());
+	try {
+		dynamic_cast<SaveableState&> (*_audio_backend).save_state (audio_backend);
+		audio_backend.setAttribute ("id", _audio_backend->id());
+	}
+	catch (std::bad_cast const&)
+	{ }
 
 	// Save event-backend:
 	QDomElement event_backend = element.ownerDocument().createElement ("event-backend");
-	_event_backend->save_state (event_backend);
-	event_backend.setAttribute ("id", _event_backend->id());
+	try {
+		dynamic_cast<SaveableState&> (*_event_backend).save_state (event_backend);
+		event_backend.setAttribute ("id", _event_backend->id());
+	}
+	catch (std::bad_cast const&)
+	{ }
 
 	// Save programs:
 	QDomElement program = element.ownerDocument().createElement ("program");
@@ -560,11 +569,19 @@ Session::load_state (QDomElement const& element)
 		// Components must be restored in given order (backends must get their
 		// IDs before program and connections between units are restored):
 
-		_audio_backend->load_state (audio_backend_element);
-		_audio_backend->set_id (audio_backend_element.attribute ("id").toInt());
+		try {
+			dynamic_cast<SaveableState&> (*_audio_backend).load_state (audio_backend_element);
+			_audio_backend->set_id (audio_backend_element.attribute ("id").toInt());
+		}
+		catch (std::bad_cast const&)
+		{ }
 
-		_event_backend->load_state (event_backend_element);
-		_event_backend->set_id (event_backend_element.attribute ("id").toInt());
+		try {
+			dynamic_cast<SaveableState&> (*_event_backend).load_state (event_backend_element);
+			_event_backend->set_id (event_backend_element.attribute ("id").toInt());
+		}
+		catch (std::bad_cast const&)
+		{ }
 
 		_program->load_state (program_element);
 
@@ -696,8 +713,11 @@ Session::stop_audio_backend()
 {
 	if (_audio_backend)
 	{
-		_audio_backend->disconnect();
-		_audio_backend->hide();
+		try {
+			dynamic_cast<QWidget&> (*_audio_backend).hide();
+		}
+		catch (std::bad_cast const&)
+		{ }
 		_graph->unregister_audio_backend();
 		delete _audio_backend;
 	}
@@ -710,8 +730,11 @@ Session::stop_event_backend()
 {
 	if (_event_backend)
 	{
-		_event_backend->disconnect();
-		_event_backend->hide();
+		try {
+			dynamic_cast<QWidget&> (*_event_backend).hide();
+		}
+		catch (std::bad_cast const&)
+		{ }
 		_graph->unregister_event_backend();
 		delete _event_backend;
 	}
@@ -723,10 +746,10 @@ void
 Session::start_audio_backend()
 {
 	try {
-		_audio_backend = new AudioBackendImpl::Backend ("Haruhi", 1, _audio_tab);
+		AudioBackendImpl::Backend* audio_backend = new AudioBackendImpl::Backend ("Haruhi", 1, _audio_tab);
+		_audio_backend = audio_backend;
+		audio_backend->show();
 		_graph->register_audio_backend (_audio_backend);
-		_audio_backend->show();
-		_audio_backend->connect();
 		// Update master volume:
 		master_volume_changed (meter_panel()->master_volume()->value());
 	}
@@ -741,10 +764,10 @@ void
 Session::start_event_backend()
 {
 	try {
-		_event_backend = new EventBackendImpl::Backend ("Haruhi", 2, _event_tab);
+		EventBackendImpl::Backend* event_backend = new EventBackendImpl::Backend ("Haruhi", 2, _event_tab);
+		_event_backend = event_backend;
+		event_backend->show();
 		_graph->register_event_backend (_event_backend);
-		_event_backend->show();
-		_event_backend->connect();
 	}
 	catch (Exception const& e)
 	{
