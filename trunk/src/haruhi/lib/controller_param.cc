@@ -32,7 +32,7 @@ ControllerParam::ControllerParam():
 
 
 ControllerParam::ControllerParam (int minimum, int maximum, int default_value, int denominator):
-	Param (minimum, maximum, default_value),
+	Param<int> (minimum, maximum, default_value),
 	_denominator (denominator),
 	_smoothing_enabled (false),
 	_smoothing_parameter (0)
@@ -42,7 +42,7 @@ ControllerParam::ControllerParam (int minimum, int maximum, int default_value, i
 ControllerParam&
 ControllerParam::operator= (ControllerParam const& other)
 {
-	Param::operator= (other);
+	Param<int>::operator= (other);
 
 	_denominator = other._denominator;
 	_smoothing_enabled = other._smoothing_enabled;
@@ -55,7 +55,7 @@ ControllerParam::operator= (ControllerParam const& other)
 void
 ControllerParam::sanitize()
 {
-	Param::sanitize();
+	Param<int>::sanitize();
 	set_smoothing (bound (smoothing(), 0, 1000)); // 0…1000ms
 }
 
