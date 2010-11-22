@@ -46,7 +46,9 @@ LevelMeter::LevelMeter (QWidget* parent, LevelMetersGroup* group, float lower_db
 	_sample (0),
 	_sample_prev (0),
 	_peak (0),
-	_peak_decounter (0)
+	_peak_decounter (0),
+	_decay_speed (0.15),
+	_fps (30)
 {
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
 	setFixedWidth (5);
@@ -114,7 +116,7 @@ LevelMeter::decay()
 {
 	_sample_prev = _sample;
 	// Decay current sample:
-	_sample *= 0.85;
+	_sample *= std::pow (1.0 - _decay_speed, 30.0 / _fps);
 	_peak_decounter -= 1;
 }
 
@@ -318,9 +320,26 @@ LevelMetersGroup::update_peak (Sample sample)
 
 
 void
-LevelMetersGroup::reset_peak()
+LevelMetersGroup::set_fps (int fps)
 {
 	for (Vector::iterator m = _vector.begin();  m != _vector.end();  ++m)
+		(*m)->set_fps (fps);
+	_timer->setInterval (1000.0 / fps);
+}
+
+
+void
+LevelMetersGroup::set_decay_speed (float speed)
+{
+	for (Vector::iterator m = _vector.begin(); m != _vector.end(); ++m)
+		(*m)->set_decay_speed (speed);
+}
+
+
+void
+LevelMetersGroup::reset_peak()
+{
+	for (Vector::iterator m = _vector.begin(); m != _vector.end(); ++m)
 		(*m)->reset_peak();
 	_peak_sample = 0;
 	_peak_button->setText ("-inf dB");
@@ -332,7 +351,7 @@ LevelMetersGroup::reset_peak()
 void
 LevelMetersGroup::update_meters()
 {
-	for (Vector::iterator m = _vector.begin();  m != _vector.end();  ++m)
+	for (Vector::iterator m = _vector.begin(); m != _vector.end(); ++m)
 	{
 		(*m)->decay();
 		(*m)->update();

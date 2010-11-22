@@ -59,6 +59,20 @@ class LevelMeter: public QWidget
 	void
 	reset_peak();
 
+	/**
+	 * Sets decay speed.
+	 * \param	speed Decay speed: [0 (no decay)..1.0 (immediate decay)].
+	 */
+	void
+	set_decay_speed (float speed) { _decay_speed = speed; }
+
+	/**
+	 * Tells LevelMeter at what fps it will be updated.
+	 * This information is used to decay meter at correct speed.
+	 */
+	void
+	set_fps (int fps) { _fps = fps; }
+
   protected:
 	void
 	paintEvent (QPaintEvent*);
@@ -80,28 +94,30 @@ class LevelMeter: public QWidget
 	}
 
   private:
-	LevelMetersGroup* _group;
-	bool	_to_repaint_bar_buffer;
+	LevelMetersGroup*	_group;
+	bool				_to_repaint_bar_buffer;
 
 	// Meter configuration:
-	float	_lower_db;
-	float	_upper_db;
+	float				_lower_db;
+	float				_upper_db;
 
 	// Helpers:
-	QSize	_prev_size;
-	QPixmap	_bar_buffer;
-	int		_z_zero;
-	int		_z_top;
-	int		_z_peak;
+	QSize				_prev_size;
+	QPixmap				_bar_buffer;
+	int					_z_zero;
+	int					_z_top;
+	int					_z_peak;
 
 	// Current meter value:
-	float	_sample;
-	float	_sample_prev;
-	float	_peak;
-	int		_peak_decounter;
+	float				_sample;
+	float				_sample_prev;
+	float				_peak;
+	int					_peak_decounter;
+	float				_decay_speed;
+	int					_fps;
 
 	// Colors table:
-	QColor	_colors[256];
+	QColor				_colors[256];
 };
 
 
@@ -140,7 +156,13 @@ class LevelMetersGroup: public QWidget
 	update_peak (Sample sample);
 
 	void
-	set_fps (int fps) { _timer->setInterval (1000.0 / fps); }
+	set_fps (int fps);
+
+	/**
+	 * Sets decay speed for each LevelMeter in group.
+	 */
+	void
+	set_decay_speed (float speed);
 
   public slots:
 	void
@@ -166,6 +188,7 @@ class LevelMetersGroup: public QWidget
 
 	// Timer for decaying meters:
 	QTimer*			_timer;
+	float			_decay_speed;
 };
 
 } // namespace Haruhi
