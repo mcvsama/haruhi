@@ -100,16 +100,18 @@ class WavePlot: public QWidget
 	post_plot_shape();
 
 	/**
-	 * Sets position of phase marker.
+	 * Enables/disables phase marker.
 	 * \param	enable: Enable phase marker?
+	 */
+	void
+	set_phase_marker_enabled (bool enable) { _phase_enabled = enable; }
+
+	/**
+	 * Sets position of phase marker.
 	 * \param	position: [0..1].
 	 */
 	void
-	set_phase_marker (bool enable, float position)
-	{
-		_phase_enabled = enable;
-		_phase_position = position;
-	}	
+	set_phase_marker_position (float position) { _phase_position = position; }
 
   protected:
 	void
