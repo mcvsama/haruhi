@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__UNITS__MIKURU__ENVELOPES_ENV_H__INCLUDED
-#define HARUHI__UNITS__MIKURU__ENVELOPES_ENV_H__INCLUDED
+#ifndef HARUHI__UNITS__MIKURU__ENVELOPES_EG_H__INCLUDED
+#define HARUHI__UNITS__MIKURU__ENVELOPES_EG_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -137,6 +137,15 @@ class EG: public Envelope
 	void
 	changed_envelope();
 
+	void
+	add_point_after_active();
+
+	void
+	add_point_before_active();
+
+	void
+	remove_active_point();
+
   private:
 	/**
 	 * Delete EGs for Voices registered as dropped.
@@ -180,9 +189,11 @@ class EG: public Envelope
 	Haruhi::Knob*				_knob_point_value;
 	Haruhi::Knob*				_knob_segment_duration;
 	QSpinBox*					_active_point;
-	Haruhi::EnvelopePlot*		_plot;
 	QSpinBox*					_sustain_point;
-	QSpinBox*					_segments;
+	QPushButton*				_add_point_after_active;
+	QPushButton*				_add_point_before_active;
+	QPushButton*				_remove_active_point;
+	Haruhi::EnvelopePlot*		_plot;
 };
 
 } // namespace MikuruPrivate

@@ -128,16 +128,15 @@ EG::create_widgets()
 {
 	Params::EG p = _params;
 
-	QWidget* knobs_panel = new QWidget (this);
-	knobs_panel->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
+	create_knobs (this);
 
-	create_knobs (knobs_panel);
+	_enabled = new QCheckBox ("Enabled", this);
+	_enabled->setChecked (p.enabled);
+	QObject::connect (_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 
-	QFrame* plot_frame = new QFrame (knobs_panel);
+	QFrame* plot_frame = new QFrame (this);
 	plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	plot_frame->setFixedWidth (200);
-	plot_frame->setFixedHeight (100);
 	_plot = new Haruhi::EnvelopePlot (plot_frame);
 	_plot->set_editable (true, 1.0f * Params::EG::SegmentDurationMax / Params::EG::SegmentDurationDenominator);
 	_plot->set_sample_rate (ARTIFICIAL_SAMPLE_RATE);
@@ -147,19 +146,16 @@ EG::create_widgets()
 	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::Spacing);
 	plot_frame_layout->addWidget (_plot);
 
-	_active_point = new QSpinBox (knobs_panel);
-	_active_point->setMinimum (0);
-	QObject::connect (_active_point, SIGNAL (valueChanged (int)), this, SLOT (changed_active_point()));
-
 	QGroupBox* grid1 = new QGroupBox (this);
 	QGridLayout* grid1_layout = new QGridLayout (grid1);
-	grid1->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
+	grid1->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Maximum);
 	grid1_layout->setMargin (3 * Config::Margin);
 
-	_enabled = new QCheckBox ("Enabled", grid1);
-	_enabled->setChecked (p.enabled);
-	grid1_layout->addWidget (_enabled, 0, 0);
-	QObject::connect (_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
+	grid1_layout->addWidget (new QLabel ("Active point:", grid1), 0, 0);
+	_active_point = new QSpinBox (grid1);
+	_active_point->setMinimum (0);
+	grid1_layout->addWidget (_active_point, 0, 1);
+	QObject::connect (_active_point, SIGNAL (valueChanged (int)), this, SLOT (changed_active_point()));
 
 	grid1_layout->addWidget (new QLabel ("Sustain point:", grid1), 1, 0);
 	_sustain_point = new QSpinBox (grid1);
@@ -169,29 +165,29 @@ EG::create_widgets()
 	QObject::connect (_sustain_point, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 	QObject::connect (_sustain_point, SIGNAL (valueChanged (int)), this, SLOT (update_plot()));
 
-	grid1_layout->addWidget (new QLabel ("Segments:", grid1), 2, 0);
-	_segments = new QSpinBox (grid1);
-	_segments->setMinimum (2);
-	_segments->setMaximum (Params::EG::MaxPoints - 1);
-	grid1_layout->addWidget (_segments, 2, 1);
-	QObject::connect (_segments, SIGNAL (valueChanged (int)), this, SLOT (update_widgets()));
-	QObject::connect (_segments, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
-	QObject::connect (_segments, SIGNAL (valueChanged (int)), this, SLOT (update_plot()));
+	_add_point_after_active = new QPushButton (Resources::Icons16::add(), "Add after", this); // TODO Icon (<)
+	QObject::connect (_add_point_after_active, SIGNAL (clicked()), this, SLOT (add_point_after_active()));
 
-	QVBoxLayout* v1 = new QVBoxLayout (knobs_panel, 0, Config::Spacing);
-	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
+	_add_point_before_active = new QPushButton (Resources::Icons16::remove(), "Add before", this); // TODO Icon (>)
+	QObject::connect (_add_point_before_active, SIGNAL (clicked()), this, SLOT (add_point_before_active()));
+
+	_remove_active_point = new QPushButton (Resources::Icons16::remove(), "Remove active", this);
+	QObject::connect (_remove_active_point, SIGNAL (clicked()), this, SLOT (remove_active_point()));
+
+	QVBoxLayout* v0 = new QVBoxLayout (this, Config::Margin, Config::Spacing);
+	QHBoxLayout* h1 = new QHBoxLayout (v0, Config::Spacing);
 	h1->addWidget (plot_frame);
+	QVBoxLayout* v1 = new QVBoxLayout (h1, Config::Spacing);
+	v1->addWidget (_enabled);
 	QHBoxLayout* h2 = new QHBoxLayout (v1, Config::Spacing);
 	h2->addWidget (_knob_point_value);
 	h2->addWidget (_knob_segment_duration);
-	h2->addWidget (_active_point);
-	v1->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
-
-	QHBoxLayout* h3 = new QHBoxLayout (this, Config::Margin, Config::Spacing);
-	h3->addWidget (knobs_panel);
-	QVBoxLayout* v2 = new QVBoxLayout (h3, Config::Spacing);
-	v2->addWidget (grid1);
-	v2->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
+	QHBoxLayout* h3 = new QHBoxLayout (v0, Config::Spacing);
+	h3->addWidget (_remove_active_point);
+	h3->addWidget (_add_point_after_active);
+	h3->addWidget (_add_point_before_active);
+	h3->addWidget (grid1);
+	v0->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }
 
 
@@ -286,7 +282,6 @@ EG::load_params()
 
 	_enabled->setChecked (p.enabled);
 	_sustain_point->setValue (p.sustain_point + 1);
-	_segments->setValue (p.segments);
 	// Load points:
 	_envelope_template.points().clear();
 	for (size_t i = 0; i < p.segments + 1; ++i)
@@ -319,7 +314,6 @@ EG::update_params()
 		return;
 
 	_params.enabled.set (_enabled->isChecked());
-	_params.segments.set (_segments->value());
 	_params.sustain_point.set (_sustain_point->value() - 1);
 
 	// Update points:
@@ -363,8 +357,10 @@ EG::update_widgets()
 		return;
 	_updating_widgets = true;
 
-	_sustain_point->setMaximum (_segments->value() + 1);
-	_active_point->setMaximum (_segments->value());
+	unsigned int const segments = _params.segments.get();
+
+	_sustain_point->setMaximum (segments + 1);
+	_active_point->setMaximum (segments);
 
 	_updating_widgets = false;
 }
@@ -417,6 +413,30 @@ EG::changed_envelope()
 	_mute_point_controls = false;
 	if (_active_point->value() != _plot->active_point())
 		_active_point->setValue (_plot->active_point());
+}
+
+
+void
+EG::add_point_after_active()
+{
+	// TODO
+	update_widgets();
+	update_params();
+	update_plot();
+}
+
+
+void
+EG::add_point_before_active()
+{
+	// TODO
+}
+
+
+void
+EG::remove_active_point()
+{
+	// TODO
 }
 
 

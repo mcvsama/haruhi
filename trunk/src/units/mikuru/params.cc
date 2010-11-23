@@ -591,7 +591,7 @@ Params::EG::EG():
 	// Controller:
 	// Non-controller:
 	enabled (0, 1, 1),
-	segments (2, MaxPoints - 1, 1),
+	segments (2, MaxPoints - 1, 2),
 	sustain_point (1, MaxPoints - 1, 0)
 {
 	for (int i = 0; i < MaxPoints; ++i)
