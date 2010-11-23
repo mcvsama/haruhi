@@ -165,7 +165,7 @@ ADSR::create_widgets (QWidget* knobs_panel)
 
 	QGroupBox* grid1 = new QGroupBox (this);
 	QGridLayout* grid1_layout = new QGridLayout (grid1);
-	grid1->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
+	grid1->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Maximum);
 	grid1_layout->setMargin (3 * Config::Margin);
 
 	_enabled = new QCheckBox ("Enabled", grid1);
@@ -191,7 +191,6 @@ ADSR::create_widgets (QWidget* knobs_panel)
 	QObject::connect (_sustain_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 	QToolTip::add (_sustain_enabled, "Sustaining enabled");
 
-	grid1_layout->addWidget (new QLabel ("Function:", grid1), 2, 0);
 	_function = new QComboBox (grid1);
 	_function->insertItem ("Log. E", Params::ADSR::LogarithmicE);
 	_function->insertItem ("Log. 2", Params::ADSR::Logarithmic2);
@@ -199,15 +198,14 @@ ADSR::create_widgets (QWidget* knobs_panel)
 	_function->insertItem ("Exp. 2", Params::ADSR::Expotential2);
 	_function->insertItem ("Exp. E", Params::ADSR::ExpotentialE);
 	_function->setCurrentItem (Params::ADSR::Linear);
-	grid1_layout->addWidget (_function, 2, 1);
+	grid1_layout->addWidget (_function, 2, 0);
 	QObject::connect (_function, SIGNAL (activated (int)), this, SLOT (update_params()));
 
-	grid1_layout->addWidget (new QLabel ("Mode:", grid1), 3, 0);
 	_mode = new QComboBox (grid1);
 	_mode->insertItem ("Polyphonic", Params::ADSR::Polyphonic);
 	_mode->insertItem ("Common Keysync", Params::ADSR::CommonKeySync);
 	_mode->setCurrentItem (Params::ADSR::Polyphonic);
-	grid1_layout->addWidget (_mode, 3, 1);
+	grid1_layout->addWidget (_mode, 2, 1);
 	QObject::connect (_mode, SIGNAL (activated (int)), this, SLOT (update_params()));
 
 	QVBoxLayout* v1 = new QVBoxLayout (knobs_panel, 0, Config::Spacing);
