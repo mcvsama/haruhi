@@ -28,13 +28,11 @@
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/envelope_plot.h>
 
-// Local: TODO sprawdź które include'y faktycznie potrzebne.
 #include "mikuru.h"
 #include "envelopes.h"
 #include "envelopes_eg.h"
 #include "voice.h"
 #include "voice_manager.h"
-#include "part.h"
 
 
 namespace MikuruPrivate {
