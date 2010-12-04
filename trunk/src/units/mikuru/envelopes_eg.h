@@ -30,6 +30,7 @@
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/knob.h>
 #include <haruhi/widgets/envelope_plot.h>
+#include <haruhi/utility/mutex.h>
 
 // Local:
 #include "envelopes.h"
@@ -93,8 +94,12 @@ class EG: public Envelope
 	void
 	resize_buffers (std::size_t size);
 
-	DSP::Envelope*
-	envelope_template() { return &_envelope_template; }
+	/**
+	 * Returns copy of envelope used by EG.
+	 * \threadsafe
+	 */
+	DSP::Envelope
+	envelope_template();
 
   public slots:
 	/**
@@ -138,10 +143,10 @@ class EG: public Envelope
 	changed_envelope();
 
 	void
-	add_point_after_active();
+	add_point_before_active();
 
 	void
-	add_point_before_active();
+	add_point_after_active();
 
 	void
 	remove_active_point();
@@ -172,6 +177,7 @@ class EG: public Envelope
 	// sample-rate: ARTIFICIAL_SAMPLE_RATE samples/sec. Therefore when creating real envelope
 	// all segment lengths must be recomputed to match current sample-rate.
 	DSP::Envelope				_envelope_template;
+	Mutex						_envelope_template_mutex;
 	EGs							_egs;
 	Haruhi::AudioBuffer			_buffer;
 	// List of Voices which has been dropped and need ADSRs to be deleted also:
@@ -190,8 +196,8 @@ class EG: public Envelope
 	Haruhi::Knob*				_knob_segment_duration;
 	QSpinBox*					_active_point;
 	QSpinBox*					_sustain_point;
-	QPushButton*				_add_point_after_active;
 	QPushButton*				_add_point_before_active;
+	QPushButton*				_add_point_after_active;
 	QPushButton*				_remove_active_point;
 	Haruhi::EnvelopePlot*		_plot;
 };

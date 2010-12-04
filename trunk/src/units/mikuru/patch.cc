@@ -605,7 +605,7 @@ Patch::load_state (QDomElement const& element)
 			load_parameter (parameters, "segments", params->segments);
 			load_parameter (parameters, "sustain-point", params->sustain_point);
 			// Load envelope points:
-			DSP::Envelope::Points& points = eg->envelope_template()->points();
+			DSP::Envelope::Points& points = eg->envelope_template().points();
 			points.clear();
 			for (QDomNode n = en->firstChild(); !n.isNull(); n = n.nextSibling())
 			{

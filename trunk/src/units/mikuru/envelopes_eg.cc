@@ -51,9 +51,11 @@ EG::EG (int id, Mikuru* mikuru, QWidget* parent):
 {
 	_id = (id == 0) ? _mikuru->allocate_id ("egs") : _mikuru->reserve_id ("egs", id);
 
+	_envelope_template_mutex.lock();
 	_envelope_template.points().push_back (DSP::Envelope::Point (0.5, 0.5 * ARTIFICIAL_SAMPLE_RATE));
 	_envelope_template.points().push_back (DSP::Envelope::Point (0.5, 0.5 * ARTIFICIAL_SAMPLE_RATE));
 	_envelope_template.points().push_back (DSP::Envelope::Point (0.5, 0));
+	_envelope_template_mutex.unlock();
 
 	create_ports();
 	create_widgets();
@@ -184,8 +186,8 @@ EG::create_widgets()
 	h2->addWidget (_knob_segment_duration);
 	QHBoxLayout* h3 = new QHBoxLayout (v0, Config::Spacing);
 	h3->addWidget (_remove_active_point);
-	h3->addWidget (_add_point_after_active);
 	h3->addWidget (_add_point_before_active);
+	h3->addWidget (_add_point_after_active);
 	h3->addWidget (grid1);
 	v0->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }
@@ -198,7 +200,9 @@ EG::voice_created (VoiceManager* voice_manager, Voice* voice)
 		return;
 
 	unsigned int sample_rate = _mikuru->graph()->sample_rate();
+	_envelope_template_mutex.lock();
 	DSP::Envelope* env = _egs[voice] = new DSP::Envelope (_envelope_template);
+	_envelope_template_mutex.unlock();
 	// Convert durations from ARTIFICIAL_SAMPLE_RATE to real sample rate:
 	for (DSP::Envelope::Points::iterator p = env->points().begin(); p != env->points().end(); ++p)
 		p->samples = 1.0f * p->samples / ARTIFICIAL_SAMPLE_RATE * sample_rate;
@@ -273,6 +277,17 @@ EG::resize_buffers (std::size_t size)
 }
 
 
+DSP::Envelope
+EG::envelope_template()
+{
+	DSP::Envelope e;
+	_envelope_template_mutex.lock();
+	e = _envelope_template;
+	_envelope_template_mutex.unlock();
+	return e;
+}
+
+
 void
 EG::load_params()
 {
@@ -283,6 +298,7 @@ EG::load_params()
 	_enabled->setChecked (p.enabled);
 	_sustain_point->setValue (p.sustain_point + 1);
 	// Load points:
+	_envelope_template_mutex.lock();
 	_envelope_template.points().clear();
 	for (size_t i = 0; i < p.segments + 1; ++i)
 	{
@@ -290,6 +306,7 @@ EG::load_params()
 			DSP::Envelope::Point (1.0 * p.values[i] / Params::EG::PointValueDenominator, p.durations[i])
 		);
 	}
+	_envelope_template_mutex.unlock();
 
 	_loading_params = false;
 
@@ -317,6 +334,7 @@ EG::update_params()
 	_params.sustain_point.set (_sustain_point->value() - 1);
 
 	// Update points:
+	_envelope_template_mutex.lock();
 	DSP::Envelope::Points& points = _envelope_template.points();
 	size_t s = _params.segments.get() + 1;
 	for (size_t i = 0; i < s; ++i)
@@ -324,6 +342,7 @@ EG::update_params()
 		_params.values[i].set (points[i].value * Params::EG::PointValueDenominator);
 		_params.durations[i].set (points[i].samples);
 	}
+	_envelope_template_mutex.unlock();
 
 	// Knob params are updated automatically using #assign_parameter.
 
@@ -334,6 +353,8 @@ EG::update_params()
 void
 EG::update_plot()
 {
+	_envelope_template_mutex.lock();
+
 	// If graph was not connected, sample rate would be 0 which would cause plotting problems.
 	_envelope_template.set_sustain_point (_params.sustain_point);
 	_plot->set_active_point (_active_point->value());
@@ -346,6 +367,7 @@ EG::update_plot()
 	// Set length of the last segment to 0:
 	_envelope_template.points().back().samples = 0;
 
+	_envelope_template_mutex.unlock();
 	_plot->post_plot_shape();
 }
 
@@ -383,7 +405,9 @@ EG::changed_segment_value()
 		return;
 
 	unsigned int p = _active_point->value();
+	_envelope_template_mutex.lock();
 	_envelope_template.points()[p].value = _point_value.to_f();
+	_envelope_template_mutex.unlock();
 
 	update_params();
 	update_plot();
@@ -398,7 +422,11 @@ EG::changed_segment_duration()
 
 	unsigned int p = _active_point->value();
 	if (p > 0)
+	{
+		_envelope_template_mutex.lock();
 		_envelope_template.points()[p-1].samples = _segment_duration.to_f() * ARTIFICIAL_SAMPLE_RATE;
+		_envelope_template_mutex.unlock();
+	}
 
 	update_params();
 	update_plot();
@@ -417,9 +445,27 @@ EG::changed_envelope()
 
 
 void
-EG::add_point_after_active()
+EG::add_point_before_active()
 {
-	// TODO
+	_envelope_template_mutex.lock();
+
+	DSP::Envelope::Points& points = _envelope_template.points();
+	DSP::Envelope::Points::iterator p = points.begin();
+	unsigned int sr = _mikuru->graph()->sample_rate();
+	unsigned int pi = _active_point->value();
+	float val = 0.5;
+
+	// Avg of adjacent points.
+	// Assuming that points.size() is always >= 2:
+	if (pi >= 1)
+		val = 0.5 * (points[pi - 1].value + points[pi].value);
+	else
+		val = points[0].value;
+
+	points.insert (p + pi, DSP::Envelope::Point (val, 0.5 * sr)); // 0.1s default
+	_params.segments.set (_params.segments.get() + 1);
+
+	_envelope_template_mutex.unlock();
 	update_widgets();
 	update_params();
 	update_plot();
@@ -427,9 +473,13 @@ EG::add_point_after_active()
 
 
 void
-EG::add_point_before_active()
+EG::add_point_after_active()
 {
 	// TODO
+
+	update_widgets();
+	update_params();
+	update_plot();
 }
 
 
@@ -437,6 +487,10 @@ void
 EG::remove_active_point()
 {
 	// TODO
+
+	update_widgets();
+	update_params();
+	update_plot();
 }
 
 
@@ -445,8 +499,10 @@ EG::update_point_knobs()
 {
 	unsigned int p = _active_point->value();
 
+	_envelope_template_mutex.lock();
 	_knob_point_value->param()->set (_envelope_template.points()[p].value * Params::EG::PointValueDenominator);
 	_knob_segment_duration->param()->set (p > 0 ? (1.0f * _envelope_template.points()[p-1].samples / ARTIFICIAL_SAMPLE_RATE * Params::EG::SegmentDurationDenominator) : 0);
+	_envelope_template_mutex.unlock();
 
 	_knob_point_value->read();
 	_knob_segment_duration->read();
