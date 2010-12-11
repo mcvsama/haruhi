@@ -18,6 +18,7 @@
 #include <limits>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
 // System:
 #include <sys/stat.h>
@@ -39,7 +40,7 @@ file_size (std::string file_name)
 }
 
 
-inline void
+void
 mkpath (std::string const& path, mode_t mode)
 {
 	std::stringstream stream (path);

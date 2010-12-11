@@ -326,7 +326,7 @@ SRC_HEADERS += haruhi/utility/timing.h
 
 SRC_SOURCES += haruhi/utility/backtrace.cc
 SRC_SOURCES += haruhi/utility/condition.cc
-SRC_HEADERS += haruhi/utility/filesystem.cc
+SRC_SOURCES += haruhi/utility/filesystem.cc
 SRC_SOURCES += haruhi/utility/mutex.cc
 SRC_SOURCES += haruhi/utility/semaphore.cc
 SRC_SOURCES += haruhi/utility/thread.cc
