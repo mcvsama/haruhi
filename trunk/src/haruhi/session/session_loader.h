@@ -28,7 +28,7 @@
 #include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
-#include <haruhi/settings/recent_session.h>
+#include <haruhi/settings/session_loader_settings.h>
 
 
 namespace Haruhi {
@@ -43,7 +43,7 @@ class SessionLoader: public QDialog
 	class RecentSessionItem: public QTreeWidgetItem
 	{
 	  public:
-		RecentSessionItem (QTreeWidget* parent, Settings::RecentSession const& recent_session):
+		RecentSessionItem (QTreeWidget* parent, SessionLoaderSettings::RecentSession const& recent_session):
 			QTreeWidgetItem (parent, QStringList (recent_session.name + QString (" (%1)").arg (::basename (recent_session.file_name.toUtf8())))),
 			recent_session (recent_session)
 		{
@@ -62,7 +62,7 @@ class SessionLoader: public QDialog
 		}
 
 	  public:
-		Settings::RecentSession recent_session;
+		SessionLoaderSettings::RecentSession recent_session;
 	};
 
   public:

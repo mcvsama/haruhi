@@ -354,10 +354,8 @@ Backend::save_selected_item()
 		DeviceWithPortItem* input_item = dynamic_cast<DeviceWithPortItem*> (item);
 		if (input_item)
 		{
-			Settings::EventHardwareTemplate tpl (input_item->name());
-			input_item->save_state (tpl.element);
-			Settings::event_hardware_templates().push_back (tpl);
-			Settings::save_event_hardware_templates();
+			Haruhi::haruhi()->devices_manager_settings()->save_device (input_item->name(), *input_item);
+			Haruhi::haruhi()->devices_manager_settings()->save();
 			QMessageBox::information (this, "Created template", "Created new template \"" + input_item->name() + "\".");
 		}
 	}
@@ -415,14 +413,15 @@ Backend::create_templates_menu (QMenu* menu)
 
 	int action_id = 0;
 	_templates.clear();
-	for (Settings::EventHardwareTemplates::iterator t = Settings::event_hardware_templates().begin(); t != Settings::event_hardware_templates().end(); ++t)
+	DevicesManagerSettings* settings = Haruhi::haruhi()->devices_manager_settings();
+	for (DevicesManagerSettings::Devices::iterator t = settings->devices().begin(); t != settings->devices().end(); ++t)
 	{
 		action_id += 1;
-		QAction* a = menu->addAction (Resources::Icons16::template_(), t->name, _insert_template_signal_mapper, SLOT (map()));
+		QAction* a = menu->addAction (Resources::Icons16::template_(), t->name(), _insert_template_signal_mapper, SLOT (map()));
 		_insert_template_signal_mapper->setMapping (a, action_id);
-		_templates[action_id] = *t;
+		_templates.insert (std::make_pair (action_id, *t));
 	}
-	menu->setEnabled (!Settings::event_hardware_templates().empty());
+	menu->setEnabled (!settings->devices().empty());
 }
 
 
@@ -457,8 +456,8 @@ Backend::insert_template (int menu_item_id)
 	Templates::iterator t = _templates.find (menu_item_id);
 	if (t != _templates.end())
 	{
-		DeviceItem* item = _tree->create_device_item (t->second.name);
-		item->load_state (t->second.element);
+		DeviceItem* item = _tree->create_device_item (t->second.name());
+		item->load_state (t->second.element());
 		item->treeWidget()->clearSelection();
 		item->treeWidget()->setCurrentItem (item);
 		item->setSelected (true);

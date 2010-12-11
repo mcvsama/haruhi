@@ -52,9 +52,29 @@ Haruhi::Haruhi (int argc, char** argv, char** envp):
 
 	_haruhi = this;
 
-	Settings::initialize ("haruhi");
+	QPixmapCache::setCacheLimit (2048); // 2MB cache
+
+	_settings = new Settings (HARUHI_XDG_SETTINGS_HOME "/haruhi.conf", Settings::XDG_CONFIG,
+							  HARUHI_SHARED_DIRECTORY "/config/haruhi.conf");
+
+	_devices_manager_settings = new DevicesManagerSettings();
+	_presetable_settings = new PresetableSettings();
+	_session_loader_settings = new SessionLoaderSettings();
+
+	_settings->register_module (_devices_manager_settings);
+	_settings->register_module (_presetable_settings);
+	_settings->register_module (_session_loader_settings);
+
 	this->run_ui();
-	Settings::deinitialize();
+
+	_settings->unregister_module (_presetable_settings);
+	_settings->unregister_module (_devices_manager_settings);
+	_settings->unregister_module (_session_loader_settings);
+
+	delete _presetable_settings;
+	delete _devices_manager_settings;
+	delete _session_loader_settings;
+	delete _settings;
 }
 
 

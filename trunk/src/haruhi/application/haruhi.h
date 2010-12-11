@@ -30,6 +30,10 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/settings/settings.h>
+#include <haruhi/settings/devices_manager_settings.h>
+#include <haruhi/settings/presetable_settings.h>
+#include <haruhi/settings/session_loader_settings.h>
 #include <haruhi/utility/noncopyable.h>
 #include <haruhi/utility/backtrace.h>
 
@@ -75,6 +79,18 @@ class Haruhi:
 	Session*
 	session() const { return _session; }
 
+	Settings*
+	settings() const { return _settings; }
+
+	DevicesManagerSettings*
+	devices_manager_settings() const { return _devices_manager_settings; }
+
+	PresetableSettings*
+	presetable_settings() const { return _presetable_settings; }
+
+	SessionLoaderSettings*
+	session_loader_settings() const { return _session_loader_settings; }
+
   public slots:
 	void
 	session_loader();
@@ -87,19 +103,23 @@ class Haruhi:
 
   private:
 	// Haruhi pointer:
-	static Haruhi*		_haruhi;
-	static int			_detected_cores;
+	static Haruhi*			_haruhi;
+	static int				_detected_cores;
 
 	// Links to main application components:
-	QApplication*		_app;
-	PeriodicUpdater*	_periodic_updater;
-	Session*			_session;
-	bool				_ok_to_quit;
+	QApplication*			_app;
+	PeriodicUpdater*		_periodic_updater;
+	Session*				_session;
+	Settings*				_settings;
+	DevicesManagerSettings*	_devices_manager_settings;
+	PresetableSettings*		_presetable_settings;
+	SessionLoaderSettings*	_session_loader_settings;
+	bool					_ok_to_quit;
 
 	// Other:
-	int					_argc;
-	char**				_argv;
-	char**				_envp;
+	int						_argc;
+	char**					_argv;
+	char**					_envp;
 };
 
 } // namespace Haruhi

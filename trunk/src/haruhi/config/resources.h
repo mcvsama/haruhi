@@ -35,9 +35,22 @@ enum {
 } // namespace Config
 
 
-#ifndef HARUHI_SHARED_DIRECTORY
-#define HARUHI_SHARED_DIRECTORY "share"
+#ifndef HARUHI_PREFIX
+#define HARUHI_PREFIX ""
 #endif
+
+#ifndef HARUHI_SHARED_DIRECTORY
+#define HARUHI_SHARED_DIRECTORY HARUHI_PREFIX "share"
+#endif
+
+#ifndef HARUHI_XDG_SETTINGS_HOME
+#define HARUHI_XDG_SETTINGS_HOME "mulabs.org/haruhi"
+#endif
+
+#ifndef HARUHI_XDG_DATA_HOME
+#define HARUHI_XDG_DATA_HOME "mulabs.org/haruhi"
+#endif
+
 
 namespace Resources {
 
@@ -49,7 +62,7 @@ small_font();
  */
 
 #define HARUHI_CONFIG_HAS_ICON(key, file)				\
-	static inline QPixmap key()								\
+	static inline QPixmap key()							\
 	{													\
 		QPixmap p;										\
 		if (!QPixmapCache::find (#key, p))				\

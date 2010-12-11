@@ -66,12 +66,6 @@ class General: public QWidget
 	Envelopes*
 	envelopes() const { return _envelopes; }
 
-	int
-	threads_number() const { return _threads_number->value(); }
-
-	void
-	set_threads_number (int threads);
-
   public slots:
 	/**
 	 * Loads widgets values from Params struct.
@@ -91,19 +85,11 @@ class General: public QWidget
 	void
 	update_params();
 
-	/**
-	 * Called when user changes threads number.
-	 */
-	void
-	update_threads (int threads);
-
   private:
 	Mikuru*				_mikuru;
 	Params::General		_params;
 	bool				_loading_params;
 
-	bool				_dont_notify_threads_number;
-	QSpinBox*			_threads_number;
 	QSpinBox*			_polyphony;
 	QCheckBox*			_enable_audio_input;
 

@@ -28,7 +28,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/session/session.h>
-#include <haruhi/settings/recent_session.h>
+#include <haruhi/settings/session_loader_settings.h>
 
 // Local:
 #include "session_loader.h"
@@ -116,7 +116,8 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	open_file_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
 	// Populate recent_listview:
-	for (Settings::RecentSessions::iterator rs = Settings::recent_sessions().begin(); rs != Settings::recent_sessions().end(); ++rs)
+	SessionLoaderSettings* settings = Haruhi::haruhi()->session_loader_settings();
+	for (SessionLoaderSettings::RecentSessions::iterator rs = settings->recent_sessions().begin(); rs != settings->recent_sessions().end(); ++rs)
 		new RecentSessionItem (_recent_listview, *rs);
 
 	if (_recent_listview->invisibleRootItem()->childCount() > 0)

@@ -20,6 +20,11 @@
 #include <algorithm>
 #include <iterator>
 
+// System:
+#include <libgen.h>
+#include <string.h>
+#include <errno.h>
+
 // Qt:
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
@@ -35,292 +40,203 @@
 #include "settings.h"
 
 
-/**
- * Settings statics
- */
+namespace Haruhi {
 
-QDomDocument						Settings::document;
-const char*							Settings::haruhi_dir_name = "haruhi";
-
-QString								Settings::_home;
-QString								Settings::_xdg_config_home;
-QString								Settings::_xdg_data_home;
-QString								Settings::_file_name;
-QString								Settings::_application_name;
-Settings::StringsMap  				Settings::_map;
-Settings::RecentSessions			Settings::_recent_sessions;
-Settings::EventHardwareTemplates	Settings::_event_hardware_templates;
-Settings::UnitSettingsList			Settings::_unit_settings_list;
-
-
-Settings::UnitSettings::UnitSettings (QString const& urn):
-	_urn (urn)
+Settings::Module::Module (QString const& name):
+	_host (0),
+	_name (name)
 {
-	_config_element = Settings::document.createElement ("config");
 }
 
 
 void
-Settings::UnitSettings::uniq_favorite_presets()
+Settings::Module::save()
 {
-	std::sort (favorite_presets().begin(), favorite_presets().end());
-	FavoritePresets::iterator e = std::unique (favorite_presets().begin(), favorite_presets().end(), FavoritePreset::eq_by_uuid);
-	favorite_presets().erase (e, favorite_presets().end());
+	_host->lock();
+	_host->save();
+	_host->unlock();
 }
 
 
-void
-Settings::UnitSettings::save_state (QDomElement& element) const
+Settings::Settings (QString const& settings_file, XDGHome xdg_home, QString const& template_file):
+	_settings_file (settings_file),
+	_template_file (template_file)
 {
-	QDomDocument document = element.ownerDocument();
-
-	//
-	// Favorite presets:
-	//
-
-	QDomElement favorite_presets_element = document.createElement ("favorite-presets");
-	for (FavoritePresets::const_iterator f = favorite_presets().begin(); f != favorite_presets().end(); ++f)
+	switch (xdg_home)
 	{
-		QDomElement fp = document.createElement ("preset");
-		fp.setAttribute ("uuid", f->uuid);
-		fp.setAttribute ("name", f->name);
-		favorite_presets_element.appendChild (fp);
-	}
-	element.appendChild (favorite_presets_element);
+		case XDG_NONE:
+			// Path is absolute, do nothing.
+			break;
 
-	//
-	// Settings
-	//
+		case XDG_CONFIG:
+			if (_settings_file.mid (0, 1) != "/")
+				_settings_file.prepend ("/");
+			_settings_file.prepend (xdg_config_home());
+			break;
 
-	element.appendChild (_config_element);
-}
-
-
-void
-Settings::UnitSettings::load_state (QDomElement const& element)
-{
-	favorite_presets().clear();
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
-	{
-		QDomElement e = n.toElement();
-		if (e.tagName() == "favorite-presets")
-		{
-			for (QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling())
-			{
-				QDomElement e = n.toElement();
-				if (!e.isNull() && e.tagName() == "preset")
-					favorite_presets().push_back (Settings::FavoritePreset (e.attribute ("uuid"), e.attribute ("name")));
-			}
-		}
-		else if (e.tagName() == "config")
-			_config_element = e;
+		case XDG_DATA:
+			if (_settings_file.mid (0, 1) != "/")
+				_settings_file.prepend ("/");
+			_settings_file.prepend (xdg_data_home());
+			break;
 	}
 }
 
 
 void
-Settings::initialize (QString const& application_name)
+Settings::register_module (Module* module)
 {
-	QPixmapCache::setCacheLimit (2048); // 2MB cache
+	if (module->_host)
+		module->_host->unregister_module (module);
 
-	_application_name = application_name;
-	_file_name = _application_name + ".conf";
+	Modules::iterator m = _modules.find (module->name());
+	if (m != _modules.end())
+	{
+		std::cerr << "Warning: settings module with name '" << module->name().toStdString() << "' already registered. Overwriting." << std::endl;
+		unregister_module (m->second);
+	}
+	_modules[module->name()] = module;
+	module->_host = this;
 
-	Settings::load();
+	// Immediately call module->load_state() if settings are already loaded:
+	ModuleElements::iterator e = _module_elements.find (module->name());
+	if (e != _module_elements.end())
+		module->load_state (e->second);
 }
 
 
 void
-Settings::deinitialize()
+Settings::unregister_module (Module* module)
 {
-	Settings::save();
+	_modules.erase (module->name());
+	module->_host = 0;
 }
 
 
 void
 Settings::load()
 {
-	Settings::_recent_sessions.clear();
+	_document = QDomDocument();
 
-	//
-	// Settings directories
-	//
+	// Load settings file:
+	QFile file (_settings_file);
 
-	char const* HOME = getenv ("HOME");
-	char const* XDG_CONFIG_HOME = getenv ("XDG_CONFIG_HOME");
-	char const* XDG_DATA_HOME = getenv ("XDG_DATA_HOME");
-
-	if (HOME)
-		_home = HOME;
-	else
-	{
-		std::clog << "Warning: HOME environment variable not defined, using '/'" << std::endl;
-		_home = "/";
-	}
-
-	_xdg_config_home = (XDG_CONFIG_HOME ? QString (XDG_CONFIG_HOME) : _home + "/.config") + "/mulabs.org/" + haruhi_dir_name;
-	_xdg_data_home = (XDG_DATA_HOME ? QString (XDG_DATA_HOME) : _home + "/.local/share") + "/mulabs.org/" + haruhi_dir_name;
-
-	//
-	// Create config dirs
-	//
-
-	mkpath (config_home().toStdString(), 0700);
-	mkpath (data_home().toStdString(), 0700);
-
-	// Load file:
-	QFile file (config_home() + "/" + Settings::_file_name);
 	if (!file.exists())
-		QFile (HARUHI_SHARED_DIRECTORY "/config/haruhi.conf").copy (config_home() + "/" + Settings::_file_name);
-	if (!file.open (IO_ReadOnly))
-		std::cerr << "Warning: failed to open configuration file." << std::endl;
-	else if (!Settings::document.setContent (&file, true))
-		std::cerr << "Warning: failed to parse configuration file." << std::endl;
-	file.close();
-
-	// Process file:
-	if (document.documentElement().tagName() == "haruhi-configuration")
 	{
-		for (QDomNode n = document.documentElement().firstChild(); !n.isNull(); n = n.nextSibling())
+		if (!_template_file.isEmpty())
 		{
-			QDomElement e = n.toElement();
-			if (!e.isNull())
-			{
-				if (e.tagName() == "recent-sessions")
-				{
-					for (QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling())
-					{
-						QDomElement e = n.toElement();
-						if (!e.isNull())
-						{
-							if (e.tagName() == "recent-session")
-								Settings::_recent_sessions.push_back (Settings::RecentSession (e.attribute ("name", "<Unknown name>"), e.attribute ("file-name", ""), e.attribute ("timestamp", "0").toInt()));
-						}
-					}
-				}
-				else if (e.tagName() == "event-hardware-templates")
-				{
-					for (QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling())
-					{
-						QDomElement e = n.toElement();
-						if (!e.isNull())
-						{
-							if (e.tagName() == "event-hardware-template")
-								Settings::_event_hardware_templates.push_back (Settings::EventHardwareTemplate (e.attribute ("name", "<Unknown name>"), e));
-						}
-					}
-				}
-				else if (e.tagName() == "unit-configurations")
-				{
-					for (QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling())
-					{
-						QDomElement e = n.toElement();
-						if (!e.isNull() && e.tagName() == "unit-configuration")
-						{
-							QString unit_urn = e.attribute ("urn");
-							if (!unit_urn.isNull())
-								unit_settings (unit_urn).load_state (e);
-						}
-					}
-				}
-			}
+			create_dirs();
+			QFile (_template_file).copy (_settings_file);
 		}
+		else
+			return;
 	}
-	else
-		std::cerr << "Warning: failed to process configuration file." << std::endl;
 
-	update_recent_sessions();
+	if (!file.open (IO_ReadOnly))
+		std::cerr << "Warning: failed to open settings file." << std::endl;
+	else if (!_document.setContent (&file, true))
+		std::cerr << "Warning: failed to parse settings file." << std::endl;
+
+	file.close();
+	parse();
 }
 
 
 void
 Settings::save()
 {
-	// Create document:
-	Settings::document = QDomDocument();
-	QDomElement root = document.createElement ("haruhi-configuration");
-	document.appendChild (root);
+	create_dirs();
 
-	//
-	// Recent sessions
-	//
+	_document = QDomDocument();
+	QDomElement root = _document.createElement ("haruhi-settings");
+	_document.appendChild (root);
 
-	update_recent_sessions();
-
-	QDomElement rss = document.createElement ("recent-sessions");
-	for (RecentSessions::iterator s = recent_sessions().begin(); s != recent_sessions().end(); ++s)
+	// Collect settings from modules:
+	for (Modules::iterator m = _modules.begin(); m != _modules.end(); ++m)
 	{
-		QDomElement rs = document.createElement ("recent-session");
-		rs.setAttribute ("name", s->name);
-		rs.setAttribute ("file-name", s->file_name);
-		rs.setAttribute ("timestamp", s->timestamp);
-		rss.appendChild (rs);
+		QDomElement e = _document.createElement ("module");
+		m->second->save_state (e);
+		e.setAttribute ("name", m->first);
+		root.appendChild (e);
 	}
-	root.appendChild (rss);
 
-	//
-	// Event hardware templates
-	//
-
-	QDomElement eht = document.createElement ("event-hardware-templates");
-	for (EventHardwareTemplates::iterator t = event_hardware_templates().begin(); t != event_hardware_templates().end(); ++t)
-	{
-		t->element.setAttribute ("name", t->name);
-		eht.appendChild (t->element);
-	}
-	root.appendChild (eht);
-
-	//
-	// Unit configurations:
-	//
-
-	QDomElement unit_settings_list_element = document.createElement ("unit-configurations");
-	for (UnitSettingsList::iterator uc = _unit_settings_list.begin(); uc != _unit_settings_list.end(); ++uc)
-	{
-		QDomElement uc_element = document.createElement ("unit-configuration");
-		uc->second.save_state (uc_element);
-		uc_element.setAttribute ("urn", uc->second.urn());
-		unit_settings_list_element.appendChild (uc_element);
-	}
-	root.appendChild (unit_settings_list_element);
-
-	// Save file:
-	QFile file (config_home() + "/" + Settings::_file_name + "~");
+	// Save XML file:
+	QFile file (_settings_file + "~");
 	if (!file.open (IO_WriteOnly))
-		throw Exception (QString ("Could not save configuration file: ") + file.errorString());
+		throw Exception (QString ("could not save settings file: ") + file.errorString());
 	QTextStream ts (&file);
-	ts << document.toString();
+	ts << _document.toString();
 	file.flush();
 	file.close();
-	::rename ((config_home() + "/" + Settings::_file_name + "~").toUtf8(), (config_home() + "/" + Settings::_file_name).toUtf8());
+	if (::rename ((_settings_file + "~").toUtf8(), _settings_file.toUtf8()) == -1)
+	{
+		char buf[256];
+		strerror_r (errno, buf, ARRAY_SIZE (buf));
+		throw Exception (QString ("could not save settings file: %1").arg (buf));
+	}
 }
 
 
 void
-Settings::update_recent_sessions()
+Settings::create_dirs()
 {
-	RecentSessions::iterator e;
-	// Remove non-existent files:
-	e = std::remove_if (_recent_sessions.begin(), _recent_sessions.end(), RecentSession::file_not_exist);
-	_recent_sessions.erase (e, _recent_sessions.end());
-	// Remove duplicates:
-	std::sort (_recent_sessions.begin(), _recent_sessions.end(), RecentSession::lt_by_file_name_and_gt_by_timestamp);
-	e = std::unique (_recent_sessions.begin(), _recent_sessions.end(), RecentSession::eq_by_file_name);
-	_recent_sessions.erase (e, _recent_sessions.end());
-	// Limit recent sessions entries:
-	std::sort (_recent_sessions.begin(), _recent_sessions.end(), RecentSession::gt_by_timestamp);
-	_recent_sessions.resize (std::min (static_cast<ptrdiff_t> (_recent_sessions.size()), static_cast<ptrdiff_t> (32)));
-	std::sort (_recent_sessions.begin(), _recent_sessions.end(), RecentSession::lt_by_name);
+	// Create required directories:
+	char* copy = strdup (_settings_file.toStdString().c_str());
+	char* dir = dirname (copy);
+	mkpath (dir, 0700);
+	free (copy);
 }
 
 
-Settings::UnitSettings&
-Settings::unit_settings (QString const& urn)
+void
+Settings::parse()
 {
-	UnitSettingsList::iterator uc = _unit_settings_list.find (urn);
-	if (uc != _unit_settings_list.end())
-		return uc->second;
-	else
-		return _unit_settings_list.insert (std::make_pair (urn, UnitSettings (urn))).first->second;
+	if (_document.documentElement().tagName() != "haruhi-settings")
+	{
+		std::cerr << "Warning: failed to process settings file." << std::endl;
+		return;
+	}
+
+	for (QDomNode n = _document.documentElement().firstChild(); !n.isNull(); n = n.nextSibling())
+	{
+		QDomElement e = n.toElement();
+		if (e.isNull())
+			continue;
+		// Load module settings:
+		if (e.tagName() == "module" && !e.attribute ("for").isEmpty())
+		{
+			QString name = e.attribute ("for");
+			_module_elements[name] = e;
+			// Call load_state() on appropriate module:
+			Modules::iterator m = _modules.find (name);
+			if (m != _modules.end())
+				m->second->load_state (_module_elements[name]);
+		}
+	}
 }
 
+
+QString
+Settings::home()
+{
+	char const* str = getenv ("HOME");
+	return str ? str : "/";
+}
+
+
+QString
+Settings::xdg_config_home()
+{
+	char const* str = getenv ("XDG_CONFIG_HOME");
+	return str ? QString (str) : home() + "/.config";
+}
+
+
+QString
+Settings::xdg_data_home()
+{
+	char const* str = getenv ("XDG_DATA_HOME");
+	return str ? QString (str) : home() + "/.local/share";
+}
+
+} // namespace Haruhi

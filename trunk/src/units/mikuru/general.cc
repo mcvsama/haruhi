@@ -37,8 +37,7 @@ namespace MikuruPrivate {
 General::General (Mikuru* mikuru, QWidget* parent):
 	QWidget (parent),
 	_mikuru (mikuru),
-	_loading_params (false),
-	_dont_notify_threads_number (false)
+	_loading_params (false)
 {
 	Params::General p = _params;
 
@@ -71,29 +70,20 @@ General::General (Mikuru* mikuru, QWidget* parent):
 	grid1_layout->setMargin (3 * Config::Margin);
 	grid1_layout->setSpacing (Config::Spacing);
 
-	// Threads:
-
-	grid1_layout->addWidget (new QLabel ("CPU threads:", grid1), 0, 0);
-	_threads_number = new QSpinBox (0, 16, 1, grid1);
-	_threads_number->setSpecialValueText ("Auto");
-	_threads_number->setValue (0);
-	grid1_layout->addWidget (_threads_number, 0, 1);
-	QObject::connect (_threads_number, SIGNAL (valueChanged (int)), this, SLOT (update_threads (int)));
-
 	// Polyphony:
 
-	grid1_layout->addWidget (new QLabel ("Polyphony (each part):", grid1), 1, 0);
+	grid1_layout->addWidget (new QLabel ("Polyphony (each part):", grid1), 0, 0);
 	_polyphony = new QSpinBox (1, 256, 1, grid1);
 	_polyphony->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_polyphony->setValue (_params.polyphony.get());
-	grid1_layout->addWidget (_polyphony, 1, 1);
+	grid1_layout->addWidget (_polyphony, 0, 1);
 	QObject::connect (_polyphony, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 
 	// Enable audio input:
 
 	_enable_audio_input = new QCheckBox ("Enable audio input", grid1);
 	_enable_audio_input->setChecked (_params.enable_audio_input);
-	grid1_layout->addWidget (_enable_audio_input, 2, 0);
+	grid1_layout->addWidget (_enable_audio_input, 1, 0);
 	QObject::connect (_enable_audio_input, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 
 	// Envelopes:
@@ -187,16 +177,6 @@ General::unit_bay_assigned()
 
 
 void
-General::set_threads_number (int threads)
-{
-	_dont_notify_threads_number = true;
-	_threads_number->setValue (threads);
-	update_threads (threads);
-	_dont_notify_threads_number = false;
-}
-
-
-void
 General::load_params()
 {
 	// Copy params:
@@ -228,21 +208,6 @@ General::update_params()
 	_params.enable_audio_input.set (_enable_audio_input->isChecked());
 
 	// Knob params are updated automatically using #assign_parameter.
-}
-
-
-void
-General::update_threads (int threads)
-{
-	_mikuru->set_threads_number (threads);
-	// Save only when fully constructed:
-	if (_mikuru->enabled())
-	{
-		_mikuru->save_config();
-		// Notify other Mikurus about changed configuration:
-		if (!_dont_notify_threads_number)
-			_mikuru->graph()->notify (new Mikuru::UpdateConfig (_mikuru, _mikuru->urn()));
-	}
 }
 
 } // namespace MikuruPrivate

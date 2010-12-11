@@ -76,25 +76,6 @@ class Mikuru:
 	friend class MikuruPrivate::VoiceManager;
 
   public:
-	/**
-	 * Notification sent to other Mikurus
-	 * when user changes global configuration.
-	 */
-	class UpdateConfig: public Haruhi::Notification
-	{
-	  public:
-		UpdateConfig (Mikuru* sender, std::string const& urn):
-			Haruhi::Notification (urn),
-			_sender (sender)
-		{ }
-
-		Mikuru*
-		sender() const { return _sender; }
-
-	  private:
-		Mikuru*	_sender;
-	};
-
 	typedef std::list<MikuruPrivate::Part*>  Parts;
 	typedef std::set<int>  IDs;
 
@@ -102,30 +83,6 @@ class Mikuru:
 	Mikuru (std::string const& urn, std::string const& title, int id, QWidget* parent);
 
 	virtual ~Mikuru();
-
-	/**
-	 * Unit API
-	 */
-	void
-	registered();
-
-	/**
-	 * Unit API
-	 */
-	void
-	unregistered();
-
-	std::string
-	name() const;
-
-	void
-	process();
-
-	void
-	panic();
-
-	void
-	graph_updated();
 
 	Haruhi::EventPort*
 	keyboard_port() const { return _port_keyboard; }
@@ -166,14 +123,30 @@ class Mikuru:
 	int
 	part_tab_position (MikuruPrivate::Part* part) const { return _tabs_widget->indexOf (part); }
 
-	/**
-	 * Unit::notify implementation.
+	/*
+	 * Plugin implementation.
 	 */
+
 	void
-	notify (Haruhi::Notification*);
+	registered();
+
+	void
+	unregistered();
+
+	std::string
+	name() const;
+
+	void
+	process();
+
+	void
+	panic();
+
+	void
+	graph_updated();
 
 	/*
-	 * Haruhi::UnitBayAware implementation.
+	 * Haruhi::HasUnitBay implementation.
 	 */
 
 	void
@@ -190,7 +163,7 @@ class Mikuru:
 	load_state (QDomElement const&);
 
 	/*
-	 * Presetable implementation.
+	 * HasPresets implementation.
 	 */
 
 	void

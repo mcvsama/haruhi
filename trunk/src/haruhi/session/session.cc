@@ -36,7 +36,7 @@
 #include <haruhi/components/audio_backend/backend.h>
 #include <haruhi/components/event_backend/backend.h>
 #include <haruhi/session/periodic_updater.h>
-#include <haruhi/settings/recent_session.h>
+#include <haruhi/settings/session_loader_settings.h>
 #include <haruhi/widgets/clickable_label.h>
 #include <haruhi/utility/numeric.h>
 
@@ -456,8 +456,9 @@ Session::load_session (QString const& file_name)
 		_file_name = file_name;
 
 		// Add session to recent sessions list:
-		Settings::recent_sessions().push_back (Settings::RecentSession (_name, file_name, ::time (0)));
-		Settings::update_recent_sessions();
+		SessionLoaderSettings* settings = Haruhi::haruhi()->session_loader_settings();
+		settings->recent_sessions().push_back (SessionLoaderSettings::RecentSession (_name, file_name, ::time (0)));
+		settings->save();
 	}
 	catch (Exception const& e)
 	{
@@ -486,8 +487,9 @@ Session::save_session (QString const& file_name)
 		::rename ((file_name + "~").toUtf8(), file_name.toUtf8());
 
 		// Add session to recent sessions list:
-		Settings::recent_sessions().push_back (Settings::RecentSession (_name, file_name, ::time (0)));
-		Settings::update_recent_sessions();
+		SessionLoaderSettings* settings = Haruhi::haruhi()->session_loader_settings();
+		settings->recent_sessions().push_back (SessionLoaderSettings::RecentSession (_name, file_name, ::time (0)));
+		settings->save();
 	}
 	catch (Exception const& e)
 	{

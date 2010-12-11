@@ -35,7 +35,6 @@
 #include <haruhi/dsp/fourier_series_filler.h>
 #include <haruhi/dsp/fft_filler.h>
 #include <haruhi/dsp/noise.h>
-#include <haruhi/settings/unit_settings.h>
 #include <haruhi/utility/atomic.h>
 #include <haruhi/utility/confusion.h>
 #include <haruhi/widgets/dial_control.h>
@@ -159,7 +158,7 @@ Mikuru::registered()
 	// Resize buffers:
 	graph_updated();
 
-	load_config();
+	set_threads_number (0);
 
 	enable();
 }
@@ -288,16 +287,6 @@ Mikuru::graph_updated()
 
 	if (graph())
 		graph()->unlock();
-}
-
-
-void
-Mikuru::notify (Haruhi::Notification* notification)
-{
-	UpdateConfig* update_config = dynamic_cast<UpdateConfig*> (notification);
-	if (update_config)
-		if (update_config->sender() != this && graph())
-			load_config();
 }
 
 
@@ -447,24 +436,6 @@ Mikuru::update_ui()
 	for (Mikuru::Parts::iterator t = _parts.begin(); t != _parts.end(); ++t)
 		i += (*t)->voice_manager()->current_polyphony();
 	_current_polyphony->setText (QString ("%1").arg (i));
-}
-
-
-void
-Mikuru::save_config()
-{
-	Settings::UnitSettings& uc = Settings::unit_settings (QString::fromStdString (urn()));
-	uc.config_element().setAttribute ("threads-number", _general->threads_number());
-	uc.save();
-}
-
-
-void
-Mikuru::load_config()
-{
-	Settings::UnitSettings& uc = Settings::unit_settings (QString::fromStdString (urn()));
-	QString threads_number = uc.config_element().attribute ("threads-number");
-	_general->set_threads_number (threads_number.isNull() ? 0 : threads_number.toInt());
 }
 
 

@@ -9,6 +9,17 @@
  * (at your option) any later version.
  *
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
+ * --
+ * Configuration file format:
+ *
+ * <haruhi-settings>
+ *  <module name="devices-manager">
+ *    ...
+ *  </module>
+ *  <module name="session-loader">
+ *    ...
+ *  </module>
+ * </haruhi-settings>
  */
 
 #ifndef HARUHI__SETTINGS__SETTINGS_H__INCLUDED
@@ -31,275 +42,152 @@
 #include <haruhi/utility/confusion.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/backtrace.h>
+#include <haruhi/utility/mutex.h>
 
 
-class Settings
+namespace Haruhi {
+
+/**
+ * Settings class reads and saves settings to file.
+ * Provides API for Clients, which can access XML
+ * subtrees and parse them.
+ */
+class Settings: public RecursiveMutex
 {
   public:
 	/**
-	 * Represents favorited preset.
+	 * Settings client. When registered in Settings object,
+	 * the latter will use SaveableState API to serialize/deserialize
+	 * settings.
 	 */
-	class FavoritePreset
+	class Module: public SaveableState
 	{
-	  public:
-		FavoritePreset (QString const& uuid, QString const& name):
-			uuid (uuid),
-			name (name)
-		{ }
-
-		bool
-		operator< (FavoritePreset const& other) const
-		{
-			return uuid < other.uuid;
-		}
-
-		static bool
-		eq_by_uuid (FavoritePreset const& a, FavoritePreset const& b)
-		{
-			return a.uuid == b.uuid;
-		}
+		friend class Settings;
 
 	  public:
-		QString	uuid;
-		QString	name;
-	};
-
-	/**
-	 * Represents configuration for Unit.
-	 */
-	class UnitSettings: public SaveableState
-	{
-	  public:
-		typedef std::vector<FavoritePreset> FavoritePresets;
-
-	  public:
-		UnitSettings (QString const& urn);
-
-		QString const&
-		urn() const { return _urn; }
-
-		FavoritePresets&
-		favorite_presets() { return _favorite_presets; }
-
-		FavoritePresets const&
-		favorite_presets() const { return _favorite_presets; }
-
-		void
-		uniq_favorite_presets();
-
-		void
-		save_state (QDomElement&) const;
-
-		void
-		load_state (QDomElement const&);
-
-		QDomElement&
-		config_element() { return _config_element; }
-
-		void
-		save() { Settings::save_unit_settings_list(); }
-
-	  private:
-		QString			_urn;
-		FavoritePresets	_favorite_presets;
-		QDomElement		_config_element;
-	};
-
-	/**
-	 * Represents entry in a list of recent sessions
-	 * shown in session manager.
-	 */
-	class RecentSession
-	{
-	  public:
-		RecentSession():
-			name(),
-			file_name(),
-			timestamp (0)
-		{ }
-
-		RecentSession (QString name, QString file_name, int timestamp):
-			name (name),
-			file_name (file_name),
-			timestamp (timestamp)
-		{ }
+		Module (QString const& name);
 
 		/**
-		 * Predicates used by standard algorithms.
+		 * Returns name that identifies module.
 		 */
+		QString
+		name() const { return _name; }
 
-		static bool
-		gt_by_timestamp (RecentSession const& a, RecentSession const& b)
-		{
-			return a.timestamp > b.timestamp;
-		}
+		/**
+		 * Saves settings. Calls save on host Settings.
+		 */
+		virtual void
+		save();
 
-		static bool
-		lt_by_name (RecentSession const& a, RecentSession const& b)
-		{
-			return a.name < b.name;
-		}
-
-		static bool
-		lt_by_file_name_and_gt_by_timestamp (RecentSession const& a, RecentSession const& b)
-		{
-			return std::make_pair (a.file_name, -a.timestamp) < std::make_pair (b.file_name, -b.timestamp);
-		}
-
-		static bool
-		eq_by_file_name (RecentSession const& a, RecentSession const& b)
-		{
-			return a.file_name == b.file_name;
-		}
-
-		static bool
-		file_not_exist (RecentSession const& a)
-		{
-			return !QFile::exists (a.file_name);
-		}
-
-	  public:
-		QString		name;
-		QString		file_name;
-		int			timestamp;
+	  private:
+		Settings*	_host;
+		QString		_name;
 	};
 
-	/**
-	 * Represents event hardware template that can be
-	 * saved/inserted into event backend inputs list.
-	 */
-	class EventHardwareTemplate
-	{
-	  public:
-		EventHardwareTemplate():
-			name(),
-			element (Settings::document.createElement ("event-hardware-template"))
-		{ }
-
-		EventHardwareTemplate (QString const& name):
-			name (name),
-			element (Settings::document.createElement ("event-hardware-template"))
-		{ }
-
-		EventHardwareTemplate (QString const& name, QDomElement const& element):
-			name (name),
-			element (element)
-		{ }
-
-	  public:
-		QString		name;
-		QDomElement	element;
+	enum XDGHome {
+		XDG_NONE,	// Path to settings file is absolute.
+		XDG_CONFIG,	// Path is relative to XDG config home.
+		XDG_DATA	// Path is relative to XDG data home.
 	};
-
-	typedef std::vector<RecentSession>			RecentSessions;
-	typedef std::list<EventHardwareTemplate>	EventHardwareTemplates;
-	typedef std::map<QString, UnitSettings>		UnitSettingsList;
 
   private:
-	// Prevent instantiating:
-	Settings() { }
-
-	typedef std::map<QString, QString> StringsMap;
+	typedef std::map<QString, Module*> Modules;
+	typedef std::map<QString, QDomElement> ModuleElements;
 
   public:
 	/**
-	 * Initializes Settings.
+	 * Initializes settings object. Does not read settings, that
+	 * is done by load().
 	 *
-	 * \param	application_name
-	 * 			Unique application name. On UNIX configuration will be stored
-	 * 			in "~/.application_name".
+	 * \param	settings_file
+	 * 			Path to configuration file.
+	 * \param	xdg_home
+	 * 			Tells if settings_file is absolute path or relative to XDG
+	 * 			defined directories for config/data files.
+	 * \param	template_file
+	 * 			If given and settings_file does not exist, it will be copied
+	 * 			to settings_file place. If not given, settings XML document will
+	 * 			be empty. This path must be absolute.
 	 */
-	static void
-	initialize (QString const& application_name);
+	Settings (QString const& settings_file, XDGHome xdg_home = XDG_NONE, QString const& template_file = QString());
 
 	/**
-	 * Should be called before program ends.
-	 * Saves configuration.
+	 * Registers module that will handle its own settings.
+	 * Settings object does not take ownership of the module.
+	 * Module must be unregistered before Settings object is deleted.
+	 *
+	 * If settings are already loaded when module is registered,
+	 * Settings object immediately calls module->load_state()
+	 * with appropriate XML element.
 	 */
-	static void
-	deinitialize();
+	void
+	register_module (Module* module);
 
 	/**
-	 * Returns list of RecentSessions.
+	 * Unregisters module.
 	 */
-	static RecentSessions&
-	recent_sessions() { return _recent_sessions; }
+	void
+	unregister_module (Module* module);
 
 	/**
-	 * Removes duplicates and sessions with nonexistent files, limits number of recent sessions.
-	 * Operates on internal list.
+	 * Reads settings.
 	 */
-	static void
-	update_recent_sessions();
+	void
+	load();
 
 	/**
-	 * Returns list of EventHardwareTemplates.
+	 * Saves settings.
 	 */
-	static EventHardwareTemplates&
-	event_hardware_templates() { return _event_hardware_templates; }
+	void
+	save();
+
+	static QString
+	config_home() { return xdg_config_home(); }
+
+	static QString
+	data_home() { return xdg_data_home(); }
+
+  private:
+	/**
+	 * Creates dirs where file is to be saved.
+	 */
+	void
+	create_dirs();
 
 	/**
-	 * Returns UnitSettings by given URN. If configuration does not
-	 * exist, creates one.
+	 * Parses settings document, so Client classes can
+	 * access their own sections.
 	 */
-	static UnitSettings&
-	unit_settings (QString const& urn);
-
-	/**
-	 * Stores event hardware template on disk.
-	 */
-	static void
-	save_event_hardware_templates() { save(); }
-
-	/**
-	 * Stores unit configurations on disk.
-	 */
-	static void
-	save_unit_settings_list() { save(); }
+	void
+	parse();
 
 	/**
 	 * Returns user's home directory.
 	 */
 	static QString
-	home() { return _home; }
+	home();
 
 	/**
-	 * Returns directory for config files.
+	 * Returns XDG standarized directory for config (settings) files.
 	 */
 	static QString
-	config_home() { return _xdg_config_home; }
+	xdg_config_home();
 
 	/**
-	 * Returns directory for shared data/presets/whatever.
+	 * Returns XDG standarized directory for shared data/presets/whatever.
 	 */
 	static QString
-	data_home() { return _xdg_data_home; }
+	xdg_data_home();
 
   private:
-	static void
-	load();
-
-	static void
-	save();
-
-  public:
-	/**
-	 * Here are preloaded config options.
-	 */
-	static QDomDocument	document;
-	static const char*	haruhi_dir_name;
-
-  private:
-	static QString					_home;
-	static QString					_xdg_config_home;
-	static QString					_xdg_data_home;
-	static QString					_file_name;
-	static QString					_application_name;
-	static StringsMap				_map;
-	static RecentSessions			_recent_sessions;
-	static EventHardwareTemplates	_event_hardware_templates;
-	static UnitSettingsList			_unit_settings_list;
+	QString			_settings_file;
+	QString			_template_file;
+	QDomDocument	_document;
+	Modules			_modules;
+	ModuleElements	_module_elements;
 };
+
+} // namespace Haruhi
 
 #endif
 

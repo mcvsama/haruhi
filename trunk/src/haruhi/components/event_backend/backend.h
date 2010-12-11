@@ -39,7 +39,8 @@
 #include <haruhi/graph/event.h>
 #include <haruhi/graph/event_backend.h>
 #include <haruhi/graph/event_port.h>
-#include <haruhi/settings/settings.h> // XXX EventHardwareTemplate
+#include <haruhi/settings/settings.h>
+#include <haruhi/settings/devices_manager_settings.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/exception.h>
 
@@ -69,8 +70,8 @@ class Backend:
 	friend class ControllerWithPortItem;
 
   private:
-	typedef std::map<Transport::Port*, DeviceWithPortItem*> InputsMap;
-	typedef std::map<int, Settings::EventHardwareTemplate> Templates;
+	typedef std::map<Transport::Port*, DeviceWithPortItem*>	InputsMap;
+	typedef std::map<int, DevicesManagerSettings::Device>	Templates;
 
   public:
 	Backend (QString const& client_name, int id, QWidget* parent);
