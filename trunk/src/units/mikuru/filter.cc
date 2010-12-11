@@ -78,7 +78,7 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 
 	_knob_frequency->controller_proxy().config().curve = 1.0;
 	_knob_frequency->controller_proxy().config().user_limit_min = 0.04 * Params::Filter::FrequencyDenominator;
-	_knob_frequency->controller_proxy().config().user_limit_min = 22.0 * Params::Filter::FrequencyDenominator;
+	_knob_frequency->controller_proxy().config().user_limit_max = 22.0 * Params::Filter::FrequencyDenominator;
 	_knob_frequency->controller_proxy().apply_config();
 
 	_knob_attenuation->controller_proxy().config().curve = 1.0;
