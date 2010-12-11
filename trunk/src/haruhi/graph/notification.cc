@@ -20,12 +20,16 @@
 
 namespace Haruhi {
 
-Notification::Notification():
+class Unit;
+
+Notification::Notification (Unit* sender):
+	_sender (sender),
 	_broadcast (true)
 { }
 
 
-Notification::Notification (std::string const& target_urn):
+Notification::Notification (Unit* sender, std::string const& target_urn):
+	_sender (sender),
 	_broadcast (false),
 	_target_urn (target_urn)
 { }

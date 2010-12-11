@@ -21,18 +21,23 @@
 
 namespace Haruhi {
 
+class Unit;
+
 class Notification
 {
   public:
 	/**
 	 * Creates Notification targeted to all Units.
+	 * \param	sender Sender Unit. May be 0.
 	 */
-	Notification();
+	Notification (Unit* sender);
 
 	/**
 	 * Creates Notification targeted to Units with specified URN.
+	 * \param	sender Sender Unit. May be 0.
+	 * \param	target_urn URN of target Units.
 	 */
-	Notification (std::string const& target_urn);
+	Notification (Unit* sender, std::string const& target_urn);
 
 	virtual ~Notification() { }
 
@@ -50,6 +55,7 @@ class Notification
 	target_urn() const { return _target_urn; }
 
   private:
+	Unit*		_sender;
 	bool		_broadcast;
 	std::string	_target_urn;
 };
