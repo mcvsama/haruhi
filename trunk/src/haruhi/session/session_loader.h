@@ -44,7 +44,7 @@ class SessionLoader: public QDialog
 	{
 	  public:
 		RecentSessionItem (QTreeWidget* parent, SessionLoaderSettings::RecentSession const& recent_session):
-			QTreeWidgetItem (parent, QStringList (recent_session.name + QString (" (%1)").arg (::basename (recent_session.file_name.toUtf8())))),
+			QTreeWidgetItem (parent, QStringList() << recent_session.name << QString ("%1").arg (::basename (recent_session.file_name.toUtf8()))),
 			recent_session (recent_session)
 		{
 			setup();

@@ -96,12 +96,15 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	open_layout->addWidget (new QLabel ("Recent sessions:", _open_tab));
 	_recent_listview = new QTreeWidget (_open_tab);
 	_recent_listview->header()->hide();
+	_recent_listview->header()->setResizeMode (QHeaderView::Stretch);
+	_recent_listview->setAllColumnsShowFocus (true);
 	_recent_listview->setMinimumSize (300, 300);
 	_recent_listview->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_recent_listview->setHeaderLabel ("Session name");
 	_recent_listview->setSelectionMode (QTreeWidget::SingleSelection);
 	_recent_listview->setVerticalScrollMode (QAbstractItemView::ScrollPerPixel);
 	_recent_listview->setRootIsDecorated (false);
+	_recent_listview->setColumnCount (2);
 	QObject::connect (_recent_listview, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (open_recent (QTreeWidgetItem*, int)));
 	open_layout->addWidget (_recent_listview);
 
