@@ -65,7 +65,11 @@ Haruhi::Haruhi (int argc, char** argv, char** envp):
 	_settings->register_module (_presetable_settings);
 	_settings->register_module (_session_loader_settings);
 
+	_settings->load();
+
 	this->run_ui();
+
+	_settings->save();
 
 	_settings->unregister_module (_presetable_settings);
 	_settings->unregister_module (_devices_manager_settings);

@@ -203,9 +203,9 @@ Settings::parse()
 		if (e.isNull())
 			continue;
 		// Load module settings:
-		if (e.tagName() == "module" && !e.attribute ("for").isEmpty())
+		if (e.tagName() == "module" && !e.attribute ("name").isEmpty())
 		{
-			QString name = e.attribute ("for");
+			QString name = e.attribute ("name");
 			_module_elements[name] = e;
 			// Call load_state() on appropriate module:
 			Modules::iterator m = _modules.find (name);
