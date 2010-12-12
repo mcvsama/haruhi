@@ -78,6 +78,7 @@ small_font();
 #define HARUHI_CONFIG_HAS_ICON_16(key, file) \
 		HARUHI_CONFIG_HAS_ICON(key, HARUHI_SHARED_DIRECTORY"/images/16/"file)
 
+		HARUHI_CONFIG_HAS_ICON_16 (haruhi, "haruhi.png");
 		HARUHI_CONFIG_HAS_ICON_16 (all, "all.png");
 		HARUHI_CONFIG_HAS_ICON_16 (add, "add.png");
 		HARUHI_CONFIG_HAS_ICON_16 (rename, "rename.png");

@@ -280,7 +280,10 @@ class Session: public QWidget
 	show_program() { _stack->setCurrentWidget (_program); }
 
 	void
-	show_backends() { _stack->setCurrentWidget (_backends); }
+	show_session_settings() { _stack->setCurrentWidget (_session_settings); }
+
+	void
+	show_haruhi_settings() { _stack->setCurrentWidget (_haruhi_settings); }
 
 	void
 	reconnect_to_jack() { _audio_backend->connect(); }
@@ -311,9 +314,10 @@ class Session: public QWidget
 	QPushButton*				_main_menu_button;
 
 	Program*					_program;
-	QTabWidget*					_backends;
+	QTabWidget*					_session_settings;
+	QTabWidget*					_haruhi_settings;
 
-	SessionPrivate::Global*		_global;
+	SessionPrivate::Global*		_session_global;
 	QWidget*					_audio_tab;
 	QWidget*					_event_tab;
 

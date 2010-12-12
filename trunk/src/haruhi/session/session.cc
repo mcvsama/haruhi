@@ -378,21 +378,27 @@ Session::Session (QWidget* parent):
 
 	_meter_panel = new MeterPanel (this, this);
 	_stack = new QStackedWidget (this);
-	_backends = new QTabWidget (this);
-	_backends->setTabPosition (QTabWidget::South);
-	_backends->setIconSize (QSize (32, 22));
 
-	_global = new Private::Global (this, _backends);
+	_session_settings = new QTabWidget (this);
+	_session_settings->setTabPosition (QTabWidget::South);
+	_session_settings->setIconSize (QSize (32, 22));
 
+	_haruhi_settings = new QTabWidget (this);
+	_haruhi_settings->setTabPosition (QTabWidget::South);
+	_haruhi_settings->setIconSize (QSize (32, 22));
+
+	_session_global = new Private::Global (this, _session_settings);
 	_audio_tab = create_container (this);
 	_event_tab = create_container (this);
+
 	_devices_manager = new DevicesManager::Panel (this);
 
 	// Add tabs:
-	_backends->addTab (_global, Resources::Icons22::configure(), "Global");
-	_backends->addTab (_audio_tab, Resources::Icons22::show_audio(), "Audio backend");
-	_backends->addTab (_event_tab, Resources::Icons22::show_event(), "Input devices");
-	_backends->addTab (_devices_manager, Resources::Icons22::show_event(), "Devices manager");
+	_session_settings->addTab (_session_global, Resources::Icons22::configure(), "Global");
+	_session_settings->addTab (_audio_tab, Resources::Icons22::show_audio(), "Audio backend");
+	_session_settings->addTab (_event_tab, Resources::Icons22::show_event(), "Input devices");
+
+	_haruhi_settings->addTab (_devices_manager, Resources::Icons22::show_event(), "Devices manager");
 
 	// Start engine and backends before program is loaded:
 	_engine = new Engine (this);
@@ -403,7 +409,8 @@ Session::Session (QWidget* parent):
 	_program = new Program (this, _stack);
 
 	_stack->addWidget (_program);
-	_stack->addWidget (_backends);
+	_stack->addWidget (_session_settings);
+	_stack->addWidget (_haruhi_settings);
 
 	_stack->setCurrentWidget (_program);
 
@@ -596,7 +603,7 @@ Session::load_state (QDomElement const& element)
 	if (!parameters_element.isNull())
 	{
 		parameters().load_state (parameters_element);
-		_global->load_params();
+		_session_global->load_params();
 		apply_parameters();
 	}
 }
@@ -701,8 +708,9 @@ Session::create_main_menu()
 {
 	_main_menu = new QMenu (this);
 
-	_main_menu->addAction (Resources::Icons16::show_program(), "Show &program", this, SLOT (show_program()), Qt::Key_F1);
-	_main_menu->addAction (Resources::Icons16::show_backends(), "Show &backends", this, SLOT (show_backends()), Qt::Key_F2);
+	_main_menu->addAction (Resources::Icons16::show_program(), "Program", this, SLOT (show_program()), Qt::Key_F1);
+	_main_menu->addAction (Resources::Icons16::show_backends(), "Session settings", this, SLOT (show_session_settings()), Qt::Key_F2);
+	_main_menu->addAction (Resources::Icons16::haruhi(), "Haruhi settings", this, SLOT (show_haruhi_settings()), Qt::Key_F3);
 	_main_menu->addSeparator();
 	_main_menu->addAction (Resources::Icons16::session_manager(), "Session &manager…", this, SLOT (session_loader()), Qt::CTRL + Qt::Key_M);
 	_main_menu->addAction (Resources::Icons16::save(), "&Save", this, SLOT (save_session()), Qt::CTRL + Qt::Key_S);
