@@ -116,7 +116,7 @@ Settings::unregister_module (Module* module)
 void
 Settings::load()
 {
-	_document = QDomDocument();
+	clear_document();
 
 	// Load settings file:
 	QFile file (_settings_file);
@@ -146,8 +146,8 @@ void
 Settings::save()
 {
 	create_dirs();
+	clear_document();
 
-	_document = QDomDocument();
 	QDomElement root = _document.createElement ("haruhi-settings");
 	_document.appendChild (root);
 
@@ -237,6 +237,15 @@ Settings::xdg_data_home()
 {
 	char const* str = getenv ("XDG_DATA_HOME");
 	return str ? QString (str) : home() + "/.local/share";
+}
+
+
+void
+Settings::clear_document()
+{
+	QDomNode n;
+	while (!(n = _document.firstChild()).isNull())
+		_document.removeChild (n);
 }
 
 } // namespace Haruhi

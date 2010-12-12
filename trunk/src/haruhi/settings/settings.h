@@ -200,6 +200,12 @@ class Settings: public RecursiveMutex
 	static QString
 	xdg_data_home();
 
+	/**
+	 * Removes all child nodes from document node.
+	 */
+	void
+	clear_document();
+
   private:
 	QString			_settings_file;
 	QString			_template_file;

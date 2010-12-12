@@ -84,13 +84,12 @@ DeviceItem::load_state (QDomElement const& element)
 	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
 	{
 		QDomElement e = n.toElement();
-		if (!e.isNull())
+		if (e.isNull())
+			continue;
+		if (e.tagName() == "controller")
 		{
-			if (e.tagName() == "controller")
-			{
-				ControllerItem* port = create_controller_item (e.attribute ("name"));
-				port->load_state (e);
-			}
+			ControllerItem* port = create_controller_item (e.attribute ("name"));
+			port->load_state (e);
 		}
 	}
 }
