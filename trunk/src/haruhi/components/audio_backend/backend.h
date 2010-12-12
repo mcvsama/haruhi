@@ -82,18 +82,6 @@ class Backend:
 
 	~Backend();
 
-	/**
-	 * Unit API
-	 */
-	void
-	registered();
-
-	/**
-	 * Unit API
-	 */
-	void
-	unregistered();
-
 	Transport*
 	transport() const { return _transport; }
 
@@ -118,6 +106,19 @@ class Backend:
 	disable();
 
 	/*
+	 * Unit API
+	 */
+
+	void
+	registered();
+
+	void
+	unregistered();
+
+	void
+	process();
+
+	/*
 	 * AudioBackend API
 	 */
 
@@ -128,14 +129,8 @@ class Backend:
 	peak_levels (LevelsMap& levels_map);
 
 	/*
-	 * Haruhi::Unit API
-	 */
-
-	void
-	process();
-
-	/*
 	 * SaveableState API
+	 * Saves/restores list of input and output ports.
 	 */
 
 	/**
@@ -151,6 +146,13 @@ class Backend:
 	load_state (QDomElement const&);
 
   public slots:
+	/**
+	 * \threadsafe
+	 */
+	void
+	notify_disconnected();
+
+  private slots:
 	/**
 	 * Connects backend to underlying transport to
 	 * allow operation.
@@ -171,23 +173,35 @@ class Backend:
 	connected() const;
 
 	/**
-	 * \threadsafe
+	 * Updates widgets (enables/disables buttons depending on current
+	 * UI state, etc).
 	 */
-	void
-	notify_disconnected();
-
 	void
 	update_widgets();
 
+	/**
+	 * Creates new input port with default name.
+	 */
 	void
 	create_input();
 
+	/**
+	 * Creates new input port with given name.
+	 * \param	name Name for new port.
+	 */
 	void
 	create_input (QString const& name);
 
+	/**
+	 * Creates new output port with default name.
+	 */
 	void
 	create_output();
 
+	/**
+	 * Creates new output port with given name.
+	 * \param	name Name for new port.
+	 */
 	void
 	create_output (QString const& name);
 
@@ -225,6 +239,9 @@ class Backend:
 	void
 	customEvent (QEvent* event);
 
+	/**
+	 * Unit API
+	 */
 	void
 	graph_updated();
 

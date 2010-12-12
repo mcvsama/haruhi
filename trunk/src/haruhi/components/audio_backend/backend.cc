@@ -130,6 +130,22 @@ Backend::~Backend()
 
 
 void
+Backend::enable()
+{
+	Unit::enable();
+	_transport->activate();
+}
+
+
+void
+Backend::disable()
+{
+	_transport->deactivate();
+	Unit::disable();
+}
+
+
+void
 Backend::registered()
 {
 	connect();
@@ -149,18 +165,12 @@ Backend::unregistered()
 
 
 void
-Backend::enable()
+Backend::process()
 {
-	Unit::enable();
-	_transport->activate();
-}
+	if (graph()->dummy())
+		return;
 
-
-void
-Backend::disable()
-{
-	_transport->deactivate();
-	Unit::disable();
+	sync_inputs();
 }
 
 
@@ -237,16 +247,6 @@ Backend::peak_levels (LevelsMap& levels)
 
 
 void
-Backend::process()
-{
-	if (graph()->dummy())
-		return;
-
-	sync_inputs();
-}
-
-
-void
 Backend::save_state (QDomElement& element) const
 {
 	QDomElement inputs = element.ownerDocument().createElement ("inputs");
@@ -285,6 +285,13 @@ Backend::load_state (QDomElement const& element)
 
 
 void
+Backend::notify_disconnected()
+{
+	QApplication::postEvent (this, new OfflineNotification());
+}
+
+
+void
 Backend::connect()
 {
 	try {
@@ -314,13 +321,6 @@ bool
 Backend::connected() const
 {
 	return _transport->connected();
-}
-
-
-void
-Backend::notify_disconnected()
-{
-	QApplication::postEvent (this, new OfflineNotification());
 }
 
 
@@ -561,7 +561,7 @@ Backend::dummy_round()
 	graph()->set_sample_rate (DummySampleRate);
 	graph()->set_buffer_size (DummyBufferSize);
 	graph()->unlock();
-	usleep (33 * 1000); // Sleep for 33ms
+	usleep (DummyPeriodTime * 1000); // Sleep for 33ms
 }
 
 } // namespace AudioBackendImpl
