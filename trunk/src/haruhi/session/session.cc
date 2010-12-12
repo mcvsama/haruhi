@@ -59,27 +59,27 @@ Private::SettingsDialog::SettingsDialog (QWidget* parent, Session* session):
 	QVBoxLayout* layout = new QVBoxLayout (this, Config::DialogMargin, Config::Spacing);
 	layout->setResizeMode (QLayout::FreeResize);
 
-		QHBoxLayout* name_layout = new QHBoxLayout (layout, Config::Spacing);
+	QHBoxLayout* name_layout = new QHBoxLayout (layout, Config::Spacing);
 
-			QLabel* name_label = new QLabel ("Session name:", this);
+	QLabel* name_label = new QLabel ("Session name:", this);
 
-			_name = new QLineEdit (_session->_name, this);
-			_name->selectAll();
-			_name->setFocus();
+	_name = new QLineEdit (_session->_name, this);
+	_name->selectAll();
+	_name->setFocus();
 
-		name_layout->addWidget (name_label);
-		name_layout->addWidget (_name);
+	name_layout->addWidget (name_label);
+	name_layout->addWidget (_name);
 
-		QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::Spacing);
+	QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::Spacing);
 
-			_accept_button = new QPushButton ("&Ok", this);
-			_accept_button->setDefault (true);
+	_accept_button = new QPushButton ("&Ok", this);
+	_accept_button->setDefault (true);
 
-			_reject_button = new QPushButton ("&Cancel", this);
+	_reject_button = new QPushButton ("&Cancel", this);
 
-		buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
-		buttons_layout->addWidget (_accept_button);
-		buttons_layout->addWidget (_reject_button);
+	buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	buttons_layout->addWidget (_accept_button);
+	buttons_layout->addWidget (_reject_button);
 
 	QObject::connect (_name, SIGNAL (textChanged (const QString&)), this, SLOT (state_changed()));
 	QObject::connect (_accept_button, SIGNAL (clicked()), this, SLOT (validate_and_accept()));
@@ -316,99 +316,99 @@ Session::Session (QWidget* parent):
 
 	_layout = new QVBoxLayout (this, Config::WindowMargin, Config::Spacing);
 
-		QFrame* header = new QFrame (this);
-		header->setAutoFillBackground (true);
-		header->setBackgroundColor (QColor (0xda, 0xe1, 0xe9));
-		header->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
-		header->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+	QFrame* header = new QFrame (this);
+	header->setAutoFillBackground (true);
+	header->setBackgroundColor (QColor (0xda, 0xe1, 0xe9));
+	header->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
+	header->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
-		QHBoxLayout* header_layout = new QHBoxLayout (header, Config::Margin);
+	QHBoxLayout* header_layout = new QHBoxLayout (header, Config::Margin);
 
-		QWidget* inner_header = new QWidget (header);
-		inner_header->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+	QWidget* inner_header = new QWidget (header);
+	inner_header->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
-		_session_name = new ClickableLabel (_name, inner_header);
-		QFont f (QApplication::font());
-		f.setPointSize (15);
-		f.setWeight (QFont::Normal);
-		_session_name->setFont (f);
-		_session_name->setCursor (QCursor (Qt::PointingHandCursor));
-		QToolTip::add (_session_name, "Click to rename session");
-		QObject::connect (_session_name, SIGNAL (clicked()), this, SLOT (rename_session()));
+	_session_name = new ClickableLabel (_name, inner_header);
+	QFont f (QApplication::font());
+	f.setPointSize (15);
+	f.setWeight (QFont::Normal);
+	_session_name->setFont (f);
+	_session_name->setCursor (QCursor (Qt::PointingHandCursor));
+	QToolTip::add (_session_name, "Click to rename session");
+	QObject::connect (_session_name, SIGNAL (clicked()), this, SLOT (rename_session()));
 
-		QLabel* tempo_note = new QLabel (QString::fromUtf8 ("♩ = "), inner_header);
-		f.setPointSize (16);
-		f.setWeight (QFont::Normal);
-		tempo_note->setFont (f);
-		tempo_note->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	QLabel* tempo_note = new QLabel (QString::fromUtf8 ("♩ = "), inner_header);
+	f.setPointSize (16);
+	f.setWeight (QFont::Normal);
+	tempo_note->setFont (f);
+	tempo_note->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-		_tempo_spinbox = new QDoubleSpinBox (inner_header);
-		_tempo_spinbox->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-		_tempo_spinbox->setRange (20.0, 400.0);
-		_tempo_spinbox->setDecimals (2);
-		_tempo_spinbox->setWrapping (true);
-		_tempo_spinbox->setValue (120.0);
-		QToolTip::add (_tempo_spinbox, "Master tempo");
-		QObject::connect (_tempo_spinbox, SIGNAL (valueChanged (double)), this, SLOT (tempo_value_changed (double)));
+	_tempo_spinbox = new QDoubleSpinBox (inner_header);
+	_tempo_spinbox->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	_tempo_spinbox->setRange (20.0, 400.0);
+	_tempo_spinbox->setDecimals (2);
+	_tempo_spinbox->setWrapping (true);
+	_tempo_spinbox->setValue (120.0);
+	QToolTip::add (_tempo_spinbox, "Master tempo");
+	QObject::connect (_tempo_spinbox, SIGNAL (valueChanged (double)), this, SLOT (tempo_value_changed (double)));
 
-		_panic_button = new QPushButton ("Panic!", inner_header);
-		_panic_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-		QToolTip::add (_panic_button, "Stops all sound processing (F10)");
-		QObject::connect (_panic_button, SIGNAL (clicked()), this, SLOT (panic_button_clicked()));
-		new QShortcut (Qt::Key_F10, this, SLOT (panic_button_clicked()));
+	_panic_button = new QPushButton ("Panic!", inner_header);
+	_panic_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	QToolTip::add (_panic_button, "Stops all sound processing (F10)");
+	QObject::connect (_panic_button, SIGNAL (clicked()), this, SLOT (panic_button_clicked()));
+	new QShortcut (Qt::Key_F10, this, SLOT (panic_button_clicked()));
 
-		_main_menu_button = new QPushButton ("Menu", inner_header);
-		_main_menu_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-		_main_menu_button->setPopup (_main_menu);
+	_main_menu_button = new QPushButton ("Menu", inner_header);
+	_main_menu_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	_main_menu_button->setPopup (_main_menu);
 
-		QHBoxLayout* inner_header_layout = new QHBoxLayout (inner_header, 0, Config::Spacing);
-		inner_header_layout->addWidget (_session_name);
-		inner_header_layout->addItem (new QSpacerItem (0, 0));
-		inner_header_layout->addWidget (tempo_note);
-		inner_header_layout->addWidget (_tempo_spinbox);
-		inner_header_layout->addItem (new QSpacerItem (2 * Config::Spacing, 0, QSizePolicy::Maximum, QSizePolicy::Minimum));
-		inner_header_layout->addWidget (_panic_button);
-		inner_header_layout->addWidget (_main_menu_button);
+	QHBoxLayout* inner_header_layout = new QHBoxLayout (inner_header, 0, Config::Spacing);
+	inner_header_layout->addWidget (_session_name);
+	inner_header_layout->addItem (new QSpacerItem (0, 0));
+	inner_header_layout->addWidget (tempo_note);
+	inner_header_layout->addWidget (_tempo_spinbox);
+	inner_header_layout->addItem (new QSpacerItem (2 * Config::Spacing, 0, QSizePolicy::Maximum, QSizePolicy::Minimum));
+	inner_header_layout->addWidget (_panic_button);
+	inner_header_layout->addWidget (_main_menu_button);
 
-		header_layout->addWidget (inner_header);
+	header_layout->addWidget (inner_header);
 
 	_layout->addWidget (header);
 
-		QHBoxLayout* bottom_layout = new QHBoxLayout (_layout, Config::Spacing + 1);
+	QHBoxLayout* bottom_layout = new QHBoxLayout (_layout, Config::Spacing + 1);
 
-		_meter_panel = new MeterPanel (this, this);
-		_stack = new QStackedWidget (this);
-		_backends = new QTabWidget (this);
-		_backends->setTabPosition (QTabWidget::South);
-		_backends->setIconSize (QSize (32, 22));
+	_meter_panel = new MeterPanel (this, this);
+	_stack = new QStackedWidget (this);
+	_backends = new QTabWidget (this);
+	_backends->setTabPosition (QTabWidget::South);
+	_backends->setIconSize (QSize (32, 22));
 
-		_global = new Private::Global (this, _backends);
+	_global = new Private::Global (this, _backends);
 
-		_audio_tab = create_container (this);
-		_event_tab = create_container (this);
-		_devices_manager = new DevicesManager::Panel (this);
+	_audio_tab = create_container (this);
+	_event_tab = create_container (this);
+	_devices_manager = new DevicesManager::Panel (this);
 
-		// Add tabs:
-		_backends->addTab (_global, Resources::Icons22::configure(), "Global");
-		_backends->addTab (_audio_tab, Resources::Icons22::show_audio(), "Audio backend");
-		_backends->addTab (_event_tab, Resources::Icons22::show_event(), "Input devices");
-		_backends->addTab (_devices_manager, Resources::Icons22::show_event(), "Devices manager");
+	// Add tabs:
+	_backends->addTab (_global, Resources::Icons22::configure(), "Global");
+	_backends->addTab (_audio_tab, Resources::Icons22::show_audio(), "Audio backend");
+	_backends->addTab (_event_tab, Resources::Icons22::show_event(), "Input devices");
+	_backends->addTab (_devices_manager, Resources::Icons22::show_event(), "Devices manager");
 
-		// Start engine and backends before program is loaded:
-		_engine = new Engine (this);
-		start_event_backend();
-		start_audio_backend();
-		_engine->start();
+	// Start engine and backends before program is loaded:
+	_engine = new Engine (this);
+	start_event_backend();
+	start_audio_backend();
+	_engine->start();
 
-		_program = new Program (this, _stack);
+	_program = new Program (this, _stack);
 
-		_stack->addWidget (_program);
-		_stack->addWidget (_backends);
+	_stack->addWidget (_program);
+	_stack->addWidget (_backends);
 
-		_stack->setCurrentWidget (_program);
+	_stack->setCurrentWidget (_program);
 
-		bottom_layout->addWidget (_meter_panel);
-		bottom_layout->addWidget (_stack);
+	bottom_layout->addWidget (_meter_panel);
+	bottom_layout->addWidget (_stack);
 }
 
 
