@@ -260,6 +260,15 @@ Waveform::Waveform (Part* part, Haruhi::PortGroup* port_group, QString const& q_
 
 Waveform::~Waveform()
 {
+	// Wave computer might call its finished() signal at any
+	// time, and disconnecting is not thread-safe at the moment.
+	// So we should try to delete WaveComputer first:
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
+	delete _wave_computer;
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
+
 	Signal::Receiver::disconnect_all_signals();
 
 	// Delete knobs before ControllerProxies:
@@ -270,7 +279,6 @@ Waveform::~Waveform()
 
 	if (_mikuru->graph())
 		_mikuru->graph()->lock();
-	delete _wave_computer;
 	delete _port_wave_shape;
 	delete _port_modulator_amplitude;
 	delete _port_modulator_index;
