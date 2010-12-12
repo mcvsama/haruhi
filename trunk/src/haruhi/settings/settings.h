@@ -79,6 +79,12 @@ class Settings: public RecursiveMutex
 		virtual void
 		save();
 
+		/**
+		 * Returns pointer to Settings object.
+		 */
+		Settings*
+		host() const { return _host; }
+
 	  private:
 		Settings*	_host;
 		QString		_name;
@@ -141,11 +147,26 @@ class Settings: public RecursiveMutex
 	void
 	save();
 
+	/**
+	 * Returns directory prefix for configuration files.
+	 */
 	static QString
 	config_home() { return xdg_config_home(); }
 
+	/**
+	 * Returns directory prefix for shared data files.
+	 */
 	static QString
 	data_home() { return xdg_data_home(); }
+
+	/**
+	 * Returns QDomDocument that stores XML settings.
+	 */
+	QDomDocument&
+	document() { return _document; }
+
+	QDomDocument const&
+	document() const { return _document; }
 
   private:
 	/**

@@ -56,7 +56,7 @@ DevicesManagerSettings::load_state (QDomElement const& element)
 void
 DevicesManagerSettings::save_device (QString const& name, SaveableState const& device)
 {
-	Device dev (name, QDomElement());
+	Device dev (name, host()->document().createElement ("device"));
 	device.save_state (dev.element());
 	_devices.push_back (dev);
 }
