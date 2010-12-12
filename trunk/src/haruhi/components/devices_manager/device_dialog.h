@@ -48,6 +48,13 @@ class DeviceDialog: public QWidget
 	virtual void
 	apply (DeviceItem*) const;
 
+  signals:
+	/**
+	 * Emited when user saves device item.
+	 */
+	void
+	item_configured (DeviceItem*) const;
+
   private slots:
 	void
 	update_widgets();

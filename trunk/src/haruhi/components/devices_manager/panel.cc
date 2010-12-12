@@ -20,9 +20,11 @@
 #include <QtGui/QLabel>
 #include <QtGui/QToolTip>
 #include <QtGui/QMenu>
+#include <QtGui/QMessageBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/application/haruhi.h>
 
 // Local:
 #include "panel.h"
@@ -63,8 +65,13 @@ Panel::Panel (QWidget* parent):
 	// Right panel (stack):
 
 	_stack = new QStackedWidget (this);
+
 	_device_dialog = new DeviceDialog (this);
+	QObject::connect (_device_dialog, SIGNAL (item_configured (DeviceItem*)), this, SLOT (save_settings()));
+
 	_controller_dialog = new ControllerDialog (this);
+	QObject::connect (_controller_dialog, SIGNAL (item_configured (ControllerItem*)), this, SLOT (save_settings()));
+
 	_stack->addWidget (_device_dialog);
 	_stack->addWidget (_controller_dialog);
 	_stack->setCurrentWidget (_device_dialog);
@@ -87,6 +94,7 @@ Panel::Panel (QWidget* parent):
 
 	selection_changed();
 	update_widgets();
+	load_settings();
 }
 
 
@@ -124,6 +132,17 @@ Panel::create_device()
 	QString name = "<unnamed device>";
 	QTreeWidgetItem* item = _tree->create_device_item (name);
 	_tree->setCurrentItem (item);
+	save_settings();
+}
+
+
+void
+Panel::add_device (DeviceItem* device_item)
+{
+	Haruhi::haruhi()->devices_manager_settings()->save_device (device_item->name(), *device_item);
+	Haruhi::haruhi()->devices_manager_settings()->save();
+	QMessageBox::information (this, "Created device template", "Created new device template \"" + device_item->name() + "\".");
+	load_settings();
 }
 
 
@@ -142,6 +161,7 @@ Panel::create_controller()
 			QTreeWidgetItem* item = parent->create_controller_item (name);
 			_tree->setCurrentItem (item);
 			parent->setExpanded (true);
+			save_settings();
 		}
 	}
 }
@@ -207,6 +227,7 @@ Panel::destroy_selected_item()
 		if (item->parent())
 			item->parent()->takeChild (item->parent()->indexOfChild (item));
 		delete item;
+		save_settings();
 	}
 }
 
@@ -244,6 +265,20 @@ Panel::context_menu_for_items (QPoint const& pos)
 
 	menu->exec (QCursor::pos());
 	delete menu;
+}
+
+
+void
+Panel::load_settings()
+{
+	_tree->load_devices_from_settings();
+}
+
+
+void
+Panel::save_settings()
+{
+	_tree->save_devices_to_settings();
 }
 
 } // namespace DevicesManager

@@ -18,6 +18,10 @@
 #include <QtGui/QTreeWidget>
 #include <QtGui/QHeaderView>
 
+// Haruhi:
+#include <haruhi/application/haruhi.h>
+#include <haruhi/settings/devices_manager_settings.h>
+
 // Local:
 #include "ports_list_view.h"
 #include "device_item.h"
@@ -88,11 +92,41 @@ PortsListView::load_state (QDomElement const& element)
 		{
 			if (e.tagName() == "device")
 			{
-				DeviceItem* port = create_device_item (e.attribute ("name"));
-				port->load_state (e);
+				DeviceItem* device = create_device_item (e.attribute ("name"));
+				device->load_state (e);
 			}
 		}
 	}
+}
+
+
+void
+PortsListView::load_devices_from_settings()
+{
+	clear();
+	DevicesManagerSettings* settings = Haruhi::haruhi()->devices_manager_settings();
+	for (DevicesManagerSettings::Devices::iterator tpl = settings->devices().begin(); tpl != settings->devices().end(); ++tpl)
+	{
+		DeviceItem* device = create_device_item (tpl->name());
+		device->load_state (tpl->element());
+	}
+}
+
+
+void
+PortsListView::save_devices_to_settings()
+{
+	DevicesManagerSettings* settings = Haruhi::haruhi()->devices_manager_settings();
+	settings->devices().clear();
+
+	for (int i = 0; i < invisibleRootItem()->childCount(); ++i)
+	{
+		DeviceItem* device_item = dynamic_cast<DeviceItem*> (invisibleRootItem()->child (i));
+		if (device_item)
+			settings->save_device (device_item->name(), *device_item);
+	}
+
+	settings->save();
 }
 
 } // namespace DevicesManager

@@ -110,6 +110,14 @@ class Backend:
 	void
 	load_state (QDomElement const&);
 
+  signals:
+	/**
+	 * Emited after user saves Device as template.
+	 * Can be used to inform DevicesManager to save new device template.
+	 */
+	void
+	device_saved_as_template (DeviceItem* device_item);
+
   public slots:
 	/**
 	 * Connects to backend to transport to allow operation.
@@ -166,7 +174,7 @@ class Backend:
 	destroy_selected_item();
 
 	void
-	save_selected_item();
+	save_selected_item_as_template();
 
 	void
 	context_menu_for_items (QPoint const&);

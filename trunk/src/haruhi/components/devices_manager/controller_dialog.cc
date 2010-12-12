@@ -267,6 +267,8 @@ ControllerDialog::apply (ControllerItem* item) const
 	item->_channel_pressure_filter = _channel_pressure_checkbox->isChecked();
 	item->_channel_pressure_channel = _channel_pressure_channel->currentText().toInt();
 	item->_channel_pressure_invert = _channel_pressure_invert->isChecked();
+
+	emit item_configured (item);
 }
 
 

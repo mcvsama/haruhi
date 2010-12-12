@@ -386,13 +386,13 @@ Session::Session (QWidget* parent):
 
 		_audio_tab = create_container (this);
 		_event_tab = create_container (this);
-		_devices_manager_tab = new DevicesManager::Panel (this);
+		_devices_manager = new DevicesManager::Panel (this);
 
 		// Add tabs:
 		_backends->addTab (_global, Resources::Icons22::configure(), "Global");
 		_backends->addTab (_audio_tab, Resources::Icons22::show_audio(), "Audio backend");
 		_backends->addTab (_event_tab, Resources::Icons22::show_event(), "Input devices");
-		_backends->addTab (_devices_manager_tab, Resources::Icons22::show_event(), "Devices manager");
+		_backends->addTab (_devices_manager, Resources::Icons22::show_event(), "Devices manager");
 
 		// Start engine and backends before program is loaded:
 		_engine = new Engine (this);
@@ -774,6 +774,8 @@ Session::start_event_backend()
 		_event_backend = event_backend;
 		event_backend->show();
 		_graph->register_event_backend (_event_backend);
+		// Reload DevicesManager list when EventBackend creates new template:
+		QObject::connect (event_backend, SIGNAL (device_saved_as_template (DeviceItem*)), _devices_manager, SLOT (add_device (DeviceItem*)));
 	}
 	catch (Exception const& e)
 	{

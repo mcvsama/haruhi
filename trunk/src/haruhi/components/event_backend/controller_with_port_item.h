@@ -63,6 +63,12 @@ class ControllerWithPortItem:
 	stop_learning();
 
 	/**
+	 * Returns true if item is in 'learning' mode.
+	 */
+	bool
+	learning() { return _learning; }
+
+	/**
 	 * Sets Core port's name to what
 	 * was set by user in the UI.
 	 */

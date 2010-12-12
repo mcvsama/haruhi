@@ -52,6 +52,12 @@ class PortsListView:
 
 	void
 	load_state (QDomElement const&);
+
+	void
+	load_devices_from_settings();
+
+	void
+	save_devices_to_settings();
 };
 
 } // namespace DevicesManager

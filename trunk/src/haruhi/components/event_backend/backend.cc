@@ -23,7 +23,6 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/application/haruhi.h>
 #include <haruhi/components/devices_manager/device_dialog.h>
 #include <haruhi/components/devices_manager/controller_dialog.h>
 #include <haruhi/graph/event_buffer.h>
@@ -346,18 +345,14 @@ Backend::destroy_selected_item()
 
 
 void
-Backend::save_selected_item()
+Backend::save_selected_item_as_template()
 {
 	QTreeWidgetItem* item = _tree->selected_item();
 	if (item)
 	{
-		DeviceWithPortItem* input_item = dynamic_cast<DeviceWithPortItem*> (item);
-		if (input_item)
-		{
-			Haruhi::haruhi()->devices_manager_settings()->save_device (input_item->name(), *input_item);
-			Haruhi::haruhi()->devices_manager_settings()->save();
-			QMessageBox::information (this, "Created template", "Created new template \"" + input_item->name() + "\".");
-		}
+		DeviceWithPortItem* device_item = dynamic_cast<DeviceWithPortItem*> (item);
+		if (device_item)
+			emit device_saved_as_template (device_item);
 	}
 }
 
@@ -371,9 +366,10 @@ Backend::context_menu_for_items (QPoint const& pos)
 
 	if (item != 0)
 	{
-		if (dynamic_cast<ControllerItem*> (item) != 0)
+		ControllerWithPortItem* cwp_item = dynamic_cast<ControllerWithPortItem*> (item);
+		if (cwp_item != 0)
 		{
-			menu->addAction (Resources::Icons16::colorpicker(), "&Learn", this, SLOT (learn_from_midi()));
+			menu->addAction (Resources::Icons16::colorpicker(), cwp_item->learning() ? "Stop &learning" : "&Learn", this, SLOT (learn_from_midi()));
 			menu->addSeparator();
 			menu->addAction (Resources::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
 			menu->addAction (Resources::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
@@ -382,7 +378,7 @@ Backend::context_menu_for_items (QPoint const& pos)
 		{
 			menu->addAction (Resources::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
 			menu->addSeparator();
-			menu->addAction (Resources::Icons16::save(), "&Save as template", this, SLOT (save_selected_item()));
+			menu->addAction (Resources::Icons16::save(), "&Save as template", this, SLOT (save_selected_item_as_template()));
 			menu->addSeparator();
 			menu->addAction (Resources::Icons16::add(), "&Add device", this, SLOT (create_device()));
 			menu->addAction (Resources::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
@@ -414,12 +410,12 @@ Backend::create_templates_menu (QMenu* menu)
 	int action_id = 0;
 	_templates.clear();
 	DevicesManagerSettings* settings = Haruhi::haruhi()->devices_manager_settings();
-	for (DevicesManagerSettings::Devices::iterator t = settings->devices().begin(); t != settings->devices().end(); ++t)
+	for (DevicesManagerSettings::Devices::iterator tpl = settings->devices().begin(); tpl != settings->devices().end(); ++tpl)
 	{
 		action_id += 1;
-		QAction* a = menu->addAction (Resources::Icons16::template_(), t->name(), _insert_template_signal_mapper, SLOT (map()));
+		QAction* a = menu->addAction (Resources::Icons16::template_(), tpl->name(), _insert_template_signal_mapper, SLOT (map()));
 		_insert_template_signal_mapper->setMapping (a, action_id);
-		_templates.insert (std::make_pair (action_id, *t));
+		_templates.insert (std::make_pair (action_id, *tpl));
 	}
 	menu->setEnabled (!settings->devices().empty());
 }
@@ -453,11 +449,11 @@ Backend::handle_event_for_learnables (Transport::MidiEvent const& event, EventPo
 void
 Backend::insert_template (int menu_item_id)
 {
-	Templates::iterator t = _templates.find (menu_item_id);
-	if (t != _templates.end())
+	Templates::iterator tpl = _templates.find (menu_item_id);
+	if (tpl != _templates.end())
 	{
-		DeviceItem* item = _tree->create_device_item (t->second.name());
-		item->load_state (t->second.element());
+		DeviceItem* item = _tree->create_device_item (tpl->second.name());
+		item->load_state (tpl->second.element());
 		item->treeWidget()->clearSelection();
 		item->treeWidget()->setCurrentItem (item);
 		item->setSelected (true);

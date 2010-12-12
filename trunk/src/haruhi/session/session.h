@@ -215,6 +215,9 @@ class Session: public QWidget
 	Parameters&
 	parameters() { return _parameters; }
 
+	DevicesManager::Panel*
+	devices_manager() { return _devices_manager; }
+
 	/**
 	 * Applies _parameters to system.
 	 */
@@ -313,7 +316,6 @@ class Session: public QWidget
 	SessionPrivate::Global*		_global;
 	QWidget*					_audio_tab;
 	QWidget*					_event_tab;
-	QWidget*					_devices_manager_tab;
 
 	// Links to main session components:
 	AudioBackend*				_audio_backend;

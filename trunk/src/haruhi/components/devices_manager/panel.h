@@ -57,6 +57,12 @@ class Panel: public QWidget
 	create_device();
 
 	/**
+	 * Adds Device as new template.
+	 */
+	void
+	add_device (DeviceItem* device_item);
+
+	/**
 	 * Creates new unnamed/unconfigured controller
 	 * and inserts it into the subtree of currently selected device.
 	 * If no device is selected, it does nothing.
@@ -81,6 +87,18 @@ class Panel: public QWidget
 
 	void
 	context_menu_for_items (QPoint const&);
+
+	/**
+	 * Loads settings from DevicesManagerSettings object.
+	 */
+	void
+	load_settings();
+
+	/**
+	 * Saves devices to DevicesManagerSettings object.
+	 */
+	void
+	save_settings();
 
   private:
 	// Widgets:

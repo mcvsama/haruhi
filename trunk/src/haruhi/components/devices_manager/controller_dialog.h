@@ -53,6 +53,13 @@ class ControllerDialog: public QWidget
 	virtual void
 	apply (ControllerItem*) const;
 
+  signals:
+	/**
+	 * Emited when user saves controller item.
+	 */
+	void
+	item_configured (ControllerItem*) const;
+
   private slots:
 	void
 	update_widgets();
