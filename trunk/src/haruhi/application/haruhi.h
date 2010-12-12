@@ -32,7 +32,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/settings/settings.h>
 #include <haruhi/settings/devices_manager_settings.h>
-#include <haruhi/settings/presetable_settings.h>
+#include <haruhi/settings/has_presets_settings.h>
 #include <haruhi/settings/session_loader_settings.h>
 #include <haruhi/utility/noncopyable.h>
 #include <haruhi/utility/backtrace.h>
@@ -85,8 +85,8 @@ class Haruhi:
 	DevicesManagerSettings*
 	devices_manager_settings() const { return _devices_manager_settings; }
 
-	PresetableSettings*
-	presetable_settings() const { return _presetable_settings; }
+	HasPresetsSettings*
+	has_presets_settings() const { return _has_presets_settings; }
 
 	SessionLoaderSettings*
 	session_loader_settings() const { return _session_loader_settings; }
@@ -112,7 +112,7 @@ class Haruhi:
 	Session*				_session;
 	Settings*				_settings;
 	DevicesManagerSettings*	_devices_manager_settings;
-	PresetableSettings*		_presetable_settings;
+	HasPresetsSettings*		_has_presets_settings;
 	SessionLoaderSettings*	_session_loader_settings;
 	bool					_ok_to_quit;
 

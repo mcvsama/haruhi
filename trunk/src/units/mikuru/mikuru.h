@@ -37,7 +37,7 @@
 #include <haruhi/dsp/smoother.h>
 #include <haruhi/plugin/plugin.h>
 #include <haruhi/plugin/plugin_factory.h>
-#include <haruhi/plugin/presetable.h>
+#include <haruhi/plugin/has_presets.h>
 #include <haruhi/session/unit_bay.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/thread.h>
@@ -63,7 +63,7 @@
 class Mikuru:
 	public Haruhi::Plugin,
 	public Haruhi::UnitBayAware,
-	public Haruhi::Presetable,
+	public Haruhi::HasPresets,
 	public SaveableState
 {
 	Q_OBJECT

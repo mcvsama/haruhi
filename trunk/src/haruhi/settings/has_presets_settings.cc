@@ -15,19 +15,19 @@
 #include <cstddef>
 
 // Local:
-#include "presetable_settings.h"
+#include "has_presets_settings.h"
 
 
 namespace Haruhi {
 
-PresetableSettings::PresetableSettings():
-	Module ("presetable")
+HasPresetsSettings::HasPresetsSettings():
+	Module ("has-presets")
 {
 }
 
 
 void
-PresetableSettings::save_state (QDomElement& element) const
+HasPresetsSettings::save_state (QDomElement& element) const
 {
 	for (Units::const_iterator u = _units.begin(); u != _units.end(); ++u)
 	{
@@ -45,7 +45,7 @@ PresetableSettings::save_state (QDomElement& element) const
 
 
 void
-PresetableSettings::load_state (QDomElement const& element)
+HasPresetsSettings::load_state (QDomElement const& element)
 {
 	_units.clear();
 
@@ -75,8 +75,8 @@ PresetableSettings::load_state (QDomElement const& element)
 }
 
 
-PresetableSettings::FavoritePresets&
-PresetableSettings::favorite_presets_for_unit (std::string const& unit_urn)
+HasPresetsSettings::FavoritePresets&
+HasPresetsSettings::favorite_presets_for_unit (std::string const& unit_urn)
 {
 	return _units[unit_urn];
 }

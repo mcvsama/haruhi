@@ -266,10 +266,10 @@ SRC_SOURCES += haruhi/lib/controller_proxy.cc
 
 ######## /plugin ########
 
+SRC_HEADERS += haruhi/plugin/has_presets.h
 SRC_HEADERS += haruhi/plugin/plugin.h
 SRC_HEADERS += haruhi/plugin/plugin_factory.h
 SRC_HEADERS += haruhi/plugin/plugin_loader.h
-SRC_HEADERS += haruhi/plugin/presetable.h
 
 SRC_SOURCES += haruhi/plugin/plugin.cc
 SRC_SOURCES += haruhi/plugin/plugin_factory.cc
@@ -303,13 +303,13 @@ SRC_MOCHDRS += haruhi/session/session_loader.h
 SRC_HEADERS += haruhi/settings/settings.h
 SRC_HEADERS += haruhi/settings/devices_manager_settings.h
 SRC_HEADERS += haruhi/settings/plugin_settings.h
-SRC_HEADERS += haruhi/settings/presetable_settings.h
+SRC_HEADERS += haruhi/settings/has_presets_settings.h
 SRC_HEADERS += haruhi/settings/session_loader_settings.h
 
 SRC_SOURCES += haruhi/settings/settings.cc
 SRC_SOURCES += haruhi/settings/devices_manager_settings.cc
 SRC_SOURCES += haruhi/settings/plugin_settings.cc
-SRC_SOURCES += haruhi/settings/presetable_settings.cc
+SRC_SOURCES += haruhi/settings/has_presets_settings.cc
 SRC_SOURCES += haruhi/settings/session_loader_settings.cc
 
 ######## /utility ########

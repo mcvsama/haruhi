@@ -29,14 +29,14 @@
 
 namespace Haruhi {
 
-class PresetableSettings: public Settings::Module
+class HasPresetsSettings: public Settings::Module
 {
   public:
 	typedef std::set<std::string>					FavoritePresets;
 	typedef std::map<std::string, FavoritePresets>	Units;
 
   public:
-	PresetableSettings();
+	HasPresetsSettings();
 
 	void
 	save_state (QDomElement& element) const;

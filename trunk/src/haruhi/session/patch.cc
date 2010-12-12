@@ -27,7 +27,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/graph/conn_set.h>
 #include <haruhi/plugin/plugin_factory.h>
-#include <haruhi/plugin/presetable.h>
+#include <haruhi/plugin/has_presets.h>
 #include <haruhi/session/session.h>
 #include <haruhi/components/presets_manager/presets_manager.h>
 
@@ -72,7 +72,7 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	_plugin (plugin)
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
-	bool plugin_is_presetable = dynamic_cast<Presetable*> (_plugin);
+	bool plugin_is_has_presets = dynamic_cast<HasPresets*> (_plugin);
 
 	QWidget* bar = new QWidget (this);
 	_stack = new QStackedWidget (this);
@@ -92,8 +92,8 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	font.setWeight (QFont::Black);
 	title_button->setFont (font);
 
-	// Presetable?
-	if (plugin_is_presetable)
+	// HasPresets?
+	if (plugin_is_has_presets)
 	{
 		_presets_manager = new PresetsManager (_plugin, this);
 		QObject::connect (_presets_manager, SIGNAL (preset_selected (const QString&, const QString&)),
@@ -129,7 +129,7 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	bar->setAutoFillBackground (true);
 
 	bar_layout->addWidget (title_button);
-	if (plugin_is_presetable)
+	if (plugin_is_has_presets)
 	{
 		bar_layout->addItem (new QSpacerItem (5, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
 		bar_layout->addWidget (_preset_name);
@@ -142,7 +142,7 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 		bar_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
 	_plugin->reparent (_stack, QPoint(), true);
-	if (plugin_is_presetable)
+	if (plugin_is_has_presets)
 		_stack->addWidget (_presets_manager);
 	_stack->addWidget (_plugin);
 	_stack->setCurrentWidget (_plugin);
@@ -337,9 +337,9 @@ Patch::save_state (QDomElement& element) const
 			plugin.setAttribute ("urn", QString::fromStdString (p->urn()));
 			plugin.setAttribute ("title", QString::fromStdString (p->title()));
 			plugin.setAttribute ("id", QString ("%1").arg (p->id()));
-			// Presetable?
-			Presetable* presetable = dynamic_cast<Presetable*> (p);
-			if (presetable)
+			// HasPresets?
+			HasPresets* has_presets = dynamic_cast<HasPresets*> (p);
+			if (has_presets)
 			{
 				plugin.setAttribute ("preset-name", _plugins_to_frames_map.find (p)->second->preset_name());
 				plugin.setAttribute ("preset-uuid", _plugins_to_frames_map.find (p)->second->preset_uuid());
@@ -390,8 +390,8 @@ Patch::load_state (QDomElement const& element)
 						if (plugin)
 						{
 							plugin->set_id (e.attribute ("id").toInt());
-							Presetable* presetable = dynamic_cast<Presetable*> (plugin);
-							if (presetable)
+							HasPresets* has_presets = dynamic_cast<HasPresets*> (plugin);
+							if (has_presets)
 								_plugins_to_frames_map[plugin]->set_preset (e.attribute ("preset-uuid"), e.attribute ("preset-name"));
 							SaveableState* saveable_state = dynamic_cast<SaveableState*> (plugin);
 							if (saveable_state)

@@ -28,10 +28,10 @@ namespace Haruhi {
  * Object inheriting this class supports
  * loading and saving presets.
  */
-class Presetable
+class HasPresets
 {
   public:
-	virtual ~Presetable() { }
+	virtual ~HasPresets() { }
 
 	virtual void
 	save_preset (QDomElement&) const = 0;

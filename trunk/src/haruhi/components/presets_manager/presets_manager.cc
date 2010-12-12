@@ -36,7 +36,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/application/haruhi.h>
 #include <haruhi/graph/unit.h>
-#include <haruhi/settings/presetable_settings.h>
+#include <haruhi/settings/has_presets_settings.h>
 #include <haruhi/utility/exception.h>
 #include <haruhi/utility/filesystem.h>
 #include <haruhi/utility/saveable_state.h>
@@ -134,8 +134,8 @@ PresetsManager::~PresetsManager()
 bool
 PresetsManager::is_favorite (QString const& uuid)
 {
-	PresetableSettings* settings = Haruhi::haruhi()->presetable_settings();
-	PresetableSettings::FavoritePresets& fp = settings->favorite_presets_for_unit (_unit->urn());
+	HasPresetsSettings* settings = Haruhi::haruhi()->has_presets_settings();
+	HasPresetsSettings::FavoritePresets& fp = settings->favorite_presets_for_unit (_unit->urn());
 	return fp.find (uuid.toStdString()) != fp.end();
 }
 
@@ -143,8 +143,8 @@ PresetsManager::is_favorite (QString const& uuid)
 void
 PresetsManager::set_favorite (QString const& uuid, QString const& name, bool set)
 {
-	PresetableSettings* settings = Haruhi::haruhi()->presetable_settings();
-	PresetableSettings::FavoritePresets& fp = settings->favorite_presets_for_unit (_unit->urn());
+	HasPresetsSettings* settings = Haruhi::haruhi()->has_presets_settings();
+	HasPresetsSettings::FavoritePresets& fp = settings->favorite_presets_for_unit (_unit->urn());
 	if (set)
 		fp.insert (uuid.toStdString());
 	else
