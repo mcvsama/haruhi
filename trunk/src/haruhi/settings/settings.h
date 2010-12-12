@@ -39,6 +39,7 @@
 #include <QtXml/QDomNode>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/confusion.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/backtrace.h>
@@ -151,13 +152,13 @@ class Settings: public RecursiveMutex
 	 * Returns directory prefix for configuration files.
 	 */
 	static QString
-	config_home() { return xdg_config_home(); }
+	config_home() { return xdg_config_home() + "/" + HARUHI_XDG_SETTINGS_HOME; }
 
 	/**
 	 * Returns directory prefix for shared data files.
 	 */
 	static QString
-	data_home() { return xdg_data_home(); }
+	data_home() { return xdg_data_home() + "/" + HARUHI_XDG_DATA_HOME; }
 
 	/**
 	 * Returns QDomDocument that stores XML settings.
