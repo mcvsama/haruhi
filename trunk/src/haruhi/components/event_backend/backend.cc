@@ -195,6 +195,26 @@ Backend::load_state (QDomElement const& element)
 
 
 void
+Backend::update_widgets()
+{
+	QTreeWidgetItem* sel = _tree->selected_item();
+	_create_controller_button->setEnabled (sel != 0);
+	_destroy_input_button->setEnabled (sel != 0);
+
+	// "Destroy device" or "Destroy controller":
+	if (sel)
+	{
+		if (dynamic_cast<DeviceItem*> (sel))
+			_destroy_input_button->setText ("Destroy device");
+		else if (dynamic_cast<ControllerItem*> (sel))
+			_destroy_input_button->setText ("Destroy controller");
+		else
+			_destroy_input_button->setText ("Destroy");
+	}
+}
+
+
+void
 Backend::connect()
 {
 	try {
@@ -224,34 +244,6 @@ Backend::connected() const
 
 
 void
-Backend::update_widgets()
-{
-	QTreeWidgetItem* sel = _tree->selected_item();
-	_create_controller_button->setEnabled (sel != 0);
-	_destroy_input_button->setEnabled (sel != 0);
-
-	// "Destroy device" or "Destroy controller":
-	if (sel)
-	{
-		if (dynamic_cast<DeviceItem*> (sel))
-			_destroy_input_button->setText ("Destroy device");
-		else if (dynamic_cast<ControllerItem*> (sel))
-			_destroy_input_button->setText ("Destroy controller");
-		else
-			_destroy_input_button->setText ("Destroy");
-	}
-}
-
-
-void
-Backend::selection_changed()
-{
-	update_widgets();
-	configure_selected_item();
-}
-
-
-void
 Backend::create_device()
 {
 	QString name = "<unnamed device>";
@@ -276,57 +268,6 @@ Backend::create_controller()
 			_tree->setCurrentItem (item);
 			parent->setExpanded (true);
 		}
-	}
-}
-
-
-void
-Backend::configure_item (DeviceItem* item)
-{
-	_device_dialog->from (item);
-	_stack->setCurrentWidget (_device_dialog);
-}
-
-
-void
-Backend::configure_item (ControllerItem* item)
-{
-	_controller_dialog->from (item);
-	_stack->setCurrentWidget (_controller_dialog);
-}
-
-
-void
-Backend::configure_selected_item()
-{
-	if (_tree->selected_item())
-	{
-		DeviceItem* device_item = dynamic_cast<DeviceItem*> (_tree->selected_item());
-		if (device_item)
-			configure_item (device_item);
-		else
-		{
-			ControllerItem* controller_item = dynamic_cast<ControllerItem*> (_tree->selected_item());
-			if (controller_item)
-				configure_item (controller_item);
-		}
-	}
-	else
-	{
-		_device_dialog->clear();
-		_controller_dialog->clear();
-	}
-}
-
-
-void
-Backend::learn_from_midi()
-{
-	if (_tree->selected_item())
-	{
-		ControllerWithPortItem* item = dynamic_cast<ControllerWithPortItem*> (_tree->selected_item());
-		if (item)
-			item->learn();
 	}
 }
 
@@ -442,6 +383,65 @@ Backend::handle_event_for_learnables (Transport::MidiEvent const& event, EventPo
 			l->first->learned_connection (l->second, port);
 			learnables().erase (l);
 		}
+	}
+}
+
+
+void
+Backend::selection_changed()
+{
+	update_widgets();
+	configure_selected_item();
+}
+
+
+void
+Backend::configure_item (DeviceItem* item)
+{
+	_device_dialog->from (item);
+	_stack->setCurrentWidget (_device_dialog);
+}
+
+
+void
+Backend::configure_item (ControllerItem* item)
+{
+	_controller_dialog->from (item);
+	_stack->setCurrentWidget (_controller_dialog);
+}
+
+
+void
+Backend::configure_selected_item()
+{
+	if (_tree->selected_item())
+	{
+		DeviceItem* device_item = dynamic_cast<DeviceItem*> (_tree->selected_item());
+		if (device_item)
+			configure_item (device_item);
+		else
+		{
+			ControllerItem* controller_item = dynamic_cast<ControllerItem*> (_tree->selected_item());
+			if (controller_item)
+				configure_item (controller_item);
+		}
+	}
+	else
+	{
+		_device_dialog->clear();
+		_controller_dialog->clear();
+	}
+}
+
+
+void
+Backend::learn_from_midi()
+{
+	if (_tree->selected_item())
+	{
+		ControllerWithPortItem* item = dynamic_cast<ControllerWithPortItem*> (_tree->selected_item());
+		if (item)
+			item->learn();
 	}
 }
 

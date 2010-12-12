@@ -79,29 +79,27 @@ class Backend:
 	~Backend();
 
 	/**
-	 * Unit API
+	 * Returns event transport used by backend.
 	 */
-	void
-	registered();
-
-	/**
-	 * Unit API
-	 */
-	void
-	unregistered();
-
 	Transport*
 	transport() const { return _transport; }
 
 	/*
-	 * Haruhi::Unit methods:
+	 * Unit API
 	 */
+
+	void
+	registered();
+
+	void
+	unregistered();
 
 	void
 	process();
 
 	/*
-	 * Saveable methods:
+	 * SaveableState API
+	 * EventBackend saves/restores lists of devices and controllers.
 	 */
 
 	void
@@ -118,15 +116,24 @@ class Backend:
 	void
 	device_saved_as_template (DeviceItem* device_item);
 
-  public slots:
+  private slots:
+	/**
+	 * Updates widgets (enables/disables buttons, etc)
+	 * depending on current UI state.
+	 */
+	void
+	update_widgets();
+
 	/**
 	 * Connects to backend to transport to allow operation.
+	 * Done automatically after unit is registered.
 	 */
 	void
 	connect();
 
 	/**
 	 * Disconnects backend from transport.
+	 * Done automatically before unit is unregistered.
 	 */
 	void
 	disconnect();
@@ -136,12 +143,6 @@ class Backend:
 	 */
 	bool
 	connected() const;
-
-	void
-	update_widgets();
-
-	void
-	selection_changed();
 
 	/**
 	 * Creates new unnamed/unconfigured device
@@ -158,28 +159,26 @@ class Backend:
 	void
 	create_controller();
 
-	void
-	configure_item (DeviceItem* item);
-
-	void
-	configure_item (ControllerItem* item);
-
-	void
-	configure_selected_item();
-
-	void
-	learn_from_midi();
-
+	/**
+	 * Destroys currently selected device or controller.
+	 */
 	void
 	destroy_selected_item();
 
+	/**
+	 * Emits signal device_saved_as_template()
+	 * if currently selected item is device item.
+	 */
 	void
 	save_selected_item_as_template();
 
+	/**
+	 * Locates item using given point, creates and
+	 * executes menu for the item.
+	 */
 	void
 	context_menu_for_items (QPoint const&);
 
-  private:
 	/**
 	 * Creates popup menu with templates for insertion
 	 * and stores it in _templates_menu.
@@ -187,13 +186,48 @@ class Backend:
 	void
 	create_templates_menu (QMenu* menu);
 
+	/**
+	 * Handles event notification from transport.
+	 * Finds learnables waiting for event and notifies
+	 * them about event.
+	 */
 	void
 	handle_event_for_learnables (Transport::MidiEvent const& event, EventPort* port);
 
-  private slots:
 	/**
-	 * Inserts new input hardware template into list.
-	 * Uses menu_item_id from _templates map.
+	 * Updates widgets and calls configure_selected_item().
+	 */
+	void
+	selection_changed();
+
+	/**
+	 * Displays configuration dialog for given device item.
+	 */
+	void
+	configure_item (DeviceItem* item);
+
+	/**
+	 * Displays configuration dialog for given controller item.
+	 */
+	void
+	configure_item (ControllerItem* item);
+
+	/**
+	 * Detects currently selected item and displays
+	 * configuration dialog for it.
+	 */
+	void
+	configure_selected_item();
+
+	/**
+	 * Puts currently selected item into learning mode.
+	 */
+	void
+	learn_from_midi();
+
+	/**
+	 * Inserts new device template into list.
+	 * Uses _templates[id].
 	 */
 	void
 	insert_template (int template_id);
@@ -213,7 +247,7 @@ class Backend:
 	DeviceWithPortDialog*		_device_dialog;
 	ControllerWithPortDialog*	_controller_dialog;
 
-	// External (hardware) port templates menu and helper storage:
+	// Device templates menu and helper storage:
 	Templates					_templates;
 	QMenu*						_templates_menu;
 };

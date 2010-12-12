@@ -85,6 +85,16 @@ class AlsaTransport: public Transport
 
 	~AlsaTransport();
 
+	/**
+	 * Low-level access to ALSA sequencer.
+	 */
+	snd_seq_t*
+	seq() const { return _seq; }
+
+	/*
+	 * Transport API
+	 */
+
 	void
 	connect (std::string const& client_name);
 
@@ -105,9 +115,6 @@ class AlsaTransport: public Transport
 
 	void
 	sync();
-
-	snd_seq_t*
-	seq() const { return _seq; }
 
   private:
 	/**
