@@ -15,6 +15,7 @@
 #include <cstddef>
 
 // Qt:
+#include <QtGui/QApplication>
 #include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
@@ -30,20 +31,21 @@ namespace DevicesManager {
 
 ControllerItem::ControllerItem (DeviceItem* parent, QString const& name):
 	Item (static_cast<QTreeWidgetItem*> (parent), name),
-	_note_filter (false),
-	_note_channel (0),
-	_controller_filter (false),
-	_controller_channel (0),
-	_controller_number (0),
-	_controller_invert (false),
-	_pitchbend_filter (false),
-	_pitchbend_channel (0),
-	_channel_pressure_filter (false),
-	_channel_pressure_channel (0),
-	_channel_pressure_invert (false),
-	_key_pressure_filter (false),
-	_key_pressure_channel (0),
-	_key_pressure_invert (false)
+	note_filter (false),
+	note_channel (0),
+	controller_filter (false),
+	controller_channel (0),
+	controller_number (0),
+	controller_invert (false),
+	pitchbend_filter (false),
+	pitchbend_channel (0),
+	channel_pressure_filter (false),
+	channel_pressure_channel (0),
+	channel_pressure_invert (false),
+	key_pressure_filter (false),
+	key_pressure_channel (0),
+	key_pressure_invert (false),
+	_learning (false)
 {
 	// Configure item:
 	setIcon (0, Resources::Icons16::event_output_port());
@@ -60,33 +62,105 @@ ControllerItem::~ControllerItem()
 
 
 void
+ControllerItem::learn()
+{
+	_learning = !_learning;
+	if (_learning)
+		setIcon (0, Resources::Icons16::colorpicker());
+	else
+		setIcon (0, Resources::Icons16::event_output_port());
+}
+
+
+void
+ControllerItem::stop_learning()
+{
+	_learning = false;
+	// Called from JACK thread, we should not change icon directly:
+	QApplication::postEvent (treeWidget(), new PortsListView::LearnedParams (this));
+}
+
+
+void
+ControllerItem::learn_from_event (EventBackendImpl::Transport::MidiEvent const& event)
+{
+	typedef EventBackendImpl::Transport::MidiEvent MidiEvent;
+
+	switch (event.type)
+	{
+		case MidiEvent::NoteOn:
+		case MidiEvent::NoteOff:
+			note_filter = true;
+			note_channel = (event.type == MidiEvent::NoteOn ? event.note_on.channel : event.note_off.channel) + 1;
+			controller_filter = false;
+			pitchbend_filter = false;
+			channel_pressure_filter = false;
+			stop_learning();
+			break;
+
+		case MidiEvent::Controller:
+			note_filter = false;
+			controller_filter = true;
+			controller_channel = event.controller.channel + 1;
+			controller_number = event.controller.number;
+			controller_invert = false;
+			pitchbend_filter = false;
+			channel_pressure_filter = false;
+			stop_learning();
+			break;
+
+		case MidiEvent::Pitchbend:
+			note_filter = false;
+			controller_filter = false;
+			pitchbend_filter = true;
+			pitchbend_channel = event.pitchbend.channel + 1;
+			channel_pressure_filter = false;
+			stop_learning();
+			break;
+
+		case MidiEvent::ChannelPressure:
+			note_filter = false;
+			controller_filter = false;
+			pitchbend_filter = false;
+			channel_pressure_filter = true;
+			channel_pressure_channel = event.channel_pressure.channel + 1;
+			stop_learning();
+			break;
+
+		default:
+			break;
+	}
+}
+
+
+void
 ControllerItem::save_state (QDomElement& element) const
 {
 	element.setAttribute ("name", name());
 
-	QDomElement note_filter = element.ownerDocument().createElement ("note-filter");
-	note_filter.setAttribute ("enabled", _note_filter ? "true" : "false");
-	note_filter.setAttribute ("channel", _note_channel == 0 ? "all" : QString ("%1").arg (_note_channel));
+	QDomElement note_filter_el = element.ownerDocument().createElement ("note-filter");
+	note_filter_el.setAttribute ("enabled", note_filter ? "true" : "false");
+	note_filter_el.setAttribute ("channel", note_channel == 0 ? "all" : QString ("%1").arg (note_channel));
 
-	QDomElement controller_filter = element.ownerDocument().createElement ("controller-filter");
-	controller_filter.setAttribute ("enabled", _controller_filter ? "true" : "false");
-	controller_filter.setAttribute ("channel", _controller_filter == 0 ? "all" : QString ("%1").arg (_controller_channel));
-	controller_filter.setAttribute ("controller-number", QString ("%1").arg (_controller_number));
-	controller_filter.setAttribute ("controller-invert", _controller_invert ? "true" : "false");
+	QDomElement controller_filter_el = element.ownerDocument().createElement ("controller-filter");
+	controller_filter_el.setAttribute ("enabled", controller_filter ? "true" : "false");
+	controller_filter_el.setAttribute ("channel", controller_filter == 0 ? "all" : QString ("%1").arg (controller_channel));
+	controller_filter_el.setAttribute ("controller-number", QString ("%1").arg (controller_number));
+	controller_filter_el.setAttribute ("controller-invert", controller_invert ? "true" : "false");
 
-	QDomElement pitchbend_filter = element.ownerDocument().createElement ("pitchbend-filter");
-	pitchbend_filter.setAttribute ("enabled", _pitchbend_filter ? "true" : "false");
-	pitchbend_filter.setAttribute ("channel", _pitchbend_channel == 0 ? "all" : QString ("%1").arg (_pitchbend_channel));
+	QDomElement pitchbend_filter_el = element.ownerDocument().createElement ("pitchbend-filter");
+	pitchbend_filter_el.setAttribute ("enabled", pitchbend_filter ? "true" : "false");
+	pitchbend_filter_el.setAttribute ("channel", pitchbend_channel == 0 ? "all" : QString ("%1").arg (pitchbend_channel));
 
-	QDomElement channel_pressure_filter = element.ownerDocument().createElement ("channel-pressure");
-	channel_pressure_filter.setAttribute ("enabled", _channel_pressure_filter ? "true" : "false");
-	channel_pressure_filter.setAttribute ("channel", _channel_pressure_channel == 0 ? "all" : QString ("%1").arg (_channel_pressure_channel));
-	channel_pressure_filter.setAttribute ("invert", _channel_pressure_invert ? "true" : "false");
+	QDomElement channel_pressure_filter_el = element.ownerDocument().createElement ("channel-pressure");
+	channel_pressure_filter_el.setAttribute ("enabled", channel_pressure_filter ? "true" : "false");
+	channel_pressure_filter_el.setAttribute ("channel", channel_pressure_channel == 0 ? "all" : QString ("%1").arg (channel_pressure_channel));
+	channel_pressure_filter_el.setAttribute ("invert", channel_pressure_invert ? "true" : "false");
 
-	element.appendChild (note_filter);
-	element.appendChild (controller_filter);
-	element.appendChild (pitchbend_filter);
-	element.appendChild (channel_pressure_filter);
+	element.appendChild (note_filter_el);
+	element.appendChild (controller_filter_el);
+	element.appendChild (pitchbend_filter_el);
+	element.appendChild (channel_pressure_filter_el);
 }
 
 
@@ -98,31 +172,31 @@ ControllerItem::load_state (QDomElement const& element)
 	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
 	{
 		QDomElement e = n.toElement();
-		if (!e.isNull())
+		if (e.isNull())
+			continue;
+
+		if (e.tagName() == "note-filter")
 		{
-			if (e.tagName() == "note-filter")
-			{
-				_note_filter = e.attribute ("enabled") == "true";
-				_note_channel = e.attribute ("channel") == "all" ? 0 : e.attribute ("channel").toInt();
-			}
-			else if (e.tagName() == "controller-filter")
-			{
-				_controller_filter = e.attribute ("enabled") == "true";
-				_controller_channel = e.attribute ("channel") == "all" ? 0 : e.attribute ("channel").toInt();
-				_controller_number = e.attribute ("controller-number").toInt();
-				_controller_invert = e.attribute ("controller-invert") == "true";
-			}
-			else if (e.tagName() == "pitchbend-filter")
-			{
-				_pitchbend_filter = e.attribute ("enabled") == "true";
-				_pitchbend_channel = e.attribute ("channel") == "all" ? 0 : e.attribute ("channel").toInt();
-			}
-			else if (e.tagName() == "channel-pressure")
-			{
-				_channel_pressure_filter = e.attribute ("enabled") == "true";
-				_channel_pressure_channel = e.attribute ("channel") == "all" ? 0 : e.attribute ("channel").toInt();
-				_channel_pressure_invert = e.attribute ("invert") == "true";
-			}
+			note_filter = e.attribute ("enabled") == "true";
+			note_channel = e.attribute ("channel") == "all" ? 0 : e.attribute ("channel").toInt();
+		}
+		else if (e.tagName() == "controller-filter")
+		{
+			controller_filter = e.attribute ("enabled") == "true";
+			controller_channel = e.attribute ("channel") == "all" ? 0 : e.attribute ("channel").toInt();
+			controller_number = e.attribute ("controller-number").toInt();
+			controller_invert = e.attribute ("controller-invert") == "true";
+		}
+		else if (e.tagName() == "pitchbend-filter")
+		{
+			pitchbend_filter = e.attribute ("enabled") == "true";
+			pitchbend_channel = e.attribute ("channel") == "all" ? 0 : e.attribute ("channel").toInt();
+		}
+		else if (e.tagName() == "channel-pressure")
+		{
+			channel_pressure_filter = e.attribute ("enabled") == "true";
+			channel_pressure_channel = e.attribute ("channel") == "all" ? 0 : e.attribute ("channel").toInt();
+			channel_pressure_invert = e.attribute ("invert") == "true";
 		}
 	}
 }

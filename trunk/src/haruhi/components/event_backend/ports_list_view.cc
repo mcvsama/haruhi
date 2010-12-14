@@ -55,21 +55,6 @@ PortsListView::create_device_item (QString const& name)
 	return new DeviceWithPortItem (_backend, this, name);
 }
 
-
-void
-PortsListView::customEvent (QEvent* event)
-{
-	LearnedParams* lp = dynamic_cast<LearnedParams*> (event);
-	if (lp)
-	{
-		// Force update of editor dialog:
-		lp->item->setSelected (false);
-		lp->item->setSelected (true);
-		// Reset icon:
-		lp->item->setIcon (0, Resources::Icons16::event_output_port());
-	}
-}
-
 } // namespace EventBackendImpl
 
 } // namespace Haruhi

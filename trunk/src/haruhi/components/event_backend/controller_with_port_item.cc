@@ -32,8 +32,7 @@ namespace EventBackendImpl {
 ControllerWithPortItem::ControllerWithPortItem (DeviceWithPortItem* parent, QString const& name):
 	ControllerItem (parent, name),
 	PortItem (parent->backend()),
-	_device_item (parent),
-	_learning (false)
+	_device_item (parent)
 {
 	// Allocate new port:
 	backend()->graph()->lock();
@@ -51,25 +50,6 @@ ControllerWithPortItem::~ControllerWithPortItem()
 	_device_item->controllers()->erase (this);
 	delete _port;
 	backend()->graph()->unlock();
-}
-
-
-void
-ControllerWithPortItem::learn()
-{
-	_learning = !_learning;
-	if (_learning)
-		setIcon (0, Resources::Icons16::colorpicker());
-	else
-		setIcon (0, Resources::Icons16::event_output_port());
-}
-
-
-void
-ControllerWithPortItem::stop_learning()
-{
-	_learning = false;
-	QApplication::postEvent (treeWidget(), new PortsListView::LearnedParams (this));
 }
 
 
@@ -99,22 +79,16 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 {
 	typedef Transport::MidiEvent MidiEvent;
 
+	if (learning())
+		learn_from_event (event);
+
 	bool handled = false;
 	Timestamp t = event.timestamp;
 	EventBuffer* buffer = _port->event_buffer();
 	switch (event.type)
 	{
 		case MidiEvent::NoteOn:
-			if (_learning)
-			{
-				_note_filter = true;
-				_note_channel = event.note_on.channel + 1;
-				_controller_filter = false;
-				_pitchbend_filter = false;
-				_channel_pressure_filter = false;
-				stop_learning();
-			}
-			if (_note_filter && (_note_channel == 0 || _note_channel == event.note_on.channel + 1))
+			if (note_filter && (note_channel == 0 || note_channel == event.note_on.channel + 1))
 			{
 				buffer->push (new VoiceEvent (t, event.note_on.note, VoiceAuto,
 											  (event.note_on.velocity == 0)? VoiceEvent::Release : VoiceEvent::Create,
@@ -126,7 +100,7 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 			break;
 
 		case MidiEvent::NoteOff:
-			if (_note_filter && (_note_channel == 0 || _note_channel == event.note_off.channel + 1))
+			if (note_filter && (note_channel == 0 || note_channel == event.note_off.channel + 1))
 			{
 				buffer->push (new VoiceControllerEvent (t, event.note_off.note, event.note_off.velocity / 127.0));
 				buffer->push (new VoiceEvent (t, event.note_off.note, VoiceAuto, VoiceEvent::Release,
@@ -137,23 +111,11 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 			break;
 
 		case MidiEvent::Controller:
-			if (_learning)
-			{
-				_note_filter = false;
-				_controller_filter = true;
-				_controller_channel = event.controller.channel + 1;
-				_controller_number = event.controller.number;
-				_controller_invert = false;
-				_pitchbend_filter = false;
-				_channel_pressure_filter = false;
-				stop_learning();
-			}
-			// Block:
 			{
 				int value = event.controller.value;
-				if (_controller_invert)
+				if (controller_invert)
 					value = 127 - value;
-				if (_controller_filter && (_controller_channel == 0 || _controller_channel == event.controller.channel + 1) && _controller_number == static_cast<int> (event.controller.number))
+				if (controller_filter && (controller_channel == 0 || controller_channel == event.controller.channel + 1) && controller_number == static_cast<int> (event.controller.number))
 				{
 					buffer->push (new ControllerEvent (t, value / 127.0));
 					handled = true;
@@ -162,16 +124,7 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 			break;
 
 		case MidiEvent::Pitchbend:
-			if (_learning)
-			{
-				_note_filter = false;
-				_controller_filter = false;
-				_pitchbend_filter = true;
-				_pitchbend_channel = event.pitchbend.channel + 1;
-				_channel_pressure_filter = false;
-				stop_learning();
-			}
-			if (_pitchbend_filter && (_pitchbend_channel == 0 || _pitchbend_channel == event.pitchbend.channel + 1))
+			if (pitchbend_filter && (pitchbend_channel == 0 || pitchbend_channel == event.pitchbend.channel + 1))
 			{
 				buffer->push (new ControllerEvent (t, event.pitchbend.value == 0 ? 0.5 : (event.pitchbend.value + 8192) / 16382.0));
 				handled = true;
@@ -179,21 +132,11 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 			break;
 
 		case MidiEvent::ChannelPressure:
-			if (_learning)
-			{
-				_note_filter = false;
-				_controller_filter = false;
-				_pitchbend_filter = false;
-				_channel_pressure_filter = true;
-				_channel_pressure_channel = event.channel_pressure.channel + 1;
-				stop_learning();
-			}
-			// Block:
 			{
 				int value = event.channel_pressure.value;
-				if (_channel_pressure_invert)
+				if (channel_pressure_invert)
 					value = 127 - value;
-				if (_channel_pressure_filter && (_channel_pressure_channel == 0 || _channel_pressure_channel == event.channel_pressure.channel + 1))
+				if (channel_pressure_filter && (channel_pressure_channel == 0 || channel_pressure_channel == event.channel_pressure.channel + 1))
 				{
 					buffer->push (new ControllerEvent (t, value / 127.0));
 					handled = true;
@@ -204,9 +147,9 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 		case MidiEvent::KeyPressure:
 			{
 				int value = event.key_pressure.value;
-				if (_key_pressure_invert)
+				if (key_pressure_invert)
 					value = 127 - value;
-				if (_key_pressure_filter && (_key_pressure_channel == 0 || _key_pressure_channel == event.key_pressure.channel + 1))
+				if (key_pressure_filter && (key_pressure_channel == 0 || key_pressure_channel == event.key_pressure.channel + 1))
 				{
 					buffer->push (new VoiceControllerEvent (t, event.key_pressure.note, value / 127.0));
 					handled = true;

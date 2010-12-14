@@ -304,7 +304,8 @@ Session::Session (QWidget* parent):
 	_audio_backend (0),
 	_event_backend (0),
 	_engine (0),
-	_plugin_loader (new PluginLoader())
+	_plugin_loader (new PluginLoader()),
+	_devices_manager (0)
 {
 	_name = "";
 
@@ -783,7 +784,10 @@ Session::start_event_backend()
 		event_backend->show();
 		_graph->register_event_backend (_event_backend);
 		// Reload DevicesManager list when EventBackend creates new template:
+		if (!_devices_manager)
+			throw Exception ("DevicesManager must be created before EventBackend");
 		QObject::connect (event_backend, SIGNAL (device_saved_as_template (DeviceItem*)), _devices_manager, SLOT (add_device (DeviceItem*)));
+		event_backend->on_event.connect (_devices_manager, &DevicesManager::Panel::on_event);
 	}
 	catch (Exception const& e)
 	{

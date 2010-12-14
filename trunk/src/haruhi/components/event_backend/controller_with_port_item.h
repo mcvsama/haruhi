@@ -49,26 +49,6 @@ class ControllerWithPortItem:
 	virtual ~ControllerWithPortItem();
 
 	/**
-	 * Puts controller into learning mode.
-	 * Uses EventBackend learning methods to setup controller
-	 * according to first incoming MIDI event.
-	 */
-	void
-	learn();
-
-	/**
-	 * Resets controller to normal (not learning) mode.
-	 */
-	void
-	stop_learning();
-
-	/**
-	 * Returns true if item is in 'learning' mode.
-	 */
-	bool
-	learning() { return _learning; }
-
-	/**
 	 * Sets Core port's name to what
 	 * was set by user in the UI.
 	 */
@@ -95,8 +75,6 @@ class ControllerWithPortItem:
 	EventPort*			_port;
 	// Link to DeviceItem:
 	DeviceWithPortItem*	_device_item;
-	// Learning from MIDI mode.
-	bool				_learning;
 };
 
 } // namespace EventBackendImpl

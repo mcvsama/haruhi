@@ -158,6 +158,7 @@ Backend::process()
 				{
 					if ((*iii)->handle_event (*m))
 						handle_event_for_learnables (*m, (*iii)->port());
+					on_event (*m);
 				}
 			}
 		}

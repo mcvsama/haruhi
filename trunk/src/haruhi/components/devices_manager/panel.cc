@@ -98,31 +98,9 @@ Panel::Panel (QWidget* parent):
 }
 
 
-void
-Panel::update_widgets()
+Panel::~Panel()
 {
-	QTreeWidgetItem* sel = _tree->selected_item();
-	_create_controller_button->setEnabled (sel != 0);
-	_destroy_input_button->setEnabled (sel != 0);
-
-	// "Destroy device" or "Destroy controller":
-	if (sel)
-	{
-		if (dynamic_cast<DeviceItem*> (sel))
-			_destroy_input_button->setText ("Destroy device");
-		else if (dynamic_cast<ControllerItem*> (sel))
-			_destroy_input_button->setText ("Destroy controller");
-		else
-			_destroy_input_button->setText ("Destroy");
-	}
-}
-
-
-void
-Panel::selection_changed()
-{
-	update_widgets();
-	configure_selected_item();
+	Signal::Receiver::disconnect_all_signals();
 }
 
 
@@ -164,6 +142,34 @@ Panel::create_controller()
 			save_settings();
 		}
 	}
+}
+
+
+void
+Panel::update_widgets()
+{
+	QTreeWidgetItem* sel = _tree->selected_item();
+	_create_controller_button->setEnabled (sel != 0);
+	_destroy_input_button->setEnabled (sel != 0);
+
+	// "Destroy device" or "Destroy controller":
+	if (sel)
+	{
+		if (dynamic_cast<DeviceItem*> (sel))
+			_destroy_input_button->setText ("Destroy device");
+		else if (dynamic_cast<ControllerItem*> (sel))
+			_destroy_input_button->setText ("Destroy controller");
+		else
+			_destroy_input_button->setText ("Destroy");
+	}
+}
+
+
+void
+Panel::selection_changed()
+{
+	update_widgets();
+	configure_selected_item();
 }
 
 
@@ -213,7 +219,10 @@ Panel::learn_from_midi()
 	{
 		ControllerItem* item = dynamic_cast<ControllerItem*> (_tree->selected_item());
 		if (item)
+		{
 			item->learn();
+			_learning_items.insert (item);
+		}
 	}
 }
 
@@ -279,6 +288,16 @@ void
 Panel::save_settings()
 {
 	_tree->save_devices_to_settings();
+}
+
+
+void
+Panel::on_event (EventBackendImpl::Transport::MidiEvent const& event)
+{
+	if (!_learning_items.empty())
+		for (LearningItems::iterator li = _learning_items.begin(); li != _learning_items.end(); ++li)
+			(*li)->learn_from_event (event);
+	_learning_items.clear();
 }
 
 } // namespace DevicesManager

@@ -129,6 +129,21 @@ PortsListView::save_devices_to_settings()
 	settings->save();
 }
 
+
+void
+PortsListView::customEvent (QEvent* event)
+{
+	LearnedParams* lp = dynamic_cast<LearnedParams*> (event);
+	if (lp)
+	{
+		// Force update of editor dialog:
+		lp->item->setSelected (false);
+		lp->item->setSelected (true);
+		// Reset icon:
+		lp->item->setIcon (0, Resources::Icons16::event_output_port());
+	}
+}
+
 } // namespace DevicesManager
 
 } // namespace Haruhi

@@ -21,6 +21,7 @@
 #include <alsa/asoundlib.h>
 
 // Haruhi:
+#include <haruhi/components/event_backend/transport.h>
 #include <haruhi/utility/saveable_state.h>
 
 // Local:
@@ -47,31 +48,62 @@ class ControllerItem:
 	QString
 	name() const { return QTreeWidgetItem::text (0); }
 
+	/**
+	 * Puts controller into learning mode.
+	 * Also changes item icon.
+	 */
+	void
+	learn();
+
+	/**
+	 * Resets controller to normal (not learning) mode.
+	 */
+	void
+	stop_learning();
+
+	/**
+	 * Returns true if item is in 'learning' mode.
+	 */
+	bool
+	learning() { return _learning; }
+
+	/**
+	 * Sets filters from MIDI event
+	 * and stops learning.
+	 */
+	void
+	learn_from_event (EventBackendImpl::Transport::MidiEvent const&);
+
+	/*
+	 * SaveableState API
+	 */
+
 	void
 	save_state (QDomElement&) const;
 
 	void
 	load_state (QDomElement const&);
 
-	// TODO learn from MIDI
-	void
-	learn() { }
-
   public:
-	bool	_note_filter;
-	int		_note_channel;					// 0 means 'all'
-	bool	_controller_filter;
-	int		_controller_channel;			// 0 means 'all'
-	int		_controller_number;
-	bool	_controller_invert;
-	bool	_pitchbend_filter;
-	int		_pitchbend_channel;				// 0 means 'all'
-	bool	_channel_pressure_filter;
-	int		_channel_pressure_channel;		// 0 means 'all'
-	bool	_channel_pressure_invert;
-	bool	_key_pressure_filter;
-	int		_key_pressure_channel;			// 0 means 'all'
-	bool	_key_pressure_invert;
+	// MIDI filters:
+	bool	note_filter;
+	int		note_channel;				// 0 means 'all'
+	bool	controller_filter;
+	int		controller_channel;			// 0 means 'all'
+	int		controller_number;
+	bool	controller_invert;
+	bool	pitchbend_filter;
+	int		pitchbend_channel;			// 0 means 'all'
+	bool	channel_pressure_filter;
+	int		channel_pressure_channel;	// 0 means 'all'
+	bool	channel_pressure_invert;
+	bool	key_pressure_filter;
+	int		key_pressure_channel;		// 0 means 'all'
+	bool	key_pressure_invert;
+
+  protected:
+	// Learning from MIDI mode:
+	bool	_learning;
 };
 
 } // namespace DevicesManager

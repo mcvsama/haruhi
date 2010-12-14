@@ -36,25 +36,6 @@ class Backend;
 class PortsListView: public DevicesManager::PortsListView
 {
   public:
-	/**
-	 * Due to bugs in Qt's MOC (Meta Object Compiler) we cannot create
-	 * PortItem that is also QObject and Q_OBJECT in non-default namespace,
-	 * therefore we can't send events to PortItems directly. We must
-	 * do it in PortsListView.
-	 */
-	class LearnedParams: public QEvent
-	{
-	  public:
-		LearnedParams (QTreeWidgetItem* item):
-			QEvent (QEvent::User),
-			item (item)
-		{ }
-
-	  public:
-		QTreeWidgetItem* item;
-	};
-
-  public:
 	PortsListView (QWidget* parent, Backend*);
 
 	Backend*
@@ -66,10 +47,6 @@ class PortsListView: public DevicesManager::PortsListView
 	 */
 	DeviceItem*
 	create_device_item (QString const& name);
-
-  protected:
-	void
-	customEvent (QEvent*);
 
   private:
 	Backend* _backend;

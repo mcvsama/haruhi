@@ -43,6 +43,7 @@
 #include <haruhi/settings/devices_manager_settings.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/exception.h>
+#include <haruhi/utility/signal.h>
 
 // Local:
 #include "ports_list_view.h"
@@ -231,6 +232,10 @@ class Backend:
 	 */
 	void
 	insert_template (int template_id);
+
+  public:
+	// Emited on each event from transport:
+	Signal::Emiter1<Transport::MidiEvent const&> on_event;
 
   private:
 	QString						_client_name;

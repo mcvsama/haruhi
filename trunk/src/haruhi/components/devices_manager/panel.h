@@ -16,11 +16,16 @@
 
 // Standard:
 #include <cstddef>
+#include <set>
 
 // Qt:
 #include <QtGui/QWidget>
 #include <QtGui/QStackedWidget>
 #include <QtGui/QPushButton>
+
+// Haruhi:
+#include <haruhi/components/event_backend/backend.h>
+#include <haruhi/utility/signal.h>
 
 // Local:
 #include "ports_list_view.h"
@@ -35,20 +40,27 @@ class DeviceItem;
 class ControllerDialog;
 class ControllerItem;
 
-class Panel: public QWidget
+class Panel:
+	public QWidget,
+	public Signal::Receiver
 {
 	Q_OBJECT
+
+	typedef std::set<ControllerItem*> LearningItems;
 
   public:
 	Panel (QWidget* parent);
 
+	~Panel();
+
+	/**
+	 * Callback for EventBackend's on_event.
+	 * Passed to controller items for learning.
+	 */
+	void
+	on_event (EventBackendImpl::Transport::MidiEvent const& event);
+
   public slots:
-	void
-	update_widgets();
-
-	void
-	selection_changed();
-
 	/**
 	 * Creates new unnamed/unconfigured device
 	 * and inserts it into the tree.
@@ -69,6 +81,13 @@ class Panel: public QWidget
 	 */
 	void
 	create_controller();
+
+  private slots:
+	void
+	update_widgets();
+
+	void
+	selection_changed();
 
 	void
 	configure_item (DeviceItem* item);
@@ -101,7 +120,6 @@ class Panel: public QWidget
 	save_settings();
 
   private:
-	// Widgets:
 	QStackedWidget*		_stack;
 	QPushButton*		_create_device_button;
 	QPushButton*		_create_controller_button;
@@ -109,6 +127,7 @@ class Panel: public QWidget
 	PortsListView*		_tree;
 	DeviceDialog*		_device_dialog;
 	ControllerDialog*	_controller_dialog;
+	LearningItems		_learning_items;
 };
 
 } // namespace DevicesManager
