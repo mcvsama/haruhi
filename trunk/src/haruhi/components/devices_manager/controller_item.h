@@ -22,6 +22,7 @@
 
 // Haruhi:
 #include <haruhi/components/event_backend/transport.h>
+#include <haruhi/lib/midi.h>
 #include <haruhi/utility/saveable_state.h>
 
 // Local:
@@ -72,7 +73,7 @@ class ControllerItem:
 	 * and stops learning.
 	 */
 	void
-	learn_from_event (EventBackendImpl::Transport::MidiEvent const&);
+	learn_from_event (MIDI::Event const&);
 
 	/*
 	 * SaveableState API

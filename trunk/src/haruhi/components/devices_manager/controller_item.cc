@@ -20,6 +20,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/lib/midi.h>
 
 // Local:
 #include "controller_item.h"
@@ -82,23 +83,21 @@ ControllerItem::stop_learning()
 
 
 void
-ControllerItem::learn_from_event (EventBackendImpl::Transport::MidiEvent const& event)
+ControllerItem::learn_from_event (MIDI::Event const& event)
 {
-	typedef EventBackendImpl::Transport::MidiEvent MidiEvent;
-
 	switch (event.type)
 	{
-		case MidiEvent::NoteOn:
-		case MidiEvent::NoteOff:
+		case MIDI::Event::NoteOn:
+		case MIDI::Event::NoteOff:
 			note_filter = true;
-			note_channel = (event.type == MidiEvent::NoteOn ? event.note_on.channel : event.note_off.channel) + 1;
+			note_channel = (event.type == MIDI::Event::NoteOn ? event.note_on.channel : event.note_off.channel) + 1;
 			controller_filter = false;
 			pitchbend_filter = false;
 			channel_pressure_filter = false;
 			stop_learning();
 			break;
 
-		case MidiEvent::Controller:
+		case MIDI::Event::Controller:
 			note_filter = false;
 			controller_filter = true;
 			controller_channel = event.controller.channel + 1;
@@ -109,7 +108,7 @@ ControllerItem::learn_from_event (EventBackendImpl::Transport::MidiEvent const& 
 			stop_learning();
 			break;
 
-		case MidiEvent::Pitchbend:
+		case MIDI::Event::Pitchbend:
 			note_filter = false;
 			controller_filter = false;
 			pitchbend_filter = true;
@@ -118,7 +117,7 @@ ControllerItem::learn_from_event (EventBackendImpl::Transport::MidiEvent const& 
 			stop_learning();
 			break;
 
-		case MidiEvent::ChannelPressure:
+		case MIDI::Event::ChannelPressure:
 			note_filter = false;
 			controller_filter = false;
 			pitchbend_filter = false;

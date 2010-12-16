@@ -19,6 +19,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/lib/midi.h>
 
 // Local:
 #include "controller_with_port_item.h"
@@ -75,10 +76,8 @@ ControllerWithPortItem::port() const
 
 
 bool
-ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
+ControllerWithPortItem::handle_event (MIDI::Event const& event)
 {
-	typedef Transport::MidiEvent MidiEvent;
-
 	if (learning())
 		learn_from_event (event);
 
@@ -87,7 +86,7 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 	EventBuffer* buffer = _port->event_buffer();
 	switch (event.type)
 	{
-		case MidiEvent::NoteOn:
+		case MIDI::Event::NoteOn:
 			if (note_filter && (note_channel == 0 || note_channel == event.note_on.channel + 1))
 			{
 				buffer->push (new VoiceEvent (t, event.note_on.note, VoiceAuto,
@@ -99,7 +98,7 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 			}
 			break;
 
-		case MidiEvent::NoteOff:
+		case MIDI::Event::NoteOff:
 			if (note_filter && (note_channel == 0 || note_channel == event.note_off.channel + 1))
 			{
 				buffer->push (new VoiceControllerEvent (t, event.note_off.note, event.note_off.velocity / 127.0));
@@ -110,7 +109,7 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 			}
 			break;
 
-		case MidiEvent::Controller:
+		case MIDI::Event::Controller:
 			{
 				int value = event.controller.value;
 				if (controller_invert)
@@ -123,7 +122,7 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 			}
 			break;
 
-		case MidiEvent::Pitchbend:
+		case MIDI::Event::Pitchbend:
 			if (pitchbend_filter && (pitchbend_channel == 0 || pitchbend_channel == event.pitchbend.channel + 1))
 			{
 				buffer->push (new ControllerEvent (t, event.pitchbend.value == 0 ? 0.5 : (event.pitchbend.value + 8192) / 16382.0));
@@ -131,7 +130,7 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 			}
 			break;
 
-		case MidiEvent::ChannelPressure:
+		case MIDI::Event::ChannelPressure:
 			{
 				int value = event.channel_pressure.value;
 				if (channel_pressure_invert)
@@ -144,7 +143,7 @@ ControllerWithPortItem::handle_event (Transport::MidiEvent const& event)
 			}
 			break;
 
-		case MidiEvent::KeyPressure:
+		case MIDI::Event::KeyPressure:
 			{
 				int value = event.key_pressure.value;
 				if (key_pressure_invert)

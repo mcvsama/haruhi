@@ -196,7 +196,7 @@ AlsaTransport::sync()
 		else
 		{
 			MidiBuffer& buf = h->second->buffer();
-			MidiEvent midi;
+			MIDI::Event midi;
 			if (map_alsa_to_internal (midi, e))
 			{
 				midi.timestamp = t;
@@ -209,45 +209,45 @@ AlsaTransport::sync()
 
 
 bool
-AlsaTransport::map_alsa_to_internal (MidiEvent& midi, ::snd_seq_event_t* event)
+AlsaTransport::map_alsa_to_internal (MIDI::Event& midi, ::snd_seq_event_t* event)
 {
 	switch (event->type)
 	{
 		case SND_SEQ_EVENT_NOTEON:
-			midi.type = MidiEvent::NoteOn;
+			midi.type = MIDI::Event::NoteOn;
 			midi.note_on.channel = event->data.note.channel;
 			midi.note_on.note = event->data.note.note;
 			midi.note_on.velocity = event->data.note.velocity;
 			break;
 
 		case SND_SEQ_EVENT_NOTEOFF:
-			midi.type = MidiEvent::NoteOff;
+			midi.type = MIDI::Event::NoteOff;
 			midi.note_off.channel = event->data.note.channel;
 			midi.note_off.note = event->data.note.note;
 			midi.note_off.velocity = event->data.note.off_velocity;
 			break;
 
 		case SND_SEQ_EVENT_CONTROLLER:
-			midi.type = MidiEvent::Controller;
+			midi.type = MIDI::Event::Controller;
 			midi.controller.channel = event->data.control.channel;
 			midi.controller.number = event->data.control.param;
 			midi.controller.value = event->data.control.value;
 			break;
 
 		case SND_SEQ_EVENT_PITCHBEND:
-			midi.type = MidiEvent::Pitchbend;
+			midi.type = MIDI::Event::Pitchbend;
 			midi.pitchbend.channel = event->data.control.channel;
 			midi.pitchbend.value = event->data.control.value;
 			break;
 
 		case SND_SEQ_EVENT_CHANPRESS:
-			midi.type = MidiEvent::ChannelPressure;
+			midi.type = MIDI::Event::ChannelPressure;
 			midi.channel_pressure.channel = event->data.control.channel;
 			midi.channel_pressure.value = event->data.control.value;
 			break;
 
 		case SND_SEQ_EVENT_KEYPRESS:
-			midi.type = MidiEvent::KeyPressure;
+			midi.type = MIDI::Event::KeyPressure;
 			midi.key_pressure.channel = event->data.note.channel;
 			midi.key_pressure.note = event->data.note.note;
 			midi.key_pressure.value = event->data.note.velocity;

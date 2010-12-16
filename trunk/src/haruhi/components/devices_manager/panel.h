@@ -25,6 +25,7 @@
 
 // Haruhi:
 #include <haruhi/components/event_backend/backend.h>
+#include <haruhi/lib/midi.h>
 #include <haruhi/utility/signal.h>
 
 // Local:
@@ -58,7 +59,7 @@ class Panel:
 	 * Passed to controller items for learning.
 	 */
 	void
-	on_event (EventBackendImpl::Transport::MidiEvent const& event);
+	on_event (MIDI::Event const& event);
 
   public slots:
 	/**

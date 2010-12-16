@@ -24,6 +24,7 @@
 #include <haruhi/components/devices_manager/controller_item.h>
 #include <haruhi/components/devices_manager/controller_dialog.h>
 #include <haruhi/graph/event_port.h>
+#include <haruhi/lib/midi.h>
 #include <haruhi/utility/saveable_state.h>
 
 // Local:
@@ -66,7 +67,7 @@ class ControllerWithPortItem:
 	 * Returns true if event has been actually passed by port.
 	 */
 	bool
-	handle_event (Transport::MidiEvent const& event);
+	handle_event (MIDI::Event const& event);
 
 	void
 	load_state (QDomElement const& element);

@@ -15,17 +15,19 @@
 #include <cstddef>
 #include <string>
 
+// Haruhi:
+#include <haruhi/utility/lexical_cast.h>
+
 // Local:
-#include <utility/lexical_cast.h>
 #include "midi.h"
 
 
-namespace Core {
-namespace Event {
+namespace Haruhi {
+
 namespace MIDI {
 
 std::string
-name_for_key (NoteEvent::Note key)
+key_name (Note key)
 {
 	std::string r;
 
@@ -50,6 +52,5 @@ name_for_key (NoteEvent::Note key)
 }
 
 } // namespace MIDI
-} // namespace Event
-} // namespace Core
 
+} // namespace Haruhi

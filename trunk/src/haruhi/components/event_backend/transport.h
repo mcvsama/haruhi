@@ -20,6 +20,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/lib/midi.h>
 
 
 namespace Haruhi {
@@ -35,59 +36,7 @@ class Backend;
 class Transport
 {
   public:
-	struct MidiEvent
-	{
-		enum Type {
-			NoteOn,
-			NoteOff,
-			Controller,
-			Pitchbend,
-			ChannelPressure,
-			KeyPressure,
-		};
-
-		Timestamp timestamp;
-		Type type;
-
-		union
-		{
-			struct {
-				unsigned char channel;
-				unsigned char note;
-				unsigned char velocity;
-			} note_on;
-
-			struct {
-				unsigned char channel;
-				unsigned char note;
-				unsigned char velocity;
-			} note_off;
-
-			struct {
-				unsigned char channel;
-				unsigned char number;
-				unsigned char value;
-			} controller;
-
-			struct {
-				unsigned char channel;
-				int value;
-			} pitchbend;
-
-			struct {
-				unsigned char channel;
-				unsigned char value;
-			} channel_pressure;
-
-			struct {
-				unsigned char channel;
-				unsigned char note;
-				unsigned char value;
-			} key_pressure;
-		};
-	};
-
-	typedef std::list<MidiEvent> MidiBuffer;
+	typedef std::list<MIDI::Event> MidiBuffer;
 
 	class Port
 	{

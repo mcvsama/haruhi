@@ -25,6 +25,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/application/haruhi.h>
+#include <haruhi/lib/midi.h>
 
 // Local:
 #include "panel.h"
@@ -292,7 +293,7 @@ Panel::save_settings()
 
 
 void
-Panel::on_event (EventBackendImpl::Transport::MidiEvent const& event)
+Panel::on_event (MIDI::Event const& event)
 {
 	if (!_learning_items.empty())
 		for (LearningItems::iterator li = _learning_items.begin(); li != _learning_items.end(); ++li)

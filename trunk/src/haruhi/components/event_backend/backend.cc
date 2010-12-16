@@ -25,6 +25,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/components/devices_manager/device_dialog.h>
 #include <haruhi/components/devices_manager/controller_dialog.h>
+#include <haruhi/lib/midi.h>
 #include <haruhi/graph/event_buffer.h>
 
 // Local:
@@ -364,7 +365,7 @@ Backend::create_templates_menu (QMenu* menu)
 
 
 void
-Backend::handle_event_for_learnables (Transport::MidiEvent const& event, EventPort* port)
+Backend::handle_event_for_learnables (MIDI::Event const& event, EventPort* port)
 {
 	Learnables::iterator lnext;
 	for (Learnables::iterator l = learnables().begin(); l != learnables().end(); l = lnext)
@@ -373,11 +374,11 @@ Backend::handle_event_for_learnables (Transport::MidiEvent const& event, EventPo
 		++lnext;
 
 		bool learned = false;
-		learned |= (l->second & Keyboard) && (event.type == Transport::MidiEvent::NoteOn || event.type == Transport::MidiEvent::NoteOff);
-		learned |= (l->second & Controller) && event.type == Transport::MidiEvent::Controller;
-		learned |= (l->second & Pitchbend) && event.type == Transport::MidiEvent::Pitchbend;
-		learned |= (l->second & ChannelPressure) && event.type == Transport::MidiEvent::ChannelPressure;
-		learned |= (l->second & KeyPressure) && event.type == Transport::MidiEvent::KeyPressure;
+		learned |= (l->second & Keyboard) && (event.type == MIDI::Event::NoteOn || event.type == MIDI::Event::NoteOff);
+		learned |= (l->second & Controller) && event.type == MIDI::Event::Controller;
+		learned |= (l->second & Pitchbend) && event.type == MIDI::Event::Pitchbend;
+		learned |= (l->second & ChannelPressure) && event.type == MIDI::Event::ChannelPressure;
+		learned |= (l->second & KeyPressure) && event.type == MIDI::Event::KeyPressure;
 
 		if (learned)
 		{

@@ -39,6 +39,7 @@
 #include <haruhi/graph/event.h>
 #include <haruhi/graph/event_backend.h>
 #include <haruhi/graph/event_port.h>
+#include <haruhi/lib/midi.h>
 #include <haruhi/settings/settings.h>
 #include <haruhi/settings/devices_manager_settings.h>
 #include <haruhi/utility/saveable_state.h>
@@ -193,7 +194,7 @@ class Backend:
 	 * them about event.
 	 */
 	void
-	handle_event_for_learnables (Transport::MidiEvent const& event, EventPort* port);
+	handle_event_for_learnables (MIDI::Event const& event, EventPort* port);
 
 	/**
 	 * Updates widgets and calls configure_selected_item().
@@ -235,7 +236,7 @@ class Backend:
 
   public:
 	// Emited on each event from transport:
-	Signal::Emiter1<Transport::MidiEvent const&> on_event;
+	Signal::Emiter1<MIDI::Event const&> on_event;
 
   private:
 	QString						_client_name;

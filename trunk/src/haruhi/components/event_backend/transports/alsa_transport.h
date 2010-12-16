@@ -25,6 +25,7 @@
 
 // Haruhi:
 #include <haruhi/components/event_backend/transport.h>
+#include <haruhi/lib/midi.h>
 
 
 namespace Haruhi {
@@ -122,7 +123,7 @@ class AlsaTransport: public Transport
 	 * false otherwise.
 	 */
 	static bool
-	map_alsa_to_internal (MidiEvent& midi, ::snd_seq_event_t* event);
+	map_alsa_to_internal (MIDI::Event& midi, ::snd_seq_event_t* event);
 
   private:
 	// ALSA sequencer:
