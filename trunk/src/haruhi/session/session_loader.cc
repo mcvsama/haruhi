@@ -19,11 +19,13 @@
 #include <QtGui/QDialog>
 #include <QtGui/QLayout>
 #include <QtGui/QTabWidget>
+#include <QtGui/QListWidget>
 #include <QtGui/QLabel>
 #include <QtGui/QPushButton>
 #include <QtGui/QFileDialog>
 #include <QtGui/QTreeWidget>
 #include <QtGui/QHeaderView>
+#include <QtGui/QGroupBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -57,30 +59,60 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 
 	_new_tab = new QWidget (_tabs);
 	_tabs->addTab (_new_tab, "&New session");
-	QVBoxLayout* new_layout = new QVBoxLayout (_new_tab, 2 * Config::Margin, Config::Spacing);
-	QGridLayout* new_grid = new QGridLayout (new_layout, 0, 2, Config::Spacing);
-	new_grid->setColSpacing (0, 100);
-	new_grid->setColSpacing (1, 150);
-
-	new_grid->addWidget (new QLabel ("Session name:", _new_tab), 0, 0);
 
 	_new_session_name = new QLineEdit ("New session", _new_tab);
 	_new_session_name->selectAll();
 	_new_session_name->setFocus();
+
+	QGroupBox* audio_box = new QGroupBox ("Audio setup", _new_tab);
+
+	_new_session_audio_inputs = new QSpinBox (0, 16, 1, audio_box);
+	_new_session_audio_inputs->setValue (2);
+
+	_new_session_audio_outputs = new QSpinBox (0, 16, 1, audio_box);
+	_new_session_audio_outputs->setValue (2);
+
+	QGroupBox* event_box = new QGroupBox ("Devices setup", _new_tab);
+
+	QPushButton* devices_add = new QPushButton (Resources::Icons16::add(), "", audio_box);
+	devices_add->setFixedWidth (devices_add->height());
+
+	QPushButton* devices_del = new QPushButton (Resources::Icons16::remove(), "", audio_box);
+	devices_del->setFixedWidth (devices_del->height());
+
+	QListWidget* devices_list = new QListWidget (audio_box);
+
+	QGridLayout* new_grid = new QGridLayout();
+	new_grid->setSpacing (Config::Spacing);
+	new_grid->setColSpacing (0, 100);
+	new_grid->setColSpacing (1, 150);
+	new_grid->addWidget (new QLabel ("Session name:", _new_tab), 0, 0);
 	new_grid->addWidget (_new_session_name, 0, 1);
 
-	new_grid->addWidget (new QLabel ("Audio inputs:", _new_tab), 1, 0);
+	QGridLayout* audio_grid = new QGridLayout (audio_box);
+	audio_grid->setSpacing (Config::Spacing);
+	audio_grid->setMargin (3 * Config::Margin);
+	audio_grid->setColSpacing (0, 100);
+	audio_grid->setColSpacing (1, 150);
+	audio_grid->addWidget (new QLabel ("Audio inputs:", _new_tab), 0, 0);
+	audio_grid->addWidget (_new_session_audio_inputs, 0, 1);
+	audio_grid->addWidget (new QLabel ("Audio outputs:", _new_tab), 1, 0);
+	audio_grid->addWidget (_new_session_audio_outputs, 1, 1);
 
-	_new_session_audio_inputs = new QSpinBox (0, 16, 1, _new_tab);
-	_new_session_audio_inputs->setValue (2);
-	new_grid->addWidget (_new_session_audio_inputs, 1, 1);
+	QGridLayout* event_grid = new QGridLayout (event_box);
+	event_grid->setSpacing (Config::Spacing);
+	event_grid->setMargin (2 * Config::Margin);
+	event_grid->addWidget (devices_combobox, 0, 0);
+	event_grid->addWidget (devices_add, 0, 1);
+	event_grid->addWidget (devices_del, 0, 2);
+	event_grid->addWidget (devices_list, 1, 0, 1, 3);
 
-	new_grid->addWidget (new QLabel ("Audio outputs:", _new_tab), 2, 0);
-
-	_new_session_audio_outputs = new QSpinBox (0, 16, 1, _new_tab);
-	_new_session_audio_outputs->setValue (2);
-	new_grid->addWidget (_new_session_audio_outputs, 2, 1);
-
+	QVBoxLayout* new_layout = new QVBoxLayout (_new_tab);
+	new_layout->setSpacing (Config::Spacing);
+	new_layout->setMargin (3 * Config::Margin);
+	new_layout->addLayout (new_grid);
+	new_layout->addWidget (audio_box);
+	new_layout->addWidget (event_box);
 	new_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
 	//
@@ -90,10 +122,6 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	_open_tab = new QWidget (_tabs);
 	_tabs->addTab (_open_tab, "&Open session");
 
-	QVBoxLayout* open_layout = new QVBoxLayout (_open_tab, 2 * Config::Margin, Config::Spacing);
-
-	open_layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
-	open_layout->addWidget (new QLabel ("Recent sessions:", _open_tab));
 	_recent_listview = new QTreeWidget (_open_tab);
 	_recent_listview->header()->hide();
 	_recent_listview->header()->setResizeMode (QHeaderView::Stretch);
@@ -106,9 +134,9 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	_recent_listview->setRootIsDecorated (false);
 	_recent_listview->setColumnCount (2);
 	QObject::connect (_recent_listview, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (open_recent (QTreeWidgetItem*, int)));
-	open_layout->addWidget (_recent_listview);
 
-	QHBoxLayout* open_file_layout = new QHBoxLayout (open_layout, Config::Spacing);
+	QHBoxLayout* open_file_layout = new QHBoxLayout();
+	open_file_layout->setSpacing (Config::Spacing);
 
 	open_file_layout->addWidget (new QLabel ("Load from file:", _open_tab));
 	open_file_layout->addItem (new QSpacerItem (Config::Spacing, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
@@ -117,6 +145,14 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	QObject::connect (browse_button, SIGNAL (clicked()), this, SLOT (browse_file()));
 	open_file_layout->addWidget (browse_button);
 	open_file_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
+
+	QVBoxLayout* open_layout = new QVBoxLayout (_open_tab);
+	open_layout->setSpacing (Config::Spacing);
+	open_layout->setMargin (2 * Config::Margin);
+	open_layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
+	open_layout->addWidget (new QLabel ("Recent sessions:", _open_tab));
+	open_layout->addWidget (_recent_listview);
+	open_layout->addLayout (open_file_layout);
 
 	// Populate recent_listview:
 	SessionLoaderSettings* settings = Haruhi::haruhi()->session_loader_settings();
