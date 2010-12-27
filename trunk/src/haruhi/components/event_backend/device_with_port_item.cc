@@ -27,7 +27,7 @@ namespace Haruhi {
 
 namespace EventBackendImpl {
 
-DeviceWithPortItem::DeviceWithPortItem (Backend* p_backend, PortsListView* parent, DevicesManager::Device* device):
+DeviceWithPortItem::DeviceWithPortItem (Backend* p_backend, Tree* parent, DevicesManager::Device* device):
 	DeviceItem (parent, device),
 	PortItem (p_backend)
 {

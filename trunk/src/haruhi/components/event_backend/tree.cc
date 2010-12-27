@@ -22,7 +22,7 @@
 #include <haruhi/config/all.h>
 
 // Local:
-#include "ports_list_view.h"
+#include "tree.h"
 #include "device_with_port_item.h"
 
 
@@ -30,7 +30,7 @@ namespace Haruhi {
 
 namespace EventBackendImpl {
 
-PortsListView::PortsListView (QWidget* parent, Backend* backend, DevicesManager::Model* model):
+Tree::Tree (QWidget* parent, Backend* backend, DevicesManager::Model* model):
 	DevicesManager::Tree (parent, model),
 	_backend (backend)
 {
@@ -50,7 +50,7 @@ PortsListView::PortsListView (QWidget* parent, Backend* backend, DevicesManager:
 
 
 DeviceItem*
-PortsListView::create_device_item (DevicesManager::Device* device)
+Tree::create_device_item (DevicesManager::Device* device)
 {
 	return new DeviceWithPortItem (_backend, this, device);
 }

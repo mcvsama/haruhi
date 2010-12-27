@@ -22,7 +22,7 @@
 
 // Local:
 #include "port_item.h"
-#include "ports_list_view.h"
+#include "tree.h"
 #include "backend.h"
 
 
@@ -30,7 +30,7 @@ namespace Haruhi {
 
 namespace AudioBackendImpl {
 
-PortItem::PortItem (PortsListView* parent, QString const& name):
+PortItem::PortItem (Tree* parent, QString const& name):
 	QTreeWidgetItem (parent, QStringList (name)),
 	_backend (parent->backend()),
 	_port (0),

@@ -37,7 +37,7 @@ namespace Haruhi {
 namespace AudioBackendImpl {
 
 class Backend;
-class PortsListView;
+class Tree;
 
 class PortItem:
 	public QTreeWidgetItem,
@@ -54,7 +54,7 @@ class PortItem:
 	};
 
   public:
-	PortItem (PortsListView* parent, QString const& name);
+	PortItem (Tree* parent, QString const& name);
 
 	~PortItem();
 

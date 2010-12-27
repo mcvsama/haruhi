@@ -55,7 +55,7 @@ SRC_HEADERS += haruhi/components/audio_backend/output_dialog.h
 SRC_HEADERS += haruhi/components/audio_backend/output_item.h
 SRC_HEADERS += haruhi/components/audio_backend/port_dialog.h
 SRC_HEADERS += haruhi/components/audio_backend/port_item.h
-SRC_HEADERS += haruhi/components/audio_backend/ports_list_view.h
+SRC_HEADERS += haruhi/components/audio_backend/tree.h
 SRC_HEADERS += haruhi/components/audio_backend/transport.h
 
 SRC_SOURCES += haruhi/components/audio_backend/backend.cc
@@ -65,7 +65,7 @@ SRC_SOURCES += haruhi/components/audio_backend/output_dialog.cc
 SRC_SOURCES += haruhi/components/audio_backend/output_item.cc
 SRC_SOURCES += haruhi/components/audio_backend/port_dialog.cc
 SRC_SOURCES += haruhi/components/audio_backend/port_item.cc
-SRC_SOURCES += haruhi/components/audio_backend/ports_list_view.cc
+SRC_SOURCES += haruhi/components/audio_backend/tree.cc
 
 SRC_MOCHDRS += haruhi/components/audio_backend/backend.h
 SRC_MOCHDRS += haruhi/components/audio_backend/input_dialog.h
@@ -84,7 +84,7 @@ SRC_HEADERS += haruhi/components/event_backend/controller_with_port_dialog.h
 SRC_HEADERS += haruhi/components/event_backend/controller_with_port_item.h
 SRC_HEADERS += haruhi/components/event_backend/device_with_port_dialog.h
 SRC_HEADERS += haruhi/components/event_backend/device_with_port_item.h
-SRC_HEADERS += haruhi/components/event_backend/ports_list_view.h
+SRC_HEADERS += haruhi/components/event_backend/tree.h
 SRC_HEADERS += haruhi/components/event_backend/port_item.h
 SRC_HEADERS += haruhi/components/event_backend/transport.h
 
@@ -93,7 +93,7 @@ SRC_SOURCES += haruhi/components/event_backend/controller_with_port_dialog.cc
 SRC_SOURCES += haruhi/components/event_backend/controller_with_port_item.cc
 SRC_SOURCES += haruhi/components/event_backend/device_with_port_dialog.cc
 SRC_SOURCES += haruhi/components/event_backend/device_with_port_item.cc
-SRC_SOURCES += haruhi/components/event_backend/ports_list_view.cc
+SRC_SOURCES += haruhi/components/event_backend/tree.cc
 SRC_SOURCES += haruhi/components/event_backend/port_item.cc
 
 SRC_MOCHDRS += haruhi/components/event_backend/backend.h

@@ -19,7 +19,7 @@
 
 // Local:
 #include "input_item.h"
-#include "ports_list_view.h"
+#include "tree.h"
 #include "backend.h"
 
 
@@ -27,7 +27,7 @@ namespace Haruhi {
 
 namespace AudioBackendImpl {
 
-InputItem::InputItem (PortsListView* parent, QString const& name):
+InputItem::InputItem (Tree* parent, QString const& name):
 	PortItem (parent, name)
 {
 	_backend->_ports_lock.lock();

@@ -68,7 +68,7 @@ Backend::Backend (QString const& client_name, int id, QWidget* parent):
 	top_layout->addWidget (_reconnect_button);
 	top_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
-		_inputs_list = new PortsListView (this, this, "Audio inputs");
+		_inputs_list = new Tree (this, this, "Audio inputs");
 
 	inputs_layout->addWidget (_inputs_list);
 
@@ -93,7 +93,7 @@ Backend::Backend (QString const& client_name, int id, QWidget* parent):
 	QObject::connect (_create_input_button, SIGNAL (clicked()), this, SLOT (create_input()));
 	QObject::connect (_destroy_input_button, SIGNAL (clicked()), this, SLOT (destroy_selected_input()));
 
-		_outputs_list = new PortsListView (this, this, "Audio outputs");
+		_outputs_list = new Tree (this, this, "Audio outputs");
 
 	outputs_layout->addWidget (_outputs_list);
 

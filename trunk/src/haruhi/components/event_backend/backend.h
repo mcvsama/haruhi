@@ -48,7 +48,7 @@
 #include <haruhi/utility/signal.h>
 
 // Local:
-#include "ports_list_view.h"
+#include "tree.h"
 #include "port_item.h"
 #include "device_with_port_item.h"
 #include "controller_with_port_item.h"
@@ -227,11 +227,11 @@ class Backend:
 	DevicesManager::Model		_model;
 
 	// Widgets:
+	QStackedWidget*				_stack;
+	Tree*						_tree;
 	QPushButton*				_create_device_button;
 	QPushButton*				_create_controller_button;
 	QPushButton*				_destroy_input_button;
-	QStackedWidget*				_stack;
-	PortsListView*				_tree;
 	DeviceWithPortDialog*		_device_dialog;
 	ControllerWithPortDialog*	_controller_dialog;
 

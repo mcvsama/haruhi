@@ -40,7 +40,7 @@
 #include <haruhi/utility/exception.h>
 
 // Local:
-#include "ports_list_view.h"
+#include "tree.h"
 #include "port_item.h"
 #include "input_item.h"
 #include "output_item.h"
@@ -263,8 +263,8 @@ class Backend:
 	QPushButton*		_destroy_output_button;
 
 	// Ports lists:
-	PortsListView*		_inputs_list;
-	PortsListView*		_outputs_list;
+	Tree*				_inputs_list;
+	Tree*				_outputs_list;
 
 	// Master volume control port:
 	EventPort*			_master_volume_port;

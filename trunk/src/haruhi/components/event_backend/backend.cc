@@ -34,7 +34,7 @@
 #include "device_with_port_dialog.h"
 #include "controller_with_port_dialog.h"
 #include "controller_with_port_item.h"
-#include "ports_list_view.h"
+#include "tree.h"
 
 
 namespace Haruhi {
@@ -54,7 +54,7 @@ Backend::Backend (QString const& client_name, int id, QWidget* parent):
 	// Widgets
 	//
 
-	_tree = new PortsListView (this, this, &_model);
+	_tree = new Tree (this, this, &_model);
 	QObject::connect (_tree, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_items (const QPoint&)));
 	QObject::connect (_tree, SIGNAL (itemSelectionChanged()), this, SLOT (selection_changed()));
 

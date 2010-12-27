@@ -34,7 +34,7 @@ namespace EventBackendImpl {
 using DevicesManager::DeviceItem;
 class Backend;
 
-class PortsListView: public DevicesManager::Tree
+class Tree: public DevicesManager::Tree
 {
   public:
 	/**
@@ -42,7 +42,7 @@ class PortsListView: public DevicesManager::Tree
 	 * \param	backend	Backend object that owns this widget.
 	 * \param	model External Model object, that will be manipulated.
 	 */
-	PortsListView (QWidget* parent, Backend* backend, DevicesManager::Model* model);
+	Tree (QWidget* parent, Backend* backend, DevicesManager::Model* model);
 
 	/**
 	 * Returns pointer to external Backend object.

@@ -24,7 +24,7 @@
 
 // Local:
 #include "port_item.h"
-#include "ports_list_view.h"
+#include "tree.h"
 #include "transport.h"
 
 
@@ -41,13 +41,13 @@ class DeviceWithPortItem:
 	public DeviceItem,
 	public PortItem
 {
-	friend class PortsListView;
+	friend class Tree;
 
   public:
 	typedef std::set<ControllerWithPortItem*> Controllers;
 
   public:
-	DeviceWithPortItem (Backend* backend, PortsListView* parent, DevicesManager::Device* device);
+	DeviceWithPortItem (Backend* backend, Tree* parent, DevicesManager::Device* device);
 
 	virtual ~DeviceWithPortItem();
 
