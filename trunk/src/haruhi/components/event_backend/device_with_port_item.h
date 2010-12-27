@@ -47,7 +47,7 @@ class DeviceWithPortItem:
 	typedef std::set<ControllerWithPortItem*> Controllers;
 
   public:
-	DeviceWithPortItem (Backend* backend, PortsListView* parent, QString const& name);
+	DeviceWithPortItem (Backend* backend, PortsListView* parent, DevicesManager::Device* device);
 
 	virtual ~DeviceWithPortItem();
 
@@ -68,14 +68,10 @@ class DeviceWithPortItem:
 	update_name();
 
 	/**
-	 * Allocates ControllerWithPortItem that will be used
-	 * as child for this DeviceWithPortItem.
+	 * \see	DevicesManager::Device::create_controller_item().
 	 */
 	ControllerItem*
-	create_controller_item (QString const& name);
-
-	void
-	load_state (QDomElement const&);
+	create_controller_item (DevicesManager::Controller* controller);
 
   protected:
 	// For quick traversal over children. Child items

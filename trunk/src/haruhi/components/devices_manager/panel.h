@@ -28,14 +28,13 @@
 #include <haruhi/lib/midi.h>
 #include <haruhi/utility/signal.h>
 
-// Local:
-#include "ports_list_view.h"
-
 
 namespace Haruhi {
 
 namespace DevicesManager {
 
+class Tree;
+class Settings;
 class DeviceDialog;
 class DeviceItem;
 class ControllerDialog;
@@ -50,7 +49,11 @@ class Panel:
 	typedef std::set<ControllerItem*> LearningItems;
 
   public:
-	Panel (QWidget* parent);
+	/**
+	 * \param	parent Parent widget.
+	 * \param	settings Settings object used as a model.
+	 */
+	Panel (QWidget* parent, Settings* settings);
 
 	~Panel();
 
@@ -60,28 +63,6 @@ class Panel:
 	 */
 	void
 	on_event (MIDI::Event const& event);
-
-  public slots:
-	/**
-	 * Creates new unnamed/unconfigured device
-	 * and inserts it into the tree.
-	 */
-	void
-	create_device();
-
-	/**
-	 * Adds Device as new template.
-	 */
-	void
-	add_device (DeviceItem* device_item);
-
-	/**
-	 * Creates new unnamed/unconfigured controller
-	 * and inserts it into the subtree of currently selected device.
-	 * If no device is selected, it does nothing.
-	 */
-	void
-	create_controller();
 
   private slots:
 	void
@@ -103,29 +84,18 @@ class Panel:
 	learn_from_midi();
 
 	void
-	destroy_selected_item();
-
-	void
 	context_menu_for_items (QPoint const&);
 
-	/**
-	 * Loads settings from DevicesManagerSettings object.
-	 */
-	void
-	load_settings();
-
-	/**
-	 * Saves devices to DevicesManagerSettings object.
-	 */
 	void
 	save_settings();
 
   private:
+	Tree*				_tree;
+	Settings*			_settings;
 	QStackedWidget*		_stack;
 	QPushButton*		_create_device_button;
 	QPushButton*		_create_controller_button;
 	QPushButton*		_destroy_input_button;
-	PortsListView*		_tree;
 	DeviceDialog*		_device_dialog;
 	ControllerDialog*	_controller_dialog;
 	LearningItems		_learning_items;

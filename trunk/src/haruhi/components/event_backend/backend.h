@@ -34,14 +34,15 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/application/haruhi.h>
+#include <haruhi/components/devices_manager/device.h>
 #include <haruhi/components/devices_manager/device_dialog.h>
 #include <haruhi/components/devices_manager/controller_dialog.h>
+#include <haruhi/components/devices_manager/model.h>
 #include <haruhi/graph/event.h>
 #include <haruhi/graph/event_backend.h>
 #include <haruhi/graph/event_port.h>
 #include <haruhi/lib/midi.h>
 #include <haruhi/settings/settings.h>
-#include <haruhi/settings/devices_manager_settings.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/exception.h>
 #include <haruhi/utility/signal.h>
@@ -73,7 +74,7 @@ class Backend:
 
   private:
 	typedef std::map<Transport::Port*, DeviceWithPortItem*>	InputsMap;
-	typedef std::map<int, DevicesManagerSettings::Device>	Templates;
+	typedef std::map<int, DevicesManager::Device*>			Templates;
 
   public:
 	Backend (QString const& client_name, int id, QWidget* parent);
@@ -147,27 +148,6 @@ class Backend:
 	connected() const;
 
 	/**
-	 * Creates new unnamed/unconfigured device
-	 * and inserts it into the tree.
-	 */
-	void
-	create_device();
-
-	/**
-	 * Creates new unnamed/unconfigured controller
-	 * and inserts it into the subtree of currently selected device.
-	 * If no device is selected, it does nothing.
-	 */
-	void
-	create_controller();
-
-	/**
-	 * Destroys currently selected device or controller.
-	 */
-	void
-	destroy_selected_item();
-
-	/**
 	 * Emits signal device_saved_as_template()
 	 * if currently selected item is device item.
 	 */
@@ -210,6 +190,7 @@ class Backend:
 
 	/**
 	 * Displays configuration dialog for given controller item.
+	 * TOOD move to PanelBase
 	 */
 	void
 	configure_item (ControllerItem* item);
@@ -243,6 +224,7 @@ class Backend:
 	Transport*					_transport;
 	InputsMap					_inputs;
 	QSignalMapper*				_insert_template_signal_mapper;
+	DevicesManager::Model		_model;
 
 	// Widgets:
 	QPushButton*				_create_device_button;

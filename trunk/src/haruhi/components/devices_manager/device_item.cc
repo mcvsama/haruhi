@@ -21,6 +21,7 @@
 #include <haruhi/config/all.h>
 
 // Local:
+#include "device.h"
 #include "device_item.h"
 #include "controller_item.h"
 
@@ -29,8 +30,9 @@ namespace Haruhi {
 
 namespace DevicesManager {
 
-DeviceItem::DeviceItem (PortsListView* parent, QString const& name):
-	Item (parent, name)
+DeviceItem::DeviceItem (Tree* parent, Device* device):
+	Item (parent, device->name()),
+	_device (device)
 {
 	// Configure item:
 	setIcon (0, Resources::Icons16::keyboard());
@@ -53,45 +55,18 @@ DeviceItem::~DeviceItem()
 }
 
 
+void
+DeviceItem::set_name (QString const& name)
+{
+	setText (0, name);
+	_device->set_name (name);
+}
+
+
 ControllerItem*
-DeviceItem::create_controller_item (QString const& name)
+DeviceItem::create_controller_item (Controller* controller)
 {
-	return new ControllerItem (this, name);
-}
-
-
-void
-DeviceItem::save_state (QDomElement& element) const
-{
-	element.setAttribute ("name", name());
-	for (int i = 0; i < childCount(); ++i)
-	{
-		ControllerItem* controller_item = dynamic_cast<ControllerItem*> (child (i));
-		if (controller_item)
-		{
-			QDomElement e = element.ownerDocument().createElement ("controller");
-			controller_item->save_state (e);
-			element.appendChild (e);
-		}
-	}
-}
-
-
-void
-DeviceItem::load_state (QDomElement const& element)
-{
-	setText (0, element.attribute ("name"));
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
-	{
-		QDomElement e = n.toElement();
-		if (e.isNull())
-			continue;
-		if (e.tagName() == "controller")
-		{
-			ControllerItem* port = create_controller_item (e.attribute ("name"));
-			port->load_state (e);
-		}
-	}
+	return new ControllerItem (this, controller);
 }
 
 } // namespace DevicesManager

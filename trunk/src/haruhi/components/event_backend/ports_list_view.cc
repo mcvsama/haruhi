@@ -30,8 +30,8 @@ namespace Haruhi {
 
 namespace EventBackendImpl {
 
-PortsListView::PortsListView (QWidget* parent, Backend* backend):
-	DevicesManager::PortsListView (parent),
+PortsListView::PortsListView (QWidget* parent, Backend* backend, DevicesManager::Model* model):
+	DevicesManager::Tree (parent, model),
 	_backend (backend)
 {
 	header()->setClickable (false);
@@ -50,9 +50,9 @@ PortsListView::PortsListView (QWidget* parent, Backend* backend):
 
 
 DeviceItem*
-PortsListView::create_device_item (QString const& name)
+PortsListView::create_device_item (DevicesManager::Device* device)
 {
-	return new DeviceWithPortItem (_backend, this, name);
+	return new DeviceWithPortItem (_backend, this, device);
 }
 
 } // namespace EventBackendImpl

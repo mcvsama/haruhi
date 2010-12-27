@@ -11,42 +11,41 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__COMPONENTS__DEVICES_MANAGER__ITEM_H__INCLUDED
-#define HARUHI__COMPONENTS__DEVICES_MANAGER__ITEM_H__INCLUDED
-
 // Standard:
 #include <cstddef>
-#include <set>
-
-// Qt:
-#include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
-#include <haruhi/utility/atomic.h>
+#include <haruhi/config/all.h>
+#include <haruhi/utility/backtrace.h>
 
 // Local:
-#include "tree.h"
+#include "settings.h"
 
 
 namespace Haruhi {
 
 namespace DevicesManager {
 
-class Item: public QTreeWidgetItem
+Settings::Settings():
+	Module ("devices-manager")
 {
-  public:
-	template<class Parent>
-		Item (Parent* parent, QString const& name):
-			QTreeWidgetItem (parent, QStringList (name))
-		{ }
+}
 
-	void
-	update_minimum_size();
-};
+
+void
+Settings::save_state (QDomElement& element) const
+{
+	_model.save_state (element);
+}
+
+
+void
+Settings::load_state (QDomElement const& element)
+{
+	_model.load_state (element);
+}
 
 } // namespace DevicesManager
 
 } // namespace Haruhi
-
-#endif
 

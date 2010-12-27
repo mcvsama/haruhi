@@ -23,7 +23,8 @@
 
 // Haruhi:
 #include <haruhi/utility/saveable_state.h>
-#include <haruhi/components/devices_manager/ports_list_view.h>
+#include <haruhi/components/devices_manager/tree.h>
+#include <haruhi/components/devices_manager/model.h>
 
 
 namespace Haruhi {
@@ -33,20 +34,27 @@ namespace EventBackendImpl {
 using DevicesManager::DeviceItem;
 class Backend;
 
-class PortsListView: public DevicesManager::PortsListView
+class PortsListView: public DevicesManager::Tree
 {
   public:
-	PortsListView (QWidget* parent, Backend*);
+	/**
+	 * \param	parent Parent widget.
+	 * \param	backend	Backend object that owns this widget.
+	 * \param	model External Model object, that will be manipulated.
+	 */
+	PortsListView (QWidget* parent, Backend* backend, DevicesManager::Model* model);
 
+	/**
+	 * Returns pointer to external Backend object.
+	 */
 	Backend*
 	backend() const { return _backend; }
 
 	/**
-	 * Allocates DeviceItem that will be used
-	 * as child for this PortsList.
+	 * Overridden from DevicesManager::Tree.
 	 */
 	DeviceItem*
-	create_device_item (QString const& name);
+	create_device_item (DevicesManager::Device* device);
 
   private:
 	Backend* _backend;

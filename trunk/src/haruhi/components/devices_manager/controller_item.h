@@ -17,9 +17,6 @@
 // Standard:
 #include <cstddef>
 
-// Libs:
-#include <alsa/asoundlib.h>
-
 // Haruhi:
 #include <haruhi/components/event_backend/transport.h>
 #include <haruhi/lib/midi.h>
@@ -27,6 +24,7 @@
 
 // Local:
 #include "item.h"
+#include "controller.h"
 #include "device_item.h"
 
 
@@ -34,12 +32,13 @@ namespace Haruhi {
 
 namespace DevicesManager {
 
-class ControllerItem:
-	public Item,
-	public SaveableState
+class ControllerItem: public Item
 {
   public:
-	ControllerItem (DeviceItem* parent, QString const& name);
+	/**
+	 * \param	controller Controller that will be associated with this UI item.
+	 */
+	ControllerItem (DeviceItem* parent, Controller* controller);
 
 	virtual ~ControllerItem();
 
@@ -47,7 +46,19 @@ class ControllerItem:
 	 * Returns controller name used in Haruhi.
 	 */
 	QString
-	name() const { return QTreeWidgetItem::text (0); }
+	name() const { return _controller->name(); }
+
+	/**
+	 * Sets new name for item and controller.
+	 */
+	void
+	set_name (QString const& name);
+
+	/**
+	 * Returns Device object associated with this UI item.
+	 */
+	Controller*
+	controller() const { return _controller; }
 
 	/**
 	 * Puts controller into learning mode.
@@ -69,42 +80,16 @@ class ControllerItem:
 	learning() { return _learning; }
 
 	/**
-	 * Sets filters from MIDI event
-	 * and stops learning.
+	 * Sets filters from MIDI event and stops learning.
 	 */
 	void
 	learn_from_event (MIDI::Event const&);
 
-	/*
-	 * SaveableState API
-	 */
-
-	void
-	save_state (QDomElement&) const;
-
-	void
-	load_state (QDomElement const&);
-
-  public:
-	// MIDI filters:
-	bool	note_filter;
-	int		note_channel;				// 0 means 'all'
-	bool	controller_filter;
-	int		controller_channel;			// 0 means 'all'
-	int		controller_number;
-	bool	controller_invert;
-	bool	pitchbend_filter;
-	int		pitchbend_channel;			// 0 means 'all'
-	bool	channel_pressure_filter;
-	int		channel_pressure_channel;	// 0 means 'all'
-	bool	channel_pressure_invert;
-	bool	key_pressure_filter;
-	int		key_pressure_channel;		// 0 means 'all'
-	bool	key_pressure_invert;
-
   protected:
-	// Learning from MIDI mode:
-	bool	_learning;
+	// Controller associated with this UI item; not owned:
+	Controller*	_controller;
+	// Learning-from-MIDI mode:
+	bool		_learning;
 };
 
 } // namespace DevicesManager

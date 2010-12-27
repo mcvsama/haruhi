@@ -45,22 +45,18 @@ class ControllerWithPortItem:
 	public PortItem
 {
   public:
-	ControllerWithPortItem (DeviceWithPortItem* parent, QString const& name);
+	ControllerWithPortItem (DeviceWithPortItem* parent, DevicesManager::Controller* controller);
 
 	virtual ~ControllerWithPortItem();
 
+	EventPort*
+	port() const { return _port; }
+
 	/**
-	 * Sets Core port's name to what
-	 * was set by user in the UI.
+	 * Sets Core port's name to what was set by user in the UI.
 	 */
 	void
 	update_name();
-
-	QString
-	name() const;
-
-	EventPort*
-	port() const;
 
 	/**
 	 * Create and push new Event into core graph.
@@ -68,9 +64,6 @@ class ControllerWithPortItem:
 	 */
 	bool
 	handle_event (MIDI::Event const& event);
-
-	void
-	load_state (QDomElement const& element);
 
   private:
 	EventPort*			_port;
