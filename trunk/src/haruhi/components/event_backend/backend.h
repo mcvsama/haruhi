@@ -65,7 +65,8 @@ class ControllerWithPortDialog;
 class Backend:
 	public QWidget,
 	public SaveableState,
-	public EventBackend
+	public EventBackend,
+	public Signal::Receiver
 {
 	Q_OBJECT
 
@@ -92,6 +93,13 @@ class Backend:
 	 */
 	Transport*
 	transport() const { return _transport; }
+
+	/**
+	 * Should be called whenever DevicesManager's model change.
+	 * Updates list of template devices.
+	 */
+	void
+	devices_manager_updated();
 
 	/*
 	 * Unit API
@@ -173,11 +181,10 @@ class Backend:
 	context_menu_for_items (QPoint const&);
 
 	/**
-	 * Creates popup menu with templates for insertion
-	 * and stores it in _templates_menu.
+	 * Creates/updates menu with templates for insertion and stores it in _templates_menu.
 	 */
 	void
-	create_templates_menu (QMenu* menu);
+	update_templates_menu();
 
 	/**
 	 * Handles event notification from transport.
@@ -238,6 +245,7 @@ class Backend:
 	QPushButton*				_create_device_button;
 	QPushButton*				_create_controller_button;
 	QPushButton*				_destroy_input_button;
+	QPushButton*				_insert_template_button;
 	DeviceWithPortDialog*		_device_dialog;
 	ControllerWithPortDialog*	_controller_dialog;
 

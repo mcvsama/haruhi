@@ -70,6 +70,10 @@ Backend::Backend (QString const& client_name, int id, QWidget* parent):
 	_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QToolTip::add (_destroy_input_button, "Destroy selected device or controller");
 
+	_insert_template_button = new QPushButton (Resources::Icons16::insert(), "Insert template", this);
+	_insert_template_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	QToolTip::add (_insert_template_button, "Insert device previously saved in Devices manager");
+
 	QObject::connect (_create_device_button, SIGNAL (clicked()), _tree, SLOT (create_device()));
 	QObject::connect (_create_controller_button, SIGNAL (clicked()), _tree, SLOT (create_controller()));
 	QObject::connect (_destroy_input_button, SIGNAL (clicked()), _tree, SLOT (destroy_selected_item()));
@@ -96,11 +100,13 @@ Backend::Backend (QString const& client_name, int id, QWidget* parent):
 
 	input_buttons_layout->addWidget (_create_device_button);
 	input_buttons_layout->addWidget (_create_controller_button);
+	input_buttons_layout->addWidget (_insert_template_button);
 	input_buttons_layout->addWidget (_destroy_input_button);
 	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 
 	selection_changed();
 	update_widgets();
+	update_templates_menu();
 }
 
 
@@ -120,6 +126,13 @@ Backend::add_device (DevicesManager::Device const& device)
 {
 	_model.devices().push_back (device);
 	_model.changed();
+}
+
+
+void
+Backend::devices_manager_updated()
+{
+	update_templates_menu();
 }
 
 
@@ -303,8 +316,7 @@ Backend::context_menu_for_items (QPoint const& pos)
 		a->setEnabled (false);
 	}
 	menu->addSeparator();
-	QMenu* templates_menu = menu->addMenu (Resources::Icons16::insert(), "&Insert template");
-	create_templates_menu (templates_menu);
+	menu->addMenu (_templates_menu);
 
 	menu->exec (QCursor::pos());
 	delete menu;
@@ -312,8 +324,11 @@ Backend::context_menu_for_items (QPoint const& pos)
 
 
 void
-Backend::create_templates_menu (QMenu* menu)
+Backend::update_templates_menu()
 {
+	delete _templates_menu;
+
+	_templates_menu = new QMenu();
 	if (_insert_template_signal_mapper)
 		delete _insert_template_signal_mapper;
 	_insert_template_signal_mapper = new QSignalMapper (this);
@@ -325,11 +340,17 @@ Backend::create_templates_menu (QMenu* menu)
 	for (DevicesManager::Model::Devices::iterator d = dm_model.devices().begin(); d != dm_model.devices().end(); ++d)
 	{
 		action_id += 1;
-		QAction* a = menu->addAction (Resources::Icons16::template_(), d->name(), _insert_template_signal_mapper, SLOT (map()));
+		QAction* a = _templates_menu->addAction (Resources::Icons16::template_(), d->name(), _insert_template_signal_mapper, SLOT (map()));
 		_insert_template_signal_mapper->setMapping (a, action_id);
 		_templates.insert (std::make_pair (action_id, *d));
 	}
-	menu->setEnabled (!dm_model.devices().empty());
+
+	_templates_menu->setTitle ("&Insert template");
+	_templates_menu->setIcon (Resources::Icons16::insert());
+	_templates_menu->setEnabled (!dm_model.devices().empty());
+
+	_insert_template_button->setMenu (_templates_menu);
+	_insert_template_button->setEnabled (!dm_model.devices().empty());
 }
 
 
