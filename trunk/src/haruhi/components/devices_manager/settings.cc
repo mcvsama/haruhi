@@ -58,7 +58,7 @@ Settings::add_device (Device device)
 	// Check for name collisions, possibly appending /0, /1, to the device name:
 	if (_model.has_device_named (device.name()))
 	{
-		for (int i = 0; i < 999; ++i)
+		for (int i = 1; i < 999; ++i)
 		{
 			QString new_name = device.name() + QString ("/%1").arg (i);
 			if (!_model.has_device_named (new_name))
