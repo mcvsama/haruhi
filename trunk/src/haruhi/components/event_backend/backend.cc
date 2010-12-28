@@ -308,20 +308,17 @@ Backend::create_templates_menu (QMenu* menu)
 	_insert_template_signal_mapper = new QSignalMapper (this);
 	QObject::connect (_insert_template_signal_mapper, SIGNAL (mapped (int)), this, SLOT (insert_template (int)));
 
-// TODO
-#if 0
 	int action_id = 0;
 	_templates.clear();
-	DevicesManager::Settings* settings = Haruhi::haruhi()->devices_manager_settings();
-	for (DevicesManager::Settings::Devices::iterator tpl = settings->devices().begin(); tpl != settings->devices().end(); ++tpl)
+	DevicesManager::Model& dm_model = Haruhi::haruhi()->devices_manager_settings()->model();
+	for (DevicesManager::Model::Devices::iterator d = dm_model.devices().begin(); d != dm_model.devices().end(); ++d)
 	{
 		action_id += 1;
-		QAction* a = menu->addAction (Resources::Icons16::template_(), tpl->name(), _insert_template_signal_mapper, SLOT (map()));
+		QAction* a = menu->addAction (Resources::Icons16::template_(), d->name(), _insert_template_signal_mapper, SLOT (map()));
 		_insert_template_signal_mapper->setMapping (a, action_id);
-		_templates.insert (std::make_pair (action_id, &*tpl));
+		_templates.insert (std::make_pair (action_id, *d));
 	}
-	menu->setEnabled (!settings->devices().empty());
-#endif
+	menu->setEnabled (!dm_model.devices().empty());
 }
 
 
@@ -412,13 +409,11 @@ Backend::learn_from_midi()
 void
 Backend::insert_template (int menu_item_id)
 {
-	Templates::iterator tpl = _templates.find (menu_item_id);
-	if (tpl != _templates.end())
+	Templates::iterator t = _templates.find (menu_item_id);
+	if (t != _templates.end())
 	{
-		DeviceItem* item = _tree->create_device_item (tpl->second);
-		_tree->clearSelection();
-		_tree->setCurrentItem (item);
-		item->setSelected (true);
+		_model.devices().push_back (t->second);
+		_model.changed();
 	}
 }
 

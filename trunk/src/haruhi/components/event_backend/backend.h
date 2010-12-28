@@ -74,7 +74,7 @@ class Backend:
 
   private:
 	typedef std::map<Transport::Port*, DeviceWithPortItem*>	InputsMap;
-	typedef std::map<int, DevicesManager::Device*>			Templates;
+	typedef std::map<int, DevicesManager::Device>			Templates;
 
   public:
 	Backend (QString const& client_name, int id, QWidget* parent);
@@ -190,7 +190,6 @@ class Backend:
 
 	/**
 	 * Displays configuration dialog for given controller item.
-	 * TOOD move to PanelBase
 	 */
 	void
 	configure_item (ControllerItem* item);
