@@ -80,10 +80,12 @@ class ControllerItem: public Item
 	learning() { return _learning; }
 
 	/**
-	 * Sets filters from MIDI event and stops learning.
+	 * If in learning mode, sets filters from MIDI event and stops learning.
+	 * \param	force Learns even if not in learning mode.
+	 * \returns	true if actually learned from event, false otherwise.
 	 */
-	void
-	learn_from_event (MIDI::Event const&);
+	bool
+	learn_from_event (MIDI::Event const&, bool force = false);
 
   protected:
 	// Controller associated with this UI item; not owned:

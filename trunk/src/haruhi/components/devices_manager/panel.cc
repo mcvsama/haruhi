@@ -122,8 +122,8 @@ Panel::on_event (MIDI::Event const& event)
 {
 	if (!_learning_items.empty())
 		for (LearningItems::iterator li = _learning_items.begin(); li != _learning_items.end(); ++li)
-			(*li)->learn_from_event (event);
-	_learning_items.clear();
+			if ((*li)->learn_from_event (event))
+				_learning_items.erase (*li);
 }
 
 

@@ -77,11 +77,15 @@ ControllerItem::stop_learning()
 }
 
 
-void
-ControllerItem::learn_from_event (MIDI::Event const& midi_event)
+bool
+ControllerItem::learn_from_event (MIDI::Event const& midi_event, bool force)
 {
-	if (_controller->learn_from_event (midi_event))
+	if ((_learning || force) && _controller->learn_from_event (midi_event))
+	{
 		stop_learning();
+		return true;
+	}
+	return false;
 }
 
 } // namespace DevicesManager
