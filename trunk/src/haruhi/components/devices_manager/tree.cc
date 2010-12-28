@@ -218,6 +218,7 @@ Tree::customEvent (QEvent* event)
 	LearnedParams* lp = dynamic_cast<LearnedParams*> (event);
 	if (lp)
 	{
+		lp->item->treeWidget()->clearSelection();
 		// Force update of editor dialog:
 		lp->item->setSelected (false);
 		lp->item->setSelected (true);
