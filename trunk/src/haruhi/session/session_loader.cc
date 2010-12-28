@@ -19,11 +19,13 @@
 #include <QtGui/QDialog>
 #include <QtGui/QLayout>
 #include <QtGui/QTabWidget>
+#include <QtGui/QListWidget>
 #include <QtGui/QLabel>
 #include <QtGui/QPushButton>
 #include <QtGui/QFileDialog>
 #include <QtGui/QTreeWidget>
 #include <QtGui/QHeaderView>
+#include <QtGui/QGroupBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -57,30 +59,66 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 
 	_new_tab = new QWidget (_tabs);
 	_tabs->addTab (_new_tab, "&New session");
-	QVBoxLayout* new_layout = new QVBoxLayout (_new_tab, 2 * Config::Margin, Config::Spacing);
-	QGridLayout* new_grid = new QGridLayout (new_layout, 0, 2, Config::Spacing);
-	new_grid->setColSpacing (0, 100);
-	new_grid->setColSpacing (1, 150);
-
-	new_grid->addWidget (new QLabel ("Session name:", _new_tab), 0, 0);
 
 	_new_session_name = new QLineEdit ("New session", _new_tab);
 	_new_session_name->selectAll();
 	_new_session_name->setFocus();
-	new_grid->addWidget (_new_session_name, 0, 1);
 
-	new_grid->addWidget (new QLabel ("Audio inputs:", _new_tab), 1, 0);
+	QGroupBox* name_box = new QGroupBox ("Session name", _new_tab);
+	QGroupBox* audio_box = new QGroupBox ("Audio setup", _new_tab);
+	QGroupBox* event_box = new QGroupBox ("Devices setup", _new_tab);
 
-	_new_session_audio_inputs = new QSpinBox (0, 16, 1, _new_tab);
+	_new_session_audio_inputs = new QSpinBox (0, 16, 1, audio_box);
 	_new_session_audio_inputs->setValue (2);
-	new_grid->addWidget (_new_session_audio_inputs, 1, 1);
 
-	new_grid->addWidget (new QLabel ("Audio outputs:", _new_tab), 2, 0);
-
-	_new_session_audio_outputs = new QSpinBox (0, 16, 1, _new_tab);
+	_new_session_audio_outputs = new QSpinBox (0, 16, 1, audio_box);
 	_new_session_audio_outputs->setValue (2);
-	new_grid->addWidget (_new_session_audio_outputs, 2, 1);
 
+	_devices_combobox = new QComboBox (event_box);
+	DevicesManager::Settings* dm_settings = Haruhi::haruhi()->devices_manager_settings();
+	assert (dm_settings);
+	DevicesManager::Model::Devices& devices = dm_settings->model().devices();
+	for (DevicesManager::Model::Devices::iterator d = devices.begin(); d != devices.end(); ++d)
+		_devices_combobox->addItem (Resources::Icons16::keyboard(), d->name(), qVariantFromValue (reinterpret_cast<void*> (&*d)));
+
+	QPushButton* devices_add = new QPushButton (Resources::Icons16::add(), "", audio_box);
+	devices_add->setFixedWidth (devices_add->height());
+	QObject::connect (devices_add, SIGNAL (clicked()), this, SLOT (add_device()));
+
+	QPushButton* devices_del = new QPushButton (Resources::Icons16::remove(), "", audio_box);
+	devices_del->setFixedWidth (devices_del->height());
+	QObject::connect (devices_del, SIGNAL (clicked()), this, SLOT (del_device()));
+
+	_devices_list = new QListWidget (audio_box);
+
+	QGridLayout* new_grid = new QGridLayout (name_box);
+	new_grid->setSpacing (Config::Spacing);
+	new_grid->addWidget (_new_session_name, 0, 0);
+
+	QGridLayout* audio_grid = new QGridLayout (audio_box);
+	audio_grid->setSpacing (Config::Spacing);
+	audio_grid->setMargin (3 * Config::Margin);
+	audio_grid->setColSpacing (0, 100);
+	audio_grid->setColSpacing (1, 150);
+	audio_grid->addWidget (new QLabel ("Audio inputs:", _new_tab), 0, 0);
+	audio_grid->addWidget (_new_session_audio_inputs, 0, 1);
+	audio_grid->addWidget (new QLabel ("Audio outputs:", _new_tab), 1, 0);
+	audio_grid->addWidget (_new_session_audio_outputs, 1, 1);
+
+	QGridLayout* event_grid = new QGridLayout (event_box);
+	event_grid->setSpacing (Config::Spacing);
+	event_grid->setMargin (2 * Config::Margin);
+	event_grid->addWidget (_devices_combobox, 0, 0);
+	event_grid->addWidget (devices_add, 0, 1);
+	event_grid->addWidget (devices_del, 0, 2);
+	event_grid->addWidget (_devices_list, 1, 0, 1, 3);
+
+	QVBoxLayout* new_layout = new QVBoxLayout (_new_tab);
+	new_layout->setSpacing (Config::Spacing);
+	new_layout->setMargin (3 * Config::Margin);
+	new_layout->addWidget (name_box);
+	new_layout->addWidget (audio_box);
+	new_layout->addWidget (event_box);
 	new_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
 	//
@@ -90,10 +128,6 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	_open_tab = new QWidget (_tabs);
 	_tabs->addTab (_open_tab, "&Open session");
 
-	QVBoxLayout* open_layout = new QVBoxLayout (_open_tab, 2 * Config::Margin, Config::Spacing);
-
-	open_layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
-	open_layout->addWidget (new QLabel ("Recent sessions:", _open_tab));
 	_recent_listview = new QTreeWidget (_open_tab);
 	_recent_listview->header()->hide();
 	_recent_listview->header()->setResizeMode (QHeaderView::Stretch);
@@ -106,9 +140,9 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	_recent_listview->setRootIsDecorated (false);
 	_recent_listview->setColumnCount (2);
 	QObject::connect (_recent_listview, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (open_recent (QTreeWidgetItem*, int)));
-	open_layout->addWidget (_recent_listview);
 
-	QHBoxLayout* open_file_layout = new QHBoxLayout (open_layout, Config::Spacing);
+	QHBoxLayout* open_file_layout = new QHBoxLayout();
+	open_file_layout->setSpacing (Config::Spacing);
 
 	open_file_layout->addWidget (new QLabel ("Load from file:", _open_tab));
 	open_file_layout->addItem (new QSpacerItem (Config::Spacing, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
@@ -117,6 +151,14 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	QObject::connect (browse_button, SIGNAL (clicked()), this, SLOT (browse_file()));
 	open_file_layout->addWidget (browse_button);
 	open_file_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
+
+	QVBoxLayout* open_layout = new QVBoxLayout (_open_tab);
+	open_layout->setSpacing (Config::Spacing);
+	open_layout->setMargin (2 * Config::Margin);
+	open_layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
+	open_layout->addWidget (new QLabel ("Recent sessions:", _open_tab));
+	open_layout->addWidget (_recent_listview);
+	open_layout->addLayout (open_file_layout);
 
 	// Populate recent_listview:
 	SessionLoaderSettings* settings = Haruhi::haruhi()->session_loader_settings();
@@ -150,6 +192,7 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 		case OpenTab:	_tabs->showPage (_open_tab); break;
 	}
 
+	_new_session_name->setFocus();
 	update_widgets();
 }
 
@@ -163,13 +206,26 @@ SessionLoader::apply (Session* session)
 			break;
 
 		case NewSession:
+		{
 			session->set_name (_new_session_name->text());
 			// Create audio inputs/outputs:
 			for (int i = 0, n = _new_session_audio_inputs->value(); i < n; ++i)
 				session->graph()->audio_backend()->create_input (QString ("in %1").arg (i + 1));
 			for (int i = 0, n = _new_session_audio_outputs->value(); i < n; ++i)
 				session->graph()->audio_backend()->create_output (QString ("out %1").arg (i + 1));
+			// Add event devices:
+			EventBackendImpl::Backend* backend = dynamic_cast<EventBackendImpl::Backend*> (session->graph()->event_backend());
+			if (backend)
+			{
+				for (int i = 0; i < _devices_list->count(); ++i)
+				{
+					DeviceItem* device_item = dynamic_cast<DeviceItem*> (_devices_list->item (i));
+					assert (device_item);
+					backend->add_device (device_item->device);
+				}
+			}
 			break;
+		}
 
 		case OpenSession:
 			session->load_session (_file_name);
@@ -226,6 +282,31 @@ SessionLoader::open_recent (QTreeWidgetItem* item, int)
 		_result = OpenSession;
 		_file_name = recent_session_item->recent_session.file_name;
 		accept();
+	}
+}
+
+
+void
+SessionLoader::add_device()
+{
+	QVariant var = _devices_combobox->itemData (_devices_combobox->currentIndex());
+	DevicesManager::Device* device = reinterpret_cast<DevicesManager::Device*> (var.value<void*>());
+	DeviceItem* device_item = new DeviceItem (_devices_list, *device);
+	_devices_list->addItem (device_item);
+	_devices_list->setCurrentItem (device_item);
+	device_item->setSelected (true);
+}
+
+
+void
+SessionLoader::del_device()
+{
+	QList<QListWidgetItem*> selected_items = _devices_list->selectedItems();
+	if (!selected_items.empty())
+	{
+		QListWidgetItem* item = selected_items.first();
+		_devices_list->takeItem (_devices_list->row (item));
+		delete item;
 	}
 }
 

@@ -116,6 +116,14 @@ Backend::~Backend()
 
 
 void
+Backend::add_device (DevicesManager::Device const& device)
+{
+	_model.devices().push_back (device);
+	_model.changed();
+}
+
+
+void
 Backend::registered()
 {
 	connect();
@@ -309,7 +317,7 @@ Backend::create_templates_menu (QMenu* menu)
 	if (_insert_template_signal_mapper)
 		delete _insert_template_signal_mapper;
 	_insert_template_signal_mapper = new QSignalMapper (this);
-	QObject::connect (_insert_template_signal_mapper, SIGNAL (mapped (int)), this, SLOT (insert_template (int)));
+	QObject::connect (_insert_template_signal_mapper, SIGNAL (mapped (int)), this, SLOT (add_template (int)));
 
 	int action_id = 0;
 	_templates.clear();
@@ -410,14 +418,11 @@ Backend::learn_from_midi()
 
 
 void
-Backend::insert_template (int menu_item_id)
+Backend::add_template (int menu_item_id)
 {
 	Templates::iterator t = _templates.find (menu_item_id);
 	if (t != _templates.end())
-	{
-		_model.devices().push_back (t->second);
-		_model.changed();
-	}
+		add_device (t->second);
 }
 
 } // namespace EventBackendImpl

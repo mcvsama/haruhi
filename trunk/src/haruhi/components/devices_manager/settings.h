@@ -63,7 +63,7 @@ class Settings:
 	 * Used by EventBackend to save devices as templates in DeviceManager.
 	 */
 	void
-	add_device (Device device);
+	add_device (Device const& device);
 
 	/*
 	 * SaveableState API
