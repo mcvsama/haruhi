@@ -667,6 +667,7 @@ Session::save_session_as()
 	QFileDialog* file_dialog = new QFileDialog (this, "Save session", ".", QString());
 	file_dialog->setNameFilter ("All Haruhi session files (*.haruhi-session)");
 	file_dialog->setMode (QFileDialog::AnyFile);
+	file_dialog->setAcceptMode (QFileDialog::AcceptSave);
 	if (file_dialog->exec() == QFileDialog::Accepted)
 	{
 		_file_name = file_dialog->selectedFile().ascii();

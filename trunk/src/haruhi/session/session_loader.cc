@@ -270,6 +270,7 @@ SessionLoader::browse_file()
 	QFileDialog* file_dialog = new QFileDialog (this, "Load session", ".", QString());
 	file_dialog->setMode (QFileDialog::ExistingFile);
 	file_dialog->setNameFilter ("All Haruhi session files (*.haruhi-session)");
+	file_dialog->setAcceptMode (QFileDialog::AcceptOpen);
 	if (file_dialog->exec() == QFileDialog::Accepted)
 	{
 		_result = OpenSession;
