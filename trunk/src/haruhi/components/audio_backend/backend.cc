@@ -239,7 +239,7 @@ Backend::peak_levels (LevelsMap& levels)
 			if (std::abs (*s) > max)
 				max = std::abs (*s);
 
-		levels[port] = max;
+		levels[port] = master_volume() * max;
 	}
 
 	_ports_lock.unlock();

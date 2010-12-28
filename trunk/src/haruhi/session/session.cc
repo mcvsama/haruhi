@@ -549,6 +549,7 @@ Session::load_state (QDomElement const& element)
 {
 	// Stop processing, if any runs:
 	delete _engine;
+	_engine = 0;
 
 	set_name (element.attribute ("name", "").ascii());
 
