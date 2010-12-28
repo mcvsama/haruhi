@@ -128,16 +128,23 @@ class SessionLoader: public QDialog
 
 	/**
 	 * Adds device currently selected in _devices_combobox to _devices_list.
+	 * Calls add_device (Device);
 	 */
 	void
-	add_device();
+	add_selected_device();
+
+	/**
+	 * Adds given Device to _devices_list.
+	 */
+	void
+	add_device (DevicesManager::Device const& device);
 
 	/**
 	 * Removes devuce currently selected in _devices_list.
 	 * Does nothing if nothing is selected.
 	 */
 	void
-	del_device();
+	del_selected_device();
 
   private:
 	QTabWidget*		_tabs;

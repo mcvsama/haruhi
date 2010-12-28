@@ -31,7 +31,8 @@ namespace Haruhi {
 namespace DevicesManager {
 
 Device::Device (QString const& name):
-	_name (name)
+	_name (name),
+	_auto_add (false)
 {
 }
 
@@ -60,6 +61,7 @@ void
 Device::save_state (QDomElement& element) const
 {
 	element.setAttribute ("name", _name);
+	element.setAttribute ("auto-add", _auto_add ? "true" : "false");
 	for (Controllers::const_iterator c = _controllers.begin(); c != _controllers.end(); ++c)
 	{
 		QDomElement e = element.ownerDocument().createElement ("controller");
@@ -73,6 +75,7 @@ void
 Device::load_state (QDomElement const& element)
 {
 	_name = element.attribute ("name", "<unnamed>");
+	_auto_add = element.attribute ("auto-add") == "true";
 	_controllers.clear();
 
 	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())

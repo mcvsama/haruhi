@@ -83,11 +83,11 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 
 	QPushButton* devices_add = new QPushButton (Resources::Icons16::add(), "", audio_box);
 	devices_add->setFixedWidth (devices_add->height());
-	QObject::connect (devices_add, SIGNAL (clicked()), this, SLOT (add_device()));
+	QObject::connect (devices_add, SIGNAL (clicked()), this, SLOT (add_selected_device()));
 
 	QPushButton* devices_del = new QPushButton (Resources::Icons16::remove(), "", audio_box);
 	devices_del->setFixedWidth (devices_del->height());
-	QObject::connect (devices_del, SIGNAL (clicked()), this, SLOT (del_device()));
+	QObject::connect (devices_del, SIGNAL (clicked()), this, SLOT (del_selected_device()));
 
 	_devices_list = new QListWidget (audio_box);
 
@@ -192,6 +192,12 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 		case OpenTab:	_tabs->showPage (_open_tab); break;
 	}
 
+	// Auto add devices marked as auto-add:
+	for (DevicesManager::Model::Devices::iterator d = devices.begin(); d != devices.end(); ++d)
+		if (d->auto_add())
+			add_device (*d);
+
+	_devices_list->clearSelection();
 	_new_session_name->setFocus();
 	update_widgets();
 }
@@ -287,11 +293,17 @@ SessionLoader::open_recent (QTreeWidgetItem* item, int)
 
 
 void
-SessionLoader::add_device()
+SessionLoader::add_selected_device()
 {
 	QVariant var = _devices_combobox->itemData (_devices_combobox->currentIndex());
-	DevicesManager::Device* device = reinterpret_cast<DevicesManager::Device*> (var.value<void*>());
-	DeviceItem* device_item = new DeviceItem (_devices_list, *device);
+	add_device (*reinterpret_cast<DevicesManager::Device*> (var.value<void*>()));
+}
+
+
+void
+SessionLoader::add_device (DevicesManager::Device const& device)
+{
+	DeviceItem* device_item = new DeviceItem (_devices_list, device);
 	_devices_list->addItem (device_item);
 	_devices_list->setCurrentItem (device_item);
 	device_item->setSelected (true);
@@ -299,7 +311,7 @@ SessionLoader::add_device()
 
 
 void
-SessionLoader::del_device()
+SessionLoader::del_selected_device()
 {
 	QList<QListWidgetItem*> selected_items = _devices_list->selectedItems();
 	if (!selected_items.empty())

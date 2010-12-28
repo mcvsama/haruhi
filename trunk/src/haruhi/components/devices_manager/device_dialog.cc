@@ -20,6 +20,8 @@
 #include <QtGui/QLineEdit>
 #include <QtGui/QPushButton>
 #include <QtGui/QMessageBox>
+#include <QtGui/QGridLayout>
+#include <QtGui/QCheckBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -32,31 +34,36 @@ namespace Haruhi {
 
 namespace DevicesManager {
 
-DeviceDialog::DeviceDialog (QWidget* parent):
-	QWidget (parent)
+DeviceDialog::DeviceDialog (QWidget* parent, Flags flags):
+	QWidget (parent),
+	_flags (flags)
 {
 	setCaption ("Device configuration");
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	setMinimumWidth (300);
 
+	QLabel* name_label = new QLabel ("Device name:", this);
+	_name = new QLineEdit (this);
+	_save_button = new QPushButton (Resources::Icons16::ok(), "&Apply", this);
+	_auto_add_checkbox = new QCheckBox ("Auto add this device to new sessions", this);
+	if ((flags & DisplayAutoAdd) == 0)
+		_auto_add_checkbox->hide();
+
+	QGridLayout* grid_layout = new QGridLayout();
+	grid_layout->setSpacing (Config::Spacing);
+	grid_layout->addWidget (name_label, 0, 0);
+	grid_layout->addWidget (_name, 0, 1);
+	grid_layout->addWidget (_auto_add_checkbox, 1, 1);
+
+	QHBoxLayout* buttons_layout = new QHBoxLayout();
+	buttons_layout->setSpacing (Config::Spacing);
+	buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	buttons_layout->addWidget (_save_button);
+
 	QVBoxLayout* layout = new QVBoxLayout (this, Config::DialogMargin, Config::Spacing);
 	layout->setResizeMode (QLayout::FreeResize);
-
-		QHBoxLayout* name_layout = new QHBoxLayout (layout, Config::Spacing);
-
-			QLabel* name_label = new QLabel ("Device name:", this);
-
-			_name = new QLineEdit (this);
-
-		name_layout->addWidget (name_label);
-		name_layout->addWidget (_name);
-
-		QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::Spacing);
-
-			_save_button = new QPushButton (Resources::Icons16::ok(), "&Apply", this);
-
-		buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
-		buttons_layout->addWidget (_save_button);
+	layout->addLayout (grid_layout);
+	layout->addLayout (buttons_layout);
 
 	QObject::connect (_name, SIGNAL (textChanged (const QString&)), this, SLOT (update_widgets()));
 	QObject::connect (_save_button, SIGNAL (clicked()), this, SLOT (validate_and_save()));
@@ -85,6 +92,7 @@ DeviceDialog::from (DeviceItem* item)
 	_name->setText (item->name());
 	_name->selectAll();
 	_name->setFocus();
+	_auto_add_checkbox->setChecked (item->device()->auto_add());
 }
 
 
@@ -92,6 +100,7 @@ void
 DeviceDialog::apply (DeviceItem* item) const
 {
 	item->set_name (_name->text());
+	item->device()->set_auto_add (_auto_add_checkbox->isChecked());
 	emit item_configured (item);
 }
 

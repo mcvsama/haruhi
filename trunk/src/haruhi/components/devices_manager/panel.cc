@@ -69,7 +69,7 @@ Panel::Panel (QWidget* parent, Settings* settings):
 
 	_stack = new QStackedWidget (this);
 
-	_device_dialog = new DeviceDialog (this);
+	_device_dialog = new DeviceDialog (this, DeviceDialog::DisplayAutoAdd);
 	QObject::connect (_device_dialog, SIGNAL (item_configured (DeviceItem*)), this, SLOT (save_settings()));
 
 	_controller_dialog = new ControllerDialog (this);

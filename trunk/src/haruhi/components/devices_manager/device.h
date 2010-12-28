@@ -60,6 +60,20 @@ class Device: public SaveableState
 	set_name (QString const& name) { _name = name; }
 
 	/**
+	 * Returns true if auto-add is set on this device.
+	 * Auto-add means that device will be added by default to new sessions
+	 * in SessionLoader UI.
+	 */
+	bool
+	auto_add() const { return _auto_add; }
+
+	/**
+	 * Sets auto-add property.
+	 */
+	void
+	set_auto_add (bool enabled) { _auto_add = enabled; }
+
+	/**
 	 * Accessor to controllers list.
 	 */
 	Controllers&
@@ -97,6 +111,7 @@ class Device: public SaveableState
   private:
 	QString		_name;
 	Controllers	_controllers;
+	bool		_auto_add;
 };
 
 } // namespace DevicesManager

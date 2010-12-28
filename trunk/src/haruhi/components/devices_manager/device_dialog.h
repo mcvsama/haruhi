@@ -16,11 +16,13 @@
 
 // Standard:
 #include <cstddef>
+#include <stdint.h>
 
 // Qt:
 #include <QtGui/QWidget>
 #include <QtGui/QPushButton>
 #include <QtGui/QLineEdit>
+#include <QtGui/QCheckBox>
 
 // Local:
 #include "device_item.h"
@@ -35,7 +37,15 @@ class DeviceDialog: public QWidget
 	Q_OBJECT
 
   public:
-	DeviceDialog (QWidget* parent);
+	typedef uint32_t Flags;
+
+	// Flags:
+	enum {
+		DisplayAutoAdd	= 0x01,
+	};
+
+  public:
+	DeviceDialog (QWidget* parent, Flags flags = 0);
 
 	virtual ~DeviceDialog() { }
 
@@ -63,9 +73,11 @@ class DeviceDialog: public QWidget
 	validate_and_save();
 
   private:
+	Flags			_flags;
 	DeviceItem*		_item;
 	QLineEdit*		_name;
 	QPushButton*	_save_button;
+	QCheckBox*		_auto_add_checkbox;
 };
 
 } // namespace DevicesManager
