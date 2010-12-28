@@ -57,7 +57,7 @@ Haruhi::Haruhi (int argc, char** argv, char** envp):
 	_settings = new Settings (HARUHI_XDG_SETTINGS_HOME "/haruhi.conf", Settings::XDG_CONFIG,
 							  HARUHI_SHARED_DIRECTORY "/config/haruhi.conf");
 
-	_devices_manager_settings = new DevicesManagerSettings();
+	_devices_manager_settings = new DevicesManager::Settings();
 	_has_presets_settings = new HasPresetsSettings();
 	_session_loader_settings = new SessionLoaderSettings();
 

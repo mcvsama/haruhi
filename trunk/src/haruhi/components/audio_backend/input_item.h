@@ -31,7 +31,7 @@ namespace AudioBackendImpl {
 class InputItem: public PortItem
 {
   public:
-	InputItem (PortsListView* parent, QString const& name);
+	InputItem (Tree* parent, QString const& name);
 
 	virtual ~InputItem();
 

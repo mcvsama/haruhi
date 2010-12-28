@@ -27,15 +27,15 @@ namespace Haruhi {
 
 namespace EventBackendImpl {
 
-DeviceWithPortItem::DeviceWithPortItem (Backend* p_backend, PortsListView* parent, QString const& name):
-	DeviceItem (parent, name),
+DeviceWithPortItem::DeviceWithPortItem (Backend* p_backend, Tree* parent, DevicesManager::Device* device):
+	DeviceItem (parent, device),
 	PortItem (p_backend)
 {
-	_transport_port = backend()->transport()->create_input (name.toStdString());
+	_transport_port = backend()->transport()->create_input (device->name().toStdString());
 	backend()->_inputs[_transport_port] = this;
 	// Allocate port group:
 	backend()->graph()->lock();
-	_port_group = new PortGroup (backend()->graph(), name.ascii());
+	_port_group = new PortGroup (backend()->graph(), device->name().toStdString());
 	backend()->graph()->unlock();
 	// Ready for handling events:
 	set_ready (true);
@@ -61,9 +61,9 @@ DeviceWithPortItem::~DeviceWithPortItem()
 
 
 ControllerItem*
-DeviceWithPortItem::create_controller_item (QString const& name)
+DeviceWithPortItem::create_controller_item (DevicesManager::Controller* controller)
 {
-	return new ControllerWithPortItem (this, name);
+	return new ControllerWithPortItem (this, controller);
 }
 
 
@@ -75,14 +75,6 @@ DeviceWithPortItem::update_name()
 	backend()->graph()->lock();
 	_port_group->set_name (name().toStdString());
 	backend()->graph()->unlock();
-}
-
-
-void
-DeviceWithPortItem::load_state (QDomElement const& element)
-{
-	DeviceItem::load_state (element);
-	update_name();
 }
 
 } // namespace EventBackendImpl

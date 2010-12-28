@@ -392,7 +392,7 @@ Session::Session (QWidget* parent):
 	_audio_tab = create_container (this);
 	_event_tab = create_container (this);
 
-	_devices_manager = new DevicesManager::Panel (this);
+	_devices_manager = new DevicesManager::Panel (this, Haruhi::haruhi()->devices_manager_settings());
 
 	// Add tabs:
 	_session_settings->addTab (_session_global, Resources::Icons22::configure(), "Global");
@@ -786,7 +786,7 @@ Session::start_event_backend()
 		// Reload DevicesManager list when EventBackend creates new template:
 		if (!_devices_manager)
 			throw Exception ("DevicesManager must be created before EventBackend");
-		QObject::connect (event_backend, SIGNAL (device_saved_as_template (DeviceItem*)), _devices_manager, SLOT (add_device (DeviceItem*)));
+		event_backend->device_saved_as_template.connect (_devices_manager->settings(), &DevicesManager::Settings::add_device);
 		event_backend->on_event.connect (_devices_manager, &DevicesManager::Panel::on_event);
 	}
 	catch (Exception const& e)

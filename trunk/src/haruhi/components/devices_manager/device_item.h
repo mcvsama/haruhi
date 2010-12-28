@@ -23,23 +23,24 @@
 
 // Local:
 #include "item.h"
-#include "ports_list_view.h"
+#include "tree.h"
+#include "controller.h"
 
 
 namespace Haruhi {
 
 namespace DevicesManager {
 
+class Device;
 class ControllerItem;
 
-class DeviceItem:
-	public Item,
-	public SaveableState
+class DeviceItem: public Item
 {
-	friend class PortsListView;
-
   public:
-	DeviceItem (PortsListView* parent, QString const& name);
+	/**
+	 * \param	device Device that will be associated with this UI item.
+	 */
+	DeviceItem (Tree* parent, Device* device);
 
 	virtual ~DeviceItem();
 
@@ -47,20 +48,31 @@ class DeviceItem:
 	 * Returns device name used in Haruhi.
 	 */
 	QString
-	name() const { return QTreeWidgetItem::text (0); }
+	name() const { return _device->name(); }
 
 	/**
-	 * Allocates ControllerItem that will be used
-	 * as child for this DeviceItem.
+	 * Sets new name for item and device.
+	 */
+	void
+	set_name (QString const& name);
+
+	/**
+	 * Allocates ControllerItem that will be used as child for this DeviceItem.
+	 * \param	controller Controller object associated with newly created item.
+	 * 			Item will not take ownership of the object.
 	 */
 	virtual ControllerItem*
-	create_controller_item (QString const& name);
+	create_controller_item (Controller* controller);
 
-	void
-	save_state (QDomElement&) const;
+	/**
+	 * Returns Device object associated with this UI item.
+	 */
+	Device*
+	device() const { return _device; }
 
-	void
-	load_state (QDomElement const&);
+  private:
+	// Device associated with this UI item; not owned:
+	Device*	_device;
 };
 
 } // namespace DevicesManager

@@ -51,7 +51,7 @@ Unit::~Unit()
 	if (enabled())
 		throw Exception ("disable unit before deletion");
 	if (graph())
-		throw Exception ("unregisted unit before deletion");
+		throw Exception ("unregister unit before deletion");
 	// Check if all ports have been unregistered:
 	if (_inputs.size() > 0 || _outputs.size() > 0)
 		throw Exception ("delete all ports before deleting unit");

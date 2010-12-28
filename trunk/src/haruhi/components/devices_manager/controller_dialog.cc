@@ -232,20 +232,21 @@ ControllerDialog::clear()
 void
 ControllerDialog::from (ControllerItem* item)
 {
+	Controller* controller = item->controller();
 	setEnabled (true);
 	_item = item;
-	_name->setText (item->name());
-	_note_checkbox->setChecked (item->note_filter);
-	_note_channel->setCurrentItem (item->note_channel);
-	_controller_checkbox->setChecked (item->controller_filter);
-	_controller_channel->setCurrentItem (item->controller_channel);
-	_controller_number->setValue (item->controller_number);
-	_controller_invert->setChecked (item->controller_invert);
-	_pitchbend_checkbox->setChecked (item->pitchbend_filter);
-	_pitchbend_channel->setCurrentItem (item->pitchbend_channel);
-	_channel_pressure_checkbox->setChecked (item->channel_pressure_filter);
-	_channel_pressure_channel->setCurrentItem (item->channel_pressure_channel);
-	_channel_pressure_invert->setChecked (item->channel_pressure_invert);
+	_name->setText (controller->name());
+	_note_checkbox->setChecked (controller->note_filter);
+	_note_channel->setCurrentItem (controller->note_channel);
+	_controller_checkbox->setChecked (controller->controller_filter);
+	_controller_channel->setCurrentItem (controller->controller_channel);
+	_controller_number->setValue (controller->controller_number);
+	_controller_invert->setChecked (controller->controller_invert);
+	_pitchbend_checkbox->setChecked (controller->pitchbend_filter);
+	_pitchbend_channel->setCurrentItem (controller->pitchbend_channel);
+	_channel_pressure_checkbox->setChecked (controller->channel_pressure_filter);
+	_channel_pressure_channel->setCurrentItem (controller->channel_pressure_channel);
+	_channel_pressure_invert->setChecked (controller->channel_pressure_invert);
 	_name->selectAll();
 	_name->setFocus();
 	update_widgets();
@@ -255,19 +256,19 @@ ControllerDialog::from (ControllerItem* item)
 void
 ControllerDialog::apply (ControllerItem* item) const
 {
-	item->setText (0, _name->text());
-	item->note_filter = _note_checkbox->isChecked();
-	item->note_channel = _note_channel->currentText().toInt();
-	item->controller_filter = _controller_checkbox->isChecked();
-	item->controller_channel = _controller_channel->currentText().toInt();
-	item->controller_number = _controller_number->value();
-	item->controller_invert = _controller_invert->isChecked();
-	item->pitchbend_filter = _pitchbend_checkbox->isChecked();
-	item->pitchbend_channel = _pitchbend_channel->currentText().toInt();
-	item->channel_pressure_filter = _channel_pressure_checkbox->isChecked();
-	item->channel_pressure_channel = _channel_pressure_channel->currentText().toInt();
-	item->channel_pressure_invert = _channel_pressure_invert->isChecked();
-
+	Controller* controller = item->controller();
+	controller->note_filter = _note_checkbox->isChecked();
+	controller->note_channel = _note_channel->currentText().toInt();
+	controller->controller_filter = _controller_checkbox->isChecked();
+	controller->controller_channel = _controller_channel->currentText().toInt();
+	controller->controller_number = _controller_number->value();
+	controller->controller_invert = _controller_invert->isChecked();
+	controller->pitchbend_filter = _pitchbend_checkbox->isChecked();
+	controller->pitchbend_channel = _pitchbend_channel->currentText().toInt();
+	controller->channel_pressure_filter = _channel_pressure_checkbox->isChecked();
+	controller->channel_pressure_channel = _channel_pressure_channel->currentText().toInt();
+	controller->channel_pressure_invert = _channel_pressure_invert->isChecked();
+	item->set_name (_name->text());
 	emit item_configured (item);
 }
 

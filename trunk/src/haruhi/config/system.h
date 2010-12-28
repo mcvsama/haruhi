@@ -16,6 +16,9 @@
 #ifndef HARUHI__CONFIG__SYSTEM_H__INCLUDED
 #define HARUHI__CONFIG__SYSTEM_H__INCLUDED
 
+#include <cstdio>
+
+
 #undef assert
 
 #if HARUHI_ENABLE_ASSERT
@@ -62,6 +65,12 @@ namespace StaticAssert {
 	template<bool>	struct Check		{ void f() { }; Check (...) { }; };
 	template<>		struct Check<false>	{ void f() { }};
 } // namespace StaticAssert
+
+
+/**
+ * Prints debug output.
+ */
+#define debug(x...) fprintf (stderr, x)
 
 #endif
 

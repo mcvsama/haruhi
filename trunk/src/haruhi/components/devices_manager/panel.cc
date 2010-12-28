@@ -33,17 +33,19 @@
 #include "device_item.h"
 #include "controller_dialog.h"
 #include "controller_item.h"
+#include "model.h"
+#include "tree.h"
 
 
 namespace Haruhi {
 
 namespace DevicesManager {
 
-Panel::Panel (QWidget* parent):
-	QWidget (parent)
+Panel::Panel (QWidget* parent, Settings* settings):
+	QWidget (parent),
+	_settings (settings)
 {
-	_tree = new PortsListView (this);
-
+	_tree = new Tree (this, &settings->model());
 	QObject::connect (_tree, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_items (const QPoint&)));
 	QObject::connect (_tree, SIGNAL (itemSelectionChanged()), this, SLOT (selection_changed()));
 
@@ -59,9 +61,9 @@ Panel::Panel (QWidget* parent):
 	_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QToolTip::add (_destroy_input_button, "Destroy selected device or controller");
 
-	QObject::connect (_create_device_button, SIGNAL (clicked()), this, SLOT (create_device()));
-	QObject::connect (_create_controller_button, SIGNAL (clicked()), this, SLOT (create_controller()));
-	QObject::connect (_destroy_input_button, SIGNAL (clicked()), this, SLOT (destroy_selected_item()));
+	QObject::connect (_create_device_button, SIGNAL (clicked()), _tree, SLOT (create_device()));
+	QObject::connect (_create_controller_button, SIGNAL (clicked()), _tree, SLOT (create_controller()));
+	QObject::connect (_destroy_input_button, SIGNAL (clicked()), _tree, SLOT (destroy_selected_item()));
 
 	// Right panel (stack):
 
@@ -77,12 +79,21 @@ Panel::Panel (QWidget* parent):
 	_stack->addWidget (_controller_dialog);
 	_stack->setCurrentWidget (_device_dialog);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
-	QHBoxLayout* input_buttons_layout = new QHBoxLayout (layout, Config::Spacing);
-	QHBoxLayout* panels_layout = new QHBoxLayout (layout, Config::Spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (Config::Margin);
+	layout->setSpacing (Config::Spacing);
+
+	QHBoxLayout* input_buttons_layout = new QHBoxLayout();
+	input_buttons_layout->setSpacing (Config::Spacing);
+
+	QHBoxLayout* panels_layout = new QHBoxLayout();
+	panels_layout->setSpacing (Config::Spacing);
 
 	QLabel* info = new QLabel ("Device templates.", this);
 	info->setMargin (Config::Margin);
+
+	layout->addLayout (input_buttons_layout);
+	layout->addLayout (panels_layout);
 	layout->addWidget (info);
 
 	panels_layout->addWidget (_tree);
@@ -95,7 +106,8 @@ Panel::Panel (QWidget* parent):
 
 	selection_changed();
 	update_widgets();
-	load_settings();
+
+	_tree->read_model();
 }
 
 
@@ -106,43 +118,12 @@ Panel::~Panel()
 
 
 void
-Panel::create_device()
+Panel::on_event (MIDI::Event const& event)
 {
-	QString name = "<unnamed device>";
-	QTreeWidgetItem* item = _tree->create_device_item (name);
-	_tree->setCurrentItem (item);
-	save_settings();
-}
-
-
-void
-Panel::add_device (DeviceItem* device_item)
-{
-	Haruhi::haruhi()->devices_manager_settings()->save_device (device_item->name(), *device_item);
-	Haruhi::haruhi()->devices_manager_settings()->save();
-	QMessageBox::information (this, "Created device template", "Created new device template \"" + device_item->name() + "\".");
-	load_settings();
-}
-
-
-void
-Panel::create_controller()
-{
-	QString name = "<unnamed controller>";
-	QTreeWidgetItem* sel = _tree->selected_item();
-	if (sel != 0)
-	{
-		DeviceItem* parent = dynamic_cast<DeviceItem*> (sel);
-		if (parent == 0)
-			parent = dynamic_cast<DeviceItem*> (sel->parent());
-		if (parent != 0)
-		{
-			QTreeWidgetItem* item = parent->create_controller_item (name);
-			_tree->setCurrentItem (item);
-			parent->setExpanded (true);
-			save_settings();
-		}
-	}
+	if (!_learning_items.empty())
+		for (LearningItems::iterator li = _learning_items.begin(); li != _learning_items.end(); ++li)
+			if ((*li)->learn_from_event (event))
+				_learning_items.erase (*li);
 }
 
 
@@ -193,9 +174,10 @@ Panel::configure_item (ControllerItem* item)
 void
 Panel::configure_selected_item()
 {
-	if (_tree->selected_item())
+	QTreeWidgetItem* item = _tree->selected_item();
+	if (item)
 	{
-		DeviceItem* device_item = dynamic_cast<DeviceItem*> (_tree->selected_item());
+		DeviceItem* device_item = dynamic_cast<DeviceItem*> (item);
 		if (device_item)
 			configure_item (device_item);
 		else
@@ -216,28 +198,15 @@ Panel::configure_selected_item()
 void
 Panel::learn_from_midi()
 {
-	if (_tree->selected_item())
+	QTreeWidgetItem* item = _tree->selected_item();
+	if (item)
 	{
-		ControllerItem* item = dynamic_cast<ControllerItem*> (_tree->selected_item());
-		if (item)
+		ControllerItem* controller_item = dynamic_cast<ControllerItem*> (item);
+		if (controller_item)
 		{
-			item->learn();
-			_learning_items.insert (item);
+			controller_item->learn();
+			_learning_items.insert (controller_item);
 		}
-	}
-}
-
-
-void
-Panel::destroy_selected_item()
-{
-	if (_tree->selected_item())
-	{
-		QTreeWidgetItem* item = _tree->selected_item();
-		if (item->parent())
-			item->parent()->takeChild (item->parent()->indexOfChild (item));
-		delete item;
-		save_settings();
 	}
 }
 
@@ -251,25 +220,26 @@ Panel::context_menu_for_items (QPoint const& pos)
 
 	if (item != 0)
 	{
-		if (dynamic_cast<ControllerItem*> (item) != 0)
+		ControllerItem* controller_item = dynamic_cast<ControllerItem*> (item);
+		if (controller_item != 0)
 		{
-			menu->addAction (Resources::Icons16::colorpicker(), "&Learn", this, SLOT (learn_from_midi()));
+			menu->addAction (Resources::Icons16::colorpicker(), controller_item->learning() ? "Stop &learning" : "&Learn", this, SLOT (learn_from_midi()));
 			menu->addSeparator();
-			menu->addAction (Resources::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
-			menu->addAction (Resources::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
+			menu->addAction (Resources::Icons16::add(), "Add &controller", _tree, SLOT (create_controller()));
+			menu->addAction (Resources::Icons16::remove(), "&Destroy", _tree, SLOT (destroy_selected_item()));
 		}
 		else if (dynamic_cast<DeviceItem*> (item) != 0)
 		{
-			menu->addAction (Resources::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
+			menu->addAction (Resources::Icons16::add(), "Add &controller", _tree, SLOT (create_controller()));
 			menu->addSeparator();
-			menu->addAction (Resources::Icons16::add(), "&Add device", this, SLOT (create_device()));
-			menu->addAction (Resources::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
+			menu->addAction (Resources::Icons16::add(), "&Add device", _tree, SLOT (create_device()));
+			menu->addAction (Resources::Icons16::remove(), "&Destroy", _tree, SLOT (destroy_selected_item()));
 		}
 	}
 	else
 	{
-		menu->addAction (Resources::Icons16::add(), "&Add device", this, SLOT (create_device()));
-		a = menu->addAction (Resources::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
+		menu->addAction (Resources::Icons16::add(), "&Add device", _tree, SLOT (create_device()));
+		a = menu->addAction (Resources::Icons16::remove(), "&Destroy", _tree, SLOT (destroy_selected_item()));
 		a->setEnabled (false);
 	}
 
@@ -279,26 +249,9 @@ Panel::context_menu_for_items (QPoint const& pos)
 
 
 void
-Panel::load_settings()
-{
-	_tree->load_devices_from_settings();
-}
-
-
-void
 Panel::save_settings()
 {
-	_tree->save_devices_to_settings();
-}
-
-
-void
-Panel::on_event (MIDI::Event const& event)
-{
-	if (!_learning_items.empty())
-		for (LearningItems::iterator li = _learning_items.begin(); li != _learning_items.end(); ++li)
-			(*li)->learn_from_event (event);
-	_learning_items.clear();
+	_settings->save();
 }
 
 } // namespace DevicesManager

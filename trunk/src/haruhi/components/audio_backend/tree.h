@@ -31,12 +31,12 @@ namespace AudioBackendImpl {
 
 class Backend;
 
-class PortsListView:
+class Tree:
 	public QTreeWidget,
 	public SaveableState
 {
   public:
-	PortsListView (QWidget* parent, Backend*, const char* header_title);
+	Tree (QWidget* parent, Backend*, const char* header_title);
 
 	Backend*
 	backend() const { return _backend; }

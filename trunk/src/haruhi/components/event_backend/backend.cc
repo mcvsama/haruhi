@@ -34,6 +34,7 @@
 #include "device_with_port_dialog.h"
 #include "controller_with_port_dialog.h"
 #include "controller_with_port_item.h"
+#include "tree.h"
 
 
 namespace Haruhi {
@@ -45,7 +46,6 @@ Backend::Backend (QString const& client_name, int id, QWidget* parent):
 	EventBackend ("• Event", id),
 	_client_name (client_name),
 	_insert_template_signal_mapper (0),
-	_tree (0),
 	_templates_menu (0)
 {
 	_transport = new AlsaTransport (this);
@@ -54,10 +54,7 @@ Backend::Backend (QString const& client_name, int id, QWidget* parent):
 	// Widgets
 	//
 
-	// Ports list:
-
-	_tree = new PortsListView (this, this);
-
+	_tree = new Tree (this, this, &_model);
 	QObject::connect (_tree, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_items (const QPoint&)));
 	QObject::connect (_tree, SIGNAL (itemSelectionChanged()), this, SLOT (selection_changed()));
 
@@ -73,9 +70,9 @@ Backend::Backend (QString const& client_name, int id, QWidget* parent):
 	_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QToolTip::add (_destroy_input_button, "Destroy selected device or controller");
 
-	QObject::connect (_create_device_button, SIGNAL (clicked()), this, SLOT (create_device()));
-	QObject::connect (_create_controller_button, SIGNAL (clicked()), this, SLOT (create_controller()));
-	QObject::connect (_destroy_input_button, SIGNAL (clicked()), this, SLOT (destroy_selected_item()));
+	QObject::connect (_create_device_button, SIGNAL (clicked()), _tree, SLOT (create_device()));
+	QObject::connect (_create_controller_button, SIGNAL (clicked()), _tree, SLOT (create_controller()));
+	QObject::connect (_destroy_input_button, SIGNAL (clicked()), _tree, SLOT (destroy_selected_item()));
 
 	// Right panel (stack):
 
@@ -145,16 +142,19 @@ Backend::process()
 	// Sync transport ports:
 	_transport->sync();
 
+	// For each Device:
 	for (InputsMap::iterator h = _inputs.begin(); h != _inputs.end(); ++h)
 	{
 		Transport::Port* transport_port = h->first;
 		if (transport_port->buffer().empty())
 			continue;
 		DeviceWithPortItem* device_item = h->second;
+		// For each Controller:
 		for (DeviceWithPortItem::Controllers::iterator iii = device_item->controllers()->begin(); iii != device_item->controllers()->end(); ++iii)
 		{
 			if ((*iii)->ready())
 			{
+				// For each event that comes from transport:
 				for (Transport::MidiBuffer::iterator m = transport_port->buffer().begin(); m != transport_port->buffer().end(); ++m)
 				{
 					if ((*iii)->handle_event (*m))
@@ -171,7 +171,7 @@ void
 Backend::save_state (QDomElement& element) const
 {
 	QDomElement inputs = element.ownerDocument().createElement ("inputs");
-	_tree->save_state (inputs);
+	_model.save_state (inputs);
 	element.appendChild (inputs);
 }
 
@@ -188,7 +188,7 @@ Backend::load_state (QDomElement const& element)
 		if (!e.isNull())
 		{
 			if (e.tagName() == "inputs")
-				_tree->load_state (e);
+				_model.load_state (e);
 		}
 	}
 	if (e)
@@ -246,48 +246,6 @@ Backend::connected() const
 
 
 void
-Backend::create_device()
-{
-	QString name = "<unnamed device>";
-	QTreeWidgetItem* item = _tree->create_device_item (name);
-	_tree->setCurrentItem (item);
-}
-
-
-void
-Backend::create_controller()
-{
-	QString name = "<unnamed controller>";
-	QTreeWidgetItem* sel = _tree->selected_item();
-	if (sel != 0)
-	{
-		DeviceWithPortItem* parent = dynamic_cast<DeviceWithPortItem*> (sel);
-		if (parent == 0)
-			parent = dynamic_cast<DeviceWithPortItem*> (sel->parent());
-		if (parent != 0)
-		{
-			QTreeWidgetItem* item = parent->create_controller_item (name);
-			_tree->setCurrentItem (item);
-			parent->setExpanded (true);
-		}
-	}
-}
-
-
-void
-Backend::destroy_selected_item()
-{
-	if (_tree->selected_item())
-	{
-		QTreeWidgetItem* item = _tree->selected_item();
-		if (item->parent())
-			item->parent()->takeChild (item->parent()->indexOfChild (item));
-		delete item;
-	}
-}
-
-
-void
 Backend::save_selected_item_as_template()
 {
 	QTreeWidgetItem* item = _tree->selected_item();
@@ -295,7 +253,7 @@ Backend::save_selected_item_as_template()
 	{
 		DeviceWithPortItem* device_item = dynamic_cast<DeviceWithPortItem*> (item);
 		if (device_item)
-			emit device_saved_as_template (device_item);
+			device_saved_as_template (*device_item->device());
 	}
 }
 
@@ -314,23 +272,26 @@ Backend::context_menu_for_items (QPoint const& pos)
 		{
 			menu->addAction (Resources::Icons16::colorpicker(), cwp_item->learning() ? "Stop &learning" : "&Learn", this, SLOT (learn_from_midi()));
 			menu->addSeparator();
-			menu->addAction (Resources::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
-			menu->addAction (Resources::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
+			menu->addAction (Resources::Icons16::add(), "Add &controller", _tree, SLOT (create_controller()));
+			menu->addAction (Resources::Icons16::remove(), "&Destroy", _tree, SLOT (destroy_selected_item()));
 		}
 		else if (dynamic_cast<DeviceItem*> (item) != 0)
 		{
-			menu->addAction (Resources::Icons16::add(), "Add &controller", this, SLOT (create_controller()));
+			menu->addAction (Resources::Icons16::add(), "Add &controller", _tree, SLOT (create_controller()));
 			menu->addSeparator();
-			menu->addAction (Resources::Icons16::save(), "&Save as template", this, SLOT (save_selected_item_as_template()));
-			menu->addSeparator();
-			menu->addAction (Resources::Icons16::add(), "&Add device", this, SLOT (create_device()));
-			menu->addAction (Resources::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
+			if (device_saved_as_template.connections_number() > 0)
+			{
+				menu->addAction (Resources::Icons16::save(), "&Save as template", this, SLOT (save_selected_item_as_template()));
+				menu->addSeparator();
+			}
+			menu->addAction (Resources::Icons16::add(), "&Add device", _tree, SLOT (create_device()));
+			menu->addAction (Resources::Icons16::remove(), "&Destroy", _tree, SLOT (destroy_selected_item()));
 		}
 	}
 	else
 	{
-		menu->addAction (Resources::Icons16::add(), "&Add device", this, SLOT (create_device()));
-		a = menu->addAction (Resources::Icons16::remove(), "&Destroy", this, SLOT (destroy_selected_item()));
+		menu->addAction (Resources::Icons16::add(), "&Add device", _tree, SLOT (create_device()));
+		a = menu->addAction (Resources::Icons16::remove(), "&Destroy", _tree, SLOT (destroy_selected_item()));
 		a->setEnabled (false);
 	}
 	menu->addSeparator();
@@ -352,15 +313,15 @@ Backend::create_templates_menu (QMenu* menu)
 
 	int action_id = 0;
 	_templates.clear();
-	DevicesManagerSettings* settings = Haruhi::haruhi()->devices_manager_settings();
-	for (DevicesManagerSettings::Devices::iterator tpl = settings->devices().begin(); tpl != settings->devices().end(); ++tpl)
+	DevicesManager::Model& dm_model = Haruhi::haruhi()->devices_manager_settings()->model();
+	for (DevicesManager::Model::Devices::iterator d = dm_model.devices().begin(); d != dm_model.devices().end(); ++d)
 	{
 		action_id += 1;
-		QAction* a = menu->addAction (Resources::Icons16::template_(), tpl->name(), _insert_template_signal_mapper, SLOT (map()));
+		QAction* a = menu->addAction (Resources::Icons16::template_(), d->name(), _insert_template_signal_mapper, SLOT (map()));
 		_insert_template_signal_mapper->setMapping (a, action_id);
-		_templates.insert (std::make_pair (action_id, *tpl));
+		_templates.insert (std::make_pair (action_id, *d));
 	}
-	menu->setEnabled (!settings->devices().empty());
+	menu->setEnabled (!dm_model.devices().empty());
 }
 
 
@@ -451,14 +412,11 @@ Backend::learn_from_midi()
 void
 Backend::insert_template (int menu_item_id)
 {
-	Templates::iterator tpl = _templates.find (menu_item_id);
-	if (tpl != _templates.end())
+	Templates::iterator t = _templates.find (menu_item_id);
+	if (t != _templates.end())
 	{
-		DeviceItem* item = _tree->create_device_item (tpl->second.name());
-		item->load_state (tpl->second.element());
-		item->treeWidget()->clearSelection();
-		item->treeWidget()->setCurrentItem (item);
-		item->setSelected (true);
+		_model.devices().push_back (t->second);
+		_model.changed();
 	}
 }
 

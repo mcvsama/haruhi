@@ -22,7 +22,7 @@
 #include <haruhi/config/all.h>
 
 // Local:
-#include "ports_list_view.h"
+#include "tree.h"
 #include "input_item.h"
 #include "output_item.h"
 
@@ -31,7 +31,7 @@ namespace Haruhi {
 
 namespace AudioBackendImpl {
 
-PortsListView::PortsListView (QWidget* parent, Backend* backend, const char* header_title):
+Tree::Tree (QWidget* parent, Backend* backend, const char* header_title):
 	QTreeWidget (parent),
 	_backend (backend)
 {
@@ -51,7 +51,7 @@ PortsListView::PortsListView (QWidget* parent, Backend* backend, const char* hea
 
 
 QTreeWidgetItem*
-PortsListView::selected_item() const
+Tree::selected_item() const
 {
 	QList<QTreeWidgetItem*> list = selectedItems();
 	return list.empty() ? 0 : list.front();
@@ -59,7 +59,7 @@ PortsListView::selected_item() const
 
 
 void
-PortsListView::save_state (QDomElement& element) const
+Tree::save_state (QDomElement& element) const
 {
 	for (int i = 0; i < invisibleRootItem()->childCount(); ++i)
 	{
@@ -90,7 +90,7 @@ PortsListView::save_state (QDomElement& element) const
 
 
 void
-PortsListView::load_state (QDomElement const& element)
+Tree::load_state (QDomElement const& element)
 {
 	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
 	{

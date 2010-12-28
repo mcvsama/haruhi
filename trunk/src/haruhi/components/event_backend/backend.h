@@ -34,20 +34,21 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/application/haruhi.h>
+#include <haruhi/components/devices_manager/device.h>
 #include <haruhi/components/devices_manager/device_dialog.h>
 #include <haruhi/components/devices_manager/controller_dialog.h>
+#include <haruhi/components/devices_manager/model.h>
 #include <haruhi/graph/event.h>
 #include <haruhi/graph/event_backend.h>
 #include <haruhi/graph/event_port.h>
 #include <haruhi/lib/midi.h>
 #include <haruhi/settings/settings.h>
-#include <haruhi/settings/devices_manager_settings.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/exception.h>
 #include <haruhi/utility/signal.h>
 
 // Local:
-#include "ports_list_view.h"
+#include "tree.h"
 #include "port_item.h"
 #include "device_with_port_item.h"
 #include "controller_with_port_item.h"
@@ -73,7 +74,7 @@ class Backend:
 
   private:
 	typedef std::map<Transport::Port*, DeviceWithPortItem*>	InputsMap;
-	typedef std::map<int, DevicesManagerSettings::Device>	Templates;
+	typedef std::map<int, DevicesManager::Device>			Templates;
 
   public:
 	Backend (QString const& client_name, int id, QWidget* parent);
@@ -110,13 +111,13 @@ class Backend:
 	void
 	load_state (QDomElement const&);
 
-  signals:
+  public:
 	/**
-	 * Emited after user saves Device as template.
-	 * Can be used to inform DevicesManager to save new device template.
+	 * Emited after user saves Device as template. Can be used to inform DevicesManager to save new device template.
+	 * If nothing is connected to this signal, 'save as template' menu item will be hidden in device popup menu.
+	 * \param	device Device to be saved as template.
 	 */
-	void
-	device_saved_as_template (DeviceItem* device_item);
+	Signal::Emiter1<DevicesManager::Device> device_saved_as_template;
 
   private slots:
 	/**
@@ -145,27 +146,6 @@ class Backend:
 	 */
 	bool
 	connected() const;
-
-	/**
-	 * Creates new unnamed/unconfigured device
-	 * and inserts it into the tree.
-	 */
-	void
-	create_device();
-
-	/**
-	 * Creates new unnamed/unconfigured controller
-	 * and inserts it into the subtree of currently selected device.
-	 * If no device is selected, it does nothing.
-	 */
-	void
-	create_controller();
-
-	/**
-	 * Destroys currently selected device or controller.
-	 */
-	void
-	destroy_selected_item();
 
 	/**
 	 * Emits signal device_saved_as_template()
@@ -243,13 +223,14 @@ class Backend:
 	Transport*					_transport;
 	InputsMap					_inputs;
 	QSignalMapper*				_insert_template_signal_mapper;
+	DevicesManager::Model		_model;
 
 	// Widgets:
+	QStackedWidget*				_stack;
+	Tree*						_tree;
 	QPushButton*				_create_device_button;
 	QPushButton*				_create_controller_button;
 	QPushButton*				_destroy_input_button;
-	QStackedWidget*				_stack;
-	PortsListView*				_tree;
 	DeviceWithPortDialog*		_device_dialog;
 	ControllerWithPortDialog*	_controller_dialog;
 

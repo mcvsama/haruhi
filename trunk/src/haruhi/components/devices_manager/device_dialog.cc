@@ -91,7 +91,7 @@ DeviceDialog::from (DeviceItem* item)
 void
 DeviceDialog::apply (DeviceItem* item) const
 {
-	item->setText (0, _name->text());
+	item->set_name (_name->text());
 	emit item_configured (item);
 }
 
