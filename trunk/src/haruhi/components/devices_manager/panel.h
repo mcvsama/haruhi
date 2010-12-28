@@ -58,6 +58,12 @@ class Panel:
 	~Panel();
 
 	/**
+	 * Returns Settings object used by this panel.
+	 */
+	Settings*
+	settings() const { return _settings; }
+
+	/**
 	 * Callback for EventBackend's on_event.
 	 * Passed to controller items for learning.
 	 */

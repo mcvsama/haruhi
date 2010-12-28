@@ -14,6 +14,10 @@
 // Standard:
 #include <cstddef>
 
+// Qt:
+#include <QtGui/QMessageBox>
+#include <QtGui/QTextDocument>
+
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/backtrace.h>
@@ -42,7 +46,33 @@ Settings::save_state (QDomElement& element) const
 void
 Settings::load_state (QDomElement const& element)
 {
+	_model.on_change.disconnect (this, &Settings::save_after_change);
 	_model.load_state (element);
+	_model.on_change.connect (this, &Settings::save_after_change);
+}
+
+
+void
+Settings::add_device (Device device)
+{
+	// Check for name collisions, possibly appending /0, /1, to the device name:
+	if (_model.has_device_named (device.name()))
+	{
+		for (int i = 0; i < 999; ++i)
+		{
+			QString new_name = device.name() + QString ("/%1").arg (i);
+			if (!_model.has_device_named (new_name))
+			{
+				device.set_name (new_name);
+				break;
+			}
+		}
+	}
+
+	_model.devices().push_back (device);
+	_model.changed();
+
+	QMessageBox::information (0, "Template saved", QString ("Device template saved as: <b>%1</b>").arg (Qt::escape (device.name())));
 }
 
 } // namespace DevicesManager

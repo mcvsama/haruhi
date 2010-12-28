@@ -24,6 +24,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/settings/settings.h>
+#include <haruhi/utility/signal.h>
 
 // Local:
 #include "device.h"
@@ -38,7 +39,9 @@ namespace DevicesManager {
  * Settings module for DevicesManager.
  * Contains Model.
  */
-class Settings: public Haruhi::Settings::Module
+class Settings:
+	public Haruhi::Settings::Module,
+	public Signal::Receiver
 {
   public:
 	Settings();
@@ -55,6 +58,13 @@ class Settings: public Haruhi::Settings::Module
 	Model const&
 	model() const { return _model; }
 
+	/**
+	 * Adds given device to model. Signals change with model().changed().
+	 * Used by EventBackend to save devices as templates in DeviceManager.
+	 */
+	void
+	add_device (Device device);
+
 	/*
 	 * SaveableState API
 	 */
@@ -64,6 +74,10 @@ class Settings: public Haruhi::Settings::Module
 
 	void
 	load_state (QDomElement const& element);
+
+  private:
+	void
+	save_after_change() { save(); }
 
   private:
 	Model	_model;

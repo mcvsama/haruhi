@@ -253,7 +253,7 @@ Backend::save_selected_item_as_template()
 	{
 		DeviceWithPortItem* device_item = dynamic_cast<DeviceWithPortItem*> (item);
 		if (device_item)
-			emit device_saved_as_template (device_item);
+			device_saved_as_template (*device_item->device());
 	}
 }
 
@@ -279,8 +279,11 @@ Backend::context_menu_for_items (QPoint const& pos)
 		{
 			menu->addAction (Resources::Icons16::add(), "Add &controller", _tree, SLOT (create_controller()));
 			menu->addSeparator();
-			menu->addAction (Resources::Icons16::save(), "&Save as template", this, SLOT (save_selected_item_as_template()));
-			menu->addSeparator();
+			if (device_saved_as_template.connections_number() > 0)
+			{
+				menu->addAction (Resources::Icons16::save(), "&Save as template", this, SLOT (save_selected_item_as_template()));
+				menu->addSeparator();
+			}
 			menu->addAction (Resources::Icons16::add(), "&Add device", _tree, SLOT (create_device()));
 			menu->addAction (Resources::Icons16::remove(), "&Destroy", _tree, SLOT (destroy_selected_item()));
 		}

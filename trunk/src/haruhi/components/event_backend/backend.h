@@ -111,13 +111,13 @@ class Backend:
 	void
 	load_state (QDomElement const&);
 
-  signals:
+  public:
 	/**
-	 * Emited after user saves Device as template.
-	 * Can be used to inform DevicesManager to save new device template.
+	 * Emited after user saves Device as template. Can be used to inform DevicesManager to save new device template.
+	 * If nothing is connected to this signal, 'save as template' menu item will be hidden in device popup menu.
+	 * \param	device Device to be saved as template.
 	 */
-	void
-	device_saved_as_template (DeviceItem* device_item);
+	Signal::Emiter1<DevicesManager::Device> device_saved_as_template;
 
   private slots:
 	/**

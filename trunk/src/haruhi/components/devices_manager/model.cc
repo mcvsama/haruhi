@@ -51,6 +51,16 @@ Model::has_device (Device* device) const
 }
 
 
+bool
+Model::has_device_named (QString const& name) const
+{
+	for (Devices::const_iterator d = _devices.begin(); d != _devices.end(); ++d)
+		if (d->name() == name)
+			return true;
+	return false;
+}
+
+
 Model::Devices::iterator
 Model::find_device (Device* device)
 {

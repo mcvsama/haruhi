@@ -67,6 +67,12 @@ class Model: public SaveableState
 	has_device (Device* device) const;
 
 	/**
+	 * Returns true if there is at least one device with given name.
+	 */
+	bool
+	has_device_named (QString const& name) const;
+
+	/**
 	 * Returns iterator pointing to given Device or past-the-end of the sequence
 	 * if Device is not found.
 	 */
