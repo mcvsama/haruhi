@@ -26,8 +26,11 @@
 #include <QtGui/QSpinBox>
 #include <QtGui/QTreeWidget>
 #include <QtGui/QTreeWidgetItem>
+#include <QtGui/QComboBox>
+#include <QtGui/QListWidget>
 
 // Haruhi:
+#include <haruhi/components/devices_manager/device.h>
 #include <haruhi/settings/session_loader_settings.h>
 
 
@@ -51,7 +54,7 @@ class SessionLoader: public QDialog
 		}
 
 		void
-		setup (void)
+		setup()
 		{
 			QSize s = sizeHint (0);
 			if (s.height() < 18)
@@ -65,14 +68,48 @@ class SessionLoader: public QDialog
 		SessionLoaderSettings::RecentSession recent_session;
 	};
 
+	class DeviceItem: public QListWidgetItem
+	{
+	  public:
+		DeviceItem (QListWidget* parent, DevicesManager::Device device):
+			QListWidgetItem (Resources::Icons16::keyboard(), device.name(), parent),
+			device (device)
+		{
+			setup();
+		}
+
+		void setup()
+		{
+			QSize s = sizeHint();
+			if (s.height() < 18)
+			{
+				s.setHeight (18);
+				setSizeHint (s);
+			}
+		}
+
+	  public:
+		DevicesManager::Device device;
+	};
+
   public:
 	enum RejectButton { CancelButton, QuitButton };
 	enum DefaultTab { NewTab, OpenTab };
 	enum Result { NoResult, NewSession, OpenSession };
 
   public:
-	SessionLoader (DefaultTab, RejectButton, QWidget* parent);
+	/**
+	 * Creates SessionLoader dialog.
+	 * \param	reject_button Text that should be on dialog rejection button.
+	 * \param	default_tab Tab that should be visible by default.
+	 * \param	parent Parent widget.
+	 */
+	SessionLoader (DefaultTab default_tab, RejectButton reject_button, QWidget* parent);
 
+	/**
+	 * Applies configuration to the Session (creates audio ports,
+	 * inserts event devices, sets name for the session, etc.)
+	 */
 	void
 	apply (Session*);
 
@@ -89,6 +126,19 @@ class SessionLoader: public QDialog
 	void
 	open_recent (QTreeWidgetItem*, int);
 
+	/**
+	 * Adds device currently selected in _devices_combobox to _devices_list.
+	 */
+	void
+	add_device();
+
+	/**
+	 * Removes devuce currently selected in _devices_list.
+	 * Does nothing if nothing is selected.
+	 */
+	void
+	del_device();
+
   private:
 	QTabWidget*		_tabs;
 	QWidget*		_new_tab;
@@ -98,6 +148,8 @@ class SessionLoader: public QDialog
 	QLineEdit*		_new_session_name;
 	QSpinBox*		_new_session_audio_inputs;
 	QSpinBox*		_new_session_audio_outputs;
+	QComboBox*		_devices_combobox;
+	QListWidget*	_devices_list;
 	QTreeWidget*	_recent_listview;
 	Result			_result;
 	QString			_file_name;

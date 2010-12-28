@@ -53,8 +53,9 @@ Settings::load_state (QDomElement const& element)
 
 
 void
-Settings::add_device (Device device)
+Settings::add_device (Device const& p_device)
 {
+	Device device (p_device);
 	// Check for name collisions, possibly appending /0, /1, to the device name:
 	if (_model.has_device_named (device.name()))
 	{

@@ -82,6 +82,12 @@ class Backend:
 	~Backend();
 
 	/**
+	 * Inserts given Device into list.
+	 */
+	void
+	add_device (DevicesManager::Device const& device);
+
+	/**
 	 * Returns event transport used by backend.
 	 */
 	Transport*
@@ -117,7 +123,12 @@ class Backend:
 	 * If nothing is connected to this signal, 'save as template' menu item will be hidden in device popup menu.
 	 * \param	device Device to be saved as template.
 	 */
-	Signal::Emiter1<DevicesManager::Device> device_saved_as_template;
+	Signal::Emiter1<DevicesManager::Device const&> device_saved_as_template;
+
+	/**
+	 * Emited on each event from transport.
+	 */
+	Signal::Emiter1<MIDI::Event const&> on_event;
 
   private slots:
 	/**
@@ -212,11 +223,7 @@ class Backend:
 	 * Uses _templates[id].
 	 */
 	void
-	insert_template (int template_id);
-
-  public:
-	// Emited on each event from transport:
-	Signal::Emiter1<MIDI::Event const&> on_event;
+	add_template (int template_id);
 
   private:
 	QString						_client_name;

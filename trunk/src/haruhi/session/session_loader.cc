@@ -64,7 +64,9 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	_new_session_name->selectAll();
 	_new_session_name->setFocus();
 
+	QGroupBox* name_box = new QGroupBox ("Session name", _new_tab);
 	QGroupBox* audio_box = new QGroupBox ("Audio setup", _new_tab);
+	QGroupBox* event_box = new QGroupBox ("Devices setup", _new_tab);
 
 	_new_session_audio_inputs = new QSpinBox (0, 16, 1, audio_box);
 	_new_session_audio_inputs->setValue (2);
@@ -72,22 +74,26 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	_new_session_audio_outputs = new QSpinBox (0, 16, 1, audio_box);
 	_new_session_audio_outputs->setValue (2);
 
-	QGroupBox* event_box = new QGroupBox ("Devices setup", _new_tab);
+	_devices_combobox = new QComboBox (event_box);
+	DevicesManager::Settings* dm_settings = Haruhi::haruhi()->devices_manager_settings();
+	assert (dm_settings);
+	DevicesManager::Model::Devices& devices = dm_settings->model().devices();
+	for (DevicesManager::Model::Devices::iterator d = devices.begin(); d != devices.end(); ++d)
+		_devices_combobox->addItem (Resources::Icons16::keyboard(), d->name(), qVariantFromValue (reinterpret_cast<void*> (&*d)));
 
 	QPushButton* devices_add = new QPushButton (Resources::Icons16::add(), "", audio_box);
 	devices_add->setFixedWidth (devices_add->height());
+	QObject::connect (devices_add, SIGNAL (clicked()), this, SLOT (add_device()));
 
 	QPushButton* devices_del = new QPushButton (Resources::Icons16::remove(), "", audio_box);
 	devices_del->setFixedWidth (devices_del->height());
+	QObject::connect (devices_del, SIGNAL (clicked()), this, SLOT (del_device()));
 
-	QListWidget* devices_list = new QListWidget (audio_box);
+	_devices_list = new QListWidget (audio_box);
 
-	QGridLayout* new_grid = new QGridLayout();
+	QGridLayout* new_grid = new QGridLayout (name_box);
 	new_grid->setSpacing (Config::Spacing);
-	new_grid->setColSpacing (0, 100);
-	new_grid->setColSpacing (1, 150);
-	new_grid->addWidget (new QLabel ("Session name:", _new_tab), 0, 0);
-	new_grid->addWidget (_new_session_name, 0, 1);
+	new_grid->addWidget (_new_session_name, 0, 0);
 
 	QGridLayout* audio_grid = new QGridLayout (audio_box);
 	audio_grid->setSpacing (Config::Spacing);
@@ -102,15 +108,15 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	QGridLayout* event_grid = new QGridLayout (event_box);
 	event_grid->setSpacing (Config::Spacing);
 	event_grid->setMargin (2 * Config::Margin);
-	event_grid->addWidget (devices_combobox, 0, 0);
+	event_grid->addWidget (_devices_combobox, 0, 0);
 	event_grid->addWidget (devices_add, 0, 1);
 	event_grid->addWidget (devices_del, 0, 2);
-	event_grid->addWidget (devices_list, 1, 0, 1, 3);
+	event_grid->addWidget (_devices_list, 1, 0, 1, 3);
 
 	QVBoxLayout* new_layout = new QVBoxLayout (_new_tab);
 	new_layout->setSpacing (Config::Spacing);
 	new_layout->setMargin (3 * Config::Margin);
-	new_layout->addLayout (new_grid);
+	new_layout->addWidget (name_box);
 	new_layout->addWidget (audio_box);
 	new_layout->addWidget (event_box);
 	new_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
@@ -186,6 +192,7 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 		case OpenTab:	_tabs->showPage (_open_tab); break;
 	}
 
+	_new_session_name->setFocus();
 	update_widgets();
 }
 
@@ -199,13 +206,26 @@ SessionLoader::apply (Session* session)
 			break;
 
 		case NewSession:
+		{
 			session->set_name (_new_session_name->text());
 			// Create audio inputs/outputs:
 			for (int i = 0, n = _new_session_audio_inputs->value(); i < n; ++i)
 				session->graph()->audio_backend()->create_input (QString ("in %1").arg (i + 1));
 			for (int i = 0, n = _new_session_audio_outputs->value(); i < n; ++i)
 				session->graph()->audio_backend()->create_output (QString ("out %1").arg (i + 1));
+			// Add event devices:
+			EventBackendImpl::Backend* backend = dynamic_cast<EventBackendImpl::Backend*> (session->graph()->event_backend());
+			if (backend)
+			{
+				for (int i = 0; i < _devices_list->count(); ++i)
+				{
+					DeviceItem* device_item = dynamic_cast<DeviceItem*> (_devices_list->item (i));
+					assert (device_item);
+					backend->add_device (device_item->device);
+				}
+			}
 			break;
+		}
 
 		case OpenSession:
 			session->load_session (_file_name);
@@ -262,6 +282,31 @@ SessionLoader::open_recent (QTreeWidgetItem* item, int)
 		_result = OpenSession;
 		_file_name = recent_session_item->recent_session.file_name;
 		accept();
+	}
+}
+
+
+void
+SessionLoader::add_device()
+{
+	QVariant var = _devices_combobox->itemData (_devices_combobox->currentIndex());
+	DevicesManager::Device* device = reinterpret_cast<DevicesManager::Device*> (var.value<void*>());
+	DeviceItem* device_item = new DeviceItem (_devices_list, *device);
+	_devices_list->addItem (device_item);
+	_devices_list->setCurrentItem (device_item);
+	device_item->setSelected (true);
+}
+
+
+void
+SessionLoader::del_device()
+{
+	QList<QListWidgetItem*> selected_items = _devices_list->selectedItems();
+	if (!selected_items.empty())
+	{
+		QListWidgetItem* item = selected_items.first();
+		_devices_list->takeItem (_devices_list->row (item));
+		delete item;
 	}
 }
 
