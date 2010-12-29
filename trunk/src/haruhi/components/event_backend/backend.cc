@@ -98,9 +98,9 @@ Backend::Backend (QString const& client_name, int id, QWidget* parent):
 	panels_layout->addWidget (_tree);
 	panels_layout->addWidget (_stack);
 
+	input_buttons_layout->addWidget (_insert_template_button);
 	input_buttons_layout->addWidget (_create_device_button);
 	input_buttons_layout->addWidget (_create_controller_button);
-	input_buttons_layout->addWidget (_insert_template_button);
 	input_buttons_layout->addWidget (_destroy_input_button);
 	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 
