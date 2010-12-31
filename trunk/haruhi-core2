@@ -1,4 +1,0 @@
-#!/bin/sh
-
-ulimit -c unlimited
-DIST=core2 make -C src && QT_NO_GLIB=1 src/dist/core2/haruhi.run

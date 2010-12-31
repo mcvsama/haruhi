@@ -1,4 +1,0 @@
-#!/bin/sh
-
-ulimit -c unlimited
-DIST=profiled make -C src && QT_NO_GLIB=1 src/dist/profiled/haruhi.run

@@ -1,0 +1,56 @@
+#!/bin/sh
+# --gdb Runs Haruhi in GDB.
+# --valgrind Runs Haruhi in Valgrind.
+
+o_run_in_gdb=0
+o_run_in_valgrind=0
+o_target="debug"
+
+for arg in "$@"; do
+	case "$arg" in
+		"-h"|"--help")
+			echo "Usage ./start [options] <target>"
+			echo "-g --gdb       Run in GDB"
+			echo "-v --valgrind  Run in Valgrind"
+			echo "<target>       Target profile defined in Makefile.conf (debug, core2, etc)"
+			exit 0
+			;;
+		"-g"|"--gdb")		o_run_in_gdb=1 ;;
+		"-v"|"--valgrind")	o_run_in_valgrind=1 ;;
+		*)					o_target="$arg"
+	esac
+done
+
+if [ "$o_run_in_valgrind" = "1" ] && [ "$o_run_in_gdb" = "1" ]; then
+	echo "Error: -g and -v options are incompatible."
+	exit 1
+fi
+
+executable="src/dist/$o_target/haruhi.run" # executable file
+run="$executable" # run command (with gdb/valgrind)
+corefile="core"
+
+if [ "$o_run_in_valgrind" = "1" ]; then
+	run="valgrind $run"
+fi
+
+if [ "$o_run_in_gdb" = "1" ]; then
+	run="gdb $run -ex \"break 'Haruhi::fail'\" -ex run"
+fi
+
+echo "Will run: $run"
+echo ""
+
+ulimit -c unlimited
+export MALLOC_CHECK=_2
+export DIST="$o_target"
+export QT_NO_GLIB=1
+
+if make -C src; then
+	if ! sh -c "$run"; then
+		if [ -f "$corefile" ]; then
+			echo "Core file found, running GDB."
+			gdb --core="$corefile" "$executable"
+		fi
+	fi
+fi
