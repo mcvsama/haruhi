@@ -75,6 +75,7 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	user_limit_min_spinbox->set_detached (true);
 	user_limit_min_spinbox->setValue (c.user_limit_min);
 	user_limit_min_spinbox->setFixedWidth (80);
+	user_limit_min_spinbox->set_volume_scale (knob->volume_scale(), knob->volume_scale_exp());
 	QObject::connect (user_limit_min_spinbox, SIGNAL (valueChanged (int)), this, SLOT (limit_min_updated()));
 	_user_limit_min_spinbox = user_limit_min_spinbox;
 
@@ -83,6 +84,7 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	user_limit_max_spinbox->set_detached (true);
 	user_limit_max_spinbox->setValue (c.user_limit_max);
 	user_limit_max_spinbox->setFixedWidth (80);
+	user_limit_max_spinbox->set_volume_scale (knob->volume_scale(), knob->volume_scale_exp());
 	QObject::connect (user_limit_max_spinbox, SIGNAL (valueChanged (int)), this, SLOT (limit_max_updated()));
 	_user_limit_max_spinbox = user_limit_max_spinbox;
 
@@ -226,6 +228,7 @@ Knob::SpinBox::int_to_float (int x) const
 {
 	int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy().config().hard_limit_min;
 	int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy().config().hard_limit_max;
+
 	float f = renormalize (x, hard_limit_min, hard_limit_max, _show_min, _show_max);
 	if (f < 0.0 && f > 0.5 * -std::pow (0.1, _decimals))
 		f = 0.0;
@@ -238,6 +241,7 @@ Knob::SpinBox::float_to_int (float y) const
 {
 	int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy().config().hard_limit_min;
 	int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy().config().hard_limit_max;
+
 	return renormalize (y, _show_min, _show_max, hard_limit_min, hard_limit_max);
 }
 

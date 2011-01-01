@@ -103,6 +103,9 @@ class Knob:
 		bool
 		volume_scale() const { return _volume_scale; }
 
+		float
+		volume_scale_exp() const { return _volume_scale_exp; }
+
 		void
 		set_volume_scale (bool setting, float exp = 1.0f);
 
@@ -156,6 +159,18 @@ class Knob:
 	 */
 	Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param,
 		  QString const& label, float show_min, float show_max, int step, int decimals);
+
+	/**
+	 * Returns true if volume scale has been enabled.
+	 */
+	bool
+	volume_scale() const { return _spin_box->volume_scale(); }
+
+	/**
+	 * Returns volume scale exponent.
+	 */
+	float
+	volume_scale_exp() const { return _spin_box->volume_scale_exp(); }
 
 	/**
 	 * Enables/disables volume scale (shown in dB).
