@@ -390,7 +390,7 @@ EMITER_TEMPLATE_SIGNATURE
 				(*i)->call (EMITER_ARGUMENTS_LIST);
 		}
 
-		typename Connections::size_type
+		EMITER_TYPENAME Connections::size_type
 		connections_number() const { return _connections.size(); }
 
 	  protected:
