@@ -32,6 +32,7 @@
 		void															\
 		operator delete (void* p, std::size_t s)						\
 			{ _allocator.deallocate (reinterpret_cast<T*> (p), s); }	\
+	private:
 
 
 /**
