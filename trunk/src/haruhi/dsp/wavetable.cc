@@ -39,10 +39,21 @@ Wavetable::~Wavetable()
 
 
 void
+Wavetable::add_table (Sample* samples, float max_frequency)
+{
+	Tables::iterator t = _tables.find (max_frequency);
+	// Delete old array, if we're overwriting table:
+	if (t != _tables.end())
+		delete[] t->second;
+	_tables[max_frequency] = samples;
+}
+
+
+void
 Wavetable::drop_tables()
 {
-	for (Tables::size_type i = 0; i < _tables.size(); ++i)
-		delete[] _tables[i];
+	for (Tables::iterator t = _tables.begin(); t != _tables.end(); ++t)
+		delete[] t->second;
 	_tables.clear();
 }
 

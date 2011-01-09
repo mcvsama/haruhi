@@ -19,6 +19,7 @@
 #include <cmath>
 #include <vector>
 #include <algorithm>
+#include <map>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -33,12 +34,9 @@ namespace DSP {
 class Wavetable
 {
   public:
-	enum {
-		Number = 12, // Number of tables.
-	};
-
-  public:
-	typedef std::vector<Sample*>  Tables;
+	// Maps frequency to array of samples. Frequency is max frequency for which
+	// given table can be used. Use lower_bound method to find correct table.
+	typedef std::map<float, Sample*>  Tables;
 
 	/**
 	 * All filler classes (that is classes that fill wavetables with samples)
@@ -75,11 +73,13 @@ class Wavetable
 
 	~Wavetable();
 
-	Tables&
-	tables() { return _tables; }
-
-	Tables const&
-	tables() const { return _tables; }
+	/**
+	 * Adds wavetable.
+	 * \param	table Array of samples. Wavetable takes ownership of the pointer.
+	 * \param	max_frequency Maximum frequency for which this array can be used.
+	 */
+	void
+	add_table (Sample* samples, float max_frequency);
 
 	/**
 	 * Deletes previously allocated tables using delete operator.
@@ -92,18 +92,18 @@ class Wavetable
 	 * Must be called by filler.
 	 */
 	void
-	set_wavetables_size (std::size_t size)
-	{
-		_size = size;
-	}
+	set_wavetables_size (std::size_t size) { _size = size; }
 
+	/**
+	 * There must be at least one table added. Otherwise behavior of this
+	 * method is undefined.
+	 */
 	Sample
 	operator() (Sample register phase, Sample frequency) const
 	{
-		const int t = table_index (frequency);
+		Sample const* table = table_for_frequency (frequency);
 		const float p = mod1 (phase) * _size;
 		const int k = static_cast<int> (p);
-		const Tables::value_type& table = _tables[t];
 		const Sample v1 = table[k];
 		const Sample v2 = table[(k + 1) % _size];
 		// Linear approximation:
@@ -119,16 +119,15 @@ class Wavetable
   private:
 	/**
 	 * Returns wavetable index to use for given frequency.
+	 * There must be at least one table in set.
 	 */
-	int
-	table_index (float frequency) const
+	Sample const*
+	table_for_frequency (float frequency) const
 	{
-		const int i = -(roundf (-log2f (1.45f * 0.5f / frequency)) + 1.0f);
-		if (i < 0)
-			return 0;
-		else if (static_cast<unsigned int> (i) > _tables.size() - 1)
-			return _tables.size() - 1;
-		return i;
+		Tables::const_iterator t = _tables.lower_bound (frequency);
+		if (t == _tables.end())
+			return _tables.rbegin()->second;
+		return t->second;
 	}
 
   private:

@@ -250,7 +250,8 @@ class VoiceOscillator
 				_z = f + _e * noise_sample() * _distribution_lookup[p];
 				_phases[p] = mod1 (_phases[p] + _z);
 				// Don't take _z as wave's frequency, because this might result in frequent jumping
-				// between two wavetables and unwanted audible noise on some notes:
+				// between two wavetables and unwanted audible noise on some notes. It's better to get
+				// some (inaudible) aliasing than that:
 				_sum += (*_wavetable)(_phases[p], f);
 				f += _d;
 			}
