@@ -32,7 +32,6 @@
 #include <haruhi/graph/event_buffer.h>
 #include <haruhi/dsp/functions.h>
 #include <haruhi/dsp/wavetable.h>
-#include <haruhi/dsp/fourier_series_filler.h>
 #include <haruhi/dsp/fft_filler.h>
 #include <haruhi/dsp/noise.h>
 #include <haruhi/utility/atomic.h>
