@@ -37,7 +37,7 @@ namespace PresetsManagerPrivate {
 
 class PresetEditor;
 class PresetItem;
-class PresetsListView;
+class PresetsTree;
 
 }
 
@@ -45,7 +45,7 @@ class PresetsManager: public QWidget
 {
 	Q_OBJECT
 
-	friend class PresetsManagerPrivate::PresetsListView;
+	friend class PresetsManagerPrivate::PresetsTree;
 
   public:
 	PresetsManager (Unit*, QWidget* parent = 0);
@@ -120,7 +120,7 @@ class PresetsManager: public QWidget
 	QString									_packages_dir;
 	Unit*									_unit;
 	SaveableState*							_saveable_unit;
-	PresetsManagerPrivate::PresetsListView*	_tree;
+	PresetsManagerPrivate::PresetsTree*		_tree;
 	PresetsManagerPrivate::PresetEditor*	_editor;
 	HasPresetsSettings*						_has_presets_settings;
 	QPushButton*							_load_button;
