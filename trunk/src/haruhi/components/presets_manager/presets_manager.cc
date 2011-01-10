@@ -36,7 +36,6 @@
 #include <haruhi/config/all.h>
 #include <haruhi/application/haruhi.h>
 #include <haruhi/graph/unit.h>
-#include <haruhi/settings/has_presets_settings.h>
 #include <haruhi/utility/exception.h>
 #include <haruhi/utility/filesystem.h>
 #include <haruhi/utility/saveable_state.h>
@@ -55,13 +54,14 @@ namespace Haruhi {
 
 namespace Private = PresetsManagerPrivate;
 
-
 PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 	QWidget (parent),
 	_unit (unit),
 	_saveable_unit (dynamic_cast<SaveableState*> (unit)),
 	_lock_file (-1)
 {
+	_has_presets_settings = Haruhi::haruhi()->has_presets_settings();
+
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	QWidget* right_panel = new QWidget (this);
 	right_panel->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
@@ -71,18 +71,12 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 	_create_category_action = _create_menu->addAction (Resources::Icons16::presets_category(), "Category", this, SLOT (create_category()));
 	_create_preset_action = _create_menu->addAction (Resources::Icons16::preset(), "Preset", this, SLOT (create_preset()));
 
-	_tabs = new QTabWidget (this);
-	_tabs->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
-	QObject::connect (_tabs, SIGNAL (currentChanged (QWidget*)), this, SLOT (update_widgets()));
+	_tree = new Private::PresetsListView (this, this);
+	_tree->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
+	QObject::connect (_tree, SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
+	QObject::connect (_tree, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (load_preset (QTreeWidgetItem*)));
 
-	_list = new Private::PresetsListView (this, this);
-	QObject::connect (_list, SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
-	QObject::connect (_list, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (load_preset (QTreeWidgetItem*)));
-
-	_favs = new Private::PresetsListView (this, this);
-	QObject::connect (_favs, SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
-
-	_editor = new Private::PresetEditor (right_panel);
+	_editor = new Private::PresetEditor (this, right_panel);
 
 	_load_button = new QPushButton (Resources::Icons16::load(), "Load", right_panel);
 	QObject::connect (_load_button, SIGNAL (clicked()), this, SLOT (load_preset()));
@@ -96,14 +90,11 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 	_destroy_button = new QPushButton (Resources::Icons16::remove(), "Destroy…", right_panel);
 	QObject::connect (_destroy_button, SIGNAL (clicked()), this, SLOT (destroy()));
 
-	_tabs->addTab (_list, "Presets");
-	_tabs->addTab (_favs, "Favorities");
-
 	// Layouts:
 
 	QVBoxLayout* v1 = new QVBoxLayout (this, 0, Config::Spacing);
 	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
-	h1->addWidget (_tabs);
+	h1->addWidget (_tree);
 	h1->addWidget (right_panel);
 	QVBoxLayout* v2 = new QVBoxLayout (right_panel, 0, Config::Spacing);
 	QHBoxLayout* h2 = new QHBoxLayout (v2, Config::Spacing);
@@ -132,24 +123,17 @@ PresetsManager::~PresetsManager()
 
 
 bool
-PresetsManager::is_favorite (QString const& uuid)
+PresetsManager::favorited (QString const& preset_uuid)
 {
-	HasPresetsSettings* settings = Haruhi::haruhi()->has_presets_settings();
-	HasPresetsSettings::FavoritePresets& fp = settings->favorite_presets_for_unit (_unit->urn());
-	return fp.find (uuid.toStdString()) != fp.end();
+	return _has_presets_settings->favorited (_unit->urn(), preset_uuid.toStdString());
 }
 
 
 void
-PresetsManager::set_favorite (QString const& uuid, QString const& name, bool set)
+PresetsManager::set_favorited (QString const& preset_uuid, bool set)
 {
-	HasPresetsSettings* settings = Haruhi::haruhi()->has_presets_settings();
-	HasPresetsSettings::FavoritePresets& fp = settings->favorite_presets_for_unit (_unit->urn());
-	if (set)
-		fp.insert (uuid.toStdString());
-	else
-		fp.erase (uuid.toStdString());
-	settings->save();
+	_has_presets_settings->set_favorited (_unit->urn(), preset_uuid.toStdString(), set);
+	_has_presets_settings->save();
 }
 
 
@@ -158,7 +142,7 @@ PresetsManager::load_preset()
 {
 	if (_saveable_unit)
 	{
-		Private::PresetItem* preset_item = _list->current_preset_item();
+		Private::PresetItem* preset_item = _tree->current_preset_item();
 		if (preset_item)
 		{
 			_saveable_unit->load_state (preset_item->patch());
@@ -171,7 +155,7 @@ PresetsManager::load_preset()
 void
 PresetsManager::load_preset (QTreeWidgetItem* item)
 {
-	_list->clearSelection();
+	_tree->clearSelection();
 	item->setSelected (true);
 	load_preset();
 }
@@ -180,7 +164,7 @@ PresetsManager::load_preset (QTreeWidgetItem* item)
 void
 PresetsManager::save_preset()
 {
-	Private::PresetItem* preset_item = _list->current_preset_item();
+	Private::PresetItem* preset_item = _tree->current_preset_item();
 	if (preset_item)
 	{
 		save_preset (preset_item, true);
@@ -192,8 +176,8 @@ PresetsManager::save_preset()
 void
 PresetsManager::create_package()
 {
-	Private::PackageItem* package_item = new Private::PackageItem (_list);
-	_list->clearSelection();
+	Private::PackageItem* package_item = new Private::PackageItem (_tree);
+	_tree->clearSelection();
 	package_item->meta().name = "<new package>";
 	package_item->reload();
 	package_item->setSelected (true);
@@ -204,15 +188,15 @@ PresetsManager::create_package()
 void
 PresetsManager::create_category()
 {
-	Private::PackageItem* package_item = _list->current_package_item();
+	Private::PackageItem* package_item = _tree->current_package_item();
 	if (!package_item)
 	{
-		Private::CategoryItem* category_item = _list->current_category_item();
+		Private::CategoryItem* category_item = _tree->current_category_item();
 		if (category_item)
 			package_item = category_item->package_item();
 		else
 		{
-			Private::PresetItem* preset_item = _list->current_preset_item();
+			Private::PresetItem* preset_item = _tree->current_preset_item();
 			if (preset_item)
 				package_item = preset_item->category_item()->package_item();
 		}
@@ -221,7 +205,7 @@ PresetsManager::create_category()
 	if (package_item)
 	{
 		Private::CategoryItem* category_item = new Private::CategoryItem ("<new category>", package_item);
-		_list->clearSelection();
+		_tree->clearSelection();
 		category_item->reload();
 		category_item->setSelected (true);
 		_editor->focus_category();
@@ -233,10 +217,10 @@ PresetsManager::create_category()
 void
 PresetsManager::create_preset()
 {
-	Private::CategoryItem* category_item = _list->current_category_item();
+	Private::CategoryItem* category_item = _tree->current_category_item();
 	if (!category_item)
 	{
-		Private::PresetItem* preset_item = _list->current_preset_item();
+		Private::PresetItem* preset_item = _tree->current_preset_item();
 		if (preset_item)
 			category_item = preset_item->category_item();
 	}
@@ -244,7 +228,7 @@ PresetsManager::create_preset()
 	if (category_item)
 	{
 		Private::PresetItem* preset_item = new Private::PresetItem (category_item);
-		_list->clearSelection();
+		_tree->clearSelection();
 		preset_item->meta().name = "<new preset>";
 		preset_item->reload();
 		preset_item->setSelected (true);
@@ -258,19 +242,19 @@ PresetsManager::create_preset()
 void
 PresetsManager::destroy()
 {
-	Private::PackageItem* package_item = _list->current_package_item();
+	Private::PackageItem* package_item = _tree->current_package_item();
 	if (package_item)
 	{
 		if (QMessageBox::question (this, "Delete package", "Really delete package " + package_item->meta().name + "?",
 								   QMessageBox::Yes | QMessageBox::Default, QMessageBox::Cancel | QMessageBox::Escape) == QMessageBox::Yes)
 		{
 			package_item->remove_file();
-			_list->invisibleRootItem()->takeChild (_list->invisibleRootItem()->indexOfChild (package_item));
+			_tree->invisibleRootItem()->takeChild (_tree->invisibleRootItem()->indexOfChild (package_item));
 			delete package_item;
 		}
 	}
 
-	Private::CategoryItem* category_item = _list->current_category_item();
+	Private::CategoryItem* category_item = _tree->current_category_item();
 	if (category_item)
 	{
 		if (QMessageBox::question (this, "Delete category", "Really delete category " + category_item->name() + "?",
@@ -289,7 +273,7 @@ PresetsManager::destroy()
 		}
 	}
 
-	Private::PresetItem* preset_item = _list->current_preset_item();
+	Private::PresetItem* preset_item = _tree->current_preset_item();
 	if (preset_item)
 	{
 		if (QMessageBox::question (this, "Delete preset", "Really delete preset " + preset_item->meta().name + "?",
@@ -324,15 +308,14 @@ PresetsManager::append_element (QDomElement& subject, QString const& name, QStri
 void
 PresetsManager::update_widgets()
 {
-	// TODO który tab? czy package/grupa/patch? itp
-	_load_button->setEnabled (_saveable_unit && _list->current_preset_item());
-	_save_button->setEnabled (_saveable_unit && _list->current_preset_item());
+	_load_button->setEnabled (_saveable_unit && _tree->current_preset_item());
+	_save_button->setEnabled (_saveable_unit && _tree->current_preset_item());
 	_create_button->setEnabled (_saveable_unit);
 	_destroy_button->setEnabled (_saveable_unit);
 
-	Private::PackageItem* package_item = _list->current_package_item();
-	Private::CategoryItem* category_item = _list->current_category_item();
-	Private::PresetItem* preset_item = _list->current_preset_item();
+	Private::PackageItem* package_item = _tree->current_package_item();
+	Private::CategoryItem* category_item = _tree->current_category_item();
+	Private::PresetItem* preset_item = _tree->current_preset_item();
 
 	_editor->setEnabled (true);
 
@@ -392,7 +375,7 @@ PresetsManager::read()
 			// Each entry in list represents one presets package:
 			for (QStringList::Iterator p = list.begin(); p != list.end(); ++p)
 			{
-				Private::PackageItem* package_item = new Private::PackageItem (_list);
+				Private::PackageItem* package_item = new Private::PackageItem (_tree);
 				try {
 					package_item->load_file (_packages_dir + "/" + *p);
 				}

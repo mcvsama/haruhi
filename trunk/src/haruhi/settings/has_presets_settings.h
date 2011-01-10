@@ -32,20 +32,32 @@ namespace Haruhi {
 class HasPresetsSettings: public Settings::Module
 {
   public:
+	// Set of preset UUIDs marked by user as favorite:
 	typedef std::set<std::string>					FavoritePresets;
+	// Maps Unit URNs to set of favorite presets:
 	typedef std::map<std::string, FavoritePresets>	Units;
 
   public:
 	HasPresetsSettings();
+
+	bool
+	favorited (std::string const& unit_urn, std::string const& preset_uuid) const;
+
+	void
+	set_favorited (std::string const& unit_urn, std::string const& preset_uuid, bool set);
+
+	FavoritePresets&
+	favorite_presets_for_unit (std::string const& unit_urn);
+
+	/*
+	 * Settings::Module API
+	 */
 
 	void
 	save_state (QDomElement& element) const;
 
 	void
 	load_state (QDomElement const& element);
-
-	FavoritePresets&
-	favorite_presets_for_unit (std::string const& unit_urn);
 
   private:
 	Units _units;

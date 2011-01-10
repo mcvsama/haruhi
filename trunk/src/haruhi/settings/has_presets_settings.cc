@@ -26,11 +26,41 @@ HasPresetsSettings::HasPresetsSettings():
 }
 
 
+bool
+HasPresetsSettings::favorited (std::string const& unit_urn, std::string const& preset_uuid) const
+{
+	Units::const_iterator u = _units.find (unit_urn);
+	if (u == _units.end())
+		return false;
+	FavoritePresets::const_iterator f = u->second.find (preset_uuid);
+	return f != u->second.end();
+}
+
+
+void
+HasPresetsSettings::set_favorited (std::string const& unit_urn, std::string const& preset_uuid, bool set)
+{
+	if (set)
+		_units[unit_urn].insert (preset_uuid);
+	else
+		_units[unit_urn].erase (preset_uuid);
+}
+
+
+HasPresetsSettings::FavoritePresets&
+HasPresetsSettings::favorite_presets_for_unit (std::string const& unit_urn)
+{
+	return _units[unit_urn];
+}
+
+
 void
 HasPresetsSettings::save_state (QDomElement& element) const
 {
 	for (Units::const_iterator u = _units.begin(); u != _units.end(); ++u)
 	{
+		if (u->second.empty())
+			continue;
 		QDomElement unit_el = element.ownerDocument().createElement ("unit");
 		unit_el.setAttribute ("urn", u->first.c_str());
 		for (FavoritePresets::const_iterator fp = u->second.begin(); fp != u->second.end(); ++fp)
@@ -72,13 +102,6 @@ HasPresetsSettings::load_state (QDomElement const& element)
 			}
 		}
 	}
-}
-
-
-HasPresetsSettings::FavoritePresets&
-HasPresetsSettings::favorite_presets_for_unit (std::string const& unit_urn)
-{
-	return _units[unit_urn];
 }
 
 } // namespace Haruhi

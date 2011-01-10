@@ -39,11 +39,12 @@ namespace Haruhi {
 
 namespace PresetsManagerPrivate {
 
-PresetEditor::PresetEditor (QWidget* parent):
+PresetEditor::PresetEditor (PresetsManager* presets_manager, QWidget* parent):
 	QWidget (parent),
 	_package_item (0),
 	_category_item (0),
-	_preset_item (0)
+	_preset_item (0),
+	_presets_manager (presets_manager)
 {
 	setSizePolicy (QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
 
@@ -62,6 +63,8 @@ PresetEditor::PresetEditor (QWidget* parent):
 
 	grid_layout->addWidget (new QLabel ("Version:", grid), 3, 0);
 	grid_layout->addWidget (_version = new QLineEdit (grid), 3, 1);
+
+	grid_layout->addWidget (_favorite = new QCheckBox ("Favorite preset", grid), 4, 0, 1, 2);
 
 	_update_details_button = new QPushButton (Resources::Icons16::save(), "Update de&tails", this);
 	_update_details_button->setAccel (Qt::CTRL + Qt::Key_T);
@@ -85,6 +88,7 @@ PresetEditor::clear()
 	_category->clear();
 	_category->setText ("");
 	_version->setText ("");
+	_favorite->setChecked (false);
 }
 
 
@@ -103,6 +107,8 @@ PresetEditor::load_package (PackageItem* package_item)
 	_name->setEnabled (false);
 	_version->setText ("");
 	_version->setEnabled (false);
+	_favorite->setChecked (false);
+	_favorite->setEnabled (false);
 }
 
 
@@ -129,6 +135,8 @@ PresetEditor::load_category (CategoryItem* category_item)
 	_name->setEnabled (false);
 	_version->setText ("");
 	_version->setEnabled (false);
+	_favorite->setChecked (false);
+	_favorite->setEnabled (false);
 }
 
 
@@ -156,6 +164,8 @@ PresetEditor::load_preset (PresetItem* preset_item)
 	_name->setEnabled (true);
 	_version->setText (m.version);
 	_version->setEnabled (true);
+	_favorite->setChecked (_presets_manager->favorited (_preset_item->uuid()));
+	_favorite->setEnabled (true);
 }
 
 
@@ -165,6 +175,7 @@ PresetEditor::save_preset (PresetItem* preset_item)
 	PresetItem::Meta& m = preset_item->meta();
 	m.name = _name->text();
 	m.version = _version->text();
+	_presets_manager->set_favorited (preset_item->uuid(), _favorite->isChecked());
 	preset_item->reload();
 }
 

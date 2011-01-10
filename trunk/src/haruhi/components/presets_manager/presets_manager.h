@@ -21,7 +21,6 @@
 
 // Qt:
 #include <QtXml/QDomNode>
-#include <QtGui/QTabWidget>
 #include <QtGui/QPushButton>
 #include <QtGui/QMenu>
 #include <QtGui/QTreeWidgetItem>
@@ -29,6 +28,7 @@
 // Haruhi:
 #include <haruhi/graph/unit.h>
 #include <haruhi/utility/saveable_state.h>
+#include <haruhi/settings/has_presets_settings.h>
 
 
 namespace Haruhi {
@@ -56,10 +56,10 @@ class PresetsManager: public QWidget
 	directory() { return _packages_dir; }
 
 	bool
-	is_favorite (QString const& uuid);
+	favorited (QString const& preset_uuid);
 
 	void
-	set_favorite (QString const& uuid, QString const& name, bool set);
+	set_favorited (QString const& preset_uuid, bool set);
 
   signals:
 	void
@@ -120,10 +120,9 @@ class PresetsManager: public QWidget
 	QString									_packages_dir;
 	Unit*									_unit;
 	SaveableState*							_saveable_unit;
-	QTabWidget*								_tabs;
-	PresetsManagerPrivate::PresetsListView*	_list;
-	PresetsManagerPrivate::PresetsListView*	_favs;
+	PresetsManagerPrivate::PresetsListView*	_tree;
 	PresetsManagerPrivate::PresetEditor*	_editor;
+	HasPresetsSettings*						_has_presets_settings;
 	QPushButton*							_load_button;
 	QPushButton*							_save_button;
 	QPushButton*							_create_button;

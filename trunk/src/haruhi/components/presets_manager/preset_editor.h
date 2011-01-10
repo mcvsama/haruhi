@@ -22,6 +22,7 @@
 #include <QtGui/QComboBox>
 #include <QtGui/QLabel>
 #include <QtGui/QPushButton>
+#include <QtGui/QCheckBox>
 
 // Local:
 #include "presets_manager.h"
@@ -40,7 +41,7 @@ class PresetEditor: public QWidget
 	Q_OBJECT
 
   public:
-	PresetEditor (QWidget* parent);
+	PresetEditor (PresetsManager* presets_manager, QWidget* parent);
 
 	void
 	clear();
@@ -88,11 +89,14 @@ class PresetEditor: public QWidget
 	QLineEdit*		_category;
 	QLineEdit*		_name;
 	QLineEdit*		_version;
+	QCheckBox*		_favorite;
 	QPushButton*	_update_details_button;
 
 	PackageItem*	_package_item;
 	CategoryItem*	_category_item;
 	PresetItem*		_preset_item;
+
+	PresetsManager*	_presets_manager;
 };
 
 } // namespace PresetsManagerPrivate

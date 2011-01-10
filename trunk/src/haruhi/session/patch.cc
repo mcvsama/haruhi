@@ -193,7 +193,7 @@ PluginTab::set_preset (QString const& uuid, QString const& name)
 		_preset_uuid = uuid;
 		_preset_name->setText (name);
 		_favorite_checkbox->setEnabled (!uuid.isNull());
-		_favorite_checkbox->setChecked (_presets_manager->is_favorite (uuid));
+		_favorite_checkbox->setChecked (_presets_manager->favorited (uuid));
 	}
 }
 
@@ -202,7 +202,7 @@ void
 PluginTab::favorited (bool set)
 {
 	if (_presets_manager)
-		_presets_manager->set_favorite (_preset_uuid, _preset_name->text(), set);
+		_presets_manager->set_favorited (_preset_uuid, set);
 }
 
 } // namespace PatchPrivate
