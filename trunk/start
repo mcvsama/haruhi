@@ -48,7 +48,7 @@ export QT_NO_GLIB=1
 
 if make -C src; then
 	if ! sh -c "$run"; then
-		if [ -f "$corefile" ]; then
+		if [ -f "$corefile" ] && [ "$o_run_in_gdb" != "1" ]; then
 			echo "Core file found, running GDB."
 			gdb --core="$corefile" "$executable"
 		fi
