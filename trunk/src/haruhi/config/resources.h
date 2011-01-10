@@ -132,6 +132,7 @@ small_font();
 		HARUHI_CONFIG_HAS_ICON_16 (modulator_ring, "modulator-ring.png");
 		HARUHI_CONFIG_HAS_ICON_16 (modulator_fm, "modulator-fm.png");
 		HARUHI_CONFIG_HAS_ICON_16 (adsr, "adsr.png");
+		HARUHI_CONFIG_HAS_ICON_16 (eg, "eg.png");
 		HARUHI_CONFIG_HAS_ICON_16 (lfo, "lfo.png");
 
 #undef HARUHI_CONFIG_HAS_ICON_16

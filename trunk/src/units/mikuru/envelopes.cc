@@ -61,7 +61,7 @@ Envelopes::Envelopes (Mikuru* mikuru, QWidget* parent):
 
 	_add_adsr = new QPushButton (Resources::Icons16::adsr(), "Add ADSR", this);
 	QObject::connect (_add_adsr, SIGNAL (clicked()), this, SLOT (add_adsr()));
-	_add_envelope = new QPushButton (Resources::Icons16::adsr(), "Add envelope", this);
+	_add_envelope = new QPushButton (Resources::Icons16::eg(), "Add envelope", this);
 	QObject::connect (_add_envelope, SIGNAL (clicked()), this, SLOT (add_eg()));
 	_add_lfo = new QPushButton (Resources::Icons16::lfo(), "Add LFO", this);
 	QObject::connect (_add_lfo, SIGNAL (clicked()), this, SLOT (add_lfo()));
@@ -71,14 +71,21 @@ Envelopes::Envelopes (Mikuru* mikuru, QWidget* parent):
 
 	// Layouts:
 
-	QVBoxLayout* v1 = new QVBoxLayout (this, 0, Config::Spacing);
-	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
+	QVBoxLayout* v1 = new QVBoxLayout (this);
+	v1->setMargin (0);
+	v1->setSpacing (Config::Spacing);
+
+	QHBoxLayout* h1 = new QHBoxLayout();
+	h1->setSpacing (Config::Spacing);
+
+	v1->addWidget (_stack);
+	v1->addLayout (h1);
+
 	h1->addWidget (_add_adsr);
 	h1->addWidget (_add_envelope);
 	h1->addWidget (_add_lfo);
 	h1->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 	h1->addWidget (_remove_envelope);
-	v1->addWidget (_stack);
 
 	update_widgets();
 }
@@ -175,7 +182,7 @@ Envelopes::add_adsr (int id)
 	_envelopes_mutex.lock();
 	_envelopes.push_back (envelope);
 	_envelopes_mutex.unlock();
-	_tabs->addTab (envelope, QString ("ADSR %1").arg (envelope->id()));
+	_tabs->addTab (envelope, Resources::Icons16::adsr(), QString ("ADSR %1").arg (envelope->id()));
 	_tabs->showPage (envelope);
 	update_widgets();
 	return envelope;
@@ -189,7 +196,7 @@ Envelopes::add_eg (int id)
 	_envelopes_mutex.lock();
 	_envelopes.push_back (envelope);
 	_envelopes_mutex.unlock();
-	_tabs->addTab (envelope, QString ("EG %1").arg (envelope->id()));
+	_tabs->addTab (envelope, Resources::Icons16::eg(), QString ("EG %1").arg (envelope->id()));
 	_tabs->showPage (envelope);
 	update_widgets();
 	return envelope;
@@ -203,7 +210,7 @@ Envelopes::add_lfo (int id)
 	_envelopes_mutex.lock();
 	_envelopes.push_back (envelope);
 	_envelopes_mutex.unlock();
-	_tabs->addTab (envelope, QString ("LFO %1").arg (envelope->id()));
+	_tabs->addTab (envelope, Resources::Icons16::lfo(), QString ("LFO %1").arg (envelope->id()));
 	_tabs->showPage (envelope);
 	update_widgets();
 	return envelope;
