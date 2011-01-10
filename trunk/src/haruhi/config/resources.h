@@ -134,6 +134,7 @@ small_font();
 		HARUHI_CONFIG_HAS_ICON_16 (adsr, "adsr.png");
 		HARUHI_CONFIG_HAS_ICON_16 (eg, "eg.png");
 		HARUHI_CONFIG_HAS_ICON_16 (lfo, "lfo.png");
+		HARUHI_CONFIG_HAS_ICON_16 (mikuru, "mikuru.png");
 
 #undef HARUHI_CONFIG_HAS_ICON_16
 	} // namespace Icons16

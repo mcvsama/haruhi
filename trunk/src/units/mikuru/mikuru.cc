@@ -92,9 +92,10 @@ Mikuru::Mikuru (std::string const& urn, std::string const& title, int id, QWidge
 	QObject::connect (_add_part, SIGNAL (clicked()), this, SLOT (add_part()));
 	QObject::connect (_add_part, SIGNAL (clicked()), this, SLOT (update_widgets()));
 
-	_del_part = new QPushButton (Resources::Icons16::remove(), "Remove part", this);
+	_del_part = new QPushButton (Resources::Icons16::remove(), "", this);
 	QObject::connect (_del_part, SIGNAL (clicked()), this, SLOT (del_part()));
 	QObject::connect (_del_part, SIGNAL (clicked()), this, SLOT (update_widgets()));
+	QToolTip::add (_del_part, "Remove selected part");
 
 	_tabs_widget = new QTabWidget (this);
 	_tabs_widget->setTabPosition (QTabWidget::North);
@@ -104,7 +105,7 @@ Mikuru::Mikuru (std::string const& urn, std::string const& title, int id, QWidge
 	_general = new Private::General (this, this);
 	_common_filters = new Private::CommonFilters (this, this);
 
-	_tabs_widget->addTab (_general, "Main && LFO/EG");
+	_tabs_widget->addTab (_general, Resources::Icons16::mikuru(), "Main + LFO/EG");
 	_tabs_widget->addTab (_common_filters, "Filters");
 
 	QVBoxLayout* layout = new QVBoxLayout (this, 0, Config::Spacing);

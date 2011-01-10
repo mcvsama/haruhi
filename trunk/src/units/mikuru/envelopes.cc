@@ -66,8 +66,9 @@ Envelopes::Envelopes (Mikuru* mikuru, QWidget* parent):
 	_add_lfo = new QPushButton (Resources::Icons16::lfo(), "Add LFO", this);
 	QObject::connect (_add_lfo, SIGNAL (clicked()), this, SLOT (add_lfo()));
 
-	_remove_envelope = new QPushButton (Resources::Icons16::remove(), "Remove", this);
+	_remove_envelope = new QPushButton (Resources::Icons16::remove(), "", this);
 	QObject::connect (_remove_envelope, SIGNAL (clicked()), this, SLOT (destroy_envelope()));
+	QToolTip::add (_remove_envelope, "Remove selected envelope");
 
 	// Layouts:
 
@@ -78,13 +79,13 @@ Envelopes::Envelopes (Mikuru* mikuru, QWidget* parent):
 	QHBoxLayout* h1 = new QHBoxLayout();
 	h1->setSpacing (Config::Spacing);
 
-	v1->addWidget (_stack);
 	v1->addLayout (h1);
+	v1->addWidget (_stack);
 
+	h1->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 	h1->addWidget (_add_adsr);
 	h1->addWidget (_add_envelope);
 	h1->addWidget (_add_lfo);
-	h1->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 	h1->addWidget (_remove_envelope);
 
 	update_widgets();
