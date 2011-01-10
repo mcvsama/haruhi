@@ -163,18 +163,18 @@ SRC_HEADERS += haruhi/components/presets_manager/category_item.h
 SRC_HEADERS += haruhi/components/presets_manager/package_item.h
 SRC_HEADERS += haruhi/components/presets_manager/preset_editor.h
 SRC_HEADERS += haruhi/components/presets_manager/preset_item.h
-SRC_HEADERS += haruhi/components/presets_manager/presets_list_view.h
+SRC_HEADERS += haruhi/components/presets_manager/presets_tree.h
 SRC_HEADERS += haruhi/components/presets_manager/presets_manager.h
 
 SRC_SOURCES += haruhi/components/presets_manager/category_item.cc
 SRC_SOURCES += haruhi/components/presets_manager/package_item.cc
 SRC_SOURCES += haruhi/components/presets_manager/preset_editor.cc
 SRC_SOURCES += haruhi/components/presets_manager/preset_item.cc
-SRC_SOURCES += haruhi/components/presets_manager/presets_list_view.cc
+SRC_SOURCES += haruhi/components/presets_manager/presets_tree.cc
 SRC_SOURCES += haruhi/components/presets_manager/presets_manager.cc
 
 SRC_MOCHDRS += haruhi/components/presets_manager/preset_editor.h
-SRC_MOCHDRS += haruhi/components/presets_manager/presets_list_view.h
+SRC_MOCHDRS += haruhi/components/presets_manager/presets_tree.h
 SRC_MOCHDRS += haruhi/components/presets_manager/presets_manager.h
 
 ######## /config ########

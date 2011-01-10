@@ -26,7 +26,7 @@
 // Local:
 #include "category_item.h"
 #include "preset_item.h"
-#include "presets_list_view.h"
+#include "presets_tree.h"
 
 
 namespace Haruhi {

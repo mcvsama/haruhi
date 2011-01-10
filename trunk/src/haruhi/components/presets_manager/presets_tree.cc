@@ -28,7 +28,7 @@
 #include <haruhi/config/all.h>
 
 // Local:
-#include "presets_list_view.h"
+#include "presets_tree.h"
 #include "presets_manager.h"
 #include "preset_item.h"
 #include "package_item.h"
@@ -39,7 +39,7 @@ namespace Haruhi {
 
 namespace PresetsManagerPrivate {
 
-PresetsListView::PresetsListView (PresetsManager* presets_manager, QWidget* parent):
+PresetsTree::PresetsTree (PresetsManager* presets_manager, QWidget* parent):
 	QTreeWidget (parent),
 	_presets_manager (presets_manager),
 	_dragged_item (0),
@@ -67,14 +67,14 @@ PresetsListView::PresetsListView (PresetsManager* presets_manager, QWidget* pare
 }
 
 
-PresetsListView::~PresetsListView()
+PresetsTree::~PresetsTree()
 {
 	_auto_open_timer->stop();
 }
 
 
 QTreeWidgetItem*
-PresetsListView::selected_item() const
+PresetsTree::selected_item() const
 {
 	QList<QTreeWidgetItem*> list = selectedItems();
 	return list.empty() ? 0 : list.front();
@@ -82,7 +82,7 @@ PresetsListView::selected_item() const
 
 
 PackageItem*
-PresetsListView::current_package_item() const
+PresetsTree::current_package_item() const
 {
 	QTreeWidgetItem* item = selected_item();
 	if (item)
@@ -92,7 +92,7 @@ PresetsListView::current_package_item() const
 
 
 CategoryItem*
-PresetsListView::current_category_item() const
+PresetsTree::current_category_item() const
 {
 	QTreeWidgetItem* item = selected_item();
 	if (item)
@@ -102,7 +102,7 @@ PresetsListView::current_category_item() const
 
 
 PresetItem*
-PresetsListView::current_preset_item() const
+PresetsTree::current_preset_item() const
 {
 	QTreeWidgetItem* item = selected_item();
 	if (item)
@@ -112,7 +112,7 @@ PresetsListView::current_preset_item() const
 
 
 void
-PresetsListView::auto_open_selected()
+PresetsTree::auto_open_selected()
 {
 	QTreeWidgetItem* item = selected_item();
 	if (item)
@@ -121,7 +121,7 @@ PresetsListView::auto_open_selected()
 
 
 void
-PresetsListView::context_menu (QPoint const& pos)
+PresetsTree::context_menu (QPoint const& pos)
 {
 	QTreeWidgetItem* item = itemAt (pos);
 	if (!item)
@@ -166,10 +166,10 @@ PresetsListView::context_menu (QPoint const& pos)
 
 
 void
-PresetsListView::dragEnterEvent (QDragEnterEvent* event)
+PresetsTree::dragEnterEvent (QDragEnterEvent* event)
 {
-	PresetsListView* source;
-	if (event->source() && (source = dynamic_cast<PresetsListView*> (event->source())) &&
+	PresetsTree* source;
+	if (event->source() && (source = dynamic_cast<PresetsTree*> (event->source())) &&
 		source == this && event->mimeData()->hasText())
 	{
 		event->accept();
@@ -180,10 +180,10 @@ PresetsListView::dragEnterEvent (QDragEnterEvent* event)
 
 
 void
-PresetsListView::dragMoveEvent (QDragMoveEvent* event)
+PresetsTree::dragMoveEvent (QDragMoveEvent* event)
 {
-	PresetsListView* source;
-	if (event->source() && (source = dynamic_cast<PresetsListView*> (event->source())) &&
+	PresetsTree* source;
+	if (event->source() && (source = dynamic_cast<PresetsTree*> (event->source())) &&
 		source == this && event->mimeData()->hasText())
 	{
 		QTreeWidgetItem* to = drag_drop_item (event->pos());
@@ -198,17 +198,17 @@ PresetsListView::dragMoveEvent (QDragMoveEvent* event)
 
 
 void
-PresetsListView::dragLeaveEvent (QDragLeaveEvent*)
+PresetsTree::dragLeaveEvent (QDragLeaveEvent*)
 {
 	_dropped_on_item = 0;
 }
 
 
 void
-PresetsListView::dropEvent (QDropEvent* event)
+PresetsTree::dropEvent (QDropEvent* event)
 {
-	PresetsListView* source;
-	if (event->source() && (source = dynamic_cast<PresetsListView*> (event->source())) &&
+	PresetsTree* source;
+	if (event->source() && (source = dynamic_cast<PresetsTree*> (event->source())) &&
 		source == this && event->mimeData()->hasText())
 	{
 		QTreeWidgetItem* to = drag_drop_item (event->pos());
@@ -254,7 +254,7 @@ PresetsListView::dropEvent (QDropEvent* event)
 
 
 void
-PresetsListView::mousePressEvent (QMouseEvent* mouse_event)
+PresetsTree::mousePressEvent (QMouseEvent* mouse_event)
 {
 	QTreeWidget::mousePressEvent (mouse_event);
 
@@ -269,7 +269,7 @@ PresetsListView::mousePressEvent (QMouseEvent* mouse_event)
 
 
 void
-PresetsListView::mouseMoveEvent (QMouseEvent* mouse_event)
+PresetsTree::mouseMoveEvent (QMouseEvent* mouse_event)
 {
 	QTreeWidget::mouseMoveEvent (mouse_event);
 
@@ -290,7 +290,7 @@ PresetsListView::mouseMoveEvent (QMouseEvent* mouse_event)
 
 
 bool
-PresetsListView::can_drop (QTreeWidgetItem* from, QTreeWidgetItem* to)
+PresetsTree::can_drop (QTreeWidgetItem* from, QTreeWidgetItem* to)
 {
 	return (dynamic_cast<PresetItem*> (from) && dynamic_cast<CategoryItem*> (to) && from->parent() != to)
 		|| (dynamic_cast<CategoryItem*> (from) && dynamic_cast<PackageItem*> (to) && from->parent() != to);
@@ -298,7 +298,7 @@ PresetsListView::can_drop (QTreeWidgetItem* from, QTreeWidgetItem* to)
 
 
 QTreeWidgetItem*
-PresetsListView::drag_drop_item (QPoint const& epos)
+PresetsTree::drag_drop_item (QPoint const& epos)
 {
 	QTreeWidgetItem* item = itemAt (epos);
 	if (item)

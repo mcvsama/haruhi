@@ -54,7 +54,7 @@ class PackageItem: public QTreeWidgetItem
 	};
 
   public:
-	PackageItem (PresetsListView* parent);
+	PackageItem (PresetsTree* parent);
 
 	void
 	setup();

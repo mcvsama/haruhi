@@ -29,7 +29,7 @@
 #include "package_item.h"
 #include "category_item.h"
 #include "preset_item.h"
-#include "presets_list_view.h"
+#include "presets_tree.h"
 
 
 namespace Haruhi {
@@ -70,7 +70,7 @@ PackageItem::Meta::load_state (QDomElement const& element)
 }
 
 
-PackageItem::PackageItem (PresetsListView* parent):
+PackageItem::PackageItem (PresetsTree* parent):
 	QTreeWidgetItem (parent),
 	_presets_manager (parent->presets_manager())
 {

@@ -46,7 +46,7 @@
 #include "package_item.h"
 #include "category_item.h"
 #include "preset_item.h"
-#include "presets_list_view.h"
+#include "presets_tree.h"
 #include "presets_manager.h"
 
 
@@ -71,7 +71,7 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 	_create_category_action = _create_menu->addAction (Resources::Icons16::presets_category(), "Category", this, SLOT (create_category()));
 	_create_preset_action = _create_menu->addAction (Resources::Icons16::preset(), "Preset", this, SLOT (create_preset()));
 
-	_tree = new Private::PresetsListView (this, this);
+	_tree = new Private::PresetsTree (this, this);
 	_tree->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
 	QObject::connect (_tree, SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
 	QObject::connect (_tree, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (load_preset (QTreeWidgetItem*)));

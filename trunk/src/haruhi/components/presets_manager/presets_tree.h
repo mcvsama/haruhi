@@ -36,14 +36,14 @@ class PackageItem;
 class CategoryItem;
 class PresetItem;
 
-class PresetsListView: public QTreeWidget
+class PresetsTree: public QTreeWidget
 {
 	Q_OBJECT
 
   public:
-	PresetsListView (PresetsManager* manager, QWidget* parent);
+	PresetsTree (PresetsManager* manager, QWidget* parent);
 
-	~PresetsListView();
+	~PresetsTree();
 
 	QTreeWidgetItem*
 	selected_item() const;
