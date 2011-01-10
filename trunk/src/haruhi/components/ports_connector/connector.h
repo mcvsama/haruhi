@@ -29,7 +29,7 @@ class PortsConnector;
 namespace PortsConnectorPrivate {
 
 /**
- * This widget draws lines between two QListViews in PortsConnector.
+ * This widget draws lines between two QTreeWidgets in PortsConnector.
  */
 class Connector: public QWidget
 {
@@ -62,7 +62,7 @@ class Connector: public QWidget
 	item_y (QTreeWidgetItem*);
 
 	/**
-	 * Returns all descendants of given QListView as a list.
+	 * Returns all descendants of given QTreeWidget as a list.
 	 */
 	static QTreeWidgetItemsList
 	get_all_items_from (QTreeWidget*);
