@@ -149,5 +149,16 @@ mod1 (float x)
 #endif
 }
 
+
+/**
+ * Returns attenuation factor from given number of decibels.
+ * \param	db Attenuation value (-inf..0), eg. -3 means -3dB.
+ */
+inline float
+attenuate_db (float db)
+{
+	return powf (10.0, db / 10.0);
+}
+
 #endif
 
