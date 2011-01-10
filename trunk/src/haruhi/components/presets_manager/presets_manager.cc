@@ -78,6 +78,10 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 
 	_editor = new Private::PresetEditor (this, right_panel);
 
+	_only_favs_button = new QPushButton (Resources::Icons16::favorite(), "Show favorites only");
+	_only_favs_button->setCheckable (true);
+	QObject::connect (_only_favs_button, SIGNAL (toggled (bool)), this, SLOT (show_favorites()));
+
 	_load_button = new QPushButton (Resources::Icons16::load(), "Load", right_panel);
 	QObject::connect (_load_button, SIGNAL (clicked()), this, SLOT (load_preset()));
 
@@ -92,16 +96,32 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 
 	// Layouts:
 
-	QVBoxLayout* v1 = new QVBoxLayout (this, 0, Config::Spacing);
-	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
-	h1->addWidget (_tree);
+	QHBoxLayout* h1 = new QHBoxLayout (this);
+	h1->setMargin (0);
+	h1->setSpacing (Config::Spacing);
+
+	QVBoxLayout* v1 = new QVBoxLayout();
+	v1->setSpacing (Config::Spacing);
+
+	QVBoxLayout* v2 = new QVBoxLayout (right_panel);
+	v2->setMargin (0);
+	v2->setSpacing (Config::Spacing);
+
+	QHBoxLayout* h2 = new QHBoxLayout();
+	h2->setSpacing (Config::Spacing);
+
+	v1->addWidget (_only_favs_button);
+	v1->addWidget (_tree);
+
+	h1->addLayout (v1);
 	h1->addWidget (right_panel);
-	QVBoxLayout* v2 = new QVBoxLayout (right_panel, 0, Config::Spacing);
-	QHBoxLayout* h2 = new QHBoxLayout (v2, Config::Spacing);
+
 	h2->addWidget (_load_button);
 	h2->addWidget (_save_button);
 	h2->addWidget (_create_button);
 	h2->addWidget (_destroy_button);
+
+	v2->addLayout (h2);
 	v2->addWidget (_editor);
 
 	QString all_presets_dir = Settings::data_home() + "/presets";
@@ -347,6 +367,38 @@ PresetsManager::update_widgets()
 		_create_package_action->setEnabled (true);
 		_create_category_action->setEnabled (false);
 		_create_preset_action->setEnabled (false);
+	}
+}
+
+
+void
+PresetsManager::show_favorites()
+{
+	bool only_favs = _only_favs_button->isChecked();
+	// Iterate through items and show/hide them according to _only_favs_button
+	// state and preset marked as favorite:
+	for (QTreeWidgetItemIterator item (_tree); *item; ++item)
+	{
+		Private::PresetItem* preset_item = dynamic_cast<Private::PresetItem*> (*item);
+		// If PresetItem, show/hide it.
+		if (preset_item)
+		{
+			preset_item->setHidden (only_favs && !favorited (preset_item->uuid()));
+			// If shown, ensure that parent items are shown, too.
+			if (!preset_item->isHidden())
+			{
+				preset_item->parent()->setHidden (false);
+				preset_item->parent()->parent()->setHidden (false);
+			}
+			// If item was hidden and selected, clear its selection:
+			else
+				preset_item->setSelected (false);
+		}
+		// By default hide PackageItem and CategoryItem. If any child PresetItem is shown,
+		// it will also show parent items (this relies on fact that QTreeWidgetItemIterator goes
+		// first through parent items, then through children).
+		else
+			(*item)->setHidden (only_favs);
 	}
 }
 

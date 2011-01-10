@@ -52,20 +52,34 @@ class PresetsManager: public QWidget
 
 	virtual ~PresetsManager();
 
+	/**
+	 * Returns filesystem path to directory where package files
+	 * (containing presets) are stored.
+	 */
 	QString const&
 	directory() { return _packages_dir; }
 
+	/**
+	 * Returns true if preset with given UUID is favorited.
+	 * Searches only presets for the Unit.
+	 */
 	bool
 	favorited (QString const& preset_uuid);
 
+	/**
+	 * Sets preset as favorited/not favorited.
+	 */
 	void
 	set_favorited (QString const& preset_uuid, bool set);
+
+	static QDomElement
+	append_element (QDomElement& subject, QString const& name, QString const& value);
 
   signals:
 	void
 	preset_selected (QString const& preset_uuid, QString const& preset_name);
 
-  public slots:
+  private slots:
 	/**
 	 * Loads Preset currently selected in list.
 	 */
@@ -93,15 +107,14 @@ class PresetsManager: public QWidget
 	void
 	destroy();
 
-	static QDomElement
-	append_element (QDomElement& subject, QString const& name, QString const& value);
-
-  private slots:
 	/**
 	 * Updates widgets (enabled, etc).
 	 */
 	void
 	update_widgets();
+
+	void
+	show_favorites();
 
   private:
 	void
@@ -123,6 +136,7 @@ class PresetsManager: public QWidget
 	PresetsManagerPrivate::PresetsTree*		_tree;
 	PresetsManagerPrivate::PresetEditor*	_editor;
 	HasPresetsSettings*						_has_presets_settings;
+	QPushButton*							_only_favs_button;
 	QPushButton*							_load_button;
 	QPushButton*							_save_button;
 	QPushButton*							_create_button;
