@@ -32,6 +32,10 @@
 class Thread
 {
   public:
+	enum {
+		MinimumStackSize = PTHREAD_STACK_MIN
+	};
+
 	enum SchedType {
 		SchedFIFO	= SCHED_FIFO,
 		SchedRR		= SCHED_RR,

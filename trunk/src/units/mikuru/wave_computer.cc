@@ -36,8 +36,8 @@ WaveComputer::WaveComputer():
 	_exit (0),
 	_exited (0)
 {
-	// 512k stack:
-	set_stack_size (512 * 1024);
+	// 128kB was tested to be safe on 32-bit system:
+	set_stack_size (256 * 1024);
 	_wavetables[0] = new DSP::Wavetable();
 	_wavetables[1] = new DSP::Wavetable();
 	start();

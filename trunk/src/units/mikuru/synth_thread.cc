@@ -42,8 +42,8 @@ SynthThread::SynthThread (Mikuru* mikuru):
 	_buffer_2 = new Haruhi::AudioBuffer (bs);
 	if (_mikuru->graph())
 		_mikuru->graph()->unlock();
-	// 512k stack will be sufficient:
-	set_stack_size (512 * 1024);
+	// 32k stack will be sufficient:
+	set_stack_size (32 * 1024);
 	set_sched (Thread::SchedRR, 50);
 }
 
