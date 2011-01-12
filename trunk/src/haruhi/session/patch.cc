@@ -71,7 +71,7 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	_patch (patch),
 	_plugin (plugin)
 {
-	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
+	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	bool plugin_is_has_presets = dynamic_cast<HasPresets*> (_plugin);
 
 	QWidget* bar = new QWidget (this);
@@ -96,6 +96,7 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	if (plugin_is_has_presets)
 	{
 		_presets_manager = new PresetsManager (_plugin, this);
+		_presets_manager->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 		QObject::connect (_presets_manager, SIGNAL (preset_selected (const QString&, const QString&)),
 						  this, SLOT (set_preset (const QString&, const QString&)));
 
@@ -149,7 +150,6 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 
 	layout->addWidget (bar);
 	layout->addWidget (_stack);
-	layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
 }
 
 

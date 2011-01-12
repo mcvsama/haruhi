@@ -121,6 +121,7 @@ Mikuru::Mikuru (std::string const& urn, std::string const& title, int id, QWidge
 	hor_layout->addWidget (_del_part);
 
 	layout->addWidget (_tabs_widget);
+	layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
 
 	// UI timer:
 	_update_ui_timer = new QTimer (this);
