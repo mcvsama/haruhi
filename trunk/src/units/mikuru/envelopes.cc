@@ -61,7 +61,7 @@ Envelopes::Envelopes (Mikuru* mikuru, QWidget* parent):
 
 	_add_adsr = new QPushButton (Resources::Icons16::adsr(), "Add ADSR", this);
 	QObject::connect (_add_adsr, SIGNAL (clicked()), this, SLOT (add_adsr()));
-	_add_envelope = new QPushButton (Resources::Icons16::eg(), "Add envelope", this);
+	_add_envelope = new QPushButton (Resources::Icons16::eg(), "Add EG", this);
 	QObject::connect (_add_envelope, SIGNAL (clicked()), this, SLOT (add_eg()));
 	_add_lfo = new QPushButton (Resources::Icons16::lfo(), "Add LFO", this);
 	QObject::connect (_add_lfo, SIGNAL (clicked()), this, SLOT (add_lfo()));
