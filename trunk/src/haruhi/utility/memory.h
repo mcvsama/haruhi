@@ -133,6 +133,7 @@ template<class T>
 		bool
 		operator< (Shared const& other) const
 		{
+			return _data < other._data;
 			return _data == other._data;
 		}
 
