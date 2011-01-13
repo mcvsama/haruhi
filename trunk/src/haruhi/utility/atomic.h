@@ -39,9 +39,17 @@ template<>
 		Atomic (unsigned int init = 0): _value (init)	{ }
 		unsigned int	load() const					{ return static_cast<unsigned int> (g_atomic_int_get (&_value)); }
 		void			store (unsigned int value)		{ g_atomic_int_set (&_value, static_cast<int> (value)); }
+		void			add (unsigned int value)		{ g_atomic_int_add (&_value, static_cast<int> (value)); }
+		void			inc()							{ g_atomic_int_inc (&_value); }
+		void			dec()							{ dec_and_test(); }
+
+		/**
+		 * Returns true if integer is 0 after decrementing it.
+		 */
+		bool			dec_and_test() const			{ return g_atomic_int_dec_and_test (&_value); }
 
 	  private:
-		unsigned int mutable _value;
+		gint mutable _value;
 	};
 
 
@@ -52,9 +60,17 @@ template<>
 		Atomic (int init = 0): _value (init)			{ }
 		int				load() const					{ return g_atomic_int_get (&_value); }
 		void			store (int value)				{ g_atomic_int_set (&_value, value); }
+		void			add (int value)					{ g_atomic_int_add (&_value, value); }
+		void			inc()							{ g_atomic_int_inc (&_value); }
+		void			dec()							{ dec_and_test(); }
+
+		/**
+		 * Returns true if integer is 0 after decrementing it.
+		 */
+		bool			dec_and_test() const			{ return g_atomic_int_dec_and_test (&_value); }
 
 	  private:
-		int mutable _value;
+		gint mutable _value;
 	};
 
 
