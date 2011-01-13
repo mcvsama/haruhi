@@ -33,7 +33,7 @@ typedef int VoiceID;
 typedef int ControllerID;
 
 
-class Event
+class Event: public FastShared
 {
 	USES_POOL_ALLOCATOR (Event)
 

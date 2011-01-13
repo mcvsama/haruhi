@@ -82,7 +82,7 @@ class Port:
 
 		/**
 		 * This port is a HD port, that is it can generate HD data or make use
-		 * of input HD data.
+		 * of input HD data (see description of ControllerEvent).
 		 *
 		 * HD data is simply buffer of controller values that can be send with each ControllerEvent.
 		 * Buffer size (number of values) must be equal to current Graph.buffer_size().
