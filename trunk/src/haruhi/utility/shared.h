@@ -66,7 +66,7 @@ namespace SharedPrivate {
 
 /**
  * Implements general purpose shared pointer proxy (reference counting proxy),
- * automatically deleted owned pointer when no object uses it.
+ * automatically deletes owned pointer when no object uses it.
  *
  * No two Shared object can be created from the same C-pointer,
  * otherwise behavior will be undefined. The only valid way to create
