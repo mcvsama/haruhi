@@ -43,7 +43,8 @@ namespace AudioBackendImpl {
 Backend::Backend (QString const& client_name, int id, QWidget* parent):
 	QWidget (parent),
 	AudioBackend ("• Audio", id),
-	_client_name (client_name)
+	_client_name (client_name),
+	_master_volume_smoother (0.0025)
 {
 	_master_volume_port = new EventPort (this, "Master Volume", Port::Input);
 	_panic_port = new EventPort (this, "Panic", Port::Input);
@@ -148,6 +149,7 @@ Backend::disable()
 void
 Backend::registered()
 {
+	graph_updated();
 	connect();
 }
 
@@ -198,9 +200,11 @@ Backend::data_ready()
 	}
 
 	// Use Master Volume control to adjust volume of outputs:
-	Sample v = master_volume();
+	_master_volume_smoother.fill (_master_volume_smoother_buffer.begin(),
+								  _master_volume_smoother_buffer.end(),
+								  master_volume());
 	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
-		p->second->attenuate (v);
+		p->second->port()->audio_buffer()->attenuate (&_master_volume_smoother_buffer);
 
 	// Copy data from graph to transport (output):
 	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
@@ -545,9 +549,7 @@ void
 Backend::graph_updated()
 {
 	Unit::graph_updated();
-	// Update smoothers for all OutputItems:
-	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
-		p->second->graph_updated();
+	_master_volume_smoother_buffer.resize (graph()->buffer_size());
 }
 
 

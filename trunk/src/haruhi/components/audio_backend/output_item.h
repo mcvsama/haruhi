@@ -45,18 +45,6 @@ class OutputItem: public PortItem
 
 	void
 	load_state (QDomElement const&);
-
-	void
-	graph_updated();
-
-	/**
-	 * Attenuates buffer using internal smoother.
-	 */
-	void
-	attenuate (Sample value);
-
-  private:
-	DSP::Smoother	_smoother;
 };
 
 } // namespace AudioBackendImpl

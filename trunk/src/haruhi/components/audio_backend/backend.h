@@ -32,6 +32,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/application/haruhi.h>
+#include <haruhi/dsp/one_pole_smoother.h>
 #include <haruhi/graph/audio_backend.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/graph/event_port.h>
@@ -250,29 +251,33 @@ class Backend:
 	dummy_round();
 
   private:
-	QString				_client_name;
-	Transport*			_transport;
-	RecursiveMutex		_ports_lock;
+	QString					_client_name;
+	Transport*				_transport;
+	RecursiveMutex			_ports_lock;
 
 	// Views:
-	QPushButton*		_disconnect_button;
-	QPushButton*		_reconnect_button;
-	QPushButton*		_create_input_button;
-	QPushButton*		_destroy_input_button;
-	QPushButton*		_create_output_button;
-	QPushButton*		_destroy_output_button;
+	QPushButton*			_disconnect_button;
+	QPushButton*			_reconnect_button;
+	QPushButton*			_create_input_button;
+	QPushButton*			_destroy_input_button;
+	QPushButton*			_create_output_button;
+	QPushButton*			_destroy_output_button;
 
 	// Ports lists:
-	Tree*				_inputs_list;
-	Tree*				_outputs_list;
+	Tree*					_inputs_list;
+	Tree*					_outputs_list;
 
 	// Master volume control port:
-	EventPort*			_master_volume_port;
-	EventPort*			_panic_port;
+	EventPort*				_master_volume_port;
+	EventPort*				_panic_port;
 
 	// Ports sets:
-	InputsMap			_inputs;
-	OutputsMap			_outputs;
+	InputsMap				_inputs;
+	OutputsMap				_outputs;
+
+	// For smoothing master volume:
+	AudioBuffer				_master_volume_smoother_buffer;
+	DSP::OnePoleSmoother	_master_volume_smoother;
 };
 
 

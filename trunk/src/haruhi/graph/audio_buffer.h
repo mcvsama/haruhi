@@ -102,8 +102,20 @@ class AudioBuffer: public Buffer
 	}
 
 	/**
-	 * Attenuates this buffer by scalar.
+	 * Attenuates this buffer by other buffer.
 	 * Other buffer must be static_castable to AudioBuffer.
+	 */
+	void
+	attenuate (Buffer* other)
+	{
+		assert (other->type() == AudioBuffer::TYPE);
+		AudioBuffer const* buf = static_cast<AudioBuffer*> (other);
+		assert (buf->size() == size());
+		std::transform (buf->begin(), buf->end(), begin(), begin(), std::multiplies<Sample>());
+	}
+
+	/**
+	 * Attenuates this buffer by scalar.
 	 */
 	void
 	attenuate (Sample value)
@@ -163,6 +175,8 @@ class AudioBuffer: public Buffer
 	static Sample*
 	allocate (std::size_t samples)
 	{
+		if (samples == 0)
+			return 0;
 		void* ret;
 		if (posix_memalign (&ret, 32, sizeof (Sample) * samples) != 0)
 			return 0;

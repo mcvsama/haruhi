@@ -40,7 +40,6 @@ OutputItem::OutputItem (Tree* parent, QString const& name):
 	_backend->_outputs[_transport_port] = this;
 	// Configure item:
 	setIcon (0, Resources::Icons16::audio_output_port());
-	graph_updated();
 	// Fully constructed:
 	set_ready (true);
 }
@@ -83,22 +82,6 @@ OutputItem::load_state (QDomElement const& element)
 {
 	setText (0, element.attribute ("name"));
 	update_name();
-}
-
-
-void
-OutputItem::graph_updated()
-{
-	// 100ms:
-	_smoother.set_smoothing_samples (0.100f * _backend->graph()->sample_rate());
-}
-
-
-void
-OutputItem::attenuate (Sample value)
-{
-	_smoother.set_value (value);
-	_smoother.multiply (port()->audio_buffer()->begin(), port()->audio_buffer()->end());
 }
 
 } // namespace AudioBackendImpl
