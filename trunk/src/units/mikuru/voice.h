@@ -29,7 +29,7 @@
 #include <haruhi/dsp/wave.h>
 #include <haruhi/dsp/wavetable.h>
 #include <haruhi/dsp/filter.h>
-#include <haruhi/dsp/smoother.h>
+#include <haruhi/dsp/one_pole_smoother.h>
 #include <haruhi/utility/atomic.h>
 
 // Local:
@@ -200,11 +200,11 @@ class Voice
 	DoubleFilter				_double_filter;
 
 	// Smoothers:
-	DSP::Smoother				_smoother_amplitude;
-	DSP::Smoother				_smoother_frequency;
-	DSP::Smoother				_smoother_pitchbend;
-	DSP::Smoother				_smoother_panorama_1;
-	DSP::Smoother				_smoother_panorama_2;
+	DSP::OnePoleSmoother		_smoother_amplitude;
+	DSP::OnePoleSmoother		_smoother_frequency;
+	DSP::OnePoleSmoother		_smoother_pitchbend;
+	DSP::OnePoleSmoother		_smoother_panorama_1;
+	DSP::OnePoleSmoother		_smoother_panorama_2;
 
 	// Helpers, attack/release to prevent audio cracking, etc:
 	float						_last_pitchbend_value;

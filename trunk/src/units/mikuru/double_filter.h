@@ -20,7 +20,7 @@
 // Haruhi:
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/filter.h>
-#include <haruhi/dsp/smoother.h>
+#include <haruhi/dsp/one_pole_smoother.h>
 
 // Local:
 #include "rbj_impulse_response.h"
@@ -83,14 +83,14 @@ class DoubleFilter
 	DSP::Filter					_filter1[5];
 	DSP::Filter					_filter2[5];
 
-	DSP::Smoother				_smoother_filter1_frequency;
-	DSP::Smoother				_smoother_filter1_resonance;
-	DSP::Smoother				_smoother_filter1_gain;
-	DSP::Smoother				_smoother_filter1_attenuation;
-	DSP::Smoother				_smoother_filter2_frequency;
-	DSP::Smoother				_smoother_filter2_resonance;
-	DSP::Smoother				_smoother_filter2_gain;
-	DSP::Smoother				_smoother_filter2_attenuation;
+	DSP::OnePoleSmoother		_smoother_filter1_frequency;
+	DSP::OnePoleSmoother		_smoother_filter1_resonance;
+	DSP::OnePoleSmoother		_smoother_filter1_gain;
+	DSP::OnePoleSmoother		_smoother_filter1_attenuation;
+	DSP::OnePoleSmoother		_smoother_filter2_frequency;
+	DSP::OnePoleSmoother		_smoother_filter2_resonance;
+	DSP::OnePoleSmoother		_smoother_filter2_gain;
+	DSP::OnePoleSmoother		_smoother_filter2_attenuation;
 };
 
 } // namespace MikuruPrivate

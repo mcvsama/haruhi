@@ -47,7 +47,6 @@ Params::General::General():
 	polyphony (0, 512, 32),
 	enable_audio_input (0, 1, 0)
 {
-	panorama.set_smoothing (50);
 }
 
 
@@ -95,10 +94,6 @@ Params::Filter::Filter():
 	passes (1, 5, 1),
 	limiter_enabled (0, 1, 1)
 {
-	frequency.set_smoothing (50);
-	resonance.set_smoothing (50);
-	gain.set_smoothing (50);
-	attenuation.set_smoothing (50);
 }
 
 
@@ -296,12 +291,7 @@ Params::Oscillator::Oscillator():
 	monophonic (0, 1, 0),
 	monophonic_retrigger (0, 1, 0),
 	monophonic_key_priority (0, 3, LastPressed),
-	const_portamento_time (0, 1, 1),
-	// TODO: handle external smoothing parameters
-	amplitude_smoothing (0, 1000, 50),
-	frequency_smoothing (0, 1000, 50),
-	pitchbend_smoothing (0, 1000, 50),
-	panorama_smoothing (0, 1000, 50)
+	const_portamento_time (0, 1, 1)
 {
 }
 
@@ -331,10 +321,6 @@ Params::Oscillator::set_non_controller_params (Oscillator& other)
 	HARUHI_MIKURU_COPY (monophonic_retrigger)
 	HARUHI_MIKURU_COPY (monophonic_key_priority)
 	HARUHI_MIKURU_COPY (const_portamento_time)
-	HARUHI_MIKURU_COPY (amplitude_smoothing)
-	HARUHI_MIKURU_COPY (frequency_smoothing)
-	HARUHI_MIKURU_COPY (pitchbend_smoothing)
-	HARUHI_MIKURU_COPY (panorama_smoothing)
 }
 
 
@@ -357,10 +343,6 @@ Params::Oscillator::sanitize()
 	HARUHI_MIKURU_SANITIZE (monophonic_retrigger)
 	HARUHI_MIKURU_SANITIZE (monophonic_key_priority)
 	HARUHI_MIKURU_SANITIZE (const_portamento_time)
-	HARUHI_MIKURU_SANITIZE (amplitude_smoothing)
-	HARUHI_MIKURU_SANITIZE (frequency_smoothing)
-	HARUHI_MIKURU_SANITIZE (pitchbend_smoothing)
-	HARUHI_MIKURU_SANITIZE (panorama_smoothing)
 }
 
 

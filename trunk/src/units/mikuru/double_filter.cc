@@ -52,33 +52,24 @@ DoubleFilter::configure (Configuration configuration, Params::Filter* params1, P
 	_params1 = *params1;
 	_params2 = *params2;
 
-	int sr = _mikuru->graph()->sample_rate();
+	int sample_rate = _mikuru->graph()->sample_rate();
+	float const speed = sample_rate / 48000.f / 25.f;
 
 	// Setup smoothers:
-	_smoother_filter1_frequency.set_smoothing_samples (0.001f * _params1.frequency.smoothing() * sr);
-	_smoother_filter1_resonance.set_smoothing_samples (0.001f * _params1.resonance.smoothing() * sr);
-	_smoother_filter1_gain.set_smoothing_samples (0.001f * _params1.gain.smoothing() * sr);
-	_smoother_filter1_attenuation.set_smoothing_samples (0.001f * _params1.attenuation.smoothing() * sr);
-
-	_smoother_filter2_frequency.set_smoothing_samples (0.001f * _params2.frequency.smoothing() * sr);
-	_smoother_filter2_resonance.set_smoothing_samples (0.001f * _params2.resonance.smoothing() * sr);
-	_smoother_filter2_gain.set_smoothing_samples (0.001f * _params2.gain.smoothing() * sr);
-	_smoother_filter2_attenuation.set_smoothing_samples (0.001f * _params2.attenuation.smoothing() * sr);
-
 	if (_params1.enabled)
 	{
-		_smoother_filter1_frequency.set_value (0.5f * _params1.frequency.get() / Params::Filter::FrequencyMax);
-		_smoother_filter1_resonance.set_value (_params1.resonance.to_f());
-		_smoother_filter1_gain.set_value (_params1.gain.to_f());
-		_smoother_filter1_attenuation.set_value (_params1.attenuation.to_f());
+		_smoother_filter1_frequency.set_speed (speed);
+		_smoother_filter1_resonance.set_speed (speed);
+		_smoother_filter1_gain.set_speed (speed);
+		_smoother_filter1_attenuation.set_speed (speed);
 	}
 
 	if (_params2.enabled)
 	{
-		_smoother_filter2_frequency.set_value (0.5f * _params2.frequency.get() / Params::Filter::FrequencyMax);
-		_smoother_filter2_resonance.set_value (_params2.resonance.to_f());
-		_smoother_filter2_gain.set_value (_params2.gain.to_f());
-		_smoother_filter2_attenuation.set_value (_params2.attenuation.to_f());
+		_smoother_filter2_frequency.set_speed (speed);
+		_smoother_filter2_resonance.set_speed (speed);
+		_smoother_filter2_gain.set_speed (speed);
+		_smoother_filter2_attenuation.set_speed (speed);
 	}
 }
 
@@ -89,39 +80,39 @@ DoubleFilter::process (Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer1,
 	bool filtered = true;
 	std::size_t nsamples = std::distance (input.begin(), input.end());
 
-	bool f1 = _params1.enabled;
-	bool f2 = _params2.enabled;
-
 	int passes1 = std::min (static_cast<int> (NumFilters), _params1.passes.get());
 	int passes2 = std::min (static_cast<int> (NumFilters), _params2.passes.get());
 
+	bool f1 = _params1.enabled;
+	bool f2 = _params2.enabled;
+
 	if (f1)
 	{
-		_smoother_filter1_frequency.advance (nsamples);
-		_smoother_filter1_resonance.advance (nsamples);
-		_smoother_filter1_gain.advance (nsamples);
-		_smoother_filter1_attenuation.advance (nsamples);
+		Sample const frequency = _smoother_filter1_frequency.process (0.5f * _params1.frequency.get() / Params::Filter::FrequencyMax, nsamples);
+		Sample const resonance = _smoother_filter1_resonance.process (_params1.resonance.to_f(), nsamples);
+		Sample const gain = _smoother_filter1_gain.process (_params1.gain.to_f(), nsamples);
+		Sample const attenuation = _smoother_filter1_attenuation.process (_params1.attenuation.to_f(), nsamples);
 
 		_impulse_response1.set_type (static_cast<RBJImpulseResponse::Type> (_params1.type.get()));
-		_impulse_response1.set_frequency (_smoother_filter1_frequency.current());
-		_impulse_response1.set_resonance (_smoother_filter1_resonance.current());
-		_impulse_response1.set_gain (_smoother_filter1_gain.current());
-		_impulse_response1.set_attenuation (_smoother_filter1_attenuation.current());
+		_impulse_response1.set_frequency (frequency);
+		_impulse_response1.set_resonance (resonance);
+		_impulse_response1.set_gain (gain);
+		_impulse_response1.set_attenuation (attenuation);
 		_impulse_response1.set_limiter (_params1.limiter_enabled);
 	}
 
 	if (f2)
 	{
-		_smoother_filter2_frequency.advance (nsamples);
-		_smoother_filter2_resonance.advance (nsamples);
-		_smoother_filter2_gain.advance (nsamples);
-		_smoother_filter2_attenuation.advance (nsamples);
+		Sample const frequency = _smoother_filter1_frequency.process (0.5f * _params2.frequency.get() / Params::Filter::FrequencyMax, nsamples);
+		Sample const resonance = _smoother_filter1_resonance.process (_params2.resonance.to_f(), nsamples);
+		Sample const gain = _smoother_filter1_gain.process (_params2.gain.to_f(), nsamples);
+		Sample const attenuation = _smoother_filter1_attenuation.process (_params2.attenuation.to_f(), nsamples);
 
 		_impulse_response2.set_type (static_cast<RBJImpulseResponse::Type> (_params2.type.get()));
-		_impulse_response2.set_frequency (_smoother_filter2_frequency.current());
-		_impulse_response2.set_resonance (_smoother_filter2_resonance.current());
-		_impulse_response2.set_gain (_smoother_filter2_gain.current());
-		_impulse_response2.set_attenuation (_smoother_filter2_attenuation.current());
+		_impulse_response2.set_frequency (frequency);
+		_impulse_response2.set_resonance (resonance);
+		_impulse_response2.set_gain (gain);
+		_impulse_response2.set_attenuation (attenuation);
 		_impulse_response2.set_limiter (_params2.limiter_enabled);
 	}
 

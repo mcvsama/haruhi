@@ -32,17 +32,17 @@ namespace DSP {
 class OnePoleSmoother
 {
   public:
-	OnePoleSmoother (Sample response_speed = 0.005f)
+	OnePoleSmoother (Sample speed = 0.005f)
 	{
-		set_response_speed (response_speed);
+		set_speed (speed);
 		reset();
 	}
 
 	void
-	set_response_speed (Sample response_speed)
+	set_speed (Sample speed)
 	{
-		_a = 1.f - response_speed;
-		_b = response_speed;
+		_a = 1.f - speed;
+		_b = speed;
 	}
 
 	/**
@@ -58,9 +58,11 @@ class OnePoleSmoother
 	 * Return smoothed sample from given input sample.
 	 */
 	Sample
-	process (Sample s)
+	process (Sample s, unsigned int iterations = 1)
 	{
-		return _z = (s * _b) + (_z * _a);
+		for (unsigned int i = 0; i < iterations; ++i)
+			_z = (s * _b) + (_z * _a);
+		return _z;
 	}
 
 	/**
@@ -89,13 +91,13 @@ class OnePoleSmoother
 		}
 
 	/**
-	 * Attenuate sequence by given value in a smooth-way.
-	 * \param	begin,end Sequence to attenuate.
-	 * \param	value Attenuating value.
+	 * Multiply sequence samples by given value in a smooth-way.
+	 * \param	begin,end Sequence to modify.
+	 * \param	value Multiplying value.
 	 */
 	template<class ForwardIterator>
 		void
-		attenuate (ForwardIterator begin, ForwardIterator end, Sample value)
+		multiply (ForwardIterator begin, ForwardIterator end, Sample value)
 		{
 			for (ForwardIterator c = begin; c != end; ++c)
 				*c *= process (value);

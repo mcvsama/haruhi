@@ -34,7 +34,7 @@
 #include <haruhi/graph/audio_port.h>
 #include <haruhi/graph/event_port.h>
 #include <haruhi/graph/notification.h>
-#include <haruhi/dsp/smoother.h>
+#include <haruhi/dsp/one_pole_smoother.h>
 #include <haruhi/plugin/plugin.h>
 #include <haruhi/plugin/plugin_factory.h>
 #include <haruhi/plugin/has_presets.h>
@@ -301,10 +301,10 @@ class Mikuru:
 	MikuruPrivate::CommonFilters*	_common_filters;
 	QTabWidget*						_tabs_widget;
 
-	DSP::Smoother					_audio_input_smoother_L;
-	DSP::Smoother					_audio_input_smoother_R;
-	DSP::Smoother					_master_volume_smoother_L;
-	DSP::Smoother					_master_volume_smoother_R;
+	DSP::OnePoleSmoother			_audio_input_smoother_L;
+	DSP::OnePoleSmoother			_audio_input_smoother_R;
+	DSP::OnePoleSmoother			_master_volume_smoother_L;
+	DSP::OnePoleSmoother			_master_volume_smoother_R;
 
 	//
 	// Synthesizer ports

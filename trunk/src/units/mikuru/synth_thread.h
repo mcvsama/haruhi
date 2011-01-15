@@ -20,6 +20,7 @@
 
 // Haruhi:
 #include <haruhi/graph/audio_buffer.h>
+#include <haruhi/dsp/one_pole_smoother.h>
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/semaphore.h>
 
@@ -140,8 +141,8 @@ class SynthThread: public Thread
 
 	Haruhi::AudioBuffer*	_buffer_1;
 	Haruhi::AudioBuffer*	_buffer_2;
-	DSP::Smoother			_panorama_smoother_1;
-	DSP::Smoother			_panorama_smoother_2;
+	DSP::OnePoleSmoother	_panorama_smoother_1;
+	DSP::OnePoleSmoother	_panorama_smoother_2;
 };
 
 } // namespace MikuruPrivate

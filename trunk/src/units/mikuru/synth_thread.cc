@@ -16,7 +16,7 @@
 #include <set>
 
 // Haruhi:
-#include <haruhi/dsp/smoother.h>
+#include <haruhi/dsp/one_pole_smoother.h>
 #include <haruhi/utility/thread.h>
 
 // Local:
@@ -101,8 +101,6 @@ SynthThread::resize_buffers (std::size_t buffers_size)
 void
 SynthThread::run()
 {
-	int smoothing_samples = 0;
-
 	while (true)
 	{
 		_start.wait();
@@ -131,24 +129,18 @@ SynthThread::run()
 		}
 
 		// Panorama:
-		int k = 0.001f * _mikuru->general()->params()->panorama.smoothing() * _mikuru->graph()->sample_rate();
-		if (smoothing_samples != k)
-		{
-			smoothing_samples = k;
-			_panorama_smoother_1.set_smoothing_samples (smoothing_samples);
-			_panorama_smoother_2.set_smoothing_samples (smoothing_samples);
-		}
+		float const speed = _mikuru->graph()->sample_rate() / 48000.f / 25.f;
+		_panorama_smoother_1.set_speed (speed);
+		_panorama_smoother_2.set_speed (speed);
 
 		float f = 0.0;
 		f = 1.0f - 1.0f * _mikuru->general()->params()->panorama.get() / Params::General::PanoramaMax;
 		f = f > 1.0f ? 1.0 : f;
-		_panorama_smoother_1.set_value (f);
-		_panorama_smoother_1.multiply (_buffer_1->begin(), _buffer_1->end());
+		_panorama_smoother_1.multiply (_buffer_1->begin(), _buffer_1->end(), f);
 
 		f = 1.0f - 1.0f * _mikuru->general()->params()->panorama.get() / Params::General::PanoramaMin;
 		f = f > 1.0f ? 1.0 : f;
-		_panorama_smoother_2.set_value (f);
-		_panorama_smoother_2.multiply (_buffer_2->begin(), _buffer_2->end());
+		_panorama_smoother_2.multiply (_buffer_2->begin(), _buffer_2->end(), f);
 
 		_done.post();
 	}

@@ -79,12 +79,13 @@ Voice::Voice (VoiceManager* voice_manager, SynthThread* thread, Haruhi::KeyID ke
 
 	int sample_rate = _mikuru->graph()->sample_rate();
 
-	// Setup smoothers:
-	_smoother_amplitude.set_smoothing_samples (0.001f * op->amplitude_smoothing.get() * sample_rate);
-	_smoother_frequency.set_smoothing_samples (0.001f * op->frequency_smoothing.get() * sample_rate);
-	_smoother_pitchbend.set_smoothing_samples (0.001f * op->pitchbend_smoothing.get() * sample_rate);
-	_smoother_panorama_1.set_smoothing_samples (0.001f * op->panorama_smoothing.get() * sample_rate);
-	_smoother_panorama_2.set_smoothing_samples (0.001f * op->panorama_smoothing.get() * sample_rate);
+	// Setup smoothers (response speed should be independent from sample rate):
+	float const speed = sample_rate / 48000.f / 25.f;
+	_smoother_amplitude.set_speed (speed);
+	_smoother_frequency.set_speed (speed);
+	_smoother_pitchbend.set_speed (speed);
+	_smoother_panorama_1.set_speed (speed);
+	_smoother_panorama_2.set_speed (speed);
 }
 
 
@@ -176,14 +177,12 @@ Voice::mixin (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
 		i = 0;
 		f = 1.0f - 1.0f * _params.panorama.get() / Params::Voice::PanoramaMax;
 		f = f > 1.0f ? 1.0 : f;
-		_smoother_panorama_1.set_value (f);
-		_smoother_panorama_1.multiply (_commons->output_buffer1.begin(), _commons->output_buffer1.end());
+		_smoother_panorama_1.multiply (_commons->output_buffer1.begin(), _commons->output_buffer1.end(), f);
 
 		i = 0;
 		f = 1.0f - 1.0f * _params.panorama.get() / Params::Voice::PanoramaMin;
 		f = f > 1.0f ? 1.0 : f;
-		_smoother_panorama_2.set_value (f);
-		_smoother_panorama_2.multiply (_commons->output_buffer2.begin(), _commons->output_buffer2.end());
+		_smoother_panorama_2.multiply (_commons->output_buffer2.begin(), _commons->output_buffer2.end(), f);
 
 		__brainfuck (",>,>++++++[-<--------<-------->>]", &_commons->output_buffer1, &_commons->output_buffer2);
 		__brainfuck ("<<<<++++++[-<++++++++>]<.", &_commons);
@@ -260,16 +259,14 @@ Voice::process_frequency()
 				_last_pitchbend_value = pitchbend;
 			}
 		}
-		_smoother_pitchbend.set_value (pitchbend);
-		_smoother_pitchbend.multiply (_commons->frequency_buffer.begin(), _commons->frequency_buffer.end());
+		_smoother_pitchbend.multiply (_commons->frequency_buffer.begin(), _commons->frequency_buffer.end(), pitchbend);
 	}
 
 	// Frequency modulation and detune:
 	{
 		float const frq_mod = _params.frequency.to_f();
 		float const frq_det = _params.detune.to_f() + _mikuru->general()->params()->detune.to_f();
-		_smoother_frequency.set_value (frq_mod);
-		_smoother_frequency.fill (_commons->temp1.begin(), _commons->temp1.end());
+		_smoother_frequency.fill (_commons->temp1.begin(), _commons->temp1.end(), frq_mod);
 
 		Sample* tb = _commons->temp1.begin();
 		Sample* fb = _commons->frequency_buffer.begin();
@@ -299,8 +296,8 @@ Voice::process_amplitude()
 	amplitude *= (s >= 0.0 ? 1 - s + _amplitude * s : s * _amplitude + 1.0f);
 
 	// Volume and amplitude modulation:
-	_smoother_amplitude.set_value (oscillator_params->volume.to_f() * _params.amplitude.to_f() * _params.adsr.to_f());
-	_smoother_amplitude.multiply (_commons->amplitude_buffer.begin(), _commons->amplitude_buffer.end());
+	_smoother_amplitude.multiply (_commons->amplitude_buffer.begin(), _commons->amplitude_buffer.end(),
+								  oscillator_params->volume.to_f() * _params.amplitude.to_f() * _params.adsr.to_f());
 
 	for (Sample *s = _commons->amplitude_buffer.begin(), *e = _commons->amplitude_buffer.end(); s != e; ++s)
 		*s = std::pow (*s, M_E);

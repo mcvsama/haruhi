@@ -198,8 +198,6 @@ class Oscillator: public QWidget
 	QSpinBox*			_pitchbend_down_semitones;
 	QSpinBox*			_transposition_semitones;
 	QSpinBox*			_frequency_modulation_range;
-	QSpinBox*			_amplitude_modulation_smoothing;
-	QSpinBox*			_frequency_modulation_smoothing;
 
 	// Monophonic:
 	QCheckBox*			_monophonic;

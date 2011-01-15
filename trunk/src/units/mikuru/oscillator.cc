@@ -244,26 +244,6 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	grid2_layout->addWidget (_frequency_modulation_range, 2, 1);
 	QObject::connect (_frequency_modulation_range, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 
-	// Amplitude modulation smoothing:
-	grid4_layout->addWidget (new QLabel ("Amp. mod. smoothing:", grid4), 0, 0);
-	_amplitude_modulation_smoothing = new QSpinBox (0, 500, 5, grid4);
-	_amplitude_modulation_smoothing->setSuffix (" ms");
-	_amplitude_modulation_smoothing->setSpecialValueText ("Off");
-	_amplitude_modulation_smoothing->setMinimumWidth (65);
-	_amplitude_modulation_smoothing->setValue (po.amplitude_smoothing);
-	grid4_layout->addWidget (_amplitude_modulation_smoothing, 0, 1);
-	QObject::connect (_amplitude_modulation_smoothing, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
-
-	// Frequency modulation smoothing:
-	grid4_layout->addWidget (new QLabel ("Freq. mod. smoothing:", grid4), 1, 0);
-	_frequency_modulation_smoothing = new QSpinBox (0, 500, 5, grid4);
-	_frequency_modulation_smoothing->setSuffix (" ms");
-	_frequency_modulation_smoothing->setSpecialValueText ("Off");
-	_frequency_modulation_smoothing->setMinimumWidth (65);
-	_frequency_modulation_smoothing->setValue (po.frequency_smoothing);
-	grid4_layout->addWidget (_frequency_modulation_smoothing, 1, 1);
-	QObject::connect (_frequency_modulation_smoothing, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
-
 	// Wave enabled:
 	_wave_enabled = new QCheckBox ("Wave enabled", grid4);
 	_wave_enabled->setChecked (po.wave_enabled);
@@ -408,9 +388,6 @@ Oscillator::load_oscillator_params()
 	_monophonic_retrigger->setChecked (po.monophonic_retrigger);
 	_monophonic_key_priority->setCurrentItem (po.monophonic_key_priority);
 	_const_portamento_time->setChecked (po.const_portamento_time);
-	// Pitchbend/panorama smoothing are set by Knobs.
-	_amplitude_modulation_smoothing->setValue (po.amplitude_smoothing);
-	_frequency_modulation_smoothing->setValue (po.frequency_smoothing);
 
 	_loading_params = false;
 	update_widgets();
@@ -459,10 +436,6 @@ Oscillator::update_oscillator_params()
 	po.monophonic_retrigger = _monophonic_retrigger->isChecked();
 	po.monophonic_key_priority = _monophonic_key_priority->currentItem();
 	po.const_portamento_time = _const_portamento_time->isChecked();
-	po.amplitude_smoothing = _amplitude_modulation_smoothing->value();
-	po.frequency_smoothing = _frequency_modulation_smoothing->value();
-	po.panorama_smoothing = _oscillator_params.panorama_smoothing;
-	po.pitchbend_smoothing = _oscillator_params.pitchbend_smoothing;
 
 	// Knob params are updated automatically using #assign_parameter.
 

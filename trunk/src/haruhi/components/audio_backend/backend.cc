@@ -43,8 +43,7 @@ namespace AudioBackendImpl {
 Backend::Backend (QString const& client_name, int id, QWidget* parent):
 	QWidget (parent),
 	AudioBackend ("• Audio", id),
-	_client_name (client_name),
-	_master_volume_smoother (0.0025)
+	_client_name (client_name)
 {
 	_master_volume_port = new EventPort (this, "Master Volume", Port::Input);
 	_panic_port = new EventPort (this, "Panic", Port::Input);
@@ -549,6 +548,8 @@ void
 Backend::graph_updated()
 {
 	Unit::graph_updated();
+	// Keep smoothing time independent from sample rate:
+	_master_volume_smoother.set_speed (graph()->sample_rate() / 48000.f / 50.f);
 	_master_volume_smoother_buffer.resize (graph()->buffer_size());
 }
 

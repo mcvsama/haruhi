@@ -207,10 +207,8 @@ Mikuru::process()
 		_input_buffer_R.fill (_audio_input_R->audio_buffer());
 		// Adjust volume:
 		float v = std::pow (_general->params()->input_volume.to_f(), M_E);
-		_audio_input_smoother_L.set_value (v);
-		_audio_input_smoother_L.multiply (_input_buffer_L.begin(), _input_buffer_L.end());
-		_audio_input_smoother_R.set_value (v);
-		_audio_input_smoother_R.multiply (_input_buffer_R.begin(), _input_buffer_R.end());
+		_audio_input_smoother_L.multiply (_input_buffer_L.begin(), _input_buffer_L.end(), v);
+		_audio_input_smoother_R.multiply (_input_buffer_R.begin(), _input_buffer_R.end(), v);
 	}
 
 	if (gp.enable_audio_input && fp.route_audio_input)
@@ -232,10 +230,8 @@ Mikuru::process()
 
 	// Master volume:
 	Haruhi::Sample v = std::pow (general()->params()->volume.to_f(), M_E);
-	_master_volume_smoother_L.set_value (v);
-	_master_volume_smoother_L.multiply (_audio_output_L->audio_buffer()->begin(), _audio_output_L->audio_buffer()->end());
-	_master_volume_smoother_R.set_value (v);
-	_master_volume_smoother_R.multiply (_audio_output_R->audio_buffer()->begin(), _audio_output_R->audio_buffer()->end());
+	_master_volume_smoother_L.multiply (_audio_output_L->audio_buffer()->begin(), _audio_output_L->audio_buffer()->end(), v);
+	_master_volume_smoother_R.multiply (_audio_output_R->audio_buffer()->begin(), _audio_output_R->audio_buffer()->end(), v);
 
 	for (Parts::iterator t = _parts.begin(); t != _parts.end(); ++t)
 	{
@@ -262,11 +258,12 @@ Mikuru::graph_updated()
 
 	int sample_rate = graph()->sample_rate();
 
-	// Smoothers (100ms):
-	_audio_input_smoother_L.set_smoothing_samples (0.100f * sample_rate);
-	_audio_input_smoother_R.set_smoothing_samples (0.100f * sample_rate);
-	_master_volume_smoother_L.set_smoothing_samples (0.100f * sample_rate);
-	_master_volume_smoother_R.set_smoothing_samples (0.100f * sample_rate);
+	// Smoothers:
+	float const speed = sample_rate / 48000.f / 25.f;
+	_audio_input_smoother_L.set_speed (speed);
+	_audio_input_smoother_R.set_speed (speed);
+	_master_volume_smoother_L.set_speed (speed);
+	_master_volume_smoother_R.set_speed (speed);
 
 	if (graph())
 		graph()->lock();

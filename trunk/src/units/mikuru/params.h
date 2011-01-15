@@ -229,10 +229,6 @@ struct Params
 		Haruhi::Param<int> monophonic_retrigger;
 		Haruhi::Param<int> monophonic_key_priority;
 		Haruhi::Param<int> const_portamento_time;
-		Haruhi::Param<int> amplitude_smoothing;
-		Haruhi::Param<int> frequency_smoothing;
-		Haruhi::Param<int> pitchbend_smoothing;
-		Haruhi::Param<int> panorama_smoothing;
 	};
 
 	/**

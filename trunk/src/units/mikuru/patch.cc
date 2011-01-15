@@ -157,10 +157,6 @@ Patch::save_state (QDomElement& element) const
 			save_parameter (oscillator_element, "monophonic-retrigger", oscillator_params.monophonic_retrigger);
 			save_parameter (oscillator_element, "monophonic-key-priority", oscillator_params.monophonic_key_priority);
 			save_parameter (oscillator_element, "const-portamento-time", oscillator_params.const_portamento_time);
-			save_parameter (oscillator_element, "amplitude-smoothing", oscillator_params.amplitude_smoothing);
-			save_parameter (oscillator_element, "frequency-smoothing", oscillator_params.frequency_smoothing);
-			save_parameter (oscillator_element, "pitchbend-smoothing", oscillator_params.pitchbend_smoothing);
-			save_parameter (oscillator_element, "panorama-smoothing", oscillator_params.panorama_smoothing);
 
 			// Knobs:
 			save_parameter (oscillator_element, "amplitude", voice_params.amplitude);
@@ -483,10 +479,6 @@ Patch::load_state (QDomElement const& element)
 					load_parameter (parameters, "monophonic-retrigger", oscillator_params->monophonic_retrigger);
 					load_parameter (parameters, "monophonic-key-priority", oscillator_params->monophonic_key_priority);
 					load_parameter (parameters, "const-portamento-time", oscillator_params->const_portamento_time);
-					load_parameter (parameters, "amplitude-smoothing", oscillator_params->amplitude_smoothing);
-					load_parameter (parameters, "frequency-smoothing", oscillator_params->frequency_smoothing);
-					load_parameter (parameters, "pitchbend-smoothing", oscillator_params->pitchbend_smoothing);
-					load_parameter (parameters, "panorama-smoothing", oscillator_params->panorama_smoothing);
 
 					// Knobs:
 					load_parameter (parameters, "amplitude", voice_params->amplitude);
