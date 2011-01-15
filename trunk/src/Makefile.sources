@@ -201,6 +201,7 @@ SRC_HEADERS += haruhi/dsp/harmonics_wave.h
 SRC_HEADERS += haruhi/dsp/impulse_response.h
 SRC_HEADERS += haruhi/dsp/modulated_wave.h
 SRC_HEADERS += haruhi/dsp/noise.h
+SRC_HEADERS += haruhi/dsp/one_pole_smoother.h
 SRC_HEADERS += haruhi/dsp/oscillator.h
 SRC_HEADERS += haruhi/dsp/parametric_wave.h
 SRC_HEADERS += haruhi/dsp/smoother.h

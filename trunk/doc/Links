@@ -3,3 +3,6 @@ Magnitude Frequency Response
 
 Calculate frequency response of Z transform with known frequency bins
 	http://www.dsprelated.com/showmessage/73249/1.php
+
+1 pole LPF for smooth parameter changes
+	http://musicdsp.org/showone.php?id=257
