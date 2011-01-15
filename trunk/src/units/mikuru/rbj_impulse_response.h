@@ -21,6 +21,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/dsp/impulse_response.h>
+#include <haruhi/utility/numeric.h>
 
 // Local:
 #include "types.h"
@@ -54,11 +55,11 @@ class RBJImpulseResponse: public DSP::ImpulseResponse
   public:
 	RBJImpulseResponse (Type type, Sample frequency, Sample resonance, Sample gain, Sample attenuation);
 
+	inline void
+	set_type (Type type);
+
 	Type
 	type() const { return _type; }
-
-	void
-	set_type (Type type);
 
 	/**
 	 * Sets center frequency.
@@ -66,7 +67,7 @@ class RBJImpulseResponse: public DSP::ImpulseResponse
 	 * \param	frequency
 	 * 			Frequency. Value in range (0, 0.5).
 	 */
-	void
+	inline void
 	set_frequency (Sample);
 
 	Sample
@@ -78,7 +79,7 @@ class RBJImpulseResponse: public DSP::ImpulseResponse
 	 * \param	resonance
 	 * 			Q/resonance. Value in range (0, 1.0]
 	 */
-	void
+	inline void
 	set_resonance (Sample resonance);
 
 	Sample
@@ -90,7 +91,7 @@ class RBJImpulseResponse: public DSP::ImpulseResponse
 	 * \param	gain
 	 * 			Gain in decibels.
 	 */
-	void
+	inline void
 	set_gain (Sample gain);
 
 	Sample
@@ -99,7 +100,7 @@ class RBJImpulseResponse: public DSP::ImpulseResponse
 	/**
 	 * Sets attenuation for filter.
 	 */
-	void
+	inline void
 	set_attenuation (Sample attenuation);
 
 	Sample
@@ -108,30 +109,25 @@ class RBJImpulseResponse: public DSP::ImpulseResponse
 	/**
 	 * Enables/disables automatic attenuation limiter.
 	 */
-	void
+	inline void
 	set_limiter (bool enabled);
 
 	bool
 	limiter() const { return _limiter; }
 
+	/*
+	 * ImpulseResponse API
+	 */
+
 	int
 	size() const { return 3; }
 
-	/**
-	 * ImpulseResponse::response()
-	 */
 	Sample
 	response (Sample frequency) const;
 
-	/**
-	 * IIR::a();
-	 */
 	Sample*
 	a() { return _a; }
 
-	/**
-	 * IIR::b();
-	 */
 	Sample*
 	b() { return _b; }
 
@@ -152,6 +148,79 @@ class RBJImpulseResponse: public DSP::ImpulseResponse
 	// Helpers:
 	bool	_dont_update;
 };
+
+/*
+ * Inline methods
+ */
+
+void
+RBJImpulseResponse::set_type (Type type)
+{
+	if (_type != type)
+	{
+		_type = type;
+		update();
+	}
+}
+
+
+void
+RBJImpulseResponse::set_frequency (Sample frequency)
+{
+	// Limit frequency to 32Hz…23.99kHz for fs=48kHz
+	frequency = bound (frequency, 0.0006666666f, 0.4997916666f);
+	if (_frequency != frequency)
+	{
+		_frequency = frequency;
+		update();
+	}
+}
+
+
+void
+RBJImpulseResponse::set_resonance (Sample resonance)
+{
+	// Q must be greater than 0:
+	resonance = std::max (0.01f, resonance);
+	if (_resonance != resonance)
+	{
+		_resonance = resonance;
+		update();
+	}
+}
+
+
+void
+RBJImpulseResponse::set_gain (Sample gain)
+{
+	if (_gain != gain)
+	{
+		_gain = gain;
+		update();
+	}
+}
+
+
+void
+RBJImpulseResponse::set_attenuation (Sample attenuation)
+{
+	if (_attenuation != attenuation)
+	{
+		_attenuation = attenuation;
+		update();
+	}
+}
+
+
+void
+RBJImpulseResponse::set_limiter (bool enabled)
+{
+	if (_limiter != enabled)
+	{
+		_limiter = enabled;
+		update();
+	}
+}
 
 } // namespace MikuruPrivate
 
