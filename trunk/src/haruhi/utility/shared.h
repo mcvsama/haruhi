@@ -211,7 +211,7 @@ template<class T>
 		typedef T Type;
 
 	  public:
-		Shared (Type* object = 0):
+		Shared (Type* object):
 			_object (object)
 		{ }
 
