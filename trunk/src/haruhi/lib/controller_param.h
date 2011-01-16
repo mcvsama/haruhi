@@ -28,7 +28,6 @@ namespace Haruhi {
 
 /**
  * Param that can be controlled by Haruhi::Controller.
- * Extends Param with smoothing parameter.
  */
 class ControllerParam:
 	public Param<int>,
@@ -47,37 +46,11 @@ class ControllerParam:
 	int
 	denominator() const { return _denominator; }
 
-	int
-	smoothing() const { return atomic (_smoothing_parameter); }
-
-	void
-	set_smoothing (int smoothing_ms)
-	{
-		_smoothing_enabled = true;
-		atomic (_smoothing_parameter) = smoothing_ms;
-	}
-
-	bool
-	smoothing_enabled() const { return _smoothing_enabled; }
-
-	void
-	set_smoothing_enabled (bool setting) { _smoothing_enabled = setting; }
-
 	/**
 	 * Returns value divided by denominator and casted to float.
 	 */
 	float
 	to_f() const { return 1.0f * get() / _denominator; }
-
-	volatile int*
-	smoothing_parameter() { return &_smoothing_parameter; }
-
-	/**
-	 * Calls Param<int>::sanitize().
-	 * Additionally sanitizes smoothing parameter.
-	 */
-	void
-	sanitize();
 
 	/*
 	 * SaveableState API
@@ -90,9 +63,7 @@ class ControllerParam:
     load_state (QDomElement const&);
 
   private:
-	int						_denominator;
-	bool					_smoothing_enabled;
-	int volatile mutable	_smoothing_parameter; // Mutable for atomic().
+	int	_denominator;
 };
 
 } // namespace Haruhi

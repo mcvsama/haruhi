@@ -25,17 +25,13 @@
 namespace Haruhi {
 
 ControllerParam::ControllerParam():
-	_denominator (1),
-	_smoothing_enabled (false),
-	_smoothing_parameter (0)
+	_denominator (1)
 { }
 
 
 ControllerParam::ControllerParam (int minimum, int maximum, int default_value, int denominator):
 	Param<int> (minimum, maximum, default_value),
-	_denominator (denominator),
-	_smoothing_enabled (false),
-	_smoothing_parameter (0)
+	_denominator (denominator)
 { }
 
 
@@ -43,20 +39,8 @@ ControllerParam&
 ControllerParam::operator= (ControllerParam const& other)
 {
 	Param<int>::operator= (other);
-
 	_denominator = other._denominator;
-	_smoothing_enabled = other._smoothing_enabled;
-	atomic (_smoothing_parameter) = static_cast<int> (atomic (other._smoothing_parameter));
-
 	return *this;
-}
-
-
-void
-ControllerParam::sanitize()
-{
-	Param<int>::sanitize();
-	set_smoothing (bound (smoothing(), 0, 1000)); // 0…1000ms
 }
 
 
@@ -64,8 +48,6 @@ void
 ControllerParam::save_state (QDomElement& element) const
 {
 	element.setAttribute ("value", QString ("%1").arg (get()));
-	element.setAttribute ("smoothing-value", QString ("%1").arg (smoothing()));
-	element.setAttribute ("smoothing-enabled", smoothing_enabled() ? "true" : "false");
 	element.appendChild (element.ownerDocument().createTextNode (QString::number (get())));
 }
 
@@ -73,12 +55,6 @@ ControllerParam::save_state (QDomElement& element) const
 void
 ControllerParam::load_state (QDomElement const& element)
 {
-	set_smoothing (0);
-	set_smoothing_enabled (false);
-	if (element.hasAttribute ("smoothing-value"))
-		set_smoothing (bound (element.attribute ("smoothing-value").toInt(), 0, 10000));
-	if (element.hasAttribute ("smoothing-enabled"))
-		set_smoothing_enabled (element.attribute ("smoothing-enabled") == "true");
 	set (bound (element.text().toInt(), minimum(), maximum()));
 }
 
