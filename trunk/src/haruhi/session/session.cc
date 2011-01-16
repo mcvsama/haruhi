@@ -593,21 +593,22 @@ Session::load_state (QDomElement const& element)
 		catch (std::bad_cast const&)
 		{ }
 
+		_engine = new Engine (this);
 		_program->load_state (program_element);
 
+		// Restore connections, parameters, etc. before starting engine:
+		if (!parameters_element.isNull())
+		{
+			parameters().load_state (parameters_element);
+			_session_global->load_params();
+			apply_parameters();
+		}
+
 		// Restart processing:
-		_engine = new Engine (this);
 		_engine->start();
 	}
 	else
 		QMessageBox::warning (this, "Error while loading session", "Could not load session due to missing information in session file.");
-
-	if (!parameters_element.isNull())
-	{
-		parameters().load_state (parameters_element);
-		_session_global->load_params();
-		apply_parameters();
-	}
 }
 
 

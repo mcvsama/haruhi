@@ -299,7 +299,7 @@ Backend::connect()
 {
 	try {
 		_transport->connect (_client_name.toStdString());
-		_transport->activate();
+		graph_updated();
 		enable();
 	}
 	catch (Exception const& e)
