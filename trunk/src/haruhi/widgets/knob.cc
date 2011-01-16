@@ -47,8 +47,7 @@ namespace Haruhi {
 
 KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	QDialog (parent),
-	_knob (knob),
-	_smoothing_spinbox (0)
+	_knob (knob)
 {
 	setCaption ("Knob properties");
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -88,32 +87,12 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	QObject::connect (user_limit_max_spinbox, SIGNAL (valueChanged (int)), this, SLOT (limit_max_updated()));
 	_user_limit_max_spinbox = user_limit_max_spinbox;
 
-	QLabel* smoothing_label = 0;
-	if (_knob->param()->smoothing_enabled())
-	{
-		smoothing_label = new QLabel ("Smoothing:", this);
-		_smoothing_spinbox = new QSpinBox (this);
-		_smoothing_spinbox->setMinimum (0);
-		_smoothing_spinbox->setMaximum (500);
-		_smoothing_spinbox->setSingleStep (5);
-		_smoothing_spinbox->setSuffix (" ms");
-		_smoothing_spinbox->setSpecialValueText ("Off");
-		_smoothing_spinbox->setMinimumWidth (65);
-		_smoothing_spinbox->setValue (_knob->param()->smoothing());
-		_smoothing_spinbox->setFixedWidth (80);
-	}
-
 	grid_layout->addWidget (curve_label, 0, 0, Qt::AlignLeft);
 	grid_layout->addWidget (range_min_label, 1, 0, Qt::AlignLeft);
 	grid_layout->addWidget (range_max_label, 2, 0, Qt::AlignLeft);
 	grid_layout->addWidget (_curve_spinbox, 0, 1, Qt::AlignRight);
 	grid_layout->addWidget (_user_limit_min_spinbox, 1, 1, Qt::AlignRight);
 	grid_layout->addWidget (_user_limit_max_spinbox, 2, 1, Qt::AlignRight);
-	if (_knob->param()->smoothing_enabled())
-	{
-		grid_layout->addWidget (smoothing_label, 3, 0, Qt::AlignLeft);
-		grid_layout->addWidget (_smoothing_spinbox, 3, 1, Qt::AlignRight);
-	}
 
 	QPushButton* accept_button = new QPushButton ("&Ok", this);
 	accept_button->setDefault (true);
@@ -140,8 +119,6 @@ KnobProperties::apply()
 	_knob->controller_proxy().config().user_limit_min = _user_limit_min_spinbox->value();
 	_knob->controller_proxy().config().user_limit_max = _user_limit_max_spinbox->value();
 	_knob->param()->set (value);
-	if (_smoothing_spinbox)
-		_knob->param()->set_smoothing (_smoothing_spinbox->value());
 }
 
 

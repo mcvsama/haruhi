@@ -61,7 +61,6 @@ class KnobProperties: public QDialog
 	QSpinBox*	_curve_spinbox;
 	QSpinBox*	_user_limit_min_spinbox;
 	QSpinBox*	_user_limit_max_spinbox;
-	QSpinBox*	_smoothing_spinbox;
 };
 
 
