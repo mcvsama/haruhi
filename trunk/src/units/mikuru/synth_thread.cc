@@ -129,9 +129,9 @@ SynthThread::run()
 		}
 
 		// Panorama:
-		float const speed = _mikuru->graph()->sample_rate() / 48000.f / 25.f;
-		_panorama_smoother_1.set_speed (speed);
-		_panorama_smoother_2.set_speed (speed);
+		float const samples = 0.005f * _mikuru->graph()->sample_rate();
+		_panorama_smoother_1.set_samples (samples);
+		_panorama_smoother_2.set_samples (samples);
 
 		float f = 0.0;
 		f = 1.0f - 1.0f * _mikuru->general()->params()->panorama.get() / Params::General::PanoramaMax;

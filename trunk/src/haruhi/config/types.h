@@ -20,6 +20,8 @@
 namespace Haruhi {
 
 typedef float	Sample;
+
+// Represented in µs:
 typedef int64_t	Timestamp;
 
 } // namespace Haruhi

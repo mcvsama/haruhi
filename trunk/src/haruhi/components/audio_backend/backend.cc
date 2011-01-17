@@ -549,7 +549,7 @@ Backend::graph_updated()
 {
 	Unit::graph_updated();
 	// Keep smoothing time independent from sample rate:
-	_master_volume_smoother.set_speed (graph()->sample_rate() / 48000.f / 50.f);
+	_master_volume_smoother.set_samples (0.01f * graph()->sample_rate());
 	_master_volume_smoother_buffer.resize (graph()->buffer_size());
 }
 

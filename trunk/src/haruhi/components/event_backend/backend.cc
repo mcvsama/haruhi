@@ -167,21 +167,20 @@ Backend::process()
 	for (InputsMap::iterator h = _inputs.begin(); h != _inputs.end(); ++h)
 	{
 		Transport::Port* transport_port = h->first;
-		if (transport_port->buffer().empty())
-			continue;
 		DeviceWithPortItem* device_item = h->second;
 		// For each Controller:
-		for (DeviceWithPortItem::Controllers::iterator iii = device_item->controllers()->begin(); iii != device_item->controllers()->end(); ++iii)
+		for (DeviceWithPortItem::Controllers::iterator c = device_item->controllers()->begin(); c != device_item->controllers()->end(); ++c)
 		{
-			if ((*iii)->ready())
+			if ((*c)->ready())
 			{
 				// For each event that comes from transport:
 				for (Transport::MidiBuffer::iterator m = transport_port->buffer().begin(); m != transport_port->buffer().end(); ++m)
 				{
-					if ((*iii)->handle_event (*m))
-						handle_event_for_learnables (*m, (*iii)->port());
+					if ((*c)->handle_event (*m))
+						handle_event_for_learnables (*m, (*c)->port());
 					on_event (*m);
 				}
+				(*c)->generate_smoothing_events();
 			}
 		}
 	}

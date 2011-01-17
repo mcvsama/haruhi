@@ -16,6 +16,7 @@
 
 // Standard:
 #include <cstddef>
+#include <cmath>
 
 // Haruhi:
 #include <haruhi/config/types.h>
@@ -32,26 +33,29 @@ namespace DSP {
 class OnePoleSmoother
 {
   public:
-	OnePoleSmoother (Sample speed = 0.005f)
+	OnePoleSmoother (Sample samples = 1.f)
 	{
-		set_speed (speed);
+		set_samples (samples);
 		reset();
 	}
 
+	/**
+	 * \param	samples is number of samples after which returned value reaches
+	 * 			99.99% of target value.
+	 */
 	void
-	set_speed (Sample speed)
+	set_samples (Sample samples)
 	{
-		_a = 1.f - speed;
-		_b = speed;
+		_time = std::pow (0.01f, 2.0f / samples);
 	}
 
 	/**
-	 * Resets smoother to initial state (value of 0.0).
+	 * Resets smoother to initial state (or given value).
 	 */
 	void
-	reset()
+	reset (float value = 0.0f)
 	{
-		_z = 0.0f;
+		_z = value;
 	}
 
 	/**
@@ -61,7 +65,7 @@ class OnePoleSmoother
 	process (Sample s, unsigned int iterations = 1)
 	{
 		for (unsigned int i = 0; i < iterations; ++i)
-			_z = (s * _b) + (_z * _a);
+			_z = _time * (_z - s) + s;
 		return _z;
 	}
 
@@ -104,7 +108,8 @@ class OnePoleSmoother
 		}
 
   private:
-	Sample _a, _b, _z;
+	Sample _time;
+	Sample _z;
 };
 
 } // namespace DSP

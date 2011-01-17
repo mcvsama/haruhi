@@ -22,10 +22,12 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/dsp/one_pole_smoother.h>
 #include <haruhi/graph/event.h>
 #include <haruhi/graph/graph.h>
 #include <haruhi/lib/midi.h>
 #include <haruhi/utility/saveable_state.h>
+#include <haruhi/utility/shared.h>
 
 
 namespace Haruhi {
@@ -37,6 +39,18 @@ namespace DevicesManager {
  */
 class Controller: public SaveableState
 {
+	struct SmoothingParams
+	{
+		SmoothingParams():
+			current (0.f), target (0.f)
+		{ }
+
+		ControllerEvent::Value	current;
+		ControllerEvent::Value	target;
+		DSP::OnePoleSmoother	smoother;
+		Timestamp				prev_timestamp;
+	};
+
   public:
 	Controller (QString const& name = "");
 
@@ -67,7 +81,14 @@ class Controller: public SaveableState
 	 * \returns	true if event has been handled, false otherwise.
 	 */
 	bool
-	handle_event (MIDI::Event const& event, EventBuffer& buffer, Graph* graph) const;
+	handle_event (MIDI::Event const& event, EventBuffer& buffer, Graph* graph);
+
+	/**
+	 * Create and push events for value smoothing.
+	 * Should be called on each processing round.
+	 */
+	void
+	generate_smoothing_events (EventBuffer& buffer, Graph* graph);
 
 	/*
 	 * SaveableState API
@@ -78,6 +99,10 @@ class Controller: public SaveableState
 
 	void
 	load_state (QDomElement const&);
+
+  private:
+	void
+	controller_smoothing_setup (Timestamp t, float target, float min_samples, float max_samples);
 
   public:
 	// MIDI filters:
@@ -95,9 +120,16 @@ class Controller: public SaveableState
 	bool	key_pressure_filter;
 	int		key_pressure_channel;		// 0 means 'all'
 	bool	key_pressure_invert;
+	// Smooth controller/pressure events:
+	bool	smoothing_enabled;
 
   private:
-	QString	_name;
+	QString							_name;
+	// Used for value smoothing:
+	bool							_smoothing_enabled;
+	SmoothingParams					_controller_smoother;
+	SmoothingParams					_channel_pressure_smoother;
+	SmoothingParams					_key_pressure_smoother[128];
 };
 
 } // namespace DevicesManager

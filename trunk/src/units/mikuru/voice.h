@@ -219,6 +219,8 @@ class Voice
 	unsigned int				_drop_samples;
 	bool						_dropped;
 	bool						_tracked;
+	// Set initially to true, reset after first mixin():
+	bool						_first_pass;
 };
 
 

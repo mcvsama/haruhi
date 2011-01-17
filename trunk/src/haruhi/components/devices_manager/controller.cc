@@ -13,6 +13,7 @@
 
 // Standard:
 #include <cstddef>
+#include <cmath>
 
 // Qt:
 #include <QtGui/QApplication>
@@ -21,6 +22,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/lib/midi.h>
+#include <haruhi/utility/numeric.h>
 
 // Local:
 #include "controller.h"
@@ -45,6 +47,7 @@ Controller::Controller (QString const& name):
 	key_pressure_filter (false),
 	key_pressure_channel (0),
 	key_pressure_invert (false),
+	smoothing_enabled (true),
 	_name (name)
 {
 }
@@ -97,7 +100,7 @@ Controller::learn_from_event (MIDI::Event const& event)
 
 
 bool
-Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Graph* graph) const
+Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Graph* graph)
 {
 	bool handled = false;
 	Timestamp const t = midi_event.timestamp;
@@ -110,8 +113,8 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 				buffer.push (new VoiceEvent (t, midi_event.note_on.note, VoiceAuto,
 											 (midi_event.note_on.velocity == 0)? VoiceEvent::Release : VoiceEvent::Create,
 											 VoiceEvent::frequency_from_key_id (midi_event.note_on.note, graph->master_tune()),
-											 midi_event.note_on.velocity / 127.0));
-				buffer.push (new VoiceControllerEvent (t, midi_event.note_on.note, midi_event.note_on.velocity / 127.0));
+											 midi_event.note_on.velocity / 127.0f));
+				buffer.push (new VoiceControllerEvent (t, midi_event.note_on.note, midi_event.note_on.velocity / 127.0f));
 				handled = true;
 			}
 			break;
@@ -119,10 +122,10 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 		case MIDI::Event::NoteOff:
 			if (note_filter && (note_channel == 0 || note_channel == midi_event.note_off.channel + 1))
 			{
-				buffer.push (new VoiceControllerEvent (t, midi_event.note_off.note, midi_event.note_off.velocity / 127.0));
+				buffer.push (new VoiceControllerEvent (t, midi_event.note_off.note, midi_event.note_off.velocity / 127.0f));
 				buffer.push (new VoiceEvent (t, midi_event.note_off.note, VoiceAuto, VoiceEvent::Release,
 											 VoiceEvent::frequency_from_key_id (midi_event.note_off.note, graph->master_tune()),
-											 midi_event.note_off.velocity / 127.0));
+											 midi_event.note_off.velocity / 127.0f));
 				handled = true;
 			}
 			break;
@@ -134,8 +137,12 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 					value = 127 - value;
 				if (controller_filter && (controller_channel == 0 || controller_channel == midi_event.controller.channel + 1) && controller_number == static_cast<int> (midi_event.controller.number))
 				{
-					buffer.push (new ControllerEvent (t, value / 127.0));
+					float const fvalue = value / 127.0f;
+					buffer.push (new ControllerEvent (t, fvalue));
 					handled = true;
+					// Smoother setup: set speed according to time between current and previous event:
+					if (_smoothing_enabled)
+						controller_smoothing_setup (t, fvalue, 0.001f * graph->sample_rate(), 0.5f * graph->sample_rate());
 				}
 			}
 			break;
@@ -143,8 +150,12 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 		case MIDI::Event::Pitchbend:
 			if (pitchbend_filter && (pitchbend_channel == 0 || pitchbend_channel == midi_event.pitchbend.channel + 1))
 			{
-				buffer.push (new ControllerEvent (t, midi_event.pitchbend.value == 0 ? 0.5 : (midi_event.pitchbend.value + 8192) / 16382.0));
+				float const fvalue = midi_event.pitchbend.value == 0 ? 0.5f : (midi_event.pitchbend.value + 8192) / 16382.0f;
+				buffer.push (new ControllerEvent (t, fvalue));
 				handled = true;
+				// Smoother setup: set speed according to time between current and previous event:
+				if (_smoothing_enabled)
+					controller_smoothing_setup (t, fvalue, 0.001f * graph->sample_rate(), 0.1f * graph->sample_rate());
 			}
 			break;
 
@@ -155,7 +166,7 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 					value = 127 - value;
 				if (channel_pressure_filter && (channel_pressure_channel == 0 || channel_pressure_channel == midi_event.channel_pressure.channel + 1))
 				{
-					buffer.push (new ControllerEvent (t, value / 127.0));
+					buffer.push (new ControllerEvent (t, value / 127.0f));
 					handled = true;
 				}
 			}
@@ -168,7 +179,7 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 					value = 127 - value;
 				if (key_pressure_filter && (key_pressure_channel == 0 || key_pressure_channel == midi_event.key_pressure.channel + 1))
 				{
-					buffer.push (new VoiceControllerEvent (t, midi_event.key_pressure.note, value / 127.0));
+					buffer.push (new VoiceControllerEvent (t, midi_event.key_pressure.note, value / 127.0f));
 					handled = true;
 				}
 			}
@@ -176,6 +187,27 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 	}
 
 	return handled;
+}
+
+
+void
+Controller::generate_smoothing_events (EventBuffer& buffer, Graph* graph)
+{
+	if (!smoothing_enabled)
+		return;
+
+	SmoothingParams& cs = _controller_smoother;
+	Timestamp const t = graph->timestamp();
+
+	if (cs.current != cs.target)
+	{
+		// If difference is small enough, treat is as no difference:
+		if (std::abs (cs.target - cs.current) < 0.001f)
+			cs.current = cs.target;
+		else
+			cs.current = cs.smoother.process (cs.target, graph->buffer_size());
+		buffer.push (new ControllerEvent (t, cs.current));
+	}
 }
 
 
@@ -245,6 +277,16 @@ Controller::load_state (QDomElement const& element)
 			channel_pressure_invert = e.attribute ("invert") == "true";
 		}
 	}
+}
+
+
+void
+Controller::controller_smoothing_setup (Timestamp t, float target, float min_samples, float max_samples)
+{
+	Timestamp dt = t - _controller_smoother.prev_timestamp;
+	_controller_smoother.target = target;
+	_controller_smoother.smoother.set_samples (bound (0.5f * dt, min_samples, max_samples));
+	_controller_smoother.prev_timestamp = t;
 }
 
 } // namespace DevicesManager

@@ -69,6 +69,13 @@ ControllerWithPortItem::handle_event (MIDI::Event const& midi_event)
 	return _controller->handle_event (midi_event, *_port->event_buffer(), _port->graph());
 }
 
+
+void
+ControllerWithPortItem::generate_smoothing_events()
+{
+	_controller->generate_smoothing_events (*_port->event_buffer(), _port->graph());
+}
+
 } // namespace EventBackendImpl
 
 } // namespace Haruhi

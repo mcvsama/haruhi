@@ -65,6 +65,13 @@ class ControllerWithPortItem:
 	bool
 	handle_event (MIDI::Event const& event);
 
+	/**
+	 * Create and push ControllerEvents used for value smoothing.
+	 * This method should be called on each processing round.
+	 */
+	void
+	generate_smoothing_events();
+
   private:
 	EventPort*			_port;
 	// Link to DeviceItem:

@@ -52,24 +52,23 @@ DoubleFilter::configure (Configuration configuration, Params::Filter* params1, P
 	_params1 = *params1;
 	_params2 = *params2;
 
-	int sample_rate = _mikuru->graph()->sample_rate();
-	float const speed = sample_rate / 48000.f / 25.f;
+	float const samples = 0.005f * _mikuru->graph()->sample_rate();
 
 	// Setup smoothers:
 	if (_params1.enabled)
 	{
-		_smoother_filter1_frequency.set_speed (speed);
-		_smoother_filter1_resonance.set_speed (speed);
-		_smoother_filter1_gain.set_speed (speed);
-		_smoother_filter1_attenuation.set_speed (speed);
+		_smoother_filter1_frequency.set_samples (samples);
+		_smoother_filter1_resonance.set_samples (samples);
+		_smoother_filter1_gain.set_samples (samples);
+		_smoother_filter1_attenuation.set_samples (samples);
 	}
 
 	if (_params2.enabled)
 	{
-		_smoother_filter2_frequency.set_speed (speed);
-		_smoother_filter2_resonance.set_speed (speed);
-		_smoother_filter2_gain.set_speed (speed);
-		_smoother_filter2_attenuation.set_speed (speed);
+		_smoother_filter2_frequency.set_samples (samples);
+		_smoother_filter2_resonance.set_samples (samples);
+		_smoother_filter2_gain.set_samples (samples);
+		_smoother_filter2_attenuation.set_samples (samples);
 	}
 }
 

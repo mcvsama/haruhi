@@ -62,7 +62,8 @@ Voice::Voice (VoiceManager* voice_manager, SynthThread* thread, Haruhi::KeyID ke
 	_drop_sample (0),
 	_drop_samples (0.0025f * _mikuru->graph()->sample_rate()), // 2.5ms
 	_dropped (false),
-	_tracked (false)
+	_tracked (false),
+	_first_pass (true)
 {
 	set_thread (thread);
 
@@ -77,15 +78,13 @@ Voice::Voice (VoiceManager* voice_manager, SynthThread* thread, Haruhi::KeyID ke
 	_filter1_params = *_part->filters()->filter1()->params();
 	_filter2_params = *_part->filters()->filter2()->params();
 
-	int sample_rate = _mikuru->graph()->sample_rate();
-
-	// Setup smoothers (response speed should be independent from sample rate):
-	float const speed = sample_rate / 48000.f / 25.f;
-	_smoother_amplitude.set_speed (speed);
-	_smoother_frequency.set_speed (speed);
-	_smoother_pitchbend.set_speed (speed);
-	_smoother_panorama_1.set_speed (speed);
-	_smoother_panorama_2.set_speed (speed);
+	// Setup smoothers (response time should be independent from sample rate):
+	unsigned int sr = _mikuru->graph()->sample_rate();
+	_smoother_amplitude.set_samples (0.005f * sr);
+	_smoother_frequency.set_samples (0.005f * sr);
+	_smoother_pitchbend.set_samples (0.05f * sr);
+	_smoother_panorama_1.set_samples (0.005f * sr);
+	_smoother_panorama_2.set_samples (0.005f * sr);
 }
 
 
@@ -177,11 +176,15 @@ Voice::mixin (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
 		i = 0;
 		f = 1.0f - 1.0f * _params.panorama.get() / Params::Voice::PanoramaMax;
 		f = f > 1.0f ? 1.0 : f;
+		if (_first_pass)
+			_smoother_panorama_1.reset (f);
 		_smoother_panorama_1.multiply (_commons->output_buffer1.begin(), _commons->output_buffer1.end(), f);
 
 		i = 0;
 		f = 1.0f - 1.0f * _params.panorama.get() / Params::Voice::PanoramaMin;
 		f = f > 1.0f ? 1.0 : f;
+		if (_first_pass)
+			_smoother_panorama_2.reset (f);
 		_smoother_panorama_2.multiply (_commons->output_buffer2.begin(), _commons->output_buffer2.end(), f);
 
 		__brainfuck (",>,>++++++[-<--------<-------->>]", &_commons->output_buffer1, &_commons->output_buffer2);
@@ -190,6 +193,8 @@ Voice::mixin (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
 		output1->mixin (&_commons->output_buffer1);
 		output2->mixin (&_commons->output_buffer2);
 	}
+
+	_first_pass = false;
 }
 
 
@@ -259,6 +264,8 @@ Voice::process_frequency()
 				_last_pitchbend_value = pitchbend;
 			}
 		}
+		if (_first_pass)
+			_smoother_pitchbend.reset (pitchbend);
 		_smoother_pitchbend.multiply (_commons->frequency_buffer.begin(), _commons->frequency_buffer.end(), pitchbend);
 	}
 
@@ -266,6 +273,8 @@ Voice::process_frequency()
 	{
 		float const frq_mod = _params.frequency.to_f();
 		float const frq_det = _params.detune.to_f() + _mikuru->general()->params()->detune.to_f();
+		if (_first_pass)
+			_smoother_frequency.reset (frq_mod);
 		_smoother_frequency.fill (_commons->temp1.begin(), _commons->temp1.end(), frq_mod);
 
 		Sample* tb = _commons->temp1.begin();
@@ -294,10 +303,12 @@ Voice::process_amplitude()
 	// Amplitude velocity sensing:
 	float s = _params.velocity_sens.to_f();
 	amplitude *= (s >= 0.0 ? 1 - s + _amplitude * s : s * _amplitude + 1.0f);
+	float f = oscillator_params->volume.to_f() * _params.amplitude.to_f() * _params.adsr.to_f();
 
+	if (_first_pass)
+		_smoother_amplitude.reset (f);
 	// Volume and amplitude modulation:
-	_smoother_amplitude.multiply (_commons->amplitude_buffer.begin(), _commons->amplitude_buffer.end(),
-								  oscillator_params->volume.to_f() * _params.amplitude.to_f() * _params.adsr.to_f());
+	_smoother_amplitude.multiply (_commons->amplitude_buffer.begin(), _commons->amplitude_buffer.end(), f);
 
 	for (Sample *s = _commons->amplitude_buffer.begin(), *e = _commons->amplitude_buffer.end(); s != e; ++s)
 		*s = std::pow (*s, M_E);

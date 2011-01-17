@@ -256,14 +256,12 @@ Mikuru::graph_updated()
 {
 	Unit::graph_updated();
 
-	int sample_rate = graph()->sample_rate();
-
 	// Smoothers:
-	float const speed = sample_rate / 48000.f / 25.f;
-	_audio_input_smoother_L.set_speed (speed);
-	_audio_input_smoother_R.set_speed (speed);
-	_master_volume_smoother_L.set_speed (speed);
-	_master_volume_smoother_R.set_speed (speed);
+	float const samples = 0.005f * graph()->sample_rate();
+	_audio_input_smoother_L.set_samples (samples);
+	_audio_input_smoother_R.set_samples (samples);
+	_master_volume_smoother_L.set_samples (samples);
+	_master_volume_smoother_R.set_samples (samples);
 
 	if (graph())
 		graph()->lock();
