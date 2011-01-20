@@ -156,7 +156,7 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	// Buttons
 	//
 
-	_load_from_file_button = new QPushButton (Resources::Icons16::open(), "Load from file…", this);
+	_load_from_file_button = new QPushButton (Resources::Icons16::open(), "&Load from file…", this);
 	QObject::connect (_load_from_file_button, SIGNAL (clicked()), this, SLOT (browse_file()));
 
 	_open_button = new QPushButton (Resources::Icons16::new_(), "Open", this);
