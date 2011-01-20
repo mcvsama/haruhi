@@ -23,6 +23,7 @@
 #include <QtGui/QComboBox>
 #include <QtGui/QSpinBox>
 #include <QtGui/QPushButton>
+#include <QtGui/QLabel>
 
 // Local:
 #include "controller_item.h"
@@ -68,28 +69,29 @@ class ControllerDialog: public QWidget
 	validate_and_save();
 
   private:
+	QSpinBox*
+	create_channel_spinbox (QWidget* parent);
+
+  private:
 	ControllerItem*		_item;
 	QLineEdit*			_name;
 	QPushButton*		_save_button;
 	QCheckBox*			_note_checkbox;
-	QWidget*			_note_params;
-	QComboBox*			_note_channel;
+	QSpinBox*			_note_channel;
 	QCheckBox*			_controller_checkbox;
-	QWidget*			_controller_params;
-	QComboBox*			_controller_channel;
+	QSpinBox*			_controller_channel;
 	QSpinBox*			_controller_number;
 	QCheckBox*			_controller_invert;
 	QCheckBox*			_pitchbend_checkbox;
-	QWidget*			_pitchbend_params;
-	QComboBox*			_pitchbend_channel;
+	QSpinBox*			_pitchbend_channel;
 	QCheckBox*			_channel_pressure_checkbox;
-	QWidget*			_channel_pressure_params;
-	QComboBox*			_channel_pressure_channel;
+	QSpinBox*			_channel_pressure_channel;
 	QCheckBox*			_channel_pressure_invert;
 	QCheckBox*			_key_pressure_checkbox;
-	QWidget*			_key_pressure_params;
-	QComboBox*			_key_pressure_channel;
+	QSpinBox*			_key_pressure_channel;
 	QCheckBox*			_key_pressure_invert;
+	QLabel*				_smoothing_label;
+	QSpinBox*			_smoothing;
 };
 
 } // namespace DevicesManager

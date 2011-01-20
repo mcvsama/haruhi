@@ -22,6 +22,7 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QGridLayout>
 #include <QtGui/QGroupBox>
+#include <QtGui/QToolTip>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -41,177 +42,116 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	setMinimumWidth (300);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::DialogMargin, Config::Spacing);
+	// Port name:
+
+	QLabel* name_label = new QLabel ("Controller name:", this);
+	_name = new QLineEdit (this);
+	QObject::connect (_name, SIGNAL (textChanged (const QString&)), this, SLOT (update_widgets()));
+
+	// Filters:
+
+	QGroupBox* filters = new QGroupBox ("Accepted events", this);
+
+	// Note filters:
+
+	_note_checkbox = new QCheckBox ("Note on/off", filters);
+	QObject::connect (_note_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
+
+	_note_channel = create_channel_spinbox (filters);
+
+	// Controller filters:
+
+	_controller_checkbox = new QCheckBox ("Controller", filters);
+	QObject::connect (_controller_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
+
+	_controller_channel = create_channel_spinbox (filters);
+
+	_controller_number = new QSpinBox (0, 127, 1, filters);
+	_controller_number->setPrefix ("CC #");
+	QToolTip::add (_controller_number, "MIDI controller number");
+
+	_controller_invert = new QCheckBox ("Invert", filters);
+	QToolTip::add (_controller_invert, "Invert values");
+
+	// Channel pressure filters:
+
+	_channel_pressure_checkbox = new QCheckBox ("Channel pressure", filters);
+	QObject::connect (_channel_pressure_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
+
+	_channel_pressure_channel = create_channel_spinbox (filters);
+
+	_channel_pressure_invert = new QCheckBox ("Invert", filters);
+	QToolTip::add (_channel_pressure_invert, "Invert values");
+
+	// Key pressure filters:
+
+	_key_pressure_checkbox = new QCheckBox ("Key pressure", filters);
+	QObject::connect (_key_pressure_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
+
+	_key_pressure_channel = create_channel_spinbox (filters);
+
+	_key_pressure_invert = new QCheckBox ("Invert", filters);
+	QToolTip::add (_key_pressure_invert, "Invert values");
+
+	// Pitchbend filters:
+
+	_pitchbend_checkbox = new QCheckBox ("Pitchbend", filters);
+	QObject::connect (_pitchbend_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
+
+	_pitchbend_channel = create_channel_spinbox (filters);
+
+	// Smoothing:
+
+	_smoothing_label = new QLabel ("Smoothing:", filters);
+
+	_smoothing = new QSpinBox (0, 1000, 50, filters);
+	_smoothing->setSuffix (" ms");
+	_smoothing->setSpecialValueText ("Off");
+
+	// Buttons:
+
+	_save_button = new QPushButton (Resources::Icons16::ok(), "&Apply", this);
+	QObject::connect (_save_button, SIGNAL (clicked()), this, SLOT (validate_and_save()));
+
+	// Layout:
+
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (Config::DialogMargin);
+	layout->setSpacing (Config::Spacing);
 	layout->setResizeMode (QLayout::FreeResize);
 
-		// Port name:
+	QHBoxLayout* name_layout = new QHBoxLayout();
+	name_layout->setSpacing (Config::Spacing);
+	name_layout->addWidget (name_label);
+	name_layout->addWidget (_name);
 
-		QHBoxLayout* name_layout = new QHBoxLayout (layout, Config::Spacing);
+	QGridLayout* filters_layout = new QGridLayout (filters);
+	filters_layout->addWidget (_note_checkbox, 0, 0);
+	filters_layout->addWidget (_note_channel, 0, 2);
+	filters_layout->addWidget (_controller_checkbox, 1, 0);
+	filters_layout->addWidget (_controller_number, 1, 1);
+	filters_layout->addWidget (_controller_channel, 1, 2);
+	filters_layout->addWidget (_controller_invert, 1, 3);
+	filters_layout->addWidget (_channel_pressure_checkbox, 2, 0);
+	filters_layout->addWidget (_channel_pressure_channel, 2, 2);
+	filters_layout->addWidget (_channel_pressure_invert, 2, 3);
+	filters_layout->addWidget (_key_pressure_checkbox, 3, 0);
+	filters_layout->addWidget (_key_pressure_channel, 3, 2);
+	filters_layout->addWidget (_key_pressure_invert, 3, 3);
+	filters_layout->addWidget (_pitchbend_checkbox, 4, 0);
+	filters_layout->addWidget (_pitchbend_channel, 4, 2);
+	filters_layout->addWidget (_smoothing_label, 5, 0);
+	filters_layout->addWidget (_smoothing, 5, 2);
 
-			QLabel* name_label = new QLabel ("Controller name:", this);
+	QHBoxLayout* buttons_layout = new QHBoxLayout();
+	buttons_layout->setSpacing (Config::Spacing);
+	buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	buttons_layout->addWidget (_save_button);
 
-			_name = new QLineEdit (this);
-
-		name_layout->addWidget (name_label);
-		name_layout->addWidget (_name);
-
-		// Filters:
-
-		QGroupBox* filters = new QGroupBox ("MIDI filters", this);
-		QGridLayout* filters_layout = new QGridLayout (filters);
-		layout->addWidget (filters);
-
-			// Note filters:
-
-			_note_checkbox = new QCheckBox ("Note on/note off events", filters);
-			QObject::connect (_note_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
-
-			_note_params = new QWidget (filters);
-			{
-				QHBoxLayout* l = new QHBoxLayout (_note_params, 0, Config::Spacing);
-
-				QLabel* channel_label = new QLabel ("Channel:", _note_params);
-				_note_channel = new QComboBox (_note_params);
-				_note_channel->insertItem ("All");
-				for (int i = 1; i <= 16; ++i)
-					_note_channel->insertItem (QString ("%1").arg (i));
-
-				l->addItem (new QSpacerItem (18, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
-				l->addWidget (channel_label);
-				l->addWidget (_note_channel);
-				l->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-			}
-
-			// Controller filters:
-
-			_controller_checkbox = new QCheckBox ("Controller events", filters);
-			QObject::connect (_controller_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
-
-			_controller_params = new QWidget (filters);
-			{
-				QVBoxLayout* v1 = new QVBoxLayout (_controller_params, 0, Config::Spacing);
-				QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
-				QHBoxLayout* h2 = new QHBoxLayout (v1, Config::Spacing);
-
-				QLabel* channel_label = new QLabel ("Channel:", _controller_params);
-				_controller_channel = new QComboBox (_controller_params);
-				_controller_channel->insertItem ("All");
-				for (int i = 1; i <= 16; ++i)
-					_controller_channel->insertItem (QString ("%1").arg (i));
-				QLabel* number_label = new QLabel ("Controller #", _controller_params);
-				_controller_number = new QSpinBox (0, 127, 1, _controller_params);
-				_controller_invert = new QCheckBox ("Invert", _controller_params);
-
-				h1->addItem (new QSpacerItem (18, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
-				h1->addWidget (channel_label);
-				h1->addWidget (_controller_channel);
-				h1->addWidget (number_label);
-				h1->addWidget (_controller_number);
-				h1->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-				h2->addItem (new QSpacerItem (18, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
-				h2->addWidget (_controller_invert);
-				h2->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-			}
-
-			// Pitchbend filters:
-
-			_pitchbend_checkbox = new QCheckBox ("Pitchbend events", filters);
-			QObject::connect (_pitchbend_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
-
-			_pitchbend_params = new QWidget (filters);
-			{
-				QHBoxLayout* l = new QHBoxLayout (_pitchbend_params, 0, Config::Spacing);
-
-				QLabel* channel_label = new QLabel ("Channel:", _pitchbend_params);
-				_pitchbend_channel = new QComboBox (_pitchbend_params);
-				_pitchbend_channel->insertItem ("All");
-				for (int i = 1; i <= 16; ++i)
-					_pitchbend_channel->insertItem (QString ("%1").arg (i));
-
-				l->addItem (new QSpacerItem (18, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
-				l->addWidget (channel_label);
-				l->addWidget (_pitchbend_channel);
-				l->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-			}
-
-			// Channel pressure filters:
-
-			_channel_pressure_checkbox = new QCheckBox ("Channel pressure events", filters);
-			QObject::connect (_channel_pressure_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
-
-			_channel_pressure_params = new QWidget (filters);
-			{
-				QVBoxLayout* v1 = new QVBoxLayout (_channel_pressure_params, 0, Config::Spacing);
-				QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
-				QHBoxLayout* h2 = new QHBoxLayout (v1, Config::Spacing);
-
-				QLabel* channel_label = new QLabel ("Channel:", _channel_pressure_params);
-				_channel_pressure_channel = new QComboBox (_channel_pressure_params);
-				_channel_pressure_channel->insertItem ("All");
-				for (int i = 1; i <= 16; ++i)
-					_channel_pressure_channel->insertItem (QString ("%1").arg (i));
-				_channel_pressure_invert = new QCheckBox ("Invert", _channel_pressure_params);
-
-				h1->addItem (new QSpacerItem (18, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
-				h1->addWidget (channel_label);
-				h1->addWidget (_channel_pressure_channel);
-				h1->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-				h2->addItem (new QSpacerItem (18, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
-				h2->addWidget (_channel_pressure_invert);
-				h2->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-			}
-
-			// Key pressure filters:
-
-			_key_pressure_checkbox = new QCheckBox ("Key pressure events", filters);
-			QObject::connect (_key_pressure_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
-
-			_key_pressure_params = new QWidget (filters);
-			{
-				QVBoxLayout* v1 = new QVBoxLayout (_key_pressure_params, 0, Config::Spacing);
-				QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
-				QHBoxLayout* h2 = new QHBoxLayout (v1, Config::Spacing);
-
-				QLabel* key_label = new QLabel ("Channel:", _key_pressure_params);
-				_key_pressure_channel = new QComboBox (_key_pressure_params);
-				_key_pressure_channel->insertItem ("All");
-				for (int i = 1; i <= 16; ++i)
-					_key_pressure_channel->insertItem (QString ("%1").arg (i));
-				_key_pressure_invert = new QCheckBox ("Invert", _key_pressure_params);
-
-				h1->addItem (new QSpacerItem (18, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
-				h1->addWidget (key_label);
-				h1->addWidget (_key_pressure_channel);
-				h1->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-				h2->addItem (new QSpacerItem (18, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
-				h2->addWidget (_key_pressure_invert);
-				h2->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-			}
-
-		filters_layout->addWidget (_note_checkbox, 0, 0);
-		filters_layout->addWidget (_note_params, 1, 0);
-		filters_layout->addWidget (_controller_checkbox, 2, 0);
-		filters_layout->addWidget (_controller_params, 3, 0);
-		filters_layout->addWidget (_pitchbend_checkbox, 5, 0);
-		filters_layout->addWidget (_pitchbend_params, 6, 0);
-		filters_layout->addWidget (_channel_pressure_checkbox, 7, 0);
-		filters_layout->addWidget (_channel_pressure_params, 8, 0);
-		filters_layout->addWidget (_key_pressure_checkbox, 9, 0);
-		filters_layout->addWidget (_key_pressure_params, 10, 0);
-
-		layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
-
-		// Buttons:
-
-		QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::Spacing);
-
-			_save_button = new QPushButton (Resources::Icons16::ok(), "&Apply", this);
-
-		buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
-		buttons_layout->addWidget (_save_button);
-
-	QObject::connect (_name, SIGNAL (textChanged (const QString&)), this, SLOT (update_widgets()));
-	QObject::connect (_save_button, SIGNAL (clicked()), this, SLOT (validate_and_save()));
+	layout->addLayout (name_layout);
+	layout->addWidget (filters);
+	layout->addLayout (buttons_layout);
+	layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
 
 	update_widgets();
 
@@ -237,16 +177,20 @@ ControllerDialog::from (ControllerItem* item)
 	_item = item;
 	_name->setText (controller->name());
 	_note_checkbox->setChecked (controller->note_filter);
-	_note_channel->setCurrentItem (controller->note_channel);
+	_note_channel->setValue (controller->note_channel);
 	_controller_checkbox->setChecked (controller->controller_filter);
-	_controller_channel->setCurrentItem (controller->controller_channel);
+	_controller_channel->setValue (controller->controller_channel);
 	_controller_number->setValue (controller->controller_number);
 	_controller_invert->setChecked (controller->controller_invert);
 	_pitchbend_checkbox->setChecked (controller->pitchbend_filter);
-	_pitchbend_channel->setCurrentItem (controller->pitchbend_channel);
+	_pitchbend_channel->setValue (controller->pitchbend_channel);
 	_channel_pressure_checkbox->setChecked (controller->channel_pressure_filter);
-	_channel_pressure_channel->setCurrentItem (controller->channel_pressure_channel);
+	_channel_pressure_channel->setValue (controller->channel_pressure_channel);
 	_channel_pressure_invert->setChecked (controller->channel_pressure_invert);
+	_key_pressure_checkbox->setChecked (controller->key_pressure_filter);
+	_key_pressure_channel->setValue (controller->key_pressure_channel);
+	_key_pressure_invert->setChecked (controller->key_pressure_invert);
+	_smoothing->setValue (controller->smoothing);
 	_name->selectAll();
 	_name->setFocus();
 	update_widgets();
@@ -258,16 +202,20 @@ ControllerDialog::apply (ControllerItem* item) const
 {
 	Controller* controller = item->controller();
 	controller->note_filter = _note_checkbox->isChecked();
-	controller->note_channel = _note_channel->currentText().toInt();
+	controller->note_channel = _note_channel->value();
 	controller->controller_filter = _controller_checkbox->isChecked();
-	controller->controller_channel = _controller_channel->currentText().toInt();
+	controller->controller_channel = _controller_channel->value();
 	controller->controller_number = _controller_number->value();
 	controller->controller_invert = _controller_invert->isChecked();
 	controller->pitchbend_filter = _pitchbend_checkbox->isChecked();
-	controller->pitchbend_channel = _pitchbend_channel->currentText().toInt();
+	controller->pitchbend_channel = _pitchbend_channel->value();
 	controller->channel_pressure_filter = _channel_pressure_checkbox->isChecked();
-	controller->channel_pressure_channel = _channel_pressure_channel->currentText().toInt();
+	controller->channel_pressure_channel = _channel_pressure_channel->value();
 	controller->channel_pressure_invert = _channel_pressure_invert->isChecked();
+	controller->key_pressure_filter = _key_pressure_checkbox->isChecked();
+	controller->key_pressure_channel = _key_pressure_channel->value();
+	controller->key_pressure_invert = _key_pressure_invert->isChecked();
+	controller->smoothing = _smoothing->value();
 	item->set_name (_name->text());
 	emit item_configured (item);
 }
@@ -276,11 +224,30 @@ ControllerDialog::apply (ControllerItem* item) const
 void
 ControllerDialog::update_widgets()
 {
+	bool note_checkbox = _note_checkbox->isChecked();
 	_save_button->setEnabled (!_name->text().isEmpty());
-	_note_params->setEnabled (_note_checkbox->isChecked());
-	_controller_params->setEnabled (_controller_checkbox->isChecked());
-	_pitchbend_params->setEnabled (_pitchbend_checkbox->isChecked());
-	_channel_pressure_params->setEnabled (_channel_pressure_checkbox->isChecked());
+	_note_channel->setEnabled (note_checkbox);
+
+	bool controller_checkbox = _controller_checkbox->isChecked();
+	_controller_channel->setEnabled (controller_checkbox);
+	_controller_number->setEnabled (controller_checkbox);
+	_controller_invert->setEnabled (controller_checkbox);
+
+	bool pitchbend_checkbox = _pitchbend_checkbox->isChecked();
+	_pitchbend_channel->setEnabled (pitchbend_checkbox);
+
+	bool channel_pressure_checkbox = _channel_pressure_checkbox->isChecked();
+	_channel_pressure_channel->setEnabled (channel_pressure_checkbox);
+	_channel_pressure_invert->setEnabled (channel_pressure_checkbox);
+
+	bool key_pressure_checkbox = _key_pressure_checkbox->isChecked();
+	_key_pressure_channel->setEnabled (key_pressure_checkbox);
+	_key_pressure_invert->setEnabled (key_pressure_checkbox);
+
+	bool smoothing = _controller_checkbox->isChecked() || _pitchbend_checkbox->isChecked() ||
+					 _channel_pressure_checkbox->isChecked() || _key_pressure_checkbox->isChecked();
+	_smoothing_label->setEnabled (smoothing);
+	_smoothing->setEnabled (smoothing);
 }
 
 
@@ -291,6 +258,16 @@ ControllerDialog::validate_and_save()
 		QMessageBox::warning (this, "Controller name", "Enter name for the controller.");
 	else if (_item)
 		apply (_item);
+}
+
+
+QSpinBox*
+ControllerDialog::create_channel_spinbox (QWidget* parent)
+{
+	QSpinBox* spinbox = new QSpinBox (0, 16, 1, parent);
+	spinbox->setPrefix ("Channel ");
+	spinbox->setSpecialValueText ("All channels");
+	return spinbox;
 }
 
 } // namespace DevicesManager

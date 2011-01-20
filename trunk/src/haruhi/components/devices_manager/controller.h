@@ -102,7 +102,13 @@ class Controller: public SaveableState
 
   private:
 	void
-	controller_smoothing_setup (Timestamp t, float target, float min_samples, float max_samples);
+	controller_smoothing_setup (Timestamp t, float target, float min_coeff, float max_coeff, unsigned int sample_rate);
+
+	void
+	channel_pressure_smoothing_setup (Timestamp t, float target, float min_coeff, float max_coeff, unsigned int sample_rate);
+
+	void
+	key_pressure_smoothing_setup (unsigned int key, Timestamp t, float target, float min_coeff, float max_coeff, unsigned int sample_rate);
 
   public:
 	// MIDI filters:
@@ -120,13 +126,12 @@ class Controller: public SaveableState
 	bool	key_pressure_filter;
 	int		key_pressure_channel;		// 0 means 'all'
 	bool	key_pressure_invert;
-	// Smooth controller/pressure events:
-	bool	smoothing_enabled;
+	// Smooth controller/pressure events, value measured in ms:
+	int		smoothing;
 
   private:
 	QString							_name;
 	// Used for value smoothing:
-	bool							_smoothing_enabled;
 	SmoothingParams					_controller_smoother;
 	SmoothingParams					_channel_pressure_smoother;
 	SmoothingParams					_key_pressure_smoother[128];

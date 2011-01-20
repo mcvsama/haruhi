@@ -47,7 +47,7 @@ Controller::Controller (QString const& name):
 	key_pressure_filter (false),
 	key_pressure_channel (0),
 	key_pressure_invert (false),
-	smoothing_enabled (true),
+	smoothing (0),
 	_name (name)
 {
 }
@@ -140,9 +140,8 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 					float const fvalue = value / 127.0f;
 					buffer.push (new ControllerEvent (t, fvalue));
 					handled = true;
-					// Smoother setup: set speed according to time between current and previous event:
-					if (_smoothing_enabled)
-						controller_smoothing_setup (t, fvalue, 0.001f * graph->sample_rate(), 0.5f * graph->sample_rate());
+					if (smoothing > 0)
+						controller_smoothing_setup (t, fvalue, 0.001f, 0.001f * smoothing, graph->sample_rate());
 				}
 			}
 			break;
@@ -153,9 +152,8 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 				float const fvalue = midi_event.pitchbend.value == 0 ? 0.5f : (midi_event.pitchbend.value + 8192) / 16382.0f;
 				buffer.push (new ControllerEvent (t, fvalue));
 				handled = true;
-				// Smoother setup: set speed according to time between current and previous event:
-				if (_smoothing_enabled)
-					controller_smoothing_setup (t, fvalue, 0.001f * graph->sample_rate(), 0.1f * graph->sample_rate());
+				if (smoothing > 0)
+					controller_smoothing_setup (t, fvalue, 0.001f, 0.001f * smoothing, graph->sample_rate());
 			}
 			break;
 
@@ -166,8 +164,11 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 					value = 127 - value;
 				if (channel_pressure_filter && (channel_pressure_channel == 0 || channel_pressure_channel == midi_event.channel_pressure.channel + 1))
 				{
-					buffer.push (new ControllerEvent (t, value / 127.0f));
+					float const fvalue = value / 127.0f;
+					buffer.push (new ControllerEvent (t, fvalue));
 					handled = true;
+					if (smoothing > 0)
+						channel_pressure_smoothing_setup (t, fvalue, 0.001f, 0.001f * smoothing, graph->sample_rate());
 				}
 			}
 			break;
@@ -179,8 +180,12 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 					value = 127 - value;
 				if (key_pressure_filter && (key_pressure_channel == 0 || key_pressure_channel == midi_event.key_pressure.channel + 1))
 				{
-					buffer.push (new VoiceControllerEvent (t, midi_event.key_pressure.note, value / 127.0f));
+					unsigned int key = bound (static_cast<unsigned int> (midi_event.key_pressure.note), 0u, 127u);
+					float const fvalue = value / 127.0f;
+					buffer.push (new VoiceControllerEvent (t, key, fvalue));
 					handled = true;
+					if (smoothing > 0)
+						key_pressure_smoothing_setup (key, t, fvalue, 0.001f, 0.001f * smoothing, graph->sample_rate());
 				}
 			}
 			break;
@@ -193,20 +198,36 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 void
 Controller::generate_smoothing_events (EventBuffer& buffer, Graph* graph)
 {
-	if (!smoothing_enabled)
+	if (smoothing == 0)
 		return;
 
-	SmoothingParams& cs = _controller_smoother;
 	Timestamp const t = graph->timestamp();
 
-	if (cs.current != cs.target)
+	SmoothingParams* sp_tab[] = { &_controller_smoother, &_channel_pressure_smoother };
+	for (SmoothingParams** sp = sp_tab; sp != sp_tab + ARRAY_SIZE (sp_tab); ++sp)
 	{
-		// If difference is small enough, treat is as no difference:
-		if (std::abs (cs.target - cs.current) < 0.001f)
-			cs.current = cs.target;
-		else
-			cs.current = cs.smoother.process (cs.target, graph->buffer_size());
-		buffer.push (new ControllerEvent (t, cs.current));
+		if ((*sp)->current != (*sp)->target)
+		{
+			// If difference is small enough, treat is as no difference:
+			if (std::abs ((*sp)->target - (*sp)->current) < 0.001f)
+				(*sp)->current = (*sp)->target;
+			else
+				(*sp)->current = (*sp)->smoother.process ((*sp)->target, graph->buffer_size());
+			buffer.push (new ControllerEvent (t, (*sp)->current));
+		}
+	}
+
+	for (unsigned int key = 0; key < ARRAY_SIZE (_key_pressure_smoother); ++key)
+	{
+		SmoothingParams& ks = _key_pressure_smoother[key];
+		if (ks.current != ks.target)
+		{
+			if (std::abs (ks.target - ks.current) < 0.001f)
+				ks.current = ks.target;
+			else
+				ks.current = ks.smoother.process (ks.target, graph->buffer_size());
+			buffer.push (new VoiceControllerEvent (t, key, ks.current));
+		}
 	}
 }
 
@@ -235,10 +256,16 @@ Controller::save_state (QDomElement& element) const
 	channel_pressure_filter_el.setAttribute ("channel", channel_pressure_channel == 0 ? "all" : QString ("%1").arg (channel_pressure_channel));
 	channel_pressure_filter_el.setAttribute ("invert", channel_pressure_invert ? "true" : "false");
 
+	QDomElement key_pressure_filter_el = element.ownerDocument().createElement ("key-pressure");
+	key_pressure_filter_el.setAttribute ("enabled", key_pressure_filter ? "true" : "false");
+	key_pressure_filter_el.setAttribute ("channel", key_pressure_channel == 0 ? "all" : QString ("%1").arg (key_pressure_channel));
+	key_pressure_filter_el.setAttribute ("invert", key_pressure_invert ? "true" : "false");
+
 	element.appendChild (note_filter_el);
 	element.appendChild (controller_filter_el);
 	element.appendChild (pitchbend_filter_el);
 	element.appendChild (channel_pressure_filter_el);
+	element.appendChild (key_pressure_filter_el);
 }
 
 
@@ -276,17 +303,43 @@ Controller::load_state (QDomElement const& element)
 			channel_pressure_channel = e.attribute ("channel") == "all" ? 0 : e.attribute ("channel").toInt();
 			channel_pressure_invert = e.attribute ("invert") == "true";
 		}
+		else if (e.tagName() == "key-pressure")
+		{
+			key_pressure_filter = e.attribute ("enabled") == "true";
+			key_pressure_channel = e.attribute ("channel") == "all" ? 0 : e.attribute ("channel").toInt();
+			key_pressure_invert = e.attribute ("invert") == "true";
+		}
 	}
 }
 
 
 void
-Controller::controller_smoothing_setup (Timestamp t, float target, float min_samples, float max_samples)
+Controller::controller_smoothing_setup (Timestamp t, float target, float min_coeff, float max_coeff, unsigned int sample_rate)
 {
-	Timestamp dt = t - _controller_smoother.prev_timestamp;
+	float dt = sample_rate * (t - _controller_smoother.prev_timestamp) / 1000.0;
 	_controller_smoother.target = target;
-	_controller_smoother.smoother.set_samples (bound (0.5f * dt, min_samples, max_samples));
+	_controller_smoother.smoother.set_samples (bound (dt, min_coeff * sample_rate, max_coeff * sample_rate));
 	_controller_smoother.prev_timestamp = t;
+}
+
+
+void
+Controller::channel_pressure_smoothing_setup (Timestamp t, float target, float min_coeff, float max_coeff, unsigned int sample_rate)
+{
+	float dt = sample_rate * (t - _channel_pressure_smoother.prev_timestamp) / 1000.0;
+	_channel_pressure_smoother.target = target;
+	_channel_pressure_smoother.smoother.set_samples (bound (dt, min_coeff * sample_rate, max_coeff * sample_rate));
+	_channel_pressure_smoother.prev_timestamp = t;
+}
+
+
+void
+Controller::key_pressure_smoothing_setup (unsigned int key, Timestamp t, float target, float min_coeff, float max_coeff, unsigned int sample_rate)
+{
+	float dt = sample_rate * (t - _key_pressure_smoother[key].prev_timestamp) / 1000.0;
+	_key_pressure_smoother[key].target = target;
+	_key_pressure_smoother[key].smoother.set_samples (bound (dt, min_coeff * sample_rate, max_coeff * sample_rate));
+	_key_pressure_smoother[key].prev_timestamp = t;
 }
 
 } // namespace DevicesManager
