@@ -94,6 +94,7 @@ small_font();
 		HARUHI_CONFIG_HAS_ICON_16 (load, "load.png");
 		HARUHI_CONFIG_HAS_ICON_16 (save, "save.png");
 		HARUHI_CONFIG_HAS_ICON_16 (save_as, "save_as.png");
+		HARUHI_CONFIG_HAS_ICON_16 (open, "open.png");
 		HARUHI_CONFIG_HAS_ICON_16 (exit, "exit.png");
 		HARUHI_CONFIG_HAS_ICON_16 (connect, "connect.png");
 		HARUHI_CONFIG_HAS_ICON_16 (disconnect, "disconnect.png");

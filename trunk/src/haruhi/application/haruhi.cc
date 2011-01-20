@@ -129,7 +129,7 @@ Haruhi::detected_cores()
 void
 Haruhi::session_loader()
 {
-	SessionLoader* loader = new SessionLoader (SessionLoader::NewTab, _session ? SessionLoader::CancelButton : SessionLoader::QuitButton, 0);
+	SessionLoader* loader = new SessionLoader (SessionLoader::AutoTab, _session ? SessionLoader::CancelButton : SessionLoader::QuitButton, 0);
 	if (loader->exec() == SessionLoader::Accepted)
 	{
 		if (_session)

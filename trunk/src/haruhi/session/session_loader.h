@@ -94,7 +94,7 @@ class SessionLoader: public QDialog
 
   public:
 	enum RejectButton { CancelButton, QuitButton };
-	enum DefaultTab { NewTab, OpenTab };
+	enum DefaultTab { NewTab, OpenTab, AutoTab };
 	enum Result { NoResult, NewSession, OpenSession };
 
   public:
@@ -150,6 +150,7 @@ class SessionLoader: public QDialog
 	QTabWidget*		_tabs;
 	QWidget*		_new_tab;
 	QWidget*		_open_tab;
+	QPushButton*	_load_from_file_button;
 	QPushButton*	_open_button;
 	QPushButton*	_quit_button;
 	QLineEdit*		_new_session_name;

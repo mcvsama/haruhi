@@ -44,14 +44,45 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 {
 	setCaption ("Haruhi — Session Control");
 	setIcon (QPixmap ("share/images/haruhi.png"));
-
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::DialogMargin, Config::Spacing);
-	layout->setResizeMode (QLayout::Fixed);
 
 	_tabs = new QTabWidget (this);
 	_tabs->setTabPosition (QTabWidget::North);
-	layout->addWidget (_tabs);
+
+	//
+	// Open session
+	//
+
+	_open_tab = new QWidget (_tabs);
+	_tabs->addTab (_open_tab, "&Open session");
+
+	_recent_listview = new QTreeWidget (_open_tab);
+	_recent_listview->header()->hide();
+	_recent_listview->header()->setResizeMode (QHeaderView::Stretch);
+	_recent_listview->setAllColumnsShowFocus (true);
+	_recent_listview->setMinimumSize (300, 300);
+	_recent_listview->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+	_recent_listview->setHeaderLabel ("Session name");
+	_recent_listview->setSelectionMode (QTreeWidget::SingleSelection);
+	_recent_listview->setVerticalScrollMode (QAbstractItemView::ScrollPerPixel);
+	_recent_listview->setRootIsDecorated (false);
+	_recent_listview->setColumnCount (2);
+	QObject::connect (_recent_listview, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (open_recent (QTreeWidgetItem*, int)));
+
+	QVBoxLayout* open_layout = new QVBoxLayout (_open_tab);
+	open_layout->setSpacing (Config::Spacing);
+	open_layout->setMargin (2 * Config::Margin);
+	open_layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
+	open_layout->addWidget (new QLabel ("Recent sessions:", _open_tab));
+	open_layout->addWidget (_recent_listview);
+
+	// Populate recent_listview:
+	SessionLoaderSettings* settings = Haruhi::haruhi()->session_loader_settings();
+	for (SessionLoaderSettings::RecentSessions::iterator rs = settings->recent_sessions().begin(); rs != settings->recent_sessions().end(); ++rs)
+		new RecentSessionItem (_recent_listview, *rs);
+
+	if (_recent_listview->invisibleRootItem()->childCount() > 0)
+		_recent_listview->setCurrentItem (_recent_listview->invisibleRootItem()->child (0));
 
 	//
 	// New session
@@ -122,74 +153,37 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	new_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
 	//
-	// Open session
-	//
-
-	_open_tab = new QWidget (_tabs);
-	_tabs->addTab (_open_tab, "&Open session");
-
-	_recent_listview = new QTreeWidget (_open_tab);
-	_recent_listview->header()->hide();
-	_recent_listview->header()->setResizeMode (QHeaderView::Stretch);
-	_recent_listview->setAllColumnsShowFocus (true);
-	_recent_listview->setMinimumSize (300, 300);
-	_recent_listview->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	_recent_listview->setHeaderLabel ("Session name");
-	_recent_listview->setSelectionMode (QTreeWidget::SingleSelection);
-	_recent_listview->setVerticalScrollMode (QAbstractItemView::ScrollPerPixel);
-	_recent_listview->setRootIsDecorated (false);
-	_recent_listview->setColumnCount (2);
-	QObject::connect (_recent_listview, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (open_recent (QTreeWidgetItem*, int)));
-
-	QHBoxLayout* open_file_layout = new QHBoxLayout();
-	open_file_layout->setSpacing (Config::Spacing);
-
-	open_file_layout->addWidget (new QLabel ("Load from file:", _open_tab));
-	open_file_layout->addItem (new QSpacerItem (Config::Spacing, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
-	QPushButton* browse_button = new QPushButton ("Browse", _open_tab);
-	browse_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	QObject::connect (browse_button, SIGNAL (clicked()), this, SLOT (browse_file()));
-	open_file_layout->addWidget (browse_button);
-	open_file_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-
-	QVBoxLayout* open_layout = new QVBoxLayout (_open_tab);
-	open_layout->setSpacing (Config::Spacing);
-	open_layout->setMargin (2 * Config::Margin);
-	open_layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
-	open_layout->addWidget (new QLabel ("Recent sessions:", _open_tab));
-	open_layout->addWidget (_recent_listview);
-	open_layout->addLayout (open_file_layout);
-
-	// Populate recent_listview:
-	SessionLoaderSettings* settings = Haruhi::haruhi()->session_loader_settings();
-	for (SessionLoaderSettings::RecentSessions::iterator rs = settings->recent_sessions().begin(); rs != settings->recent_sessions().end(); ++rs)
-		new RecentSessionItem (_recent_listview, *rs);
-
-	if (_recent_listview->invisibleRootItem()->childCount() > 0)
-		_recent_listview->setCurrentItem (_recent_listview->invisibleRootItem()->child (0));
-
-	//
 	// Buttons
 	//
 
-	QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::Spacing);
-	buttons_layout->addItem (new QSpacerItem (0, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	_load_from_file_button = new QPushButton (Resources::Icons16::open(), "Load from file…", this);
+	QObject::connect (_load_from_file_button, SIGNAL (clicked()), this, SLOT (browse_file()));
 
 	_open_button = new QPushButton (Resources::Icons16::new_(), "Open", this);
 	_open_button->setDefault (true);
 	QObject::connect (_open_button, SIGNAL (clicked()), this, SLOT (validate_and_accept()));
-	buttons_layout->addWidget (_open_button);
 
 	_quit_button = new QPushButton (Resources::Icons16::exit(), reject_button == CancelButton ? "Cancel" : "Quit", this);
 	QObject::connect (_quit_button, SIGNAL (clicked()), this, SLOT (reject()));
-	buttons_layout->addWidget (_quit_button);
 
 	QObject::connect (_tabs, SIGNAL (currentChanged (QWidget*)), this, SLOT (update_widgets()));
 
 	switch (default_tab)
 	{
-		case NewTab:	_tabs->showPage (_new_tab); break;
-		case OpenTab:	_tabs->showPage (_open_tab); break;
+		case OpenTab:
+			_tabs->showPage (_open_tab);
+			break;
+
+		case NewTab:
+			_tabs->showPage (_new_tab);
+			break;
+
+		case AutoTab:
+			if (_recent_listview->invisibleRootItem()->childCount() > 0)
+				_tabs->showPage (_open_tab);
+			else
+				_tabs->showPage (_new_tab);
+			break;
 	}
 
 	// Auto add devices marked as auto-add:
@@ -197,8 +191,26 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 		if (d->auto_add())
 			add_device (*d);
 
+	//
+	// Layout
+	//
+
+	QHBoxLayout* buttons_layout = new QHBoxLayout();
+	buttons_layout->setSpacing (Config::Spacing);
+	buttons_layout->addWidget (_load_from_file_button);
+	buttons_layout->addItem (new QSpacerItem (0, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	buttons_layout->addWidget (_open_button);
+	buttons_layout->addWidget (_quit_button);
+
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (Config::DialogMargin);
+	layout->setSpacing (Config::Spacing);
+	layout->setResizeMode (QLayout::Fixed);
+	layout->addWidget (_tabs);
+	layout->addLayout (buttons_layout);
+
 	_devices_list->clearSelection();
-	_new_session_name->setFocus();
+	_recent_listview->setFocus();
 	update_widgets();
 }
 
