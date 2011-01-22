@@ -34,5 +34,13 @@ Waveshaper::~Waveshaper()
 	_mikuru->free_id ("waveshapers", _id);
 }
 
+
+void
+Waveshaper::process (Haruhi::AudioBuffer* buffer, unsigned int channel)
+{
+	for (Sample* s = buffer->begin(); s != buffer->end(); ++s)
+		*s = waveshape_power3 (*s);
+}
+
 } // namespace MikuruPrivate
 

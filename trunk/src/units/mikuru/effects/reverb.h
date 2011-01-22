@@ -38,6 +38,9 @@ class Reverb: public Effect
 	int
 	id() const { return _id; }
 
+	void
+	process (Haruhi::AudioBuffer* buffer, unsigned int channel);
+
   private:
 	Mikuru*	_mikuru;
 	int		_id;

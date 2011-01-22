@@ -32,6 +32,8 @@ class Mikuru;
 
 namespace MikuruPrivate {
 
+using Haruhi::Sample;
+
 class Waveshaper: public Effect
 {
   public:
@@ -41,6 +43,9 @@ class Waveshaper: public Effect
 
 	int
 	id() const { return _id; }
+
+	void
+	process (Haruhi::AudioBuffer* buffer, unsigned int channel);
 
   private:
 	/**

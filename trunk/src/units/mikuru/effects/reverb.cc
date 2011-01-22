@@ -34,5 +34,11 @@ Reverb::~Reverb()
 	_mikuru->free_id ("reverbs", _id);
 }
 
+
+void
+Reverb::process (Haruhi::AudioBuffer* buffer, unsigned int channel)
+{
+}
+
 } // namespace MikuruPrivate
 

@@ -34,5 +34,11 @@ Delay::~Delay()
 	_mikuru->free_id ("delays", _id);
 }
 
+
+void
+Delay::process (Haruhi::AudioBuffer* buffer, unsigned int channel)
+{
+}
+
 } // namespace MikuruPrivate
 

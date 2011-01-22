@@ -20,6 +20,9 @@
 // Qt:
 #include <QtGui/QWidget>
 
+// Haruhi:
+#include <haruhi/graph/audio_buffer.h>
+
 // Local:
 #include "effect.h"
 
@@ -37,6 +40,9 @@ class Effect: public QWidget
 
 	virtual int
 	id() const = 0;
+
+	virtual void
+	process (Haruhi::AudioBuffer* data, unsigned int channel) = 0;
 };
 
 } // namespace MikuruPrivate
