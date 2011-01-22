@@ -13,7 +13,7 @@ LDFLAGS			= $(foreach lib, $(LIBS), -l$(lib)) $(PKGCONFIG_LIBS)
 AR				= ar
 MOC				= $(QT_PREFIX)/bin/moc
 
-.PHONY: first all dep help dist clean distclean
+.PHONY: first all dep help dist clean depclean distclean
 .DEFAULT: all
 MAKEFLAGS = --silent
 
@@ -104,11 +104,16 @@ help:
 	@echo 'Available targets:'
 	@echo '  all        Compiles program.'
 	@echo '  dep        Generates dependencies.'
-	@echo '  clean      Cleans source from compilation-time files.'
+	@echo '  clean      Cleans source tree.'
+	@echo '  depclean   Removes dep files.'
+	@echo '  distclean  Cleans dist tree.'
 	@echo '  help       Shows this help.'
 
 clean:
 	@rm -f $(MOCSRCS)
+
+depclean:
+	@rm -f $(DEPFILES)
 
 distclean:
 	@rm -f $(DEPFILES) $(MOCOBJS) $(OBJECTS) $(NODEP_OBJECTS)
