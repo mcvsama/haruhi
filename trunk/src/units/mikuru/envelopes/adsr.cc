@@ -29,12 +29,12 @@
 #include <haruhi/widgets/knob.h>
 
 // Local:
-#include "mikuru.h"
-#include "envelopes.h"
-#include "envelopes_adsr.h"
-#include "voice.h"
-#include "voice_manager.h"
-#include "part.h"
+#include "../mikuru.h"
+#include "../envelopes.h"
+#include "../voice.h"
+#include "../voice_manager.h"
+#include "../part.h"
+#include "adsr.h"
 
 
 namespace MikuruPrivate {

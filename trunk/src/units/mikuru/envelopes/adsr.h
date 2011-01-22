@@ -33,8 +33,8 @@
 #include <haruhi/widgets/envelope_plot.h>
 
 // Local:
-#include "envelopes.h"
-#include "params.h"
+#include "../params.h"
+#include "envelope.h"
 
 
 class Mikuru;

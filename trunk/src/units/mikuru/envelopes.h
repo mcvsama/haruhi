@@ -28,6 +28,7 @@
 #include <haruhi/utility/mutex.h>
 
 // Local:
+#include "envelopes/envelope.h"
 #include "widgets.h"
 #include "params.h"
 
@@ -42,36 +43,6 @@ class Part;
 class ADSR;
 class EG;
 class LFO;
-
-
-class Envelope: public QWidget
-{
-  public:
-	Envelope (QWidget* parent);
-
-	virtual ~Envelope() { }
-
-	virtual int
-	id() const = 0;
-
-	virtual void
-	voice_created (VoiceManager*, Voice*) { }
-
-	virtual void
-	voice_released (VoiceManager*, Voice*) { }
-
-	virtual void
-	voice_dropped (VoiceManager*, Voice*) { }
-
-	virtual void
-	new_part (Part* part) { }
-
-	virtual void
-	process() = 0;
-
-	virtual void
-	resize_buffers (std::size_t size) = 0;
-};
 
 
 class Envelopes: public QWidget

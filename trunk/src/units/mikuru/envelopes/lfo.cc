@@ -31,12 +31,12 @@
 #include <haruhi/widgets/wave_plot.h>
 
 // Local:
-#include "mikuru.h"
-#include "envelopes.h"
-#include "envelopes_lfo.h"
-#include "voice.h"
-#include "voice_manager.h"
-#include "part.h"
+#include "../mikuru.h"
+#include "../envelopes.h"
+#include "../voice.h"
+#include "../voice_manager.h"
+#include "../part.h"
+#include "lfo.h"
 
 
 namespace MikuruPrivate {

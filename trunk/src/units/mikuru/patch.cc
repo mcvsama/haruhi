@@ -27,11 +27,11 @@
 #include "params.h"
 #include "patch.h"
 #include "envelopes.h"
-#include "envelopes_adsr.h"
-#include "envelopes_eg.h"
-#include "envelopes_lfo.h"
 #include "common_filters.h"
 #include "part_filters.h"
+#include "envelopes/adsr.h"
+#include "envelopes/eg.h"
+#include "envelopes/lfo.h"
 
 
 namespace MikuruPrivate {

@@ -28,11 +28,11 @@
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/envelope_plot.h>
 
-#include "mikuru.h"
-#include "envelopes.h"
-#include "envelopes_eg.h"
-#include "voice.h"
-#include "voice_manager.h"
+#include "../mikuru.h"
+#include "../envelopes.h"
+#include "../voice.h"
+#include "../voice_manager.h"
+#include "eg.h"
 
 
 namespace MikuruPrivate {

@@ -374,14 +374,27 @@ SRC_MOCHDRS += haruhi/widgets/frequency_response_plot.h
 SRC_MOCHDRS += haruhi/widgets/knob.h
 SRC_MOCHDRS += haruhi/widgets/level_meter.h
 
+######## /units/mikuru/envelopes ########
+
+SRC_HEADERS += units/mikuru/envelopes/adsr.h
+SRC_HEADERS += units/mikuru/envelopes/envelope.h
+SRC_HEADERS += units/mikuru/envelopes/eg.h
+SRC_HEADERS += units/mikuru/envelopes/lfo.h
+
+SRC_SOURCES += units/mikuru/envelopes/adsr.cc
+SRC_SOURCES += units/mikuru/envelopes/envelope.cc
+SRC_SOURCES += units/mikuru/envelopes/eg.cc
+SRC_SOURCES += units/mikuru/envelopes/lfo.cc
+
+SRC_MOCHDRS += units/mikuru/envelopes/adsr.h
+SRC_MOCHDRS += units/mikuru/envelopes/eg.h
+SRC_MOCHDRS += units/mikuru/envelopes/lfo.h
+
 ######## /units/mikuru ########
 
 SRC_HEADERS += units/mikuru/common_filters.h
 SRC_HEADERS += units/mikuru/double_filter.h
 SRC_HEADERS += units/mikuru/envelopes.h
-SRC_HEADERS += units/mikuru/envelopes_adsr.h
-SRC_HEADERS += units/mikuru/envelopes_eg.h
-SRC_HEADERS += units/mikuru/envelopes_lfo.h
 SRC_HEADERS += units/mikuru/event_dispatcher.h
 SRC_HEADERS += units/mikuru/filter.h
 SRC_HEADERS += units/mikuru/general.h
@@ -404,9 +417,6 @@ SRC_HEADERS += units/mikuru/widgets.h
 SRC_SOURCES += units/mikuru/common_filters.cc
 SRC_SOURCES += units/mikuru/double_filter.cc
 SRC_SOURCES += units/mikuru/envelopes.cc
-SRC_SOURCES += units/mikuru/envelopes_adsr.cc
-SRC_SOURCES += units/mikuru/envelopes_eg.cc
-SRC_SOURCES += units/mikuru/envelopes_lfo.cc
 SRC_SOURCES += units/mikuru/event_dispatcher.cc
 SRC_SOURCES += units/mikuru/filter.cc
 SRC_SOURCES += units/mikuru/general.cc
@@ -428,9 +438,6 @@ SRC_SOURCES += units/mikuru/widgets.cc
 
 SRC_MOCHDRS += units/mikuru/common_filters.h
 SRC_MOCHDRS += units/mikuru/envelopes.h
-SRC_MOCHDRS += units/mikuru/envelopes_adsr.h
-SRC_MOCHDRS += units/mikuru/envelopes_eg.h
-SRC_MOCHDRS += units/mikuru/envelopes_lfo.h
 SRC_MOCHDRS += units/mikuru/filter.h
 SRC_MOCHDRS += units/mikuru/general.h
 SRC_MOCHDRS += units/mikuru/mikuru.h

@@ -32,18 +32,12 @@
 #include "voice_manager.h"
 #include "part.h"
 #include "envelopes.h"
-#include "envelopes_adsr.h"
-#include "envelopes_eg.h"
-#include "envelopes_lfo.h"
+#include "envelopes/adsr.h"
+#include "envelopes/eg.h"
+#include "envelopes/lfo.h"
 
 
 namespace MikuruPrivate {
-
-Envelope::Envelope (QWidget* parent):
-	QWidget (parent)
-{
-}
-
 
 Envelopes::Envelopes (Mikuru* mikuru, QWidget* parent):
 	QWidget (parent),
