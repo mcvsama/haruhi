@@ -1,0 +1,14 @@
+Gloubi-boulga
+<http://musicdsp.org/showArchiveComment.php?ArchiveID=86>
+
+	References : Laurent de Soras on IRC
+
+	Notes: Multiply input by gain before processing
+
+	Code:
+	const double x = input * 0.686306;
+	const double a = 1 + exp (sqrt (fabs (x)) * -0.75);
+	output = (exp (x) - exp (-x * a)) / (exp (x) + exp (-x));
+
+Gloubi-boulga simple
+	x - 0.15 * x^2 - 0.15 * x^3

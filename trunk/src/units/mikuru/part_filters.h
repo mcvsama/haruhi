@@ -38,6 +38,7 @@ class Mikuru;
 namespace MikuruPrivate {
 
 class Filter;
+class Part;
 
 class PartFilters:
 	public QWidget,

@@ -266,14 +266,6 @@ struct Params
 	};
 
 	/**
-	 * Waveshaper params.
-	 */
-	struct Waveshaper
-	{
-		HARUHI_MIKURU_PARAMS_STANDARD_METHODS (Waveshaper)
-	};
-
-	/**
 	 * Envelope: ADSR
 	 */
 	struct ADSR

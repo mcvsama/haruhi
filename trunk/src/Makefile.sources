@@ -374,6 +374,18 @@ SRC_MOCHDRS += haruhi/widgets/frequency_response_plot.h
 SRC_MOCHDRS += haruhi/widgets/knob.h
 SRC_MOCHDRS += haruhi/widgets/level_meter.h
 
+######## /units/mikuru/effects ########
+
+SRC_HEADERS += units/mikuru/effects/delay.h
+SRC_HEADERS += units/mikuru/effects/effect.h
+SRC_HEADERS += units/mikuru/effects/reverb.h
+SRC_HEADERS += units/mikuru/effects/waveshaper.h
+
+SRC_SOURCES += units/mikuru/effects/delay.cc
+SRC_SOURCES += units/mikuru/effects/effect.cc
+SRC_SOURCES += units/mikuru/effects/reverb.cc
+SRC_SOURCES += units/mikuru/effects/waveshaper.cc
+
 ######## /units/mikuru/envelopes ########
 
 SRC_HEADERS += units/mikuru/envelopes/adsr.h
@@ -394,6 +406,7 @@ SRC_MOCHDRS += units/mikuru/envelopes/lfo.h
 
 SRC_HEADERS += units/mikuru/common_filters.h
 SRC_HEADERS += units/mikuru/double_filter.h
+SRC_HEADERS += units/mikuru/effects.h
 SRC_HEADERS += units/mikuru/envelopes.h
 SRC_HEADERS += units/mikuru/event_dispatcher.h
 SRC_HEADERS += units/mikuru/filter.h
@@ -402,6 +415,7 @@ SRC_HEADERS += units/mikuru/mikuru.h
 SRC_HEADERS += units/mikuru/oscillator.h
 SRC_HEADERS += units/mikuru/params.h
 SRC_HEADERS += units/mikuru/part.h
+SRC_HEADERS += units/mikuru/part_effects.h
 SRC_HEADERS += units/mikuru/part_filters.h
 SRC_HEADERS += units/mikuru/patch.h
 SRC_HEADERS += units/mikuru/rbj_impulse_response.h
@@ -411,11 +425,11 @@ SRC_HEADERS += units/mikuru/voice_commons.h
 SRC_HEADERS += units/mikuru/voice_manager.h
 SRC_HEADERS += units/mikuru/voice_oscillator.h
 SRC_HEADERS += units/mikuru/wave_computer.h
-SRC_HEADERS += units/mikuru/waveshaper.h
 SRC_HEADERS += units/mikuru/widgets.h
 
 SRC_SOURCES += units/mikuru/common_filters.cc
 SRC_SOURCES += units/mikuru/double_filter.cc
+SRC_SOURCES += units/mikuru/effects.cc
 SRC_SOURCES += units/mikuru/envelopes.cc
 SRC_SOURCES += units/mikuru/event_dispatcher.cc
 SRC_SOURCES += units/mikuru/filter.cc
@@ -424,6 +438,7 @@ SRC_SOURCES += units/mikuru/mikuru.cc
 SRC_SOURCES += units/mikuru/oscillator.cc
 SRC_SOURCES += units/mikuru/params.cc
 SRC_SOURCES += units/mikuru/part.cc
+SRC_SOURCES += units/mikuru/part_effects.cc
 SRC_SOURCES += units/mikuru/part_filters.cc
 SRC_SOURCES += units/mikuru/patch.cc
 SRC_SOURCES += units/mikuru/rbj_impulse_response.cc
@@ -433,7 +448,6 @@ SRC_SOURCES += units/mikuru/voice_commons.cc
 SRC_SOURCES += units/mikuru/voice_manager.cc
 SRC_SOURCES += units/mikuru/voice_oscillator.cc
 SRC_SOURCES += units/mikuru/wave_computer.cc
-SRC_SOURCES += units/mikuru/waveshaper.cc
 SRC_SOURCES += units/mikuru/widgets.cc
 
 SRC_MOCHDRS += units/mikuru/common_filters.h
@@ -443,8 +457,8 @@ SRC_MOCHDRS += units/mikuru/general.h
 SRC_MOCHDRS += units/mikuru/mikuru.h
 SRC_MOCHDRS += units/mikuru/oscillator.h
 SRC_MOCHDRS += units/mikuru/part.h
+SRC_MOCHDRS += units/mikuru/part_effects.h
 SRC_MOCHDRS += units/mikuru/part_filters.h
-SRC_MOCHDRS += units/mikuru/waveshaper.h
 
 ######### /units/vanhalen ########
 

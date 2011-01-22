@@ -39,7 +39,7 @@ namespace MikuruPrivate {
 class Waveform;
 class Oscillator;
 class PartFilters;
-class Waveshaper;
+class PartEffects;
 
 class Part: public QWidget
 {
@@ -97,6 +97,7 @@ class Part: public QWidget
 	StyledCheckBoxLabel*	_part_enabled;
 	Oscillator*				_oscillator;
 	PartFilters*			_filters;
+	PartEffects*			_effects;
 };
 
 } // namespace MikuruPrivate

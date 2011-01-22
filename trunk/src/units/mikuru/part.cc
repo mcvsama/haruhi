@@ -24,6 +24,7 @@
 #include "oscillator.h"
 #include "filter.h"
 #include "part_filters.h"
+#include "part_effects.h"
 
 
 namespace MikuruPrivate {
@@ -46,6 +47,7 @@ Part::Part (Mikuru* mikuru, QWidget* parent):
 
 	_oscillator = new Oscillator (this, _port_group, "Oscillator", _mikuru, tabs);
 	_filters = new PartFilters (this, _port_group, "Filter", _mikuru, tabs);
+	_effects = new PartEffects (this, _mikuru, tabs);
 
 	// Top part widgets:
 
@@ -57,6 +59,7 @@ Part::Part (Mikuru* mikuru, QWidget* parent):
 	tabs->addTab (_oscillator, "Oscillator");
 	tabs->addTab (new QWidget(), "Modulator");
 	tabs->addTab (_filters, "Filters");
+	tabs->addTab (_effects, "Effects");
 	tabs->showPage (_oscillator);
 
 	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);

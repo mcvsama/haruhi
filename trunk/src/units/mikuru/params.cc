@@ -403,29 +403,6 @@ Params::Voice::sanitize()
 }
 
 
-Params::Waveshaper::Waveshaper()
-{
-}
-
-
-void
-Params::Waveshaper::set_controller_params (Waveshaper& other)
-{
-}
-
-
-void
-Params::Waveshaper::set_non_controller_params (Waveshaper& other)
-{
-}
-
-
-void
-Params::Waveshaper::sanitize()
-{
-}
-
-
 Params::ADSR::ADSR():
 	// Controller:
 	HARUHI_MIKURU_CONSTRUCT (delay, Delay),
