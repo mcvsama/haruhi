@@ -74,9 +74,6 @@ class Part: public QWidget
 	PartFilters*
 	filters() const { return _filters; }
 
-	Waveform*
-	waveform() const { return _waveform; }
-
   public slots:
 	void
 	load_params();
@@ -98,7 +95,6 @@ class Part: public QWidget
 
 	// Widgets:
 	StyledCheckBoxLabel*	_part_enabled;
-	Waveform*				_waveform;
 	Oscillator*				_oscillator;
 	PartFilters*			_filters;
 };

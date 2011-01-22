@@ -398,7 +398,6 @@ SRC_HEADERS += units/mikuru/voice_commons.h
 SRC_HEADERS += units/mikuru/voice_manager.h
 SRC_HEADERS += units/mikuru/voice_oscillator.h
 SRC_HEADERS += units/mikuru/wave_computer.h
-SRC_HEADERS += units/mikuru/waveform.h
 SRC_HEADERS += units/mikuru/waveshaper.h
 SRC_HEADERS += units/mikuru/widgets.h
 
@@ -424,7 +423,6 @@ SRC_SOURCES += units/mikuru/voice_commons.cc
 SRC_SOURCES += units/mikuru/voice_manager.cc
 SRC_SOURCES += units/mikuru/voice_oscillator.cc
 SRC_SOURCES += units/mikuru/wave_computer.cc
-SRC_SOURCES += units/mikuru/waveform.cc
 SRC_SOURCES += units/mikuru/waveshaper.cc
 SRC_SOURCES += units/mikuru/widgets.cc
 
@@ -439,7 +437,6 @@ SRC_MOCHDRS += units/mikuru/mikuru.h
 SRC_MOCHDRS += units/mikuru/oscillator.h
 SRC_MOCHDRS += units/mikuru/part.h
 SRC_MOCHDRS += units/mikuru/part_filters.h
-SRC_MOCHDRS += units/mikuru/waveform.h
 SRC_MOCHDRS += units/mikuru/waveshaper.h
 
 ######### /units/vanhalen ########

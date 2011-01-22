@@ -24,7 +24,6 @@
 #include "mikuru.h"
 #include "oscillator.h"
 #include "filter.h"
-#include "waveform.h"
 #include "params.h"
 #include "patch.h"
 #include "envelopes.h"
@@ -124,7 +123,6 @@ Patch::save_state (QDomElement& element) const
 		QDomElement part_element = element.ownerDocument().createElement ("part");
 		QDomElement oscillator_element = element.ownerDocument().createElement ("oscillator");
 		QDomElement filters_element = element.ownerDocument().createElement ("filters");
-		QDomElement waveform_element = element.ownerDocument().createElement ("waveform");
 
 		// General:
 		{
@@ -136,8 +134,22 @@ Patch::save_state (QDomElement& element) const
 		// Oscillator:
 		{
 			Oscillator* oscillator = (*pt)->oscillator();
+			Params::Waveform waveform_params (*oscillator->waveform_params());
 			Params::Oscillator oscillator_params (*oscillator->oscillator_params());
 			Params::Voice voice_params (*oscillator->voice_params());
+
+			// Knobs&other:
+			save_parameter (oscillator_element, "wave-type", waveform_params.wave_type);
+			save_parameter (oscillator_element, "wave-shape", waveform_params.wave_shape);
+			save_parameter (oscillator_element, "modulator-type", waveform_params.modulator_type);
+			save_parameter (oscillator_element, "modulator-wave-type", waveform_params.modulator_wave_type);
+			save_parameter (oscillator_element, "modulator-amplitude", waveform_params.modulator_amplitude);
+			save_parameter (oscillator_element, "modulator-index", waveform_params.modulator_index);
+			save_parameter (oscillator_element, "modulator-shape", waveform_params.modulator_shape);
+			for (Oscillator::Sliders::size_type i = 0; i < Params::Waveform::HarmonicsNumber; ++i)
+				save_parameter (oscillator_element, QString ("harmonic-%1").arg (i), waveform_params.harmonics[i]);
+			for (Oscillator::Sliders::size_type i = 0; i < Params::Waveform::HarmonicsNumber; ++i)
+				save_parameter (oscillator_element, QString ("phase-%1").arg (i), waveform_params.phases[i]);
 
 			// Knobs:
 			save_parameter (oscillator_element, "volume", oscillator->_knob_volume);
@@ -215,27 +227,8 @@ Patch::save_state (QDomElement& element) const
 			filters_element.appendChild (filter2_element);
 		}
 
-		// Waveform:
-		{
-			Waveform* waveform = (*pt)->waveform();
-			Params::Waveform params (*waveform->params());
-
-			save_parameter (waveform_element, "wave-type", params.wave_type);
-			save_parameter (waveform_element, "wave-shape", params.wave_shape);
-			save_parameter (waveform_element, "modulator-type", params.modulator_type);
-			save_parameter (waveform_element, "modulator-wave-type", params.modulator_wave_type);
-			save_parameter (waveform_element, "modulator-amplitude", params.modulator_amplitude);
-			save_parameter (waveform_element, "modulator-index", params.modulator_index);
-			save_parameter (waveform_element, "modulator-shape", params.modulator_shape);
-			for (Waveform::Sliders::size_type i = 0; i < Params::Waveform::HarmonicsNumber; ++i)
-				save_parameter (waveform_element, QString ("harmonic-%1").arg (i), params.harmonics[i]);
-			for (Waveform::Sliders::size_type i = 0; i < Params::Waveform::HarmonicsNumber; ++i)
-				save_parameter (waveform_element, QString ("phase-%1").arg (i), params.phases[i]);
-		}
-
 		part_element.appendChild (oscillator_element);
 		part_element.appendChild (filters_element);
-		part_element.appendChild (waveform_element);
 		// Tab position:
 		sorted_parts.insert (std::make_pair (_mikuru->part_tab_position (*pt), part_element));
 	}
@@ -456,10 +449,24 @@ Patch::load_state (QDomElement const& element)
 				if (e.tagName() == "oscillator")
 				{
 					Oscillator* oscillator = part->oscillator();
+					Params::Waveform* waveform_params = oscillator->waveform_params();
 					Params::Oscillator* oscillator_params = oscillator->oscillator_params();
 					Params::Voice* voice_params = oscillator->voice_params();
 
 					create_parameters (e, parameters);
+
+					// Knobs&other:
+					load_parameter (parameters, "wave-type", waveform_params->wave_type);
+					load_parameter (parameters, "wave-shape", waveform_params->wave_shape);
+					load_parameter (parameters, "modulator-type", waveform_params->modulator_type);
+					load_parameter (parameters, "modulator-wave-type", waveform_params->modulator_wave_type);
+					load_parameter (parameters, "modulator-amplitude", waveform_params->modulator_amplitude);
+					load_parameter (parameters, "modulator-index", waveform_params->modulator_index);
+					load_parameter (parameters, "modulator-shape", waveform_params->modulator_shape);
+					for (Oscillator::Sliders::size_type i = 0; i < Params::Waveform::HarmonicsNumber; ++i)
+						load_parameter (parameters, QString ("harmonic-%1").arg (i), waveform_params->harmonics[i]);
+					for (Oscillator::Sliders::size_type i = 0; i < Params::Waveform::HarmonicsNumber; ++i)
+						load_parameter (parameters, QString ("phase-%1").arg (i), waveform_params->phases[i]);
 
 					// Knobs:
 					load_parameter (parameters, "volume", oscillator->_knob_volume);
@@ -492,6 +499,7 @@ Patch::load_state (QDomElement const& element)
 					load_parameter (parameters, "unison-init", oscillator->_knob_unison_init);
 					load_parameter (parameters, "unison-noise", oscillator->_knob_unison_noise);
 
+					oscillator->load_waveform_params();
 					oscillator->load_oscillator_params();
 					oscillator->load_voice_params();
 				}
@@ -531,27 +539,6 @@ Patch::load_state (QDomElement const& element)
 					}
 
 					part_filters->load_params();
-				}
-				else if (e.tagName() == "waveform")
-				{
-					Waveform* waveform = part->waveform();
-					Params::Waveform* params = waveform->params();
-
-					create_parameters (e, parameters);
-
-					load_parameter (parameters, "wave-type", params->wave_type);
-					load_parameter (parameters, "wave-shape", params->wave_shape);
-					load_parameter (parameters, "modulator-type", params->modulator_type);
-					load_parameter (parameters, "modulator-wave-type", params->modulator_wave_type);
-					load_parameter (parameters, "modulator-amplitude", params->modulator_amplitude);
-					load_parameter (parameters, "modulator-index", params->modulator_index);
-					load_parameter (parameters, "modulator-shape", params->modulator_shape);
-					for (Waveform::Sliders::size_type i = 0; i < Params::Waveform::HarmonicsNumber; ++i)
-						load_parameter (parameters, QString ("harmonic-%1").arg (i), params->harmonics[i]);
-					for (Waveform::Sliders::size_type i = 0; i < Params::Waveform::HarmonicsNumber; ++i)
-						load_parameter (parameters, QString ("phase-%1").arg (i), params->phases[i]);
-
-					waveform->load_params();
 				}
 			}
 		}

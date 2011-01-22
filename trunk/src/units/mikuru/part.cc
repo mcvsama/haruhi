@@ -21,7 +21,6 @@
 // Local:
 #include "mikuru.h"
 #include "part.h"
-#include "waveform.h"
 #include "oscillator.h"
 #include "filter.h"
 #include "part_filters.h"
@@ -45,7 +44,6 @@ Part::Part (Mikuru* mikuru, QWidget* parent):
 
 	QTabWidget* tabs = new QTabWidget (this);
 
-	_waveform = new Waveform (this, _port_group, "Waveform", _mikuru, tabs);
 	_oscillator = new Oscillator (this, _port_group, "Oscillator", _mikuru, tabs);
 	_filters = new PartFilters (this, _port_group, "Filter", _mikuru, tabs);
 
@@ -56,7 +54,6 @@ Part::Part (Mikuru* mikuru, QWidget* parent):
 	QObject::connect (_part_enabled->checkbox(), SIGNAL (clicked()), this, SLOT (update_params()));
 
 	// Add tabs:
-	tabs->addTab (_waveform, "Waveform");
 	tabs->addTab (_oscillator, "Oscillator");
 	tabs->addTab (new QWidget(), "Modulator");
 	tabs->addTab (_filters, "Filters");
@@ -82,7 +79,6 @@ Part::process_events()
 {
 	_oscillator->process_events();
 	_filters->process_events();
-	_waveform->process_events();
 }
 
 

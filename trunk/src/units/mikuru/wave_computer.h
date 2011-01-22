@@ -28,11 +28,10 @@
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/memory.h>
 
-// Local:
-#include "waveform.h"
-
 
 namespace MikuruPrivate {
+
+namespace DSP = Haruhi::DSP;
 
 class WaveComputer: public Thread
 {

@@ -28,7 +28,6 @@
 #include "voice.h"
 #include "oscillator.h"
 #include "filter.h"
-#include "waveform.h"
 #include "synth_thread.h"
 #include "general.h"
 #include "double_filter.h"
@@ -132,7 +131,7 @@ Voice::mixin (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
 	Params::Oscillator* oscillator_params = _part->oscillator()->oscillator_params();
 
 	// Main oscillator:
-	_oscillator.set_wavetable (_part->waveform()->wavetable());
+	_oscillator.set_wavetable (_part->oscillator()->wavetable());
 	_oscillator.set_unison_spread (2.0f * _params.unison_spread.to_f());
 	_oscillator.set_unison_number (_params.unison_index.get());
 	_oscillator.set_unison_noise (_params.unison_noise.to_f());

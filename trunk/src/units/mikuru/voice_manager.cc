@@ -22,7 +22,6 @@
 // Local:
 #include "mikuru.h"
 #include "oscillator.h"
-#include "waveform.h"
 #include "voice.h"
 #include "voice_manager.h"
 #include "params.h"
@@ -199,7 +198,7 @@ VoiceManager::voice_event (Haruhi::VoiceEvent const* voice_event)
 				;
 		}
 	}
-	else if (voice_event->type() == Haruhi::VoiceEvent::Create && _part->params()->enabled && _part->waveform()->wavetable())
+	else if (voice_event->type() == Haruhi::VoiceEvent::Create && _part->params()->enabled && _part->oscillator()->wavetable())
 	{
 		_keys.insert (Key (voice_event->timestamp(), voice_event->key_id(), voice_event->frequency(), voice_event->value()));
 

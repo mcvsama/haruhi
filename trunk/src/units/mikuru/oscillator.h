@@ -20,12 +20,22 @@
 // Qt:
 #include <QtGui/QComboBox>
 #include <QtGui/QCheckBox>
+#include <QtGui/QSlider>
+#include <QtGui/QPushButton>
+#include <QtGui/QDialog>
 
 // Haruhi:
 #include <haruhi/dsp/wave.h>
+#include <haruhi/dsp/wavetable.h>
+#include <haruhi/dsp/functions.h>
+#include <haruhi/dsp/harmonics_wave.h>
+#include <haruhi/dsp/modulated_wave.h>
 #include <haruhi/lib/controller_proxy.h>
+#include <haruhi/graph/event_port.h>
 #include <haruhi/graph/port_group.h>
 #include <haruhi/widgets/knob.h>
+#include <haruhi/utility/signal.h>
+#include <haruhi/utility/memory.h>
 
 // Local:
 #include "event_dispatcher.h"
@@ -35,20 +45,91 @@
 
 class Mikuru;
 
+namespace Haruhi {
+	class WavePlot;
+}
+
 namespace MikuruPrivate {
 
+namespace DSP = Haruhi::DSP;
 class Part;
+class WaveComputer;
 
-class Oscillator: public QWidget
+/**
+ * Slider that implements slot reset() which
+ * sets slider value to 0.
+ */
+class Slider: public QSlider
+{
+	Q_OBJECT
+
+  public:
+	Slider (int min_value, int max_value, int page_step, int value, Qt::Orientation orientation, QWidget* parent):
+		QSlider (orientation, parent)
+	{
+		setMinimum (min_value);
+		setMaximum (max_value);
+		setPageStep (page_step);
+		setValue (value);
+	}
+
+  public slots:
+	/**
+	 * Sets slider value to 0.
+	 */
+	void
+	reset() { setValue (0); }
+};
+
+
+class Oscillator:
+	public QWidget,
+	public Signal::Receiver
 {
 	Q_OBJECT
 
 	friend class Patch;
 
+	/**
+	 * Holds info about wave (name, icon, pointer to parametric wave).
+	 * Instead of having multiple lists, we pack such data into WaveInfo for convenience.
+	 */
+	struct WaveInfo
+	{
+		WaveInfo():
+			wave (0)
+		{ }
+
+		/**
+		 * Takes ownership of wave - deletes it upon destruction.
+		 */
+		WaveInfo (QPixmap const& icon, QString const& name, DSP::ParametricWave* wave):
+			icon (icon),
+			name (name),
+			wave (wave)
+		{ }
+
+		QPixmap						icon;
+		QString						name;
+		Shared<DSP::ParametricWave>	wave;
+	};
+
+	typedef std::vector<WaveInfo>		Waves;
+	typedef std::vector<QSlider*>		Sliders;
+	typedef std::vector<QPushButton*>	Buttons;
+
   public:
 	Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const& port_prefix, Mikuru* mikuru, QWidget* parent);
 
 	~Oscillator();
+
+	/**
+	 * \returns	Waveform params.
+	 * \entry	Any thread.
+	 * \threadsafe
+	 */
+	Params::Waveform*
+	waveform_params() { return &_waveform_params; }
 
 	Params::Oscillator*
 	oscillator_params() { return &_oscillator_params; }
@@ -56,6 +137,9 @@ class Oscillator: public QWidget
 	Params::Voice*
 	voice_params() { return &_voice_params; }
 
+	/**
+	 * \entry	Only from Engine thread.
+	 */
 	void
 	process_events();
 
@@ -68,10 +152,22 @@ class Oscillator: public QWidget
 	Haruhi::EventPort*
 	frequency_port() const { return _port_frequency; }
 
+	/**
+	 * \returns	currently used Wavetable.
+	 * \entry	Any thread.
+	 * \threadsafe
+	 */
+	DSP::Wavetable*
+	wavetable();
+
   public slots:
 	/**
 	 * Loads widgets values from Params struct.
+	 * \entry	Only from UI thread.
 	 */
+	void
+	load_waveform_params();
+
 	void
 	load_oscillator_params();
 
@@ -81,13 +177,18 @@ class Oscillator: public QWidget
 	void
 	update_params()
 	{
+		update_waveform_params();
 		update_oscillator_params();
 		update_voice_params();
 	}
 
 	/**
 	 * Loads params from given struct and updates widgets.
+	 * \entry	Only from UI thread.
 	 */
+	void
+	load_waveform_params (Params::Waveform& params);
+
 	void
 	load_oscillator_params (Params::Oscillator& params);
 
@@ -96,7 +197,11 @@ class Oscillator: public QWidget
 
 	/**
 	 * Updates Params structure from widgets.
+	 * \entry	Only from UI thread.
 	 */
+	void
+	update_waveform_params();
+
 	void
 	update_oscillator_params();
 
@@ -108,6 +213,13 @@ class Oscillator: public QWidget
 	 */
 	void
 	update_widgets();
+
+	/**
+	 * Recomputes wave.
+	 * \entry	Only from UI thread.
+	 */
+	void
+	recompute_wave();
 
   private slots:
 	void
@@ -134,13 +246,60 @@ class Oscillator: public QWidget
 	void
 	update_voice_velocity_sens();
 
+	/**
+	 * Called when any value or phase slider is moved.
+	 * \entry	Only from UI thread.
+	 */
+	void
+	sliders_updated();
+
+	void
+	show_harmonics();
+
+  private:
+	/**
+	 * Returns WaveInfo for currently selected wave in UI.
+	 */
+	WaveInfo&
+	active_wave();
+
+	/**
+	 * Returns WaveInfo for currently selected modulator wave in UI.
+	 */
+	WaveInfo&
+	active_modulator_wave();
+
+	/**
+	 * Redraws wave plot.
+	 * \entry	Only from WaveComputer thread.
+	 */
+	void
+	update_wave_plot (Shared<DSP::Wave> const& wave);
+
+	/**
+	 * Higlights or resets button color.
+	 * \entry	Only from UI thread.
+	 */
+	void
+	set_button_highlighted (QPushButton* button, bool highlight);
+
   private:
 	Mikuru*				_mikuru;
 	Part*				_part;
+	Params::Waveform	_waveform_params;
 	Params::Oscillator	_oscillator_params;
 	Params::Voice		_voice_params;
 	bool				_loading_params;
-	QWidget*			_panel;
+	Waves				_waves;
+	Waves				_modulator_waves;
+	WaveComputer*		_wave_computer;
+	Shared<DSP::Wave>	_plotters_wave;
+
+	// Waveform ports:
+	Haruhi::EventPort*	_port_wave_shape;
+	Haruhi::EventPort*	_port_modulator_amplitude;
+	Haruhi::EventPort*	_port_modulator_index;
+	Haruhi::EventPort*	_port_modulator_shape;
 
 	// Part ports:
 	Haruhi::EventPort*	_port_volume;
@@ -172,6 +331,12 @@ class Oscillator: public QWidget
 	EventDispatcher*	_evdisp_unison_init;
 	EventDispatcher*	_evdisp_unison_noise;
 
+	// Waveform knobs:
+	Haruhi::Knob*		_knob_wave_shape;
+	Haruhi::Knob*		_knob_modulator_amplitude;
+	Haruhi::Knob*		_knob_modulator_index;
+	Haruhi::Knob*		_knob_modulator_shape;
+
 	// Volume knobs:
 	Haruhi::Knob*		_knob_volume;
 	Haruhi::Knob*		_knob_panorama;
@@ -190,6 +355,23 @@ class Oscillator: public QWidget
 	Haruhi::Knob*		_knob_phase;
 	Haruhi::Knob*		_knob_noise_level;
 
+	// Waveform-related:
+	Haruhi::WavePlot*	_base_wave_plot;
+	Haruhi::WavePlot*	_final_wave_plot;
+	QComboBox*			_wave_type;
+	QComboBox*			_modulator_type;
+	QComboBox*			_modulator_wave_type;
+	Sliders				_harmonics_sliders;
+	Buttons				_harmonics_resets;
+	Sliders				_phases_sliders;
+	Buttons				_phases_resets;
+	QColor				_std_button_bg;
+	QColor				_std_button_fg;
+	QWidget*			_harmonics_tab;
+	QWidget*			_phases_tab;
+	QDialog*			_harmonics_window;
+	QTabWidget*			_harmonics_and_phases_tabs;
+
 	// Pitchbend/transposition:
 	QCheckBox*			_const_portamento_time;
 	QCheckBox*			_pitchbend_enabled;
@@ -205,8 +387,8 @@ class Oscillator: public QWidget
 	QComboBox*			_monophonic_key_priority;
 
 	// Other:
-	QCheckBox*			_wave_enabled;
-	QCheckBox*			_noise_enabled;
+	QPushButton*		_wave_enabled;
+	QPushButton*		_noise_enabled;
 };
 
 } // namespace MikuruPrivate
