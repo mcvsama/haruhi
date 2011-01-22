@@ -44,7 +44,7 @@ class Waveshaper: public Effect
 
   private:
 	/**
-	 * Implementation of
+	 * Gloubi-boulga waveshaper
 	 * <http://musicdsp.org/showArchiveComment.php?ArchiveID=86>
 	 */
 	Sample
@@ -56,7 +56,7 @@ class Waveshaper: public Effect
 	}
 
 	/**
-	 * Simpler implementation of Gloubi-boulga waveshaper:
+	 * Simpler implementation of Gloubi-boulga waveshaper
 	 * x - 0.15 * x^2 - 0.15 * x^3
 	 */
 	Sample
@@ -66,6 +66,8 @@ class Waveshaper: public Effect
 	}
 
 	/**
+	 * Simple cubic waveshaper
+	 * <http://musicdsp.org/showArchiveComment.php?ArchiveID=114>
 	 */
 	Sample
 	waveshape_power3 (Sample x)
