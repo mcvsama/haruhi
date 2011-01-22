@@ -53,6 +53,7 @@ Envelopes::Envelopes (Mikuru* mikuru, QWidget* parent):
 
 	_placeholder = new QLabel ("Add envelopes/LFOs with \"Add\" buttons.", _stack);
 	_placeholder->setAlignment (Qt::AlignCenter);
+
 	_tabs = new QTabWidget (_stack);
 	_tabs->setMovable (true);
 
@@ -72,21 +73,19 @@ Envelopes::Envelopes (Mikuru* mikuru, QWidget* parent):
 
 	// Layouts:
 
-	QVBoxLayout* v1 = new QVBoxLayout (this);
-	v1->setMargin (0);
-	v1->setSpacing (Config::Spacing);
-
 	QHBoxLayout* h1 = new QHBoxLayout();
 	h1->setSpacing (Config::Spacing);
-
-	v1->addLayout (h1);
-	v1->addWidget (_stack);
-
 	h1->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 	h1->addWidget (_add_adsr);
 	h1->addWidget (_add_envelope);
 	h1->addWidget (_add_lfo);
 	h1->addWidget (_remove_envelope);
+
+	QVBoxLayout* v1 = new QVBoxLayout (this);
+	v1->setMargin (0);
+	v1->setSpacing (Config::Spacing);
+	v1->addLayout (h1);
+	v1->addWidget (_stack);
 
 	update_widgets();
 }
@@ -164,18 +163,6 @@ Envelopes::notify_new_part (Part* part)
 }
 
 
-void
-Envelopes::update_widgets()
-{
-	if (_tabs->count())
-		_stack->setCurrentWidget (_tabs);
-	else
-		_stack->setCurrentWidget (_placeholder);
-	_remove_envelope->setEnabled (_tabs->currentPage());
-	_tabs->setMargin (Config::Spacing - 1);
-}
-
-
 ADSR*
 Envelopes::add_adsr (int id)
 {
@@ -222,19 +209,17 @@ void
 Envelopes::destroy_envelope()
 {
 	QWidget* tab = _tabs->currentPage();
-	if (tab)
-	{
-		Envelope* envelope = dynamic_cast<Envelope*> (tab);
-		if (envelope)
-		{
-			_envelopes_mutex.lock();
-			_envelopes.remove (envelope);
-			_envelopes_mutex.unlock();
-			_tabs->removePage (envelope);
-			delete envelope;
-			update_widgets();
-		}
-	}
+	if (!tab)
+		return;
+	Envelope* envelope = dynamic_cast<Envelope*> (tab);
+	if (!envelope)
+		return;
+	_envelopes_mutex.lock();
+	_envelopes.remove (envelope);
+	_envelopes_mutex.unlock();
+	_tabs->removePage (envelope);
+	delete envelope;
+	update_widgets();
 }
 
 
@@ -268,6 +253,18 @@ Envelopes::show_first()
 {
 	if (!_envelopes.empty())
 		_tabs->showPage (_envelopes.front());
+}
+
+
+void
+Envelopes::update_widgets()
+{
+	if (_tabs->count())
+		_stack->setCurrentWidget (_tabs);
+	else
+		_stack->setCurrentWidget (_placeholder);
+	_remove_envelope->setEnabled (_tabs->currentPage());
+	_tabs->setMargin (Config::Spacing - 1);
 }
 
 } // namespace MikuruPrivate

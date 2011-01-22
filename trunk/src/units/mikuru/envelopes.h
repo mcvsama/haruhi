@@ -113,10 +113,6 @@ class Envelopes: public QWidget
 	int
 	envelope_tab_position (MikuruPrivate::Envelope* envelope) const { return _tabs->indexOf (envelope); }
 
-  private:
-	void
-	update_widgets();
-
   public slots:
 	ADSR*
 	add_adsr (int id = 0);
@@ -138,6 +134,10 @@ class Envelopes: public QWidget
 
 	void
 	show_first();
+
+  private:
+	void
+	update_widgets();
 
   private:
 	Mikuru*			_mikuru;
