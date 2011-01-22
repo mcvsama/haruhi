@@ -91,7 +91,7 @@ ModulatedWave::value_for_ring (Sample phase, Sample frequency) const
 Sample
 ModulatedWave::value_for_frequency (Sample phase, Sample frequency) const
 {
-	return (*_wave)(mod1 (phase * (1.0f - 0.1 * _mod_amplitude * (*_modulator)(mod1 (phase * _mod_index), frequency * _mod_index))), frequency);
+	return (*_wave)(mod1 (phase + phase * _mod_amplitude * (*_modulator)(mod1 (phase * _mod_index), frequency * _mod_index)), frequency);
 }
 
 } // namespace DSP
