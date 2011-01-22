@@ -60,6 +60,9 @@ class Envelopes: public QWidget
 	EnvelopesList&
 	envelopes() { return _envelopes; }
 
+	Mutex&
+	envelopes_mutex() { return _envelopes_mutex; }
+
 	void
 	process();
 

@@ -41,6 +41,9 @@ Part::Part (Mikuru* mikuru, QWidget* parent):
 	_voice_manager = new VoiceManager (this);
 	_port_group = new Haruhi::PortGroup (_mikuru->graph(), QString ("Part %1").arg (id()).toStdString());
 
+	_buffer_1 = new Haruhi::AudioBuffer();
+	_buffer_2 = new Haruhi::AudioBuffer();
+
 	// Tabs/widgets:
 
 	QTabWidget* tabs = new QTabWidget (this);
@@ -74,6 +77,9 @@ Part::~Part()
 	delete _voice_manager;
 	delete _port_group;
 	_filters->delete_ports();
+
+	delete _buffer_1;
+	delete _buffer_2;
 }
 
 
@@ -82,6 +88,25 @@ Part::process_events()
 {
 	_oscillator->process_events();
 	_filters->process_events();
+}
+
+
+void
+Part::prepare_buffers()
+{
+	_buffer_1->resize (_mikuru->graph()->buffer_size());
+	_buffer_2->resize (_mikuru->graph()->buffer_size());
+
+	_buffer_1->clear();
+	_buffer_2->clear();
+}
+
+
+void
+Part::process_effects()
+{
+	_effects->process (_buffer_1, 0);
+	_effects->process (_buffer_2, 1);
 }
 
 

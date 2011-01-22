@@ -270,6 +270,9 @@ class Mikuru:
 	void
 	process_voices();
 
+	void
+	process_parts();
+
 	/**
 	 * Updates number of synth. threads. Pass 0 to detect automatically.
 	 * \entry	Only from UI thread.
@@ -301,6 +304,8 @@ class Mikuru:
 	MikuruPrivate::CommonFilters*	_common_filters;
 	QTabWidget*						_tabs_widget;
 
+	DSP::OnePoleSmoother			_panorama_smoother_1;
+	DSP::OnePoleSmoother			_panorama_smoother_2;
 	DSP::OnePoleSmoother			_audio_input_smoother_L;
 	DSP::OnePoleSmoother			_audio_input_smoother_R;
 	DSP::OnePoleSmoother			_master_volume_smoother_L;

@@ -237,6 +237,7 @@ Patch::save_state (QDomElement& element) const
 
 	// Envelopes sorted by their tab-position:
 	std::multimap<int, QDomElement> sorted_envelopes;
+	_mikuru->general()->envelopes()->envelopes_mutex().lock();
 	for (Envelopes::EnvelopesList::iterator en = _mikuru->general()->envelopes()->envelopes().begin(); en != _mikuru->general()->envelopes()->envelopes().end(); ++en)
 	{
 		QDomElement envelope_element = element.ownerDocument().createElement ("envelope");
@@ -316,6 +317,7 @@ Patch::save_state (QDomElement& element) const
 		// Tab position:
 		sorted_envelopes.insert (std::make_pair (_mikuru->general()->envelopes()->envelope_tab_position (*en), envelope_element));
 	}
+	_mikuru->general()->envelopes()->envelopes_mutex().unlock();
 	for (std::multimap<int, QDomElement>::iterator e = sorted_envelopes.begin(); e != sorted_envelopes.end(); ++e)
 		element.appendChild (e->second);
 

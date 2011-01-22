@@ -94,22 +94,6 @@ class SynthThread: public Thread
 	voices() const { return _voices; }
 
 	/**
-	 * \returns	output 1 buffer.
-	 * \entry	Any thread
-	 * \threadsafe
-	 */
-	Haruhi::AudioBuffer*
-	buffer1() const { return _buffer_1; }
-
-	/**
-	 * \returns	output 2 buffer.
-	 * \entry	Any thread
-	 * \threadsafe
-	 */
-	Haruhi::AudioBuffer*
-	buffer2() const { return _buffer_2; }
-
-	/**
 	 * \returns	VoiceCommons for this thread.
 	 * \entry	Any thread
 	 * \threadsafe
@@ -138,11 +122,6 @@ class SynthThread: public Thread
 	Semaphore				_exit;
 	Semaphore				_start;
 	Semaphore				_done;
-
-	Haruhi::AudioBuffer*	_buffer_1;
-	Haruhi::AudioBuffer*	_buffer_2;
-	DSP::OnePoleSmoother	_panorama_smoother_1;
-	DSP::OnePoleSmoother	_panorama_smoother_2;
 };
 
 } // namespace MikuruPrivate

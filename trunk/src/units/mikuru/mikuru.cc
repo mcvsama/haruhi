@@ -28,6 +28,7 @@
 #include <QtGui/QToolTip>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/graph/event_buffer.h>
 #include <haruhi/dsp/functions.h>
@@ -47,6 +48,7 @@
 #include "general.h"
 #include "common_filters.h"
 #include "double_filter.h"
+#include "params.h"
 
 
 namespace Private = MikuruPrivate;
@@ -182,6 +184,8 @@ Mikuru::name() const
 void
 Mikuru::process()
 {
+	using Haruhi::Sample;
+
 	clear_outputs();
 
 	_parts_mutex.lock();
@@ -194,7 +198,35 @@ Mikuru::process()
 	process_controller_events();
 	// Then synthesize voices:
 	process_voices();
+	// Then process parts' effects:
+	process_parts();
 	// Mixed output is in _mix_L and _mix_R.
+
+	// Stereo width:
+	// TODO smoothing
+	float w = std::pow (1.0f - general()->params()->stereo_width.to_f(), M_E);
+	Sample o1, o2;
+	for (Sample *s1 = _mix_L.begin(), *s2 = _mix_R.begin(); s1 != _mix_L.end(); ++s1, ++s2)
+	{
+		o1 = *s1;
+		o2 = *s2;
+		*s1 += w * o2;
+		*s2 += w * o1;
+	}
+
+	// Panorama:
+	float const samples = 0.005f * graph()->sample_rate();
+	_panorama_smoother_1.set_samples (samples);
+	_panorama_smoother_2.set_samples (samples);
+
+	float f = 0.0;
+	f = 1.0f - 1.0f * general()->params()->panorama.get() / Private::Params::General::PanoramaMax;
+	f = f > 1.0f ? 1.0 : f;
+	_panorama_smoother_1.multiply (_mix_L.begin(), _mix_L.end(), f);
+
+	f = 1.0f - 1.0f * general()->params()->panorama.get() / Private::Params::General::PanoramaMin;
+	f = f > 1.0f ? 1.0 : f;
+	_panorama_smoother_2.multiply (_mix_R.begin(), _mix_R.end(), f);
 
 	// Process audio input and filters:
 	Private::Params::General gp = *_general->params();
@@ -233,10 +265,10 @@ Mikuru::process()
 	_master_volume_smoother_L.multiply (_audio_output_L->audio_buffer()->begin(), _audio_output_L->audio_buffer()->end(), v);
 	_master_volume_smoother_R.multiply (_audio_output_R->audio_buffer()->begin(), _audio_output_R->audio_buffer()->end(), v);
 
-	for (Parts::iterator t = _parts.begin(); t != _parts.end(); ++t)
+	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
 	{
-		(*t)->voice_manager()->sweep();
-		(*t)->voice_manager()->check_polyphony();
+		(*p)->voice_manager()->sweep();
+		(*p)->voice_manager()->check_polyphony();
 	}
 
 	_parts_mutex.unlock();
@@ -246,8 +278,8 @@ Mikuru::process()
 void
 Mikuru::panic()
 {
-	for (Parts::iterator t = _parts.begin(); t != _parts.end(); ++t)
-		(*t)->voice_manager()->panic();
+	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
+		(*p)->voice_manager()->panic();
 }
 
 
@@ -258,6 +290,8 @@ Mikuru::graph_updated()
 
 	// Smoothers:
 	float const samples = 0.005f * graph()->sample_rate();
+	_panorama_smoother_1.set_samples (samples);
+	_panorama_smoother_2.set_samples (samples);
 	_audio_input_smoother_L.set_samples (samples);
 	_audio_input_smoother_R.set_samples (samples);
 	_master_volume_smoother_L.set_samples (samples);
@@ -481,8 +515,8 @@ Mikuru::process_voice_events()
 		if ((*e)->event_type() == Haruhi::Event::ControllerEventType)
 		{
 			Haruhi::ControllerEvent const* controller_event = static_cast<Haruhi::ControllerEvent const*> (e->get());
-			for (Parts::iterator t = _parts.begin(); t != _parts.end(); ++t)
-				(*t)->voice_manager()->set_sustain (controller_event->value() >= 0.5);
+			for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
+				(*p)->voice_manager()->set_sustain (controller_event->value() >= 0.5);
 			break;
 		}
 	}
@@ -497,14 +531,14 @@ Mikuru::process_voice_events()
 		{
 			Haruhi::VoiceEvent const* voice_event = static_cast<Haruhi::VoiceEvent const*> (e->get());
 			if (enabled || voice_event->type() == Haruhi::VoiceEvent::Release || voice_event->type() == Haruhi::VoiceEvent::Drop)
-				for (Parts::iterator t = _parts.begin(); t != _parts.end(); ++t)
-					(*t)->voice_manager()->voice_event (voice_event);
+				for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
+					(*p)->voice_manager()->voice_event (voice_event);
 		}
 	}
 
 	// Force processing buffered events:
-	for (Parts::iterator t = _parts.begin(); t != _parts.end(); ++t)
-		(*t)->voice_manager()->process_buffered_events();
+	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
+		(*p)->voice_manager()->process_buffered_events();
 }
 
 
@@ -515,33 +549,47 @@ Mikuru::process_controller_events()
 
 	_general->process_events();
 	_common_filters->process_events();
-	for (Parts::iterator part = _parts.begin(); part != _parts.end(); ++part)
-		(*part)->process_events();
+	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
+		(*p)->process_events();
 }
 
 
 void
 Mikuru::process_voices()
 {
-	_synth_threads_mutex.lock();
+	// Prepare parts:
+	_parts_mutex.lock();
+	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
+		(*p)->prepare_buffers();
+	_parts_mutex.unlock();
 
-	// Synthesize:
+	_synth_threads_mutex.lock();
+	// Synthesize voices:
 	for (Private::SynthThreads::iterator s = _synth_threads.begin(); s != _synth_threads.end(); ++s)
 		(*s)->synthesize();
 	// Wait for threads:
 	for (Private::SynthThreads::iterator s = _synth_threads.begin(); s != _synth_threads.end(); ++s)
 		(*s)->join_synthesized();
+	_synth_threads_mutex.unlock();
 
+	// Result data is now in parts' buffers.
+}
+
+
+void
+Mikuru::process_parts()
+{
 	_mix_L.clear();
 	_mix_R.clear();
-	// Mix threads' results:
-	for (Private::SynthThreads::iterator s = _synth_threads.begin(); s != _synth_threads.end(); ++s)
-	{
-		_mix_L.mixin ((*s)->buffer1());
-		_mix_R.mixin ((*s)->buffer2());
-	}
 
-	_synth_threads_mutex.unlock();
+	_parts_mutex.lock();
+	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
+	{
+		(*p)->process_effects();
+		_mix_L.mixin ((*p)->buffer1());
+		_mix_R.mixin ((*p)->buffer2());
+	}
+	_parts_mutex.unlock();
 }
 
 

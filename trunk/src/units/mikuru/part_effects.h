@@ -54,11 +54,17 @@ class PartEffects: public QWidget
 	EffectsList&
 	effects() { return _effects; }
 
+	Mutex&
+	effects_mutex() { return _effects_mutex; }
+
 	/**
 	 * Returns tab-poisition of given effect.
 	 */
 	int
 	effect_tab_position (Effect* effect) const { return _tabs->indexOf (effect); }
+
+	void
+	process (Haruhi::AudioBuffer* buffer, unsigned int channel);
 
   public slots:
 	Delay*

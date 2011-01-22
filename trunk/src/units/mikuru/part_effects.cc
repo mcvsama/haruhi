@@ -76,6 +76,17 @@ PartEffects::PartEffects (Part* part, Mikuru* mikuru, QWidget* parent):
 }
 
 
+void
+PartEffects::process (Haruhi::AudioBuffer* buffer, unsigned int channel)
+{
+	_effects_mutex.lock();
+	// TODO change relative filter position when tab is moved.
+	for (EffectsList::iterator e = _effects.begin(); e != _effects.end(); ++e)
+		(*e)->process (buffer, channel);
+	_effects_mutex.unlock();
+}
+
+
 Delay*
 PartEffects::add_delay (int id)
 {
