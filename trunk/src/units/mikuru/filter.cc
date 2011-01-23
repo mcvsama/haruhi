@@ -83,7 +83,7 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 
 	_knob_attenuation->controller_proxy().config().curve = 1.0;
 	_knob_attenuation->controller_proxy().apply_config();
-	_knob_attenuation->set_volume_scale (true, 1.0);
+	_knob_attenuation->set_volume_scale (true, _params.passes);
 
 	QObject::connect (_knob_frequency, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
 	QObject::connect (_knob_resonance, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
@@ -276,8 +276,11 @@ Filter::update_widgets()
 	_panel->setEnabled (_params.enabled.get());
 	_limiter_enabled->setEnabled (ft == RBJImpulseResponse::LowPass || ft == RBJImpulseResponse::HighPass || ft == RBJImpulseResponse::BandPass ||
 								  ft == RBJImpulseResponse::LowShelf || ft == RBJImpulseResponse::HighShelf);
+	// Plot and attenuation should reflect Number of filter passes:
 	_response_plot->set_num_passes (_params.passes);
 	_response_plot->replot();
+	_knob_attenuation->set_volume_scale (true, _params.passes);
+	_knob_attenuation->update();
 }
 
 

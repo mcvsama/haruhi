@@ -167,7 +167,8 @@ Knob::SpinBox::set_volume_scale (bool setting, float exp)
 {
 	_volume_scale = setting;
 	_volume_scale_exp = exp;
-	update();
+	// Update does not call textFromValue, so it does not update text in spinbox:
+	setValue (value());
 }
 
 
