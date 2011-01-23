@@ -60,9 +60,6 @@ class Filter: public QWidget
 
 	~Filter();
 
-	void
-	set_double_scale (bool set) { _response_plot->set_double_scale (set); }
-
 	Params::Filter*
 	params() { return &_params; }
 
