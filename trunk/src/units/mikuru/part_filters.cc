@@ -150,7 +150,6 @@ PartFilters::update_params()
 void
 PartFilters::update_widgets()
 {
-	// TODO update scales according to number of passes	
 }
 
 

@@ -117,7 +117,6 @@ CommonFilters::process_filters (Haruhi::AudioBuffer& input1, Haruhi::AudioBuffer
 void
 CommonFilters::update_widgets()
 {
-	// TODO update scales according to number of passes	
 }
 
 
