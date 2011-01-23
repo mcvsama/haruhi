@@ -263,7 +263,6 @@ Knob::Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_
 
 	QObject::connect (_dial_control, SIGNAL (valueChanged (int)), this, SLOT (dial_changed (int)));
 	QObject::connect (_spin_box, SIGNAL (valueChanged (int)), this, SLOT (spin_changed (int)));
-
 }
 
 

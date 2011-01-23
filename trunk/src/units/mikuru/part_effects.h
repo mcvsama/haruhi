@@ -46,6 +46,7 @@ class PartEffects: public QWidget
 {
 	Q_OBJECT
 
+  public:
 	typedef std::list<Effect*> EffectsList;
 
   public:

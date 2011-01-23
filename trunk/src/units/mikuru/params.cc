@@ -585,6 +585,10 @@ Params::EG::set_non_controller_params (EG& other)
 void
 Params::EG::sanitize()
 {
+	HARUHI_MIKURU_SANITIZE (enabled)
+	HARUHI_MIKURU_SANITIZE (segments)
+	HARUHI_MIKURU_SANITIZE (sustain_point)
+
 	int p = segments.get();
 	if (p < 2)
 	{
@@ -607,11 +611,40 @@ Params::EG::sanitize()
 }
 
 
+Params::Effect::Effect():
+	// Controller:
+	// Non-controller:
+	enabled (0, 1, 1)
+{
+}
+
+
+void
+Params::Effect::set_controller_params (Effect& other)
+{
+}
+
+
+void
+Params::Effect::set_non_controller_params (Effect& other)
+{
+	HARUHI_MIKURU_COPY (enabled)
+}
+
+
+void
+Params::Effect::sanitize()
+{
+	HARUHI_MIKURU_SANITIZE (enabled)
+}
+
+
 Params::Waveshaper::Waveshaper():
 	// Controller:
 	HARUHI_MIKURU_CONSTRUCT (gain, Gain),
+	HARUHI_MIKURU_CONSTRUCT (parameter, Parameter),
 	// Non-controller:
-	enabled (0, 1, 1)
+	type (0, 3, 0)
 {
 }
 
@@ -620,13 +653,14 @@ void
 Params::Waveshaper::set_controller_params (Waveshaper& other)
 {
 	HARUHI_MIKURU_COPY (gain)
+	HARUHI_MIKURU_COPY (parameter)
 }
 
 
 void
 Params::Waveshaper::set_non_controller_params (Waveshaper& other)
 {
-	HARUHI_MIKURU_COPY (enabled)
+	HARUHI_MIKURU_COPY (type)
 }
 
 
@@ -634,6 +668,8 @@ void
 Params::Waveshaper::sanitize()
 {
 	HARUHI_MIKURU_SANITIZE (gain)
+	HARUHI_MIKURU_SANITIZE (parameter)
+	HARUHI_MIKURU_SANITIZE (type)
 }
 
 } // namespace MikuruPrivate

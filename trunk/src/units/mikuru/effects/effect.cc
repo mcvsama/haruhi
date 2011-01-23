@@ -28,26 +28,27 @@ namespace MikuruPrivate {
 Effect::Effect (QWidget* parent):
 	QWidget (parent)
 {
-	_effect_panel = new QGroupBox (this);
+	_effect_panel = new QWidget (this);
+	_effect_panel->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Maximum);
 
-	QGroupBox* bottom_panel = new QGroupBox (this);
+	QGroupBox* common_panel = new QGroupBox (this);
 
-	QPushButton* enabled_button = new QPushButton ("&Enabled", bottom_panel);
-	enabled_button->setCheckable (true);
-	enabled_button->setChecked (true);
+	_enabled_button = new QPushButton ("&Enabled", common_panel);
+	_enabled_button->setCheckable (true);
+	_enabled_button->setChecked (true);
 
-	QHBoxLayout* bottom_panel_layout = new QHBoxLayout (bottom_panel);
-	bottom_panel_layout->setMargin (Config::Margin);
-	bottom_panel_layout->setSpacing (Config::Spacing);
-	bottom_panel_layout->addWidget (enabled_button);
-	bottom_panel_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	QHBoxLayout* common_panel_layout = new QHBoxLayout (common_panel);
+	common_panel_layout->setMargin (Config::Margin);
+	common_panel_layout->setSpacing (Config::Spacing);
+	common_panel_layout->addWidget (_enabled_button);
+	common_panel_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (Config::Margin);
 	layout->setSpacing (Config::Spacing);
+	layout->addWidget (common_panel);
 	layout->addWidget (_effect_panel);
 	layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::MinimumExpanding));
-	layout->addWidget (bottom_panel);
 }
 
 
@@ -55,6 +56,23 @@ QWidget*
 Effect::parent_widget() const
 {
 	return _effect_panel;
+}
+
+
+void
+Effect::load_params()
+{
+	// Copy params:
+	Params::Effect p (effect_params());
+
+	_enabled_button->setChecked (p.enabled);
+}
+
+
+void
+Effect::update_params()
+{
+	effect_params().enabled.set (_enabled_button->isChecked());
 }
 
 } // namespace MikuruPrivate

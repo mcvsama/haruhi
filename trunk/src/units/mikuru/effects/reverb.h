@@ -42,8 +42,17 @@ class Reverb: public Effect
 	process (Haruhi::AudioBuffer* buffer, unsigned int channel);
 
   private:
-	Mikuru*	_mikuru;
-	int		_id;
+	/*
+	 * Effect API
+	 */
+
+	Params::Effect&
+	effect_params() { return _params; }
+
+  private:
+	Mikuru*			_mikuru;
+	int				_id;
+	Params::Effect	_params;
 };
 
 } // namespace MikuruPrivate

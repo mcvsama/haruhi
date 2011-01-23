@@ -75,6 +75,9 @@ class Part: public QWidget
 	PartFilters*
 	filters() const { return _filters; }
 
+	PartEffects*
+	effects() const { return _effects; }
+
 	Haruhi::AudioBuffer*
 	buffer1() const { return _buffer_1; }
 

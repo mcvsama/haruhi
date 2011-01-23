@@ -19,12 +19,13 @@
 
 // Qt:
 #include <QtGui/QWidget>
-#include <QtGui/QGroupBox>
+#include <QtGui/QPushButton>
 
 // Haruhi:
 #include <haruhi/graph/audio_buffer.h>
 
 // Local:
+#include "../params.h"
 #include "effect.h"
 
 
@@ -45,12 +46,29 @@ class Effect: public QWidget
 	virtual void
 	process (Haruhi::AudioBuffer* data, unsigned int channel) = 0;
 
+  public slots:
+	/**
+	 * Loads widgets values from Params struct.
+	 */
+	virtual void
+	load_params();
+
+	/**
+	 * Updates Params structure from widgets.
+	 */
+	virtual void
+	update_params();
+
   protected:
+	virtual Params::Effect&
+	effect_params() = 0;
+
 	QWidget*
 	parent_widget() const;
 
   private:
-	QGroupBox*	_effect_panel;
+	QWidget*		_effect_panel;
+	QPushButton*	_enabled_button;
 };
 
 } // namespace MikuruPrivate

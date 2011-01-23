@@ -16,9 +16,10 @@
 
 // Standard:
 #include <cstddef>
-#include <cmath>
+#include <vector>
 
 // Qt:
+#include <QtCore/QMetaType>
 #include <QtGui/QWidget>
 #include <QtGui/QComboBox>
 
@@ -39,15 +40,51 @@ class Mikuru;
 namespace MikuruPrivate {
 
 using Haruhi::Sample;
+class Patch;
+
+class Shaper
+{
+  public:
+	typedef Sample (*Function)(Sample, Sample);
+
+	Shaper():
+		function (0), has_parameter (false)
+	{ }
+
+	Shaper (Shaper const& other):
+		function (other.function),
+		has_parameter (other.has_parameter)
+	{ }
+
+	Shaper (Function function, bool has_parameter):
+		function (function),
+		has_parameter (has_parameter)
+	{ }
+
+	Function	function;
+	bool		has_parameter;
+};
+
 
 class Waveshaper: public Effect
 {
 	Q_OBJECT
 
+	friend class Patch;
+
+	typedef std::vector<Shaper*> Shapers;
+
   public:
 	Waveshaper (int id, Mikuru* mikuru, QWidget* parent);
 
 	~Waveshaper();
+
+	Params::Waveshaper*
+	params() { return &_params; }
+
+	/*
+	 * Effect API
+	 */
 
 	int
 	id() const { return _id; }
@@ -56,59 +93,58 @@ class Waveshaper: public Effect
 	process (Haruhi::AudioBuffer* buffer, unsigned int channel);
 
   private:
-	/**
-	 * Gloubi-boulga waveshaper
-	 * <http://musicdsp.org/showArchiveComment.php?ArchiveID=86>
+	/*
+	 * Effect API
 	 */
-	Sample
-	waveshape_gloubi_boulga (Sample input)
-	{
-		const float x = input * 0.686306f;
-		const float a = 1.0f + expf (sqrtf (fabsf (x)) * -0.75f);
-		return (expf (x) - expf (-x * a)) / (expf (x) + expf (-x));
-	}
+
+	Params::Effect&
+	effect_params() { return _params; }
+
+  public slots:
+	/**
+	 * Loads widgets values from Params struct.
+	 */
+	void
+	load_params();
+
+	void
+	load_params (Params::Waveshaper& params);
 
 	/**
-	 * Simpler implementation of Gloubi-boulga waveshaper
-	 * x - 0.15 * x^2 - 0.15 * x^3
+	 * Updates Params structure from widgets.
 	 */
-	Sample
-	waveshape_gloubi_boulga_simple (Sample x)
-	{
-		x = bound (x, -1.0f, +1.0f);
-		return x - 0.15f * x * x - 0.15f * x * x * x;
-	}
-
-	/**
-	 * Simple cubic waveshaper
-	 * <http://musicdsp.org/showArchiveComment.php?ArchiveID=114>
-	 */
-	Sample
-	waveshape_warmth (Sample x)
-	{
-		x = bound (x, -1.0f, +1.0f);
-		return 1.5f * x - 0.5f * x * x * x;
-	}
+	void
+	update_params();
 
   private slots:
 	void
 	set_type (int type);
 
+	void
+	update_widgets();
+
   private:
 	Mikuru*				_mikuru;
 	int					_id;
 	Params::Waveshaper	_params;
+	bool				_loading_params;
 
+	Shapers				_shapers;
 	QComboBox*			_waveshaper_type_combo;
-	Atomic<int>			_waveshaper_type;
+	Atomic<Shaper*>		_waveshaper_type;
 
 	Haruhi::Knob*		_knob_gain;
+	Haruhi::Knob*		_knob_parameter;
 
 	Haruhi::PortGroup*	_port_group;
 	Haruhi::EventPort*	_port_gain;
+	Haruhi::EventPort*	_port_parameter;
 };
 
 } // namespace MikuruPrivate
+
+// Qt sucks rather hardly. This must be in global namespace:
+Q_DECLARE_METATYPE (MikuruPrivate::Shaper*);
 
 #endif
 
