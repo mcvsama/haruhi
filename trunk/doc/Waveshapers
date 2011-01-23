@@ -15,7 +15,7 @@ Gloubi-boulga simple
 	Code:
 	x - 0.15 * x^2 - 0.15 * x^3
 
-Simple cubic waveshaper
+Simple cubic waveshaper (Warmth)
 <http://musicdsp.org/showArchiveComment.php?ArchiveID=114>
 
 	Type: Polynomial; Distortion

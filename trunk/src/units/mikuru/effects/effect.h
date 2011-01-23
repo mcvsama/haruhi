@@ -19,6 +19,7 @@
 
 // Qt:
 #include <QtGui/QWidget>
+#include <QtGui/QGroupBox>
 
 // Haruhi:
 #include <haruhi/graph/audio_buffer.h>
@@ -43,6 +44,13 @@ class Effect: public QWidget
 
 	virtual void
 	process (Haruhi::AudioBuffer* data, unsigned int channel) = 0;
+
+  protected:
+	QWidget*
+	parent_widget() const;
+
+  private:
+	QGroupBox*	_effect_panel;
 };
 
 } // namespace MikuruPrivate

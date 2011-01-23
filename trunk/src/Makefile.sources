@@ -386,6 +386,8 @@ SRC_SOURCES += units/mikuru/effects/effect.cc
 SRC_SOURCES += units/mikuru/effects/reverb.cc
 SRC_SOURCES += units/mikuru/effects/waveshaper.cc
 
+SRC_MOCHDRS += units/mikuru/effects/waveshaper.h
+
 ######## /units/mikuru/envelopes ########
 
 SRC_HEADERS += units/mikuru/envelopes/adsr.h

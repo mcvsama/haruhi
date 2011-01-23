@@ -20,11 +20,17 @@
 
 // Qt:
 #include <QtGui/QWidget>
+#include <QtGui/QComboBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/graph/audio_port.h>
+#include <haruhi/widgets/knob.h>
+#include <haruhi/utility/atomic.h>
+#include <haruhi/utility/numeric.h>
 
 // Local:
+#include "../params.h"
 #include "effect.h"
 
 
@@ -36,6 +42,8 @@ using Haruhi::Sample;
 
 class Waveshaper: public Effect
 {
+	Q_OBJECT
+
   public:
 	Waveshaper (int id, Mikuru* mikuru, QWidget* parent);
 
@@ -67,6 +75,7 @@ class Waveshaper: public Effect
 	Sample
 	waveshape_gloubi_boulga_simple (Sample x)
 	{
+		x = bound (x, -1.0f, +1.0f);
 		return x - 0.15f * x * x - 0.15f * x * x * x;
 	}
 
@@ -75,14 +84,28 @@ class Waveshaper: public Effect
 	 * <http://musicdsp.org/showArchiveComment.php?ArchiveID=114>
 	 */
 	Sample
-	waveshape_power3 (Sample x)
+	waveshape_warmth (Sample x)
 	{
+		x = bound (x, -1.0f, +1.0f);
 		return 1.5f * x - 0.5f * x * x * x;
 	}
 
+  private slots:
+	void
+	set_type (int type);
+
   private:
-	Mikuru*	_mikuru;
-	int		_id;
+	Mikuru*				_mikuru;
+	int					_id;
+	Params::Waveshaper	_params;
+
+	QComboBox*			_waveshaper_type_combo;
+	Atomic<int>			_waveshaper_type;
+
+	Haruhi::Knob*		_knob_gain;
+
+	Haruhi::PortGroup*	_port_group;
+	Haruhi::EventPort*	_port_gain;
 };
 
 } // namespace MikuruPrivate

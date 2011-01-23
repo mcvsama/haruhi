@@ -606,6 +606,36 @@ Params::EG::sanitize()
 	}
 }
 
+
+Params::Waveshaper::Waveshaper():
+	// Controller:
+	HARUHI_MIKURU_CONSTRUCT (gain, Gain),
+	// Non-controller:
+	enabled (0, 1, 1)
+{
+}
+
+
+void
+Params::Waveshaper::set_controller_params (Waveshaper& other)
+{
+	HARUHI_MIKURU_COPY (gain)
+}
+
+
+void
+Params::Waveshaper::set_non_controller_params (Waveshaper& other)
+{
+	HARUHI_MIKURU_COPY (enabled)
+}
+
+
+void
+Params::Waveshaper::sanitize()
+{
+	HARUHI_MIKURU_SANITIZE (gain)
+}
+
 } // namespace MikuruPrivate
 
 #undef HARUHI_MIKURU_COPY_ATOMIC

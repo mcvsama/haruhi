@@ -364,6 +364,22 @@ struct Params
 		Haruhi::Param<unsigned int> values[MaxPoints];
 		Haruhi::Param<unsigned int> durations[MaxPoints];
 	};
+
+	/**
+	 * Effect: Waveshaper
+	 */
+	struct Waveshaper
+	{
+		HARUHI_MIKURU_PARAMS_STANDARD_METHODS (Waveshaper)
+
+		enum {
+			HARUHI_MIKURU_PARAM (Gain,					       0,	+1000000,	 +100000,	 +100000)
+		};
+
+		Haruhi::ControllerParam gain;
+
+		Haruhi::Param<int> enabled;
+	};
 };
 
 } // namespace MikuruPrivate
