@@ -51,7 +51,7 @@ PartEffects::PartEffects (Part* part, Mikuru* mikuru, QWidget* parent):
 	_placeholder = new QLabel ("Add effects with \"Add effect\" button.", this);
 	_placeholder->setAlignment (Qt::AlignCenter);
 
-	_tabs = new QTabWidget (_stack);
+	_tabs = new QTabWidget (this);
 	_tabs->setMovable (true);
 
 	_stack = new QStackedWidget (this);
