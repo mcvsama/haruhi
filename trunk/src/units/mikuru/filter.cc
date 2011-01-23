@@ -276,7 +276,8 @@ Filter::update_widgets()
 	_panel->setEnabled (_params.enabled.get());
 	_limiter_enabled->setEnabled (ft == RBJImpulseResponse::LowPass || ft == RBJImpulseResponse::HighPass || ft == RBJImpulseResponse::BandPass ||
 								  ft == RBJImpulseResponse::LowShelf || ft == RBJImpulseResponse::HighShelf);
-	// TODO update freq.respones (grid dB) according to _params.passes
+	_response_plot->set_num_passes (_params.passes);
+	_response_plot->replot();
 }
 
 
