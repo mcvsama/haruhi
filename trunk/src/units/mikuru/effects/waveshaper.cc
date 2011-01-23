@@ -162,11 +162,7 @@ Waveshaper::~Waveshaper()
 void
 Waveshaper::process (Haruhi::AudioBuffer* buffer, unsigned int channel)
 {
-	Shaper* shaper = _waveshaper_type.load();
-	if (!shaper)
-		return;
-
-	Shaper::Function f = shaper->function;
+	Shaper::Function f = current_shaper()->function;
 	float gain = _params.gain.to_f();
 	float parameter = _params.parameter.to_f();
 
@@ -187,6 +183,7 @@ Waveshaper::load_params()
 	_waveshaper_type_combo->setCurrentIndex (p.type);
 
 	_loading_params = false;
+	update_widgets();
 }
 
 
@@ -207,7 +204,6 @@ Waveshaper::update_params()
 	Effect::update_params();
 
 	_params.type.set (_waveshaper_type_combo->currentIndex());
-	_waveshaper_type.store (_waveshaper_type_combo->itemData (_params.type.get()).value<Shaper*> ());
 
 	// Knob params are updated automatically using #assign_parameter.
 
@@ -216,15 +212,16 @@ Waveshaper::update_params()
 
 
 void
-Waveshaper::set_type (int type)
+Waveshaper::update_widgets()
 {
+	_knob_parameter->setEnabled (current_shaper()->has_parameter);
 }
 
 
-void
-Waveshaper::update_widgets()
+Shaper*
+Waveshaper::current_shaper()
 {
-	_knob_parameter->setEnabled (_waveshaper_type.load()->has_parameter);
+	return _waveshaper_type_combo->itemData (_params.type.get()).value<Shaper*>();
 }
 
 } // namespace MikuruPrivate

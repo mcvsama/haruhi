@@ -118,10 +118,11 @@ class Waveshaper: public Effect
 
   private slots:
 	void
-	set_type (int type);
-
-	void
 	update_widgets();
+
+  private:
+	Shaper*
+	current_shaper();
 
   private:
 	Mikuru*				_mikuru;
@@ -131,7 +132,6 @@ class Waveshaper: public Effect
 
 	Shapers				_shapers;
 	QComboBox*			_waveshaper_type_combo;
-	Atomic<Shaper*>		_waveshaper_type;
 
 	Haruhi::Knob*		_knob_gain;
 	Haruhi::Knob*		_knob_parameter;

@@ -560,14 +560,16 @@ Patch::load_state (QDomElement const& element)
 
 								create_parameters (e, parameters);
 
-								load_parameter (parameters, "enabled", params->enabled);
-								load_parameter (parameters, "type", params->type);
-								load_parameter (parameters, "passes", params->passes);
-								load_parameter (parameters, "limiter-enabled", params->limiter_enabled);
+								// Knobs:
 								load_parameter (parameters, "frequency", filter->_knob_frequency);
 								load_parameter (parameters, "resonance", filter->_knob_resonance);
 								load_parameter (parameters, "gain", filter->_knob_gain);
 								load_parameter (parameters, "attenuation", filter->_knob_attenuation);
+								// Other:
+								load_parameter (parameters, "enabled", params->enabled);
+								load_parameter (parameters, "type", params->type);
+								load_parameter (parameters, "passes", params->passes);
+								load_parameter (parameters, "limiter-enabled", params->limiter_enabled);
 
 								filter->load_params();
 							}
@@ -575,6 +577,25 @@ Patch::load_state (QDomElement const& element)
 					}
 
 					part_filters->load_params();
+				}
+				else if (e.tagName() == "effect")
+				{
+					if (e.attribute ("type") == "waveshaper")
+					{
+						Waveshaper* waveshaper = part->effects()->add_waveshaper (e.attribute ("id").toInt());
+						Params::Waveshaper* params = waveshaper->params();
+
+						create_parameters (e, parameters);
+
+						// Knobs:
+						load_parameter (parameters, "gain", waveshaper->_knob_gain);
+						load_parameter (parameters, "parameter", waveshaper->_knob_parameter);
+						// Other:
+						load_parameter (parameters, "enabled", params->enabled);
+						load_parameter (parameters, "type", params->type);
+
+						waveshaper->load_params();
+					}
 				}
 			}
 		}
