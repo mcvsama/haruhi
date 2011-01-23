@@ -167,7 +167,8 @@ Knob::SpinBox::set_volume_scale (bool setting, float exp)
 {
 	_volume_scale = setting;
 	_volume_scale_exp = exp;
-	update();
+	// Update does not call textFromValue, so it does not update text in spinbox:
+	setValue (value());
 }
 
 
@@ -262,7 +263,6 @@ Knob::Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_
 
 	QObject::connect (_dial_control, SIGNAL (valueChanged (int)), this, SLOT (dial_changed (int)));
 	QObject::connect (_spin_box, SIGNAL (valueChanged (int)), this, SLOT (spin_changed (int)));
-
 }
 
 

@@ -64,6 +64,9 @@ PartFilters::PartFilters (Part* part, Haruhi::PortGroup* filter_ports, QString c
 	filters_layout->addWidget (_filter1);
 	filters_layout->addWidget (_filter2);
 	filters_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
+
+	_filter1->unit_bay_assigned();
+	_filter2->unit_bay_assigned();
 }
 
 
@@ -107,14 +110,6 @@ PartFilters::process_filters (Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& b
 
 
 void
-PartFilters::unit_bay_assigned()
-{
-	_filter1->unit_bay_assigned();
-	_filter2->unit_bay_assigned();
-}
-
-
-void
 PartFilters::load_params()
 {
 	Params::PartFilters p = _params;
@@ -150,7 +145,6 @@ PartFilters::update_params()
 void
 PartFilters::update_widgets()
 {
-	// TODO update scales according to number of passes	
 }
 
 

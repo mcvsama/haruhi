@@ -16,7 +16,6 @@
 #include <set>
 
 // Haruhi:
-#include <haruhi/dsp/one_pole_smoother.h>
 #include <haruhi/utility/thread.h>
 
 // Local:
@@ -38,8 +37,6 @@ SynthThread::SynthThread (Mikuru* mikuru):
 		_mikuru->graph()->lock();
 	std::size_t bs = _mikuru->graph()->buffer_size();
 	_voice_commons = new VoiceCommons (bs);
-	_buffer_1 = new Haruhi::AudioBuffer (bs);
-	_buffer_2 = new Haruhi::AudioBuffer (bs);
 	if (_mikuru->graph())
 		_mikuru->graph()->unlock();
 	// 32k stack will be sufficient:
@@ -57,8 +54,6 @@ SynthThread::~SynthThread()
 		(*_voices.begin())->set_thread (0);
 	if (_mikuru->graph())
 		_mikuru->graph()->unlock();
-	delete _buffer_1;
-	delete _buffer_2;
 	delete _voice_commons;
 }
 
@@ -91,8 +86,6 @@ SynthThread::resize_buffers (std::size_t buffers_size)
 	if (_mikuru->graph())
 		_mikuru->graph()->lock();
 	voice_commons()->resize_buffers (buffers_size);
-	_buffer_1->resize (buffers_size);
-	_buffer_2->resize (buffers_size);
 	if (_mikuru->graph())
 		_mikuru->graph()->unlock();
 }
@@ -109,38 +102,9 @@ SynthThread::run()
 		if (_exit.try_wait())
 			break;
 
-		_buffer_1->clear();
-		_buffer_2->clear();
-
 		// Mixin voices:
 		for (Voices::iterator v = _voices.begin(); v != _voices.end(); ++v)
-			(*v)->mixin (_buffer_1, _buffer_2);
-
-		// Stereo width:
-		// TODO smoothing
-		float w = std::pow (1.0f - _mikuru->general()->params()->stereo_width.to_f(), M_E);
-		Sample o1, o2;
-		for (Sample *s1 = _buffer_1->begin(), *s2 = _buffer_2->begin(); s1 != _buffer_1->end(); ++s1, ++s2)
-		{
-			o1 = *s1;
-			o2 = *s2;
-			*s1 += w * o2;
-			*s2 += w * o1;
-		}
-
-		// Panorama:
-		float const samples = 0.005f * _mikuru->graph()->sample_rate();
-		_panorama_smoother_1.set_samples (samples);
-		_panorama_smoother_2.set_samples (samples);
-
-		float f = 0.0;
-		f = 1.0f - 1.0f * _mikuru->general()->params()->panorama.get() / Params::General::PanoramaMax;
-		f = f > 1.0f ? 1.0 : f;
-		_panorama_smoother_1.multiply (_buffer_1->begin(), _buffer_1->end(), f);
-
-		f = 1.0f - 1.0f * _mikuru->general()->params()->panorama.get() / Params::General::PanoramaMin;
-		f = f > 1.0f ? 1.0 : f;
-		_panorama_smoother_2.multiply (_buffer_2->begin(), _buffer_2->end(), f);
+			(*v)->mixin ((*v)->voice_manager()->part()->buffer1(), (*v)->voice_manager()->part()->buffer2());
 
 		_done.post();
 	}

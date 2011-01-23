@@ -236,6 +236,7 @@ void
 Controller::save_state (QDomElement& element) const
 {
 	element.setAttribute ("name", _name);
+	element.setAttribute ("smoothing", smoothing);
 
 	QDomElement note_filter_el = element.ownerDocument().createElement ("note-filter");
 	note_filter_el.setAttribute ("enabled", note_filter ? "true" : "false");
@@ -273,6 +274,7 @@ void
 Controller::load_state (QDomElement const& element)
 {
 	_name = element.attribute ("name", "<unnamed>");
+	smoothing = element.attribute ("smoothing", "0").toInt();
 
 	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
 	{

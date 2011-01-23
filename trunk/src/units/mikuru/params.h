@@ -266,14 +266,6 @@ struct Params
 	};
 
 	/**
-	 * Waveshaper params.
-	 */
-	struct Waveshaper
-	{
-		HARUHI_MIKURU_PARAMS_STANDARD_METHODS (Waveshaper)
-	};
-
-	/**
 	 * Envelope: ADSR
 	 */
 	struct ADSR
@@ -371,6 +363,34 @@ struct Params
 		Haruhi::Param<unsigned int> sustain_point;
 		Haruhi::Param<unsigned int> values[MaxPoints];
 		Haruhi::Param<unsigned int> durations[MaxPoints];
+	};
+
+	/**
+	 * Base class for effects params
+	 */
+	struct Effect
+	{
+		HARUHI_MIKURU_PARAMS_STANDARD_METHODS (Effect)
+
+		Haruhi::Param<int> enabled;
+	};
+
+	/**
+	 * Effect: Waveshaper
+	 */
+	struct Waveshaper: public Effect
+	{
+		HARUHI_MIKURU_PARAMS_STANDARD_METHODS (Waveshaper)
+
+		enum {
+			HARUHI_MIKURU_PARAM (Gain,					       0,	+1000000,	 +100000,	 +100000)
+			HARUHI_MIKURU_PARAM (Parameter,				       0,	+1000000,	+1000000,	 +500000)
+		};
+
+		Haruhi::ControllerParam gain;
+		Haruhi::ControllerParam parameter;
+
+		Haruhi::Param<int> type;
 	};
 };
 

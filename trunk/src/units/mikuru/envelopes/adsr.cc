@@ -53,6 +53,7 @@ ADSR::ADSR (int id, Mikuru* mikuru, QWidget* parent):
 	create_ports();
 	create_knobs (knobs_panel);
 	create_widgets (knobs_panel);
+	update_params();
 	update_plot();
 }
 
@@ -62,7 +63,6 @@ ADSR::~ADSR()
 	_plot->assign_envelope (0);
 	_mikuru->free_id ("adsrs", _id);
 
-	// Delete knobs before ControllerProxies:
 	delete _knob_delay;
 	delete _knob_attack;
 	delete _knob_attack_hold;

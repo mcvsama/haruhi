@@ -28,7 +28,9 @@
 #include "patch.h"
 #include "envelopes.h"
 #include "common_filters.h"
+#include "part_effects.h"
 #include "part_filters.h"
+#include "effects/waveshaper.h"
 #include "envelopes/adsr.h"
 #include "envelopes/eg.h"
 #include "envelopes/lfo.h"
@@ -227,8 +229,40 @@ Patch::save_state (QDomElement& element) const
 			filters_element.appendChild (filter2_element);
 		}
 
+		// Part effects sorted by their tab-position:
+		std::multimap<int, QDomElement> sorted_effects;
+		(*pt)->effects()->effects_mutex().lock();
+		{
+			PartEffects* part_effects = (*pt)->effects();
+			for (PartEffects::EffectsList::iterator ef = part_effects->effects().begin(); ef != part_effects->effects().end(); ++ef)
+			{
+				QDomElement effect_element = element.ownerDocument().createElement ("effect");
+				Waveshaper* waveshaper;
+
+				if ((waveshaper = dynamic_cast<Waveshaper*> (*ef)))
+				{
+					Params::Waveshaper params (*waveshaper->params());
+
+					effect_element.setAttribute ("type", "waveshaper");
+					effect_element.setAttribute ("id", waveshaper->id());
+					// Knobs:
+					save_parameter (effect_element, "gain", waveshaper->_knob_gain);
+					save_parameter (effect_element, "parameter", waveshaper->_knob_parameter);
+					// Other:
+					save_parameter (effect_element, "enabled", params.enabled);
+					save_parameter (effect_element, "type", params.type);
+				}
+
+				// Tab position:
+				sorted_effects.insert (std::make_pair ((*pt)->effects()->effect_tab_position (*ef), effect_element));
+			}
+		}
+		(*pt)->effects()->effects_mutex().unlock();
+
 		part_element.appendChild (oscillator_element);
 		part_element.appendChild (filters_element);
+		for (std::multimap<int, QDomElement>::iterator e = sorted_effects.begin(); e != sorted_effects.end(); ++e)
+			part_element.appendChild (e->second);
 		// Tab position:
 		sorted_parts.insert (std::make_pair (_mikuru->part_tab_position (*pt), part_element));
 	}
@@ -237,6 +271,7 @@ Patch::save_state (QDomElement& element) const
 
 	// Envelopes sorted by their tab-position:
 	std::multimap<int, QDomElement> sorted_envelopes;
+	_mikuru->general()->envelopes()->envelopes_mutex().lock();
 	for (Envelopes::EnvelopesList::iterator en = _mikuru->general()->envelopes()->envelopes().begin(); en != _mikuru->general()->envelopes()->envelopes().end(); ++en)
 	{
 		QDomElement envelope_element = element.ownerDocument().createElement ("envelope");
@@ -316,6 +351,7 @@ Patch::save_state (QDomElement& element) const
 		// Tab position:
 		sorted_envelopes.insert (std::make_pair (_mikuru->general()->envelopes()->envelope_tab_position (*en), envelope_element));
 	}
+	_mikuru->general()->envelopes()->envelopes_mutex().unlock();
 	for (std::multimap<int, QDomElement>::iterator e = sorted_envelopes.begin(); e != sorted_envelopes.end(); ++e)
 		element.appendChild (e->second);
 
@@ -524,14 +560,16 @@ Patch::load_state (QDomElement const& element)
 
 								create_parameters (e, parameters);
 
-								load_parameter (parameters, "enabled", params->enabled);
-								load_parameter (parameters, "type", params->type);
-								load_parameter (parameters, "passes", params->passes);
-								load_parameter (parameters, "limiter-enabled", params->limiter_enabled);
+								// Knobs:
 								load_parameter (parameters, "frequency", filter->_knob_frequency);
 								load_parameter (parameters, "resonance", filter->_knob_resonance);
 								load_parameter (parameters, "gain", filter->_knob_gain);
 								load_parameter (parameters, "attenuation", filter->_knob_attenuation);
+								// Other:
+								load_parameter (parameters, "enabled", params->enabled);
+								load_parameter (parameters, "type", params->type);
+								load_parameter (parameters, "passes", params->passes);
+								load_parameter (parameters, "limiter-enabled", params->limiter_enabled);
 
 								filter->load_params();
 							}
@@ -539,6 +577,25 @@ Patch::load_state (QDomElement const& element)
 					}
 
 					part_filters->load_params();
+				}
+				else if (e.tagName() == "effect")
+				{
+					if (e.attribute ("type") == "waveshaper")
+					{
+						Waveshaper* waveshaper = part->effects()->add_waveshaper (e.attribute ("id").toInt());
+						Params::Waveshaper* params = waveshaper->params();
+
+						create_parameters (e, parameters);
+
+						// Knobs:
+						load_parameter (parameters, "gain", waveshaper->_knob_gain);
+						load_parameter (parameters, "parameter", waveshaper->_knob_parameter);
+						// Other:
+						load_parameter (parameters, "enabled", params->enabled);
+						load_parameter (parameters, "type", params->type);
+
+						waveshaper->load_params();
+					}
 				}
 			}
 		}

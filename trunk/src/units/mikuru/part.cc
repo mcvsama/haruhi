@@ -24,6 +24,7 @@
 #include "oscillator.h"
 #include "filter.h"
 #include "part_filters.h"
+#include "part_effects.h"
 
 
 namespace MikuruPrivate {
@@ -40,12 +41,16 @@ Part::Part (Mikuru* mikuru, QWidget* parent):
 	_voice_manager = new VoiceManager (this);
 	_port_group = new Haruhi::PortGroup (_mikuru->graph(), QString ("Part %1").arg (id()).toStdString());
 
+	_buffer_1 = new Haruhi::AudioBuffer();
+	_buffer_2 = new Haruhi::AudioBuffer();
+
 	// Tabs/widgets:
 
 	QTabWidget* tabs = new QTabWidget (this);
 
 	_oscillator = new Oscillator (this, _port_group, "Oscillator", _mikuru, tabs);
 	_filters = new PartFilters (this, _port_group, "Filter", _mikuru, tabs);
+	_effects = new PartEffects (this, _mikuru, tabs);
 
 	// Top part widgets:
 
@@ -57,6 +62,7 @@ Part::Part (Mikuru* mikuru, QWidget* parent):
 	tabs->addTab (_oscillator, "Oscillator");
 	tabs->addTab (new QWidget(), "Modulator");
 	tabs->addTab (_filters, "Filters");
+	tabs->addTab (_effects, "Effects");
 	tabs->showPage (_oscillator);
 
 	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
@@ -71,6 +77,9 @@ Part::~Part()
 	delete _voice_manager;
 	delete _port_group;
 	_filters->delete_ports();
+
+	delete _buffer_1;
+	delete _buffer_2;
 }
 
 
@@ -79,6 +88,25 @@ Part::process_events()
 {
 	_oscillator->process_events();
 	_filters->process_events();
+}
+
+
+void
+Part::prepare_buffers()
+{
+	_buffer_1->resize (_mikuru->graph()->buffer_size());
+	_buffer_2->resize (_mikuru->graph()->buffer_size());
+
+	_buffer_1->clear();
+	_buffer_2->clear();
+}
+
+
+void
+Part::process_effects()
+{
+	_effects->process (_buffer_1, 0);
+	_effects->process (_buffer_2, 1);
 }
 
 

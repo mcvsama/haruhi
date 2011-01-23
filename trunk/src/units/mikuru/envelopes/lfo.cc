@@ -155,6 +155,7 @@ LFO::LFO (int id, Mikuru* mikuru, QWidget* parent):
 	create_ports();
 	create_knobs (knobs_panel);
 	create_widgets (knobs_panel);
+	update_params();
 	update_plot();
 	update_widgets();
 	reset_common_osc();

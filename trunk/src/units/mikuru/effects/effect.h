@@ -11,76 +11,64 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__UNITS__MIKURU__WAVESHAPER_H__INCLUDED
-#define HARUHI__UNITS__MIKURU__WAVESHAPER_H__INCLUDED
+#ifndef HARUHI__UNITS__MIKURU__EFFECTS__EFFECT_H__INCLUDED
+#define HARUHI__UNITS__MIKURU__EFFECTS__EFFECT_H__INCLUDED
 
 // Standard:
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QComboBox>
-#include <QtGui/QCheckBox>
+#include <QtGui/QWidget>
+#include <QtGui/QPushButton>
 
 // Haruhi:
 #include <haruhi/graph/audio_buffer.h>
-#include <haruhi/widgets/knob.h>
 
 // Local:
-#include "widgets.h"
-#include "params.h"
+#include "../params.h"
+#include "effect.h"
 
 
 class Mikuru;
 
 namespace MikuruPrivate {
 
-class Part;
-
-class Waveshaper: public QWidget
+class Effect: public QWidget
 {
-	Q_OBJECT
-
-	friend class Patch;
-
   public:
-	Waveshaper (Part* part, Haruhi::PortGroup* port_group, QString const& port_prefix, Mikuru* mikuru, QWidget* parent);
+	Effect (QWidget* parent);
 
-	~Waveshaper();
+	virtual ~Effect() { }
 
-	Params::Waveshaper*
-	params() { return &_params; }
+	virtual int
+	id() const = 0;
 
-	void
-	process (Haruhi::AudioBuffer* buffer1, Haruhi::AudioBuffer* buffer2);
+	virtual void
+	process (Haruhi::AudioBuffer* data, unsigned int channel) = 0;
 
   public slots:
 	/**
 	 * Loads widgets values from Params struct.
 	 */
-	void
+	virtual void
 	load_params();
 
 	/**
 	 * Updates Params structure from widgets.
 	 */
-	void
+	virtual void
 	update_params();
 
-	/**
-	 * Updates widgets.
-	 */
-	void
-	update_widgets();
+  protected:
+	virtual Params::Effect&
+	effect_params() = 0;
+
+	QWidget*
+	parent_widget() const;
 
   private:
-	Mikuru*				_mikuru;
-	Part*				_part;
-	Params::Waveshaper	_params;
-	bool				_loading_params;
-
-	// Knobs:
-	Haruhi::Knob*		_control;
-	int					_i;// TODO temporary
+	QWidget*		_effect_panel;
+	QPushButton*	_enabled_button;
 };
 
 } // namespace MikuruPrivate

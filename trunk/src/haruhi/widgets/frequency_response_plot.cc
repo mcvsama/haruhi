@@ -31,7 +31,7 @@ namespace Haruhi {
 
 FrequencyResponsePlot::FrequencyResponsePlot (QWidget* parent, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
-	_double_scale (false),
+	_num_passes (1.0f),
 	_to_repaint_buffer (false),
 	_to_replot (false),
 	_last_enabled_state (isEnabled()),
@@ -43,7 +43,7 @@ FrequencyResponsePlot::FrequencyResponsePlot (QWidget* parent, const char* name)
 
 FrequencyResponsePlot::FrequencyResponsePlot (DSP::ImpulseResponse* impulse_response, QWidget* parent, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
-	_double_scale (false),
+	_num_passes (1.0f),
 	_to_repaint_buffer (false),
 	_to_replot (false),
 	_last_enabled_state (isEnabled()),
@@ -60,9 +60,9 @@ FrequencyResponsePlot::~FrequencyResponsePlot()
 
 
 void
-FrequencyResponsePlot::set_double_scale (bool set)
+FrequencyResponsePlot::set_num_passes (float num_passes)
 {
-	_double_scale = set;
+	_num_passes = num_passes;
 	repaint_grid();
 	replot();
 }
@@ -89,7 +89,7 @@ FrequencyResponsePlot::replot (bool force)
 			for (int x = 0; x < n; ++x)
 			{
 				float k = std::exp (1.0f * x / n * std::log (static_cast<float> (MaxFreq))) + MinFreq;
-				_values[x] = 10.0 * std::log10 (_impulse_response->response (k / s + 1.0 / (2 * MaxFreq)));
+				_values[x] = _num_passes * 10.0 * std::log10 (_impulse_response->response (k / s + 1.0 / (2 * MaxFreq)));
 			}
 			_to_repaint_buffer = true;
 			_to_replot = false;
@@ -195,8 +195,9 @@ FrequencyResponsePlot::repaint_grid()
 	{
 		float pos = log_meter (*db, lower_db, upper_db) * h;
 		painter.drawLine (0, h - pos, w, h - pos);
+		float const scale = 1.0f;
 		if (*db >= -40)
-			painter.drawText (3, h - pos - 2, QString::number (std::abs ((_double_scale ? 2.0f : 1.0f) * *db)) + ((*db == 0) ? " dB" : ""));
+			painter.drawText (3, h - pos - 2, QString::number (std::abs (scale * *db)) + ((*db == 0) ? " dB" : ""));
 	}
 
 	// 0dB line:

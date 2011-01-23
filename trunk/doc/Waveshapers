@@ -1,0 +1,81 @@
+Gloubi-boulga
+<http://musicdsp.org/showArchiveComment.php?ArchiveID=86>
+
+	References : Laurent de Soras on IRC
+
+	Notes: Multiply input by gain before processing
+
+	Code:
+	const double x = input * 0.686306;
+	const double a = 1 + exp (sqrt (fabs (x)) * -0.75);
+	output = (exp (x) - exp (-x * a)) / (exp (x) + exp (-x));
+
+Gloubi-boulga simple
+
+	Code:
+	x - 0.15 * x^2 - 0.15 * x^3
+
+Simple cubic waveshaper (Warmth)
+<http://musicdsp.org/showArchiveComment.php?ArchiveID=114>
+
+	Type: Polynomial; Distortion
+	References: Posted by Jon Watte
+
+	Notes:
+	> The other question; what's a 'waveshaper' algorithm. Is it simply another
+	> word for distortion?
+
+	A typical "waveshaper" is some function which takes an input sample value
+	X and transforms it to an output sample X'. A typical implementation would
+	be a look-up table of some number of points, and some level of interpolation
+	between those points (say, cubic). When people talk about a wave shaper,
+	this is most often what they mean. Note that a wave shaper, as opposed to a
+	filter, does not have any state. The mapping from X -> X' is stateless.
+
+	Some wave shapers are implemented as polynomials, or using other math
+	functions. Hard clipping is a wave shaper implemented using the min() and
+	max() functions (or the three-argument clamp() function, which is the same
+	thing). A very mellow and musical-sounding distortion is implemented using
+	a third-degree polynomial; something like X' = (3/2)X - (1/2)X^3. The nice
+	thing with polynomial wave shapers is that you know that the maximum they
+	will expand bandwidth is their order. Thus, you need to oversample 3x to
+	make sure that a third-degree polynomial is aliasing free. With a lookup
+	table based wave shaper, you don't know this (unless you treat an N-point
+	table as an N-point polynomial :-)
+
+	Code:
+	return 1.5f * in - 0.5f * in *in * in;
+
+Saturation
+<http://musicdsp.org/showArchiveComment.php?ArchiveID=43>
+
+	Type: waveshaper
+	References: Posted by Jon Watte
+
+	Notes:
+	A favourite of mine is using a sin() function instead.
+	This will have the "unfortunate" side effect of removing
+	odd harmonics if you take it to the extreme: a triangle
+	wave gets mapped to a pure sine wave.
+	This will work with a going from .1 or so to a= 5 and bigger!
+	The mathematical limits for a = 0 actually turns it into a linear
+	function at that point, but unfortunately FPUs aren't that good
+	with calculus :-) Once a goes above 1, you start getting clipping
+	in addition to the "soft" wave shaping. It starts getting into
+	more of an effect and less of a mastering tool, though :-)
+
+	Seeing as this is just various forms of wave shaping, you
+	could do it all with a look-up table, too. In my version, that would
+	get rid of the somewhat-expensive sin() function.
+
+	Code:
+	(input: a == "overdrive amount")
+
+	z = M_PI * a;
+	s = 1/sin(z)
+	b = 1/a
+
+	if (x > b)
+		f(x) = 1
+	else
+		f(x) = sin(z*x)*s

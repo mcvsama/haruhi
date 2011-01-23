@@ -430,6 +430,8 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 
 	QGroupBox* group2 = new QGroupBox (this);
 	QVBoxLayout* group2_layout = new QVBoxLayout (group2);
+	group2_layout->setMargin (2 * Config::Margin);
+	group2_layout->setSpacing (Config::Spacing);
 	group2_layout->addWidget (_monophonic);
 	group2_layout->addWidget (_monophonic_retrigger);
 	group2_layout->addItem (new QSpacerItem (0, 10, QSizePolicy::Fixed, QSizePolicy::Fixed));

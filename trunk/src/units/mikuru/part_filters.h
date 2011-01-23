@@ -38,6 +38,7 @@ class Mikuru;
 namespace MikuruPrivate {
 
 class Filter;
+class Part;
 
 class PartFilters:
 	public QWidget,
@@ -70,9 +71,6 @@ class PartFilters:
 
 	void
 	process_filters (Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer1, Haruhi::AudioBuffer& buffer2, Haruhi::AudioBuffer& output);
-
-	void
-	unit_bay_assigned();
 
 	Mikuru*
 	mikuru() const { return _mikuru; }

@@ -24,6 +24,7 @@
 
 // Haruhi:
 #include <haruhi/application/haruhi.h>
+#include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/wave.h>
 
 // Local:
@@ -39,7 +40,7 @@ namespace MikuruPrivate {
 class Waveform;
 class Oscillator;
 class PartFilters;
-class Waveshaper;
+class PartEffects;
 
 class Part: public QWidget
 {
@@ -74,6 +75,21 @@ class Part: public QWidget
 	PartFilters*
 	filters() const { return _filters; }
 
+	PartEffects*
+	effects() const { return _effects; }
+
+	Haruhi::AudioBuffer*
+	buffer1() const { return _buffer_1; }
+
+	Haruhi::AudioBuffer*
+	buffer2() const { return _buffer_2; }
+
+	void
+	prepare_buffers();
+
+	void
+	process_effects();
+
   public slots:
 	void
 	load_params();
@@ -93,10 +109,15 @@ class Part: public QWidget
 	VoiceManager*			_voice_manager;
 	Haruhi::PortGroup*		_port_group;
 
+	// Output buffers:
+	Haruhi::AudioBuffer*	_buffer_1;
+	Haruhi::AudioBuffer*	_buffer_2;
+
 	// Widgets:
 	StyledCheckBoxLabel*	_part_enabled;
 	Oscillator*				_oscillator;
 	PartFilters*			_filters;
+	PartEffects*			_effects;
 };
 
 } // namespace MikuruPrivate

@@ -45,8 +45,12 @@ class FrequencyResponsePlot: public QWidget
 
 	virtual ~FrequencyResponsePlot();
 
+	/**
+	 * Sets number of passes the same filter will be applied.
+	 * Causes plot to be rendered differently.
+	 */
 	void
-	set_double_scale (bool set);
+	set_num_passes (float num_passes);
 
 	/**
 	 * Assigns ImpulseResponse to this plot.
@@ -89,7 +93,7 @@ class FrequencyResponsePlot: public QWidget
 
   private:
 	Graph*					_graph;
-	bool					_double_scale;
+	float					_num_passes;
 	QPixmap					_double_buffer;
 	QPixmap					_grid_buffer;
 	bool					_to_repaint_buffer;
