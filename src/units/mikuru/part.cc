@@ -18,6 +18,9 @@
 // Qt:
 #include <QtGui/QWhatsThis>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 // Local:
 #include "mikuru.h"
 #include "part.h"
@@ -59,10 +62,10 @@ Part::Part (Mikuru* mikuru, QWidget* parent):
 	QObject::connect (_part_enabled->checkbox(), SIGNAL (clicked()), this, SLOT (update_params()));
 
 	// Add tabs:
-	tabs->addTab (_oscillator, "Oscillator");
+	tabs->addTab (_oscillator, Resources::Icons16::wave_sine(), "Oscillator");
 	tabs->addTab (new QWidget(), "Modulator");
-	tabs->addTab (_filters, "Filters");
-	tabs->addTab (_effects, "Effects");
+	tabs->addTab (_filters, Resources::Icons16::filters(), "Filters");
+	tabs->addTab (_effects, Resources::Icons16::effects(), "Effects");
 	tabs->showPage (_oscillator);
 
 	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);

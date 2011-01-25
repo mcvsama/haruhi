@@ -108,7 +108,7 @@ Mikuru::Mikuru (std::string const& urn, std::string const& title, int id, QWidge
 	_common_filters = new Private::CommonFilters (this, this);
 
 	_tabs_widget->addTab (_general, Resources::Icons16::mikuru(), "+ LFO/EG");
-	_tabs_widget->addTab (_common_filters, "Filters");
+	_tabs_widget->addTab (_common_filters, Resources::Icons16::filters(), "Filters");
 
 	QVBoxLayout* layout = new QVBoxLayout (this, 0, Config::Spacing);
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
