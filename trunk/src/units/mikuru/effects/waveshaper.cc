@@ -18,6 +18,7 @@
 
 // Qt:
 #include <QtGui/QLayout>
+#include <QtGui/QGroupBox>
 
 // Haruhi:
 #include <haruhi/utility/memory.h>
@@ -101,9 +102,15 @@ Waveshaper::Waveshaper (int id, Mikuru* mikuru, QWidget* parent):
 	_shapers.push_back (new Shaper (Waveshapers::warmth, false));
 	_shapers.push_back (new Shaper (Waveshapers::saturation_1, true));
 
-	QLabel* type_label = new QLabel ("Waveshaper type:", parent_widget());
+	QGroupBox* box = new QGroupBox (this);
+	box->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-	_waveshaper_type_combo = new QComboBox (parent_widget());
+	QWidget* label_and_combo = new QWidget (this);
+	label_and_combo->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Maximum);
+
+	QLabel* type_label = new QLabel ("Waveshaper type:", label_and_combo);
+
+	_waveshaper_type_combo = new QComboBox (label_and_combo);
 	_waveshaper_type_combo->addItem ("Gloubi-boulga", qVariantFromValue (_shapers[0]));
 	_waveshaper_type_combo->addItem ("Gloubi-boulga simple (fast)", qVariantFromValue (_shapers[1]));
 	_waveshaper_type_combo->addItem ("Warmth", qVariantFromValue (_shapers[2]));
@@ -122,17 +129,21 @@ Waveshaper::Waveshaper (int id, Mikuru* mikuru, QWidget* parent):
 	_knob_gain = new Haruhi::Knob (parent_widget(), _port_gain, &_params.gain, "Gain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveshaper::Gain, 100), 2);
 	_knob_parameter = new Haruhi::Knob (parent_widget(), _port_parameter, &_params.parameter, "Parameter", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveshaper::Parameter, 100), 2);
 
-	QGridLayout* type_layout = new QGridLayout();
-	type_layout->setSpacing (Config::Spacing);
-	type_layout->addWidget (type_label, 0, 0);
-	type_layout->addWidget (_waveshaper_type_combo, 0, 1);
-	type_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::MinimumExpanding), 1, 0);
+	QHBoxLayout* label_and_combo_layout = new QHBoxLayout (label_and_combo);
+	label_and_combo_layout->setMargin (0);
+	label_and_combo_layout->setSpacing (Config::Spacing);
+	label_and_combo_layout->addWidget (type_label);
+	label_and_combo_layout->addWidget (_waveshaper_type_combo);
+
+	QHBoxLayout* box_layout = new QHBoxLayout (box);
+	box_layout->setMargin (0);
+	box_layout->setSpacing (Config::Spacing);
+	box_layout->addWidget (label_and_combo);
 
 	QHBoxLayout* layout = new QHBoxLayout (parent_widget());
 	layout->setMargin (0);
 	layout->setSpacing (Config::Spacing);
-	layout->addLayout (type_layout);
-	layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	layout->addWidget (box);
 	layout->addWidget (_knob_gain);
 	layout->addWidget (_knob_parameter);
 

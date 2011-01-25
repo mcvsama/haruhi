@@ -599,6 +599,8 @@ Patch::load_state (QDomElement const& element)
 				}
 			}
 		}
+
+		part->effects()->show_first();
 	}
 
 	// For each <envelope> element:
