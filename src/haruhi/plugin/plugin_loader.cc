@@ -24,8 +24,8 @@
 #include <haruhi/utility/exception.h>
 
 // Factories:
-#include <units/mikuru/mikuru.h>
-#include <units/vanhalen/vanhalen.h>
+#include <plugins/mikuru/mikuru.h>
+#include <plugins/vanhalen/vanhalen.h>
 
 // Local:
 #include "plugin_loader.h"
