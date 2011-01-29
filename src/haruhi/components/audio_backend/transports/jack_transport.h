@@ -35,6 +35,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/components/audio_backend/transport.h>
 #include <haruhi/utility/semaphore.h>
+#include <haruhi/utility/mutex.h>
 
 
 namespace Haruhi {
@@ -69,8 +70,28 @@ class JackTransport: public Transport
 		 */
 		virtual ~JackPort();
 
-		Sample*
-		buffer();
+		/**
+		 * Copies data from internal buffer to JACK buffer.
+		 */
+		void
+		copy_to_jack();
+
+		/**
+		 * Copies data from JACK buffer to internal buffer.
+		 */
+		void
+		copy_from_jack();
+
+		/**
+		 * Calls copy_to_jack or copy_from_jack depending on port
+		 * direction (Input, Output).
+		 */
+		void
+		transfer_data();
+
+		/*
+		 * Transport::Port API
+		 */
 
 		void
 		rename (std::string const&);
@@ -88,6 +109,9 @@ class JackTransport: public Transport
 		 */
 		void
 		destroy();
+
+		Sample*
+		jack_buffer();
 
 	  private:
 		Direction		_direction;
@@ -125,7 +149,10 @@ class JackTransport: public Transport
 	deactivate();
 
 	void
-	wait_for_tick();
+	lock_ports() { _ports_mutex.lock(); }
+
+	void
+	unlock_ports() { _ports_mutex.unlock(); }
 
 	void
 	data_ready();
@@ -212,7 +239,7 @@ class JackTransport: public Transport
 	jack_client_t*	_jack_client;
 	Ports			_ports;
 	bool			_active;
-	Semaphore		_wait_for_tick;
+	Mutex			_ports_mutex;
 	Semaphore		_data_ready;
 };
 

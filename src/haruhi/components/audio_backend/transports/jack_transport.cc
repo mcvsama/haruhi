@@ -44,6 +44,7 @@ JackTransport::JackPort::JackPort (Transport* transport, Direction direction, st
 {
 	jack_set_error_function (JackTransport::s_log_error);
 	jack_set_info_function (JackTransport::s_log_info);
+	buffer()->resize (transport->backend()->graph()->buffer_size());
 	reinit();
 }
 
@@ -54,12 +55,34 @@ JackTransport::JackPort::~JackPort()
 }
 
 
-Sample*
-JackTransport::JackPort::buffer()
+void
+JackTransport::JackPort::copy_to_jack()
 {
-	if (transport()->connected())
-		return static_cast<Sample*> (jack_port_get_buffer (_jack_port, transport()->backend()->graph()->buffer_size()));
-	return 0;
+	Sample* jbuf = jack_buffer();
+	if (jbuf)
+		memcpy (jbuf, buffer()->begin(), sizeof (Sample) * buffer()->size());
+}
+
+
+void
+JackTransport::JackPort::copy_from_jack()
+{
+	Sample* jbuf = jack_buffer();
+	if (jbuf)
+		memcpy (buffer()->begin(), jbuf, sizeof (Sample) * buffer()->size());
+	else
+		buffer()->clear();
+}
+
+
+void
+JackTransport::JackPort::transfer_data()
+{
+	switch (_direction)
+	{
+		case Input:		copy_from_jack(); break;
+		case Output:	copy_to_jack(); break;
+	}
 }
 
 
@@ -100,11 +123,19 @@ JackTransport::JackPort::destroy()
 }
 
 
+Sample*
+JackTransport::JackPort::jack_buffer()
+{
+	if (transport()->connected())
+		return static_cast<Sample*> (jack_port_get_buffer (_jack_port, transport()->backend()->graph()->buffer_size()));
+	return 0;
+}
+
+
 JackTransport::JackTransport (Backend* backend):
 	Transport (backend),
 	_jack_client (0),
 	_active (false),
-	_wait_for_tick (0),
 	_data_ready (0)
 {
 	ignore_sigpipe();
@@ -144,8 +175,10 @@ JackTransport::connect (std::string const& client_name)
 		c_buffer_size_change (jack_get_buffer_size (_jack_client));
 
 		// Switch all ports online:
+		lock_ports();
 		for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
 			(*p)->reinit();
+		unlock_ports();
 	}
 	catch (Exception const& e)
 	{
@@ -161,8 +194,10 @@ JackTransport::disconnect()
 	if (_jack_client)
 	{
 		deactivate();
+		lock_ports();
 		for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
 			(*p)->destroy();
+		unlock_ports();
 		jack_client_t* c = _jack_client;
 		_jack_client = 0;
 		jack_client_close (c);
@@ -193,7 +228,10 @@ JackTransport::deactivate()
 {
 	if (connected())
 	{
+		// Ensure that Engine is not stuck in process() function:
+		_data_ready.post();
 		deactivated();
+		// Deactivate:
 		jack_deactivate (_jack_client);
 		_active = false;
 	}
@@ -201,16 +239,9 @@ JackTransport::deactivate()
 
 
 void
-JackTransport::wait_for_tick()
-{
-	_wait_for_tick.wait();
-}
-
-
-void
 JackTransport::data_ready()
 {
-	_data_ready.post();
+	_data_ready.wait();
 }
 
 
@@ -218,7 +249,9 @@ JackTransport::Port*
 JackTransport::create_input (std::string const& port_name)
 {
 	JackPort* port = new JackPort (this, JackPort::Input, port_name);
+	lock_ports();
 	_ports.insert (port);
+	unlock_ports();
 	return port;
 }
 
@@ -227,7 +260,9 @@ JackTransport::Port*
 JackTransport::create_output (std::string const& port_name)
 {
 	JackPort* port = new JackPort (this, JackPort::Output, port_name);
+	lock_ports();
 	_ports.insert (port);
+	unlock_ports();
 	return port;
 }
 
@@ -235,7 +270,9 @@ JackTransport::create_output (std::string const& port_name)
 void
 JackTransport::destroy_port (Port* port)
 {
+	lock_ports();
 	_ports.erase (static_cast<JackPort*> (port));
+	unlock_ports();
 	delete port;
 }
 
@@ -245,7 +282,6 @@ JackTransport::deactivated()
 {
 	// Ensure that neither Jack or Engine is stuck:
 	_data_ready.post();
-	_wait_for_tick.post();
 }
 
 
@@ -262,8 +298,11 @@ JackTransport::ignore_sigpipe()
 int
 JackTransport::c_process (jack_nframes_t samples)
 {
-	_wait_for_tick.post();
-	_data_ready.wait();
+	lock_ports();
+	for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
+		(*p)->transfer_data();
+	unlock_ports();
+	_data_ready.post();
 	return 0;
 }
 
@@ -281,6 +320,11 @@ JackTransport::c_sample_rate_change (jack_nframes_t sample_rate)
 int
 JackTransport::c_buffer_size_change (jack_nframes_t buffer_size)
 {
+	// Update ports buffers:
+	lock_ports();
+	for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
+		(*p)->buffer()->resize (buffer_size);
+	unlock_ports();
 	backend()->graph()->lock();
 	backend()->graph()->set_buffer_size (buffer_size);
 	backend()->graph()->unlock();

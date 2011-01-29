@@ -44,7 +44,7 @@ class Transport
 	  public:
 		Port (Transport* transport):
 			_transport (transport),
-			_buffer (1)
+			_buffer()
 		{ }
 
 		virtual ~Port() { }
@@ -57,10 +57,9 @@ class Transport
 
 		/**
 		 * Returns audio buffer to use for transporting audio.
-		 * May return 0 if data is not available/port is disabled.
 		 */
-		virtual Sample*
-		buffer() = 0;
+		virtual AudioBuffer*
+		buffer() { return &_buffer; }
 
 	  private:
 		Transport*	_transport;
@@ -117,14 +116,19 @@ class Transport
 	active() const = 0;
 
 	/**
-	 * Waits for audio subsystem request for audio data.
+	 * Locks ports so no data is copied between them and audio-subsystem.
 	 */
 	virtual void
-	wait_for_tick() = 0;
+	lock_ports() = 0;
 
 	/**
-	 * Tells audio subsystem that new data is available, so
-	 * it can continue processing.
+	 * Unlocks ports. Complementary to lock_ports().
+	 */
+	virtual void
+	unlock_ports() = 0;
+
+	/**
+	 * Call blocks until transport fetches data from ports.
 	 */
 	virtual void
 	data_ready() = 0;
