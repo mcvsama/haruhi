@@ -120,7 +120,8 @@ Tree::read_model()
 		last_added_item = device_item;
 	}
 
-	setCurrentItem (last_added_item);
+	if (last_added_item)
+		setCurrentItem (last_added_item);
 }
 
 

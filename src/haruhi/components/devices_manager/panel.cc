@@ -252,6 +252,7 @@ void
 Panel::save_settings()
 {
 	_settings->save();
+	_settings->model().changed();
 }
 
 } // namespace DevicesManager
