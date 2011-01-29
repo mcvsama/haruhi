@@ -54,12 +54,34 @@ JackTransport::JackPort::~JackPort()
 }
 
 
-Sample*
-JackTransport::JackPort::buffer()
+void
+JackTransport::JackPort::copy_to_jack()
 {
-	if (transport()->connected())
-		return static_cast<Sample*> (jack_port_get_buffer (_jack_port, transport()->backend()->graph()->buffer_size()));
-	return 0;
+	Sample* jbuf = jack_buffer();
+	if (jbuf)
+		memcpy (jbuf, buffer()->begin(), sizeof (Sample) * buffer()->size());
+}
+
+
+void
+JackTransport::JackPort::copy_from_jack()
+{
+	Sample* jbuf = jack_buffer();
+	if (jbuf)
+		memcpy (buffer()->begin(), jbuf, sizeof (Sample) * buffer()->size());
+	else
+		buffer()->clear();
+}
+
+
+void
+JackTransport::JackPort::transfer_data()
+{
+	switch (_direction)
+	{
+		case Input:		copy_from_jack(); break;
+		case Output:	copy_to_jack(); break;
+	}
 }
 
 
@@ -100,11 +122,19 @@ JackTransport::JackPort::destroy()
 }
 
 
+Sample*
+JackTransport::JackPort::jack_buffer()
+{
+	if (transport()->connected())
+		return static_cast<Sample*> (jack_port_get_buffer (_jack_port, transport()->backend()->graph()->buffer_size()));
+	return 0;
+}
+
+
 JackTransport::JackTransport (Backend* backend):
 	Transport (backend),
 	_jack_client (0),
 	_active (false),
-	_wait_for_tick (0),
 	_data_ready (0)
 {
 	ignore_sigpipe();
@@ -193,7 +223,7 @@ JackTransport::deactivate()
 {
 	if (connected())
 	{
-		// Ensure that Jack is not stuck in process() function:
+		// Ensure that Engine is not stuck in process() function:
 		_data_ready.post();
 		// Deactivate:
 		jack_deactivate (_jack_client);
@@ -203,16 +233,9 @@ JackTransport::deactivate()
 
 
 void
-JackTransport::wait_for_tick()
-{
-	_wait_for_tick.wait();
-}
-
-
-void
 JackTransport::data_ready()
 {
-	_data_ready.post();
+	_data_ready.wait();
 }
 
 
@@ -255,8 +278,11 @@ JackTransport::ignore_sigpipe()
 int
 JackTransport::c_process (jack_nframes_t samples)
 {
-	_wait_for_tick.post();
-	_data_ready.wait();
+	lock_ports();
+	for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
+		(*p)->transfer_data();
+	unlock_ports();
+	_data_ready.post();
 	return 0;
 }
 
@@ -277,6 +303,9 @@ JackTransport::c_buffer_size_change (jack_nframes_t buffer_size)
 	backend()->graph()->lock();
 	backend()->graph()->set_buffer_size (buffer_size);
 	backend()->graph()->unlock();
+	// Update ports buffers:
+	for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
+		(*p)->buffer()->resize (buffer_size);
 	return 0;
 }
 

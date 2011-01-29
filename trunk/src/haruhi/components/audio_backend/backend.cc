@@ -174,45 +174,40 @@ Backend::disable()
 void
 Backend::data_ready()
 {
-	_transport->wait_for_tick();
+	if (!_transport->active())
+		return;
 
 	_ports_lock.lock();
-	// Copy data from transport to graph (input):
-	for (InputsMap::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
-	{
-		Sample* src_buffer = p->first->buffer();
-		AudioBuffer* dst_buffer = p->second->port()->audio_buffer();
-		if (src_buffer)
-			memcpy (dst_buffer->begin(), src_buffer, sizeof (Sample) * dst_buffer->size());
-		else
-			dst_buffer->clear();
-	}
 
 	// Use Master Volume control to adjust volume of outputs:
-	// TODO FIXME use master_volume().
 	DialControl* master_volume = session()->meter_panel()->master_volume();
 	Sample v = std::pow (master_volume->value() / static_cast<float> (Session::MeterPanel::ZeroVolume), M_E);
 	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
 		p->second->attenuate (v);
 
 	// Copy data from graph to transport (output):
+	_transport->lock_ports();
 	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
 	{
-		AudioBuffer* src_buffer = p->second->port()->audio_buffer();
-		Sample* dst_buffer = p->first->buffer();
-		if (dst_buffer)
-		{
-			if (p->second->port()->back_connections().empty())
-				memset (dst_buffer, 0, sizeof (Sample) * src_buffer->size());
-			else
-				memcpy (dst_buffer, src_buffer->begin(), sizeof (Sample) * src_buffer->size());
-		}
+		if (p->second->port()->back_connections().empty())
+			p->first->buffer()->clear();
+		else
+			p->first->buffer()->fill (p->second->port()->audio_buffer());
 	}
-
-	update_level_meter();
+	_transport->unlock_ports();
 	_ports_lock.unlock();
 
 	_transport->data_ready();
+
+	// Copy data from transport to graph (input):
+	_ports_lock.lock();
+	_transport->lock_ports();
+	for (InputsMap::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
+		p->first->buffer()->fill (p->second->port()->buffer());
+	_transport->unlock_ports();
+	_ports_lock.unlock();
+
+	update_level_meter();
 }
 
 
@@ -553,6 +548,7 @@ Backend::dummy_round()
 void
 Backend::update_level_meter()
 {
+	_ports_lock.lock();
 	// Level meter:
 	std::vector<OutputItem*> ovec;
 	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
@@ -563,6 +559,7 @@ Backend::update_level_meter()
 		AudioBuffer* abuf = ovec[i]->port()->audio_buffer();
 		session()->meter_panel()->level_meters_group()->meter (i)->process (abuf->begin(), abuf->end());
 	}
+	_ports_lock.unlock();
 }
 
 
