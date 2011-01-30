@@ -69,9 +69,6 @@ class PartFilters:
 	void
 	process_events();
 
-	void
-	process_filters (Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer1, Haruhi::AudioBuffer& buffer2, Haruhi::AudioBuffer& output);
-
 	Mikuru*
 	mikuru() const { return _mikuru; }
 

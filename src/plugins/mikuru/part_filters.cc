@@ -100,16 +100,6 @@ PartFilters::process_events()
 
 
 void
-PartFilters::process_filters (Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer1, Haruhi::AudioBuffer& buffer2, Haruhi::AudioBuffer& output)
-{
-	_double_filter.configure (static_cast<DoubleFilter::Configuration> (_params.filter_configuration.get()), _filter1->params(), _filter2->params());
-
-	if (!_double_filter.process (input, buffer1, buffer2, output))
-		output.fill (&input);
-}
-
-
-void
 PartFilters::load_params()
 {
 	Params::PartFilters p = _params;
