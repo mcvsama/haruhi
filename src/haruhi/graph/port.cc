@@ -188,7 +188,6 @@ Port::graph() const
 void
 Port::register_me()
 {
-	// Lock graph for changes:
 	switch (_direction)
 	{
 		case Port::Input:	_unit->_inputs.insert (this);	break;

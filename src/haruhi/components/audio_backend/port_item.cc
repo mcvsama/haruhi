@@ -61,13 +61,6 @@ PortItem::name() const
 }
 
 
-AudioPort*
-PortItem::port() const
-{
-	return _port;
-}
-
-
 void
 PortItem::update_name()
 {

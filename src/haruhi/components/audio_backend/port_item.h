@@ -65,7 +65,7 @@ class PortItem:
 	transport_port() const { return _transport_port; }
 
 	AudioPort*
-	port() const;
+	port() const { return _port; }
 
 	/**
 	 * Tells whether port has been fully constructed and

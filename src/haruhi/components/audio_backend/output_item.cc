@@ -30,14 +30,14 @@ namespace AudioBackendImpl {
 OutputItem::OutputItem (Tree* parent, QString const& name):
 	PortItem (parent, name)
 {
-	_backend->_ports_lock.lock();
 	_transport_port = _backend->transport()->create_output (name.toStdString());
-	_backend->_ports_lock.unlock();
 	// Allocate new port:
 	_backend->graph()->lock();
 	_port = new AudioPort (_backend, name.ascii(), Port::Input);
 	_backend->graph()->unlock();
+	_backend->_ports_lock.lock();
 	_backend->_outputs[_transport_port] = this;
+	_backend->_ports_lock.unlock();
 	// Configure item:
 	setIcon (0, Resources::Icons16::audio_output_port());
 	// Fully constructed:
@@ -47,10 +47,10 @@ OutputItem::OutputItem (Tree* parent, QString const& name):
 
 OutputItem::~OutputItem()
 {
-	_backend->_outputs.erase (_transport_port);
 	_backend->_ports_lock.lock();
-	_backend->transport()->destroy_port (_transport_port);
+	_backend->_outputs.erase (_transport_port);
 	_backend->_ports_lock.unlock();
+	_backend->transport()->destroy_port (_transport_port);
 	_backend->graph()->lock();
 	delete _port;
 	_backend->graph()->unlock();

@@ -253,6 +253,7 @@ class Backend:
   private:
 	QString					_client_name;
 	Transport*				_transport;
+	// Lock for _inputs and _outputs:
 	RecursiveMutex			_ports_lock;
 
 	// Views:

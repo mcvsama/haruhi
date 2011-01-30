@@ -27,6 +27,9 @@ AudioPort::AudioPort (Unit* unit, std::string const& name, Port::Direction direc
 	Port (unit, name, direction, new AudioBuffer(), group, flags)
 {
 	register_me();
+	// Resize buffers:
+	if (graph())
+		graph_updated();
 }
 
 

@@ -190,12 +190,15 @@ Backend::data_ready()
 								  _master_volume_smoother_buffer.end(),
 								  master_volume());
 	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
-		p->second->port()->audio_buffer()->attenuate (&_master_volume_smoother_buffer);
+		if (p->second->ready())
+			p->second->port()->audio_buffer()->attenuate (&_master_volume_smoother_buffer);
 
 	// Copy data from graph to transport (output):
 	_transport->lock_ports();
 	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
 	{
+		if (!p->second->ready())
+			continue;
 		if (p->second->port()->back_connections().empty())
 			p->first->buffer()->clear();
 		else
@@ -210,7 +213,8 @@ Backend::data_ready()
 	_ports_lock.lock();
 	_transport->lock_ports();
 	for (InputsMap::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
-		p->first->buffer()->fill (p->second->port()->buffer());
+		if (p->second->ready())
+			p->first->buffer()->fill (p->second->port()->buffer());
 	_transport->unlock_ports();
 	_ports_lock.unlock();
 }
@@ -222,7 +226,6 @@ Backend::peak_levels (LevelsMap& levels)
 	levels.clear();
 
 	_ports_lock.lock();
-
 	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
 	{
 		Sample register max = 0;
@@ -235,7 +238,6 @@ Backend::peak_levels (LevelsMap& levels)
 
 		levels[port] = master_volume() * max;
 	}
-
 	_ports_lock.unlock();
 }
 
