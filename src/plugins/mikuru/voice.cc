@@ -311,15 +311,14 @@ void
 Voice::process_amplitude()
 {
 	Params::Oscillator* const oscillator_params = _part->oscillator()->oscillator_params();
-	float amplitude = 1.0f;
 
 	// Prepare amplitude buffer:
 	std::fill (_commons->amplitude_buffer.begin(), _commons->amplitude_buffer.end(), 1.0f);
 
 	// Amplitude velocity sensing:
-	float s = _params.velocity_sens.to_f();
-	amplitude *= (s >= 0.0 ? 1 - s + _amplitude * s : s * _amplitude + 1.0f);
-	float f = oscillator_params->volume.to_f() * _params.amplitude.to_f() * _params.adsr.to_f();
+	float sens = _params.velocity_sens.to_f();
+	sens = (sens >= 0.0 ? 1 - sens + _amplitude * sens : sens * _amplitude + 1.0f);
+	float f = sens * oscillator_params->volume.to_f() * _params.amplitude.to_f() * _params.adsr.to_f();
 
 	if (_first_pass)
 		_smoother_amplitude.reset (f);
