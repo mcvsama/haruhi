@@ -108,6 +108,10 @@ Part::prepare_buffers()
 void
 Part::process_effects()
 {
+	// Apply pseudo stereo effect:
+	if (_oscillator->oscillator_params()->pseudo_stereo.get())
+		_buffer_2->negate();
+
 	_effects->process (_buffer_1, 0);
 	_effects->process (_buffer_2, 1);
 }

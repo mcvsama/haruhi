@@ -230,6 +230,7 @@ struct Params
 		Haruhi::Param<int> monophonic_key_priority;
 		Haruhi::Param<int> const_portamento_time;
 		Haruhi::Param<int> unison_stereo;
+		Haruhi::Param<int> pseudo_stereo;
 	};
 
 	/**

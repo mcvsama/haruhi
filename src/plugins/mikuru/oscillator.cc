@@ -355,6 +355,13 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	_unison_stereo = new QCheckBox ("Unison stereo", this);
 	_unison_stereo->setChecked (po.unison_stereo);
 	QObject::connect (_unison_stereo, SIGNAL (toggled (bool)), this, SLOT (update_oscillator_params()));
+	QToolTip::add (_unison_stereo, "Spreads unison voices across stereo channels.");
+
+	// Pseudo stereo:
+	_pseudo_stereo = new QCheckBox ("Pseudo stereo", this);
+	_pseudo_stereo->setChecked (po.pseudo_stereo);
+	QObject::connect (_pseudo_stereo, SIGNAL (toggled (bool)), this, SLOT (update_oscillator_params()));
+	QToolTip::add (_pseudo_stereo, "Inverts right channel to give pseudo-stereo effect for monophonic voices.");
 
 	// Transposition:
 	_transposition_semitones = new QSpinBox (-60, 60, 1, this);
@@ -445,6 +452,7 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	group2_layout->addItem (new QSpacerItem (0, 10, QSizePolicy::Fixed, QSizePolicy::Fixed));
 	group2_layout->addWidget (_const_portamento_time);
 	group2_layout->addWidget (_unison_stereo);
+	group2_layout->addWidget (_pseudo_stereo);
 	group2_layout->addItem (new QSpacerItem (0, 10, QSizePolicy::Fixed, QSizePolicy::Fixed));
 	group2_layout->addWidget (_pitchbend_enabled);
 	group2_layout->addWidget (_pitchbend_released);
@@ -643,6 +651,7 @@ Oscillator::load_oscillator_params()
 	_monophonic_key_priority->setCurrentItem (po.monophonic_key_priority);
 	_const_portamento_time->setChecked (po.const_portamento_time);
 	_unison_stereo->setChecked (po.unison_stereo);
+	_pseudo_stereo->setChecked (po.pseudo_stereo);
 
 	_loading_params = false;
 	update_widgets();
@@ -723,6 +732,7 @@ Oscillator::update_oscillator_params()
 	po.monophonic_key_priority = _monophonic_key_priority->currentItem();
 	po.const_portamento_time = _const_portamento_time->isChecked();
 	po.unison_stereo = _unison_stereo->isChecked();
+	po.pseudo_stereo = _pseudo_stereo->isChecked();
 
 	// Knob params are updated automatically using #assign_parameter.
 

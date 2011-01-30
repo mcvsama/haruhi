@@ -388,6 +388,7 @@ class Oscillator:
 
 	// Other:
 	QCheckBox*			_unison_stereo;
+	QCheckBox*			_pseudo_stereo;
 	QPushButton*		_wave_enabled;
 	QPushButton*		_noise_enabled;
 };
