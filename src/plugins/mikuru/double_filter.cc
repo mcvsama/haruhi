@@ -26,10 +26,15 @@ DoubleFilter::DoubleFilter (Mikuru* mikuru):
 	_impulse_response1 (RBJImpulseResponse::LowPass, 0.0, 0.0, 0.0, 1.0),
 	_impulse_response2 (RBJImpulseResponse::LowPass, 0.0, 0.0, 0.0, 1.0)
 {
-	for (int i = 0; i < NumFilters; ++i)
+	// Two channels:
+	for (int c = 0; c < 2; ++c)
 	{
-		_filter1[i].assign_impulse_response (&_impulse_response1);
-		_filter2[i].assign_impulse_response (&_impulse_response2);
+		// Each stage:
+		for (int i = 0; i < NumFilters; ++i)
+		{
+			_filter1[c][i].assign_impulse_response (&_impulse_response1);
+			_filter2[c][i].assign_impulse_response (&_impulse_response2);
+		}
 	}
 }
 
@@ -37,10 +42,15 @@ DoubleFilter::DoubleFilter (Mikuru* mikuru):
 void
 DoubleFilter::reset()
 {
-	for (int i = 0; i < NumFilters; ++i)
+	// Two channels:
+	for (int c = 0; c < 2; ++c)
 	{
-		_filter1[i].reset();
-		_filter2[i].reset();
+		// Each stage:
+		for (int i = 0; i < NumFilters; ++i)
+		{
+			_filter1[c][i].reset();
+			_filter2[c][i].reset();
+		}
 	}
 }
 
@@ -74,10 +84,14 @@ DoubleFilter::configure (Configuration configuration, Params::Filter* params1, P
 
 
 bool
-DoubleFilter::process (Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer1, Haruhi::AudioBuffer& buffer2, Haruhi::AudioBuffer& output)
+DoubleFilter::process (Haruhi::AudioBuffer& input1, Haruhi::AudioBuffer& input2,
+					   Haruhi::AudioBuffer& buffer1, Haruhi::AudioBuffer& buffer2,
+					   Haruhi::AudioBuffer& output1, Haruhi::AudioBuffer& output2)
 {
+	assert (input1.size() == input2.size());
+
 	bool filtered = true;
-	std::size_t nsamples = std::distance (input.begin(), input.end());
+	std::size_t nsamples = input1.size();
 
 	int passes1 = std::min (static_cast<int> (NumFilters), _params1.passes.get());
 	int passes2 = std::min (static_cast<int> (NumFilters), _params2.passes.get());
@@ -119,15 +133,23 @@ DoubleFilter::process (Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer1,
 	{
 		// Filter1 enabled only:
 		if (f1 && !f2)
-			filterout (_filter1, passes1, input, buffer1, output);
+		{
+			filterout (_filter1[0], passes1, input1, buffer1, output1);
+			filterout (_filter1[1], passes1, input2, buffer1, output2);
+		}
 		// Filter2 enabled only:
 		else if (!f1 && f2)
-			filterout (_filter2, passes2, input, buffer1, output);
+		{
+			filterout (_filter2[0], passes2, input1, buffer1, output1);
+			filterout (_filter2[1], passes2, input2, buffer1, output2);
+		}
 		// Both enabled:
 		else if (f1 && f2)
 		{
-			filterout (_filter1, passes1, input, buffer1, buffer2);
-			filterout (_filter2, passes2, buffer2, buffer1, output);
+			filterout (_filter1[0], passes1, input1, buffer1, buffer2);
+			filterout (_filter2[0], passes2, buffer2, buffer1, output1);
+			filterout (_filter1[1], passes1, input2, buffer1, buffer2);
+			filterout (_filter2[1], passes2, buffer2, buffer1, output2);
 		}
 		// Neither enabled:
 		else
@@ -137,17 +159,27 @@ DoubleFilter::process (Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer1,
 	{
 		// Filter1 enabled only:
 		if (f1 && !f2)
-			filterout (_filter1, passes1, input, buffer1, output);
+		{
+			filterout (_filter1[0], passes1, input1, buffer1, output1);
+			filterout (_filter1[1], passes1, input2, buffer1, output2);
+		}
 		// Filter2 enabled only:
 		else if (!f1 && f2)
-			filterout (_filter2, passes2, input, buffer1, output);
+		{
+			filterout (_filter2[0], passes2, input1, buffer1, output1);
+			filterout (_filter2[1], passes2, input2, buffer1, output2);
+		}
 		// Both enabled:
 		else if (f1 && f2)
 		{
-			filterout (_filter1, passes1, input, buffer1, output);
-			filterout (_filter2, passes2, input, buffer1, buffer2);
+			filterout (_filter1[0], passes1, input1, buffer1, output1);
+			filterout (_filter2[0], passes2, input1, buffer1, buffer2);
 			// Mix in buffer into output:
-			output.mixin (&buffer2);
+			output1.mixin (&buffer2);
+			filterout (_filter1[1], passes1, input2, buffer1, output2);
+			filterout (_filter2[1], passes2, input2, buffer1, buffer2);
+			// Mix in buffer into output:
+			output2.mixin (&buffer2);
 		}
 		// Neither enabled:
 		else

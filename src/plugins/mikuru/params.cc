@@ -291,7 +291,8 @@ Params::Oscillator::Oscillator():
 	monophonic (0, 1, 0),
 	monophonic_retrigger (0, 1, 0),
 	monophonic_key_priority (0, 3, LastPressed),
-	const_portamento_time (0, 1, 1)
+	const_portamento_time (0, 1, 1),
+	unison_stereo (0, 1, 1)
 {
 }
 
@@ -321,6 +322,7 @@ Params::Oscillator::set_non_controller_params (Oscillator& other)
 	HARUHI_MIKURU_COPY (monophonic_retrigger)
 	HARUHI_MIKURU_COPY (monophonic_key_priority)
 	HARUHI_MIKURU_COPY (const_portamento_time)
+	HARUHI_MIKURU_COPY (unison_stereo)
 }
 
 
@@ -343,6 +345,7 @@ Params::Oscillator::sanitize()
 	HARUHI_MIKURU_SANITIZE (monophonic_retrigger)
 	HARUHI_MIKURU_SANITIZE (monophonic_key_priority)
 	HARUHI_MIKURU_SANITIZE (const_portamento_time)
+	HARUHI_MIKURU_SANITIZE (unison_stereo)
 }
 
 

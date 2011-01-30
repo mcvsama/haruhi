@@ -135,20 +135,29 @@ Voice::mixin (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
 	_oscillator.set_unison_spread (2.0f * _params.unison_spread.to_f());
 	_oscillator.set_unison_number (_params.unison_index.get());
 	_oscillator.set_unison_noise (_params.unison_noise.to_f());
+	_oscillator.set_unison_stereo (oscillator_params->unison_stereo.get());
 	_oscillator.set_noise_amplitude (oscillator_params->noise_level.to_f());
 	_oscillator.set_wavetable_enabled (oscillator_params->wave_enabled.get());
 	_oscillator.set_noise_enabled (oscillator_params->noise_enabled.get());
-	_oscillator.fill (&_commons->oscillator_buffer);
+	_oscillator.fill (&_commons->oscillator_buffer1, &_commons->oscillator_buffer2);
 
-	_double_filter.configure (static_cast<DoubleFilter::Configuration> (static_cast<int> (_part->filters()->params()->filter_configuration.get())), &_filter1_params, &_filter2_params);
-	bool filtered = _double_filter.process (_commons->oscillator_buffer, _commons->filter_buffer1, _commons->filter_buffer2, _commons->output_buffer);
-	Haruhi::AudioBuffer& filters_output = filtered ? _commons->output_buffer : _commons->oscillator_buffer;
+	_double_filter.configure (static_cast<DoubleFilter::Configuration> (static_cast<int> (_part->filters()->params()->filter_configuration.get())),
+							  &_filter1_params, &_filter2_params);
+	bool filtered = _double_filter.process (_commons->oscillator_buffer1, _commons->oscillator_buffer2,
+											_commons->filter_buffer1, _commons->filter_buffer2,
+											_commons->output_buffer1, _commons->output_buffer2);
+	Haruhi::AudioBuffer& filters_output1 = filtered ? _commons->output_buffer1 : _commons->oscillator_buffer1;
+	Haruhi::AudioBuffer& filters_output2 = filtered ? _commons->output_buffer2 : _commons->oscillator_buffer2;
 
 	// Attacking or dropping? Multiply samples.
 	if (_attack_sample < _attack_samples)
 	{
-		for (unsigned int i = 0; i < filters_output.size() && _attack_sample < _attack_samples; ++i, ++_attack_sample)
-			filters_output[i] *= 1.0f * _attack_sample / _attack_samples;
+		for (unsigned int i = 0; i < filters_output1.size() && _attack_sample < _attack_samples; ++i, ++_attack_sample)
+		{
+			float const k = 1.0f * _attack_sample / _attack_samples;
+			filters_output1[i] *= k;
+			filters_output2[i] *= k;
+		}
 	}
 	else if (dropped())
 	{
@@ -156,17 +165,25 @@ Voice::mixin (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
 		{
 			unsigned int i;
 			for (i = 0; i < _commons->output_buffer.size() && _drop_sample < _drop_samples; ++i, ++_drop_sample)
-				filters_output[i] *= 1.0 - 1.0f * _drop_sample / _drop_samples;
-			std::fill (filters_output.begin() + i, filters_output.end(), 0.0f);
+			{
+				float const k = 1.0 - 1.0f * _drop_sample / _drop_samples;
+				filters_output1[i] *= k;
+				filters_output2[i] *= k;
+			}
+			std::fill (filters_output1.begin() + i, filters_output1.end(), 0.0f);
+			std::fill (filters_output2.begin() + i, filters_output2.end(), 0.0f);
 		}
 		else
-			std::fill (filters_output.begin(), filters_output.end(), 0.0f);
+		{
+			std::fill (filters_output1.begin(), filters_output1.end(), 0.0f);
+			std::fill (filters_output2.begin(), filters_output2.end(), 0.0f);
+		}
 	}
 
 	// Output:
 	{
-		_commons->output_buffer1.fill (&filters_output);
-		_commons->output_buffer2.fill (&filters_output);
+		_commons->output_buffer1.fill (&filters_output1);
+		_commons->output_buffer2.fill (&filters_output2);
 
 		int i = 0;
 		float f = 0.0;

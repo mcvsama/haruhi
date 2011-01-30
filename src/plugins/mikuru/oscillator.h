@@ -387,6 +387,7 @@ class Oscillator:
 	QComboBox*			_monophonic_key_priority;
 
 	// Other:
+	QCheckBox*			_unison_stereo;
 	QPushButton*		_wave_enabled;
 	QPushButton*		_noise_enabled;
 };

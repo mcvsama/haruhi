@@ -351,6 +351,11 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	_monophonic_key_priority->setCurrentItem (po.monophonic_key_priority);
 	QObject::connect (_monophonic_key_priority, SIGNAL (activated (int)), this, SLOT (update_oscillator_params()));
 
+	// Unison stereo:
+	_unison_stereo = new QCheckBox ("Unison stereo", this);
+	_unison_stereo->setChecked (po.unison_stereo);
+	QObject::connect (_unison_stereo, SIGNAL (toggled (bool)), this, SLOT (update_oscillator_params()));
+
 	// Transposition:
 	_transposition_semitones = new QSpinBox (-60, 60, 1, this);
 	_transposition_semitones->setSuffix (" semitones");
@@ -439,6 +444,7 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	group2_layout->addWidget (_monophonic_key_priority);
 	group2_layout->addItem (new QSpacerItem (0, 10, QSizePolicy::Fixed, QSizePolicy::Fixed));
 	group2_layout->addWidget (_const_portamento_time);
+	group2_layout->addWidget (_unison_stereo);
 	group2_layout->addItem (new QSpacerItem (0, 10, QSizePolicy::Fixed, QSizePolicy::Fixed));
 	group2_layout->addWidget (_pitchbend_enabled);
 	group2_layout->addWidget (_pitchbend_released);
@@ -636,6 +642,7 @@ Oscillator::load_oscillator_params()
 	_monophonic_retrigger->setChecked (po.monophonic_retrigger);
 	_monophonic_key_priority->setCurrentItem (po.monophonic_key_priority);
 	_const_portamento_time->setChecked (po.const_portamento_time);
+	_unison_stereo->setChecked (po.unison_stereo);
 
 	_loading_params = false;
 	update_widgets();
@@ -715,6 +722,7 @@ Oscillator::update_oscillator_params()
 	po.monophonic_retrigger = _monophonic_retrigger->isChecked();
 	po.monophonic_key_priority = _monophonic_key_priority->currentItem();
 	po.const_portamento_time = _const_portamento_time->isChecked();
+	po.unison_stereo = _unison_stereo->isChecked();
 
 	// Knob params are updated automatically using #assign_parameter.
 

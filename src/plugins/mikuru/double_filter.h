@@ -62,7 +62,9 @@ class DoubleFilter
 	 * All buffers must be distinct.
 	 */
 	bool
-	process (Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer1, Haruhi::AudioBuffer& buffer2, Haruhi::AudioBuffer& output);
+	process (Haruhi::AudioBuffer& input1, Haruhi::AudioBuffer& input2,
+			 Haruhi::AudioBuffer& buffer1, Haruhi::AudioBuffer& buffer2,
+			 Haruhi::AudioBuffer& output1, Haruhi::AudioBuffer& output2);
 
   private:
 	/**
@@ -80,8 +82,9 @@ class DoubleFilter
 	RBJImpulseResponse			_impulse_response1;
 	RBJImpulseResponse			_impulse_response2;
 
-	DSP::Filter					_filter1[5];
-	DSP::Filter					_filter2[5];
+	// Two channels, for each up to 5 stages:
+	DSP::Filter					_filter1[2][5];
+	DSP::Filter					_filter2[2][5];
 
 	DSP::OnePoleSmoother		_smoother_filter1_frequency;
 	DSP::OnePoleSmoother		_smoother_filter1_resonance;

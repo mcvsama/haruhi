@@ -38,7 +38,8 @@ class VoiceCommons
 	Haruhi::AudioBuffer	temp1;
 	Haruhi::AudioBuffer	frequency_buffer;
 	Haruhi::AudioBuffer	amplitude_buffer;
-	Haruhi::AudioBuffer	oscillator_buffer;
+	Haruhi::AudioBuffer	oscillator_buffer1;
+	Haruhi::AudioBuffer	oscillator_buffer2;
 	Haruhi::AudioBuffer	filter_buffer1;
 	Haruhi::AudioBuffer	filter_buffer2;
 	Haruhi::AudioBuffer	output_buffer;

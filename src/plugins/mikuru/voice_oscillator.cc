@@ -31,6 +31,7 @@ VoiceOscillator::VoiceOscillator (DSP::Wavetable* wavetable):
 	_unison_number (-1),
 	_unison_spread (0),
 	_unison_noise (0.0),
+	_unison_stereo (false),
 	_noise(),
 	_noise_state (_noise.state()),
 	_noise_enabled (false),

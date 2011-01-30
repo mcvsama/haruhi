@@ -33,8 +33,7 @@ CommonFilters::CommonFilters (Mikuru* mikuru, QWidget* parent):
 	QWidget (parent),
 	_mikuru (mikuru),
 	_loading_params (false),
-	_double_filter_1 (mikuru),
-	_double_filter_2 (mikuru)
+	_double_filter (mikuru)
 {
 	Params::CommonFilters p = _params;
 
@@ -77,8 +76,7 @@ CommonFilters::~CommonFilters()
 void
 CommonFilters::reset()
 {
-	_double_filter_1.reset();
-	_double_filter_2.reset();
+	_double_filter.reset();
 }
 
 
@@ -103,13 +101,13 @@ void
 CommonFilters::process_filters (Haruhi::AudioBuffer& input1, Haruhi::AudioBuffer& buffer1, Haruhi::AudioBuffer& output1,
 								Haruhi::AudioBuffer& input2, Haruhi::AudioBuffer& buffer2, Haruhi::AudioBuffer& output2)
 {
-	_double_filter_1.configure (static_cast<DoubleFilter::Configuration> (_params.filter_configuration.get()), _filter1->params(), _filter2->params());
-	_double_filter_2.configure (static_cast<DoubleFilter::Configuration> (_params.filter_configuration.get()), _filter1->params(), _filter2->params());
+	_double_filter.configure (static_cast<DoubleFilter::Configuration> (_params.filter_configuration.get()), _filter1->params(), _filter2->params());
 
-	if (!_double_filter_1.process (input1, buffer1, buffer2, output1))
+	if (!_double_filter.process (input1, input2, buffer1, buffer2, output1, output2))
+	{
 		output1.fill (&input1);
-	if (!_double_filter_2.process (input2, buffer1, buffer2, output2))
 		output2.fill (&input2);
+	}
 }
 
 

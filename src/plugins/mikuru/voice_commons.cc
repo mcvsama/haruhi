@@ -27,7 +27,8 @@ VoiceCommons::VoiceCommons (std::size_t buffers_size):
 	temp1 (buffers_size),
 	frequency_buffer (buffers_size),
 	amplitude_buffer (buffers_size),
-	oscillator_buffer (buffers_size),
+	oscillator_buffer1 (buffers_size),
+	oscillator_buffer2 (buffers_size),
 	filter_buffer1 (buffers_size),
 	filter_buffer2 (buffers_size),
 	output_buffer (buffers_size),
@@ -43,7 +44,8 @@ VoiceCommons::resize_buffers (std::size_t buffers_size)
 	temp1.resize (buffers_size);
 	frequency_buffer.resize (buffers_size);
 	amplitude_buffer.resize (buffers_size);
-	oscillator_buffer.resize (buffers_size);
+	oscillator_buffer1.resize (buffers_size);
+	oscillator_buffer2.resize (buffers_size);
 	filter_buffer1.resize (buffers_size);
 	filter_buffer2.resize (buffers_size);
 	output_buffer.resize (buffers_size);

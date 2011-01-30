@@ -105,8 +105,7 @@ class CommonFilters: public QWidget
 	bool					_loading_params;
 
 	Haruhi::PortGroup*		_filter_ports;
-	DoubleFilter			_double_filter_1;
-	DoubleFilter			_double_filter_2;
+	DoubleFilter			_double_filter;
 
 	Filter*					_filter1;
 	Filter*					_filter2;
