@@ -437,7 +437,7 @@ void
 Session::apply_parameters()
 {
 	graph()->set_master_tune (master_tune());
-	engine()->set_sched (Thread::SchedRR, _parameters.engine_thread_priority);
+	engine()->set_sched (Thread::SchedFIFO, _parameters.engine_thread_priority);
 	meter_panel()->level_meters_group()->set_fps (_parameters.level_meter_fps);
 }
 
