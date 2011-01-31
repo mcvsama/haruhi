@@ -22,14 +22,13 @@
 #include <haruhi/utility/noncopyable.h>
 
 // Local:
+#include "event_buffer.h"
 #include "graph.h"
 #include "port.h"
 #include "port_group.h"
 
 
 namespace Haruhi {
-
-class EventBuffer;
 
 class EventPort: public Port
 {
@@ -42,13 +41,13 @@ class EventPort: public Port
 	 * Helper that casts Buffer to EventBuffer.
 	 */
 	EventBuffer*
-	event_buffer() const;
+	event_buffer() const { return static_cast<EventBuffer*> (buffer()); }
 
 	/**
 	 * Implementation of Port::graph_updated().
 	 */
 	void
-	graph_updated();
+	graph_updated() { }
 };
 
 } // namespace Haruhi

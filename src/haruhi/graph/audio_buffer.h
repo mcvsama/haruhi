@@ -50,7 +50,11 @@ class AudioBuffer: public Buffer
 	void
 	clear()
 	{
+#ifdef HARUHI_IEEE754
+		bzero (begin(), sizeof (Sample) * size());
+#else
 		std::fill (begin(), end(), 0.0);
+#endif
 	}
 
 	/**
@@ -63,7 +67,7 @@ class AudioBuffer: public Buffer
 		assert (other->type() == AudioBuffer::TYPE);
 		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
 		assert (buf->size() == size());
-		std::copy (buf->begin(), buf->end(), begin());
+		memcpy (begin(), buf->begin(), sizeof (Sample) * size());
 	}
 
 	/**
@@ -85,7 +89,8 @@ class AudioBuffer: public Buffer
 		assert (other->type() == AudioBuffer::TYPE);
 		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
 		assert (buf->size() == size());
-		std::transform (buf->begin(), buf->end(), begin(), begin(), std::plus<Sample>());
+		for (Sample *s = buf->begin(), *t = begin(); s != buf->end(); ++s, ++t)
+			*t += *s;
 	}
 
 	/**
@@ -98,7 +103,8 @@ class AudioBuffer: public Buffer
 		assert (other->type() == AudioBuffer::TYPE);
 		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
 		assert (buf->size() == size());
-		std::transform (buf->begin(), buf->end(), begin(), begin(), std::minus<Sample>());
+		for (Sample *s = buf->begin(), *t = begin(); s != buf->end(); ++s, ++t)
+			*t -= *s;
 	}
 
 	/**
@@ -111,7 +117,8 @@ class AudioBuffer: public Buffer
 		assert (other->type() == AudioBuffer::TYPE);
 		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
 		assert (buf->size() == size());
-		std::transform (buf->begin(), buf->end(), begin(), begin(), std::multiplies<Sample>());
+		for (Sample *s = buf->begin(), *t = begin(); s != buf->end(); ++s, ++t)
+			*t *= *s;
 	}
 
 	/**
@@ -130,7 +137,8 @@ class AudioBuffer: public Buffer
 	void
 	negate()
 	{
-		std::transform (begin(), end(), begin(), std::negate<Sample>());
+		for (Sample* s = begin(); s != end(); ++s)
+			*s = -*s;
 	}
 
 	void

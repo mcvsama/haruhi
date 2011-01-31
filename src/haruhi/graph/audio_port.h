@@ -24,11 +24,10 @@
 // Local:
 #include "port.h"
 #include "port_group.h"
+#include "audio_buffer.h"
 
 
 namespace Haruhi {
-
-class AudioBuffer;
 
 class AudioPort: public Port
 {
@@ -41,7 +40,7 @@ class AudioPort: public Port
 	 * Helper that casts Buffer to AudioBuffer.
 	 */
 	AudioBuffer*
-	audio_buffer() const;
+	audio_buffer() const { return static_cast<AudioBuffer*> (buffer()); }
 
 	/**
 	 * Implementation of Port::graph_updated().

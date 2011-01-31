@@ -20,6 +20,7 @@
 
 // System:
 #include <pthread.h>
+#include <errno.h>
 
 
 /**
@@ -62,14 +63,25 @@ class Mutex
 	 * Locks mutex or waits to be released and locks.
 	 */
 	void
-	lock() const;
+	lock() const { ::pthread_mutex_lock (&_mutex); }
 
 	/**
 	 * Tries to lock mutex. Returns true if mutex was
 	 * locked successfully, and false if it was not.
 	 */
 	bool
-	try_lock() const;
+	try_lock() const
+	{
+		switch (::pthread_mutex_trylock (&_mutex))
+		{
+			case EBUSY:
+				return false;
+
+			case 0:
+				return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Unlocks mutex. If calling thread is not the thread
@@ -79,13 +91,24 @@ class Mutex
 	 * 			When calling thread does not own the mutex.
 	 */
 	void
-	unlock() const;
+	unlock() const
+	{
+		switch (::pthread_mutex_unlock (&_mutex))
+		{
+			case EPERM:
+				throw MutexPermissionException ("the calling thread does not own the mutex", __func__);
+		}
+	}
 
 	/**
 	 * Unlocks and locks mutex again.
 	 */
 	void
-	yield() const;
+	yield() const
+	{
+		unlock();
+		lock();
+	}
 
 	/**
 	 * Helper for lock-safe copying some value (eg. for returning):

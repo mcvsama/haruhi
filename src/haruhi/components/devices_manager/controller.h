@@ -24,6 +24,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/dsp/one_pole_smoother.h>
 #include <haruhi/graph/event.h>
+#include <haruhi/graph/event_buffer.h>
 #include <haruhi/graph/graph.h>
 #include <haruhi/lib/midi.h>
 #include <haruhi/utility/saveable_state.h>

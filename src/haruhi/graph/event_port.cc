@@ -16,7 +16,6 @@
 
 // Local:
 #include "event_port.h"
-#include "event_buffer.h"
 #include "unit.h"
 
 
@@ -32,19 +31,6 @@ EventPort::EventPort (Unit* unit, std::string const& name, Port::Direction direc
 EventPort::~EventPort()
 {
 	unregister_me();
-}
-
-
-EventBuffer*
-EventPort::event_buffer() const
-{
-	return static_cast<EventBuffer*> (buffer());
-}
-
-
-void
-EventPort::graph_updated()
-{
 }
 
 } // namespace Haruhi

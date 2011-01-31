@@ -47,51 +47,6 @@ Mutex::~Mutex()
 }
 
 
-void
-Mutex::lock() const
-{
-	::pthread_mutex_lock (&_mutex);
-}
-
-
-bool
-Mutex::try_lock() const
-{
-	switch (::pthread_mutex_trylock (&_mutex))
-	{
-		case EBUSY:
-			return false;
-
-		case 0:
-			return true;
-	}
-	return false;
-}
-
-
-void
-Mutex::unlock() const
-{
-	switch (::pthread_mutex_unlock (&_mutex))
-	{
-		case EPERM:
-			throw MutexPermissionException ("the calling thread does not own the mutex", __func__);
-	}
-}
-
-
-void
-Mutex::yield() const
-{
-	unlock();
-	lock();
-}
-
-
-/**
- * RecursiveMutex
- */
-
 RecursiveMutex::RecursiveMutex():
 	Mutex (Mutex::Recursive)
 { }

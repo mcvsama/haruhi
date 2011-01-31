@@ -16,7 +16,6 @@
 
 // Local:
 #include "audio_port.h"
-#include "audio_buffer.h"
 #include "graph.h"
 #include "unit.h"
 
@@ -36,13 +35,6 @@ AudioPort::AudioPort (Unit* unit, std::string const& name, Port::Direction direc
 AudioPort::~AudioPort()
 {
 	unregister_me();
-}
-
-
-AudioBuffer*
-AudioPort::audio_buffer() const
-{
-	return static_cast<AudioBuffer*> (buffer());
 }
 
 

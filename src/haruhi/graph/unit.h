@@ -168,13 +168,13 @@ class Unit: private Noncopyable
 	 * Returns input ports list.
 	 */
 	Ports const&
-	inputs() const;
+	inputs() const { return _inputs; }
 
 	/**
 	 * Returns output ports list.
 	 */
 	Ports const&
-	outputs() const;
+	outputs() const { return _outputs; }
 
 	/**
 	 * Allocates and returns unique ID for new unit.

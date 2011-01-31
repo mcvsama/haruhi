@@ -233,9 +233,5 @@ class VoiceControllerEvent: public ControllerEvent
 
 } // namespace Haruhi
 
-// Local:
-#include "event_port.h"
-#include "event_buffer.h"
-
 #endif
 

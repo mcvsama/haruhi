@@ -34,14 +34,33 @@ class ControllerParam:
 	public SaveableState
 {
   public:
-	ControllerParam();
+	/**
+	 * Inline for performance reasons.
+	 */
+	ControllerParam():
+		_denominator (1)
+	{ }
 
-	ControllerParam (int minimum, int maximum, int default_value, int denominator = 1);
+	/**
+	 * Inline for performance reasons.
+	 */
+	ControllerParam (int minimum, int maximum, int default_value, int denominator = 1):
+		Param<int> (minimum, maximum, default_value),
+		_denominator (denominator)
+	{ }
 
 	ControllerParam (ControllerParam const& other) { *this = other; }
 
+	/**
+	 * Inline for performance reasons.
+	 */
 	ControllerParam&
-	operator= (ControllerParam const& other);
+	operator= (ControllerParam const& other)
+	{
+		Param<int>::operator= (other);
+		_denominator = other._denominator;
+		return *this;
+	}
 
 	int
 	denominator() const { return _denominator; }

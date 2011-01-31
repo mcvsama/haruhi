@@ -112,20 +112,6 @@ Unit::set_title (std::string const& title)
 }
 
 
-Ports const&
-Unit::inputs() const
-{
-	return _inputs;
-}
-
-
-Ports const&
-Unit::outputs() const
-{
-	return _outputs;
-}
-
-
 void
 Unit::panic()
 {

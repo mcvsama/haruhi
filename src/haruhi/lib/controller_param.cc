@@ -24,26 +24,6 @@
 
 namespace Haruhi {
 
-ControllerParam::ControllerParam():
-	_denominator (1)
-{ }
-
-
-ControllerParam::ControllerParam (int minimum, int maximum, int default_value, int denominator):
-	Param<int> (minimum, maximum, default_value),
-	_denominator (denominator)
-{ }
-
-
-ControllerParam&
-ControllerParam::operator= (ControllerParam const& other)
-{
-	Param<int>::operator= (other);
-	_denominator = other._denominator;
-	return *this;
-}
-
-
 void
 ControllerParam::save_state (QDomElement& element) const
 {
