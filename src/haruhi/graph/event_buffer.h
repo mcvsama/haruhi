@@ -55,7 +55,7 @@ class EventBuffer: public Buffer
 	 * Other buffer must be static_castable to EventBuffer.
 	 */
 	void
-	mixin (Buffer*);
+	mixin (Buffer const*);
 
 	void
 	push (Shared<Event> const& event) { _events->insert (event); }

@@ -53,7 +53,7 @@ class Buffer
 	 * Mixes in another buffer.
 	 */
 	virtual void
-	mixin (Buffer*) = 0;
+	mixin (Buffer const*) = 0;
 };
 
 } // namespace Haruhi

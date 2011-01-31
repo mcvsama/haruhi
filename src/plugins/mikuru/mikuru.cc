@@ -301,16 +301,23 @@ Mikuru::graph_updated()
 		graph()->lock();
 
 	std::size_t s = graph()->buffer_size();
+
 	_synth_threads_mutex.lock();
 	for (MikuruPrivate::SynthThreads::iterator st = _synth_threads.begin(); st != _synth_threads.end(); ++st)
 		(*st)->resize_buffers (s);
 	_synth_threads_mutex.unlock();
+
 	_mix_L.resize (s);
 	_mix_R.resize (s);
 	_filter_buffer_L.resize (s);
 	_filter_buffer_R.resize (s);
 	_input_buffer_L.resize (s);
 	_input_buffer_R.resize (s);
+
+	_parts_mutex.lock();
+	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
+		(*p)->graph_updated();
+	_parts_mutex.unlock();
 
 	if (general() && general()->envelopes())
 		general()->envelopes()->resize_buffers (s);
@@ -557,12 +564,6 @@ Mikuru::process_controller_events()
 void
 Mikuru::process_voices()
 {
-	// Prepare parts:
-	_parts_mutex.lock();
-	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
-		(*p)->prepare_buffers();
-	_parts_mutex.unlock();
-
 	_synth_threads_mutex.lock();
 	// Synthesize voices:
 	for (Private::SynthThreads::iterator s = _synth_threads.begin(); s != _synth_threads.end(); ++s)
@@ -572,7 +573,7 @@ Mikuru::process_voices()
 		(*s)->join_synthesized();
 	_synth_threads_mutex.unlock();
 
-	// Result data is now in parts' buffers.
+	// Result data is now in voices' buffers.
 }
 
 
@@ -585,6 +586,7 @@ Mikuru::process_parts()
 	_parts_mutex.lock();
 	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
 	{
+		(*p)->mix_voices();
 		(*p)->process_effects();
 		_mix_L.mixin ((*p)->buffer1());
 		_mix_R.mixin ((*p)->buffer2());

@@ -132,13 +132,11 @@ class Voice
 	timestamp() const { return _timestamp; }
 
 	/**
-	 * Preconditions:
-	 * distance (begin1, end1) = distance (begin2, end2)
-	 *
 	 * May be called only when Voice is assigned to existing thread.
+	 * Generated output is accessible through buffer{1,2}() methods.
 	 */
 	void
-	mixin (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2);
+	process();
 
 	void
 	release();
@@ -164,6 +162,25 @@ class Voice
 	bool
 	finished() const;
 
+	/**
+	 * Accessor to output buffer for channel 1.
+	 */
+	Haruhi::AudioBuffer const*
+	buffer1() const { return &_output1; }
+
+	/**
+	 * Accessor to output buffer for channel 2.
+	 */
+	Haruhi::AudioBuffer const*
+	buffer2() const { return &_output2; }
+
+	/**
+	 * Updates buffer sizes.
+	 * Should be called whenever graph parameters change.
+	 */
+	void
+	graph_updated();
+
   private:
 	inline void
 	process_frequency();
@@ -184,6 +201,8 @@ class Voice
 	VoiceManager*				_voice_manager;
 	SynthThread*				_synth_thread;
 	VoiceCommons*				_commons;
+	Haruhi::AudioBuffer			_output1;
+	Haruhi::AudioBuffer			_output2;
 
 	Haruhi::KeyID				_key_id;
 	Haruhi::VoiceID				_voice_id;

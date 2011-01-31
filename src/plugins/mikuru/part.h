@@ -85,10 +85,13 @@ class Part: public QWidget
 	buffer2() const { return _buffer_2; }
 
 	void
-	prepare_buffers();
+	mix_voices();
 
 	void
 	process_effects();
+
+	void
+	graph_updated();
 
   public slots:
 	void

@@ -44,11 +44,11 @@ EventBuffer::~EventBuffer()
 
 
 void
-EventBuffer::mixin (Buffer* other)
+EventBuffer::mixin (Buffer const* other)
 {
 	if (other->type() != EventBuffer::TYPE)
 		throw Exception ("incompatible buffers");
-	EventBuffer const* other_buffer = static_cast<EventBuffer*> (other);
+	EventBuffer const* other_buffer = static_cast<EventBuffer const*> (other);
 	EventsMultiset* aux = new EventsMultiset();
 	std::merge (_events->begin(), _events->end(), other_buffer->_events->begin(), other_buffer->_events->end(),
 				std::insert_iterator<EventsMultiset> (*aux, aux->begin()), EventsMultiset::key_compare());
