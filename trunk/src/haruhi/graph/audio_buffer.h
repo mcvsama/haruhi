@@ -58,10 +58,10 @@ class AudioBuffer: public Buffer
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	fill (Buffer* other)
+	fill (Buffer const* other)
 	{
 		assert (other->type() == AudioBuffer::TYPE);
-		AudioBuffer* buf = static_cast<AudioBuffer*> (other);
+		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
 		assert (buf->size() == size());
 		std::copy (buf->begin(), buf->end(), begin());
 	}
@@ -70,7 +70,7 @@ class AudioBuffer: public Buffer
 	 * Calls add().
 	 */
 	void
-	mixin (Buffer* other)
+	mixin (Buffer const* other)
 	{
 		add (other);
 	}
@@ -80,10 +80,10 @@ class AudioBuffer: public Buffer
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	add (Buffer* other)
+	add (Buffer const* other)
 	{
 		assert (other->type() == AudioBuffer::TYPE);
-		AudioBuffer const* buf = static_cast<AudioBuffer*> (other);
+		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
 		assert (buf->size() == size());
 		std::transform (buf->begin(), buf->end(), begin(), begin(), std::plus<Sample>());
 	}
@@ -93,10 +93,10 @@ class AudioBuffer: public Buffer
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	sub (Buffer* other)
+	sub (Buffer const* other)
 	{
 		assert (other->type() == AudioBuffer::TYPE);
-		AudioBuffer const* buf = static_cast<AudioBuffer*> (other);
+		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
 		assert (buf->size() == size());
 		std::transform (buf->begin(), buf->end(), begin(), begin(), std::minus<Sample>());
 	}
@@ -106,10 +106,10 @@ class AudioBuffer: public Buffer
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	attenuate (Buffer* other)
+	attenuate (Buffer const* other)
 	{
 		assert (other->type() == AudioBuffer::TYPE);
-		AudioBuffer const* buf = static_cast<AudioBuffer*> (other);
+		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
 		assert (buf->size() == size());
 		std::transform (buf->begin(), buf->end(), begin(), begin(), std::multiplies<Sample>());
 	}
