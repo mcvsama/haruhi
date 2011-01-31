@@ -244,8 +244,8 @@ class VoiceOscillator
 					_phases[p] = mod1 (_phases[p] + f);
 					tmpsum = (*_wavetable)(_phases[p], f);
 					// Stereo:
-					sum1 += std::pow (_1_div_unison_number * (p + 1), 2.0f) * tmpsum;
-					sum2 += std::pow (_1_div_unison_number * (_unison_number - p), 2.0f) * tmpsum;
+					sum1 += float_pow2 (_1_div_unison_number * (p + 1)) * tmpsum;
+					sum2 += float_pow2 (_1_div_unison_number * (_unison_number - p)) * tmpsum;
 					f += d;
 				}
 			}
@@ -298,10 +298,10 @@ class VoiceOscillator
 					// Don't take z as wave's frequency, because this might result in frequent jumping
 					// between two wavetables and unwanted audible noise on some notes. It's better to get
 					// some (inaudible) aliasing than that:
-					tmpsum = (*_wavetable)(_phases[p], f) * _1_div_unison_number;
+					tmpsum = (*_wavetable)(_phases[p], f);
 					// Stereo:
-					sum1 += 0.1f * int_pow2 (_unison_number - p) * tmpsum;
-					sum2 += 0.1f * int_pow2 (p + 1) * tmpsum;
+					sum1 += float_pow2 (_1_div_unison_number * (p + 1)) * tmpsum;
+					sum2 += float_pow2 (_1_div_unison_number * (_unison_number - p)) * tmpsum;
 					f += d;
 				}
 			}
@@ -334,8 +334,8 @@ class VoiceOscillator
 		return _noise.get (_noise_state) + _noise.get (_noise_state);
 	}
 
-	int
-	int_pow2 (int val)
+	float
+	float_pow2 (float val)
 	{
 		return val * val;
 	}
