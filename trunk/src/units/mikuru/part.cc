@@ -92,13 +92,16 @@ Part::process_events()
 
 
 void
-Part::prepare_buffers()
+Part::mix_voices()
 {
 	_buffer_1->resize (_mikuru->graph()->buffer_size());
 	_buffer_2->resize (_mikuru->graph()->buffer_size());
 
 	_buffer_1->clear();
 	_buffer_2->clear();
+
+	// Mix all voices into part's buffers:
+	_voice_manager->mix_voices (_buffer_1, _buffer_2);
 }
 
 
@@ -107,6 +110,13 @@ Part::process_effects()
 {
 	_effects->process (_buffer_1, 0);
 	_effects->process (_buffer_2, 1);
+}
+
+
+void
+Part::graph_updated()
+{
+	_voice_manager->graph_updated();
 }
 
 

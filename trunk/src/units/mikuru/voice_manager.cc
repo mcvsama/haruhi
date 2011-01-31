@@ -382,6 +382,53 @@ VoiceManager::set_all_filters2_params (Params::Filter& params)
 
 
 void
+VoiceManager::graph_updated()
+{
+	for (Voices::iterator v = _pressed_voices.begin(); v != _pressed_voices.end(); ++v)
+		(*v)->graph_updated();
+	for (Voices::iterator v = _sustained_voices.begin(); v != _sustained_voices.end(); ++v)
+		(*v)->graph_updated();
+	for (Voices::iterator v = _released_voices.begin(); v != _released_voices.end(); ++v)
+		(*v)->graph_updated();
+	for (Voices::iterator v = _dropped_voices.begin(); v != _dropped_voices.end(); ++v)
+		(*v)->graph_updated();
+	if (_mono_voice)
+		_mono_voice->graph_updated();
+}
+
+
+void
+VoiceManager::mix_voices (Haruhi::AudioBuffer* buffer1, Haruhi::AudioBuffer* buffer2)
+{
+	for (Voices::iterator v = _pressed_voices.begin(); v != _pressed_voices.end(); ++v)
+	{
+		buffer1->mixin ((*v)->buffer1());
+		buffer2->mixin ((*v)->buffer2());
+	}
+	for (Voices::iterator v = _sustained_voices.begin(); v != _sustained_voices.end(); ++v)
+	{
+		buffer1->mixin ((*v)->buffer1());
+		buffer2->mixin ((*v)->buffer2());
+	}
+	for (Voices::iterator v = _released_voices.begin(); v != _released_voices.end(); ++v)
+	{
+		buffer1->mixin ((*v)->buffer1());
+		buffer2->mixin ((*v)->buffer2());
+	}
+	for (Voices::iterator v = _dropped_voices.begin(); v != _dropped_voices.end(); ++v)
+	{
+		buffer1->mixin ((*v)->buffer1());
+		buffer2->mixin ((*v)->buffer2());
+	}
+	if (_mono_voice)
+	{
+		buffer1->mixin (_mono_voice->buffer1());
+		buffer2->mixin (_mono_voice->buffer2());
+	}
+}
+
+
+void
 VoiceManager::poly_create (Haruhi::VoiceEvent const* voice_event)
 {
 	// If there is already voice with the same voice_id, drop it first:

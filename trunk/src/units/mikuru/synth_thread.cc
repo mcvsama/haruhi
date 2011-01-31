@@ -104,7 +104,7 @@ SynthThread::run()
 
 		// Mixin voices:
 		for (Voices::iterator v = _voices.begin(); v != _voices.end(); ++v)
-			(*v)->mixin ((*v)->voice_manager()->part()->buffer1(), (*v)->voice_manager()->part()->buffer2());
+			(*v)->process();
 
 		_done.post();
 	}

@@ -146,6 +146,16 @@ class VoiceManager
 	void
 	set_all_filters2_params (Params::Filter& params);
 
+	void
+	graph_updated();
+
+	/**
+	 * Mixes all managed voices into given output buffers.
+	 * Buffers are not cleared before operation.
+	 */
+	void
+	mix_voices (Haruhi::AudioBuffer* buffer1, Haruhi::AudioBuffer* buffer2);
+
   private:
 	void
 	poly_create (Haruhi::VoiceEvent const*);

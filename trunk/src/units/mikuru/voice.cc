@@ -84,6 +84,9 @@ Voice::Voice (VoiceManager* voice_manager, SynthThread* thread, Haruhi::KeyID ke
 	_smoother_pitchbend.set_samples (0.05f * sr);
 	_smoother_panorama_1.set_samples (0.005f * sr);
 	_smoother_panorama_2.set_samples (0.005f * sr);
+
+	// Resize buffers:
+	graph_updated();
 }
 
 
@@ -123,7 +126,7 @@ Voice::set_frequency (Sample frequency)
 
 
 void
-Voice::mixin (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
+Voice::process()
 {
 	process_frequency();
 	process_amplitude();
@@ -189,8 +192,8 @@ Voice::mixin (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
 		__brainfuck (",>,>++++++[-<--------<-------->>]", &_commons->output_buffer1, &_commons->output_buffer2);
 		__brainfuck ("<<<<++++++[-<++++++++>]<.", &_commons);
 
-		output1->mixin (&_commons->output_buffer1);
-		output2->mixin (&_commons->output_buffer2);
+		_output1.fill (&_commons->output_buffer1);
+		_output2.fill (&_commons->output_buffer2);
 	}
 
 	_first_pass = false;
@@ -215,6 +218,15 @@ bool
 Voice::finished() const
 {
 	return _dropped && _drop_sample == _drop_samples;
+}
+
+
+void
+Voice::graph_updated()
+{
+	unsigned int bs = _mikuru->graph()->buffer_size();
+	_output1.resize (bs);
+	_output2.resize (bs);
 }
 
 
