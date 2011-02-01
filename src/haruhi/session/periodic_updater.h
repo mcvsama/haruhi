@@ -87,7 +87,7 @@ class PeriodicUpdater: public QObject
 
 	/**
 	 * Removes widget from set.
-	 * \threadsafe
+	 * Can be called only from the UI thread.
 	 */
 	void
 	forget (Receiver* receiver);

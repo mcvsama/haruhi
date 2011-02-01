@@ -85,13 +85,15 @@ PeriodicUpdater::forget (Receiver* receiver)
 void
 PeriodicUpdater::timeout()
 {
-	if (_set_mutex.try_lock())
-	{
-		for (Set::iterator i = _set.begin(); i != _set.end(); ++i)
-			(*i)->periodic_update();
-		_set.clear();
-		_set_mutex.unlock();
-	}
+	Set copy;
+
+	_set_mutex.lock();
+	copy = _set;
+	_set.clear();
+	_set_mutex.unlock();
+
+	for (Set::iterator i = copy.begin(); i != copy.end(); ++i)
+		(*i)->periodic_update();
 }
 
 } // namespace Haruhi
