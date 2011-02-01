@@ -157,7 +157,7 @@ mod1 (float x)
 inline float
 attenuate_db (float db)
 {
-	return powf (10.0, db / 10.0);
+	return powf (10.0f, db / 10.0f);
 }
 
 #endif

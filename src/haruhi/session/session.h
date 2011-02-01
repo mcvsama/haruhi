@@ -148,7 +148,7 @@ class Session: public QWidget
 		enum {
 			MinVolume	= 0,
 			ZeroVolume	= 1000,
-			MaxVolume	= 1500,
+			MaxVolume	= 1200,
 		};
 
 	  public:
