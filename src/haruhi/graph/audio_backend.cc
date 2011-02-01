@@ -23,8 +23,8 @@
 
 namespace Haruhi {
 
-AudioBackend::AudioBackend (std::string const& title, int id):
-	Backend ("urn://haruhi.mulabs.org/backend/audio-backend/1", title, id)
+AudioBackend::AudioBackend (std::string const& title):
+	Backend ("urn://haruhi.mulabs.org/backend/audio-backend/1", title, AudioBackend::ID)
 {
 }
 

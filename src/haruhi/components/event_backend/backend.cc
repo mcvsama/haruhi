@@ -41,9 +41,9 @@ namespace Haruhi {
 
 namespace EventBackendImpl {
 
-Backend::Backend (QString const& client_name, int id, QWidget* parent):
+Backend::Backend (QString const& client_name, QWidget* parent):
 	QWidget (parent),
-	EventBackend ("• Event", id),
+	EventBackend ("╸Devices╺"),
 	_client_name (client_name),
 	_insert_template_signal_mapper (0),
 	_templates_menu (0)

@@ -34,11 +34,14 @@ namespace Haruhi {
 class AudioBackend: public Backend
 {
   public:
+	// AudioBackend has always fixed ID:
+	enum { ID = 0x10000 };
+
 	// Maps audio port to peak level of its audio data:
 	typedef std::map<AudioPort*, Sample> LevelsMap;
 
   public:
-	AudioBackend (std::string const& title, int id);
+	AudioBackend (std::string const& title);
 
 	/**
 	 * Tells audio backend that data have been processed and are ready to copy

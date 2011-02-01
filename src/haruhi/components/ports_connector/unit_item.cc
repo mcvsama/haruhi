@@ -59,6 +59,8 @@ UnitItem::UnitItem (Port::Direction type, Unit* unit, QTreeWidget* parent, QStri
 			case Port::Output:	setIcon (0, Resources::Icons16::output_unit()); break;
 		}
 	}
+
+	update();
 }
 
 
@@ -72,7 +74,12 @@ UnitItem::unit() const
 void
 UnitItem::update()
 {
-	setText (0, QString::fromStdString (_unit->title()));
+	QString text;
+	if (_unit->id() >= Unit::ReservedID)
+		text = QString::fromStdString (_unit->title());
+	else
+		text = QString ("%1: %2").arg (_unit->id()).arg (QString::fromStdString (_unit->title()));
+	setText (0, text);
 }
 
 

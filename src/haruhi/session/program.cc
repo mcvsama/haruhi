@@ -30,7 +30,7 @@ Program::Program (Session* session, QWidget* parent):
 
 	_layout = new QVBoxLayout (this, 0, Config::Spacing);
 
-		_patch = new Patch (session, "Test patch", this);
+		_patch = new Patch (session, "Patch", this);
 
 	_layout->addWidget (_patch);
 }

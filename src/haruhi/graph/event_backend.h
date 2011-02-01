@@ -33,6 +33,9 @@ class EventPort;
 class EventTeacher
 {
   public:
+	// AudioBackend has always fixed ID:
+	enum { ID = 0x10001 };
+
 	/**
 	 * Ports to listen for in start_learning()/stop_learning().
 	 * As transport type use EventTypes.
@@ -108,7 +111,7 @@ class EventBackend:
 	public EventTeacher
 {
   public:
-	EventBackend (std::string const& title, int id);
+	EventBackend (std::string const& title);
 };
 
 } // namespace Haruhi

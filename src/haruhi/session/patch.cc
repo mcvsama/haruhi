@@ -212,7 +212,7 @@ namespace Private = PatchPrivate;
 
 
 Patch::Patch (Session* session, std::string const& title, QWidget* parent):
-	UnitBay ("", title, 0, parent),
+	UnitBay ("", title, 0x20000, parent),
 	_session (session)
 {
 	// Register itself:
@@ -290,9 +290,9 @@ Patch::load_plugin (QString const& urn)
 
 		// Create unit frame:
 		Private::PluginTab* plugin_tab = new Private::PluginTab (this, _tabs, plugin);
-		// TODO patch should give a hint to plugin how should it call itself in Core::Graph:
-		_tabs->addTab (plugin_tab, Resources::Icons22::spacer(), QString ("%1: %2").arg (1).arg (QString::fromStdString (plugin->title())));
+		_tabs->addTab (plugin_tab, Resources::Icons22::spacer(), "<>");
 		_plugins_to_frames_map[plugin] = plugin_tab;
+		update_tab_title (plugin);
 		_session->graph()->register_unit (plugin);
 	}
 	return plugin;
@@ -317,6 +317,26 @@ Patch::unload_plugin (Plugin* plugin)
 		delete plugin_tab;
 		_plugins_to_frames_map.erase (u);
 	}
+}
+
+
+int
+Patch::plugin_tab_position (Plugin* plugin) const
+{
+	int tab_position = -1;
+	PluginsToFramesMap::const_iterator f = _plugins_to_frames_map.find (plugin);
+	if (f != _plugins_to_frames_map.end())
+		tab_position = _tabs->indexOf (f->second);
+	return tab_position;
+}
+
+
+void
+Patch::update_tab_title (Plugin* plugin)
+{
+	int i = plugin_tab_position (plugin);
+	if (i != -1)
+		_tabs->setTabText (i, QString ("%1: %2").arg (plugin->id()).arg (QString::fromStdString (plugin->title())));
 }
 
 
@@ -416,17 +436,6 @@ Patch::load_state (QDomElement const& element)
 		conn_set.load();
 		graph()->unlock();
 	}
-}
-
-
-int
-Patch::plugin_tab_position (Plugin* plugin) const
-{
-	int tab_position = -1;
-	PluginsToFramesMap::const_iterator f = _plugins_to_frames_map.find (plugin);
-	if (f != _plugins_to_frames_map.end())
-		tab_position = _tabs->indexOf (f->second);
-	return tab_position;
 }
 
 

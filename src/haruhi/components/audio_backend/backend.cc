@@ -40,9 +40,9 @@ namespace Haruhi {
 
 namespace AudioBackendImpl {
 
-Backend::Backend (QString const& client_name, int id, QWidget* parent):
+Backend::Backend (QString const& client_name, QWidget* parent):
 	QWidget (parent),
-	AudioBackend ("• Audio", id),
+	AudioBackend ("╸Audio╺"),
 	_client_name (client_name)
 {
 	_master_volume_port = new EventPort (this, "Master Volume", Port::Input);

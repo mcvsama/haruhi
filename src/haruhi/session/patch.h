@@ -142,17 +142,24 @@ class Patch:
 	void
 	unload_plugin (Plugin*);
 
-	void
-	save_state (QDomElement&) const;
-
-	void
-	load_state (QDomElement const&);
-
 	/**
 	 * Returns tab-position of given plugin.
 	 */
 	int
 	plugin_tab_position (Plugin*) const;
+
+	void
+	update_tab_title (Plugin*);
+
+	/*
+	 * SaveableState API
+	 */
+
+	void
+	save_state (QDomElement&) const;
+
+	void
+	load_state (QDomElement const&);
 
   private:
 	/**

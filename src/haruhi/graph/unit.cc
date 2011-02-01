@@ -29,7 +29,7 @@
 
 namespace Haruhi {
 
-int Unit::_id_counter = 0;
+Unit::IDs Unit::_ids;
 
 
 Unit::Unit (std::string const& urn, std::string const& title, int id):
@@ -45,6 +45,7 @@ Unit::Unit (std::string const& urn, std::string const& title, int id):
 
 Unit::~Unit()
 {
+	free_id (id());
 	// Prevent processing:
 	_processing_mutex.lock();
 	// Check if unit is properly disabled when destroyed:
@@ -98,8 +99,6 @@ Unit::set_id (int id)
 	_id = id;
 	if (_id <= 0)
 		_id = Unit::allocate_id();
-	else if (_id_counter < _id)
-		_id_counter = _id;
 }
 
 
@@ -119,25 +118,6 @@ Unit::panic()
 
 
 void
-Unit::graph_updated()
-{
-	graph()->lock();
-	for (Ports::const_iterator i = _inputs.begin();  i != _inputs.end();  ++i)
-		(*i)->graph_updated();
-	for (Ports::const_iterator o = _outputs.begin();  o != _outputs.end();  ++o)
-		(*o)->graph_updated();
-	graph()->unlock();
-}
-
-
-int
-Unit::allocate_id()
-{
-	return _id_counter += 1;
-}
-
-
-void
 Unit::sync_inputs()
 {
 	for (Ports::const_iterator i = _inputs.begin();  i != _inputs.end();  ++i)
@@ -152,6 +132,43 @@ Unit::clear_outputs()
 {
 	for (Ports::const_iterator o = _outputs.begin();  o != _outputs.end();  ++o)
 		(*o)->buffer()->clear();
+}
+
+
+void
+Unit::graph_updated()
+{
+	graph()->lock();
+	for (Ports::const_iterator i = _inputs.begin();  i != _inputs.end();  ++i)
+		(*i)->graph_updated();
+	for (Ports::const_iterator o = _outputs.begin();  o != _outputs.end();  ++o)
+		(*o)->graph_updated();
+	graph()->unlock();
+}
+
+
+int
+Unit::allocate_id()
+{
+	// Find lowest free ID:
+	int id = 1;
+	while (!_ids.insert (id).second)
+		++id;
+	return id;
+}
+
+
+int
+Unit::reserve_id (int id)
+{
+	return _ids.insert (id).second ? id : allocate_id();
+}
+
+
+void
+Unit::free_id (int id)
+{
+	_ids.erase (id);
 }
 
 } // namespace Haruhi

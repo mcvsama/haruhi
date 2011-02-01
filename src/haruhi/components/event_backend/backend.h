@@ -78,7 +78,7 @@ class Backend:
 	typedef std::map<int, DevicesManager::Device>			Templates;
 
   public:
-	Backend (QString const& client_name, int id, QWidget* parent);
+	Backend (QString const& client_name, QWidget* parent);
 
 	~Backend();
 

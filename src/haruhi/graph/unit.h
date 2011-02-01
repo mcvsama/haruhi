@@ -46,7 +46,12 @@ class Unit: private Noncopyable
 	friend class Graph;
 	friend class Port;
 
+	typedef std::set<int> IDs;
+
   public:
+	// Special IDs, reserved for Backends, etc.
+	enum { ReservedID = 0x10000 };
+
 	// Shorthand types:
 	typedef std::set<Unit*> Set;
 
@@ -151,7 +156,8 @@ class Unit: private Noncopyable
 	id() const { return _id; }
 
 	/**
-	 * Sets unit id.
+	 * Sets unit id. If id <= 0, auto-calculated positive ID is assigned.
+	 * Does not validate that ID is unique.
 	 * May not be called inside of processing round.
 	 */
 	void
@@ -175,12 +181,6 @@ class Unit: private Noncopyable
 	 */
 	Ports const&
 	outputs() const { return _outputs; }
-
-	/**
-	 * Allocates and returns unique ID for new unit.
-	 */
-	static int
-	allocate_id();
 
   protected: // By Chuck Norris
 	/**
@@ -226,7 +226,22 @@ class Unit: private Noncopyable
 	graph_updated();
 
   private:
-	static int	_id_counter;
+	/**
+	 * Allocates and returns unique ID for new unit.
+	 */
+	static int
+	allocate_id();
+
+	static int
+	reserve_id (int id);
+
+	static void
+	free_id (int id);
+
+  private:
+	static IDs	_ids;
+	// IDs are not checked to be unique.
+	int			_id;
 
 	Graph*		_graph;
 	bool		_synced;
@@ -236,9 +251,6 @@ class Unit: private Noncopyable
 
 	std::string _urn;
 	std::string	_title;
-
-	// IDs are not checked to be unique.
-	int			_id;
 
 	Ports		_inputs;
 	Ports		_outputs;

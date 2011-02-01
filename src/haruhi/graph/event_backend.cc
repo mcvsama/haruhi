@@ -43,8 +43,8 @@ EventTeacher::stop_learning (Learnable* learnable)
 }
 
 
-EventBackend::EventBackend (std::string const& title, int id):
-	Backend ("urn://haruhi.mulabs.org/backend/event-backend/1", title, id)
+EventBackend::EventBackend (std::string const& title):
+	Backend ("urn://haruhi.mulabs.org/backend/event-backend/1", title, EventBackend::ID)
 {
 }
 

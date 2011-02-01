@@ -581,14 +581,12 @@ Session::load_state (QDomElement const& element)
 
 		try {
 			dynamic_cast<SaveableState&> (*_audio_backend).load_state (audio_backend_element);
-			_audio_backend->set_id (audio_backend_element.attribute ("id").toInt());
 		}
 		catch (std::bad_cast const&)
 		{ }
 
 		try {
 			dynamic_cast<SaveableState&> (*_event_backend).load_state (event_backend_element);
-			_event_backend->set_id (event_backend_element.attribute ("id").toInt());
 		}
 		catch (std::bad_cast const&)
 		{ }
@@ -764,7 +762,7 @@ void
 Session::start_audio_backend()
 {
 	try {
-		AudioBackendImpl::Backend* audio_backend = new AudioBackendImpl::Backend ("Haruhi", 1, _audio_tab);
+		AudioBackendImpl::Backend* audio_backend = new AudioBackendImpl::Backend ("Haruhi", _audio_tab);
 		_audio_backend = audio_backend;
 		audio_backend->show();
 		_graph->register_audio_backend (_audio_backend);
@@ -782,7 +780,7 @@ void
 Session::start_event_backend()
 {
 	try {
-		EventBackendImpl::Backend* event_backend = new EventBackendImpl::Backend ("Haruhi", 2, _event_tab);
+		EventBackendImpl::Backend* event_backend = new EventBackendImpl::Backend ("Haruhi", _event_tab);
 		_event_backend = event_backend;
 		event_backend->show();
 		_graph->register_event_backend (_event_backend);
