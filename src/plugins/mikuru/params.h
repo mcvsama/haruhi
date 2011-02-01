@@ -81,7 +81,7 @@ struct Params
 		HARUHI_MIKURU_PARAMS_STANDARD_METHODS (General)
 
 		enum {
-			HARUHI_MIKURU_PARAM (Volume,				       0,	+1000000,	+1000000,	 +707945) // -1.5dB
+			HARUHI_MIKURU_PARAM (Volume,				       0,	+1000000,	+1000000,	 +938445) // -1.5dB/20*log_10/exp
 			HARUHI_MIKURU_PARAM (Panorama,				-1000000,	+1000000,	+1000000,	       0)
 			HARUHI_MIKURU_PARAM (Detune,				-1000000,	+1000000,	+1000000,	       0)
 			HARUHI_MIKURU_PARAM (StereoWidth,			       0,	+1000000,	+1000000,	+1000000)
@@ -199,7 +199,7 @@ struct Params
 		HARUHI_MIKURU_PARAMS_STANDARD_METHODS (Oscillator)
 
 		enum {
-			HARUHI_MIKURU_PARAM (Volume,				       0,	+1000000,	+1000000,	 +707945) // -1.5dB
+			HARUHI_MIKURU_PARAM (Volume,				       0,	+1000000,	+1000000,	 +938445) // -1.5dB/20*log_10/exp
 			HARUHI_MIKURU_PARAM (PortamentoTime,		       0,	+1000000,	 +100000,	       0)
 			HARUHI_MIKURU_PARAM (Phase,					-1000000,	+1000000,	+1000000,	       0)
 			HARUHI_MIKURU_PARAM (NoiseLevel,			       0,	+1000000,	+1000000,	       0)
