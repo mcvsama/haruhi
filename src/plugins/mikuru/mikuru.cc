@@ -278,8 +278,10 @@ Mikuru::process()
 void
 Mikuru::panic()
 {
+	_parts_mutex.lock();
 	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
 		(*p)->voice_manager()->panic();
+	_parts_mutex.unlock();
 }
 
 
@@ -583,7 +585,6 @@ Mikuru::process_parts()
 	_mix_L.clear();
 	_mix_R.clear();
 
-	_parts_mutex.lock();
 	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
 	{
 		(*p)->mix_voices();
@@ -591,7 +592,6 @@ Mikuru::process_parts()
 		_mix_L.mixin ((*p)->buffer1());
 		_mix_R.mixin ((*p)->buffer2());
 	}
-	_parts_mutex.unlock();
 }
 
 
