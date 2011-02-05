@@ -39,6 +39,7 @@
 #include <haruhi/utility/confusion.h>
 #include <haruhi/widgets/dial_control.h>
 #include <haruhi/widgets/knob.h>
+#include <haruhi/utility/numeric.h>
 
 // Local:
 #include "mikuru.h"
@@ -204,7 +205,7 @@ Mikuru::process()
 
 	// Stereo width:
 	// TODO smoothing
-	float w = std::pow (1.0f - general()->params()->stereo_width.to_f(), M_E);
+	float w = fast_powE (1.0f - general()->params()->stereo_width.to_f());
 	Sample o1, o2;
 	for (Sample *s1 = _mix_L.begin(), *s2 = _mix_R.begin(); s1 != _mix_L.end(); ++s1, ++s2)
 	{
@@ -238,7 +239,7 @@ Mikuru::process()
 		_input_buffer_L.fill (_audio_input_L->audio_buffer());
 		_input_buffer_R.fill (_audio_input_R->audio_buffer());
 		// Adjust volume:
-		float v = std::pow (_general->params()->input_volume.to_f(), M_E);
+		float v = fast_powE (_general->params()->input_volume.to_f());
 		_audio_input_smoother_L.multiply (_input_buffer_L.begin(), _input_buffer_L.end(), v);
 		_audio_input_smoother_R.multiply (_input_buffer_R.begin(), _input_buffer_R.end(), v);
 	}
@@ -261,7 +262,7 @@ Mikuru::process()
 	}
 
 	// Master volume:
-	Haruhi::Sample v = std::pow (general()->params()->volume.to_f(), M_E);
+	Haruhi::Sample v = fast_powE (general()->params()->volume.to_f());
 	_master_volume_smoother_L.multiply (_audio_output_L->audio_buffer()->begin(), _audio_output_L->audio_buffer()->end(), v);
 	_master_volume_smoother_R.multiply (_audio_output_R->audio_buffer()->begin(), _audio_output_R->audio_buffer()->end(), v);
 

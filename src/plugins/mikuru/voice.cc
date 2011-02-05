@@ -21,6 +21,7 @@
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/functions.h>
 #include <haruhi/utility/confusion.h>
+#include <haruhi/utility/numeric.h>
 
 // Local:
 #include "types.h"
@@ -258,7 +259,7 @@ Voice::process_frequency()
 	std::fill (_commons->frequency_buffer.begin(), _commons->frequency_buffer.end(), 1.0f);
 
 	// Transposition:
-	frequency *= std::pow (2.0f, (1.0f / 12.0f) * oscillator_params->transposition_semitones.get());
+	frequency *= fast_2pow ((1.0f / 12.0f) * oscillator_params->transposition_semitones.get());
 
 	// Glide:
 	if (_frequency_change != 1.0f)
@@ -287,8 +288,8 @@ Voice::process_frequency()
 			else
 			{
 				pitchbend = _params.pitchbend.to_f();
-				float range = std::pow (2.0f, (1.0f / 12.0f) * (pitchbend >= 0 ? oscillator_params->pitchbend_up_semitones.get() : oscillator_params->pitchbend_down_semitones.get()));
-				pitchbend = std::pow (range, pitchbend + 1.0f) / range;
+				float range = fast_2pow ((1.0f / 12.0f) * (pitchbend >= 0 ? oscillator_params->pitchbend_up_semitones.get() : oscillator_params->pitchbend_down_semitones.get()));
+				pitchbend = fast_pow (range, pitchbend + 1.0f) / range;
 				_last_pitchbend_value = pitchbend;
 			}
 		}
@@ -310,7 +311,7 @@ Voice::process_frequency()
 		float range = 1.0f * oscillator_params->frequency_mod_range.get();
 
 		for (std::size_t i = 0; i < buffer_size; ++i)
-			fb[i] *= std::pow (2.0f, (1.0f / 12.0f) * (frq_det + tb[i] * range));
+			fb[i] *= fast_2pow ((1.0f / 12.0f) * (frq_det + tb[i] * range));
 	}
 
 	// Multiply buffer by static frequency value:
@@ -338,7 +339,7 @@ Voice::process_amplitude()
 	_smoother_amplitude.multiply (_commons->amplitude_buffer.begin(), _commons->amplitude_buffer.end(), f);
 
 	for (Sample *s = _commons->amplitude_buffer.begin(), *e = _commons->amplitude_buffer.end(); s != e; ++s)
-		*s = std::pow (*s, M_E);
+		*s = fast_powE (*s);
 }
 
 
@@ -352,14 +353,14 @@ Voice::update_glide_parameters()
 	{
 		if (_part->oscillator()->oscillator_params()->const_portamento_time.get())
 		{
-			_frequency_change = std::pow (_target_frequency / source_frequency,
+			_frequency_change = fast_pow (_target_frequency / source_frequency,
 										  1.0f / (1.0f / Params::Oscillator::PortamentoTimeDenominator * portamento_time * _mikuru->graph()->sample_rate()));
 		}
 		else
 		{
 			// 2 octaves per portamento time:
 			Sample difference = _target_frequency - source_frequency > 0 ? 2.0f : 0.5f;
-			_frequency_change = std::pow (difference,
+			_frequency_change = fast_pow (difference,
 										  1.0f / (1.0f / Params::Oscillator::PortamentoTimeDenominator * portamento_time * _mikuru->graph()->sample_rate()));
 		}
 	}

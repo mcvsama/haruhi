@@ -176,7 +176,7 @@ class VoiceOscillator
 		{
 			// Multiply samples by _volume and divide samples by _unison_number:
 			// (these coefficients have been obtained by listening tests):
-			float amp = std::pow (_1_div_unison_number, _unison_stereo ? 0.4f : 0.75f);
+			float amp = fast_pow (_1_div_unison_number, _unison_stereo ? 0.4f : 0.75f);
 
 			for (std::size_t i = 0, n = output1->size(); i < n; ++i)
 			{
@@ -244,8 +244,8 @@ class VoiceOscillator
 					_phases[p] = mod1 (_phases[p] + f);
 					tmpsum = (*_wavetable)(_phases[p], f);
 					// Stereo:
-					sum1 += float_pow2 (_1_div_unison_number * (p + 1)) * tmpsum;
-					sum2 += float_pow2 (_1_div_unison_number * (_unison_number - p)) * tmpsum;
+					sum1 += pow2 (_1_div_unison_number * (p + 1)) * tmpsum;
+					sum2 += pow2 (_1_div_unison_number * (_unison_number - p)) * tmpsum;
 					f += d;
 				}
 			}
@@ -300,8 +300,8 @@ class VoiceOscillator
 					// some (inaudible) aliasing than that:
 					tmpsum = (*_wavetable)(_phases[p], f);
 					// Stereo:
-					sum1 += float_pow2 (_1_div_unison_number * (p + 1)) * tmpsum;
-					sum2 += float_pow2 (_1_div_unison_number * (_unison_number - p)) * tmpsum;
+					sum1 += pow2 (_1_div_unison_number * (p + 1)) * tmpsum;
+					sum2 += pow2 (_1_div_unison_number * (_unison_number - p)) * tmpsum;
 					f += d;
 				}
 			}
@@ -332,12 +332,6 @@ class VoiceOscillator
 	noise_sample()
 	{
 		return _noise.get (_noise_state) + _noise.get (_noise_state);
-	}
-
-	float
-	float_pow2 (float val)
-	{
-		return val * val;
 	}
 
   private:

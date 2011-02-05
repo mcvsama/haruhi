@@ -23,6 +23,7 @@
 
 // Haruhi:
 #include <haruhi/widgets/wave_plot.h>
+#include <haruhi/utility/numeric.h>
 
 // Local:
 #include "mikuru.h"
@@ -794,7 +795,7 @@ Oscillator::recompute_wave()
 			float h = 1.0f * hv / Params::Waveform::HarmonicDenominator;
 			float p = 1.0f * pv / Params::Waveform::PhaseDenominator;
 			// Apply exponential curve to harmonic value:
-			h = h > 0 ? std::pow (h, M_E) : -std::pow (-h, M_E);
+			h = h > 0 ? fast_powE (h) : -fast_powE (-h);
 			hw->set_harmonic (i, h, p);
 			set_button_highlighted (_harmonics_resets[i], hv != 0);
 			set_button_highlighted (_phases_resets[i], pv != 0);
