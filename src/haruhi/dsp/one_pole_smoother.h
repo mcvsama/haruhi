@@ -20,6 +20,7 @@
 
 // Haruhi:
 #include <haruhi/config/types.h>
+#include <haruhi/utility/numeric.h>
 
 
 namespace Haruhi {
@@ -46,7 +47,7 @@ class OnePoleSmoother
 	void
 	set_samples (Sample samples)
 	{
-		_time = std::pow (0.01f, 2.0f / samples);
+		_time = fast_pow (0.01f, 2.0f / samples);
 	}
 
 	/**

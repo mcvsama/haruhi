@@ -18,11 +18,14 @@
 #include <cstddef>
 #include <cmath>
 
+// Haruhi:
+#include <haruhi/utility/numeric.h>
+
 
 inline float
 log_meter (float db, float lower_db = -70.0, float upper_db = 6.0)
 {
-	return db < lower_db ? 0.0 : std::pow ((db - lower_db) / (upper_db - lower_db), 2.0);
+	return db < lower_db ? 0.0 : pow2 ((db - lower_db) / (upper_db - lower_db));
 }
 
 #endif

@@ -804,7 +804,7 @@ Session::master_volume_changed (int value)
 {
 	if (_audio_backend)
 	{
-		Sample v = std::pow (value / static_cast<float> (Session::MeterPanel::ZeroVolume), M_E);
+		Sample v = fast_powE (value / static_cast<float> (Session::MeterPanel::ZeroVolume));
 		_audio_backend->set_master_volume (v);
 	}
 }

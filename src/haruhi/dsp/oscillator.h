@@ -128,7 +128,7 @@ class Oscillator
 			fill_without_noised_unison (begin, end);
 
 		// Multiply samples by _volume and divide samples by _unison_number:
-		float amp = _value * std::pow (_1_div_unison_number, 0.75f);
+		float amp = _value * fast_pow (_1_div_unison_number, 0.75f);
 		// TODO might be optimized by using SIMD instructions:
 		for (Sample* c = begin; c != end; ++c)
 			*c *= amp;
