@@ -148,8 +148,8 @@ class VoiceOscillator
 		// Synthesize wave:
 		if (_wavetable == 0 || !_wavetable_enabled)
 		{
-			std::fill (output1->begin(), output1->end(), 0.0f);
-			std::fill (output2->begin(), output2->end(), 0.0f);
+			output1->clear();
+			output2->clear();
 		}
 		else
 		{
@@ -215,12 +215,23 @@ class VoiceOscillator
 	}
 
 	void
+	initialize_stereo_unison_lookup()
+	{
+		// Lookup table for stereo unison:
+		for (int p = 0; p < _unison_number; ++p)
+			_stereo_unison_lookup[p] = pow2 (_1_div_unison_number * (p + 1));
+	}
+
+
+	void
 	fill_without_noised_unison (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
 	{
-		Sample f, d, l, c, h, sum1, sum2, tmpsum;
+		Sample f, d, l, h, sum1, sum2, tmpsum;
 		Sample* const o1 = output1->begin();
 		Sample* const o2 = output2->begin();
 		Sample* const fs = _frequency_source->begin();
+
+		initialize_stereo_unison_lookup();
 
 		// Oscillate:
 		for (std::size_t i = 0, n = output1->size(); i < n; ++i)
@@ -229,8 +240,7 @@ class VoiceOscillator
 			f = fs[i];
 			d = unison_delta (f);
 			l = f - d * _half_unison_number;
-			c = f;
-			h = c + c - l;
+			h = f + f - l;
 			f = l;
 			if (f < 0.0f)
 				f = 0.0f;
@@ -244,8 +254,8 @@ class VoiceOscillator
 					_phases[p] = mod1 (_phases[p] + f);
 					tmpsum = (*_wavetable)(_phases[p], f);
 					// Stereo:
-					sum1 += pow2 (_1_div_unison_number * (p + 1)) * tmpsum;
-					sum2 += pow2 (_1_div_unison_number * (_unison_number - p)) * tmpsum;
+					sum1 += _stereo_unison_lookup[p] * tmpsum;
+					sum2 += _stereo_unison_lookup[_unison_number - p - 1] * tmpsum;
 					f += d;
 				}
 			}
@@ -268,10 +278,12 @@ class VoiceOscillator
 	void
 	fill_with_noised_unison (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
 	{
-		Sample e, f, d, l, c, h, z, sum1, sum2, tmpsum;
+		Sample e, f, d, l, h, z, sum1, sum2, tmpsum;
 		Sample* const o1 = output1->begin();
 		Sample* const o2 = output2->begin();
 		Sample* const fs = _frequency_source->begin();
+
+		initialize_stereo_unison_lookup();
 
 		// Oscillate:
 		for (std::size_t i = 0, n = output1->size(); i < n; ++i)
@@ -281,8 +293,7 @@ class VoiceOscillator
 			e = std::sqrt (f) * _unison_noise;
 			d = unison_delta (f);
 			l = f - d * _half_unison_number;
-			c = f;
-			h = c + c - l;
+			h = f + f - l;
 			f = l;
 			if (f < 0.0f)
 				f = 0.0f;
@@ -300,8 +311,8 @@ class VoiceOscillator
 					// some (inaudible) aliasing than that:
 					tmpsum = (*_wavetable)(_phases[p], f);
 					// Stereo:
-					sum1 += pow2 (_1_div_unison_number * (p + 1)) * tmpsum;
-					sum2 += pow2 (_1_div_unison_number * (_unison_number - p)) * tmpsum;
+					sum1 += _stereo_unison_lookup[p] * tmpsum;
+					sum2 += _stereo_unison_lookup[_unison_number - p - 1] * tmpsum;
 					f += d;
 				}
 			}
@@ -340,6 +351,7 @@ class VoiceOscillator
 	Haruhi::AudioBuffer*	_frequency_source;
 	Haruhi::AudioBuffer*	_amplitude_source;
 	Sample					_distribution_lookup[MaxUnison];
+	Sample					_stereo_unison_lookup[MaxUnison];
 	Sample					_phases[MaxUnison];
 
 	// Unison:
