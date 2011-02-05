@@ -26,6 +26,7 @@
 #include <haruhi/application/haruhi.h>
 #include <haruhi/application/fail.h>
 #include <haruhi/utility/backtrace.h>
+#include <haruhi/utility/fast_pow.h>
 
 
 int main (int argc, char** argv, char** envp)
@@ -42,6 +43,9 @@ int main (int argc, char** argv, char** envp)
 	// Now casting QString to std::string|const char* will yield UTF-8 encodec strings.
 	// Also std::strings and const chars* are expected to be encoded in UTF-8.
 
+	// Lib initializations:
+	fast_pow_initialize();
+
 	try {
 		if (argc == 2 && (strcmp (argv[1], "-v") == 0 || strcmp (argv[1], "--version") == 0))
 			std::cout << "Haruhi  commit: " << Haruhi::Version::commit << "  branch: " << Haruhi::Version::branch << std::endl;
@@ -53,5 +57,8 @@ int main (int argc, char** argv, char** envp)
 		Backtrace::clog();
 		throw;
 	}
+
+	// Deinit:
+	fast_pow_deinitialize();
 }
 

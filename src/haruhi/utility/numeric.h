@@ -19,6 +19,9 @@
 #include <cmath>
 #include <stdint.h>
 
+// Local:
+#include "fast_pow.h"
+
 
 inline float
 renormalize (float value, float a1, float b1, float a2, float b2)
@@ -60,10 +63,17 @@ template<class Value>
 
 template<class Value>
 	inline Value
-	pow2 (Value value)
+	pow2 (Value v)
 	{
-		return value * value;
+		return v * v;
 	}
+
+
+inline float
+fast_powE (float v)
+{
+	return fast_pow (v, M_E);
+}
 
 
 /**
@@ -73,10 +83,7 @@ template<class Value>
 inline float
 ieee754_fractional_part (const float& v)
 {
-	union {
-		float f;
-		uint32_t i;
-	} u = {v};
+	union { float f; uint32_t i; } u = { f: v };
 	// Sign:
 	const uint32_t s = u.i & (1 << 31);
 	// Get exponent:
@@ -117,6 +124,19 @@ sse3_fractional_part (const float& v)
 }
 
 
+inline float
+fractional_part (const float& v)
+{
+#if defined HARUHI_SSE3
+	return sse3_fractional_part (v);
+#elif defined HARUHI_IEEE754
+	return ieee754_fractional_part (v);
+#else
+	return std::fmod (v, 1.0f);
+#endif
+}
+
+
 /**
  * Returns x > 0.0 ? 1.0 : -1.0.
  */
@@ -138,15 +158,9 @@ sgn (float const& v)
  * Fmods value x into [0, 1.0] range.
  */
 inline float
-mod1 (float x)
+mod1 (float v)
 {
-#if defined HARUHI_SSE3
-	return x >= 0.0 ? sse3_fractional_part (x) : 1.0f - sse3_fractional_part (-x);
-#elif defined HARUHI_IEEE754
-	return x >= 0.0 ? ieee754_fractional_part (x) : 1.0f - ieee754_fractional_part (-x);
-#else
-	return x >= 0.0 ? std::fmod (x, 1.0f) : 1.0f - std::fmod (-x, 1.0f);
-#endif
+	return v >= 0.0f ? fractional_part (v) : 1.0f - fractional_part (-v);
 }
 
 
