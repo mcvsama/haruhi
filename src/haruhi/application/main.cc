@@ -40,7 +40,7 @@ int main (int argc, char** argv, char** envp)
 
 	// Qt preparations:
 	QTextCodec::setCodecForCStrings (QTextCodec::codecForName ("UTF-8"));
-	// Now casting QString to std::string|const char* will yield UTF-8 encodec strings.
+	// Now casting QString to std::string|const char* will yield UTF-8 encoded strings.
 	// Also std::strings and const chars* are expected to be encoded in UTF-8.
 
 	// Lib initializations:
