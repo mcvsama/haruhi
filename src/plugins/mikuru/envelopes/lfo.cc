@@ -29,6 +29,7 @@
 #include <haruhi/dsp/functions.h>
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/wave_plot.h>
+#include <haruhi/utility/numeric.h>
 
 // Local:
 #include "../mikuru.h"
@@ -86,13 +87,13 @@ LFO::Osc::advance (unsigned int samples)
 		if (_current_fade_in_sample < _fade_in_samples)
 		{
 			_current_fade_in_sample += samples;
-			dep *= std::pow (1.0f * std::min (_current_fade_in_sample, _fade_in_samples) / _fade_in_samples, 2.0f);
+			dep *= pow2 (1.0f * std::min (_current_fade_in_sample, _fade_in_samples) / _fade_in_samples);
 		}
 		// Fade out:
 		else if (_fade_out_enabled)
 		{
 			_current_fade_out_sample += samples;
-			dep *= std::pow (1.0f - 1.0f * std::min (_current_fade_out_sample, _fade_out_samples) / _fade_out_samples, 2.0f);
+			dep *= pow2 (1.0f - 1.0f * std::min (_current_fade_out_sample, _fade_out_samples) / _fade_out_samples);
 		}
 
 		// Osc:
@@ -629,11 +630,11 @@ LFO::apply_function (Haruhi::Sample v) const
 {
 	switch (_params.function.get())
 	{
-		case Params::LFO::LogarithmicE: return std::pow (v, 1.0f/M_E);
-		case Params::LFO::Logarithmic2: return std::pow (v, 0.5f);
+		case Params::LFO::LogarithmicE: return fast_pow (v, 1.0f/M_E);
+		case Params::LFO::Logarithmic2: return fast_pow (v, 0.5f);
 		case Params::LFO::Linear:		return v;
-		case Params::LFO::Expotential2: return std::pow (v, 2.0f);
-		case Params::LFO::ExpotentialE: return std::pow (v, M_E);
+		case Params::LFO::Expotential2: return fast_pow (v, 2.0f);
+		case Params::LFO::ExpotentialE: return fast_pow (v, M_E);
 	}
 	return v;
 }

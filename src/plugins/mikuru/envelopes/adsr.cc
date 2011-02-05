@@ -27,6 +27,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/widgets/envelope_plot.h>
 #include <haruhi/widgets/knob.h>
+#include <haruhi/utility/numeric.h>
 
 // Local:
 #include "../mikuru.h"
@@ -314,11 +315,11 @@ ADSR::process()
 		v = *(_buffer.end() - 1);
 		switch (_params.function)
 		{
-			case Params::ADSR::LogarithmicE: v = std::pow (v, 1.0f/M_E);	break;
-			case Params::ADSR::Logarithmic2: v = std::pow (v, 0.5f);		break;
+			case Params::ADSR::LogarithmicE: v = fast_pow (v, 1.0f/M_E);	break;
+			case Params::ADSR::Logarithmic2: v = fast_pow (v, 0.5f);		break;
 			case Params::ADSR::Linear:										break;
-			case Params::ADSR::Expotential2: v = std::pow (v, 2.0f);		break;
-			case Params::ADSR::ExpotentialE: v = std::pow (v, M_E);			break;
+			case Params::ADSR::Expotential2: v = fast_pow (v, 2.0f);		break;
+			case Params::ADSR::ExpotentialE: v = fast_pow (v, M_E);			break;
 		}
 
 		if (adsr->finished())
