@@ -38,37 +38,37 @@ namespace DSP {
 
 template<class Sample>
 	inline Sample
-	base_sine5 (Sample register x)
+	base_sin5 (Sample register x)
 	{
 		if (x > 0.5)		x = +1.0 - x;
 		else if (x < -0.5)	x = -1.0 - x;
 		x *= M_PI;
 		Sample const register xx = x * x;
-		return x * (xx * (xx * (xx * (xx * (1.0/362880.0) - (1.0/5040.0)) + (1.0/120.0)) - (1.0/6.0)) + 1.0);
+		return x * (xx * (xx * (xx * (xx * (1.0f/362880.0f) - (1.0f/5040.0f)) + (1.0f/120.0f)) - (1.0f/6.0f)) + 1.0f);
 	}
 
 
 template<class Sample>
 	inline Sample
-	base_sine6 (Sample register x)
+	base_sin6 (Sample register x)
 	{
 		if (x > 0.5f)		x = +1.0f - x;
 		else if (x < -0.5f)	x = -1.0f - x;
 		x *= M_PI;
 		Sample const register xx = x * x;
-		return x * (xx * (xx * (xx * (xx * (xx * (1.0/39916800.0) + (1.0/362880.0)) - (1.0/5040.0)) + (1.0/120.0)) - (1.0/6.0)) + 1.0);
+		return x * (xx * (xx * (xx * (xx * (xx * (1.0f/39916800.0f) + (1.0f/362880.0f)) - (1.0f/5040.0f)) + (1.0f/120.0f)) - (1.0f/6.0f)) + 1.0f);
 	}
 
 
 template<class Sample>
 	inline Sample
-	base_sine7 (Sample register x)
+	base_sin7 (Sample register x)
 	{
 		if (x > 0.5)		x = +1.0 - x;
 		else if (x < -0.5)	x = -1.0 - x;
 		x *= M_PI;
 		Sample const register xx = x * x;
-		return x * (xx * (xx * (xx * (xx * (xx * (xx * (1.0/6227020800.0) - (1.0/39916800.0)) + (1.0/362880.0)) - (1.0/5040.0)) + (1.0/120.0)) - (1.0/6.0)) + 1.0);
+		return x * (xx * (xx * (xx * (xx * (xx * (xx * (1.0f/6227020800.0f) - (1.0f/39916800.0f)) + (1.0f/362880.0f)) - (1.0f/5040.0f)) + (1.0f/120.0f)) - (1.0f/6.0f)) + 1.0f);
 	}
 
 
@@ -88,9 +88,9 @@ namespace ParametricWaves {
 		operator() (Sample x, Sample) const
 		{
 			x = x * 2.0f - 1.0f;
-			float a = std::pow (1.0f + param(), 4.0f);
-			float sgn = x >= 0.0 ? 1.0f : -1.0f;
-			return sgn * (DSP::base_sine7 (std::pow (sgn * x, a)));
+			float a = pow2 (pow2 (1.0f + param())); // x^4
+			float sgn = x >= 0.0f ? 1.0f : -1.0f;
+			return sgn * (DSP::base_sin7 (std::pow (sgn * x, a)));
 		}
 	};
 
@@ -196,7 +196,7 @@ namespace ParametricWaves {
 				a = 0.005f;
 			else if (a > 0.995f)
 				a = 0.995f;
-			return x > a ? -1.0 : 1.0;
+			return x > a ? -1.0f : 1.0f;
 		}
 	};
 
@@ -215,8 +215,8 @@ namespace ParametricWaves {
 		operator() (Sample x, Sample) const
 		{
 			x = x * 2.0f - 1.0f;
-			Sample sgn = x >= 0.0 ? 1.0 : -1.0;
-			return sgn * std::pow (mod1 (sgn * x), 50.0 * param() * param() * param());
+			Sample sgn = x >= 0.0f ? 1.0f : -1.0f;
+			return sgn * fast_pow (mod1 (sgn * x), 50.0f * param() * param() * param());
 		}
 	};
 
@@ -288,7 +288,7 @@ namespace ParametricWaves {
 			a = (a - 0.5f) * 4.0f;
 			if (a < 0.0f)
 				a *= 2.0f;
-			a = std::pow (3.0f, a);
+			a = fast_pow (3.0f, a);
 			return std::sin (x / 2.0f) * std::sin (a * x * x);
 		}
 	};
@@ -303,10 +303,10 @@ namespace SeriesFunctions {
  */
 template<class Sample>
 	inline Sample
-	base_sine5 (Sample register x, Sample base_frequency, Sample fmin, Sample fmax)
+	base_sin5 (Sample register x, Sample base_frequency, Sample fmin, Sample fmax)
 	{
 		if (base_frequency >= fmin)
-			return DSP::base_sine5 (x);
+			return DSP::base_sin5 (x);
 		return 0.0;
 	}
 
@@ -316,10 +316,10 @@ template<class Sample>
  */
 template<class Sample>
 	inline Sample
-	base_sine6 (Sample register x, Sample base_frequency, Sample fmin, Sample fmax)
+	base_sin6 (Sample register x, Sample base_frequency, Sample fmin, Sample fmax)
 	{
 		if (base_frequency >= fmin)
-			return DSP::base_sine6 (x);
+			return DSP::base_sin6 (x);
 		return 0.0;
 	}
 
@@ -329,10 +329,10 @@ template<class Sample>
  */
 template<class Sample>
 	inline Sample
-	base_sine7 (Sample register x, Sample base_frequency, Sample fmin, Sample fmax)
+	base_sin7 (Sample register x, Sample base_frequency, Sample fmin, Sample fmax)
 	{
 		if (base_frequency >= fmin)
-			return DSP::base_sine7 (x);
+			return DSP::base_sin7 (x);
 		return 0.0;
 	}
 
@@ -363,7 +363,7 @@ template<class Sample>
 		for (int register k = std::max (1, a); k <= n; ++k)
 		{
 			float z = std::fmod ((2 * k - 1) * (x + 1.f), 2.f) - 1.f;
-			y += sgn * DSP::base_sine5 (z) / pow2<Sample> (2 * k - 1);
+			y += sgn * DSP::base_sin5 (z) / pow2<Sample> (2 * k - 1);
 			sgn = -sgn;
 		}
 
@@ -394,7 +394,7 @@ template<class Sample>
 		const int a = static_cast<int> (std::ceil (0.5f * fmin / base_frequency));
 
 		for (int register k = std::max (1, a); k <= n; ++k)
-			y += DSP::base_sine5 (std::fmod ((2 * k - 1) * (x + 1.0f), 2.0f) - 1.0f) / static_cast<Sample> (2 * k - 1);
+			y += DSP::base_sin5 (std::fmod ((2 * k - 1) * (x + 1.0f), 2.0f) - 1.0f) / static_cast<Sample> (2 * k - 1);
 
 		return y * 4.0f / M_PI;
 	}
@@ -423,7 +423,7 @@ template<class Sample>
 		const int a = static_cast<int> (std::ceil (fmin / base_frequency));
 
 		for (int register k = std::max (1, a); k <= n; ++k)
-			y += DSP::base_sine5 (std::fmod (k * (x + 1.0f), 2.0f) - 1.0f) / static_cast<Sample> (k);
+			y += DSP::base_sin5 (std::fmod (k * (x + 1.0f), 2.0f) - 1.0f) / static_cast<Sample> (k);
 
 		return y * M_2_PI;
 	}
