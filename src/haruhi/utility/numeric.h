@@ -19,9 +19,6 @@
 #include <cmath>
 #include <stdint.h>
 
-// Local:
-#include "fast_pow.h"
-
 
 inline float
 renormalize (float value, float a1, float b1, float a2, float b2)
@@ -42,22 +39,22 @@ cut (int value)
 
 
 template<class Value>
-	inline Value
-	bound (Value value, Value min, Value max)
+	inline void
+	limit_value (Value& value, Value min, Value max)
 	{
-		return (value < min)
-			? min
-			: (value > max)
-				? max
-				: value;
+		if (value < min)
+			value = min;
+		else if (value > max)
+			value = max;
 	}
 
 
 template<class Value>
-	inline void
-	limit_value (Value& value, Value min, Value max)
+	inline Value
+	bound (Value value, Value min, Value max)
 	{
-		value = bound (value, min, max);
+		limit_value (value, min, max);
+		return value;
 	}
 
 

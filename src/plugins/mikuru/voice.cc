@@ -17,11 +17,17 @@
 #include <algorithm>
 #include <set>
 
+// System:
+#ifdef HARUHI_SSE1
+#include <xmmintrin.h>
+#endif
+
 // Haruhi:
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/functions.h>
 #include <haruhi/utility/confusion.h>
 #include <haruhi/utility/numeric.h>
+#include <haruhi/utility/simd_ops.h>
 
 // Local:
 #include "types.h"
@@ -256,7 +262,7 @@ Voice::process_frequency()
 	float frequency = 1.0f;
 
 	// Prepare frequency buffer:
-	std::fill (_commons->frequency_buffer.begin(), _commons->frequency_buffer.end(), 1.0f);
+	SIMD::fill_buffer (_commons->frequency_buffer.begin(), _commons->frequency_buffer.size(), 1.0f);
 
 	// Transposition:
 	frequency *= FastPow::pow_radix_2 ((1.0f / 12.0f) * oscillator_params->transposition_semitones.get());
@@ -264,12 +270,25 @@ Voice::process_frequency()
 	// Glide:
 	if (_frequency_change != 1.0f)
 	{
-		for (Sample *s = _commons->frequency_buffer.begin(), *e = _commons->frequency_buffer.end(); s != e; ++s)
+		if (_frequency_change > 1.0f)
 		{
-			if ((_frequency_change > 1.0f && _frequency >= _target_frequency) || (_frequency_change < 1.0f && _frequency <= _target_frequency))
-				_frequency_change = 1.0f;
-			_frequency *= _frequency_change;
-			*s *= _frequency;
+			for (Sample *s = _commons->frequency_buffer.begin(), *e = _commons->frequency_buffer.end(); s != e; ++s)
+			{
+				if (_frequency >= _target_frequency)
+					_frequency_change = 1.0f;
+				_frequency *= _frequency_change;
+				*s *= _frequency;
+			}
+		}
+		else if (_frequency_change < 1.0f)
+		{
+			for (Sample *s = _commons->frequency_buffer.begin(), *e = _commons->frequency_buffer.end(); s != e; ++s)
+			{
+				if (_frequency <= _target_frequency)
+					_frequency_change = 1.0f;
+				_frequency *= _frequency_change;
+				*s *= _frequency;
+			}
 		}
 	}
 	else
@@ -310,13 +329,36 @@ Voice::process_frequency()
 		Sample* fb = _commons->frequency_buffer.begin();
 		float range = 1.0f * oscillator_params->frequency_mod_range.get();
 
+#if defined(HARUHI_SSE1) && defined(HARUHI_HAS_SSE_POW)
+		// 2 times faster on Core2 than scalar code using SSEPow, but
+		// only 1.3 times faster on Core2 than scalar code using LookupPow :/
+		__m128 range4 = _mm_set_ps1 (range);
+		__m128 frq_det4 = _mm_set_ps1 (frq_det);
+		__m128 t;
+		__m128* tp = reinterpret_cast<__m128*> (tb);
+		__m128* fp = reinterpret_cast<__m128*> (fb);
+
+		for (std::size_t i = 0; i < buffer_size; i += 4, ++tp, ++fp)
+		{
+			t = _mm_mul_ps (*tp, range4);					// tb[i] * range
+			t = _mm_add_ps (t, frq_det4);					// frq_det + tb[i] * range
+			t = _mm_mul_ps (t, _mm_set_ps1 (1.0f / 12.0f));	// (1.0f/12.0f) + (frq_det + tb[i] * range)
+			t = SSEPow::vec4_pow_radix_2 (t);				// 2^…
+			*fp = _mm_mul_ps (*fp, t);
+		}
+
+		// The rest:
+		for (std::size_t i = buffer_size / 4 * 4; i < buffer_size; ++i)
+			fb[i] *= FastPow::pow_radix_2 ((1.0f / 12.0f) * (frq_det + tb[i] * range));
+#else
+		// Generic code:
 		for (std::size_t i = 0; i < buffer_size; ++i)
 			fb[i] *= FastPow::pow_radix_2 ((1.0f / 12.0f) * (frq_det + tb[i] * range));
+#endif
 	}
 
 	// Multiply buffer by static frequency value:
-	for (Sample *s = _commons->frequency_buffer.begin(), *e = _commons->frequency_buffer.end(); s != e; ++s)
-		*s *= frequency;
+	SIMD::multiply_buffer_by_scalar (_commons->frequency_buffer.begin(), _commons->frequency_buffer.size(), frequency);
 }
 
 
@@ -324,9 +366,6 @@ void
 Voice::process_amplitude()
 {
 	Params::Oscillator* const oscillator_params = _part->oscillator()->oscillator_params();
-
-	// Prepare amplitude buffer:
-	std::fill (_commons->amplitude_buffer.begin(), _commons->amplitude_buffer.end(), 1.0f);
 
 	// Amplitude velocity sensing:
 	float sens = _params.velocity_sens.to_f();
@@ -336,10 +375,9 @@ Voice::process_amplitude()
 	if (_first_pass)
 		_smoother_amplitude.reset (f);
 	// Volume and amplitude modulation:
-	_smoother_amplitude.multiply (_commons->amplitude_buffer.begin(), _commons->amplitude_buffer.end(), f);
+	_smoother_amplitude.fill (_commons->amplitude_buffer.begin(), _commons->amplitude_buffer.end(), f);
 
-	for (Sample *s = _commons->amplitude_buffer.begin(), *e = _commons->amplitude_buffer.end(); s != e; ++s)
-		*s = FastPow::pow (*s, M_E);
+	SIMD::power_buffer_to_scalar (_commons->amplitude_buffer.begin(), _commons->amplitude_buffer.size(), M_E);
 }
 
 

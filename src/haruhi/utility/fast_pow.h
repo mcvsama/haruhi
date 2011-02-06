@@ -22,11 +22,8 @@
 #include "sse_pow.h"
 
 
-#ifdef HARUHI_HAS_SSE_POW
-namespace FastPow = SSEPow;
-#else
 namespace FastPow = LookupPow;
-#endif
+
 
 #endif
 

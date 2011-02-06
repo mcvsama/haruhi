@@ -10,7 +10,7 @@
  *
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  * --
- * The SSE optimized log2f4, exp2f4 and powf4 functions were take from José Fonseca's Tech blog.
+ * The SSE optimized log2f4, exp2f4 and vec4_pow(__m128,__m128) functions were take from José Fonseca's Tech blog.
  * Visit <http://jrfonseca.blogspot.com/2008/09/fast-sse2-pow-tables-or-polynomials.html>
  * for complete code.
  */
@@ -142,9 +142,39 @@ log2f4 (__m128 x)
  * Prior to use this function initialize() must be called.
  */
 static inline __m128
-powf4 (__m128 x, __m128 y)
+vec4_pow (__m128 radix, __m128 power)
 {
-	return exp2f4 (_mm_mul_ps (log2f4 (x), y));
+	return exp2f4 (_mm_mul_ps (log2f4 (radix), power));
+}
+
+
+/**
+ * Prior to use this function initialize() must be called.
+ */
+static inline __m128
+vec4_pow_radix_2 (__m128 power)
+{
+	return exp2f4 (power);
+}
+
+
+/**
+ * Prior to use this function initialize() must be called.
+ */
+static inline __m128
+vec4_exp (__m128 power)
+{
+	return exp2f4 (_mm_mul_ps (_mm_set_ps1 (1.44269504088896f), power));
+}
+
+
+/**
+ * Prior to use this function initialize() must be called.
+ */
+static inline __m128
+vec4_radix_10 (__m128 power)
+{
+	return exp2f4 (_mm_mul_ps (_mm_set_ps1 (3.32192809488736f), power));
 }
 
 
@@ -155,7 +185,7 @@ static inline float
 pow (float radix, float power)
 {
 	float result;
-	_mm_store_ss (&result, powf4 (_mm_set_ps1 (radix), _mm_set_ps1 (power)));
+	_mm_store_ss (&result, vec4_pow (_mm_set_ps1 (radix), _mm_set_ps1 (power)));
 	return result;
 }
 
@@ -164,9 +194,11 @@ pow (float radix, float power)
  * Prior to use this function initialize() must be called.
  */
 static inline float
-pow_radix_2 (const float power)
+pow_radix_2 (float power)
 {
-	return pow (2.0f, power);
+	float result;
+	_mm_store_ss (&result, exp2f4 (_mm_set_ps1 (power)));
+	return result;
 }
 
 
@@ -174,9 +206,11 @@ pow_radix_2 (const float power)
  * Prior to use this function initialize() must be called.
  */
 static inline float
-exp (const float power)
+exp (float power)
 {
-	return pow (M_E, power);
+	float result;
+	_mm_store_ss (&result, exp2f4 (_mm_mul_ps (_mm_set_ps1 (1.44269504088896f), _mm_set_ps1 (power))));
+	return result;
 }
 
 
@@ -184,9 +218,11 @@ exp (const float power)
  * Prior to use this function initialize() must be called.
  */
 static inline float
-pow_radix_10 (const float power)
+pow_radix_10 (float power)
 {
-	return pow (10.0f, power);
+	float result;
+	_mm_store_ss (&result, exp2f4 (_mm_mul_ps (_mm_set_ps1 (3.32192809488736f), _mm_set_ps1 (power))));
+	return result;
 }
 
 
@@ -196,7 +232,7 @@ pow_radix_10 (const float power)
 static inline void
 vec4_pow (float* result, float* radix, float* power)
 {
-	_mm_store_ps (result, powf4 (_mm_load_ps (radix), _mm_load_ps (power)));
+	_mm_store_ps (result, vec4_pow (_mm_load_ps (radix), _mm_load_ps (power)));
 }
 
 
@@ -206,7 +242,7 @@ vec4_pow (float* result, float* radix, float* power)
 static inline void
 vec4_pow_to_scalar (float* result, float* radix, float power)
 {
-	_mm_store_ps (result, powf4 (_mm_load_ps (radix), _mm_set_ps1 (power)));
+	_mm_store_ps (result, vec4_pow (_mm_load_ps (radix), _mm_set_ps1 (power)));
 }
 
 } // namespace SSEPow
