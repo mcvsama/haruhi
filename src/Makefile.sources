@@ -339,6 +339,7 @@ SRC_HEADERS += haruhi/utility/pool_allocator.h
 SRC_HEADERS += haruhi/utility/ref_counted.h
 SRC_HEADERS += haruhi/utility/saveable_state.h
 SRC_HEADERS += haruhi/utility/semaphore.h
+SRC_HEADERS += haruhi/utility/simd_ops.h
 SRC_HEADERS += haruhi/utility/shared.h
 SRC_HEADERS += haruhi/utility/signal.h
 SRC_HEADERS += haruhi/utility/sse_pow.h

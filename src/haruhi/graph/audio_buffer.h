@@ -21,6 +21,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/pool_allocator.h>
+#include <haruhi/utility/simd_ops.h>
 
 // Local:
 #include "buffer.h"
@@ -48,14 +49,7 @@ class AudioBuffer: public Buffer
 	 * Clears (zeroes) buffer.
 	 */
 	void
-	clear()
-	{
-#ifdef HARUHI_IEEE754
-		bzero (begin(), sizeof (Sample) * size());
-#else
-		std::fill (begin(), end(), 0.0);
-#endif
-	}
+	clear() { SIMD::clear_buffer (begin(), size()); }
 
 	/**
 	 * Fills this buffer from other buffer.
@@ -67,7 +61,7 @@ class AudioBuffer: public Buffer
 		assert (other->type() == AudioBuffer::TYPE);
 		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
 		assert (buf->size() == size());
-		memcpy (begin(), buf->begin(), sizeof (Sample) * size());
+		SIMD::copy_buffer (begin(), buf->begin(), size());
 	}
 
 	/**
@@ -89,8 +83,7 @@ class AudioBuffer: public Buffer
 		assert (other->type() == AudioBuffer::TYPE);
 		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
 		assert (buf->size() == size());
-		for (Sample *s = buf->begin(), *t = begin(); s != buf->end(); ++s, ++t)
-			*t += *s;
+		SIMD::add_buffers (begin(), buf->begin(), size());
 	}
 
 	/**
@@ -103,8 +96,7 @@ class AudioBuffer: public Buffer
 		assert (other->type() == AudioBuffer::TYPE);
 		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
 		assert (buf->size() == size());
-		for (Sample *s = buf->begin(), *t = begin(); s != buf->end(); ++s, ++t)
-			*t -= *s;
+		SIMD::sub_buffers (begin(), buf->begin(), size());
 	}
 
 	/**
@@ -117,8 +109,7 @@ class AudioBuffer: public Buffer
 		assert (other->type() == AudioBuffer::TYPE);
 		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
 		assert (buf->size() == size());
-		for (Sample *s = buf->begin(), *t = begin(); s != buf->end(); ++s, ++t)
-			*t *= *s;
+		SIMD::multiply_buffers (begin(), buf->begin(), size());
 	}
 
 	/**
@@ -127,8 +118,7 @@ class AudioBuffer: public Buffer
 	void
 	attenuate (Sample value)
 	{
-		for (Sample* s = begin(); s != end(); ++s)
-			*s *= value;
+		SIMD::multiply_buffer_by_scalar (begin(), size(), value);
 	}
 
 	/**
@@ -137,42 +127,26 @@ class AudioBuffer: public Buffer
 	void
 	negate()
 	{
-		for (Sample* s = begin(); s != end(); ++s)
-			*s = -*s;
+		SIMD::negate_buffer (begin(), size());
 	}
 
 	void
 	resize (std::size_t size);
 
 	std::size_t
-	size() const
-	{
-		return _size;
-	}
+	size() const { return _size; }
 
 	Sample*
-	begin() const
-	{
-		return _data;
-	}
+	begin() const { return _data; }
 
 	Sample*
-	end() const
-	{
-		return _end;
-	}
+	end() const { return _end; }
 
 	Sample&
-	operator[] (std::size_t const i)
-	{
-		return _data[i];
-	}
+	operator[] (std::size_t const i) { return _data[i]; }
 
 	Sample const&
-	operator[] (std::size_t const i) const
-	{
-		return _data[i];
-	}
+	operator[] (std::size_t const i) const { return _data[i]; }
 
   public:
 	/**
