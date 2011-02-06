@@ -222,7 +222,6 @@ Mikuru::process()
 	// TODO smoothing
 	float w = FastPow::pow (1.0f - general()->params()->stereo_width.to_f(), M_E);
 	Sample o1, o2;
-	// TODO SIMD:
 	for (Sample *s1 = _mix_L.begin(), *s2 = _mix_R.begin(); s1 != _mix_L.end(); ++s1, ++s2)
 	{
 		o1 = *s1;
