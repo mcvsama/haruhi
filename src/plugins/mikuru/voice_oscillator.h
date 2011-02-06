@@ -242,10 +242,7 @@ class VoiceOscillator
 			l = f - d * _half_unison_number;
 			h = f + f - l;
 			f = l;
-			if (f < 0.0f)
-				f = 0.0f;
-			if (f > 0.5f)
-				f = 0.5f;
+			limit_value (f, 0.0f, 0.5f);
 			// Add unisons:
 			if (_unison_stereo)
 			{
@@ -295,10 +292,7 @@ class VoiceOscillator
 			l = f - d * _half_unison_number;
 			h = f + f - l;
 			f = l;
-			if (f < 0.0f)
-				f = 0.0f;
-			if (f > 0.5f)
-				f = 0.5f;
+			limit_value (f, 0.0f, 0.5f);
 			// Add unisons:
 			if (_unison_stereo)
 			{

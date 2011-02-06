@@ -38,7 +38,8 @@ class ControllerParam:
 	 * Inline for performance reasons.
 	 */
 	ControllerParam():
-		_denominator (1)
+		_denominator (1),
+		_1_div_denominator (1.0f / _denominator)
 	{ }
 
 	/**
@@ -46,7 +47,8 @@ class ControllerParam:
 	 */
 	ControllerParam (int minimum, int maximum, int default_value, int denominator = 1):
 		Param<int> (minimum, maximum, default_value),
-		_denominator (denominator)
+		_denominator (denominator),
+		_1_div_denominator (1.0f / _denominator)
 	{ }
 
 	ControllerParam (ControllerParam const& other) { *this = other; }
@@ -59,6 +61,7 @@ class ControllerParam:
 	{
 		Param<int>::operator= (other);
 		_denominator = other._denominator;
+		_1_div_denominator = other._1_div_denominator;
 		return *this;
 	}
 
@@ -69,7 +72,7 @@ class ControllerParam:
 	 * Returns value divided by denominator and casted to float.
 	 */
 	float
-	to_f() const { return 1.0f * get() / _denominator; }
+	to_f() const { return _1_div_denominator * get(); }
 
 	/*
 	 * SaveableState API
@@ -82,7 +85,8 @@ class ControllerParam:
     load_state (QDomElement const&);
 
   private:
-	int	_denominator;
+	int		_denominator;
+	float	_1_div_denominator;
 };
 
 } // namespace Haruhi

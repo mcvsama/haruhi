@@ -194,14 +194,14 @@ Voice::process()
 
 		// Panorama:
 		i = 0;
-		f = 1.0f - 1.0f * _params.panorama.get() / Params::Voice::PanoramaMax;
+		f = 1.0f - 1.0f / Params::Voice::PanoramaMax * _params.panorama.get();
 		f = f > 1.0f ? 1.0 : f;
 		if (_first_pass)
 			_smoother_panorama_1.reset (f);
 		_smoother_panorama_1.multiply (_commons->output_buffer1.begin(), _commons->output_buffer1.end(), f);
 
 		i = 0;
-		f = 1.0f - 1.0f * _params.panorama.get() / Params::Voice::PanoramaMin;
+		f = 1.0f - 1.0f / Params::Voice::PanoramaMin * _params.panorama.get();
 		f = f > 1.0f ? 1.0 : f;
 		if (_first_pass)
 			_smoother_panorama_2.reset (f);

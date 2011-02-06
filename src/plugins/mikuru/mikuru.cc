@@ -221,13 +221,13 @@ Mikuru::process()
 	_panorama_smoother_1.set_samples (samples);
 	_panorama_smoother_2.set_samples (samples);
 
-	float f = 0.0;
-	f = 1.0f - 1.0f * general()->params()->panorama.get() / Private::Params::General::PanoramaMax;
-	f = f > 1.0f ? 1.0 : f;
+	float f = 0.0f;
+	f = 1.0f - 1.0f / Private::Params::General::PanoramaMax * general()->params()->panorama.get();
+	f = f > 1.0f ? 1.0f : f;
 	_panorama_smoother_1.multiply (_mix_L.begin(), _mix_L.end(), f);
 
-	f = 1.0f - 1.0f * general()->params()->panorama.get() / Private::Params::General::PanoramaMin;
-	f = f > 1.0f ? 1.0 : f;
+	f = 1.0f - 1.0f / Private::Params::General::PanoramaMin * general()->params()->panorama.get();
+	f = f > 1.0f ? 1.0f : f;
 	_panorama_smoother_2.multiply (_mix_R.begin(), _mix_R.end(), f);
 
 	// Process audio input and filters:
