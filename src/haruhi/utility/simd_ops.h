@@ -35,7 +35,7 @@
 namespace SIMD {
 
 #define CAST_TO_MM128(x) reinterpret_cast<__m128*> (x)
-#define FLOATSIZE sizeof (float)
+#define VECSIZE 4
 
 
 /**
@@ -49,15 +49,15 @@ clear_buffer (float* target, size_t size)
 {
 #ifdef HARUHI_SSE1
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / FLOATSIZE; ++i)
+	for (size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_xor_ps (*xt, *xt);
 		++xt;
 	}
-	for (size_t i = size / FLOATSIZE * FLOATSIZE; i < size; ++i)
+	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] = 0.0f;
 #elif defined(HARUHI_IEEE754)
-	bzero (target, FLOATSIZE * size);
+	bzero (target, sizeof (float) * size);
 #else
 	std::fill (target, target + size, 0.0);
 #endif
@@ -78,20 +78,20 @@ negate_buffer (float* target, size_t size)
 	union { int i; float f; } u = { i: 1 << 31 };
 	__m128 st = _mm_set_ps1 (u.f);
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / FLOATSIZE; ++i)
+	for (size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_xor_ps (*xt, st);
 		++xt;
 	}
 # else
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / FLOATSIZE; ++i)
+	for (size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_sub_ps (_mm_setzero_ps(), *xt);
 		++xt;
 	}
 # endif
-	for (size_t i = size / FLOATSIZE * FLOATSIZE; i < size; ++i)
+	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] = -target[i];
 #else
 	for (size_t i = 0; i < size; ++i)
@@ -111,12 +111,12 @@ fill_buffer (float* target, size_t size, float scalar)
 {
 #ifdef HARUHI_SSE1
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / FLOATSIZE; ++i)
+	for (size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_set_ps1 (scalar);
 		++xt;
 	}
-	for (size_t i = size / FLOATSIZE * FLOATSIZE; i < size; ++i)
+	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] = scalar;
 #else
 	std::fill (target, target + size, scalar);
@@ -136,16 +136,16 @@ copy_buffer (float* target, float* source, size_t size)
 #ifdef HARUHI_SSE1
 	__m128* xs = CAST_TO_MM128 (source);
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / FLOATSIZE; ++i)
+	for (size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = *xs;
 		++xs;
 		++xt;
 	}
-	for (size_t i = size / FLOATSIZE * FLOATSIZE; i < size; ++i)
+	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] = source[i];
 #else
-	memcpy (target, source, FLOATSIZE * size);
+	memcpy (target, source, sizeof (float) * size);
 #endif
 }
 
@@ -162,13 +162,13 @@ add_buffers (float* target, float* source, size_t size)
 #ifdef HARUHI_SSE1
 	__m128* xs = CAST_TO_MM128 (source);
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / FLOATSIZE; ++i)
+	for (size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_add_ps (*xt, *xs);
 		++xs;
 		++xt;
 	}
-	for (size_t i = size / FLOATSIZE * FLOATSIZE; i < size; ++i)
+	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] += source[i];
 #else
 	for (size_t i = 0; i < size; ++i)
@@ -189,12 +189,12 @@ add_scalar_to_buffer (float* target, size_t size, float scalar)
 #ifdef HARUHI_SSE1
 	__m128 xs = _mm_set_ps1 (scalar);
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / FLOATSIZE; ++i)
+	for (size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_add_ps (*xt, xs);
 		++xt;
 	}
-	for (size_t i = size / FLOATSIZE * FLOATSIZE; i < size; ++i)
+	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] += scalar;
 #else
 	for (size_t i = 0; i < size; ++i)
@@ -215,13 +215,13 @@ sub_buffers (float* target, float* source, size_t size)
 #ifdef HARUHI_SSE1
 	__m128* xs = CAST_TO_MM128 (source);
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / FLOATSIZE; ++i)
+	for (size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_sub_ps (*xt, *xs);
 		++xs;
 		++xt;
 	}
-	for (size_t i = size / FLOATSIZE * FLOATSIZE; i < size; ++i)
+	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] += source[i];
 #else
 	for (size_t i = 0; i < size; ++i)
@@ -242,13 +242,13 @@ multiply_buffers (float* target, float* source, size_t size)
 #ifdef HARUHI_SSE1
 	__m128* xs = CAST_TO_MM128 (source);
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / FLOATSIZE; ++i)
+	for (size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_mul_ps (*xt, *xs);
 		++xs;
 		++xt;
 	}
-	for (size_t i = size / FLOATSIZE * FLOATSIZE; i < size; ++i)
+	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] *= source[i];
 #else
 	for (size_t i = 0; i < size; ++i)
@@ -269,12 +269,12 @@ multiply_buffer_by_scalar (float* target, size_t size, float scalar)
 #ifdef HARUHI_SSE1
 	__m128 xs = _mm_set_ps1 (scalar);
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / FLOATSIZE; ++i)
+	for (size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_mul_ps (*xt, xs);
 		++xt;
 	}
-	for (size_t i = size / FLOATSIZE * FLOATSIZE; i < size; ++i)
+	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] *= scalar;
 #else
 	for (size_t i = 0; i < size; ++i)
@@ -296,7 +296,7 @@ power_buffers (float* target, float* power, size_t size)
 	const float* target_end = target + size;
 	for (float *x = target, *y = power; x < target_end; x += 4, y += 4)
 		SSEPow::vec4_pow (x, x, y);
-	for (size_t i = size / FLOATSIZE * FLOATSIZE; i < size; ++i)
+	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] = SSEPow::pow (target[i], power[i]);
 #else
 	for (size_t i = 0; i < size; ++i)
@@ -318,7 +318,7 @@ power_buffer_to_scalar (float* target, size_t size, float scalar)
 	const float* target_end = target + size;
 	for (float* x = target; x < target_end; x += 4)
 		SSEPow::vec4_pow_to_scalar (x, x, scalar);
-	for (size_t i = size / FLOATSIZE * FLOATSIZE; i < size; ++i)
+	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] = SSEPow::pow (target[i], scalar);
 #else
 	for (size_t i = 0; i < size; ++i)
@@ -328,7 +328,7 @@ power_buffer_to_scalar (float* target, size_t size, float scalar)
 
 
 #undef CAST_TO_MM128
-#undef FLOATSIZE
+#undef VECSIZE
 
 } // namespace SIMD
 
