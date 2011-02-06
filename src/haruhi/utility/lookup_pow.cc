@@ -3,7 +3,7 @@
  * Copyleft 2008…2011  Michał Gawron
  * Marduk Unix Labs, http://mulabs.org/
  * --
- * Implementation of the fast_pow() and fast_pow_initialize() functions were
+ * Implementation of the pow_generic() and initialize() functions were
  * obtained from <http://www.hxa.name/articles/content/fast-pow-adjustable_hxa7241_2007.html>
  * and are distributed under following license:
  *
@@ -38,17 +38,19 @@
 #include "fast_pow.h"
 
 
-unsigned int* fast_pow_lookup;
+namespace LookupPow {
+
+unsigned int* lookup_table;
 
 
 /**
- * Initializes fast_pow lookup table with given precision.
+ * Initializes lookup table with given precision.
  *
  * \param	pTable Length must be 2 ^ precision
  * \param	precision Number of mantissa bits used, >= 0 and <= 18
  */
-void
-fast_pow_generic_initialize (unsigned int* const pTable, const unsigned int precision)
+static void
+generic_initialize (unsigned int* const pTable, const unsigned int precision)
 {
 	// step along table elements and x-axis positions
 	float zeroToOne = 1.0f / (static_cast<float> (1 << precision) * 2.0f);
@@ -65,16 +67,18 @@ fast_pow_generic_initialize (unsigned int* const pTable, const unsigned int prec
 
 
 void
-fast_pow_initialize()
+initialize()
 {
-	fast_pow_lookup = new unsigned int[1 << FastPowLookupPrecision];
-	fast_pow_generic_initialize (fast_pow_lookup, FastPowLookupPrecision);
+	lookup_table = new unsigned int[1 << FastPowLookupPrecision];
+	generic_initialize (lookup_table, FastPowLookupPrecision);
 }
 
 
 void
-fast_pow_deinitialize()
+deinitialize()
 {
-	delete fast_pow_lookup;
+	delete lookup_table;
 }
+
+} // namespace LookupPow
 

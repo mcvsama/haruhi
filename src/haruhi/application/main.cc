@@ -44,7 +44,10 @@ int main (int argc, char** argv, char** envp)
 	// Also std::strings and const chars* are expected to be encoded in UTF-8.
 
 	// Lib initializations:
-	fast_pow_initialize();
+	LookupPow::initialize();
+#ifdef HARUHI_HAS_SSE_POW
+	SSEPow::initialize();
+#endif
 
 	try {
 		if (argc == 2 && (strcmp (argv[1], "-v") == 0 || strcmp (argv[1], "--version") == 0))
@@ -59,6 +62,9 @@ int main (int argc, char** argv, char** envp)
 	}
 
 	// Deinit:
-	fast_pow_deinitialize();
+	LookupPow::deinitialize();
+#ifdef HARUHI_HAS_SSE_POW
+	SSEPow::deinitialize();
+#endif
 }
 

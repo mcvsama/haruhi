@@ -25,6 +25,7 @@
 #include <haruhi/dsp/wave.h>
 #include <haruhi/dsp/parametric_wave.h>
 #include <haruhi/utility/numeric.h>
+#include <haruhi/utility/fast_pow.h>
 
 
 namespace Haruhi {
@@ -216,7 +217,7 @@ namespace ParametricWaves {
 		{
 			x = x * 2.0f - 1.0f;
 			Sample sgn = x >= 0.0f ? 1.0f : -1.0f;
-			return sgn * fast_pow (mod1 (sgn * x), 50.0f * param() * param() * param());
+			return sgn * FastPow::pow (mod1 (sgn * x), 50.0f * param() * param() * param());
 		}
 	};
 
@@ -288,7 +289,7 @@ namespace ParametricWaves {
 			a = (a - 0.5f) * 4.0f;
 			if (a < 0.0f)
 				a *= 2.0f;
-			a = fast_pow (3.0f, a);
+			a = FastPow::pow (3.0f, a);
 			return std::sin (x / 2.0f) * std::sin (a * x * x);
 		}
 	};

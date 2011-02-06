@@ -330,6 +330,7 @@ SRC_HEADERS += haruhi/utility/exception.h
 SRC_HEADERS += haruhi/utility/fast_pow.h
 SRC_HEADERS += haruhi/utility/filesystem.h
 SRC_HEADERS += haruhi/utility/lexical_cast.h
+SRC_HEADERS += haruhi/utility/lookup_pow.h
 SRC_HEADERS += haruhi/utility/memory.h
 SRC_HEADERS += haruhi/utility/mutex.h
 SRC_HEADERS += haruhi/utility/noncopyable.h
@@ -340,15 +341,17 @@ SRC_HEADERS += haruhi/utility/saveable_state.h
 SRC_HEADERS += haruhi/utility/semaphore.h
 SRC_HEADERS += haruhi/utility/shared.h
 SRC_HEADERS += haruhi/utility/signal.h
+SRC_HEADERS += haruhi/utility/sse_pow.h
 SRC_HEADERS += haruhi/utility/thread.h
 SRC_HEADERS += haruhi/utility/timing.h
 
 SRC_SOURCES += haruhi/utility/backtrace.cc
 SRC_SOURCES += haruhi/utility/condition.cc
 SRC_SOURCES += haruhi/utility/filesystem.cc
-SRC_SOURCES += haruhi/utility/fast_pow.cc
+SRC_SOURCES += haruhi/utility/lookup_pow.cc
 SRC_SOURCES += haruhi/utility/mutex.cc
 SRC_SOURCES += haruhi/utility/semaphore.cc
+SRC_SOURCES += haruhi/utility/sse_pow.cc
 SRC_SOURCES += haruhi/utility/thread.cc
 
 ######### /widgets ########

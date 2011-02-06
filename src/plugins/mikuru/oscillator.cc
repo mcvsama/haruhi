@@ -795,7 +795,7 @@ Oscillator::recompute_wave()
 			float h = 1.0f * hv / Params::Waveform::HarmonicDenominator;
 			float p = 1.0f * pv / Params::Waveform::PhaseDenominator;
 			// Apply exponential curve to harmonic value:
-			h = h > 0 ? fast_powE (h) : -fast_powE (-h);
+			h = h > 0 ? FastPow::pow (h, M_E) : -FastPow::pow (-h, M_E);
 			hw->set_harmonic (i, h, p);
 			set_button_highlighted (_harmonics_resets[i], hv != 0);
 			set_button_highlighted (_phases_resets[i], pv != 0);

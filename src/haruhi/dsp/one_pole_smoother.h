@@ -21,6 +21,7 @@
 // Haruhi:
 #include <haruhi/config/types.h>
 #include <haruhi/utility/numeric.h>
+#include <haruhi/utility/fast_pow.h>
 
 
 namespace Haruhi {
@@ -47,7 +48,7 @@ class OnePoleSmoother
 	void
 	set_samples (Sample samples)
 	{
-		_time = fast_pow (0.01f, 2.0f / samples);
+		_time = LookupPow::pow (0.01f, 2.0f / samples);
 	}
 
 	/**
@@ -66,7 +67,7 @@ class OnePoleSmoother
 	process (Sample s, unsigned int iterations = 1)
 	{
 		for (unsigned int i = 0; i < iterations; ++i)
-			_z = _time * (_z - s) + s;
+			process_single_sample (s);
 		return _z;
 	}
 
@@ -78,7 +79,7 @@ class OnePoleSmoother
 		process (ForwardIterator begin, ForwardIterator end)
 		{
 			for (ForwardIterator c = begin; c != end; ++c)
-				*c = process_sample (*c);
+				*c = process_single_sample (*c);
 		}
 
 	/**
@@ -92,7 +93,7 @@ class OnePoleSmoother
 		fill (ForwardIterator begin, ForwardIterator end, Sample value)
 		{
 			for (ForwardIterator c = begin; c != end; ++c)
-				*c = process (value);
+				*c = process_single_sample (value);
 		}
 
 	/**
@@ -105,8 +106,15 @@ class OnePoleSmoother
 		multiply (ForwardIterator begin, ForwardIterator end, Sample value)
 		{
 			for (ForwardIterator c = begin; c != end; ++c)
-				*c *= process (value);
+				*c *= process_single_sample (value);
 		}
+
+  private:
+	Sample
+	process_single_sample (Sample s)
+	{
+		return _z = _time * (_z - s) + s;
+	}
 
   private:
 	Sample _time;

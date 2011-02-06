@@ -630,11 +630,11 @@ LFO::apply_function (Haruhi::Sample v) const
 {
 	switch (_params.function.get())
 	{
-		case Params::LFO::LogarithmicE: return fast_pow (v, 1.0f/M_E);
-		case Params::LFO::Logarithmic2: return fast_pow (v, 0.5f);
+		case Params::LFO::LogarithmicE: return FastPow::pow (v, 1.0f/M_E);
+		case Params::LFO::Logarithmic2: return FastPow::pow (v, 0.5f);
 		case Params::LFO::Linear:		return v;
-		case Params::LFO::Expotential2: return fast_pow (v, 2.0f);
-		case Params::LFO::ExpotentialE: return fast_pow (v, M_E);
+		case Params::LFO::Expotential2: return FastPow::pow (v, 2.0f);
+		case Params::LFO::ExpotentialE: return FastPow::pow (v, M_E);
 	}
 	return v;
 }

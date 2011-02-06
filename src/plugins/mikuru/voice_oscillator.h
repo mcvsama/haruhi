@@ -176,7 +176,7 @@ class VoiceOscillator
 		{
 			// Multiply samples by _volume and divide samples by _unison_number:
 			// (these coefficients have been obtained by listening tests):
-			float amp = fast_pow (_1_div_unison_number, _unison_stereo ? 0.4f : 0.75f);
+			float amp = FastPow::pow (_1_div_unison_number, _unison_stereo ? 0.4f : 0.75f);
 
 			for (std::size_t i = 0, n = output1->size(); i < n; ++i)
 			{

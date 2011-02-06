@@ -35,6 +35,12 @@ void
 fail (int signum)
 {
 	std::vector<const char*> features;
+#ifdef HARUHI_SSE1
+	features.push_back ("HARUHI_SSE1");
+#endif
+#ifdef HARUHI_SSE2
+	features.push_back ("HARUHI_SSE2");
+#endif
 #ifdef HARUHI_SSE3
 	features.push_back ("HARUHI_SSE3");
 #endif

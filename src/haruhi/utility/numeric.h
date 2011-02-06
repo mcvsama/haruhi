@@ -69,13 +69,6 @@ template<class Value>
 	}
 
 
-inline float
-fast_powE (float v)
-{
-	return fast_pow (v, M_E);
-}
-
-
 /**
  * Returns fractional part of float.
  * For IEEE-754 only.
