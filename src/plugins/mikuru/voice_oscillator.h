@@ -177,13 +177,7 @@ class VoiceOscillator
 			// Multiply samples by _volume and divide samples by _unison_number:
 			// (these coefficients have been obtained by listening tests):
 			float amp = FastPow::pow (_1_div_unison_number, _unison_stereo ? 0.4f : 0.75f);
-
-			for (std::size_t i = 0, n = output1->size(); i < n; ++i)
-			{
-				float const x = amp * (*_amplitude_source)[i];
-				o1[i] *= x;
-				o2[i] *= x;
-			}
+			SIMD::multiply_buffers_and_by_scalar (o1, o2, _amplitude_source->begin(), output1->size(), amp);
 		}
 	}
 
