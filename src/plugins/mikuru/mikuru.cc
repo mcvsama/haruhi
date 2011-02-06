@@ -40,6 +40,7 @@
 #include <haruhi/widgets/dial_control.h>
 #include <haruhi/widgets/knob.h>
 #include <haruhi/utility/numeric.h>
+#include <haruhi/utility/timing.h>
 
 // Local:
 #include "mikuru.h"
@@ -58,6 +59,7 @@ namespace Private = MikuruPrivate;
 Mikuru::Mikuru (std::string const& urn, std::string const& title, int id, QWidget* parent):
 	Haruhi::Plugin (urn, title, id, parent),
 	_patch (this),
+	_current_load (0.0f),
 	_general (0),
 	_common_filters (0),
 	_mix_L (64),
@@ -88,8 +90,13 @@ Mikuru::Mikuru (std::string const& urn, std::string const& title, int id, QWidge
 	QObject::connect (_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 	_enabled->setChecked (true);
 
-	QLabel* polyphony_label = new QLabel ("Voices number:", this);
-	_current_polyphony = new QLabel ("0", this);
+	_current_voices_label = new QLabel ("", this);
+	_current_voices_label->setFixedWidth (50);
+	_current_voices_label->setAlignment (Qt::AlignRight | Qt::AlignVCenter);
+	_current_load_label = new QLabel ("", this);
+	_current_load_label->setFixedWidth (50);
+	_current_load_per_voice_label = new QLabel ("", this);
+	_current_load_per_voice_label->setFixedWidth (50);
 
 	_add_part = new QPushButton (Resources::Icons16::add(), "Add part", this);
 	QObject::connect (_add_part, SIGNAL (clicked()), this, SLOT (add_part()));
@@ -117,8 +124,14 @@ Mikuru::Mikuru (std::string const& urn, std::string const& title, int id, QWidge
 	QHBoxLayout* hor_layout = new QHBoxLayout (layout, Config::Spacing);
 	hor_layout->addWidget (_enabled);
 	hor_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-	hor_layout->addWidget (polyphony_label);
-	hor_layout->addWidget (_current_polyphony);
+	hor_layout->addWidget (_current_voices_label);
+	hor_layout->addWidget (new QLabel (" voices"));
+	hor_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
+	hor_layout->addWidget (new QLabel ("DSP: "));
+	hor_layout->addWidget (_current_load_label);
+	hor_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
+	hor_layout->addWidget (new QLabel ("One voice: "));
+	hor_layout->addWidget (_current_load_per_voice_label);
 	hor_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 	hor_layout->addWidget (_add_part);
 	hor_layout->addWidget (_del_part);
@@ -185,6 +198,8 @@ Mikuru::name() const
 void
 Mikuru::process()
 {
+	Timing t_total;
+
 	using Haruhi::Sample;
 
 	clear_outputs();
@@ -274,6 +289,9 @@ Mikuru::process()
 	}
 
 	_parts_mutex.unlock();
+
+	float period_time = 1.0f * graph()->buffer_size() / graph()->sample_rate();
+	_current_load = 1.0e-6f * t_total.microseconds() / period_time;
 }
 
 
@@ -476,7 +494,9 @@ Mikuru::update_ui()
 	int i = 0;
 	for (Mikuru::Parts::iterator t = _parts.begin(); t != _parts.end(); ++t)
 		i += (*t)->voice_manager()->current_polyphony();
-	_current_polyphony->setText (QString ("%1").arg (i));
+	_current_voices_label->setText (QString ("%1").arg (i));
+	_current_load_label->setText (QString ("%1%").arg (100.0f * _current_load, 3, 'f', 1, '0'));
+	_current_load_per_voice_label->setText (QString ("%1%").arg (i ? 100.0f * _current_load / i : 0.0f, 3, 'f', 1, '0'));
 }
 
 

@@ -295,7 +295,10 @@ class Mikuru:
 	MikuruPrivate::Patch			_patch;
 
 	QCheckBox*						_enabled;
-	QLabel*							_current_polyphony;
+	QLabel*							_current_voices_label;
+	QLabel*							_current_load_label;
+	QLabel*							_current_load_per_voice_label;
+	float							_current_load;
 	QPushButton*					_add_part;
 	QPushButton*					_del_part;
 	QTimer*							_update_ui_timer;
