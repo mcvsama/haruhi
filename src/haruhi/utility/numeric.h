@@ -19,6 +19,11 @@
 #include <cmath>
 #include <stdint.h>
 
+// System:
+#ifdef HARUHI_SSE2
+#include <xmmintrin.h>
+#endif
+
 
 inline float
 renormalize (float value, float a1, float b1, float a2, float b2)
@@ -105,7 +110,7 @@ sse3_fractional_part (const float& v)
 	union {
 		float f;
 		uint32_t i;
-	} u = {v};
+	} u = { f: v };
 	// Sign:
 	const uint32_t s = u.i & (1 << 31);
 	u.f = u.f - static_cast<int> (u.f);
@@ -125,6 +130,20 @@ fractional_part (const float& v)
 	return std::fmod (v, 1.0f);
 #endif
 }
+
+
+#ifdef HARUHI_SSE2
+/**
+ * SIMD version of fractional_part().
+ */
+inline __m128
+fractional_part (__m128 x)
+{
+    __m128i a = _mm_cvttps_epi32 (x);
+    __m128 b = _mm_cvtepi32_ps (a);
+    return _mm_sub_ps (x, b);
+}
+#endif
 
 
 /**
