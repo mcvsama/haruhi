@@ -284,6 +284,67 @@ multiply_buffer_by_scalar (float* target, size_t size, float scalar)
 
 
 /**
+ * Computes target = target * source * scalar
+ * Arrays must be 16-byte aligned.
+ *
+ * \param	size Number of floats in arrays.
+ */
+static inline void
+multiply_buffers_and_by_scalar (float* target, float* source, size_t size, float scalar)
+{
+#ifdef HARUHI_SSE1
+	__m128 xscalar = _mm_set_ps1 (scalar);
+	__m128* xs = CAST_TO_MM128 (source);
+	__m128* xt = CAST_TO_MM128 (target);
+	for (size_t i = 0; i < size / VECSIZE; ++i)
+	{
+		*xt = _mm_mul_ps (*xt, _mm_mul_ps (*xs, xscalar));
+		++xs;
+		++xt;
+	}
+#else
+	for (size_t i = 0; i < size; ++i)
+		target[i] *= source[i] * scalar;
+#endif
+}
+
+
+/**
+ * Computes target1 = target1 * source * scalar, target2 = target2 * source * scalar
+ * Arrays must be 16-byte aligned.
+ *
+ * \param	size Number of floats in arrays.
+ */
+static inline void
+multiply_buffers_and_by_scalar (float* target1, float* target2, float* source, size_t size, float scalar)
+{
+#ifdef HARUHI_SSE1
+	__m128 xscalar = _mm_set_ps1 (scalar);
+	__m128 tmp;
+	__m128* xs = CAST_TO_MM128 (source);
+	__m128* xt1 = CAST_TO_MM128 (target1);
+	__m128* xt2 = CAST_TO_MM128 (target2);
+	for (size_t i = 0; i < size / VECSIZE; ++i)
+	{
+		tmp = _mm_mul_ps (*xs, xscalar);
+		*xt1 = _mm_mul_ps (*xt1, tmp);
+		*xt2 = _mm_mul_ps (*xt2, tmp);
+		++xs;
+		++xt1;
+		++xt2;
+	}
+#else
+	for (size_t i = 0; i < size; ++i)
+	{
+		float k = source[i] * scalar;
+		target1[i] *= k;
+		target2[i] *= k;
+	}
+#endif
+}
+
+
+/**
  * Computes target = target^power
  * Arrays must be 16-byte aligned.
  *
