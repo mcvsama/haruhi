@@ -180,13 +180,14 @@ Voice::process()
 				filters_output1[i] *= k;
 				filters_output2[i] *= k;
 			}
+			// Starting point is not 16-byte aligned, can't use SIMD operations:
 			std::fill (filters_output1.begin() + i, filters_output1.end(), 0.0f);
 			std::fill (filters_output2.begin() + i, filters_output2.end(), 0.0f);
 		}
 		else
 		{
-			std::fill (filters_output1.begin(), filters_output1.end(), 0.0f);
-			std::fill (filters_output2.begin(), filters_output2.end(), 0.0f);
+			filters_output1.clear();
+			filters_output2.clear();
 		}
 	}
 
@@ -262,7 +263,7 @@ Voice::process_frequency()
 	float frequency = 1.0f;
 
 	// Prepare frequency buffer:
-	SIMD::fill_buffer (_commons->frequency_buffer.begin(), _commons->frequency_buffer.size(), 1.0f);
+	_commons->frequency_buffer.fill (1.0f);
 
 	// Transposition:
 	frequency *= FastPow::pow_radix_2 ((1.0f / 12.0f) * oscillator_params->transposition_semitones.get());

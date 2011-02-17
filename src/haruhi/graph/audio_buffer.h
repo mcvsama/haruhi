@@ -65,6 +65,12 @@ class AudioBuffer: public Buffer
 	}
 
 	/**
+	 * Fills this buffer with given scalar.
+	 */
+	void
+	fill (Sample value) { SIMD::fill_buffer (begin(), size(), value); }
+
+	/**
 	 * Calls add().
 	 */
 	void
