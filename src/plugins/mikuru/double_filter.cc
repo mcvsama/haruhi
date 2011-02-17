@@ -30,7 +30,7 @@ DoubleFilter::DoubleFilter (Mikuru* mikuru):
 	for (int c = 0; c < 2; ++c)
 	{
 		// Each stage:
-		for (int i = 0; i < NumFilters; ++i)
+		for (int i = 0; i < MaxStages; ++i)
 		{
 			_filter1[c][i].assign_impulse_response (&_impulse_response1);
 			_filter2[c][i].assign_impulse_response (&_impulse_response2);
@@ -46,7 +46,7 @@ DoubleFilter::reset()
 	for (int c = 0; c < 2; ++c)
 	{
 		// Each stage:
-		for (int i = 0; i < NumFilters; ++i)
+		for (int i = 0; i < MaxStages; ++i)
 		{
 			_filter1[c][i].reset();
 			_filter2[c][i].reset();
@@ -93,8 +93,8 @@ DoubleFilter::process (Haruhi::AudioBuffer& input1, Haruhi::AudioBuffer& input2,
 	bool filtered = true;
 	std::size_t nsamples = input1.size();
 
-	int passes1 = std::min (static_cast<int> (NumFilters), _params1.passes.get());
-	int passes2 = std::min (static_cast<int> (NumFilters), _params2.passes.get());
+	int passes1 = std::min (static_cast<int> (MaxStages), _params1.passes.get());
+	int passes2 = std::min (static_cast<int> (MaxStages), _params2.passes.get());
 
 	bool f1 = _params1.enabled;
 	bool f2 = _params2.enabled;
@@ -191,7 +191,7 @@ DoubleFilter::process (Haruhi::AudioBuffer& input1, Haruhi::AudioBuffer& input2,
 
 
 void
-DoubleFilter::filterout (DSP::Filter* filters, int passes, Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer, Haruhi::AudioBuffer& output)
+DoubleFilter::filterout (FilterType* filters, int passes, Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer, Haruhi::AudioBuffer& output)
 {
 	// ↓ passes
 	// 1: in -> out

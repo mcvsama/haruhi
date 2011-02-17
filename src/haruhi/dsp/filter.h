@@ -32,137 +32,165 @@ namespace DSP {
  * Implementation of IIR filters described in
  * http://www.musicdsp.org/files/Audio-EQ-Cookbook.txt
  */
-class Filter
-{
-  public:
-	/**
-	 * Creates filter with no impulse response.
-	 */
-	Filter();
+template<unsigned int tOrder, int tResponseType>
+	class Filter
+	{
+	  public:
+		enum {
+			Order			= tOrder,
+			ResponseType	= tResponseType
+		};
 
-	/**
-	 * Creates filter with given impulse response.
-	 * Filter does not take ownership of impulse_response.
-	 */
-	Filter (ImpulseResponse* impulse_response);
+	  private:
+		typedef ImpulseResponse<Order, ResponseType> ImpulseResponseType;
 
-	~Filter();
+	  public:
+		/**
+		 * Creates filter with no impulse response.
+		 */
+		Filter():
+			_impulse_response (0),
+			_last_serial (0)
+		{ }
 
-	/**
-	 * Resets the filter to state as it is newly created.
-	 */
-	void
-	reset();
-
-	void
-	assign_impulse_response (ImpulseResponse* impulse_response);
-
-	/**
-	 * Note: input and output sequences must be distinct!
-	 * InputIterator and OutputIterator must implement concept of RandomAccessIterator.
-	 */
-	template<class InputIterator, class OutputIterator>
-		void
-		transform (InputIterator begin, InputIterator end, OutputIterator output)
+		/**
+		 * Creates filter with given impulse response.
+		 * Filter does not take ownership of impulse_response.
+		 */
+		Filter (ImpulseResponseType* impulse_response):
+			_impulse_response (0),
+			_last_serial (0)
 		{
-			if (std::distance (begin, end) < _size)
-			{
-				*output++ = 0.0f;
-				return;
-			}
-
-			std::copy (begin, end, output);
-
-			if (_impulse_response)
-			{
-				InputIterator current = begin;
-
-				// If this is IIR filter:
-				if (_a)
-				{
-					// Filter first part using previous-buffers:
-					for (int i = 0; i < _size - 1; ++i, ++current, ++output)
-						*output = mixed_advance_iir (current, output, i);
-
-					// Filter the rest:
-					for (; current != end; ++current, ++output)
-						*output = advance_iir (current, output);
-
-					// Store last samples as previous-buffer for next round
-					// (current and output are now after the end of sequences):
-					for (int i = 0; i < _size - 1; ++i)
-					{
-						_px[i] = current[-i-1];
-						_py[i] = output[-i-1];
-					}
-				}
-				// If this is FIR filter:
-				else
-				{
-					// Filter first part using previous-buffers:
-					for (int i = 0; i < _size - 1; ++i, ++current, ++output)
-						*output = mixed_advance_fir (current, i);
-
-					// Filter the rest:
-					for (; current != end; ++current, ++output)
-						*output = advance_fir (current);
-
-					// Store last samples as previous-buffer for next round
-					// (current and output are now after the end of sequences):
-					for (int i = 0; i < _size - 1; ++i)
-						_px[i] = current[-i-1];
-				}
-			}
+			assign_impulse_response (impulse_response);
 		}
 
-  private:
-	Sample
-	advance_fir (Sample* x)
-	{
-		Sample register sum = 0.0;
-		for (int i = 0; i < _size; ++i)
-			sum += _b[i] * x[-i];
-		return sum;
-	}
+		/**
+		 * Resets the filter to state as it is newly created.
+		 */
+		void
+		reset()
+		{
+			std::fill (_px, _px + Order, 0.0f);
+			std::fill (_py, _py + Order, 0.0f);
+		}
 
-	Sample
-	advance_iir (Sample* x, Sample* y)
-	{
-		Sample register sum = 0.0;
-		for (int i = 0; i < _size; ++i)
-			sum += _b[i] * x[-i] - _a[i] * y[-i];
-		return sum;
-	}
+		void
+		assign_impulse_response (ImpulseResponseType* impulse_response)
+		{
+			_impulse_response = impulse_response;
 
-	Sample
-	mixed_advance_fir (Sample* x, int position)
-	{
-		Sample register sum = 0.0;
-		for (int i = 0; i < _size; ++i)
-			sum += _b[i] * (i > position ? _px[i-1-position] : x[-i]);
-		return sum;
-	}
+			std::fill (_px, _px + Order, 0.0f);
+			std::fill (_py, _py + Order, 0.0f);
+		}
 
-	Sample
-	mixed_advance_iir (Sample* x, Sample* y, int position)
-	{
-		Sample register sum = 0.0;
-		for (int i = 0; i < _size; ++i)
-			sum += _b[i] * (i > position ? _px[i-1-position] : x[-i]) - _a[i] * (i > position ? _py[i-1-position] : y[-i]);
-		return sum;
-	}
+		/**
+		 * Note: input and output sequences must be distinct!
+		 * InputIterator and OutputIterator must implement concept of RandomAccessIterator.
+		 */
+		template<class InputIterator, class OutputIterator>
+			void
+			transform (InputIterator begin, InputIterator end, OutputIterator output)
+			{
+				if (std::distance (begin, end) < Order)
+				{
+					*output++ = 0.0f;
+					return;
+				}
 
-  private:
-	ImpulseResponse*		_impulse_response;
-	ImpulseResponse::Serial	_last_serial;
-	// Cached data from ImpulseResponse:
-	Sample*					_a;
-	Sample*					_b;
-	int						_size;
-	// Previous samples buffer, stored in reverse order (index 0 contains last sample, 1 one before last, etc):
-	Sample*					_px;
-	Sample*					_py;
-};
+				std::copy (begin, end, output);
+
+				if (_impulse_response)
+				{
+					InputIterator current = begin;
+
+					// If this is IIR filter:
+					if (ResponseType == static_cast<int> (FIR))
+					{
+						// Filter first part using previous-buffers:
+						for (int i = 0; i < Order - 1; ++i, ++current, ++output)
+							*output = mixed_advance_iir (current, output, i);
+
+						// Filter the rest:
+						for (; current != end; ++current, ++output)
+							*output = advance_iir (current, output);
+
+						// Store last samples as previous-buffer for next round
+						// (current and output are now after the end of sequences):
+						for (int i = 0; i < Order - 1; ++i)
+						{
+							_px[i] = current[-i-1];
+							_py[i] = output[-i-1];
+						}
+					}
+					// If this is FIR filter:
+					else
+					{
+						// Filter first part using previous-buffers:
+						for (int i = 0; i < Order - 1; ++i, ++current, ++output)
+							*output = mixed_advance_fir (current, i);
+
+						// Filter the rest:
+						for (; current != end; ++current, ++output)
+							*output = advance_fir (current);
+
+						// Store last samples as previous-buffer for next round
+						// (current and output are now after the end of sequences):
+						for (int i = 0; i < Order - 1; ++i)
+							_px[i] = current[-i-1];
+					}
+				}
+			}
+
+	  private:
+		Sample
+		advance_fir (Sample* x)
+		{
+			Sample (&b)[Order] = _impulse_response->b;
+			Sample register sum = 0.0;
+			for (int i = 0; i < Order; ++i)
+				sum += b[i] * x[-i];
+			return sum;
+		}
+
+		Sample
+		advance_iir (Sample* x, Sample* y)
+		{
+			Sample (&a)[Order] = _impulse_response->a;
+			Sample (&b)[Order] = _impulse_response->b;
+			Sample register sum = 0.0;
+			for (int i = 0; i < Order; ++i)
+				sum += b[i] * x[-i] - a[i] * y[-i];
+			return sum;
+		}
+
+		Sample
+		mixed_advance_fir (Sample* x, int position)
+		{
+			Sample (&b)[Order] = _impulse_response->b;
+			Sample register sum = 0.0;
+			for (int i = 0; i < Order; ++i)
+				sum += b[i] * (i > position ? _px[i-1-position] : x[-i]);
+			return sum;
+		}
+
+		Sample
+		mixed_advance_iir (Sample* x, Sample* y, int position)
+		{
+			Sample (&a)[Order] = _impulse_response->a;
+			Sample (&b)[Order] = _impulse_response->b;
+			Sample register sum = 0.0;
+			for (int i = 0; i < Order; ++i)
+				sum += b[i] * (i > position ? _px[i-1-position] : x[-i]) - a[i] * (i > position ? _py[i-1-position] : y[-i]);
+			return sum;
+		}
+
+	  private:
+		ImpulseResponseType*					_impulse_response;
+		typename ImpulseResponseType::Serial	_last_serial;
+		// Previous samples buffer, stored in reverse order (index 0 contains last sample, 1 one before last, etc):
+		Sample	_px[Order];
+		Sample	_py[Order];
+	};
 
 } // namespace DSP
 

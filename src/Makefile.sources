@@ -215,7 +215,6 @@ SRC_SOURCES += haruhi/dsp/delay_line.cc
 SRC_SOURCES += haruhi/dsp/envelope.cc
 SRC_SOURCES += haruhi/dsp/fft.cc
 SRC_SOURCES += haruhi/dsp/fft_filler.cc
-SRC_SOURCES += haruhi/dsp/filter.cc
 SRC_SOURCES += haruhi/dsp/harmonics_wave.cc
 SRC_SOURCES += haruhi/dsp/modulated_wave.cc
 SRC_SOURCES += haruhi/dsp/noise.cc

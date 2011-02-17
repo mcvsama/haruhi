@@ -35,8 +35,10 @@ namespace MikuruPrivate {
 class DoubleFilter
 {
   public:
+	typedef DSP::Filter<RBJImpulseResponse::Order, RBJImpulseResponse::ResponseType> FilterType;
+
 	enum {
-		NumFilters = 5,
+		MaxStages = 5,
 	};
 
 	enum Configuration
@@ -71,29 +73,29 @@ class DoubleFilter
 	 * All buffers must be distinct.
 	 */
 	void
-	filterout (DSP::Filter* filters, int passes, Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer, Haruhi::AudioBuffer& output);
+	filterout (FilterType* filters, int passes, Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer, Haruhi::AudioBuffer& output);
 
   public:
-	Mikuru*						_mikuru;
-	Configuration				_configuration;
-	Params::Filter				_params1;
-	Params::Filter				_params2;
+	Mikuru*									_mikuru;
+	Configuration							_configuration;
+	Params::Filter							_params1;
+	Params::Filter							_params2;
 
-	RBJImpulseResponse			_impulse_response1;
-	RBJImpulseResponse			_impulse_response2;
+	RBJImpulseResponse						_impulse_response1;
+	RBJImpulseResponse						_impulse_response2;
 
 	// Two channels, for each up to 5 stages:
-	DSP::Filter					_filter1[2][5];
-	DSP::Filter					_filter2[2][5];
+	FilterType								_filter1[2][5];
+	FilterType								_filter2[2][5];
 
-	DSP::OnePoleSmoother		_smoother_filter1_frequency;
-	DSP::OnePoleSmoother		_smoother_filter1_resonance;
-	DSP::OnePoleSmoother		_smoother_filter1_gain;
-	DSP::OnePoleSmoother		_smoother_filter1_attenuation;
-	DSP::OnePoleSmoother		_smoother_filter2_frequency;
-	DSP::OnePoleSmoother		_smoother_filter2_resonance;
-	DSP::OnePoleSmoother		_smoother_filter2_gain;
-	DSP::OnePoleSmoother		_smoother_filter2_attenuation;
+	DSP::OnePoleSmoother					_smoother_filter1_frequency;
+	DSP::OnePoleSmoother					_smoother_filter1_resonance;
+	DSP::OnePoleSmoother					_smoother_filter1_gain;
+	DSP::OnePoleSmoother					_smoother_filter1_attenuation;
+	DSP::OnePoleSmoother					_smoother_filter2_frequency;
+	DSP::OnePoleSmoother					_smoother_filter2_resonance;
+	DSP::OnePoleSmoother					_smoother_filter2_gain;
+	DSP::OnePoleSmoother					_smoother_filter2_attenuation;
 };
 
 } // namespace MikuruPrivate

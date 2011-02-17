@@ -41,7 +41,7 @@ class FrequencyResponsePlot: public QWidget
   public:
 	FrequencyResponsePlot (QWidget* parent, const char* name = 0);
 
-	FrequencyResponsePlot (DSP::ImpulseResponse* impulse_response, QWidget* parent, const char* name = 0);
+	FrequencyResponsePlot (DSP::PlotableImpulseResponse* impulse_response, QWidget* parent, const char* name = 0);
 
 	virtual ~FrequencyResponsePlot();
 
@@ -53,17 +53,17 @@ class FrequencyResponsePlot: public QWidget
 	set_num_passes (float num_passes);
 
 	/**
-	 * Assigns ImpulseResponse to this plot.
-	 * FrequencyResponsePlot does not take ownership of ImpulseResponse object.
+	 * Assigns PlotableImpulseResponse to this plot.
+	 * FrequencyResponsePlot does not take ownership of PlotableImpulseResponse object.
 	 * Pass 0 to deassign.
 	 */
 	void
-	assign_impulse_response (DSP::ImpulseResponse* impulse_response);
+	assign_impulse_response (DSP::PlotableImpulseResponse* impulse_response);
 
 	/**
-	 * Returns currently assigned ImpulseResponse (or 0 if none assigned).
+	 * Returns currently assigned PlotableImpulseResponse (or 0 if none assigned).
 	 */
-	DSP::ImpulseResponse*
+	DSP::PlotableImpulseResponse*
 	impulse_response() const { return _impulse_response; }
 
 	/**
@@ -92,16 +92,16 @@ class FrequencyResponsePlot: public QWidget
 	repaint_grid();
 
   private:
-	Graph*					_graph;
-	float					_num_passes;
-	QPixmap					_double_buffer;
-	QPixmap					_grid_buffer;
-	bool					_to_repaint_buffer;
-	bool					_to_replot;
-	bool					_last_enabled_state;
-	DSP::ImpulseResponse*	_impulse_response;
-	std::vector<float>		_values;
-	QSize					_prev_size;
+	Graph*							_graph;
+	float							_num_passes;
+	QPixmap							_double_buffer;
+	QPixmap							_grid_buffer;
+	bool							_to_repaint_buffer;
+	bool							_to_replot;
+	bool							_last_enabled_state;
+	DSP::PlotableImpulseResponse*	_impulse_response;
+	std::vector<float>				_values;
+	QSize							_prev_size;
 };
 
 } // namespace Haruhi

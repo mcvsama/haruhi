@@ -38,7 +38,7 @@ namespace DSP = Haruhi::DSP;
  * Band pass/constant gain is not used directly as exactly the same
  * response has variable gain filter with limiter enabled.
  */
-class RBJImpulseResponse: public DSP::ImpulseResponse
+class RBJImpulseResponse: public DSP::ImpulseResponse<3, DSP::IIR>
 {
   public:
 	enum Type {
@@ -119,17 +119,8 @@ class RBJImpulseResponse: public DSP::ImpulseResponse
 	 * ImpulseResponse API
 	 */
 
-	int
-	size() const { return 3; }
-
 	Sample
 	response (Sample frequency) const;
-
-	Sample*
-	a() { return _a; }
-
-	Sample*
-	b() { return _b; }
 
   private:
 	void
@@ -142,9 +133,6 @@ class RBJImpulseResponse: public DSP::ImpulseResponse
 	Sample	_gain;
 	Sample	_attenuation;
 	bool	_limiter;
-	// Filter coefficients:
-	Sample	_a[3];
-	Sample	_b[3];
 	// Helpers:
 	bool	_dont_update;
 };

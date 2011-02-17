@@ -26,65 +26,66 @@ namespace Haruhi {
 
 namespace DSP {
 
+enum ImpulseResponseType { FIR, IIR };
+
+
 /**
  * Base class for impulse responses.
  */
-class ImpulseResponse
+class PlotableImpulseResponse
 {
   public:
-	typedef unsigned int Serial;
-
-  public:
-	ImpulseResponse():
-		_serial (0)
-	{ }
-
-	virtual ~ImpulseResponse() { }
-
-	/**
-	 * Returns size of IR vector.
-	 */
-	virtual int
-	size() const = 0;
-
 	/**
 	 * Computes response magnitude for given frequency (0, 0.5).
 	 */
 	virtual Sample
 	response (Sample frequency) const = 0;
-
-	/**
-	 * Returns table of H(z)'s denominator coefficients.
-	 * For FIR returns 0.
-	 */
-	virtual Sample*
-	a() = 0;
-
-	/**
-	 * Returns table of H(z)'s numerator coefficients.
-	 */
-	virtual Sample*
-	b() = 0;
-
-	/**
-	 * Returns current serial number.
-	 * Serial number changes whenever impulse response
-	 * coefficients change.
-	 */
-	Serial
-	serial() const { return _serial; }
-
-  protected:
-	/**
-	 * Increases serial number, so filter will
-	 * know to reset recursive coefficients.
-	 */
-	void
-	bump() { ++_serial; }
-
-  public:
-	Serial _serial;
 };
+
+
+template<unsigned int tOrder, int tResponseType>
+	class ImpulseResponse: public PlotableImpulseResponse
+	{
+	  public:
+		typedef unsigned int Serial;
+
+		enum {
+			Order			= tOrder,
+			ResponseType	= tResponseType,
+		};
+
+	  public:
+		ImpulseResponse():
+			_serial (0)
+		{ }
+
+		virtual ~ImpulseResponse() { }
+
+		/**
+		 * Returns current serial number.
+		 * Serial number changes whenever impulse response
+		 * coefficients change.
+		 */
+		Serial
+		serial() const { return _serial; }
+
+	  protected:
+		/**
+		 * Increases serial number, so filter will
+		 * know to reset recursive coefficients.
+		 */
+		void
+		bump() { ++_serial; }
+
+	  public:
+		// Array of H(z)'s denominator coefficients. Unused in FIR filters.
+		Sample	a[Order];
+		// Array of H(z)'s numerator coefficients.
+		Sample	b[Order];
+
+	  private:
+		Serial	_serial;
+	};
 
 } // namespace DSP
 

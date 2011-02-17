@@ -41,7 +41,7 @@ FrequencyResponsePlot::FrequencyResponsePlot (QWidget* parent, const char* name)
 }
 
 
-FrequencyResponsePlot::FrequencyResponsePlot (DSP::ImpulseResponse* impulse_response, QWidget* parent, const char* name):
+FrequencyResponsePlot::FrequencyResponsePlot (DSP::PlotableImpulseResponse* impulse_response, QWidget* parent, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
 	_num_passes (1.0f),
 	_to_repaint_buffer (false),
@@ -69,7 +69,7 @@ FrequencyResponsePlot::set_num_passes (float num_passes)
 
 
 void
-FrequencyResponsePlot::assign_impulse_response (DSP::ImpulseResponse* impulse_response)
+FrequencyResponsePlot::assign_impulse_response (DSP::PlotableImpulseResponse* impulse_response)
 {
 	_impulse_response = impulse_response;
 	replot();

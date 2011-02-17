@@ -45,9 +45,9 @@ Sample
 RBJImpulseResponse::response (Sample frequency) const
 {
 	// Normally one would substitute: z = e^(i2πf) = e^(iω)
-	double phi = std::pow (std::sin (M_PI * frequency), 2.0);
-	return (std::pow (_b[0] + _b[1] + _b[2], 2.0) - 4.0 * (_b[0] * _b[1] + 4 * _b[0] * _b[2] + _b[1] * _b[2]) * phi + 16.0 * _b[0] * _b[2] * std::pow (phi, 2.0)) /
-		   (std::pow (  1.0 + _a[1] + _a[2], 2.0) - 4.0 * (  1.0 * _a[1] + 4 *   1.0 * _a[2] + _a[1] * _a[2]) * phi + 16.0 *   1.0 * _a[2] * std::pow (phi, 2.0));
+	float phi = std::pow (std::sin (M_PI * frequency), 2.0f);
+	return (std::pow (b[0] + b[1] + b[2], 2.0f) - 4.0f * (b[0] * b[1] + 4.f * b[0] * b[2] + b[1] * b[2]) * phi + 16.0f * b[0] * b[2] * std::pow (phi, 2.0f)) /
+		   (std::pow (1.0f + a[1] + a[2], 2.0f) - 4.0f * (1.0f * a[1] + 4.f * 1.0f * a[2] + a[1] * a[2]) * phi + 16.0f * 1.0f * a[2] * std::pow (phi, 2.0f));
 }
 
 
@@ -70,14 +70,14 @@ RBJImpulseResponse::update()
 		case LowPass:
 			cos_w0 = std::cos (w0);
 
-			_a[0] =  1.0f + alpha;
+			a[0] =  1.0f + alpha;
 
-			_b[0] = (1.0f - cos_w0) / 2.0f / _a[0];
-			_b[1] = (1.0f - cos_w0) / _a[0];
-			_b[2] = (1.0f - cos_w0) / 2.0f / _a[0];
+			b[0] = (1.0f - cos_w0) / 2.0f / a[0];
+			b[1] = (1.0f - cos_w0) / a[0];
+			b[2] = (1.0f - cos_w0) / 2.0f / a[0];
 
-			_a[1] = -2.0f * cos_w0 / _a[0];
-			_a[2] = (1.0f - alpha) / _a[0];
+			a[1] = -2.0f * cos_w0 / a[0];
+			a[2] = (1.0f - alpha) / a[0];
 
 			auto_attenuation = std::min (1.0f, 1.0f / _resonance);
 			break;
@@ -85,14 +85,14 @@ RBJImpulseResponse::update()
 		case HighPass:
 			cos_w0 = std::cos (w0);
 
-			_a[0] =   1.0f + alpha;
+			a[0] =   1.0f + alpha;
 
-			_b[0] =  (1.0f + cos_w0) / 2.0f / _a[0];
-			_b[1] = -(1.0f + cos_w0) / _a[0];
-			_b[2] =  (1.0f + cos_w0) / 2.0f / _a[0];
+			b[0] =  (1.0f + cos_w0) / 2.0f / a[0];
+			b[1] = -(1.0f + cos_w0) / a[0];
+			b[2] =  (1.0f + cos_w0) / 2.0f / a[0];
 
-			_a[1] =  -2.0f * cos_w0 / _a[0];
-			_a[2] =  (1.0f - alpha) / _a[0];
+			a[1] =  -2.0f * cos_w0 / a[0];
+			a[2] =  (1.0f - alpha) / a[0];
 
 			auto_attenuation = std::min (1.0f, 1.0f / _resonance);
 			break;
@@ -102,14 +102,14 @@ RBJImpulseResponse::update()
 			sin_w0 = std::sin (w0);
 			cos_w0 = std::cos (w0);
 
-			_a[0] =  1.0f + alpha;
+			a[0] =  1.0f + alpha;
 
-			_b[0] =  sin_w0 / 2.0f / _a[0];
-			_b[1] =  0.0f;
-			_b[2] = -sin_w0 / 2.0f / _a[0];
+			b[0] =  sin_w0 / 2.0f / a[0];
+			b[1] =  0.0f;
+			b[2] = -sin_w0 / 2.0f / a[0];
 
-			_a[1] = -2.0f * cos_w0 / _a[0];
-			_a[2] = (1.0f - alpha) / _a[0];
+			a[1] = -2.0f * cos_w0 / a[0];
+			a[2] = (1.0f - alpha) / a[0];
 
 			auto_attenuation = 1.0f / _resonance;
 			break;
@@ -117,54 +117,54 @@ RBJImpulseResponse::update()
 		case Notch:
 			cos_w0 = std::cos (w0);
 
-			_a[0] =  1.0f + alpha;
+			a[0] =  1.0f + alpha;
 
-			_b[0] =  1.0f / _a[0];
-			_b[1] = -2.0f * cos_w0 / _a[0];
-			_b[2] =  1.0f / _a[0];
+			b[0] =  1.0f / a[0];
+			b[1] = -2.0f * cos_w0 / a[0];
+			b[2] =  1.0f / a[0];
 
-			_a[1] = _b[1];
-			_a[2] = (1.0f - alpha) / _a[0];
+			a[1] = b[1];
+			a[2] = (1.0f - alpha) / a[0];
 			break;
 
 		case AllPass:
 			cos_w0 = std::cos (w0);
 
-			_a[0] =  1.0f + alpha;
+			a[0] =  1.0f + alpha;
 
-			_b[0] = (1.0f - alpha) / _a[0];
-			_b[1] = -2.0f * cos_w0 / _a[0];
-			_b[2] =  1.0f;
+			b[0] = (1.0f - alpha) / a[0];
+			b[1] = -2.0f * cos_w0 / a[0];
+			b[2] =  1.0f;
 
-			_a[1] = -2.0f * cos_w0 / _a[0];
-			_a[2] = (1.0f - alpha) / _a[0];
+			a[1] = -2.0f * cos_w0 / a[0];
+			a[2] = (1.0f - alpha) / a[0];
 			break;
 
 		case Peaking:
 			cos_w0 = std::cos (w0);
 
-			_a[0] =  1.0f + alpha / A;
+			a[0] =  1.0f + alpha / A;
 
-			_b[0] = (1.0f + alpha * A) / _a[0];
-			_b[1] = -2.0f * cos_w0 / _a[0];
-			_b[2] = (1.0f - alpha * A) / _a[0];
+			b[0] = (1.0f + alpha * A) / a[0];
+			b[1] = -2.0f * cos_w0 / a[0];
+			b[2] = (1.0f - alpha * A) / a[0];
 
-			_a[1] = -2.0f * cos_w0 / _a[0];
-			_a[2] = (1.0f - alpha / A) / _a[0];
+			a[1] = -2.0f * cos_w0 / a[0];
+			a[2] = (1.0f - alpha / A) / a[0];
 			break;
 
 		case LowShelf:
 			cos_w0 = std::cos (w0);
 			sqrt_A = std::sqrt (A);
 
-			_a[0] =              (A + 1.0f) + (A - 1.0f) * cos_w0 + 2.0f * sqrt_A * alpha;
+			a[0] =              (A + 1.0f) + (A - 1.0f) * cos_w0 + 2.0f * sqrt_A * alpha;
 
-			_b[0] =        (A * ((A + 1.0f) - (A - 1.0f) * cos_w0) + 2.0f * sqrt_A * alpha) / _a[0];
-			_b[1] =  2.0f * A * ((A - 1.0f) - (A + 1.0f) * cos_w0) / _a[0];
-			_b[2] =        (A * ((A + 1.0f) - (A - 1.0f) * cos_w0) - 2.0f * sqrt_A * alpha) / _a[0];
+			b[0] =        (A * ((A + 1.0f) - (A - 1.0f) * cos_w0) + 2.0f * sqrt_A * alpha) / a[0];
+			b[1] =  2.0f * A * ((A - 1.0f) - (A + 1.0f) * cos_w0) / a[0];
+			b[2] =        (A * ((A + 1.0f) - (A - 1.0f) * cos_w0) - 2.0f * sqrt_A * alpha) / a[0];
 
-			_a[1] =     -2.0f * ((A - 1.0f) + (A + 1.0f) * cos_w0) / _a[0];
-			_a[2] =             ((A + 1.0f) + (A - 1.0f) * cos_w0 - 2.0f * sqrt_A * alpha) / _a[0];
+			a[1] =     -2.0f * ((A - 1.0f) + (A + 1.0f) * cos_w0) / a[0];
+			a[2] =             ((A + 1.0f) + (A - 1.0f) * cos_w0 - 2.0f * sqrt_A * alpha) / a[0];
 
 			auto_attenuation = std::min (1.0f, 1.0f / _resonance);
 			break;
@@ -173,21 +173,21 @@ RBJImpulseResponse::update()
 			cos_w0 = std::cos (w0);
 			sqrt_A = std::sqrt (A);
 
-			_a[0] =              (A + 1.0f) - (A - 1.0f) * cos_w0 + 2.0f * sqrt_A * alpha;
+			a[0] =              (A + 1.0f) - (A - 1.0f) * cos_w0 + 2.0f * sqrt_A * alpha;
 
-			_b[0] =         A * ((A + 1.0f) + (A - 1.0f) * cos_w0 + 2.0f * sqrt_A * alpha) / _a[0];
-			_b[1] = -2.0f * A * ((A - 1.0f) + (A + 1.0f) * cos_w0) / _a[0];
-			_b[2] =         A * ((A + 1.0f) + (A - 1.0f) * cos_w0 - 2.0f * sqrt_A * alpha) / _a[0];
+			b[0] =         A * ((A + 1.0f) + (A - 1.0f) * cos_w0 + 2.0f * sqrt_A * alpha) / a[0];
+			b[1] = -2.0f * A * ((A - 1.0f) + (A + 1.0f) * cos_w0) / a[0];
+			b[2] =         A * ((A + 1.0f) + (A - 1.0f) * cos_w0 - 2.0f * sqrt_A * alpha) / a[0];
 
-			_a[1] =      2.0f * ((A - 1.0f) - (A + 1.0f) * cos_w0) / _a[0];
-			_a[2] =             ((A + 1.0f) - (A - 1.0f) * cos_w0 - 2.0f * sqrt_A * alpha) / _a[0];
+			a[1] =      2.0f * ((A - 1.0f) - (A + 1.0f) * cos_w0) / a[0];
+			a[2] =             ((A + 1.0f) - (A - 1.0f) * cos_w0 - 2.0f * sqrt_A * alpha) / a[0];
 
 			auto_attenuation = std::min (1.0f, 1.0f / _resonance);
 			break;
 	}
 
-	// Since we normalized _a[0], now reset it to 0, so it doesn't add value when convolving:
-	_a[0] = 0.0f;
+	// Since we normalized a[0], now reset it to 0, so it doesn't add value when convolving:
+	a[0] = 0.0f;
 
 	// Limiter off?
 	if (!_limiter)
@@ -195,7 +195,7 @@ RBJImpulseResponse::update()
 
 	// Apply total attenuation:
 	for (int i = 0; i < 3; ++i)
-		_b[i] *= _attenuation * auto_attenuation;
+		b[i] *= _attenuation * auto_attenuation;
 
 	// Indicate that coeffs. changed:
 	bump();
