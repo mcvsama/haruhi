@@ -43,7 +43,9 @@ namespace MikuruPrivate {
 class Part;
 class EventDispatcher;
 
-class Filter: public QWidget
+class Filter:
+	public QWidget,
+	public Signal::Receiver
 {
 	Q_OBJECT
 
@@ -98,7 +100,14 @@ class Filter: public QWidget
 	 * Redraws frequency response.
 	 */
 	void
-	update_frequency_response();
+	update_impulse_response();
+
+  private:
+	/**
+	 * Sets up params callbacks.
+	 */
+	void
+	setup_params();
 
   public:
 	Signal::Emiter0					params_updated;

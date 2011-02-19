@@ -20,6 +20,7 @@
 // Haruhi:
 #include <haruhi/utility/atomic.h>
 #include <haruhi/utility/numeric.h>
+#include <haruhi/utility/signal.h>
 
 
 namespace Haruhi {
@@ -58,6 +59,7 @@ template<class tType>
 			_maximum = other._maximum;
 			_default_value = other._default_value;
 			_value = other._value;
+			on_change();
 			return *this;
 		}
 
@@ -70,7 +72,7 @@ template<class tType>
 		get() const { return _value.load(); }
 
 		void
-		set (Type const& value) { _value.store (value); }
+		set (Type const& value) { _value.store (value); on_change(); }
 
 		Type
 		minimum() const { return _minimum; }
@@ -98,6 +100,10 @@ template<class tType>
 		 */
 		volatile int*
 		parameter() { return &_value; }
+
+	  public:
+		// Emited when parameter gets changed:
+		Signal::Emiter0	on_change;
 
 	  private:
 		Type			_minimum;

@@ -85,11 +85,6 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 	_knob_attenuation->controller_proxy().apply_config();
 	_knob_attenuation->set_volume_scale (true, _params.passes);
 
-	QObject::connect (_knob_frequency, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
-	QObject::connect (_knob_resonance, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
-	QObject::connect (_knob_gain, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
-	QObject::connect (_knob_attenuation, SIGNAL (changed (int)), this, SLOT (update_frequency_response()));
-
 	if (_polyphonic_control)
 	{
 		VoiceManager* vm = _part->voice_manager();
@@ -114,7 +109,6 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 	_filter_type->setCurrentItem (p.type);
 	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_params()));
 	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_widgets()));
-	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_frequency_response()));
 
 	_passes = new QComboBox (_panel);
 	_passes->addItem ("1 pass");
@@ -130,7 +124,6 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 	_limiter_enabled->setChecked (_params.limiter_enabled);
 	QToolTip::add (_limiter_enabled, "Automatic attenuation limit");
 	QObject::connect (_limiter_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
-	QObject::connect (_limiter_enabled, SIGNAL (toggled (bool)), this, SLOT (update_frequency_response()));
 
 	// Layouts:
 
@@ -160,8 +153,9 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 
 	_response_plot->assign_impulse_response (&_impulse_response);
 
+	setup_params();
 	update_widgets();
-	update_frequency_response();
+	update_impulse_response();
 }
 
 
@@ -285,17 +279,27 @@ Filter::update_widgets()
 
 
 void
-Filter::update_frequency_response()
+Filter::update_impulse_response()
 {
-	params_updated();
-
 	_impulse_response.set_type (static_cast<RBJImpulseResponse::Type> (_params.type.get()));
 	_impulse_response.set_frequency (0.5f * _params.frequency.get() / Params::Filter::FrequencyMax);
 	_impulse_response.set_resonance (_params.resonance.to_f());
 	_impulse_response.set_gain (_params.gain.to_f());
 	_impulse_response.set_attenuation (_params.attenuation.to_f());
 	_impulse_response.set_limiter (_params.limiter_enabled.get());
+
+	params_updated();
 	_response_plot->replot();
+}
+
+
+void
+Filter::setup_params()
+{
+	_params.frequency.on_change.connect (this, &Filter::update_impulse_response);
+	_params.resonance.on_change.connect (this, &Filter::update_impulse_response);
+	_params.gain.on_change.connect (this, &Filter::update_impulse_response);
+	_params.attenuation.on_change.connect (this, &Filter::update_impulse_response);
 }
 
 } // namespace MikuruPrivate

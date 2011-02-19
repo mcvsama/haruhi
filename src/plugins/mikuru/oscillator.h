@@ -214,14 +214,24 @@ class Oscillator:
 	void
 	update_widgets();
 
+  private slots:
 	/**
-	 * Recomputes wave.
+	 * Called when any value or phase slider is moved.
 	 * \entry	Only from UI thread.
 	 */
 	void
-	recompute_wave();
+	sliders_updated();
 
-  private slots:
+	void
+	show_harmonics();
+
+  private:
+	/**
+	 * Sets up params callbacks.
+	 */
+	void
+	setup_params();
+
 	void
 	update_voice_panorama();
 
@@ -247,16 +257,12 @@ class Oscillator:
 	update_voice_velocity_sens();
 
 	/**
-	 * Called when any value or phase slider is moved.
+	 * Recomputes wave.
 	 * \entry	Only from UI thread.
 	 */
 	void
-	sliders_updated();
+	recompute_wave();
 
-	void
-	show_harmonics();
-
-  private:
 	/**
 	 * Returns WaveInfo for currently selected wave in UI.
 	 */

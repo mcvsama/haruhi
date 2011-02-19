@@ -53,11 +53,11 @@ namespace MikuruPrivate {
 UPDATE_VOICE (panorama)
 UPDATE_VOICE (detune)
 UPDATE_VOICE (pitchbend)
+UPDATE_VOICE (velocity_sens)
 UPDATE_VOICE (unison_index)
 UPDATE_VOICE (unison_spread)
 UPDATE_VOICE (unison_init)
 UPDATE_VOICE (unison_noise)
-UPDATE_VOICE (velocity_sens)
 
 #undef UPDATE_VOICE
 
@@ -149,19 +149,6 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	_knob_portamento_time->controller_proxy().apply_config();
 
 	_knob_volume->set_volume_scale (true, M_E);
-
-	QObject::connect (_knob_wave_shape, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
-	QObject::connect (_knob_modulator_amplitude, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
-	QObject::connect (_knob_modulator_index, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
-	QObject::connect (_knob_modulator_shape, SIGNAL (changed (int)), this, SLOT (recompute_wave()));
-	QObject::connect (_knob_panorama, SIGNAL (changed (int)), this, SLOT (update_voice_panorama()));
-	QObject::connect (_knob_detune, SIGNAL (changed (int)), this, SLOT (update_voice_detune()));
-	QObject::connect (_knob_pitchbend, SIGNAL (changed (int)), this, SLOT (update_voice_pitchbend()));
-	QObject::connect (_knob_unison_index, SIGNAL (changed (int)), this, SLOT (update_voice_unison_index()));
-	QObject::connect (_knob_unison_spread, SIGNAL (changed (int)), this, SLOT (update_voice_unison_spread()));
-	QObject::connect (_knob_unison_init, SIGNAL (changed (int)), this, SLOT (update_voice_unison_init()));
-	QObject::connect (_knob_unison_noise, SIGNAL (changed (int)), this, SLOT (update_voice_unison_noise()));
-	QObject::connect (_knob_velocity_sens, SIGNAL (changed (int)), this, SLOT (update_voice_velocity_sens()));
 
 	QToolTip::add (_knob_unison_index, "Number of voices playing in unison");
 	QToolTip::add (_knob_unison_spread, "Unison frequencies spread");
@@ -370,7 +357,7 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	_transposition_semitones->setValue (po.transposition_semitones);
 	QObject::connect (_transposition_semitones, SIGNAL (valueChanged (int)), this, SLOT (update_oscillator_params()));
 
-	// Glide:
+	// Const. glide:
 	_const_portamento_time = new QCheckBox ("Const. glide", this);
 	_const_portamento_time->setChecked (po.const_portamento_time);
 	QObject::connect (_const_portamento_time, SIGNAL (toggled (bool)), this, SLOT (update_oscillator_params()));
@@ -505,6 +492,7 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	_std_button_bg = _harmonics_resets[0]->paletteBackgroundColor();
 	_std_button_fg = _harmonics_resets[0]->paletteForegroundColor();
 
+	setup_params();
 	update_widgets();
 	update_waveform_params();
 }
@@ -777,6 +765,41 @@ Oscillator::update_widgets()
 
 
 void
+Oscillator::sliders_updated()
+{
+	if (!_loading_params)
+		update_waveform_params();
+}
+
+
+void
+Oscillator::show_harmonics()
+{
+	_harmonics_window->show();
+	_harmonics_window->activateWindow();
+}
+
+
+void
+Oscillator::setup_params()
+{
+	_waveform_params.wave_shape.on_change.connect (this, &Oscillator::recompute_wave);
+	_waveform_params.modulator_amplitude.on_change.connect (this, &Oscillator::recompute_wave);
+	_waveform_params.modulator_index.on_change.connect (this, &Oscillator::recompute_wave);
+	_waveform_params.modulator_shape.on_change.connect (this, &Oscillator::recompute_wave);
+
+	_voice_params.panorama.on_change.connect (this, &Oscillator::update_voice_panorama);
+	_voice_params.detune.on_change.connect (this, &Oscillator::update_voice_detune);
+	_voice_params.pitchbend.on_change.connect (this, &Oscillator::update_voice_pitchbend);
+	_voice_params.velocity_sens.on_change.connect (this, &Oscillator::update_voice_velocity_sens);
+	_voice_params.unison_index.on_change.connect (this, &Oscillator::update_voice_unison_index);
+	_voice_params.unison_spread.on_change.connect (this, &Oscillator::update_voice_unison_spread);
+	_voice_params.unison_init.on_change.connect (this, &Oscillator::update_voice_unison_init);
+	_voice_params.unison_noise.on_change.connect (this, &Oscillator::update_voice_unison_noise);
+}
+
+
+void
 Oscillator::recompute_wave()
 {
 	DSP::ParametricWave* pw = active_wave().wave.get();
@@ -816,22 +839,6 @@ Oscillator::recompute_wave()
 		_final_wave_plot->assign_wave (pw, false, true);
 		_final_wave_plot->post_plot_shape();
 	}
-}
-
-
-void
-Oscillator::sliders_updated()
-{
-	if (!_loading_params)
-		update_waveform_params();
-}
-
-
-void
-Oscillator::show_harmonics()
-{
-	_harmonics_window->show();
-	_harmonics_window->activateWindow();
 }
 
 
