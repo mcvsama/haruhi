@@ -104,7 +104,7 @@ template<unsigned int tOrder, int tResponseType>
 					InputIterator current = begin;
 
 					// If this is IIR filter:
-					if (ResponseType == static_cast<int> (FIR))
+					if (ResponseType == static_cast<int> (IIR))
 					{
 						// Filter first part using previous-buffers:
 						for (int i = 0; i < Order - 1; ++i, ++current, ++output)
