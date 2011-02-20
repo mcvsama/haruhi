@@ -15,6 +15,7 @@
 #include <cstddef>
 
 // Qt:
+#include <QtGui/QApplication>
 #include <QtGui/QPainter>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QPolygonF>
@@ -105,6 +106,13 @@ FrequencyResponsePlot::replot (bool force)
 
 
 void
+FrequencyResponsePlot::post_replot()
+{
+	QApplication::postEvent (this, new Replot());
+}
+
+
+void
 FrequencyResponsePlot::resizeEvent (QResizeEvent*)
 {
 	if (_prev_size != size())
@@ -168,6 +176,14 @@ FrequencyResponsePlot::paintEvent (QPaintEvent* paint_event)
 	QPainter (this).drawPixmap (paint_event->rect().topLeft(), _double_buffer, paint_event->rect());
 	_to_repaint_buffer = false;
 	_last_enabled_state = isEnabled();
+}
+
+
+void
+FrequencyResponsePlot::customEvent (QEvent* e)
+{
+	if (dynamic_cast<Replot*> (e))
+		replot();
 }
 
 

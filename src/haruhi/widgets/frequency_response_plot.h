@@ -19,6 +19,7 @@
 #include <vector>
 
 // Qt:
+#include <QtCore/QEvent>
 #include <QtGui/QWidget>
 #include <QtGui/QPixmap>
 
@@ -36,6 +37,17 @@ class FrequencyResponsePlot: public QWidget
 	enum {
 		MinFreq = 32,
 		MaxFreq = 24000,
+	};
+
+	/**
+	 * Used to request replot from other-than-UI thread.
+	 */
+	class Replot: public QEvent
+	{
+	  public:
+		Replot():
+			QEvent (QEvent::User)
+		{ }
 	};
 
   public:
@@ -69,9 +81,17 @@ class FrequencyResponsePlot: public QWidget
 	/**
 	 * Request replot on nearest paint event.
 	 * \param	force forces replot to be done now.
+	 * \thread	Only UI thread. Use post_replot() from other threads.
 	 */
 	void
 	replot (bool force = false);
+
+	/**
+	 * Request replot on nearest paint event.
+	 * \threadsafe
+	 */
+	void
+	post_replot();
 
   protected:
 	void
@@ -79,6 +99,9 @@ class FrequencyResponsePlot: public QWidget
 
 	void
 	paintEvent (QPaintEvent*);
+
+	void
+	customEvent (QEvent*);
 
   private:
 	void

@@ -289,7 +289,7 @@ Filter::update_impulse_response()
 	_impulse_response.set_limiter (_params.limiter_enabled.get());
 
 	params_updated();
-	_response_plot->replot();
+	_response_plot->post_replot();
 }
 
 
