@@ -109,6 +109,7 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 	_filter_type->setCurrentItem (p.type);
 	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_params()));
 	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_widgets()));
+	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_impulse_response()));
 
 	_passes = new QComboBox (_panel);
 	_passes->addItem ("1 pass");
@@ -119,11 +120,13 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 	_passes->setCurrentItem (p.passes.get() - 1);
 	QObject::connect (_passes, SIGNAL (activated (int)), this, SLOT (update_params()));
 	QObject::connect (_passes, SIGNAL (activated (int)), this, SLOT (update_widgets()));
+	QObject::connect (_passes, SIGNAL (activated (int)), this, SLOT (update_impulse_response()));
 
 	_limiter_enabled = new QCheckBox ("Q limiter", _panel);
 	_limiter_enabled->setChecked (_params.limiter_enabled);
 	QToolTip::add (_limiter_enabled, "Automatic attenuation limit");
 	QObject::connect (_limiter_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
+	QObject::connect (_limiter_enabled, SIGNAL (toggled (bool)), this, SLOT (update_impulse_response()));
 
 	// Layouts:
 
