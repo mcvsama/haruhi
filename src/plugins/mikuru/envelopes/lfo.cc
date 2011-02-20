@@ -207,14 +207,14 @@ LFO::create_ports()
 		_mikuru->graph()->lock();
 	_port_group = new Haruhi::PortGroup (_mikuru->graph(), QString ("LFO %1").arg (this->id()).toStdString());
 	// Inputs:
-	_port_delay = new Haruhi::EventPort (_mikuru, "Delay", Haruhi::Port::Input, _port_group);
-	_port_fade_in = new Haruhi::EventPort (_mikuru, "Fade in", Haruhi::Port::Input, _port_group);
-	_port_frequency = new Haruhi::EventPort (_mikuru, "Frequency", Haruhi::Port::Input, _port_group);
-	_port_level = new Haruhi::EventPort (_mikuru, "Level", Haruhi::Port::Input, _port_group);
-	_port_depth = new Haruhi::EventPort (_mikuru, "Depth", Haruhi::Port::Input, _port_group);
-	_port_phase = new Haruhi::EventPort (_mikuru, "Start phase", Haruhi::Port::Input, _port_group);
-	_port_wave_shape = new Haruhi::EventPort (_mikuru, "Wave shape", Haruhi::Port::Input, _port_group);
-	_port_fade_out = new Haruhi::EventPort (_mikuru, "Fade out", Haruhi::Port::Input, _port_group);
+	_port_delay			= new Haruhi::EventPort (_mikuru, "Delay", Haruhi::Port::Input, _port_group);
+	_port_fade_in		= new Haruhi::EventPort (_mikuru, "Fade in", Haruhi::Port::Input, _port_group);
+	_port_frequency		= new Haruhi::EventPort (_mikuru, "Frequency", Haruhi::Port::Input, _port_group);
+	_port_level			= new Haruhi::EventPort (_mikuru, "Level", Haruhi::Port::Input, _port_group);
+	_port_depth			= new Haruhi::EventPort (_mikuru, "Depth", Haruhi::Port::Input, _port_group);
+	_port_phase			= new Haruhi::EventPort (_mikuru, "Start phase", Haruhi::Port::Input, _port_group);
+	_port_wave_shape	= new Haruhi::EventPort (_mikuru, "Wave shape", Haruhi::Port::Input, _port_group);
+	_port_fade_out		= new Haruhi::EventPort (_mikuru, "Fade out", Haruhi::Port::Input, _port_group);
 	// Outputs:
 	_port_output = new Haruhi::EventPort (_mikuru, QString ("LFO %1").arg (this->id()).toStdString(), Haruhi::Port::Output, 0, Haruhi::Port::Polyphonic);
 	if (_mikuru->graph())
@@ -225,14 +225,14 @@ LFO::create_ports()
 void
 LFO::create_knobs (QWidget* parent)
 {
-	_knob_delay = new Haruhi::Knob (parent, _port_delay, &_params.delay, "Delay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Delay, 1000), 2);
-	_knob_fade_in = new Haruhi::Knob (parent, _port_fade_in, &_params.fade_in, "Fade in", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::FadeIn, 1000), 2);
-	_knob_frequency = new Haruhi::Knob (parent, _port_frequency, &_params.frequency, "Frequency", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Frequency, 3000), 3);
-	_knob_level = new Haruhi::Knob (parent, _port_level, &_params.level, "Level", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Level, 100), 2);
-	_knob_depth = new Haruhi::Knob (parent, _port_depth, &_params.depth, "Depth", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Depth, 100), 2);
-	_knob_phase = new Haruhi::Knob (parent, _port_phase, &_params.phase, "Phase", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Phase, 1000), 3);
-	_knob_wave_shape = new Haruhi::Knob (parent, _port_wave_shape, &_params.wave_shape, "W.shape", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::WaveShape, 1000), 3);
-	_knob_fade_out = new Haruhi::Knob (parent, _port_fade_out, &_params.fade_out, "Fade out", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::FadeOut, 100), 2);
+	_knob_delay			= new Haruhi::Knob (parent, _port_delay, &_params.delay, "Delay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Delay, 1000), 2);
+	_knob_fade_in		= new Haruhi::Knob (parent, _port_fade_in, &_params.fade_in, "Fade in", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::FadeIn, 1000), 2);
+	_knob_frequency		= new Haruhi::Knob (parent, _port_frequency, &_params.frequency, "Frequency", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Frequency, 3000), 3);
+	_knob_level			= new Haruhi::Knob (parent, _port_level, &_params.level, "Level", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Level, 100), 2);
+	_knob_depth			= new Haruhi::Knob (parent, _port_depth, &_params.depth, "Depth", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Depth, 100), 2);
+	_knob_phase			= new Haruhi::Knob (parent, _port_phase, &_params.phase, "Phase", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::Phase, 1000), 3);
+	_knob_wave_shape	= new Haruhi::Knob (parent, _port_wave_shape, &_params.wave_shape, "W.shape", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::WaveShape, 1000), 3);
+	_knob_fade_out		= new Haruhi::Knob (parent, _port_fade_out, &_params.fade_out, "Fade out", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::LFO::FadeOut, 100), 2);
 
 	// Proxy configs:
 	Haruhi::Knob* curved_knobs[] = {

@@ -41,24 +41,24 @@ General::General (Mikuru* mikuru, QWidget* parent):
 {
 	Params::General p = _params;
 
-	_port_volume = new Haruhi::EventPort (_mikuru, "Volume", Haruhi::Port::Input, 0, Haruhi::Port::ControlVolume);
-	_port_detune = new Haruhi::EventPort (_mikuru, "Detune", Haruhi::Port::Input);
-	_port_panorama = new Haruhi::EventPort (_mikuru, "Panorama", Haruhi::Port::Input);
-	_port_stereo_width = new Haruhi::EventPort (_mikuru, "Stereo width", Haruhi::Port::Input);
-	_port_input_volume = new Haruhi::EventPort (_mikuru, "Input volume", Haruhi::Port::Input);
-	_port_pitchbend = new Haruhi::EventPort (_mikuru, "Pitchbend (global)", Haruhi::Port::Input, 0, Haruhi::Port::ControlPitchbend | Haruhi::Port::Polyphonic);
-	_port_amplitude= new Haruhi::EventPort (_mikuru, "Amplitude (global)", Haruhi::Port::Input, 0, Haruhi::Port::ControlPitchbend | Haruhi::Port::Polyphonic);
-	_port_frequency = new Haruhi::EventPort (_mikuru, "Frequency (global)", Haruhi::Port::Input, 0, Haruhi::Port::ControlPitchbend | Haruhi::Port::Polyphonic);
+	_port_volume		= new Haruhi::EventPort (_mikuru, "Volume", Haruhi::Port::Input, 0, Haruhi::Port::ControlVolume);
+	_port_detune		= new Haruhi::EventPort (_mikuru, "Detune", Haruhi::Port::Input);
+	_port_panorama		= new Haruhi::EventPort (_mikuru, "Panorama", Haruhi::Port::Input);
+	_port_stereo_width	= new Haruhi::EventPort (_mikuru, "Stereo width", Haruhi::Port::Input);
+	_port_input_volume	= new Haruhi::EventPort (_mikuru, "Input volume", Haruhi::Port::Input);
+	_port_pitchbend		= new Haruhi::EventPort (_mikuru, "Pitchbend (global)", Haruhi::Port::Input, 0, Haruhi::Port::ControlPitchbend | Haruhi::Port::Polyphonic);
+	_port_amplitude		= new Haruhi::EventPort (_mikuru, "Amplitude (global)", Haruhi::Port::Input, 0, Haruhi::Port::ControlPitchbend | Haruhi::Port::Polyphonic);
+	_port_frequency		= new Haruhi::EventPort (_mikuru, "Frequency (global)", Haruhi::Port::Input, 0, Haruhi::Port::ControlPitchbend | Haruhi::Port::Polyphonic);
 
-	_knob_volume = new Haruhi::Knob (this, _port_volume, &_params.volume, "Volume dB",
-									 -std::numeric_limits<float>::infinity(), 0.0f,
-									 (Params::General::VolumeMax - Params::General::VolumeMin) / 500, 2);
-	_knob_detune = new Haruhi::Knob (this, _port_detune, &_params.detune, "Detune", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::Detune, 100), 2);
-	_knob_panorama = new Haruhi::Knob (this, _port_panorama, &_params.panorama, "Panorama", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::Panorama, 100), 2);
-	_knob_stereo_width = new Haruhi::Knob (this, _port_stereo_width, &_params.stereo_width, "St.width", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::StereoWidth, 100), 2);
-	_knob_input_volume = new Haruhi::Knob (this, _port_input_volume, &_params.input_volume, "Input dB",
-										   -std::numeric_limits<float>::infinity(), 0.0f,
-										   (Params::General::InputVolumeMax - Params::General::InputVolumeMin) / 500, 2);
+	_knob_volume		= new Haruhi::Knob (this, _port_volume, &_params.volume, "Volume dB",
+											-std::numeric_limits<float>::infinity(), 0.0f,
+											(Params::General::VolumeMax - Params::General::VolumeMin) / 500, 2);
+	_knob_detune		= new Haruhi::Knob (this, _port_detune, &_params.detune, "Detune", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::Detune, 100), 2);
+	_knob_panorama		= new Haruhi::Knob (this, _port_panorama, &_params.panorama, "Panorama", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::Panorama, 100), 2);
+	_knob_stereo_width	= new Haruhi::Knob (this, _port_stereo_width, &_params.stereo_width, "St.width", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::General::StereoWidth, 100), 2);
+	_knob_input_volume	= new Haruhi::Knob (this, _port_input_volume, &_params.input_volume, "Input dB",
+											-std::numeric_limits<float>::infinity(), 0.0f,
+											(Params::General::InputVolumeMax - Params::General::InputVolumeMin) / 500, 2);
 
 	_knob_volume->set_volume_scale (true, M_E);
 	_knob_input_volume->set_volume_scale (true, M_E);

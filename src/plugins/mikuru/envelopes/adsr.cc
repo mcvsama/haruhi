@@ -103,13 +103,13 @@ ADSR::create_ports()
 		_mikuru->graph()->lock();
 	_port_group = new Haruhi::PortGroup (_mikuru->graph(), QString ("ADSR %1").arg (this->id()).toStdString());
 	// Inputs:
-	_port_delay = new Haruhi::EventPort (_mikuru, "Delay", Haruhi::Port::Input, _port_group);
-	_port_attack = new Haruhi::EventPort (_mikuru, "Attack", Haruhi::Port::Input, _port_group);
-	_port_attack_hold = new Haruhi::EventPort (_mikuru, "Attack hold", Haruhi::Port::Input, _port_group);
-	_port_decay = new Haruhi::EventPort (_mikuru, "Decay", Haruhi::Port::Input, _port_group);
-	_port_sustain = new Haruhi::EventPort (_mikuru, "Sustain", Haruhi::Port::Input, _port_group);
-	_port_sustain_hold = new Haruhi::EventPort (_mikuru, "Sustain hold", Haruhi::Port::Input, _port_group);
-	_port_release = new Haruhi::EventPort (_mikuru, "Release", Haruhi::Port::Input, _port_group);
+	_port_delay			= new Haruhi::EventPort (_mikuru, "Delay", Haruhi::Port::Input, _port_group);
+	_port_attack		= new Haruhi::EventPort (_mikuru, "Attack", Haruhi::Port::Input, _port_group);
+	_port_attack_hold	= new Haruhi::EventPort (_mikuru, "Attack hold", Haruhi::Port::Input, _port_group);
+	_port_decay			= new Haruhi::EventPort (_mikuru, "Decay", Haruhi::Port::Input, _port_group);
+	_port_sustain		= new Haruhi::EventPort (_mikuru, "Sustain", Haruhi::Port::Input, _port_group);
+	_port_sustain_hold	= new Haruhi::EventPort (_mikuru, "Sustain hold", Haruhi::Port::Input, _port_group);
+	_port_release		= new Haruhi::EventPort (_mikuru, "Release", Haruhi::Port::Input, _port_group);
 	// Outputs:
 	_port_output = new Haruhi::EventPort (_mikuru, QString ("ADSR %1").arg (this->id()).toStdString(), Haruhi::Port::Output, 0, Haruhi::Port::Polyphonic);
 	if (_mikuru->graph())
@@ -120,13 +120,13 @@ ADSR::create_ports()
 void
 ADSR::create_knobs (QWidget* parent)
 {
-	_knob_delay = new Haruhi::Knob (parent, _port_delay, &_params.delay, "Delay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Delay, 100), 2);
-	_knob_attack = new Haruhi::Knob (parent, _port_attack, &_params.attack, "Attack", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Attack, 100), 2);
-	_knob_attack_hold = new Haruhi::Knob (parent, _port_attack_hold, &_params.attack_hold, "Att.hold", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::AttackHold, 100), 2);
-	_knob_decay = new Haruhi::Knob (parent, _port_decay, &_params.decay, "Decay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Decay, 100), 2);
-	_knob_sustain = new Haruhi::Knob (parent, _port_sustain, &_params.sustain, "Sustain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Sustain, 100), 2);
-	_knob_sustain_hold = new Haruhi::Knob (parent, _port_sustain_hold, &_params.sustain_hold, "Sus.hold", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::SustainHold, 100), 2);
-	_knob_release = new Haruhi::Knob (parent, _port_release, &_params.release, "Release", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Release, 100), 2);
+	_knob_delay			= new Haruhi::Knob (parent, _port_delay, &_params.delay, "Delay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Delay, 100), 2);
+	_knob_attack		= new Haruhi::Knob (parent, _port_attack, &_params.attack, "Attack", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Attack, 100), 2);
+	_knob_attack_hold	= new Haruhi::Knob (parent, _port_attack_hold, &_params.attack_hold, "Att.hold", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::AttackHold, 100), 2);
+	_knob_decay			= new Haruhi::Knob (parent, _port_decay, &_params.decay, "Decay", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Decay, 100), 2);
+	_knob_sustain		= new Haruhi::Knob (parent, _port_sustain, &_params.sustain, "Sustain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Sustain, 100), 2);
+	_knob_sustain_hold	= new Haruhi::Knob (parent, _port_sustain_hold, &_params.sustain_hold, "Sus.hold", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::SustainHold, 100), 2);
+	_knob_release		= new Haruhi::Knob (parent, _port_release, &_params.release, "Release", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::ADSR::Release, 100), 2);
 
 	// Some knobs need curve setup:
 	Haruhi::Knob* curved_knobs[] = {

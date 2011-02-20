@@ -68,7 +68,7 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	_part (part),
 	_loading_params (false)
 {
-	std::string port_prefix = q_port_prefix.toStdString();
+	std::string port_prefix = q_port_prefix.toStdString() + " - ";
 
 	Params::Waveform pw = _waveform_params;
 	Params::Oscillator po = _oscillator_params;
@@ -78,24 +78,24 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 
 	if (_mikuru->graph())
 		_mikuru->graph()->lock();
-	_port_wave_shape = new Haruhi::EventPort (_mikuru, port_prefix + " - Wave shape", Haruhi::Port::Input, port_group);
-	_port_modulator_amplitude = new Haruhi::EventPort (_mikuru, port_prefix + " - Wave modulator amplitude", Haruhi::Port::Input, port_group);
-	_port_modulator_index = new Haruhi::EventPort (_mikuru, port_prefix + " - Wave modulator index", Haruhi::Port::Input, port_group);
-	_port_modulator_shape = new Haruhi::EventPort (_mikuru, port_prefix + " - Wave modulator shape", Haruhi::Port::Input, port_group);
-	_port_volume = new Haruhi::EventPort (_mikuru, port_prefix + " - Volume", Haruhi::Port::Input, port_group);
-	_port_amplitude = new Haruhi::EventPort (_mikuru, port_prefix + " - Amplitude modulation", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
-	_port_frequency = new Haruhi::EventPort (_mikuru, port_prefix + " - Frequency modulation", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
-	_port_panorama = new Haruhi::EventPort (_mikuru, port_prefix + " - Panorama", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
-	_port_detune = new Haruhi::EventPort (_mikuru, port_prefix + " - Detune", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
-	_port_pitchbend = new Haruhi::EventPort (_mikuru, port_prefix + " - Pitchbend", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
-	_port_velocity_sens = new Haruhi::EventPort (_mikuru, port_prefix + " - Velocity sensitivity", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
-	_port_unison_index = new Haruhi::EventPort (_mikuru, port_prefix + " - Unison index", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
-	_port_unison_spread = new Haruhi::EventPort (_mikuru, port_prefix + " - Unison spread", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
-	_port_unison_init = new Haruhi::EventPort (_mikuru, port_prefix + " - Unison init. φ", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
-	_port_unison_noise = new Haruhi::EventPort (_mikuru, port_prefix + " - Unison noise", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
-	_port_portamento_time = new Haruhi::EventPort (_mikuru, port_prefix + " - Portamento time", Haruhi::Port::Input, port_group);
-	_port_phase = new Haruhi::EventPort (_mikuru, port_prefix + " - Phase", Haruhi::Port::Input, port_group);
-	_port_noise_level = new Haruhi::EventPort (_mikuru, port_prefix + " - Noise level", Haruhi::Port::Input, port_group);
+	_port_wave_shape			= new Haruhi::EventPort (_mikuru, port_prefix + "Wave shape", Haruhi::Port::Input, port_group);
+	_port_modulator_amplitude	= new Haruhi::EventPort (_mikuru, port_prefix + "Wave modulator amplitude", Haruhi::Port::Input, port_group);
+	_port_modulator_index		= new Haruhi::EventPort (_mikuru, port_prefix + "Wave modulator index", Haruhi::Port::Input, port_group);
+	_port_modulator_shape		= new Haruhi::EventPort (_mikuru, port_prefix + "Wave modulator shape", Haruhi::Port::Input, port_group);
+	_port_volume				= new Haruhi::EventPort (_mikuru, port_prefix + "Volume", Haruhi::Port::Input, port_group);
+	_port_amplitude				= new Haruhi::EventPort (_mikuru, port_prefix + "Amplitude modulation", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_frequency				= new Haruhi::EventPort (_mikuru, port_prefix + "Frequency modulation", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_panorama				= new Haruhi::EventPort (_mikuru, port_prefix + "Panorama", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_detune				= new Haruhi::EventPort (_mikuru, port_prefix + "Detune", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_pitchbend				= new Haruhi::EventPort (_mikuru, port_prefix + "Pitchbend", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_velocity_sens			= new Haruhi::EventPort (_mikuru, port_prefix + "Velocity sensitivity", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_unison_index			= new Haruhi::EventPort (_mikuru, port_prefix + "Unison index", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_unison_spread			= new Haruhi::EventPort (_mikuru, port_prefix + "Unison spread", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_unison_init			= new Haruhi::EventPort (_mikuru, port_prefix + "Unison init. φ", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_unison_noise			= new Haruhi::EventPort (_mikuru, port_prefix + "Unison noise", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	_port_portamento_time		= new Haruhi::EventPort (_mikuru, port_prefix + "Portamento time", Haruhi::Port::Input, port_group);
+	_port_phase					= new Haruhi::EventPort (_mikuru, port_prefix + "Phase", Haruhi::Port::Input, port_group);
+	_port_noise_level			= new Haruhi::EventPort (_mikuru, port_prefix + "Noise level", Haruhi::Port::Input, port_group);
 	if (_mikuru->graph())
 		_mikuru->graph()->unlock();
 
