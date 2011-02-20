@@ -39,6 +39,7 @@
 #include <haruhi/session/program.h>
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/mutex.h>
+#include <haruhi/utility/signal.h>
 #include <haruhi/widgets/level_meter.h>
 #include <haruhi/widgets/dial_control.h>
 
@@ -111,7 +112,9 @@ namespace SessionPrivate {
 } // namespace SessionPrivate
 
 
-class Session: public QWidget
+class Session:
+	public QWidget,
+	public Signal::Receiver
 {
 	Q_OBJECT
 
@@ -185,10 +188,7 @@ class Session: public QWidget
 	engine() const { return _engine; }
 
 	QString const&
-	name() const
-	{
-		return _name;
-	}
+	name() const { return _name; }
 
 	void
 	set_name (QString const& name)
@@ -277,6 +277,9 @@ class Session: public QWidget
 	start_event_backend();
 
 	void
+	audio_backend_state_change (bool);
+
+	void
 	show_program() { _stack->setCurrentWidget (_program); }
 
 	void
@@ -291,6 +294,9 @@ class Session: public QWidget
 	void
 	master_volume_changed (int);
 
+	void
+	update_window_title();
+
   protected:
 	void
 	closeEvent (QCloseEvent* e);
@@ -303,7 +309,6 @@ class Session: public QWidget
 	QString						_name;
 	QString						_file_name;
 	Parameters					_parameters;
-
 	Graph*						_graph;
 
 	QVBoxLayout*				_layout;

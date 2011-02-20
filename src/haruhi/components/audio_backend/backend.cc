@@ -129,6 +129,13 @@ Backend::~Backend()
 }
 
 
+bool
+Backend::connected() const
+{
+	return _transport->connected();
+}
+
+
 void
 Backend::enable()
 {
@@ -281,19 +288,13 @@ Backend::load_state (QDomElement const& element)
 
 
 void
-Backend::notify_disconnected()
-{
-	QApplication::postEvent (this, new OfflineNotification());
-}
-
-
-void
 Backend::connect()
 {
 	try {
 		_transport->connect (_client_name.toStdString());
 		graph_updated();
 		enable();
+		QApplication::postEvent (this, new StateChange (true, false));
 	}
 	catch (Exception const& e)
 	{
@@ -309,14 +310,15 @@ Backend::disconnect()
 	disable();
 	_transport->deactivate();
 	_transport->disconnect();
+	QApplication::postEvent (this, new StateChange (false, false));
 	update_widgets();
 }
 
 
-bool
-Backend::connected() const
+void
+Backend::notify_disconnected()
 {
-	return _transport->connected();
+	QApplication::postEvent (this, new StateChange (false, true));
 }
 
 
@@ -527,12 +529,18 @@ Backend::destroy_selected_output()
 void
 Backend::customEvent (QEvent* event)
 {
-	OfflineNotification* offline_notification = dynamic_cast<OfflineNotification*> (event);
-	if (offline_notification)
+	StateChange* state_change = dynamic_cast<StateChange*> (event);
+	if (state_change)
 	{
-		update_widgets();
-		// Show message to user:
-		QMessageBox::warning (this, "Audio backend", "Audio transport disconnected.\nUse «Reconnect» button on Audio backend tab (or press C-j) to reconnect.");
+		if (state_change->from_backend)
+		{
+			update_widgets();
+			on_state_change (state_change->online);
+			// Show message to user:
+			QMessageBox::warning (this, "Audio backend", "Audio transport disconnected.\nUse «Reconnect» button on Audio backend tab (or press C-j) to reconnect.");
+		}
+		else
+			on_state_change (state_change->online);
 	}
 }
 

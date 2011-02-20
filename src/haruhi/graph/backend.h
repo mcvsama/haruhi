@@ -18,6 +18,9 @@
 #include <cstddef>
 #include <string>
 
+// Haruhi:
+#include <haruhi/utility/signal.h>
+
 // Local:
 #include "unit.h"
 
@@ -28,6 +31,12 @@ class Backend: public Unit
 {
   public:
 	Backend (std::string const& urn, std::string const& title, int id);
+
+	/**
+	 * \returns	true if backend is connected.
+	 */
+	virtual bool
+	connected() const = 0;
 
 	/**
 	 * Connects backend object to system backend.
@@ -41,11 +50,13 @@ class Backend: public Unit
 	virtual void
 	disconnect() = 0;
 
+  public:
 	/**
-	 * \returns	true if backend is connected.
+	 * Emited when backend goes online/offline.
+	 * Argument says whether backend is now online.
+	 * Always emited from UI thread.
 	 */
-	virtual bool
-	connected() const = 0;
+	Signal::Emiter1<bool> on_state_change;
 };
 
 } // namespace Haruhi

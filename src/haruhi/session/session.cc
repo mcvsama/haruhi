@@ -309,7 +309,6 @@ Session::Session (QWidget* parent):
 {
 	_name = "";
 
-	setCaption ("Haruhi");
 	setIcon (QPixmap ("share/images/haruhi.png"));
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
@@ -417,6 +416,8 @@ Session::Session (QWidget* parent):
 
 	bottom_layout->addWidget (_meter_panel);
 	bottom_layout->addWidget (_stack);
+
+	update_window_title();
 }
 
 
@@ -800,6 +801,13 @@ Session::start_event_backend()
 
 
 void
+Session::audio_backend_state_change (bool)
+{
+	update_window_title();
+}
+
+
+void
 Session::master_volume_changed (int value)
 {
 	if (_audio_backend)
@@ -807,6 +815,16 @@ Session::master_volume_changed (int value)
 		Sample v = FastPow::pow (value / static_cast<float> (Session::MeterPanel::ZeroVolume), M_E);
 		_audio_backend->set_master_volume (v);
 	}
+
+
+void
+Session::update_window_title()
+{
+	QString s ("Haruhi");
+	if (!_audio_backend || !_audio_backend->connected())
+		s = "Haruhi (offline)";
+	setCaption (s);
+	setWindowTitle (s);
 }
 
 

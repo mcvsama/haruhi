@@ -62,12 +62,19 @@ class Backend:
 {
 	Q_OBJECT
 
-	class OfflineNotification: public QEvent
+	class StateChange: public QEvent
 	{
 	  public:
-		OfflineNotification():
-			QEvent (QEvent::User)
+		StateChange (bool online, bool from_backend):
+			QEvent (QEvent::User),
+			online (online),
+			from_backend (from_backend)
 		{ }
+
+		// True if just connected, false if disconnected:
+		bool online;
+		// Whether notification was caused by transport:
+		bool from_backend;
 	};
 
 	friend class PortItem;
@@ -105,6 +112,12 @@ class Backend:
 	 */
 	void
 	disable();
+
+	/**
+	 * Returns true if backend is connected to the transport.
+	 */
+	bool
+	connected() const;
 
 	/*
 	 * Unit API
@@ -148,13 +161,6 @@ class Backend:
 
   public slots:
 	/**
-	 * \threadsafe
-	 */
-	void
-	notify_disconnected();
-
-  private slots:
-	/**
 	 * Connects backend to underlying transport to
 	 * allow operation.
 	 */
@@ -168,11 +174,12 @@ class Backend:
 	disconnect();
 
 	/**
-	 * Returns true if backend is connected to transport.
+	 * \threadsafe
 	 */
-	bool
-	connected() const;
+	void
+	notify_disconnected();
 
+  private slots:
 	/**
 	 * Updates widgets (enables/disables buttons depending on current
 	 * UI state, etc).

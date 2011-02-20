@@ -70,6 +70,18 @@ class Backend:
 {
 	Q_OBJECT
 
+	class StateChange: public QEvent
+	{
+	  public:
+		StateChange (bool online):
+			QEvent (QEvent::User),
+			online (online)
+		{ }
+
+		// True if just connected, false if disconnected:
+		bool online;
+	};
+
 	friend class DeviceWithPortItem;
 	friend class ControllerWithPortItem;
 
@@ -81,6 +93,12 @@ class Backend:
 	Backend (QString const& client_name, QWidget* parent);
 
 	~Backend();
+
+	/**
+	 * Returns true, if backend is connected to transport.
+	 */
+	bool
+	connected() const;
 
 	/**
 	 * Inserts given Device into list.
@@ -125,6 +143,20 @@ class Backend:
 	void
 	load_state (QDomElement const&);
 
+	/**
+	 * Connects to backend to transport to allow operation.
+	 * Done automatically after unit is registered.
+	 */
+	void
+	connect();
+
+	/**
+	 * Disconnects backend from transport.
+	 * Done automatically before unit is unregistered.
+	 */
+	void
+	disconnect();
+
   public:
 	/**
 	 * Emited after user saves Device as template. Can be used to inform DevicesManager to save new device template.
@@ -145,26 +177,6 @@ class Backend:
 	 */
 	void
 	update_widgets();
-
-	/**
-	 * Connects to backend to transport to allow operation.
-	 * Done automatically after unit is registered.
-	 */
-	void
-	connect();
-
-	/**
-	 * Disconnects backend from transport.
-	 * Done automatically before unit is unregistered.
-	 */
-	void
-	disconnect();
-
-	/**
-	 * Returns true, if backend is connected to transport.
-	 */
-	bool
-	connected() const;
 
 	/**
 	 * Emits signal device_saved_as_template()
@@ -231,6 +243,10 @@ class Backend:
 	 */
 	void
 	add_template (int template_id);
+
+  protected:
+	void
+	customEvent (QEvent* event);
 
   private:
 	QString						_client_name;

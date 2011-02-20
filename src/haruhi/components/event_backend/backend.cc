@@ -121,6 +121,13 @@ Backend::~Backend()
 }
 
 
+bool
+Backend::connected() const
+{
+	return _transport->connected();
+}
+
+
 void
 Backend::add_device (DevicesManager::Device const& device)
 {
@@ -217,6 +224,30 @@ Backend::load_state (QDomElement const& element)
 
 
 void
+Backend::connect()
+{
+	try {
+		_transport->connect (_client_name.toStdString());
+		enable();
+		QApplication::postEvent (this, new StateChange (true));
+	}
+	catch (Exception const& e)
+	{
+		QMessageBox::warning (this, "Event backend", QString ("Can't connect to event backend: ") + e.what());
+	}
+}
+
+
+void
+Backend::disconnect()
+{
+	disable();
+	_transport->disconnect();
+	QApplication::postEvent (this, new StateChange (false));
+}
+
+
+void
 Backend::update_widgets()
 {
 	QTreeWidgetItem* sel = _tree->selected_item();
@@ -233,35 +264,6 @@ Backend::update_widgets()
 		else
 			_destroy_input_button->setText ("Destroy");
 	}
-}
-
-
-void
-Backend::connect()
-{
-	try {
-		_transport->connect (_client_name.toStdString());
-		enable();
-	}
-	catch (Exception const& e)
-	{
-		QMessageBox::warning (this, "Event backend", QString ("Can't connect to event backend: ") + e.what());
-	}
-}
-
-
-void
-Backend::disconnect()
-{
-	disable();
-	_transport->disconnect();
-}
-
-
-bool
-Backend::connected() const
-{
-	return _transport->connected();
 }
 
 
@@ -443,6 +445,15 @@ Backend::add_template (int menu_item_id)
 	Templates::iterator t = _templates.find (menu_item_id);
 	if (t != _templates.end())
 		add_device (t->second);
+}
+
+
+void
+Backend::customEvent (QEvent* event)
+{
+	StateChange* state_change = dynamic_cast<StateChange*> (event);
+	if (state_change)
+		on_state_change (state_change->online);
 }
 
 } // namespace EventBackendImpl
