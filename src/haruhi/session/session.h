@@ -172,6 +172,17 @@ class Session:
 		DialControl*		_master_volume;
 	};
 
+	class UpdateMasterVolume: public QEvent
+	{
+	  public:
+		UpdateMasterVolume (Sample value):
+			QEvent (QEvent::User),
+			value (value)
+		{ }
+
+		Sample value;
+	};
+
   private:
 	// Prevent copying:
 	Session (Session const&);
@@ -230,17 +241,24 @@ class Session:
 	void
 	save_session (QString const& file_name);
 
-	void
-	save_state (QDomElement&) const;
-
-	void
-	load_state (QDomElement const&);
-
 	float
 	master_tune() const;
 
 	void
 	update_level_meters();
+
+	void
+	set_master_volume (Sample value, bool update_widget = true);
+
+	/*
+	 * SaveableState API
+	 */
+
+	void
+	save_state (QDomElement&) const;
+
+	void
+	load_state (QDomElement const&);
 
   private slots:
 	void
@@ -299,7 +317,10 @@ class Session:
 
   protected:
 	void
-	closeEvent (QCloseEvent* e);
+	closeEvent (QCloseEvent*);
+
+	void
+	customEvent (QEvent*);
 
   private:
 	QWidget*

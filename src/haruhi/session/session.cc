@@ -290,7 +290,7 @@ Session::MeterPanel::MeterPanel (Session* session, QWidget* parent):
 
 	_level_meters_group = new LevelMetersGroup (this);
 	_master_volume = new DialControl (this, MinVolume, MaxVolume, ZeroVolume * std::pow (attenuate_db (-3.0f), 1.0f / M_E));
-	QObject::connect (_master_volume, SIGNAL (valueChanged (int)), session, SLOT (master_volume_changed (int)));
+	QObject::connect (_master_volume, SIGNAL (valueChanged (int)), _session, SLOT (master_volume_changed (int)));
 	QToolTip::add (_master_volume, "Master Volume");
 
 	layout->addWidget (_level_meters_group);
@@ -507,6 +507,51 @@ Session::save_session (QString const& file_name)
 }
 
 
+float
+Session::master_tune() const
+{
+	return 440.0f * std::pow (2.0f, (1.0f / 12.0f) * (_parameters.tuning / 100.0f + _parameters.transpose));
+}
+
+
+void
+Session::update_level_meters()
+{
+	if (_audio_backend)
+	{
+		AudioBackend::LevelsMap levels_map;
+		std::vector<AudioPort*> ports;
+
+		// Hold lock until we finish operations on Ports (sorting by name):
+		graph()->lock();
+
+		_audio_backend->peak_levels (levels_map);
+
+		// Sort ports by name:
+		for (AudioBackend::LevelsMap::iterator p = levels_map.begin(); p != levels_map.end(); ++p)
+			ports.push_back (p->first);
+		std::sort (ports.begin(), ports.end(), AudioPort::CompareByName());
+
+		graph()->unlock();
+
+		// Update level meter widget:
+		for (unsigned int i = 0; i < std::min (ports.size(), static_cast<std::vector<AudioPort*>::size_type> (2u)); ++i)
+			meter_panel()->level_meters_group()->meter (i)->set (levels_map[ports[i]]);
+	}
+}
+
+
+void
+Session::set_master_volume (Sample value, bool update_widget)
+{
+	if (!_audio_backend)
+		return;
+	_audio_backend->set_master_volume (FastPow::pow (value, M_E));
+	if (update_widget)
+		QApplication::postEvent (this, new UpdateMasterVolume (value));
+}
+
+
 void
 Session::save_state (QDomElement& element) const
 {
@@ -608,40 +653,6 @@ Session::load_state (QDomElement const& element)
 	}
 	else
 		QMessageBox::warning (this, "Error while loading session", "Could not load session due to missing information in session file.");
-}
-
-
-float
-Session::master_tune() const
-{
-	return 440.0f * std::pow (2.0f, (1.0f / 12.0f) * (_parameters.tuning / 100.0f + _parameters.transpose));
-}
-
-
-void
-Session::update_level_meters()
-{
-	if (_audio_backend)
-	{
-		AudioBackend::LevelsMap levels_map;
-		std::vector<AudioPort*> ports;
-
-		// Hold lock until we finish operations on Ports (sorting by name):
-		graph()->lock();
-
-		_audio_backend->peak_levels (levels_map);
-
-		// Sort ports by name:
-		for (AudioBackend::LevelsMap::iterator p = levels_map.begin(); p != levels_map.end(); ++p)
-			ports.push_back (p->first);
-		std::sort (ports.begin(), ports.end(), AudioPort::CompareByName());
-
-		graph()->unlock();
-
-		// Update level meter widget:
-		for (unsigned int i = 0; i < std::min (ports.size(), static_cast<std::vector<AudioPort*>::size_type> (2u)); ++i)
-			meter_panel()->level_meters_group()->meter (i)->set (levels_map[ports[i]]);
-	}
 }
 
 
@@ -765,9 +776,10 @@ Session::start_audio_backend()
 	try {
 		AudioBackendImpl::Backend* audio_backend = new AudioBackendImpl::Backend ("Haruhi", _audio_tab);
 		_audio_backend = audio_backend;
+		audio_backend->on_state_change.connect (this, &Session::audio_backend_state_change);
 		audio_backend->show();
 		_graph->register_audio_backend (_audio_backend);
-		// Update master volume:
+		// Initially set master volume:
 		master_volume_changed (meter_panel()->master_volume()->value());
 	}
 	catch (Exception const& e)
@@ -810,11 +822,8 @@ Session::audio_backend_state_change (bool)
 void
 Session::master_volume_changed (int value)
 {
-	if (_audio_backend)
-	{
-		Sample v = FastPow::pow (value / static_cast<float> (Session::MeterPanel::ZeroVolume), M_E);
-		_audio_backend->set_master_volume (v);
-	}
+	set_master_volume (value / static_cast<float> (Session::MeterPanel::MaxVolume), false);
+}
 
 
 void
@@ -833,6 +842,18 @@ Session::closeEvent (QCloseEvent* e)
 {
 	e->accept();
 	Haruhi::haruhi()->ok_to_quit();
+}
+
+
+void
+Session::customEvent (QEvent* e)
+{
+	UpdateMasterVolume* ue = dynamic_cast<UpdateMasterVolume*> (e);
+	if (!ue)
+		return;
+	e->accept();
+	if (_audio_backend)
+		meter_panel()->master_volume()->setValue (renormalize (ue->value, 0.0, 1.0, Session::MeterPanel::MinVolume, Session::MeterPanel::MaxVolume));
 }
 
 

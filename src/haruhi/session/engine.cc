@@ -63,7 +63,6 @@ Engine::run()
 void
 Engine::adjust_master_volume()
 {
-	DialControl* master_volume = _session->meter_panel()->master_volume();
 	EventBuffer* buffer = _session->graph()->audio_backend()->master_volume_port()->event_buffer();
 	EventBuffer::EventsMultiset const& events = buffer->events();
 	for (EventBuffer::EventsMultiset::const_iterator e = events.begin(); e != events.end(); ++e)
@@ -71,8 +70,7 @@ Engine::adjust_master_volume()
 		if ((*e)->event_type() == Event::ControllerEventType)
 		{
 			ControllerEvent const* controller_event = static_cast<ControllerEvent const*> (e->get());
-			// FIXME Use controller_proxy!
-			master_volume->setValue (renormalize (controller_event->value(), 0.0, 1.0, Session::MeterPanel::MinVolume, Session::MeterPanel::MaxVolume));
+			_session->set_master_volume (controller_event->value());
 		}
 	}
 }
