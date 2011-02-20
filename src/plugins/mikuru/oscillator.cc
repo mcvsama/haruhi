@@ -159,16 +159,16 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	// EventDispatchers for polyphonic controls:
 
 	VoiceManager* vm = _part->voice_manager();
-	_evdisp_amplitude = new EventDispatcher (_port_amplitude, Params::Voice::AmplitudeMin, Params::Voice::AmplitudeMax, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::amplitude));
-	_evdisp_frequency = new EventDispatcher (_port_frequency, Params::Voice::FrequencyMin, Params::Voice::FrequencyMax, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::frequency));
-	_evdisp_panorama = new EventDispatcher (_port_panorama, _knob_panorama, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::panorama));
-	_evdisp_detune = new EventDispatcher (_port_detune, _knob_detune, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::detune));
-	_evdisp_pitchbend = new EventDispatcher (_port_pitchbend, _knob_pitchbend, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::pitchbend));
-	_evdisp_velocity_sens = new EventDispatcher (_port_velocity_sens, _knob_velocity_sens, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::velocity_sens));
-	_evdisp_unison_index = new EventDispatcher (_port_unison_index, _knob_unison_index, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::unison_index));
-	_evdisp_unison_spread = new EventDispatcher (_port_unison_spread, _knob_unison_spread, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::unison_spread));
-	_evdisp_unison_init = new EventDispatcher (_port_unison_init, _knob_unison_init, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::unison_init));
-	_evdisp_unison_noise = new EventDispatcher (_port_unison_noise, _knob_unison_noise, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::unison_noise));
+	_evdisp_amplitude		= new EventDispatcher (_port_amplitude, Params::Voice::AmplitudeMin, Params::Voice::AmplitudeMax, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::amplitude));
+	_evdisp_frequency		= new EventDispatcher (_port_frequency, Params::Voice::FrequencyMin, Params::Voice::FrequencyMax, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::frequency));
+	_evdisp_panorama		= new EventDispatcher (_port_panorama, _knob_panorama, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::panorama));
+	_evdisp_detune			= new EventDispatcher (_port_detune, _knob_detune, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::detune));
+	_evdisp_pitchbend		= new EventDispatcher (_port_pitchbend, _knob_pitchbend, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::pitchbend));
+	_evdisp_velocity_sens	= new EventDispatcher (_port_velocity_sens, _knob_velocity_sens, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::velocity_sens));
+	_evdisp_unison_index	= new EventDispatcher (_port_unison_index, _knob_unison_index, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::unison_index));
+	_evdisp_unison_spread	= new EventDispatcher (_port_unison_spread, _knob_unison_spread, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::unison_spread));
+	_evdisp_unison_init		= new EventDispatcher (_port_unison_init, _knob_unison_init, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::unison_init));
+	_evdisp_unison_noise	= new EventDispatcher (_port_unison_noise, _knob_unison_noise, new EventDispatcher::VoiceParamReceiver (vm, &Params::Voice::unison_noise));
 
 	// Wave types:
 
