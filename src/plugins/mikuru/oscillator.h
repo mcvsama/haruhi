@@ -174,14 +174,6 @@ class Oscillator:
 	void
 	load_voice_params();
 
-	void
-	update_params()
-	{
-		update_waveform_params();
-		update_oscillator_params();
-		update_voice_params();
-	}
-
 	/**
 	 * Loads params from given struct and updates widgets.
 	 * \entry	Only from UI thread.
@@ -204,9 +196,6 @@ class Oscillator:
 
 	void
 	update_oscillator_params();
-
-	void
-	update_voice_params();
 
 	/**
 	 * Updates widgets.

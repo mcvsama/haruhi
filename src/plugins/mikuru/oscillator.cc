@@ -730,21 +730,6 @@ Oscillator::update_oscillator_params()
 
 
 void
-Oscillator::update_voice_params()
-{
-	if (_loading_params)
-		return;
-
-	// No non-controller params to set.
-
-	// Send voice params to all existing voices:
-	// FIXME problem: it'd be better to update only changed param, not all, because
-	// 		 setting other params will mess with fe. params controlled by LFO.
-	_part->voice_manager()->set_all_voices_params (_voice_params);
-}
-
-
-void
 Oscillator::update_widgets()
 {
 	bool waves = _wave_enabled->isChecked();
