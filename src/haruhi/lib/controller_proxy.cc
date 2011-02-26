@@ -50,6 +50,13 @@ ControllerProxy::Config::reverse (int in) const
 
 
 int
+ControllerProxy::Config::forward_normalized (float in) const
+{
+	return forward (renormalize (in, 0.0f, 1.0f, 1.0f * hard_limit_min, 1.0f * hard_limit_max));
+}
+
+
+int
 ControllerProxy::Config::encurve (int in) const
 {
 	float power = curve < 0
@@ -115,7 +122,7 @@ void
 ControllerProxy::process_event (ControllerEvent const* event)
 {
 	// Update parameter:
-	param()->set (_config.forward (renormalize (event->value(), 0.0f, 1.0f, 1.0f * _config.hard_limit_min, 1.0f * _config.hard_limit_max)));
+	param()->set (_config.forward_normalized (event->value()));
 	// Schedule update for paired Widget:
 	if (_widget)
 		_widget->schedule_for_update();

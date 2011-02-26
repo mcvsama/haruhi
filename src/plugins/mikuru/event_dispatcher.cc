@@ -55,8 +55,8 @@ EventDispatcher::EventDispatcher (Haruhi::EventPort* port, Haruhi::Knob* knob, R
 	_port (port),
 	_knob (knob),
 	_receiver (receiver),
-	_min (knob->controller_proxy().config().user_limit_min),
-	_max (knob->controller_proxy().config().user_limit_max)
+	_min (0),
+	_max (0)
 {
 }
 
@@ -114,7 +114,7 @@ EventDispatcher::load_events()
 	{
 		for (VCEMap::iterator v = _vcemap.begin(); v != _vcemap.end(); ++v)
 		{
-			float const val = renormalize (v->second->value(), 0.0f, 1.0f, _knob->controller_proxy().config().user_limit_min, _knob->controller_proxy().config().user_limit_max);
+			float const val = _knob->controller_proxy().config().forward_normalized (v->second->value());
 			_receiver->receive (v->second->voice_id(), val);
 		}
 	}

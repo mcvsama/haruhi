@@ -60,11 +60,25 @@ class ControllerProxy: public SaveableState
 	  public:
 		Config (int limit_min, int limit_max);
 
+		/**
+		 * Applies forward transform. Takes input value,
+		 * returns curved and limited value.
+		 */
 		int
 		forward (int in) const;
 
+		/**
+		 * Applies reverse transform (inverse of what forward() does).
+		 */
 		int
 		reverse (int in) const;
+
+		/**
+		 * The same as forward(), but takes input value normalized
+		 * into range [0.0, 1.0].
+		 */
+		int
+		forward_normalized (float in) const;
 
 	  private:
 		int
