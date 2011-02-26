@@ -32,7 +32,7 @@ namespace Haruhi {
 
 FrequencyResponsePlot::FrequencyResponsePlot (QWidget* parent, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
-	_num_passes (1.0f),
+	_num_stages (1.0f),
 	_to_repaint_buffer (false),
 	_to_replot (false),
 	_last_enabled_state (isEnabled()),
@@ -44,7 +44,7 @@ FrequencyResponsePlot::FrequencyResponsePlot (QWidget* parent, const char* name)
 
 FrequencyResponsePlot::FrequencyResponsePlot (DSP::PlotableImpulseResponse* impulse_response, QWidget* parent, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
-	_num_passes (1.0f),
+	_num_stages (1.0f),
 	_to_repaint_buffer (false),
 	_to_replot (false),
 	_last_enabled_state (isEnabled()),
@@ -61,9 +61,9 @@ FrequencyResponsePlot::~FrequencyResponsePlot()
 
 
 void
-FrequencyResponsePlot::set_num_passes (float num_passes)
+FrequencyResponsePlot::set_num_stages (float num_stages)
 {
-	_num_passes = num_passes;
+	_num_stages = num_stages;
 	repaint_grid();
 	replot();
 }
@@ -90,7 +90,7 @@ FrequencyResponsePlot::replot (bool force)
 			for (int x = 0; x < n; ++x)
 			{
 				float k = std::exp (1.0f * x / n * std::log (static_cast<float> (MaxFreq))) + MinFreq;
-				_values[x] = _num_passes * 10.0 * std::log10 (_impulse_response->response (k / s + 1.0 / (2 * MaxFreq)));
+				_values[x] = _num_stages * 10.0 * std::log10 (_impulse_response->response (k / s + 1.0 / (2 * MaxFreq)));
 			}
 			_to_repaint_buffer = true;
 			_to_replot = false;

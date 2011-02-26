@@ -62,19 +62,19 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 
 	if (_mikuru->graph())
 		_mikuru->graph()->lock();
-	_port_frequency = new Haruhi::EventPort (_mikuru, (port_prefix + " - Frequency").toStdString(), Haruhi::Port::Input, port_group, _polyphonic_control ? Haruhi::Port::Polyphonic : 0);
-	_port_resonance = new Haruhi::EventPort (_mikuru, (port_prefix + " - Resonance").toStdString(), Haruhi::Port::Input, port_group, _polyphonic_control ? Haruhi::Port::Polyphonic : 0);
-	_port_gain = new Haruhi::EventPort (_mikuru, (port_prefix + " - Gain").toStdString(), Haruhi::Port::Input, port_group, _polyphonic_control ? Haruhi::Port::Polyphonic : 0);
-	_port_attenuation = new Haruhi::EventPort (_mikuru, (port_prefix + " - Attenuate").toStdString(), Haruhi::Port::Input, port_group, _polyphonic_control ? Haruhi::Port::Polyphonic : 0);
+	_port_frequency		= new Haruhi::EventPort (_mikuru, (port_prefix + " - Frequency").toStdString(), Haruhi::Port::Input, port_group, _polyphonic_control ? Haruhi::Port::Polyphonic : 0);
+	_port_resonance		= new Haruhi::EventPort (_mikuru, (port_prefix + " - Resonance").toStdString(), Haruhi::Port::Input, port_group, _polyphonic_control ? Haruhi::Port::Polyphonic : 0);
+	_port_gain			= new Haruhi::EventPort (_mikuru, (port_prefix + " - Gain").toStdString(), Haruhi::Port::Input, port_group, _polyphonic_control ? Haruhi::Port::Polyphonic : 0);
+	_port_attenuation	= new Haruhi::EventPort (_mikuru, (port_prefix + " - Attenuate").toStdString(), Haruhi::Port::Input, port_group, _polyphonic_control ? Haruhi::Port::Polyphonic : 0);
 	if (_mikuru->graph())
 		_mikuru->graph()->unlock();
 
-	_knob_frequency = new Haruhi::Knob (_panel, _port_frequency, &_params.frequency, "Freq.", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Frequency, 2400), 2);
-	_knob_resonance = new Haruhi::Knob (_panel, _port_resonance, &_params.resonance, "Q", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Resonance, 100), 2);
-	_knob_gain = new Haruhi::Knob (_panel, _port_gain, &_params.gain, "Gain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Gain, 100), 1);
-	_knob_attenuation = new Haruhi::Knob (_panel, _port_attenuation, &_params.attenuation, "Attenuate",
-										  -std::numeric_limits<float>::infinity(), 0.0f,
-										  (Params::Filter::AttenuationMax - Params::Filter::AttenuationMin) / 500, 2);
+	_knob_frequency		= new Haruhi::Knob (_panel, _port_frequency, &_params.frequency, "Freq.", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Frequency, 2400), 2);
+	_knob_resonance		= new Haruhi::Knob (_panel, _port_resonance, &_params.resonance, "Q", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Resonance, 100), 2);
+	_knob_gain			= new Haruhi::Knob (_panel, _port_gain, &_params.gain, "Gain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Filter::Gain, 100), 1);
+	_knob_attenuation	= new Haruhi::Knob (_panel, _port_attenuation, &_params.attenuation, "Attenuate",
+											-std::numeric_limits<float>::infinity(), 0.0f,
+											(Params::Filter::AttenuationMax - Params::Filter::AttenuationMin) / 500, 2);
 
 	_knob_frequency->controller_proxy().config().curve = 1.0;
 	_knob_frequency->controller_proxy().config().user_limit_min = 0.04 * Params::Filter::FrequencyDenominator;
@@ -83,17 +83,17 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 
 	_knob_attenuation->controller_proxy().config().curve = 1.0;
 	_knob_attenuation->controller_proxy().apply_config();
-	_knob_attenuation->set_volume_scale (true, _params.passes);
+	_knob_attenuation->set_volume_scale (true, _params.stages);
 
 	if (_polyphonic_control)
 	{
 		VoiceManager* vm = _part->voice_manager();
 		EventDispatcher::VoiceFilterParamReceiver::FilterID fid = _filter_id == Filter1 ? EventDispatcher::VoiceFilterParamReceiver::Filter1 : EventDispatcher::VoiceFilterParamReceiver::Filter2;
 
-		_evdisp_frequency = new EventDispatcher (_port_frequency, _knob_frequency, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::frequency));
-		_evdisp_resonance = new EventDispatcher (_port_resonance, _knob_resonance, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::resonance));
-		_evdisp_gain = new EventDispatcher (_port_gain, _knob_gain, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::gain));
-		_evdisp_attenuation = new EventDispatcher (_port_attenuation, _knob_attenuation, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::attenuation));
+		_evdisp_frequency	= new EventDispatcher (_port_frequency, _knob_frequency, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::frequency));
+		_evdisp_resonance	= new EventDispatcher (_port_resonance, _knob_resonance, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::resonance));
+		_evdisp_gain		= new EventDispatcher (_port_gain, _knob_gain, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::gain));
+		_evdisp_attenuation	= new EventDispatcher (_port_attenuation, _knob_attenuation, new EventDispatcher::VoiceFilterParamReceiver (vm, fid, &Params::Filter::attenuation));
 	}
 
 	// Widgets/knobs:
@@ -111,16 +111,16 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_widgets()));
 	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_impulse_response()));
 
-	_passes = new QComboBox (_panel);
-	_passes->addItem ("1 pass");
-	_passes->addItem ("2 passes");
-	_passes->addItem ("3 passes");
-	_passes->addItem ("4 passes");
-	_passes->addItem ("5 passes");
-	_passes->setCurrentItem (p.passes.get() - 1);
-	QObject::connect (_passes, SIGNAL (activated (int)), this, SLOT (update_params()));
-	QObject::connect (_passes, SIGNAL (activated (int)), this, SLOT (update_widgets()));
-	QObject::connect (_passes, SIGNAL (activated (int)), this, SLOT (update_impulse_response()));
+	_stages = new QComboBox (_panel);
+	_stages->addItem ("1 stage");
+	_stages->addItem ("2 stages");
+	_stages->addItem ("3 stages");
+	_stages->addItem ("4 stages");
+	_stages->addItem ("5 stages");
+	_stages->setCurrentItem (p.stages.get() - 1);
+	QObject::connect (_stages, SIGNAL (activated (int)), this, SLOT (update_params()));
+	QObject::connect (_stages, SIGNAL (activated (int)), this, SLOT (update_widgets()));
+	QObject::connect (_stages, SIGNAL (activated (int)), this, SLOT (update_impulse_response()));
 
 	_limiter_enabled = new QCheckBox ("Q limiter", _panel);
 	_limiter_enabled->setChecked (_params.limiter_enabled);
@@ -143,7 +143,7 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 
 	QHBoxLayout* hor2_layout = new QHBoxLayout (ver1_layout, Config::Spacing);
 	hor2_layout->addWidget (_filter_type);
-	hor2_layout->addWidget (_passes);
+	hor2_layout->addWidget (_stages);
 	hor2_layout->addWidget (_limiter_enabled);
 
 	QHBoxLayout* hor3_layout = new QHBoxLayout (ver1_layout, Config::Spacing);
@@ -230,7 +230,7 @@ Filter::load_params()
 
 	_filter_label->checkbox()->setChecked (p.enabled);
 	_filter_type->setCurrentItem (p.type);
-	_passes->setCurrentItem (p.passes.get() - 1);
+	_stages->setCurrentItem (p.stages.get() - 1);
 	_limiter_enabled->setChecked (p.limiter_enabled);
 
 	_loading_params = false;
@@ -255,13 +255,11 @@ Filter::update_params()
 	Params::Filter p;
 	p.enabled = _filter_label->checkbox()->isChecked();
 	p.type = _filter_type->currentItem();
-	p.passes = _passes->currentItem() + 1;
+	p.stages = _stages->currentItem() + 1;
 	p.limiter_enabled = _limiter_enabled->isChecked();
 	_params.set_non_controller_params (p);
 
 	// Knob params are updated automatically using #assign_parameter.
-
-	params_updated();
 }
 
 
@@ -273,10 +271,10 @@ Filter::update_widgets()
 	_panel->setEnabled (_params.enabled.get());
 	_limiter_enabled->setEnabled (ft == RBJImpulseResponse::LowPass || ft == RBJImpulseResponse::HighPass || ft == RBJImpulseResponse::BandPass ||
 								  ft == RBJImpulseResponse::LowShelf || ft == RBJImpulseResponse::HighShelf);
-	// Plot and attenuation should reflect Number of filter passes:
-	_response_plot->set_num_passes (_params.passes);
+	// Plot and attenuation should reflect Number of filter stages:
+	_response_plot->set_num_stages (_params.stages);
 	_response_plot->replot();
-	_knob_attenuation->set_volume_scale (true, _params.passes);
+	_knob_attenuation->set_volume_scale (true, _params.stages);
 	_knob_attenuation->update();
 }
 
@@ -291,7 +289,6 @@ Filter::update_impulse_response()
 	_impulse_response.set_attenuation (_params.attenuation.to_f());
 	_impulse_response.set_limiter (_params.limiter_enabled.get());
 
-	params_updated();
 	_response_plot->post_replot();
 }
 

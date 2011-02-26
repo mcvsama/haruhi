@@ -340,48 +340,6 @@ VoiceManager::set_filter2_param (Haruhi::VoiceID voice_id, Haruhi::ControllerPar
 
 
 void
-VoiceManager::set_all_voices_params (Params::Voice& params)
-{
-	for (Voices::iterator v = _pressed_voices.begin(); v != _pressed_voices.end(); ++v)
-		*(*v)->params() = params;
-	for (Voices::iterator v = _sustained_voices.begin(); v != _sustained_voices.end(); ++v)
-		*(*v)->params() = params;
-	for (Voices::iterator v = _released_voices.begin(); v != _released_voices.end(); ++v)
-		*(*v)->params() = params;
-	if (_mono_voice)
-		*_mono_voice->params() = params;
-}
-
-
-void
-VoiceManager::set_all_filters1_params (Params::Filter& params)
-{
-	for (Voices::iterator v = _pressed_voices.begin(); v != _pressed_voices.end(); ++v)
-		*(*v)->filter1_params() = params;
-	for (Voices::iterator v = _sustained_voices.begin(); v != _sustained_voices.end(); ++v)
-		*(*v)->filter1_params() = params;
-	for (Voices::iterator v = _released_voices.begin(); v != _released_voices.end(); ++v)
-		*(*v)->filter1_params() = params;
-	if (_mono_voice)
-		*_mono_voice->filter1_params() = params;
-}
-
-
-void
-VoiceManager::set_all_filters2_params (Params::Filter& params)
-{
-	for (Voices::iterator v = _pressed_voices.begin(); v != _pressed_voices.end(); ++v)
-		*(*v)->filter2_params() = params;
-	for (Voices::iterator v = _sustained_voices.begin(); v != _sustained_voices.end(); ++v)
-		*(*v)->filter2_params() = params;
-	for (Voices::iterator v = _released_voices.begin(); v != _released_voices.end(); ++v)
-		*(*v)->filter2_params() = params;
-	if (_mono_voice)
-		*_mono_voice->filter2_params() = params;
-}
-
-
-void
 VoiceManager::graph_updated()
 {
 	for (Voices::iterator v = _pressed_voices.begin(); v != _pressed_voices.end(); ++v)

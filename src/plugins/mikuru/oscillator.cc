@@ -39,7 +39,6 @@ namespace MikuruPrivate {
 /*
  * Methods for updating individual Voice parameters
  * instead of all parameters at once.
- * TODO create own ControllerProxy that will override set_value and call _part->voice_manager()->set_voice_param (Haruhi::OmniVoice, …)
  */
 
 #define UPDATE_VOICE(param_name) \

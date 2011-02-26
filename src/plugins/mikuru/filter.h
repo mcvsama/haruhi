@@ -109,9 +109,6 @@ class Filter:
 	void
 	setup_params();
 
-  public:
-	Signal::Emiter0					params_updated;
-
   private:
 	Mikuru*							_mikuru;
 	Params::Filter					_params;
@@ -140,7 +137,7 @@ class Filter:
 	QWidget*						_panel;
 	Haruhi::FrequencyResponsePlot*	_response_plot;
 	QComboBox*						_filter_type;
-	QComboBox*						_passes;
+	QComboBox*						_stages;
 	QCheckBox*						_limiter_enabled;
 	Haruhi::Knob*					_knob_frequency;
 	Haruhi::Knob*					_knob_resonance;

@@ -138,15 +138,6 @@ class VoiceManager
 	set_filter2_param (Haruhi::VoiceID, Haruhi::ControllerParam (Params::Filter::* param), int value);
 
 	void
-	set_all_voices_params (Params::Voice& params);
-
-	void
-	set_all_filters1_params (Params::Filter& params);
-
-	void
-	set_all_filters2_params (Params::Filter& params);
-
-	void
 	graph_updated();
 
 	/**

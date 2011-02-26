@@ -93,8 +93,8 @@ DoubleFilter::process (Haruhi::AudioBuffer& input1, Haruhi::AudioBuffer& input2,
 	bool filtered = true;
 	std::size_t nsamples = input1.size();
 
-	int passes1 = std::min (static_cast<int> (MaxStages), _params1.passes.get());
-	int passes2 = std::min (static_cast<int> (MaxStages), _params2.passes.get());
+	int stages1 = std::min (static_cast<int> (MaxStages), _params1.stages.get());
+	int stages2 = std::min (static_cast<int> (MaxStages), _params2.stages.get());
 
 	bool f1 = _params1.enabled;
 	bool f2 = _params2.enabled;
@@ -134,22 +134,22 @@ DoubleFilter::process (Haruhi::AudioBuffer& input1, Haruhi::AudioBuffer& input2,
 		// Filter1 enabled only:
 		if (f1 && !f2)
 		{
-			filterout (_filter1[0], passes1, input1, buffer1, output1);
-			filterout (_filter1[1], passes1, input2, buffer1, output2);
+			filterout (_filter1[0], stages1, input1, buffer1, output1);
+			filterout (_filter1[1], stages1, input2, buffer1, output2);
 		}
 		// Filter2 enabled only:
 		else if (!f1 && f2)
 		{
-			filterout (_filter2[0], passes2, input1, buffer1, output1);
-			filterout (_filter2[1], passes2, input2, buffer1, output2);
+			filterout (_filter2[0], stages2, input1, buffer1, output1);
+			filterout (_filter2[1], stages2, input2, buffer1, output2);
 		}
 		// Both enabled:
 		else if (f1 && f2)
 		{
-			filterout (_filter1[0], passes1, input1, buffer1, buffer2);
-			filterout (_filter2[0], passes2, buffer2, buffer1, output1);
-			filterout (_filter1[1], passes1, input2, buffer1, buffer2);
-			filterout (_filter2[1], passes2, buffer2, buffer1, output2);
+			filterout (_filter1[0], stages1, input1, buffer1, buffer2);
+			filterout (_filter2[0], stages2, buffer2, buffer1, output1);
+			filterout (_filter1[1], stages1, input2, buffer1, buffer2);
+			filterout (_filter2[1], stages2, buffer2, buffer1, output2);
 		}
 		// Neither enabled:
 		else
@@ -160,24 +160,24 @@ DoubleFilter::process (Haruhi::AudioBuffer& input1, Haruhi::AudioBuffer& input2,
 		// Filter1 enabled only:
 		if (f1 && !f2)
 		{
-			filterout (_filter1[0], passes1, input1, buffer1, output1);
-			filterout (_filter1[1], passes1, input2, buffer1, output2);
+			filterout (_filter1[0], stages1, input1, buffer1, output1);
+			filterout (_filter1[1], stages1, input2, buffer1, output2);
 		}
 		// Filter2 enabled only:
 		else if (!f1 && f2)
 		{
-			filterout (_filter2[0], passes2, input1, buffer1, output1);
-			filterout (_filter2[1], passes2, input2, buffer1, output2);
+			filterout (_filter2[0], stages2, input1, buffer1, output1);
+			filterout (_filter2[1], stages2, input2, buffer1, output2);
 		}
 		// Both enabled:
 		else if (f1 && f2)
 		{
-			filterout (_filter1[0], passes1, input1, buffer1, output1);
-			filterout (_filter2[0], passes2, input1, buffer1, buffer2);
+			filterout (_filter1[0], stages1, input1, buffer1, output1);
+			filterout (_filter2[0], stages2, input1, buffer1, buffer2);
 			// Mix in buffer into output:
 			output1.mixin (&buffer2);
-			filterout (_filter1[1], passes1, input2, buffer1, output2);
-			filterout (_filter2[1], passes2, input2, buffer1, buffer2);
+			filterout (_filter1[1], stages1, input2, buffer1, output2);
+			filterout (_filter2[1], stages2, input2, buffer1, buffer2);
 			// Mix in buffer into output:
 			output2.mixin (&buffer2);
 		}
@@ -191,9 +191,9 @@ DoubleFilter::process (Haruhi::AudioBuffer& input1, Haruhi::AudioBuffer& input2,
 
 
 void
-DoubleFilter::filterout (FilterType* filters, int passes, Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer, Haruhi::AudioBuffer& output)
+DoubleFilter::filterout (FilterType* filters, int stages, Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer, Haruhi::AudioBuffer& output)
 {
-	// ↓ passes
+	// ↓ stages
 	// 1: in -> out
 	// 2: in -> buf -> out
 	// 3: in -> out -> buf -> out
@@ -202,12 +202,12 @@ DoubleFilter::filterout (FilterType* filters, int passes, Haruhi::AudioBuffer& i
 
 	Haruhi::AudioBuffer* s = &buffer;
 	Haruhi::AudioBuffer* t = &output;
-	if (passes % 2 == 0)
+	if (stages % 2 == 0)
 		std::swap (s, t);
-	// Now for odd number of passes, s is buffer, t is output.
+	// Now for odd number of stages, s is buffer, t is output.
 	// For even s is output, t is buffer.
 	filters[0].transform (input.begin(), input.end(), t->begin());
-	for (int i = 1; i < passes; ++i)
+	for (int i = 1; i < stages; ++i)
 	{
 		std::swap (s, t);
 		filters[i].transform (s->begin(), s->end(), t->begin());

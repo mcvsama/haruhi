@@ -97,11 +97,33 @@ class PartFilters:
 	void
 	update_widgets();
 
+  private:
 	void
-	filter1_params_updated();
+	update_filter1_frequency();
 
 	void
-	filter2_params_updated();
+	update_filter1_resonance();
+
+	void
+	update_filter1_gain();
+
+	void
+	update_filter1_attenuation();
+
+	void
+	update_filter2_frequency();
+
+	void
+	update_filter2_resonance();
+
+	void
+	update_filter2_gain();
+
+	void
+	update_filter2_attenuation();
+
+	void
+	setup_params();
 
   private:
 	Mikuru*					_mikuru;

@@ -91,7 +91,7 @@ Params::Filter::Filter():
 	// Non-controller:
 	enabled (0, 1, 0),
 	type (0, 7, RBJImpulseResponse::LowPass),
-	passes (1, 5, 1),
+	stages (1, 5, 1),
 	limiter_enabled (0, 1, 1)
 {
 }
@@ -112,7 +112,7 @@ Params::Filter::set_non_controller_params (Filter& other)
 {
 	HARUHI_MIKURU_COPY (enabled)
 	HARUHI_MIKURU_COPY (type)
-	HARUHI_MIKURU_COPY (passes)
+	HARUHI_MIKURU_COPY (stages)
 	HARUHI_MIKURU_COPY (limiter_enabled)
 }
 
@@ -126,7 +126,7 @@ Params::Filter::sanitize()
 	HARUHI_MIKURU_SANITIZE (attenuation)
 	HARUHI_MIKURU_SANITIZE (enabled)
 	HARUHI_MIKURU_SANITIZE (type)
-	HARUHI_MIKURU_SANITIZE (passes)
+	HARUHI_MIKURU_SANITIZE (stages)
 	HARUHI_MIKURU_SANITIZE (limiter_enabled)
 }
 

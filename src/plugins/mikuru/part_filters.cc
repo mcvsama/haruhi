@@ -30,6 +30,31 @@
 
 namespace MikuruPrivate {
 
+/*
+ * Methods for updating individual Voice parameters
+ * instead of all parameters at once.
+ */
+
+#define UPDATE_VOICE(filter, param_name) \
+	void PartFilters::update_##filter##_##param_name() \
+	{ \
+		if (_loading_params) \
+			return; \
+		_part->voice_manager()->set_##filter##_param (Haruhi::OmniVoice, &Params::Filter::param_name, _##filter->params()->param_name.get()); \
+	}
+
+UPDATE_VOICE (filter1, frequency)
+UPDATE_VOICE (filter1, resonance)
+UPDATE_VOICE (filter1, gain)
+UPDATE_VOICE (filter1, attenuation)
+UPDATE_VOICE (filter2, frequency)
+UPDATE_VOICE (filter2, resonance)
+UPDATE_VOICE (filter2, gain)
+UPDATE_VOICE (filter2, attenuation)
+
+#undef UPDATE_VOICE
+
+
 PartFilters::PartFilters (Part* part, Haruhi::PortGroup* filter_ports, QString const& port_prefix, Mikuru* mikuru, QWidget* parent):
 	QWidget (parent),
 	_mikuru (mikuru),
@@ -40,10 +65,7 @@ PartFilters::PartFilters (Part* part, Haruhi::PortGroup* filter_ports, QString c
 	Params::PartFilters p = _params;
 
 	_filter1 = new Filter (Filter::Filter1, filter_ports, port_prefix + " - 1", "Filter 1 (2-pole IIR)", _part, _mikuru, this);
-	_filter1->params_updated.connect (this, &PartFilters::filter1_params_updated);
-
 	_filter2 = new Filter (Filter::Filter2, filter_ports, port_prefix + " - 2", "Filter 2 (2-pole IIR)", _part, _mikuru, this);
-	_filter2->params_updated.connect (this, &PartFilters::filter2_params_updated);
 
 	// Filter configuration:
 
@@ -67,6 +89,8 @@ PartFilters::PartFilters (Part* part, Haruhi::PortGroup* filter_ports, QString c
 
 	_filter1->unit_bay_assigned();
 	_filter2->unit_bay_assigned();
+
+	setup_params();
 }
 
 
@@ -139,16 +163,19 @@ PartFilters::update_widgets()
 
 
 void
-PartFilters::filter1_params_updated()
+PartFilters::setup_params()
 {
-	_part->voice_manager()->set_all_filters1_params (*_filter1->params());
-}
+	// Controller params:
+	_filter1->params()->frequency.on_change.connect (this, &PartFilters::update_filter1_frequency);
+	_filter1->params()->resonance.on_change.connect (this, &PartFilters::update_filter1_resonance);
+	_filter1->params()->gain.on_change.connect (this, &PartFilters::update_filter1_gain);
+	_filter1->params()->attenuation.on_change.connect (this, &PartFilters::update_filter1_attenuation);
 
-
-void
-PartFilters::filter2_params_updated()
-{
-	_part->voice_manager()->set_all_filters2_params (*_filter2->params());
+	// Controller params:
+	_filter2->params()->frequency.on_change.connect (this, &PartFilters::update_filter2_frequency);
+	_filter2->params()->resonance.on_change.connect (this, &PartFilters::update_filter2_resonance);
+	_filter2->params()->gain.on_change.connect (this, &PartFilters::update_filter2_gain);
+	_filter2->params()->attenuation.on_change.connect (this, &PartFilters::update_filter2_attenuation);
 }
 
 } // namespace MikuruPrivate

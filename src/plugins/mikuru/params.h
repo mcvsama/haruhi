@@ -116,7 +116,7 @@ struct Params
 
 		Haruhi::Param<int> enabled;
 		Haruhi::Param<int> type;
-		Haruhi::Param<int> passes;
+		Haruhi::Param<int> stages;
 		Haruhi::Param<int> limiter_enabled;
 	};
 

@@ -58,11 +58,11 @@ class FrequencyResponsePlot: public QWidget
 	virtual ~FrequencyResponsePlot();
 
 	/**
-	 * Sets number of passes the same filter will be applied.
+	 * Sets number of stages the same filter will be applied.
 	 * Causes plot to be rendered differently.
 	 */
 	void
-	set_num_passes (float num_passes);
+	set_num_stages (float num_stages);
 
 	/**
 	 * Assigns PlotableImpulseResponse to this plot.
@@ -116,7 +116,7 @@ class FrequencyResponsePlot: public QWidget
 
   private:
 	Graph*							_graph;
-	float							_num_passes;
+	float							_num_stages;
 	QPixmap							_double_buffer;
 	QPixmap							_grid_buffer;
 	bool							_to_repaint_buffer;

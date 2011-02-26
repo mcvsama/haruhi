@@ -73,7 +73,7 @@ class DoubleFilter
 	 * All buffers must be distinct.
 	 */
 	void
-	filterout (FilterType* filters, int passes, Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer, Haruhi::AudioBuffer& output);
+	filterout (FilterType* filters, int stages, Haruhi::AudioBuffer& input, Haruhi::AudioBuffer& buffer, Haruhi::AudioBuffer& output);
 
   public:
 	Mikuru*									_mikuru;

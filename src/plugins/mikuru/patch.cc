@@ -90,7 +90,7 @@ Patch::save_state (QDomElement& element) const
 
 			save_parameter (filter1_element, "enabled", params.enabled);
 			save_parameter (filter1_element, "type", params.type);
-			save_parameter (filter1_element, "passes", params.passes);
+			save_parameter (filter1_element, "stages", params.stages);
 			save_parameter (filter1_element, "limiter-enabled", params.limiter_enabled);
 			save_parameter (filter1_element, "frequency", filter->_knob_frequency);
 			save_parameter (filter1_element, "resonance", filter->_knob_resonance);
@@ -105,7 +105,7 @@ Patch::save_state (QDomElement& element) const
 
 			save_parameter (filter2_element, "enabled", params.enabled);
 			save_parameter (filter2_element, "type", params.type);
-			save_parameter (filter2_element, "passes", params.passes);
+			save_parameter (filter2_element, "stages", params.stages);
 			save_parameter (filter2_element, "limiter-enabled", params.limiter_enabled);
 			save_parameter (filter2_element, "frequency", filter->_knob_frequency);
 			save_parameter (filter2_element, "resonance", filter->_knob_resonance);
@@ -204,7 +204,7 @@ Patch::save_state (QDomElement& element) const
 
 				save_parameter (filter1_element, "enabled", params.enabled);
 				save_parameter (filter1_element, "type", params.type);
-				save_parameter (filter1_element, "passes", params.passes);
+				save_parameter (filter1_element, "stages", params.stages);
 				save_parameter (filter1_element, "limiter-enabled", params.limiter_enabled);
 				save_parameter (filter1_element, "frequency", filter->_knob_frequency);
 				save_parameter (filter1_element, "resonance", filter->_knob_resonance);
@@ -219,7 +219,7 @@ Patch::save_state (QDomElement& element) const
 
 				save_parameter (filter2_element, "enabled", params.enabled);
 				save_parameter (filter2_element, "type", params.type);
-				save_parameter (filter2_element, "passes", params.passes);
+				save_parameter (filter2_element, "stages", params.stages);
 				save_parameter (filter2_element, "limiter-enabled", params.limiter_enabled);
 				save_parameter (filter2_element, "frequency", filter->_knob_frequency);
 				save_parameter (filter2_element, "resonance", filter->_knob_resonance);
@@ -451,7 +451,7 @@ Patch::load_state (QDomElement const& element)
 
 					load_parameter (parameters, "enabled", params->enabled);
 					load_parameter (parameters, "type", params->type);
-					load_parameter (parameters, "passes", params->passes);
+					load_parameter (parameters, "stages", params->stages);
 					load_parameter (parameters, "limiter-enabled", params->limiter_enabled);
 					load_parameter (parameters, "frequency", filter->_knob_frequency);
 					load_parameter (parameters, "resonance", filter->_knob_resonance);
@@ -572,7 +572,7 @@ Patch::load_state (QDomElement const& element)
 								// Other:
 								load_parameter (parameters, "enabled", params->enabled);
 								load_parameter (parameters, "type", params->type);
-								load_parameter (parameters, "passes", params->passes);
+								load_parameter (parameters, "stages", params->stages);
 								load_parameter (parameters, "limiter-enabled", params->limiter_enabled);
 
 								filter->load_params();
