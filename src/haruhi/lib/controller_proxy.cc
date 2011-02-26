@@ -53,10 +53,10 @@ int
 ControllerProxy::Config::encurve (int in) const
 {
 	float power = curve < 0
-		? renormalize (curve, -1.0, 0.0, 0.4, 1.0)
-		: renormalize (curve, 0.0, +1.0, 1.0, 2.5);
-	return renormalize (std::pow (std::max (+0.0f, renormalize (in, 1.0 * hard_limit_min, 1.0 * hard_limit_max, 0.0, 1.0)), power),
-						0.0, 1.0, 1.0 * hard_limit_min, 1.0 * hard_limit_max);
+		? renormalize (curve, -1.0f, 0.0f, 0.4f, 1.0f)
+		: renormalize (curve, 0.0f, +1.0f, 1.0f, 2.5f);
+	return renormalize (std::pow (std::max (+0.0f, renormalize (in, 1.0f * hard_limit_min, 1.0f * hard_limit_max, 0.0f, 1.0f)), power),
+						0.0f, 1.0f, 1.0f * hard_limit_min, 1.0f * hard_limit_max);
 }
 
 
@@ -64,10 +64,10 @@ int
 ControllerProxy::Config::decurve (int in) const
 {
 	float power = curve < 0
-		? renormalize (curve, -1.0, 0.0, 0.4, 1.0)
-		: renormalize (curve, 0.0, +1.0, 1.0, 2.5);
-	return renormalize (std::pow (renormalize (in, 1.0 * hard_limit_min, 1.0 * hard_limit_max, 0.0, 1.0), 1.0 / power),
-						0.0, 1.0, 1.0 * hard_limit_min, 1.0 * hard_limit_max);
+		? renormalize (curve, -1.0f, 0.0f, 0.4f, 1.0f)
+		: renormalize (curve, 0.0f, +1.0f, 1.0f, 2.5f);
+	return renormalize (std::pow (renormalize (in, 1.0f * hard_limit_min, 1.0f * hard_limit_max, 0.0f, 1.0f), 1.0f / power),
+						0.0f, 1.0f, 1.0f * hard_limit_min, 1.0f * hard_limit_max);
 }
 
 
