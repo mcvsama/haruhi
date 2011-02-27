@@ -33,6 +33,7 @@ namespace PortsConnectorPrivate {
 
 UnitItem::UnitItem (Port::Direction type, Unit* unit, QTreeWidget* parent, QString const& label):
 	QTreeWidgetItem (parent, QStringList (label)),
+	_filtered_out (false),
 	_type (type),
 	_unit (unit)
 {
@@ -61,6 +62,7 @@ UnitItem::UnitItem (Port::Direction type, Unit* unit, QTreeWidget* parent, QStri
 	}
 
 	update();
+	update_visibility();
 }
 
 
@@ -92,6 +94,7 @@ UnitItem::insert_port (Port* port)
 		PortItem* item = new PortItem (_type, port, parent, QString::fromStdString (port->name()));
 		parent->addChild (item);
 		_ports[port] = item;
+		update_visibility();
 		return item;
 	}
 	return 0;
@@ -112,6 +115,7 @@ UnitItem::remove_port (Port* port)
 			if (port->group())
 				cleanup_group (port->group());
 		}
+		update_visibility();
 	}
 }
 
@@ -127,6 +131,14 @@ bool
 UnitItem::port_exist (Port* port) const
 {
 	return _ports.find (port) != _ports.end();
+}
+
+
+void
+UnitItem::set_filtered_out (bool set)
+{
+	_filtered_out = set;
+	update_visibility();
 }
 
 
@@ -156,6 +168,13 @@ UnitItem::cleanup_group (PortGroup* group)
 		item->parent()->takeChild (item->parent()->indexOfChild (item));
 		delete item;
 	}
+}
+
+
+void
+UnitItem::update_visibility()
+{
+	setHidden (childCount() == 0 || _filtered_out);
 }
 
 } // namespace PortsConnectorPrivate

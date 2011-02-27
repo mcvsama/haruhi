@@ -65,6 +65,9 @@ class UnitItem:
 	bool
 	port_exist (Port*) const;
 
+	void
+	set_filtered_out (bool set);
+
 	template<class Predicate>
 		inline int
 		count_outputs_if (Predicate predicate) const
@@ -93,10 +96,17 @@ class UnitItem:
 	void
 	cleanup_group (PortGroup*);
 
+	/**
+	 * Hides unit item if it has no children ports.
+	 */
+	void
+	update_visibility();
+
   public:
 	PortsToItemsMap	_ports;
 
   private:
+	bool			_filtered_out;
 	Port::Direction	_type;
 	Unit*			_unit;
 };

@@ -264,7 +264,7 @@ PortsList::update_filter()
 	{
 		unit_item = dynamic_cast<UnitItem*> (invisibleRootItem()->child (i));
 		if (unit_item)
-			unit_item->setHidden (!(_filter == 0 || unit_item->unit() == _filter));
+			unit_item->set_filtered_out (!(_filter == 0 || unit_item->unit() == _filter));
 	}
 }
 

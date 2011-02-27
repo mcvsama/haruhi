@@ -64,6 +64,8 @@ UnitsCombobox::read_units()
 	std::sort (list.begin(), list.end(), Unit::ComparePointerByTitle());
 	for (Units::iterator u = list.begin(); u != list.end(); ++u)
 	{
+		if (((_type == Port::Input) ? (*u)->inputs() : (*u)->outputs()).empty())
+			continue;
 		insertItem (unit_icon, QString::fromStdString ((*u)->title()));
 		_units.push_back (*u);
 	}
@@ -73,6 +75,8 @@ UnitsCombobox::read_units()
 	std::sort (list.begin(), list.end(), Unit::ComparePointerByTitle());
 	for (Units::iterator u = list.begin(); u != list.end(); ++u)
 	{
+		if (((_type == Port::Input) ? (*u)->inputs() : (*u)->outputs()).empty())
+			continue;
 		insertItem (unit_icon, QString::fromStdString ((*u)->title()), _units.size());
 		_units.push_back (*u);
 	}
