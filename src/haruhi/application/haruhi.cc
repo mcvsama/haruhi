@@ -127,6 +127,13 @@ Haruhi::detected_cores()
 
 
 void
+Haruhi::call_out (boost::function<void()> callback)
+{
+	QApplication::postEvent (this, new CallOut (callback));
+}
+
+
+void
 Haruhi::session_loader()
 {
 	SessionLoader* loader = new SessionLoader (SessionLoader::AutoTab, _session ? SessionLoader::CancelButton : SessionLoader::QuitButton, 0);
@@ -155,6 +162,18 @@ Haruhi::quit_if_ok()
 {
 	if (_ok_to_quit)
 		_app->quit();
+}
+
+
+void
+Haruhi::customEvent (QEvent* event)
+{
+	CallOut* co = dynamic_cast<CallOut*> (event);
+	if (co)
+	{
+		co->accept();
+		co->call_out();
+	}
 }
 
 } // namespace Haruhi

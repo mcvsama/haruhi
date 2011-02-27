@@ -20,13 +20,17 @@
 // System:
 #include <unistd.h>
 
-// Lib:
+// Qt:
 #include <QtCore/QObject>
+#include <QtCore/QEvent>
 #include <QtGui/QApplication>
 #include <QtGui/QStackedWidget>
 #include <QtGui/QMainWindow>
 #include <QtGui/QFrame>
 #include <QtGui/QLabel>
+
+// Lib:
+#include <boost/function.hpp>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -52,6 +56,30 @@ class Haruhi:
 	private Noncopyable
 {
 	Q_OBJECT
+
+  public:
+	enum {
+		CallOutEvent = QEvent::User,
+	};
+
+	/**
+	 * Allows calling out given function from within main Qt event queue.
+	 * You can use boost::bind() as function callback.
+	 */
+	class CallOut: public QEvent
+	{
+	  public:
+		CallOut (boost::function<void()> callback):
+			QEvent (static_cast<QEvent::Type> (CallOutEvent)),
+			_callback (callback)
+		{ }
+
+		void
+		call_out() { _callback(); }
+
+	  private:
+		boost::function<void()> _callback;
+	};
 
   public:
 	Haruhi (int argc, char** argv, char** envp);
@@ -91,6 +119,12 @@ class Haruhi:
 	SessionLoaderSettings*
 	session_loader_settings() const { return _session_loader_settings; }
 
+	/**
+	 * Registers given callback to be called from within main Qt event queue.
+	 */
+	void
+	call_out (boost::function<void()> callback);
+
   public slots:
 	void
 	session_loader();
@@ -100,6 +134,10 @@ class Haruhi:
 
 	void
 	quit_if_ok();
+
+  private:
+	void
+	customEvent (QEvent*);
 
   private:
 	// Haruhi pointer:
@@ -121,6 +159,13 @@ class Haruhi:
 	char**	_argv;
 	char**	_envp;
 };
+
+
+static inline Haruhi*
+g_haruhi()
+{
+	return Haruhi::haruhi();
+}
 
 } // namespace Haruhi
 
