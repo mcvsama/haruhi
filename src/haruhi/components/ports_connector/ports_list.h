@@ -60,6 +60,9 @@ class PortsList: public QTreeWidget
 
   public slots:
 	void
+	read_units();
+
+	void
 	insert_unit (Unit*);
 
 	void

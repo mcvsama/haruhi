@@ -25,6 +25,7 @@
 #include <map>
 
 // Qt:
+#include <QtGui/QApplication>
 #include <QtGui/QPainter>
 #include <QtGui/QPushButton>
 #include <QtGui/QLabel>
@@ -38,8 +39,12 @@
 #include <QtGui/QMenu>
 #include <Qt3Support/Q3ListView> // Required due to Qt4 bug in which normally QScrollBar is not QWidget.
 
+// Lib:
+#include <boost/bind/bind.hpp>
+
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/application/haruhi.h>
 #include <haruhi/graph/audio_port.h>
 #include <haruhi/graph/event_port.h>
 
@@ -51,7 +56,6 @@
 namespace Haruhi {
 
 namespace Private = PortsConnectorPrivate;
-
 
 PortsConnector::PortsConnector (UnitBay* unit_bay, QWidget* parent):
 	QWidget (parent),
@@ -295,87 +299,102 @@ PortsConnector::remove_unit (Unit* unit)
 
 
 void
-PortsConnector::unit_registered (Unit* unit)
+PortsConnector::unit_registered (Unit*)
 {
-	if (_unit_bay->units().find (unit) != _unit_bay->units().end() ||
-		_external_units.find (unit) != _external_units.end())
-	{
-		_ipanel->list()->insert_unit (unit);
-		_opanel->list()->insert_unit (unit);
-		_ipanel->filter()->read_units();
-		_opanel->filter()->read_units();
-	}
+	call_out (boost::bind (&PortsConnector::graph_changed, this));
 }
 
 
 void
 PortsConnector::unit_unregistered (Unit* unit)
 {
+	call_out (boost::bind (&PortsConnector::graph_changed, this));
 	if (_external_units.find (unit) != _external_units.end())
 		_external_units.erase (unit);
-	_ipanel->list()->remove_unit (unit);
-	_opanel->list()->remove_unit (unit);
-	_ipanel->filter()->read_units();
-	_opanel->filter()->read_units();
 }
 
 
 void
-PortsConnector::unit_retitled (Unit* unit)
+PortsConnector::unit_retitled (Unit*)
 {
-	_ipanel->list()->update_unit (unit);
-	_opanel->list()->update_unit (unit);
-	_ipanel->filter()->read_units();
-	_opanel->filter()->read_units();
+	call_out (boost::bind (&PortsConnector::graph_changed, this));
 }
 
 
 void
-PortsConnector::port_renamed (Port* port)
+PortsConnector::port_renamed (Port*)
 {
-	UnitItem* unit_item = find_unit_item (port->direction(), port->unit());
-	if (unit_item)
-		unit_item->update_port (port);
+	call_out (boost::bind (&PortsConnector::graph_changed, this));
 }
 
 
 void
 PortsConnector::port_connected_to (Port*, Port*)
 {
-	_connector->update();
+	call_out (boost::bind (&PortsConnector::graph_changed, this));
 }
 
 
 void
 PortsConnector::port_disconnected_from (Port*, Port*)
 {
-	_connector->update();
+	call_out (boost::bind (&PortsConnector::graph_changed, this));
 }
 
 
 void
-PortsConnector::port_registered (Port* port, Unit* unit)
+PortsConnector::port_registered (Port*, Unit*)
 {
-	UnitItem* unit_item = find_unit_item (port->direction(), unit);
-	if (unit_item)
-		_ports_to_items[port] = unit_item->insert_port (port);
+	call_out (boost::bind (&PortsConnector::graph_changed, this));
 }
 
 
 void
-PortsConnector::port_unregistered (Port* port, Unit* unit)
+PortsConnector::port_unregistered (Port*, Unit*)
 {
-	_ports_to_items.erase (port);
-	UnitItem* unit_item = find_unit_item (port->direction(), unit);
-	if (unit_item)
-		unit_item->remove_port (port);
+	call_out (boost::bind (&PortsConnector::graph_changed, this));
 }
 
 
 void
 PortsConnector::port_group_renamed (PortGroup*)
 {
-	// TODO
+	call_out (boost::bind (&PortsConnector::graph_changed, this));
+}
+
+
+void
+PortsConnector::graph_changed()
+{
+	_unit_bay->graph()->lock();
+
+	_ipanel->list()->read_units();
+	_opanel->list()->read_units();
+	_ipanel->filter()->read_units();
+	_opanel->filter()->read_units();
+	_connector->update();
+
+	_unit_bay->graph()->unlock();
+}
+
+
+void
+PortsConnector::call_out (boost::function<void()> callback)
+{
+	QApplication::removePostedEvents (this, Haruhi::CallOutEvent);
+	QApplication::postEvent (this, new Haruhi::CallOut (callback));
+}
+
+
+void
+PortsConnector::customEvent (QEvent* event)
+{
+	Haruhi::CallOut* co = dynamic_cast<Haruhi::CallOut*> (event);
+	if (co)
+	{
+		co->accept();
+		co->call_out();
+	}
 }
 
 
@@ -620,6 +639,21 @@ PortsConnector::find_port_item (Port* port) const
 	if (p != _ports_to_items.end())
 		return p->second;
 	return 0;
+}
+
+
+bool
+PortsConnector::validate_unit (Unit* unit)
+{
+	return _unit_bay->graph()->units().find (unit) != _unit_bay->graph()->units().end();
+}
+
+
+bool
+PortsConnector::validate_unit_and_port (Unit* unit, Port* port)
+{
+	return validate_unit (unit) &&
+		(unit->inputs().find (port) != unit->inputs().end() || unit->outputs().find (port) != unit->outputs().end());
 }
 
 } // namespace Haruhi

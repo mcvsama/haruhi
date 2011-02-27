@@ -31,6 +31,7 @@
 #include <QtGui/QMenu>
 
 // Haruhi:
+#include <haruhi/application/haruhi.h>
 #include <haruhi/graph/predicates.h>
 #include <haruhi/session/unit_bay.h>
 #include <haruhi/utility/signal.h>
@@ -140,7 +141,8 @@ class PortsConnector:
 
   private:
 	/*
-	 * Graph notification slots:
+	 * Graph notification slots (they only send callback
+	 * events to Qt event queue).
 	 */
 
 	void
@@ -170,7 +172,23 @@ class PortsConnector:
 	void
 	port_group_renamed (PortGroup*);
 
+	/**
+	 * Actually updates widgets. Should be called
+	 * from withing Qt thread.
+	 */
+	void
+	graph_changed();
+
+	/**
+	 * Registers given callback to be called from within main Qt event queue.
+	 */
+	void
+	call_out (boost::function<void()> callback);
+
   private:
+	void
+	customEvent (QEvent*);
+
 	template<class Port>
 		inline void
 		operate_on_ports (PortsConnectorPrivate::Operation operation, Port* oport, Port* iport);
@@ -204,6 +222,19 @@ class PortsConnector:
 
 	PortItem*
 	find_port_item (Port* port) const;
+
+	/**
+	 * Returns true if unit is registered in Graph.
+	 */
+	bool
+	validate_unit (Unit*);
+
+	/**
+	 * Returns true if unit is registered in Graph and
+	 * port belongs to that unit.
+	 */
+	bool
+	validate_unit_and_port (Unit*, Port*);
 
   private:
 	UnitsSet							_external_units;		// External Units to UnitBay that are included in lists.

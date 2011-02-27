@@ -33,6 +33,8 @@
 
 namespace Haruhi {
 
+class PortsConnector;
+
 namespace PortsConnectorPrivate {
 
 class UnitItem:
@@ -52,6 +54,9 @@ class UnitItem:
 
 	void
 	update();
+
+	void
+	read_ports();
 
 	PortItem*
 	insert_port (Port*);
@@ -101,6 +106,9 @@ class UnitItem:
 	 */
 	void
 	update_visibility();
+
+	PortsConnector*
+	ports_connector() const;
 
   public:
 	PortsToItemsMap	_ports;

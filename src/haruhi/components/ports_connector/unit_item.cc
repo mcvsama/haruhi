@@ -13,6 +13,9 @@
 
 // Standard:
 #include <cstddef>
+#include <algorithm>
+#include <iterator>
+#include <set>
 
 // Qt:
 #include <QtGui/QTreeWidget>
@@ -25,6 +28,7 @@
 // Local:
 #include "unit_item.h"
 #include "ports_list.h"
+#include "ports_connector.h"
 
 
 namespace Haruhi {
@@ -62,6 +66,7 @@ UnitItem::UnitItem (Port::Direction type, Unit* unit, QTreeWidget* parent, QStri
 	}
 
 	update();
+	read_ports();
 	update_visibility();
 }
 
@@ -85,6 +90,30 @@ UnitItem::update()
 }
 
 
+void
+UnitItem::read_ports()
+{
+	Ports u_ports = (_type == Port::Input) ? _unit->inputs() : _unit->outputs(); // Unit ports
+	Ports l_ports; // UnitItem ports
+	for (PortsToItemsMap::iterator p = _ports.begin(); p != _ports.end(); ++p)
+		l_ports.insert (p->first);
+
+	Ports added;
+	Ports removed;
+	Ports rest;
+	std::set_difference (u_ports.begin(), u_ports.end(), l_ports.begin(), l_ports.end(), std::inserter (added, added.end()));
+	std::set_difference (l_ports.begin(), l_ports.end(), u_ports.begin(), u_ports.end(), std::inserter (removed, removed.end()));
+	std::set_intersection (u_ports.begin(), u_ports.end(), l_ports.begin(), l_ports.end(), std::inserter (rest, rest.end()));
+
+	for (Ports::iterator p = added.begin(); p != added.end(); ++p)
+		insert_port (*p);
+	for (Ports::iterator p = removed.begin(); p != removed.end(); ++p)
+		remove_port (*p);
+	for (Ports::iterator p = rest.begin(); p != rest.end(); ++p)
+		update_port (*p);
+}
+
+
 PortItem*
 UnitItem::insert_port (Port* port)
 {
@@ -95,6 +124,8 @@ UnitItem::insert_port (Port* port)
 		parent->addChild (item);
 		_ports[port] = item;
 		update_visibility();
+		// Highlighting helper:
+		ports_connector()->_ports_to_items[port] = item;
 		return item;
 	}
 	return 0;
@@ -106,6 +137,9 @@ UnitItem::remove_port (Port* port)
 {
 	if (port_exist (port))
 	{
+		// Highlighting helper:
+		ports_connector()->_ports_to_items.erase (port);
+
 		PortsToItemsMap::iterator k = _ports.find (port);
 		if (k != _ports.end())
 		{
@@ -124,6 +158,9 @@ void
 UnitItem::update_port (Port* port)
 {
 	_ports[port]->update();
+	// Update group title if changed:
+	if (port->group())
+		find_or_create_group_item_for (port->group())->update();
 }
 
 
@@ -175,6 +212,16 @@ void
 UnitItem::update_visibility()
 {
 	setHidden (childCount() == 0 || _filtered_out);
+}
+
+
+PortsConnector*
+UnitItem::ports_connector() const
+{
+	PortsList* pl = dynamic_cast<PortsList*> (treeWidget());
+	if (pl)
+		return pl->ports_connector();
+	return 0;
 }
 
 } // namespace PortsConnectorPrivate
