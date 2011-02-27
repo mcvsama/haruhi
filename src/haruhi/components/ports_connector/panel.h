@@ -51,7 +51,6 @@ class Panel: public QWidget
 	filter_updated();
 
   private:
-	QVBoxLayout*	_layout;
 	PortsConnector*	_ports_connector;
 	PortsList*		_list;
 	UnitsCombobox*	_filter;

@@ -49,6 +49,9 @@ DeviceDialog::DeviceDialog (QWidget* parent, Flags flags):
 	if ((flags & DisplayAutoAdd) == 0)
 		_auto_add_checkbox->hide();
 
+	QObject::connect (_name, SIGNAL (textChanged (const QString&)), this, SLOT (update_widgets()));
+	QObject::connect (_save_button, SIGNAL (clicked()), this, SLOT (validate_and_save()));
+
 	QGridLayout* grid_layout = new QGridLayout();
 	grid_layout->setSpacing (Config::Spacing);
 	grid_layout->addWidget (name_label, 0, 0);
@@ -60,13 +63,12 @@ DeviceDialog::DeviceDialog (QWidget* parent, Flags flags):
 	buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 	buttons_layout->addWidget (_save_button);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::DialogMargin, Config::Spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (Config::DialogMargin);
+	layout->setSpacing (Config::Spacing);
 	layout->setResizeMode (QLayout::FreeResize);
 	layout->addLayout (grid_layout);
 	layout->addLayout (buttons_layout);
-
-	QObject::connect (_name, SIGNAL (textChanged (const QString&)), this, SLOT (update_widgets()));
-	QObject::connect (_save_button, SIGNAL (clicked()), this, SLOT (validate_and_save()));
 
 	update_widgets();
 

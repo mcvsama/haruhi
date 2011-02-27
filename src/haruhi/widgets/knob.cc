@@ -55,13 +55,6 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	Knob::SpinBox* s = knob->_spin_box;
 	ControllerProxy::Config& c = _knob->controller_proxy().config();
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::DialogMargin, Config::Spacing);
-	layout->setResizeMode (QLayout::Fixed);
-
-	QGridLayout* grid_layout = new QGridLayout (layout, 2, 2, Config::Spacing);
-	layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
-	QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::Spacing);
-
 	QLabel* curve_label = new QLabel ("Response curve:", this);
 	Knob::SpinBox* curve_spinbox = new Knob::SpinBox (this, _knob, -1000, 1000, -1.0, 1.0, 100, 1);
 	curve_spinbox->set_detached (true);
@@ -87,13 +80,6 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	QObject::connect (user_limit_max_spinbox, SIGNAL (valueChanged (int)), this, SLOT (limit_max_updated()));
 	_user_limit_max_spinbox = user_limit_max_spinbox;
 
-	grid_layout->addWidget (curve_label, 0, 0, Qt::AlignLeft);
-	grid_layout->addWidget (range_min_label, 1, 0, Qt::AlignLeft);
-	grid_layout->addWidget (range_max_label, 2, 0, Qt::AlignLeft);
-	grid_layout->addWidget (_curve_spinbox, 0, 1, Qt::AlignRight);
-	grid_layout->addWidget (_user_limit_min_spinbox, 1, 1, Qt::AlignRight);
-	grid_layout->addWidget (_user_limit_max_spinbox, 2, 1, Qt::AlignRight);
-
 	QPushButton* accept_button = new QPushButton ("&Ok", this);
 	accept_button->setDefault (true);
 	QPushButton* reject_button = new QPushButton ("&Cancel", this);
@@ -101,9 +87,30 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	QObject::connect (accept_button, SIGNAL (clicked()), this, SLOT (accept()));
 	QObject::connect (reject_button, SIGNAL (clicked()), this, SLOT (reject()));
 
+	// Layouts:
+
+	QGridLayout* grid_layout = new QGridLayout();
+	grid_layout->setSpacing (Config::Spacing);
+	grid_layout->addWidget (curve_label, 0, 0, Qt::AlignLeft);
+	grid_layout->addWidget (range_min_label, 1, 0, Qt::AlignLeft);
+	grid_layout->addWidget (range_max_label, 2, 0, Qt::AlignLeft);
+	grid_layout->addWidget (_curve_spinbox, 0, 1, Qt::AlignRight);
+	grid_layout->addWidget (_user_limit_min_spinbox, 1, 1, Qt::AlignRight);
+	grid_layout->addWidget (_user_limit_max_spinbox, 2, 1, Qt::AlignRight);
+
+	QHBoxLayout* buttons_layout = new QHBoxLayout();
+	buttons_layout->setSpacing (Config::Spacing);
 	buttons_layout->addItem (new QSpacerItem (50, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 	buttons_layout->addWidget (accept_button);
 	buttons_layout->addWidget (reject_button);
+
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (Config::DialogMargin);
+	layout->setSpacing (Config::Spacing);
+	layout->setResizeMode (QLayout::Fixed);
+	layout->addLayout (grid_layout);
+	layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
+	layout->addLayout (buttons_layout);
 
 	// Range spinboxes: min must be strictly less than max
 	_user_limit_min_spinbox->setMaximum (_user_limit_max_spinbox->maximum() - 1);
@@ -247,22 +254,29 @@ Knob::Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_
 	_context_menu = new QMenu (this);
 	_std_text_color = _label->paletteForegroundColor();
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing + 2);
-	QHBoxLayout* label_layout = new QHBoxLayout (layout, 0);
-	QHBoxLayout* dial_layout = new QHBoxLayout (layout, 0);
+	QObject::connect (_dial_control, SIGNAL (valueChanged (int)), this, SLOT (dial_changed (int)));
+	QObject::connect (_spin_box, SIGNAL (valueChanged (int)), this, SLOT (spin_changed (int)));
 
+	// Layouts:
+
+	QHBoxLayout* label_layout = new QHBoxLayout();
+	label_layout->setSpacing (0);
 	label_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
 	label_layout->addWidget (_label);
 	label_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
 
+	QHBoxLayout* dial_layout = new QHBoxLayout();
+	dial_layout->setSpacing (0);
 	dial_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
 	dial_layout->addWidget (_dial_control);
 	dial_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
 
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (Config::Margin);
+	layout->setSpacing (Config::Spacing + 2);
+	layout->addLayout (label_layout);
+	layout->addLayout (dial_layout);
 	layout->addWidget (_spin_box);
-
-	QObject::connect (_dial_control, SIGNAL (valueChanged (int)), this, SLOT (dial_changed (int)));
-	QObject::connect (_spin_box, SIGNAL (valueChanged (int)), this, SLOT (spin_changed (int)));
 }
 
 

@@ -37,15 +37,16 @@ Panel::Panel (Port::Direction type, PortsConnector* ports_connector, QWidget* pa
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-	_layout = new QVBoxLayout (this, 0, Config::Spacing);
+	_filter = new UnitsCombobox (ports_connector, type, this);
+	QObject::connect (_filter, SIGNAL (activated (int)), this, SLOT (filter_updated()));
 
-		_filter = new UnitsCombobox (ports_connector, type, this);
-		_list = new PortsList (type, this, ports_connector, this);
+	_list = new PortsList (type, this, ports_connector, this);
 
-		QObject::connect (_filter, SIGNAL (activated (int)), this, SLOT (filter_updated()));
-
-	_layout->addWidget (_filter);
-	_layout->addWidget (_list);
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (0);
+	layout->setSpacing (Config::Spacing);
+	layout->addWidget (_filter);
+	layout->addWidget (_list);
 }
 
 

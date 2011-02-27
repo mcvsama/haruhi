@@ -19,7 +19,6 @@
 
 // Qt:
 #include <QtGui/QWidget>
-#include <QtGui/QLayout>
 #include <QtGui/QSplitter>
 #include <QtGui/QPushButton>
 #include <QtGui/QDialog>
@@ -239,7 +238,6 @@ class PortsConnector:
   private:
 	UnitsSet							_external_units;		// External Units to UnitBay that are included in lists.
 	UnitBay*							_unit_bay;
-	QVBoxLayout*						_layout;
 	PortsConnectorPrivate::Panel*		_opanel;
 	PortsConnectorPrivate::Panel*		_ipanel;
 	QSplitter*							_splitter;

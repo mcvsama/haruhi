@@ -19,7 +19,6 @@
 
 // Qt:
 #include <QtGui/QWidget>
-#include <QtGui/QLayout>
 #include <QtGui/QTabWidget>
 #include <QtGui/QSpinBox>
 #include <QtGui/QPushButton>
@@ -332,7 +331,6 @@ class Session:
 	Parameters					_parameters;
 	Graph*						_graph;
 
-	QVBoxLayout*				_layout;
 	MeterPanel*					_meter_panel;
 	QStackedWidget*				_stack;
 	QLabel*						_session_name;

@@ -19,7 +19,6 @@
 
 // Qt:
 #include <QtGui/QWidget>
-#include <QtGui/QLayout>
 
 // Haruhi:
 #include <haruhi/utility/saveable_state.h>
@@ -47,8 +46,7 @@ class Program:
 	load_state (QDomElement const&);
 
   private:
-	QVBoxLayout*	_layout;
-	Patch*			_patch;
+	Patch* _patch;
 };
 
 } // namespace Haruhi

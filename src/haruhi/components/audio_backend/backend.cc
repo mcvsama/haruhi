@@ -50,12 +50,6 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 
 	_transport = new JackTransport (this);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
-	QHBoxLayout* top_layout = new QHBoxLayout (layout, Config::Spacing);
-	QHBoxLayout* lists_layout = new QHBoxLayout (layout, Config::Spacing);
-	QVBoxLayout* inputs_layout = new QVBoxLayout (lists_layout, Config::Spacing);
-	QVBoxLayout* outputs_layout = new QVBoxLayout (lists_layout, Config::Spacing);
-
 	_disconnect_button = new QPushButton (Resources::Icons16::connect(), "Disconnect from JACK", this);
 	_disconnect_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QObject::connect (_disconnect_button, SIGNAL (clicked()), this, SLOT (disconnect()));
@@ -64,59 +58,76 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	_reconnect_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QObject::connect (_reconnect_button, SIGNAL (clicked()), this, SLOT (connect()));
 
-	top_layout->addWidget (_disconnect_button);
-	top_layout->addWidget (_reconnect_button);
-	top_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-
-		_inputs_list = new Tree (this, this, "Audio inputs");
-
-	inputs_layout->addWidget (_inputs_list);
-
+	_inputs_list = new Tree (this, this, "Audio inputs");
 	QObject::connect (_inputs_list, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_inputs (const QPoint&)));
 	QObject::connect (_inputs_list, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (double_click_on_inputs (QTreeWidgetItem*, int)));
 	QObject::connect (_inputs_list, SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
 
-	QHBoxLayout* input_buttons_layout = new QHBoxLayout (inputs_layout, Config::Spacing);
-
-		_create_input_button = new QPushButton (Resources::Icons16::add(), "New input", this);
-		_create_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-		QToolTip::add (_create_input_button, "Create new input port");
-
-		_destroy_input_button = new QPushButton (Resources::Icons16::remove(), "Destroy", this);
-		_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-		QToolTip::add (_destroy_input_button, "Destroy selected port");
-
-	input_buttons_layout->addWidget (_create_input_button);
-	input_buttons_layout->addWidget (_destroy_input_button);
-	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
-
+	_create_input_button = new QPushButton (Resources::Icons16::add(), "New input", this);
+	_create_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	QToolTip::add (_create_input_button, "Create new input port");
 	QObject::connect (_create_input_button, SIGNAL (clicked()), this, SLOT (create_input()));
+
+	_destroy_input_button = new QPushButton (Resources::Icons16::remove(), "Destroy", this);
+	_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	QToolTip::add (_destroy_input_button, "Destroy selected port");
 	QObject::connect (_destroy_input_button, SIGNAL (clicked()), this, SLOT (destroy_selected_input()));
 
-		_outputs_list = new Tree (this, this, "Audio outputs");
-
-	outputs_layout->addWidget (_outputs_list);
-
+	_outputs_list = new Tree (this, this, "Audio outputs");
 	QObject::connect (_outputs_list, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_outputs (const QPoint&)));
 	QObject::connect (_outputs_list, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (double_click_on_outputs (QTreeWidgetItem*, int)));
 	QObject::connect (_outputs_list, SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
 
-	QHBoxLayout* output_buttons_layout = new QHBoxLayout (outputs_layout, Config::Spacing);
+	_create_output_button = new QPushButton (Resources::Icons16::add(), "New output", this);
+	_create_output_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	QToolTip::add (_create_output_button, "Create new output port");
+	QObject::connect (_create_output_button, SIGNAL (clicked()), this, SLOT (create_output()));
 
-		_create_output_button = new QPushButton (Resources::Icons16::add(), "New output", this);
-		_create_output_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-		QToolTip::add (_create_output_button, "Create new output port");
+	_destroy_output_button = new QPushButton (Resources::Icons16::remove(), "Destroy", this);
+	_destroy_output_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	QToolTip::add (_destroy_output_button, "Destroy selected port");
+	QObject::connect (_destroy_output_button, SIGNAL (clicked()), this, SLOT (destroy_selected_output()));
 
-		_destroy_output_button = new QPushButton (Resources::Icons16::remove(), "Destroy", this);
-		_destroy_output_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-		QToolTip::add (_destroy_output_button, "Destroy selected port");
+	// Layouts:
 
+	QHBoxLayout* input_buttons_layout = new QHBoxLayout();
+	input_buttons_layout->setSpacing (Config::Spacing);
+	input_buttons_layout->addWidget (_create_input_button);
+	input_buttons_layout->addWidget (_destroy_input_button);
+	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+
+	QVBoxLayout* inputs_layout = new QVBoxLayout();
+	inputs_layout->setSpacing (Config::Spacing);
+	inputs_layout->addWidget (_inputs_list);
+	inputs_layout->addLayout (input_buttons_layout);
+
+	QHBoxLayout* output_buttons_layout = new QHBoxLayout();
+	output_buttons_layout->setSpacing (Config::Spacing);
 	output_buttons_layout->addWidget (_create_output_button);
 	output_buttons_layout->addWidget (_destroy_output_button);
 	output_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 
-	QObject::connect (_create_output_button, SIGNAL (clicked()), this, SLOT (create_output()));
-	QObject::connect (_destroy_output_button, SIGNAL (clicked()), this, SLOT (destroy_selected_output()));
+	QVBoxLayout* outputs_layout = new QVBoxLayout();
+	outputs_layout->setSpacing (Config::Spacing);
+	outputs_layout->addWidget (_outputs_list);
+	outputs_layout->addLayout (output_buttons_layout);
+
+	QHBoxLayout* top_layout = new QHBoxLayout();
+	top_layout->setSpacing (Config::Spacing);
+	top_layout->addWidget (_disconnect_button);
+	top_layout->addWidget (_reconnect_button);
+	top_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
+
+	QHBoxLayout* lists_layout = new QHBoxLayout();
+	lists_layout->setSpacing (Config::Spacing);
+	lists_layout->addLayout (inputs_layout);
+	lists_layout->addLayout (outputs_layout);
+
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (Config::Margin);
+	layout->setSpacing (Config::Spacing);
+	layout->addLayout (top_layout);
+	layout->addLayout (lists_layout);
 
 	update_widgets();
 }

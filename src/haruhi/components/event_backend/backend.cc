@@ -50,9 +50,7 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 {
 	_transport = new AlsaTransport (this);
 
-	//
 	// Widgets
-	//
 
 	_tree = new Tree (this, this, &_model);
 	QObject::connect (_tree, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_items (const QPoint&)));
@@ -87,22 +85,30 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	_stack->addWidget (_controller_dialog);
 	_stack->setCurrentWidget (_device_dialog);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
-	QHBoxLayout* input_buttons_layout = new QHBoxLayout (layout, Config::Spacing);
-	QHBoxLayout* panels_layout = new QHBoxLayout (layout, Config::Spacing);
-
 	QLabel* info = new QLabel ("Devices used in current session. Each device corresponds to external MIDI port.", this);
 	info->setMargin (Config::Margin);
-	layout->addWidget (info);
 
-	panels_layout->addWidget (_tree);
-	panels_layout->addWidget (_stack);
+	// Layouts:
 
+	QHBoxLayout* input_buttons_layout = new QHBoxLayout();
+	input_buttons_layout->setSpacing (Config::Spacing);
 	input_buttons_layout->addWidget (_insert_template_button);
 	input_buttons_layout->addWidget (_create_device_button);
 	input_buttons_layout->addWidget (_create_controller_button);
 	input_buttons_layout->addWidget (_destroy_input_button);
 	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+
+	QHBoxLayout* panels_layout = new QHBoxLayout();
+	panels_layout->setSpacing (Config::Spacing);
+	panels_layout->addWidget (_tree);
+	panels_layout->addWidget (_stack);
+
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (Config::Margin);
+	layout->setSpacing (Config::Spacing);
+	layout->addLayout (input_buttons_layout);
+	layout->addLayout (panels_layout);
+	layout->addWidget (info);
 
 	selection_changed();
 	update_widgets();

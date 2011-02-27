@@ -17,6 +17,9 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 
+// Qt:
+#include <QtGui/QLayout>
+
 // Local:
 #include "program.h"
 
@@ -28,11 +31,12 @@ Program::Program (Session* session, QWidget* parent):
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-	_layout = new QVBoxLayout (this, 0, Config::Spacing);
+	_patch = new Patch (session, "Patch", this);
 
-		_patch = new Patch (session, "Patch", this);
-
-	_layout->addWidget (_patch);
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (0);
+	layout->setSpacing (Config::Spacing);
+	layout->addWidget (_patch);
 }
 
 

@@ -28,6 +28,7 @@
 #include <QtGui/QApplication>
 #include <QtGui/QPainter>
 #include <QtGui/QPushButton>
+#include <QtGui/QLayout>
 #include <QtGui/QLabel>
 #include <QtGui/QDialog>
 #include <QtGui/QRadioButton>
@@ -64,34 +65,22 @@ PortsConnector::PortsConnector (UnitBay* unit_bay, QWidget* parent):
 	_context_menu (0),
 	_highlight_connected (false)
 {
-	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+	_splitter = new QSplitter (Qt::Horizontal, this);
+	_splitter->setChildrenCollapsible (false);
 
-	_layout = new QVBoxLayout (this, 0, Config::Spacing);
+	_opanel = new Panel (Port::Output, this, _splitter);
+	_connector = new Connector (this, _splitter);
+	_ipanel = new Panel (Port::Input, this, _splitter);
 
-		_splitter = new QSplitter (Qt::Horizontal, this);
-		_splitter->setChildrenCollapsible (false);
+	_splitter->setStretchFactor (0, 4);
+	_splitter->setStretchFactor (1, 3);
+	_splitter->setStretchFactor (2, 4);
 
-			_opanel = new Panel (Port::Output, this, _splitter);
-			_connector = new Connector (this, _splitter);
-			_ipanel = new Panel (Port::Input, this, _splitter);
+	_connect_button = new QPushButton (Resources::Icons16::connect(), "&Connect", this);
+	_connect_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
 
-		_splitter->setStretchFactor (0, 4);
-		_splitter->setStretchFactor (1, 3);
-		_splitter->setStretchFactor (2, 4);
-
-	_layout->addWidget (_splitter);
-
-		QHBoxLayout* buttons_layout = new QHBoxLayout (_layout, Config::Spacing);
-
-		_connect_button = new QPushButton (Resources::Icons16::connect(), "&Connect", this);
-		_connect_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
-
-		_disconnect_button = new QPushButton (Resources::Icons16::disconnect(), "&Disconnect", this);
-		_disconnect_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
-
-		buttons_layout->addWidget (_connect_button);
-		buttons_layout->addWidget (_disconnect_button);
-		buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
+	_disconnect_button = new QPushButton (Resources::Icons16::disconnect(), "&Disconnect", this);
+	_disconnect_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
 
 	QObject::connect (_ipanel->list()->verticalScrollBar(), SIGNAL (valueChanged (int)), static_cast<QWidget*> (this), SLOT (list_view_moved()));
 	QObject::connect (_ipanel->list()->header(), SIGNAL (sectionClicked (int)), this, SLOT (list_view_moved()));
@@ -113,6 +102,22 @@ PortsConnector::PortsConnector (UnitBay* unit_bay, QWidget* parent):
 
 	QObject::connect (_connect_button, SIGNAL (clicked()), this, SLOT (connect_selected()));
 	QObject::connect (_disconnect_button, SIGNAL (clicked()), this, SLOT (disconnect_selected()));
+
+	// Layouts:
+
+	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+
+	QHBoxLayout* buttons_layout = new QHBoxLayout();
+	buttons_layout->setSpacing (Config::Spacing);
+	buttons_layout->addWidget (_connect_button);
+	buttons_layout->addWidget (_disconnect_button);
+	buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
+
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (0);
+	layout->setSpacing (Config::Spacing);
+	layout->addWidget (_splitter);
+	layout->addLayout (buttons_layout);
 
 	_unit_bay->graph()->unit_registered.connect (this, &PortsConnector::unit_registered);
 	_unit_bay->graph()->unit_unregistered.connect (this, &PortsConnector::unit_unregistered);

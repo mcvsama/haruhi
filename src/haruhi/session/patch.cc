@@ -22,6 +22,7 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QCheckBox>
 #include <QtGui/QMenu>
+#include <QtGui/QLayout>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -46,16 +47,19 @@ ConnectionsTab::ConnectionsTab (Patch* patch, QWidget* parent):
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	setContentsMargins (Config::Margin, Config::Margin, Config::Margin, Config::Margin);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, 0, Config::Spacing);
-	QHBoxLayout* top_layout = new QHBoxLayout (layout, Config::Spacing);
-
-	top_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-
 	_ports_connector = new PortsConnector (_patch, this);
 	_ports_connector->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_ports_connector->add_external_unit (_patch->session()->graph()->audio_backend());
 	_ports_connector->add_external_unit (_patch->session()->graph()->event_backend());
 
+	QHBoxLayout* top_layout = new QHBoxLayout();
+	top_layout->setSpacing (Config::Spacing);
+	top_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
+
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (0);
+	layout->setSpacing (Config::Spacing);
+	layout->addLayout (top_layout);
 	layout->addWidget (_ports_connector);
 }
 
@@ -122,13 +126,21 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 		QObject::connect (_favorite_checkbox, SIGNAL (toggled (bool)), this, SLOT (favorited (bool)));
 	}
 
-	// Layouts:
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
-	QHBoxLayout* bar_layout = new QHBoxLayout (bar, 0, Config::Spacing);
 	bar->setPaletteForegroundColor (QColor (0xff, 0xff, 0xff));
 	bar->setPaletteBackgroundColor (QColor (0x00, 0x2A, 0x5B));
 	bar->setAutoFillBackground (true);
 
+	_plugin->reparent (_stack, QPoint(), true);
+	if (plugin_is_has_presets)
+		_stack->addWidget (_presets_manager);
+	_stack->addWidget (_plugin);
+	_stack->setCurrentWidget (_plugin);
+
+	// Layouts:
+
+	QHBoxLayout* bar_layout = new QHBoxLayout (bar);
+	bar_layout->setMargin (0);
+	bar_layout->setSpacing (Config::Spacing);
 	bar_layout->addWidget (title_button);
 	if (plugin_is_has_presets)
 	{
@@ -142,12 +154,9 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	else
 		bar_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
-	_plugin->reparent (_stack, QPoint(), true);
-	if (plugin_is_has_presets)
-		_stack->addWidget (_presets_manager);
-	_stack->addWidget (_plugin);
-	_stack->setCurrentWidget (_plugin);
-
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (Config::Margin);
+	layout->setSpacing (Config::Spacing);
 	layout->addWidget (bar);
 	layout->addWidget (_stack);
 }
@@ -228,24 +237,29 @@ Patch::Patch (Session* session, std::string const& title, QWidget* parent):
 	add_plugin_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
 	add_plugin_button->setPopup (_plugins_menu);
 
-	QVBoxLayout* add_plugin_layout = new QVBoxLayout (add_plugin_frame, 0, 0);
+	_tabs = new QTabWidget (this);
+	_tabs->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+	_tabs->setTabPosition (QTabWidget::South);
+	_tabs->setIconSize (QSize (32, 22));
+	_tabs->setMovable (true);
+	_tabs->setCornerWidget (add_plugin_frame, Qt::BottomRightCorner);
+
+	_connections_tab = new Private::ConnectionsTab (this, _tabs);
+
+	_tabs->addTab (_connections_tab, Resources::Icons22::connections(), "Connections");
+
+	// Layouts:
+
+	QVBoxLayout* add_plugin_layout = new QVBoxLayout (add_plugin_frame);
+	add_plugin_layout->setMargin (0);
+	add_plugin_layout->setSpacing (0);
 	add_plugin_layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Expanding));
 	add_plugin_layout->addWidget (add_plugin_button);
 
-	_layout = new QVBoxLayout (this, 0, Config::Spacing);
-
-		_tabs = new QTabWidget (this);
-		_tabs->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-		_tabs->setTabPosition (QTabWidget::South);
-		_tabs->setIconSize (QSize (32, 22));
-		_tabs->setMovable (true);
-		_tabs->setCornerWidget (add_plugin_frame, Qt::BottomRightCorner);
-
-			_connections_tab = new Private::ConnectionsTab (this, _tabs);
-
-		_tabs->addTab (_connections_tab, Resources::Icons22::connections(), "Connections");
-
-	_layout->addWidget (_tabs);
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (0);
+	layout->setSpacing (Config::Spacing);
+	layout->addWidget (_tabs);
 }
 
 

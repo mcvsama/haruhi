@@ -50,20 +50,16 @@ PresetEditor::PresetEditor (PresetsManager* presets_manager, QWidget* parent):
 
 	QGroupBox* grid = new QGroupBox (this);
 	grid->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
-	QGridLayout* grid_layout = new QGridLayout (grid);
 
+	QGridLayout* grid_layout = new QGridLayout (grid);
 	grid_layout->addWidget (new QLabel ("Package:", grid), 0, 0);
 	grid_layout->addWidget (_package = new QLineEdit (grid), 0, 1);
-
 	grid_layout->addWidget (new QLabel ("Category:", grid), 1, 0);
 	grid_layout->addWidget (_category = new QLineEdit (grid), 1, 1);
-
 	grid_layout->addWidget (new QLabel ("Preset name:", grid), 2, 0);
 	grid_layout->addWidget (_name = new QLineEdit (grid), 2, 1);
-
 	grid_layout->addWidget (new QLabel ("Version:", grid), 3, 0);
 	grid_layout->addWidget (_version = new QLineEdit (grid), 3, 1);
-
 	grid_layout->addWidget (_favorite = new QCheckBox ("Favorite preset", grid), 4, 0, 1, 2);
 
 	_update_details_button = new QPushButton (Resources::Icons16::save(), "Update de&tails", this);
@@ -71,12 +67,17 @@ PresetEditor::PresetEditor (PresetsManager* presets_manager, QWidget* parent):
 	QToolTip::add (_update_details_button, "Saves metadata without current patch");
 	QObject::connect (_update_details_button, SIGNAL (clicked()), this, SLOT (update_details()));
 
-	QVBoxLayout* v1 = new QVBoxLayout (this, 0, Config::Spacing);
-	v1->addWidget (grid);
-	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
-	h1->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-	h1->addWidget (_update_details_button);
-	v1->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
+	QHBoxLayout* hor_layout = new QHBoxLayout();
+	hor_layout->setSpacing (Config::Spacing);
+	hor_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
+	hor_layout->addWidget (_update_details_button);
+
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (0);
+	layout->setSpacing (Config::Spacing);
+	layout->addWidget (grid);
+	layout->addLayout (hor_layout);
+	layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }
 
 

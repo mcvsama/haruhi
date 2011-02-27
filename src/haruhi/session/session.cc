@@ -29,6 +29,7 @@
 #include <QtGui/QFileDialog>
 #include <QtGui/QCloseEvent>
 #include <QtGui/QGridLayout>
+#include <QtGui/QLayout>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -56,34 +57,39 @@ Private::SettingsDialog::SettingsDialog (QWidget* parent, Session* session):
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	setMinimumWidth (300);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::DialogMargin, Config::Spacing);
-	layout->setResizeMode (QLayout::FreeResize);
-
-	QHBoxLayout* name_layout = new QHBoxLayout (layout, Config::Spacing);
-
 	QLabel* name_label = new QLabel ("Session name:", this);
 
 	_name = new QLineEdit (_session->_name, this);
 	_name->selectAll();
 	_name->setFocus();
-
-	name_layout->addWidget (name_label);
-	name_layout->addWidget (_name);
-
-	QHBoxLayout* buttons_layout = new QHBoxLayout (layout, Config::Spacing);
+	QObject::connect (_name, SIGNAL (textChanged (const QString&)), this, SLOT (state_changed()));
 
 	_accept_button = new QPushButton ("&Ok", this);
 	_accept_button->setDefault (true);
+	QObject::connect (_accept_button, SIGNAL (clicked()), this, SLOT (validate_and_accept()));
 
 	_reject_button = new QPushButton ("&Cancel", this);
+	QObject::connect (_reject_button, SIGNAL (clicked()), this, SLOT (reject()));
 
+	// Layouts:
+
+	QHBoxLayout* name_layout = new QHBoxLayout();
+	name_layout->setSpacing (Config::Spacing);
+	name_layout->addWidget (name_label);
+	name_layout->addWidget (_name);
+
+	QHBoxLayout* buttons_layout = new QHBoxLayout();
+	buttons_layout->setSpacing (Config::Spacing);
 	buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 	buttons_layout->addWidget (_accept_button);
 	buttons_layout->addWidget (_reject_button);
 
-	QObject::connect (_name, SIGNAL (textChanged (const QString&)), this, SLOT (state_changed()));
-	QObject::connect (_accept_button, SIGNAL (clicked()), this, SLOT (validate_and_accept()));
-	QObject::connect (_reject_button, SIGNAL (clicked()), this, SLOT (reject()));
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (Config::DialogMargin);
+	layout->setSpacing (Config::Spacing);
+	layout->setResizeMode (QLayout::FreeResize);
+	layout->addLayout (name_layout);
+	layout->addLayout (buttons_layout);
 
 	state_changed();
 
@@ -286,13 +292,14 @@ Session::MeterPanel::MeterPanel (Session* session, QWidget* parent):
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
 	setFrameStyle (QFrame::StyledPanel | QFrame::Raised);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
-
 	_level_meters_group = new LevelMetersGroup (this);
 	_master_volume = new DialControl (this, MinVolume, MaxVolume, ZeroVolume * std::pow (attenuate_db (-3.0f), 1.0f / M_E));
 	QObject::connect (_master_volume, SIGNAL (valueChanged (int)), _session, SLOT (master_volume_changed (int)));
 	QToolTip::add (_master_volume, "Master Volume");
 
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (Config::Margin);
+	layout->setSpacing (Config::Spacing);
 	layout->addWidget (_level_meters_group);
 	layout->addWidget (_master_volume);
 }
@@ -314,15 +321,11 @@ Session::Session (QWidget* parent):
 
 	create_main_menu();
 
-	_layout = new QVBoxLayout (this, Config::WindowMargin, Config::Spacing);
-
 	QFrame* header = new QFrame (this);
 	header->setAutoFillBackground (true);
 	header->setBackgroundColor (QColor (0xda, 0xe1, 0xe9));
 	header->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	header->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-
-	QHBoxLayout* header_layout = new QHBoxLayout (header, Config::Margin);
 
 	QWidget* inner_header = new QWidget (header);
 	inner_header->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
@@ -361,21 +364,6 @@ Session::Session (QWidget* parent):
 	_main_menu_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_main_menu_button->setPopup (_main_menu);
 
-	QHBoxLayout* inner_header_layout = new QHBoxLayout (inner_header, 0, Config::Spacing);
-	inner_header_layout->addWidget (_session_name);
-	inner_header_layout->addItem (new QSpacerItem (0, 0));
-	inner_header_layout->addWidget (tempo_note);
-	inner_header_layout->addWidget (_tempo_spinbox);
-	inner_header_layout->addItem (new QSpacerItem (2 * Config::Spacing, 0, QSizePolicy::Maximum, QSizePolicy::Minimum));
-	inner_header_layout->addWidget (_panic_button);
-	inner_header_layout->addWidget (_main_menu_button);
-
-	header_layout->addWidget (inner_header);
-
-	_layout->addWidget (header);
-
-	QHBoxLayout* bottom_layout = new QHBoxLayout (_layout, Config::Spacing + 1);
-
 	_meter_panel = new MeterPanel (this, this);
 	_stack = new QStackedWidget (this);
 
@@ -392,6 +380,34 @@ Session::Session (QWidget* parent):
 	_event_tab = create_container (this);
 
 	_devices_manager = new DevicesManager::Panel (this, Haruhi::haruhi()->devices_manager_settings());
+
+	// Layouts:
+
+	QHBoxLayout* header_layout = new QHBoxLayout (header);
+	header_layout->setMargin (Config::Margin);
+	header_layout->addWidget (inner_header);
+
+	QHBoxLayout* inner_header_layout = new QHBoxLayout (inner_header);
+	inner_header_layout->setMargin (0);
+	inner_header_layout->setSpacing (Config::Spacing);
+	inner_header_layout->addWidget (_session_name);
+	inner_header_layout->addItem (new QSpacerItem (0, 0));
+	inner_header_layout->addWidget (tempo_note);
+	inner_header_layout->addWidget (_tempo_spinbox);
+	inner_header_layout->addItem (new QSpacerItem (2 * Config::Spacing, 0, QSizePolicy::Maximum, QSizePolicy::Minimum));
+	inner_header_layout->addWidget (_panic_button);
+	inner_header_layout->addWidget (_main_menu_button);
+
+	QHBoxLayout* bottom_layout = new QHBoxLayout();
+	bottom_layout->setSpacing (Config::Spacing + 1);
+	bottom_layout->addWidget (_meter_panel);
+	bottom_layout->addWidget (_stack);
+
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (Config::WindowMargin);
+	layout->setSpacing (Config::Spacing);
+	layout->addWidget (header);
+	layout->addLayout (bottom_layout);
 
 	// Add tabs:
 	_session_settings->addTab (_session_global, Resources::Icons22::configure(), "Global");
@@ -413,9 +429,6 @@ Session::Session (QWidget* parent):
 	_stack->addWidget (_haruhi_settings);
 
 	_stack->setCurrentWidget (_program);
-
-	bottom_layout->addWidget (_meter_panel);
-	bottom_layout->addWidget (_stack);
 
 	update_window_title();
 }
@@ -863,7 +876,9 @@ Session::create_container (QWidget* parent)
 	// Configure layouts for audio and event tabs:
 	QWidget* w = new QWidget (parent);
 	w->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	QHBoxLayout* layout = new QHBoxLayout (w, 0, 0);
+	QHBoxLayout* layout = new QHBoxLayout (w);
+	layout->setMargin (0);
+	layout->setSpacing (0);
 	layout->setAutoAdd (true);
 	return w;
 }

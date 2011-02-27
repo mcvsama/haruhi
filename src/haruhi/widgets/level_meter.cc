@@ -251,28 +251,17 @@ LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper
 	_peak_sample (0),
 	_timer (0)
 {
-	QVBoxLayout* layout1 = new QVBoxLayout (this, 0, Config::Spacing);
+	_peak_button = new QPushButton ("-inf dB", this);
+	_peak_button->setFont (Resources::small_font());
+	_peak_button->setFixedHeight (2 * Resources::small_font().pointSize());
+	_peak_button->setFixedWidth (35);
+	_peak_button_bg = _peak_button->paletteBackgroundColor();
+	_peak_button_fg = _peak_button->paletteForegroundColor();
 
-		_peak_button = new QPushButton ("-inf dB", this);
-		_peak_button->setFont (Resources::small_font());
-		_peak_button->setFixedHeight (2 * Resources::small_font().pointSize());
-		_peak_button->setFixedWidth (35);
-		_peak_button_bg = _peak_button->paletteBackgroundColor();
-		_peak_button_fg = _peak_button->paletteForegroundColor();
+	_vector.push_back (new LevelMeter (this, this));
+	_vector.push_back (new LevelMeter (this, this));
 
-	layout1->addWidget (_peak_button);
-
-		QHBoxLayout* layout2 = new QHBoxLayout (layout1, 1);
-
-			_vector.push_back (new LevelMeter (this, this));
-			_vector.push_back (new LevelMeter (this, this));
-
-			_scale = new Scale (this, lower_db, upper_db);
-
-		layout2->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
-		for (Vector::iterator m = _vector.begin();  m != _vector.end();  ++m)
-			layout2->addWidget (*m);
-		layout2->addWidget (_scale);
+	_scale = new Scale (this, lower_db, upper_db);
 
 	_timer = new QTimer (this);
 
@@ -280,6 +269,21 @@ LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper
 	QObject::connect (_timer, SIGNAL (timeout()), this, SLOT (update_meters()));
 	new QShortcut (Qt::CTRL + Qt::Key_R, this, SLOT (reset_peak()));
 	QToolTip::add (_peak_button, "C-r to reset");
+
+	// Layouts:
+
+	QHBoxLayout* meters_layout = new QHBoxLayout();
+	meters_layout->setSpacing (1);
+	meters_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
+	for (Vector::iterator m = _vector.begin();  m != _vector.end();  ++m)
+		meters_layout->addWidget (*m);
+	meters_layout->addWidget (_scale);
+
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (0);
+	layout->setSpacing (Config::Spacing);
+	layout->addWidget (_peak_button);
+	layout->addLayout (meters_layout);
 
 	_timer->start (25); // 40 fps
 }

@@ -22,7 +22,6 @@
 // Qt:
 #include <QtCore/QSignalMapper>
 #include <QtGui/QWidget>
-#include <QtGui/QLayout>
 #include <QtGui/QTabWidget>
 #include <QtGui/QStackedWidget>
 #include <QtGui/QFrame>
@@ -174,7 +173,6 @@ class Patch:
 
   private:
 	Session*						_session;
-	QVBoxLayout*					_layout;
 	QTabWidget*						_tabs;
 	PatchPrivate::ConnectionsTab*	_connections_tab;
 	PluginsToFramesMap				_plugins_to_frames_map;
