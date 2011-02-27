@@ -127,6 +127,20 @@ class SessionLoader: public QDialog
 	open_recent (QTreeWidgetItem*, int);
 
 	/**
+	 * Reads DevicesManagerSettings and creates entries
+	 * in _devices_combobox with items that are not
+	 * already added to _devices_list.
+	 */
+	void
+	populate_devices_combo();
+
+	/**
+	 * Auto add devices marked as auto-add to _devices_list.
+	 */
+	void
+	auto_add_devices();
+
+	/**
 	 * Adds device currently selected in _devices_combobox to _devices_list.
 	 * Calls add_device (Device);
 	 */

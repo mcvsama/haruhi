@@ -106,11 +106,6 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	_new_session_audio_outputs->setValue (2);
 
 	_devices_combobox = new QComboBox (event_box);
-	DevicesManager::Settings* dm_settings = Haruhi::haruhi()->devices_manager_settings();
-	assert (dm_settings);
-	DevicesManager::Model::Devices& devices = dm_settings->model().devices();
-	for (DevicesManager::Model::Devices::iterator d = devices.begin(); d != devices.end(); ++d)
-		_devices_combobox->addItem (Resources::Icons16::keyboard(), d->name(), qVariantFromValue (reinterpret_cast<void*> (&*d)));
 
 	QPushButton* devices_add = new QPushButton (Resources::Icons16::add(), "", audio_box);
 	devices_add->setFixedWidth (devices_add->height());
@@ -186,10 +181,7 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 			break;
 	}
 
-	// Auto add devices marked as auto-add:
-	for (DevicesManager::Model::Devices::iterator d = devices.begin(); d != devices.end(); ++d)
-		if (d->auto_add())
-			add_device (*d);
+	auto_add_devices();
 
 	//
 	// Layout
@@ -209,6 +201,7 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	layout->addWidget (_tabs);
 	layout->addLayout (buttons_layout);
 
+	populate_devices_combo();
 	_devices_list->clearSelection();
 	_recent_listview->setFocus();
 	update_widgets();
@@ -306,6 +299,51 @@ SessionLoader::open_recent (QTreeWidgetItem* item, int)
 
 
 void
+SessionLoader::populate_devices_combo()
+{
+	_devices_combobox->clear();
+
+	DevicesManager::Settings* dm_settings = Haruhi::haruhi()->devices_manager_settings();
+	assert (dm_settings);
+	DevicesManager::Model::Devices& devices = dm_settings->model().devices();
+
+	for (DevicesManager::Model::Devices::iterator d = devices.begin(); d != devices.end(); ++d)
+	{
+		bool already_added = false;
+		for (int i = 0; i < _devices_list->count(); ++i)
+		{
+			DeviceItem* ld = dynamic_cast<DeviceItem*> (_devices_list->item (i));
+			if (!ld)
+				continue;
+			if (*d == ld->device)
+			{
+				already_added = true;
+				break;
+			}
+		}
+		if (already_added)
+			continue;
+		_devices_combobox->addItem (Resources::Icons16::keyboard(), d->name(), qVariantFromValue (reinterpret_cast<void*> (&*d)));
+	}
+
+	_devices_combobox->setEnabled (_devices_combobox->count() > 0);
+}
+
+
+void
+SessionLoader::auto_add_devices()
+{
+	DevicesManager::Settings* dm_settings = Haruhi::haruhi()->devices_manager_settings();
+	assert (dm_settings);
+	DevicesManager::Model::Devices& devices = dm_settings->model().devices();
+
+	for (DevicesManager::Model::Devices::iterator d = devices.begin(); d != devices.end(); ++d)
+		if (d->auto_add())
+			add_device (*d);
+}
+
+
+void
 SessionLoader::add_selected_device()
 {
 	QVariant var = _devices_combobox->itemData (_devices_combobox->currentIndex());
@@ -320,6 +358,7 @@ SessionLoader::add_device (DevicesManager::Device const& device)
 	_devices_list->addItem (device_item);
 	_devices_list->setCurrentItem (device_item);
 	device_item->setSelected (true);
+	populate_devices_combo();
 }
 
 
@@ -333,6 +372,7 @@ SessionLoader::del_selected_device()
 		_devices_list->takeItem (_devices_list->row (item));
 		delete item;
 	}
+	populate_devices_combo();
 }
 
 } // namespace Haruhi

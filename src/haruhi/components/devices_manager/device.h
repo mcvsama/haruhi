@@ -47,6 +47,9 @@ class Device: public SaveableState
   public:
 	Device (QString const& name = "");
 
+	bool
+	operator== (Device const& other) const;
+
 	/**
 	 * Name for device. Name is for UI.
 	 */

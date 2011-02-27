@@ -38,6 +38,13 @@ Device::Device (QString const& name):
 
 
 bool
+Device::operator== (Device const& other) const
+{
+	return _name == other._name && _controllers == other._controllers && _auto_add == other._auto_add;
+}
+
+
+bool
 Device::has_controller (Controller* controller) const
 {
 	for (Controllers::const_iterator c = _controllers.begin(); c != _controllers.end(); ++c)

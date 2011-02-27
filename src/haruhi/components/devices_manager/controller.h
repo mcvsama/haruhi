@@ -55,6 +55,9 @@ class Controller: public SaveableState
   public:
 	Controller (QString const& name = "");
 
+	bool
+	operator== (Controller const& other) const;
+
 	/**
 	 * Name for controller. Name is for UI.
 	 */

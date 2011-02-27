@@ -54,6 +54,29 @@ Controller::Controller (QString const& name):
 
 
 bool
+Controller::operator== (Controller const& other) const
+{
+	return
+		note_filter == other.note_filter &&
+		note_channel == other.note_channel &&
+		controller_filter == other.controller_filter &&
+		controller_channel == other.controller_channel &&
+		controller_number == other.controller_number &&
+		controller_invert == other.controller_invert &&
+		pitchbend_filter == other.pitchbend_filter &&
+		pitchbend_channel == other.pitchbend_channel &&
+		channel_pressure_filter == other.channel_pressure_filter &&
+		channel_pressure_channel == other.channel_pressure_channel &&
+		channel_pressure_invert == other.channel_pressure_invert &&
+		key_pressure_filter == other.key_pressure_filter &&
+		key_pressure_channel == other.key_pressure_channel &&
+		key_pressure_invert == other.key_pressure_invert &&
+		smoothing == other.smoothing &&
+		_name == other._name;
+}
+
+
+bool
 Controller::learn_from_event (MIDI::Event const& event)
 {
 	switch (event.type)
