@@ -591,6 +591,7 @@ LFO::update_widgets()
 	_plot->set_phase_marker_enabled (!continuous && !_random_start_phase->isChecked());
 	_tempo_numerator->setEnabled (_tempo_sync->isChecked());
 	_tempo_denominator->setEnabled (_tempo_sync->isChecked());
+	_random_start_phase->setEnabled (!continuous);
 	update_plot();
 }
 
