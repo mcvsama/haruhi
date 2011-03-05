@@ -92,14 +92,19 @@ General::General (Mikuru* mikuru, QWidget* parent):
 
 	// Layouts:
 
-	QVBoxLayout* v1_layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
-	QHBoxLayout* h1_layout = new QHBoxLayout (v1_layout, Config::Spacing);
+	QHBoxLayout* h1_layout = new QHBoxLayout();
+	h1_layout->setSpacing (Config::Spacing);
 	h1_layout->addWidget (_knob_volume);
 	h1_layout->addWidget (_knob_detune);
 	h1_layout->addWidget (_knob_panorama);
 	h1_layout->addWidget (_knob_stereo_width);
 	h1_layout->addWidget (_knob_input_volume);
 	h1_layout->addWidget (grid1);
+
+	QVBoxLayout* v1_layout = new QVBoxLayout (this);
+	v1_layout->setMargin (Config::Margin);
+	v1_layout->setSpacing (Config::Spacing);
+	v1_layout->addLayout (h1_layout);
 	v1_layout->addWidget (new StyledLabel ("LFOs & Envelopes", this));
 	v1_layout->addWidget (_envelopes);
 }

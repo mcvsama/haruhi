@@ -198,7 +198,9 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	base_plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_base_wave_plot = new Haruhi::WavePlot (base_plot_frame);
 	QToolTip::add (_base_wave_plot, "Base wave");
-	QVBoxLayout* base_plot_frame_layout = new QVBoxLayout (base_plot_frame, 0, Config::Spacing);
+	QVBoxLayout* base_plot_frame_layout = new QVBoxLayout (base_plot_frame);
+	base_plot_frame_layout->setMargin (0);
+	base_plot_frame_layout->setSpacing (Config::Spacing);
 	base_plot_frame_layout->addWidget (_base_wave_plot);
 
 	QFrame* harmonics_plot_frame = new QFrame (this);
@@ -206,7 +208,9 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	harmonics_plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_final_wave_plot = new Haruhi::WavePlot (harmonics_plot_frame);
 	QToolTip::add (_final_wave_plot, "Wave with harmonics and modulation");
-	QVBoxLayout* harmonics_plot_frame_layout = new QVBoxLayout (harmonics_plot_frame, 0, Config::Spacing);
+	QVBoxLayout* harmonics_plot_frame_layout = new QVBoxLayout (harmonics_plot_frame);
+	harmonics_plot_frame_layout->setMargin (0);
+	harmonics_plot_frame_layout->setSpacing (Config::Spacing);
 	harmonics_plot_frame_layout->addWidget (_final_wave_plot);
 
 	// Wave type:
@@ -277,7 +281,9 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 		_harmonics_sliders.push_back (slider);
 		_harmonics_resets.push_back (reset);
 	}
-	QHBoxLayout* harmonics_tab_layout = new QHBoxLayout (_harmonics_tab, 0, 0);
+	QHBoxLayout* harmonics_tab_layout = new QHBoxLayout (_harmonics_tab);
+	harmonics_tab_layout->setMargin (0);
+	harmonics_tab_layout->setSpacing (0);
 	harmonics_tab_layout->addWidget (harmonics_grid);
 
 	// Phases:
@@ -312,7 +318,9 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 		_phases_sliders.push_back (slider);
 		_phases_resets.push_back (reset);
 	}
-	QHBoxLayout* phases_tab_layout = new QHBoxLayout (_phases_tab, 0, 0);
+	QHBoxLayout* phases_tab_layout = new QHBoxLayout (_phases_tab);
+	phases_tab_layout->setMargin (0);
+	phases_tab_layout->setSpacing (0);
 	phases_tab_layout->addWidget (phases_grid);
 
 	_harmonics_and_phases_tabs->addTab (_harmonics_tab, "Harmonics");

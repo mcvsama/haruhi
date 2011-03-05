@@ -21,6 +21,7 @@
 // Qt:
 #include <QtGui/QToolTip>
 #include <QtGui/QGroupBox>
+#include <QtGui/QLayout>
 #include <QtGui/QGridLayout>
 
 // Haruhi:
@@ -161,8 +162,6 @@ ADSR::create_widgets (QWidget* knobs_panel)
 	plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_plot = new Haruhi::EnvelopePlot (plot_frame);
-	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::Spacing);
-	plot_frame_layout->addWidget (_plot);
 
 	QGroupBox* grid1 = new QGroupBox (this);
 	QGridLayout* grid1_layout = new QGridLayout (grid1);
@@ -209,24 +208,44 @@ ADSR::create_widgets (QWidget* knobs_panel)
 	grid1_layout->addWidget (_mode, 2, 1);
 	QObject::connect (_mode, SIGNAL (activated (int)), this, SLOT (update_params()));
 
-	QVBoxLayout* v1 = new QVBoxLayout (knobs_panel, 0, Config::Spacing);
-	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
+	// Layouts:
+
+	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame);
+	plot_frame_layout->setMargin (0);
+	plot_frame_layout->setSpacing (Config::Spacing);
+	plot_frame_layout->addWidget (_plot);
+
+	QHBoxLayout* h1 = new QHBoxLayout();
+	h1->setSpacing (Config::Spacing);
 	h1->addWidget (_knob_delay);
 	h1->addWidget (_knob_attack);
 	h1->addWidget (_knob_decay);
 	h1->addWidget (_knob_sustain);
 	h1->addWidget (_knob_release);
-	QHBoxLayout* h2 = new QHBoxLayout (v1, Config::Spacing);
+
+	QHBoxLayout* h2 = new QHBoxLayout();
+	h2->setSpacing (Config::Spacing);
 	h2->addWidget (_knob_attack_hold);
 	h2->addWidget (_knob_sustain_hold);
 	h2->addWidget (plot_frame);
+
+	QVBoxLayout* v1 = new QVBoxLayout (knobs_panel);
+	v1->setMargin (0);
+	v1->setSpacing (Config::Spacing);
+	v1->addLayout (h1);
+	v1->addLayout (h2);
 	v1->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
-	QHBoxLayout* h3 = new QHBoxLayout (this, Config::Margin, Config::Spacing);
-	h3->addWidget (knobs_panel);
-	QVBoxLayout* v2 = new QVBoxLayout (h3, Config::Spacing);
+	QVBoxLayout* v2 = new QVBoxLayout();
+	v2->setSpacing (Config::Spacing);
 	v2->addWidget (grid1);
 	v2->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
+
+	QHBoxLayout* h3 = new QHBoxLayout (this);
+	h3->setMargin (Config::Margin);
+	h3->setSpacing (Config::Spacing);
+	h3->addWidget (knobs_panel);
+	h3->addLayout (v2);
 }
 
 

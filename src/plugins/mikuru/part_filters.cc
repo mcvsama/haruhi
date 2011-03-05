@@ -78,11 +78,16 @@ PartFilters::PartFilters (Part* part, Haruhi::PortGroup* filter_ports, QString c
 
 	// Layouts:
 
-	QVBoxLayout* filters_layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
-	QHBoxLayout* top_filters_layout = new QHBoxLayout (filters_layout, Config::Spacing);
+	QHBoxLayout* top_filters_layout = new QHBoxLayout();
+	top_filters_layout->setSpacing (Config::Spacing);
 	top_filters_layout->addWidget (new QLabel ("Configuration:", this));
 	top_filters_layout->addWidget (_filter_configuration);
 	top_filters_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
+
+	QVBoxLayout* filters_layout = new QVBoxLayout (this);
+	filters_layout->setMargin (Config::Margin);
+	filters_layout->setSpacing (Config::Spacing);
+	filters_layout->addLayout (top_filters_layout);
 	filters_layout->addWidget (_filter1);
 	filters_layout->addWidget (_filter2);
 	filters_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));

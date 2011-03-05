@@ -57,7 +57,9 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 	plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_response_plot = new Haruhi::FrequencyResponsePlot (plot_frame);
-	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::Spacing);
+	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame);
+	plot_frame_layout->setMargin (0);
+	plot_frame_layout->setSpacing (Config::Spacing);
 	plot_frame_layout->addWidget (_response_plot);
 
 	if (_mikuru->graph())
@@ -133,29 +135,43 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 
 	// Layouts:
 
-	QVBoxLayout* layout = new QVBoxLayout (this, 0, Config::Spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (0);
+	layout->setSpacing (Config::Spacing);
 	layout->addWidget (_filter_label);
 	layout->addWidget (_panel);
 
-	QHBoxLayout* panel_layout = new QHBoxLayout (_panel, 0, Config::Spacing);
-
-	QHBoxLayout* hor1_layout = new QHBoxLayout (panel_layout, Config::Spacing);
-	hor1_layout->addWidget (plot_frame);
-
-	QVBoxLayout* ver1_layout = new QVBoxLayout (hor1_layout, Config::Spacing);
-
-	QHBoxLayout* hor2_layout = new QHBoxLayout (ver1_layout, Config::Spacing);
+	QHBoxLayout* hor2_layout = new QHBoxLayout();
+	hor2_layout->setSpacing (Config::Spacing);
 	hor2_layout->addWidget (_filter_type);
 	hor2_layout->addWidget (_stages);
 	hor2_layout->addWidget (_limiter_enabled);
 
-	QHBoxLayout* hor3_layout = new QHBoxLayout (ver1_layout, Config::Spacing);
-
-	QHBoxLayout* params_layout = new QHBoxLayout (hor3_layout, Config::Spacing);
+	QHBoxLayout* params_layout = new QHBoxLayout();
+	params_layout->setSpacing (Config::Spacing);
 	params_layout->addWidget (_knob_frequency);
 	params_layout->addWidget (_knob_resonance);
 	params_layout->addWidget (_knob_gain);
 	params_layout->addWidget (_knob_attenuation);
+
+	QHBoxLayout* hor3_layout = new QHBoxLayout();
+	hor3_layout->setSpacing (Config::Spacing);
+	hor3_layout->addLayout (params_layout);
+
+	QVBoxLayout* ver1_layout = new QVBoxLayout();
+	ver1_layout->setSpacing (Config::Spacing);
+	ver1_layout->addLayout (hor2_layout);
+	ver1_layout->addLayout (hor3_layout);
+
+	QHBoxLayout* hor1_layout = new QHBoxLayout();
+	hor1_layout->setSpacing (Config::Spacing);
+	hor1_layout->addWidget (plot_frame);
+	hor1_layout->addLayout (ver1_layout);
+
+	QHBoxLayout* panel_layout = new QHBoxLayout (_panel);
+	panel_layout->setMargin (0);
+	panel_layout->setSpacing (Config::Spacing);
+	panel_layout->addLayout (hor1_layout);
 
 	_response_plot->assign_impulse_response (&_impulse_response);
 

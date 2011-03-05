@@ -118,10 +118,12 @@ Mikuru::Mikuru (std::string const& urn, std::string const& title, int id, QWidge
 	_tabs_widget->addTab (_general, Resources::Icons16::mikuru(), "+ LFO/EG");
 	_tabs_widget->addTab (_common_filters, Resources::Icons16::filters(), "Filters");
 
-	QVBoxLayout* layout = new QVBoxLayout (this, 0, Config::Spacing);
+	// Layouts:
+
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-	QHBoxLayout* hor_layout = new QHBoxLayout (layout, Config::Spacing);
+	QHBoxLayout* hor_layout = new QHBoxLayout();
+	hor_layout->setSpacing (Config::Spacing);
 	hor_layout->addWidget (_enabled);
 	hor_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 	hor_layout->addWidget (_current_voices_label);
@@ -136,6 +138,10 @@ Mikuru::Mikuru (std::string const& urn, std::string const& title, int id, QWidge
 	hor_layout->addWidget (_add_part);
 	hor_layout->addWidget (_del_part);
 
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (0);
+	layout->setSpacing (Config::Spacing);
+	layout->addLayout (hor_layout);
 	layout->addWidget (_tabs_widget);
 	layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
 

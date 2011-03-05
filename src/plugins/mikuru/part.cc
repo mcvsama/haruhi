@@ -68,7 +68,9 @@ Part::Part (Mikuru* mikuru, QWidget* parent):
 	tabs->addTab (_effects, Resources::Icons16::effects(), "Effects");
 	tabs->showPage (_oscillator);
 
-	QVBoxLayout* layout = new QVBoxLayout (this, Config::Margin, Config::Spacing);
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (Config::Margin);
+	layout->setSpacing (Config::Spacing);
 	layout->addWidget (_part_enabled);
 	layout->addWidget (tabs);
 }

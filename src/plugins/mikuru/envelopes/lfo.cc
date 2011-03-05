@@ -22,6 +22,7 @@
 #include <QtGui/QToolTip>
 #include <QtGui/QPushButton>
 #include <QtGui/QGroupBox>
+#include <QtGui/QLayout>
 #include <QtGui/QGridLayout>
 
 // Haruhi:
@@ -273,8 +274,6 @@ LFO::create_widgets (QWidget* knobs_panel)
 	plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_plot = new Haruhi::WavePlot (plot_frame);
-	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::Spacing);
-	plot_frame_layout->addWidget (_plot);
 
 	QGroupBox* grid1 = new QGroupBox (this);
 	QGridLayout* grid1_layout = new QGridLayout (grid1);
@@ -311,7 +310,9 @@ LFO::create_widgets (QWidget* knobs_panel)
 	QObject::connect (_tempo_sync, SIGNAL (toggled (bool)), this, SLOT (update_widgets()));
 
 	QWidget* tempo_grid = new QWidget (grid1);
-	QHBoxLayout* tempo_layout = new QHBoxLayout (tempo_grid, 0, Config::Spacing);
+	QHBoxLayout* tempo_layout = new QHBoxLayout (tempo_grid);
+	tempo_layout->setMargin (0);
+	tempo_layout->setSpacing (Config::Spacing);
 	tempo_layout->setAutoAdd (true);
 	grid1_layout->addWidget (tempo_grid, 2, 1);
 
@@ -358,27 +359,45 @@ LFO::create_widgets (QWidget* knobs_panel)
 	QObject::connect (_mode, SIGNAL (activated (int)), this, SLOT (update_params()));
 	QObject::connect (_mode, SIGNAL (activated (int)), this, SLOT (update_widgets()));
 
-	// Layout:
+	// Layouts:
 
-	QVBoxLayout* v1 = new QVBoxLayout (knobs_panel, 0, Config::Spacing);
-	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
+	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame);
+	plot_frame_layout->setMargin (0);
+	plot_frame_layout->setSpacing (Config::Spacing);
+	plot_frame_layout->addWidget (_plot);
+
+	QHBoxLayout* h1 = new QHBoxLayout();
+	h1->setSpacing (Config::Spacing);
 	h1->addWidget (_knob_fade_in);
 	h1->addWidget (_knob_frequency);
 	h1->addWidget (_knob_level);
 	h1->addWidget (_knob_depth);
 	h1->addWidget (_knob_fade_out);
-	QHBoxLayout* h2 = new QHBoxLayout (v1, Config::Spacing);
+
+	QHBoxLayout* h2 = new QHBoxLayout();
+	h2->setSpacing (Config::Spacing);
 	h2->addWidget (_knob_delay);
 	h2->addWidget (plot_frame);
 	h2->addWidget (_knob_wave_shape);
 	h2->addWidget (_knob_phase);
+
+	QVBoxLayout* v1 = new QVBoxLayout (knobs_panel);
+	v1->setMargin (0);
+	v1->setSpacing (Config::Spacing);
+	v1->addLayout (h1);
+	v1->addLayout (h2);
 	v1->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
-	QHBoxLayout* h3 = new QHBoxLayout (this, Config::Margin, Config::Spacing);
-	h3->addWidget (knobs_panel);
-	QVBoxLayout* v2 = new QVBoxLayout (h3, Config::Spacing);
+	QVBoxLayout* v2 = new QVBoxLayout();
+	v2->setSpacing (Config::Spacing);
 	v2->addWidget (grid1);
 	v2->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
+
+	QHBoxLayout* h3 = new QHBoxLayout (this);
+	h3->setMargin (Config::Margin);
+	h3->setSpacing (Config::Spacing);
+	h3->addWidget (knobs_panel);
+	h3->addLayout (v2);
 }
 
 

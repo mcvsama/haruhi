@@ -19,6 +19,7 @@
 #include <QtGui/QCheckBox>
 #include <QtGui/QToolTip>
 #include <QtGui/QLabel>
+#include <QtGui/QLayout>
 
 // Local:
 #include "mikuru.h"
@@ -55,13 +56,18 @@ CommonFilters::CommonFilters (Mikuru* mikuru, QWidget* parent):
 
 	// Layouts:
 
-	QVBoxLayout* v1 = new QVBoxLayout (this, Config::Margin, Config::Spacing);
-	QHBoxLayout* h1 = new QHBoxLayout (v1, Config::Spacing);
+	QHBoxLayout* h1 = new QHBoxLayout();
+	h1->setSpacing (Config::Spacing);
 	h1->addWidget (new QLabel ("Configuration:", this));
 	h1->addWidget (_filter_configuration);
 	h1->addItem (new QSpacerItem (20, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
 	h1->addWidget (_route_audio_input);
 	h1->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
+
+	QVBoxLayout* v1 = new QVBoxLayout (this);
+	v1->setMargin (Config::Margin);
+	v1->setSpacing (Config::Spacing);
+	v1->addLayout (h1);
 	v1->addWidget (_filter1);
 	v1->addWidget (_filter2);
 	v1->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));

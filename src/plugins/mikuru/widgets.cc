@@ -64,7 +64,9 @@ StyledCheckBoxLabel::StyledCheckBoxLabel (QString const& label, QWidget* parent)
 	_label->setFont (font);
 	_label->setFixedHeight (font.pointSize() + 10);
 
-	QHBoxLayout* layout = new QHBoxLayout (this, 0, 0);
+	QHBoxLayout* layout = new QHBoxLayout (this);
+	layout->setMargin (0);
+	layout->setSpacing (0);
 	layout->addItem (new QSpacerItem (5, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
 	layout->addWidget (_checkbox);
 	layout->addWidget (_label);

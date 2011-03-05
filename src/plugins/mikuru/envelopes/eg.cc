@@ -21,6 +21,7 @@
 // Qt:
 #include <QtGui/QToolTip>
 #include <QtGui/QGroupBox>
+#include <QtGui/QLayout>
 #include <QtGui/QGridLayout>
 
 // Haruhi:
@@ -145,8 +146,6 @@ EG::create_widgets()
 	_plot->assign_envelope (&_envelope_template);
 	QObject::connect (_plot, SIGNAL (envelope_updated()), this, SLOT (changed_envelope()));
 	QObject::connect (_plot, SIGNAL (active_point_changed()), this, SLOT (changed_envelope()));
-	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame, 0, Config::Spacing);
-	plot_frame_layout->addWidget (_plot);
 
 	QGroupBox* grid1 = new QGroupBox (this);
 	QGridLayout* grid1_layout = new QGridLayout (grid1);
@@ -176,19 +175,40 @@ EG::create_widgets()
 	_remove_active_point = new QPushButton (Resources::Icons16::remove(), "Remove active", this);
 	QObject::connect (_remove_active_point, SIGNAL (clicked()), this, SLOT (remove_active_point()));
 
-	QVBoxLayout* v0 = new QVBoxLayout (this, Config::Margin, Config::Spacing);
-	QHBoxLayout* h1 = new QHBoxLayout (v0, Config::Spacing);
-	h1->addWidget (plot_frame);
-	QVBoxLayout* v1 = new QVBoxLayout (h1, Config::Spacing);
-	v1->addWidget (_enabled);
-	QHBoxLayout* h2 = new QHBoxLayout (v1, Config::Spacing);
-	h2->addWidget (_knob_point_value);
-	h2->addWidget (_knob_segment_duration);
-	QHBoxLayout* h3 = new QHBoxLayout (v0, Config::Spacing);
+	// Layouts:
+
+	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame);
+	plot_frame_layout->setMargin (0);
+	plot_frame_layout->setSpacing (Config::Spacing);
+	plot_frame_layout->addWidget (_plot);
+
+	QHBoxLayout* h3 = new QHBoxLayout();
+	h3->setSpacing (Config::Spacing);
 	h3->addWidget (_remove_active_point);
 	h3->addWidget (_add_point_before_active);
 	h3->addWidget (_add_point_after_active);
 	h3->addWidget (grid1);
+
+	QHBoxLayout* h2 = new QHBoxLayout();
+	h2->setSpacing (Config::Spacing);
+	h2->addWidget (_knob_point_value);
+	h2->addWidget (_knob_segment_duration);
+
+	QVBoxLayout* v1 = new QVBoxLayout();
+	v1->setSpacing (Config::Spacing);
+	v1->addWidget (_enabled);
+	v1->addLayout (h2);
+
+	QHBoxLayout* h1 = new QHBoxLayout();
+	h1->setSpacing (Config::Spacing);
+	h1->addWidget (plot_frame);
+	h1->addLayout (v1);
+
+	QVBoxLayout* v0 = new QVBoxLayout (this);
+	v0->setMargin (Config::Margin);
+	v0->setSpacing (Config::Spacing);
+	v0->addLayout (h1);
+	v0->addLayout (h3);
 	v0->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }
 
