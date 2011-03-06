@@ -89,6 +89,12 @@ class UnitItem:
 
   private:
 	/**
+	 * Returns group item for given group or 0.
+	 */
+	GroupItem*
+	find_group_item_for (PortGroup*);
+
+	/**
 	 * Returns group item for given group or creates
 	 * new if one doesn't exist.
 	 */

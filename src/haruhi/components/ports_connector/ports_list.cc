@@ -113,6 +113,8 @@ PortsList::read_units()
 		remove_unit (*u);
 	for (Units::iterator u = rest.begin(); u != rest.end(); ++u)
 		update_unit (*u);
+
+	sort();
 }
 
 
@@ -125,7 +127,6 @@ PortsList::insert_unit (Unit* unit)
 		invisibleRootItem()->addChild (unit_item);
 		unit_item->setExpanded (true);
 		_units[unit] = unit_item;
-		sort();
 	}
 }
 
@@ -151,7 +152,6 @@ PortsList::update_unit (Unit* unit)
 {
 	_units[unit]->update();
 	_units[unit]->read_ports();
-	sort();
 }
 
 

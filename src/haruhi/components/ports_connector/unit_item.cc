@@ -180,7 +180,7 @@ UnitItem::set_filtered_out (bool set)
 
 
 GroupItem*
-UnitItem::find_or_create_group_item_for (PortGroup* group)
+UnitItem::find_group_item_for (PortGroup* group)
 {
 	GroupItem* item = 0;
 	for (int i = 0; i < childCount(); ++i)
@@ -189,6 +189,16 @@ UnitItem::find_or_create_group_item_for (PortGroup* group)
 		if ((item = dynamic_cast<GroupItem*> (c)) != 0 && item->group() == group)
 			return item;
 	}
+	return 0;
+}
+
+
+GroupItem*
+UnitItem::find_or_create_group_item_for (PortGroup* group)
+{
+	GroupItem* item = find_group_item_for (group);
+	if (item)
+		return item;
 	// If group item not found, create new:
 	item = new GroupItem (group, this);
 	addChild (item);
@@ -199,8 +209,8 @@ UnitItem::find_or_create_group_item_for (PortGroup* group)
 void
 UnitItem::cleanup_group (PortGroup* group)
 {
-	GroupItem* item = find_or_create_group_item_for (group);
-	if (item->childCount() == 0)
+	GroupItem* item = find_group_item_for (group);
+	if (item && item->childCount() == 0)
 	{
 		item->parent()->takeChild (item->parent()->indexOfChild (item));
 		delete item;
