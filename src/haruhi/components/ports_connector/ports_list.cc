@@ -107,10 +107,11 @@ PortsList::read_units()
 	std::set_difference (l_units.begin(), l_units.end(), g_units.begin(), g_units.end(), std::inserter (removed, removed.end()));
 	std::set_intersection (g_units.begin(), g_units.end(), l_units.begin(), l_units.end(), std::inserter (rest, rest.end()));
 
-	for (Units::iterator u = added.begin(); u != added.end(); ++u)
-		insert_unit (*u);
+	// Removing items for deleted units first is safest.
 	for (Units::iterator u = removed.begin(); u != removed.end(); ++u)
 		remove_unit (*u);
+	for (Units::iterator u = added.begin(); u != added.end(); ++u)
+		insert_unit (*u);
 	for (Units::iterator u = rest.begin(); u != rest.end(); ++u)
 		update_unit (*u);
 

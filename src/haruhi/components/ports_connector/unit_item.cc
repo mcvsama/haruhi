@@ -105,10 +105,12 @@ UnitItem::read_ports()
 	std::set_difference (l_ports.begin(), l_ports.end(), u_ports.begin(), u_ports.end(), std::inserter (removed, removed.end()));
 	std::set_intersection (u_ports.begin(), u_ports.end(), l_ports.begin(), l_ports.end(), std::inserter (rest, rest.end()));
 
-	for (Ports::iterator p = added.begin(); p != added.end(); ++p)
-		insert_port (*p);
+	// Since some operations (setHidden) may call sort() and thus operator< which operatoes on Port,
+	// remove deleted items first to avoid segmentation faults.
 	for (Ports::iterator p = removed.begin(); p != removed.end(); ++p)
 		remove_port (*p);
+	for (Ports::iterator p = added.begin(); p != added.end(); ++p)
+		insert_port (*p);
 	for (Ports::iterator p = rest.begin(); p != rest.end(); ++p)
 		update_port (*p);
 }
