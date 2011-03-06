@@ -20,6 +20,7 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QTreeWidgetItem>
 #include <QtGui/QMenu>
+#include <QtGui/QTextDocument>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -239,7 +240,7 @@ Backend::connect()
 	}
 	catch (Exception const& e)
 	{
-		QMessageBox::warning (this, "Event backend", QString ("Can't connect to event backend: ") + e.what());
+		QMessageBox::warning (this, "Event backend", "Can't connect to event backend: " + Qt::escape (e.what()));
 	}
 }
 

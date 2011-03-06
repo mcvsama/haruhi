@@ -109,6 +109,7 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 		QFont font (QApplication::font());
 		font.setWeight (QFont::Black);
 		_preset_name->setFont (font);
+		_preset_name->setTextFormat (Qt::PlainText);
 
 		// Presets button:
 		_presets_button = new QPushButton ("Presets", bar);

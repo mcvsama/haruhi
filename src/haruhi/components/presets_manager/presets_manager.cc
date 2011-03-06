@@ -31,6 +31,7 @@
 #include <QtGui/QTabWidget>
 #include <QtGui/QPushButton>
 #include <QtGui/QMessageBox>
+#include <QtGui/QTextDocument>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -265,7 +266,7 @@ PresetsManager::destroy()
 	Private::PackageItem* package_item = _tree->current_package_item();
 	if (package_item)
 	{
-		if (QMessageBox::question (this, "Delete package", "Really delete package " + package_item->meta().name + "?",
+		if (QMessageBox::question (this, "Delete package", "Really delete package " + Qt::escape (package_item->meta().name) + "?",
 								   QMessageBox::Yes | QMessageBox::Default, QMessageBox::Cancel | QMessageBox::Escape) == QMessageBox::Yes)
 		{
 			package_item->remove_file();
@@ -277,7 +278,7 @@ PresetsManager::destroy()
 	Private::CategoryItem* category_item = _tree->current_category_item();
 	if (category_item)
 	{
-		if (QMessageBox::question (this, "Delete category", "Really delete category " + category_item->name() + "?",
+		if (QMessageBox::question (this, "Delete category", "Really delete category " + Qt::escape (category_item->name()) + "?",
 								   QMessageBox::Yes | QMessageBox::Default, QMessageBox::Cancel | QMessageBox::Escape) == QMessageBox::Yes)
 		{
 			Private::PackageItem* package_item = category_item->package_item();
@@ -288,7 +289,7 @@ PresetsManager::destroy()
 			}
 			catch (Exception const& e)
 			{
-				QMessageBox::warning (this, "Error", e.what());
+				QMessageBox::warning (this, "Error", Qt::escape (e.what()));
 			}
 		}
 	}
@@ -296,7 +297,7 @@ PresetsManager::destroy()
 	Private::PresetItem* preset_item = _tree->current_preset_item();
 	if (preset_item)
 	{
-		if (QMessageBox::question (this, "Delete preset", "Really delete preset " + preset_item->meta().name + "?",
+		if (QMessageBox::question (this, "Delete preset", "Really delete preset " + Qt::escape (preset_item->meta().name) + "?",
 								   QMessageBox::Yes | QMessageBox::Default, QMessageBox::Cancel | QMessageBox::Escape) == QMessageBox::Yes)
 		{
 			Private::CategoryItem* category_item = preset_item->category_item();
@@ -307,7 +308,7 @@ PresetsManager::destroy()
 			}
 			catch (Exception const& e)
 			{
-				QMessageBox::warning (this, "Error", e.what());
+				QMessageBox::warning (this, "Error", Qt::escape (e.what()));
 			}
 		}
 	}
@@ -433,7 +434,7 @@ PresetsManager::read()
 				}
 				catch (Exception const& e)
 				{
-					QMessageBox::warning (this, "Error", e.what());
+					QMessageBox::warning (this, "Error", Qt::escape (e.what()));
 				}
 			}
 			update_widgets();
@@ -499,7 +500,7 @@ PresetsManager::save_preset (Private::PresetItem* preset_item, bool with_patch)
 		}
 		catch (Exception const& e)
 		{
-			QMessageBox::warning (this, "Error", e.what());
+			QMessageBox::warning (this, "Error", Qt::escape (e.what()));
 		}
 	}
 }

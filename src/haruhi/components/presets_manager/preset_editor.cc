@@ -23,6 +23,7 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QGroupBox>
 #include <QtGui/QGridLayout>
+#include <QtGui/QTextDocument>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -227,7 +228,7 @@ PresetEditor::update_details()
 	}
 	catch (Exception const& e)
 	{
-		QMessageBox::warning (this, "Error", e.what());
+		QMessageBox::warning (this, "Error", Qt::escape (e.what()));
 	}
 }
 

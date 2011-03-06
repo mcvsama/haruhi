@@ -93,10 +93,13 @@ Mikuru::Mikuru (std::string const& urn, std::string const& title, int id, QWidge
 	_current_voices_label = new QLabel ("", this);
 	_current_voices_label->setFixedWidth (50);
 	_current_voices_label->setAlignment (Qt::AlignRight | Qt::AlignVCenter);
+	_current_voices_label->setTextFormat (Qt::PlainText);
 	_current_load_label = new QLabel ("", this);
 	_current_load_label->setFixedWidth (50);
+	_current_load_label->setTextFormat (Qt::PlainText);
 	_current_load_per_voice_label = new QLabel ("", this);
 	_current_load_per_voice_label->setFixedWidth (50);
+	_current_load_per_voice_label->setTextFormat (Qt::PlainText);
 
 	_add_part = new QPushButton (Resources::Icons16::add(), "Add part", this);
 	QObject::connect (_add_part, SIGNAL (clicked()), this, SLOT (add_part()));

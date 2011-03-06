@@ -25,6 +25,7 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QToolTip>
 #include <QtGui/QMenu>
+#include <QtGui/QTextDocument>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -309,7 +310,7 @@ Backend::connect()
 	}
 	catch (Exception const& e)
 	{
-		QMessageBox::warning (this, "Audio backend", QString ("Can't connect to audio backend: ") + e.what());
+		QMessageBox::warning (this, "Audio backend", "Can't connect to audio backend: " + Qt::escape (e.what()));
 	}
 	update_widgets();
 }

@@ -15,6 +15,7 @@
 #include <cstddef>
 
 // Qt:
+#include <QtGui/QTextDocument>
 #include <QtGui/QMessageBox>
 
 // Haruhi:
@@ -381,7 +382,7 @@ Patch::load_state (QDomElement const& element)
 
 	if (element.attribute ("version") != Patch::VERSION_D_2010_02_20)
 	{
-		QMessageBox::warning (_mikuru, "Error loading patch", "Unknown patch version \"" + element.attribute ("version") + "\", not loading.");
+		QMessageBox::warning (_mikuru, "Preset load error", "Unknown preset version \"" + Qt::escape (element.attribute ("version")) + "\", not loading.");
 		return;
 	}
 

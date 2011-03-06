@@ -247,10 +247,11 @@ Knob::Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_
 	setFrameStyle (QFrame::StyledPanel | QFrame::Raised);
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-	_label = new QLabel (label, this);
 	_dial_control = new DialControl (this, hard_limit_min, hard_limit_max, controller_proxy().config().reverse (controller_proxy().param()->get()));
 	_spin_box = new SpinBox (this, this, user_limit_min, user_limit_max, show_min, show_max, step, decimals);
+	_label = new QLabel (label, this);
 	_label->setBuddy (_spin_box);
+	_label->setTextFormat (Qt::PlainText);
 	_context_menu = new QMenu (this);
 	_std_text_color = _label->paletteForegroundColor();
 

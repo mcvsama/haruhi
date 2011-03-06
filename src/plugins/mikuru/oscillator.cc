@@ -269,6 +269,7 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 		QLabel* label = new QLabel (QString ("%1").arg (i + 1), harmonics_grid);
 		label->setAlignment (Qt::AlignCenter);
 		label->setFixedWidth (23);
+		label->setTextFormat (Qt::PlainText);
 		harmonics_layout->addWidget (label, 1, i);
 
 		QPushButton* reset = new QPushButton ("R", harmonics_grid);
@@ -305,6 +306,7 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 		QLabel* label = new QLabel (QString ("%1").arg (i + 1), phases_grid);
 		label->setAlignment (Qt::AlignCenter);
 		label->setFixedWidth (23);
+		label->setTextFormat (Qt::PlainText);
 		phases_layout->addWidget (label, 1, i);
 
 		QPushButton* reset = new QPushButton ("R", phases_grid);

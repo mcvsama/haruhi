@@ -30,6 +30,7 @@
 #include <QtGui/QCloseEvent>
 #include <QtGui/QGridLayout>
 #include <QtGui/QLayout>
+#include <QtGui/QTextDocument>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -336,6 +337,7 @@ Session::Session (QWidget* parent):
 	f.setWeight (QFont::Normal);
 	_session_name->setFont (f);
 	_session_name->setCursor (QCursor (Qt::PointingHandCursor));
+	_session_name->setTextFormat (Qt::PlainText);
 	QToolTip::add (_session_name, "Click to rename session");
 	QObject::connect (_session_name, SIGNAL (clicked()), this, SLOT (rename_session()));
 
@@ -484,7 +486,7 @@ Session::load_session (QString const& file_name)
 	}
 	catch (Exception const& e)
 	{
-		QMessageBox::warning (this, "Error while loading session", e.what());
+		QMessageBox::warning (this, "Error while loading session", Qt::escape (e.what()));
 	}
 }
 
@@ -515,7 +517,7 @@ Session::save_session (QString const& file_name)
 	}
 	catch (Exception const& e)
 	{
-		QMessageBox::warning (this, "Error while loading session", e.what());
+		QMessageBox::warning (this, "Error while loading session", Qt::escape (e.what()));
 	}
 }
 
@@ -797,7 +799,7 @@ Session::start_audio_backend()
 	}
 	catch (Exception const& e)
 	{
-		QMessageBox::warning (this, "Could not create audio backend", QString ("Could not start audio backend: ") + e.what());
+		QMessageBox::warning (this, "Could not create audio backend", "Could not start audio backend: " + Qt::escape (e.what()));
 	}
 }
 
@@ -820,7 +822,7 @@ Session::start_event_backend()
 	}
 	catch (Exception const& e)
 	{
-		QMessageBox::warning (this, "Could not create event backend", QString ("Could not start event backend: ") + e.what());
+		QMessageBox::warning (this, "Could not create event backend", "Could not start event backend: " + Qt::escape (e.what()));
 	}
 }
 
