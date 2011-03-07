@@ -257,8 +257,8 @@ EG::process()
 	_port_segment_duration->sync();
 
 	// Process ports events:
-	_knob_point_value->controller_proxy().process_events();
-	_knob_segment_duration->controller_proxy().process_events();
+	_knob_point_value->process_events();
+	_knob_segment_duration->process_events();
 
 	// Nothing to process?
 	if (_egs.empty())

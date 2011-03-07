@@ -464,14 +464,14 @@ LFO::process()
 	_port_fade_out->sync();
 
 	// Process ports events:
-	_knob_delay->controller_proxy().process_events();
-	_knob_fade_in->controller_proxy().process_events();
-	_knob_frequency->controller_proxy().process_events();
-	_knob_level->controller_proxy().process_events();
-	_knob_depth->controller_proxy().process_events();
-	_knob_phase->controller_proxy().process_events();
-	_knob_wave_shape->controller_proxy().process_events();
-	_knob_fade_out->controller_proxy().process_events();
+	_knob_delay->process_events();
+	_knob_fade_in->process_events();
+	_knob_frequency->process_events();
+	_knob_level->process_events();
+	_knob_depth->process_events();
+	_knob_phase->process_events();
+	_knob_wave_shape->process_events();
+	_knob_fade_out->process_events();
 
 	// Skip if disabled or not connected:
 	if (!_params.enabled.get() || _port_output->forward_connections().empty())

@@ -577,15 +577,15 @@ void
 Oscillator::process_events()
 {
 	// Waveform:
-	_knob_wave_shape->controller_proxy().process_events();
-	_knob_modulator_amplitude->controller_proxy().process_events();
-	_knob_modulator_index->controller_proxy().process_events();
-	_knob_modulator_shape->controller_proxy().process_events();
+	_knob_wave_shape->process_events();
+	_knob_modulator_amplitude->process_events();
+	_knob_modulator_index->process_events();
+	_knob_modulator_shape->process_events();
 	// Oscillator:
-	_knob_volume->controller_proxy().process_events();
-	_knob_portamento_time->controller_proxy().process_events();
-	_knob_phase->controller_proxy().process_events();
-	_knob_noise_level->controller_proxy().process_events();
+	_knob_volume->process_events();
+	_knob_portamento_time->process_events();
+	_knob_phase->process_events();
+	_knob_noise_level->process_events();
 	// Voice:
 	_evdisp_amplitude->load_events();
 	_evdisp_frequency->load_events();

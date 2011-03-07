@@ -105,7 +105,7 @@ EventDispatcher::load_events()
 	if (ce)
 	{
 		if (_knob)
-			_knob->controller_proxy().process_event (ce);
+			_knob->process_event (ce);
 		else
 			_receiver->receive (Haruhi::OmniVoice, renormalize (ce->value(), 0.0f, 1.0f, _min, _max));
 	}

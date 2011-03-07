@@ -21,6 +21,9 @@
 #include <QtGui/QAbstractSlider>
 #include <QtGui/QPixmap>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 namespace Haruhi {
 
@@ -32,6 +35,13 @@ class DialControl: public QAbstractSlider
 	DialControl (QWidget* parent, int value_min, int value_max, int value);
 
 	~DialControl();
+
+	/**
+	 * Returns true if mouse button is pressed over a dial,
+	 * and user is to change dial's value.
+	 */
+	bool
+	mouse_pressed() { return _mouse_pressed; }
 
   signals:
 	void
@@ -46,6 +56,9 @@ class DialControl: public QAbstractSlider
 
 	void
 	mousePressEvent (QMouseEvent*);
+
+	void
+	mouseReleaseEvent (QMouseEvent*);
 
 	void
 	mouseMoveEvent (QMouseEvent*);
@@ -67,6 +80,7 @@ class DialControl: public QAbstractSlider
 	int			_mouse_press_value;
 	bool		_to_update;
 	bool		_last_enabled_state;
+	bool		_mouse_pressed;
 };
 
 } // namespace Haruhi

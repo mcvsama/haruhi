@@ -96,6 +96,29 @@ class Controller:
 	void
 	stop_learning();
 
+	/**
+	 * Processes events on ControllerProxy unless user is interacting
+	 * with controller's UI at the moment.
+	 * You should call this method instead of accessing ControllerProxy.
+	 */
+	void
+	process_events();
+
+	/**
+	 * Processes given event on ControllerProxy unless user is interacting
+	 * with controller's UI at the moment.
+	 * You should call this method instead of accessing ControllerProxy.
+	 */
+	void
+	process_event (ControllerEvent const*);
+
+	/**
+	 * Returns true if user is moving dial with the mouse
+	 * at the moment. By default returns false.
+	 */
+	virtual bool
+	mouse_pressed() { return false; }
+
   protected:
 	/**
 	 * Called whenever learning is started/stopped.

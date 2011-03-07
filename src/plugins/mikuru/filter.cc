@@ -223,10 +223,10 @@ Filter::process_events()
 	}
 	else
 	{
-		_knob_frequency->controller_proxy().process_events();
-		_knob_resonance->controller_proxy().process_events();
-		_knob_gain->controller_proxy().process_events();
-		_knob_attenuation->controller_proxy().process_events();
+		_knob_frequency->process_events();
+		_knob_resonance->process_events();
+		_knob_gain->process_events();
+		_knob_attenuation->process_events();
 	}
 }
 

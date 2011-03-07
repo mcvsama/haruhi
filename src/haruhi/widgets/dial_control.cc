@@ -36,7 +36,8 @@ DialControl::DialControl (QWidget* parent, int value_min, int value_max, int val
 	_disabled_dial_pixmap ("share/images/dial:disabled.png"),
 	_mouse_press_value (0),
 	_to_update (false),
-	_last_enabled_state (isEnabled())
+	_last_enabled_state (isEnabled()),
+	_mouse_pressed (false)
 {
 	setWindowFlags (Qt::WRepaintNoErase);
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -93,6 +94,20 @@ DialControl::mousePressEvent (QMouseEvent* event)
 		event->accept();
 		_mouse_press_position = event->pos();
 		_mouse_press_value = value();
+		_mouse_pressed = true;
+	}
+	else
+		event->ignore();
+}
+
+
+void
+DialControl::mouseReleaseEvent (QMouseEvent* event)
+{
+	if (event->button() == Qt::LeftButton)
+	{
+		event->accept();
+		_mouse_pressed = false;
 	}
 	else
 		event->ignore();

@@ -76,6 +76,22 @@ Controller::stop_learning()
 
 
 void
+Controller::process_events()
+{
+	if (!mouse_pressed())
+		controller_proxy().process_events();
+}
+
+
+void
+Controller::process_event (ControllerEvent const* event)
+{
+	if (!mouse_pressed())
+		controller_proxy().process_event (event);
+}
+
+
+void
 Controller::learned_connection (EventBackend::EventTypes, EventPort* learned_port)
 {
 	_learning.store (false);

@@ -307,13 +307,13 @@ ADSR::process()
 	_port_release->sync();
 
 	// Process ports events:
-	_knob_delay->controller_proxy().process_events();
-	_knob_attack->controller_proxy().process_events();
-	_knob_attack_hold->controller_proxy().process_events();
-	_knob_decay->controller_proxy().process_events();
-	_knob_sustain->controller_proxy().process_events();
-	_knob_sustain_hold->controller_proxy().process_events();
-	_knob_release->controller_proxy().process_events();
+	_knob_delay->process_events();
+	_knob_attack->process_events();
+	_knob_attack_hold->process_events();
+	_knob_decay->process_events();
+	_knob_sustain->process_events();
+	_knob_sustain_hold->process_events();
+	_knob_release->process_events();
 
 	// Nothing to process?
 	if (_adsrs.empty())

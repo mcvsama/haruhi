@@ -148,11 +148,11 @@ General::delete_envelopes()
 void
 General::process_events()
 {
-	_knob_volume->controller_proxy().process_events();
-	_knob_detune->controller_proxy().process_events();
-	_knob_panorama->controller_proxy().process_events();
-	_knob_stereo_width->controller_proxy().process_events();
-	_knob_input_volume->controller_proxy().process_events();
+	_knob_volume->process_events();
+	_knob_detune->process_events();
+	_knob_panorama->process_events();
+	_knob_stereo_width->process_events();
+	_knob_input_volume->process_events();
 
 	// Copy values from pitchbend/amplitude/frequency ports to each part's port:
 	Haruhi::EventBuffer* pitchbend_buffer = _port_pitchbend->event_buffer();

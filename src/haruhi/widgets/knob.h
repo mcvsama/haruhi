@@ -193,6 +193,13 @@ class Knob:
 	read();
 
 	/*
+	 * Controller API
+	 */
+
+	bool
+	mouse_pressed() { return _dial_control->mouse_pressed(); }
+
+	/*
 	 * PeriodicUpdater::Receiver API
 	 */
 
