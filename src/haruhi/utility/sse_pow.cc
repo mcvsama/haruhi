@@ -25,6 +25,7 @@
 // Local:
 #include "sse_pow.h"
 
+#if defined(HARUHI_SSE1) && defined(HARUHI_SSE2)
 
 namespace SSEPow {
 
@@ -64,4 +65,6 @@ deinitialize()
 }
 
 } // namespace SSEPow
+
+#endif
 
