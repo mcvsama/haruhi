@@ -36,8 +36,9 @@ WaveComputer::WaveComputer():
 	_exit (0),
 	_exited (0)
 {
-	// 128kB was tested to be safe on 32-bit system:
-	set_stack_size (256 * 1024);
+	// Stack size depends on distro and CFLAGS used for fftw.
+	// Let's safely assume that 1MB is fine:
+	set_stack_size (1024 * 1024);
 	_wavetables[0] = new DSP::Wavetable();
 	_wavetables[1] = new DSP::Wavetable();
 	start();
