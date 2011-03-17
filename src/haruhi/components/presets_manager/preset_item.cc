@@ -15,7 +15,7 @@
 #include <cstddef>
 
 // System:
-#include <uuid/uuid.h>
+#include <uuid/uuid.h>//TODO XXX
 
 // Qt:
 #include <QtGui/QTreeWidgetItem>
@@ -24,6 +24,7 @@
 #include <haruhi/config/all.h>
 
 // Local:
+#include "helpers.h"
 #include "category_item.h"
 #include "preset_item.h"
 #include "presets_tree.h"
@@ -36,8 +37,8 @@ namespace PresetsManagerPrivate {
 void
 PresetItem::Meta::save_state (QDomElement& element) const
 {
-	PresetsManager::append_element (element, "name", name);
-	PresetsManager::append_element (element, "version", version);
+	append_element (element, "name", name);
+	append_element (element, "version", version);
 }
 
 

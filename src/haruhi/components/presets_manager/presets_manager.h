@@ -30,6 +30,9 @@
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/settings/has_presets_settings.h>
 
+// Local:
+#include "model.h"
+
 
 namespace Haruhi {
 
@@ -41,6 +44,7 @@ class PresetsTree;
 
 }
 
+
 class PresetsManager: public QWidget
 {
 	Q_OBJECT
@@ -50,30 +54,26 @@ class PresetsManager: public QWidget
   public:
 	PresetsManager (Unit*, QWidget* parent = 0);
 
-	virtual ~PresetsManager();
+	~PresetsManager();
 
 	/**
-	 * Returns filesystem path to directory where package files
-	 * (containing presets) are stored.
+	 * Model accessor.
 	 */
-	QString const&
-	directory() { return _packages_dir; }
+	PresetsManagerPrivate::Model*
+	model() { return _model; }
 
 	/**
 	 * Returns true if preset with given UUID is favorited.
 	 * Searches only presets for the Unit.
 	 */
 	bool
-	favorited (QString const& preset_uuid);
+	favorited (QString const& preset_uuid) const;
 
 	/**
 	 * Sets preset as favorited/not favorited.
 	 */
 	void
 	set_favorited (QString const& preset_uuid, bool set);
-
-	static QDomElement
-	append_element (QDomElement& subject, QString const& name, QString const& value);
 
   signals:
 	void
@@ -90,7 +90,7 @@ class PresetsManager: public QWidget
 	load_preset (QTreeWidgetItem*);
 
 	/**
-	 * Save as current.
+	 * Save current params as selected preset.
 	 */
 	void
 	save_preset();
@@ -123,14 +123,11 @@ class PresetsManager: public QWidget
 	void
 	save_preset (PresetsManagerPrivate::PresetItem* preset_item, bool with_patch);
 
-	QString
-	lock_file_name() const;
-
 	std::string
 	sanitize_urn (std::string const& urn) const;
 
   private:
-	QString									_packages_dir;
+	PresetsManagerPrivate::Model*			_model;
 	Unit*									_unit;
 	SaveableState*							_saveable_unit;
 	PresetsManagerPrivate::PresetsTree*		_tree;
@@ -145,7 +142,6 @@ class PresetsManager: public QWidget
 	QAction*								_create_package_action;
 	QAction*								_create_category_action;
 	QAction*								_create_preset_action;
-	int										_lock_file;
 };
 
 } // namespace Haruhi

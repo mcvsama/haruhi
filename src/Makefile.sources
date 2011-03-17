@@ -159,15 +159,25 @@ SRC_MOCHDRS += haruhi/components/ports_connector/ports_list.h
 
 ######## /components/presets_manager ########
 
+SRC_HEADERS += haruhi/components/presets_manager/category.h
 SRC_HEADERS += haruhi/components/presets_manager/category_item.h
+SRC_HEADERS += haruhi/components/presets_manager/helpers.h
+SRC_HEADERS += haruhi/components/presets_manager/model.h
+SRC_HEADERS += haruhi/components/presets_manager/package.h
 SRC_HEADERS += haruhi/components/presets_manager/package_item.h
+SRC_HEADERS += haruhi/components/presets_manager/preset.h
 SRC_HEADERS += haruhi/components/presets_manager/preset_editor.h
 SRC_HEADERS += haruhi/components/presets_manager/preset_item.h
 SRC_HEADERS += haruhi/components/presets_manager/presets_tree.h
 SRC_HEADERS += haruhi/components/presets_manager/presets_manager.h
 
+SRC_SOURCES += haruhi/components/presets_manager/category.cc
 SRC_SOURCES += haruhi/components/presets_manager/category_item.cc
+SRC_SOURCES += haruhi/components/presets_manager/helpers.cc
+SRC_SOURCES += haruhi/components/presets_manager/model.cc
+SRC_SOURCES += haruhi/components/presets_manager/package.cc
 SRC_SOURCES += haruhi/components/presets_manager/package_item.cc
+SRC_SOURCES += haruhi/components/presets_manager/preset.cc
 SRC_SOURCES += haruhi/components/presets_manager/preset_editor.cc
 SRC_SOURCES += haruhi/components/presets_manager/preset_item.cc
 SRC_SOURCES += haruhi/components/presets_manager/presets_tree.cc

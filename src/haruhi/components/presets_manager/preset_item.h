@@ -81,6 +81,7 @@ class PresetItem: public QTreeWidgetItem
 	void
 	clear_patch_element (QDomDocument& document);
 
+	// TODO remove
 	void
 	ensure_has_uuid();
 
@@ -97,6 +98,7 @@ class PresetItem: public QTreeWidgetItem
   private:
 	/**
 	 * Generates and stores new UUID for this preset.
+	 * TODO remove
 	 */
 	void
 	generate_uuid();

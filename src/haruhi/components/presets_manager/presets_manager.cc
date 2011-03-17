@@ -32,6 +32,7 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QMessageBox>
 #include <QtGui/QTextDocument>
+#include <QtGui/QMessageBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -58,8 +59,7 @@ namespace Private = PresetsManagerPrivate;
 PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 	QWidget (parent),
 	_unit (unit),
-	_saveable_unit (dynamic_cast<SaveableState*> (unit)),
-	_lock_file (-1)
+	_saveable_unit (dynamic_cast<SaveableState*> (unit))
 {
 	_has_presets_settings = Haruhi::haruhi()->has_presets_settings();
 
@@ -129,8 +129,17 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 	mkpath (all_presets_dir.toStdString(), 0700);
 
 	std::string dir = sanitize_urn (_unit->urn());
-	_packages_dir = all_presets_dir + "/" + QString::fromStdString (dir);
-	read();
+	try {
+		_model = Private::Model::get (all_presets_dir + "/" + QString::fromStdString (dir));
+	}
+	catch (Exception const& e)
+	{
+		_model = 0;
+		QString message =
+			"Another instance of Haruhi has locked the presets directory.\n"
+			"Presets manager will be disabled for this session.\n\nError message: %1\nDetail: %2";
+		QMessageBox::information (0, "Presets disabled", message.arg (e.what()).arg (e.details()));
+	}
 
 	update_widgets();
 }
@@ -138,13 +147,12 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 
 PresetsManager::~PresetsManager()
 {
-	if (_lock_file != -1)
-		::unlink (lock_file_name());
+	Private::Model::release (_model);
 }
 
 
 bool
-PresetsManager::favorited (QString const& preset_uuid)
+PresetsManager::favorited (QString const& preset_uuid) const
 {
 	return _has_presets_settings->favorited (_unit->urn(), preset_uuid.toStdString());
 }
@@ -315,17 +323,6 @@ PresetsManager::destroy()
 }
 
 
-QDomElement
-PresetsManager::append_element (QDomElement& subject, QString const& name, QString const& value)
-{
-	QDomDocument doc = subject.ownerDocument();
-	QDomElement element = doc.createElement (name);
-	element.appendChild (doc.createTextNode (value));
-	subject.appendChild (element);
-	return element;
-}
-
-
 void
 PresetsManager::update_widgets()
 {
@@ -405,85 +402,6 @@ PresetsManager::show_favorites()
 
 
 void
-PresetsManager::read()
-{
-	mkpath (directory().toStdString(), 0700);
-
-	bool exit = false;
-	// Try locking 5 times then give up:
-	for (int i = 0; i < 5 && exit == false; ++i)
-	{
-		_lock_file = ::open (lock_file_name(), O_CREAT | O_EXCL | O_WRONLY, 0644);
-		// If lock is acquired:
-		if (_lock_file != -1)
-		{
-			// Write our pid to file:
-			QString pid  = QString ("%1").arg (::getpid());
-			if (::write (_lock_file, pid.ascii(), std::strlen (pid.ascii())) == -1)
-				std::cerr << "Warning: failed to write Mikuru's PID to lock file." << std::endl;
-
-			// Read packages:
-			QDir dir (_packages_dir, "*.haruhi-presets");
-			QStringList list = dir.entryList();
-			// Each entry in list represents one presets package:
-			for (QStringList::Iterator p = list.begin(); p != list.end(); ++p)
-			{
-				Private::PackageItem* package_item = new Private::PackageItem (_tree);
-				try {
-					package_item->load_file (_packages_dir + "/" + *p);
-				}
-				catch (Exception const& e)
-				{
-					QMessageBox::warning (this, "Error", Qt::escape (e.what()));
-				}
-			}
-			update_widgets();
-			exit = true;
-		}
-		else
-		{
-			QFile f (lock_file_name());
-			char pid_string[1024] = { 0, };
-			if (f.open (IO_ReadOnly))
-			{
-				f.readLine (pid_string, 1023);
-				int pid = std::atoi (pid_string);
-				// Check if another process exist:
-				if (::kill (pid, 0) == 0)
-				{
-					// If the other process is us, link two PresetsManagers to mirror their operations:
-					// (first will be in master mode to operate on disk, second in slave to operate only in UI).
-					if (::getpid() == pid)
-					{
-						// TODO
-						QMessageBox::warning (this, "Presets Manager", "Another unit has locked the presets directory, sharing is unimplemented yet.");
-						setEnabled (false);
-						exit = true;
-					}
-					else
-					{
-						QMessageBox::warning (this, "Presets Manager", "Another process has locked presets directory, disabling Presets Manager.");
-						setEnabled (false);
-						exit = true;
-					}
-				}
-				else
-					// Does not exist, remove file and try again to read:
-					f.remove();
-			}
-			// Couldn't open file, try to read again in a loop.
-		}
-	}
-
-	if (exit == false)
-	{
-		QMessageBox::warning (this, "Presets Manager", "Could not read presets directory (could not acquire or clean lock).\nGiving up.");
-		setEnabled (false);
-	}
-}
-
-
-void
 PresetsManager::save_preset (Private::PresetItem* preset_item, bool with_patch)
 {
 	if (_saveable_unit)
@@ -503,13 +421,6 @@ PresetsManager::save_preset (Private::PresetItem* preset_item, bool with_patch)
 			QMessageBox::warning (this, "Error", Qt::escape (e.what()));
 		}
 	}
-}
-
-
-QString
-PresetsManager::lock_file_name() const
-{
-	return _packages_dir + "/" + ".haruhi-lock.pid";
 }
 
 

@@ -26,6 +26,7 @@
 #include <haruhi/utility/exception.h>
 
 // Local:
+#include "helpers.h"
 #include "package_item.h"
 #include "category_item.h"
 #include "preset_item.h"
@@ -39,11 +40,11 @@ namespace PresetsManagerPrivate {
 void
 PackageItem::Meta::save_state (QDomElement& element) const
 {
-	PresetsManager::append_element (element, "name", name);
-	PresetsManager::append_element (element, "version", version);
-	PresetsManager::append_element (element, "created-at", created_at);
-	PresetsManager::append_element (element, "credits", credits);
-	PresetsManager::append_element (element, "license", license);
+	append_element (element, "name", name);
+	append_element (element, "version", version);
+	append_element (element, "created-at", created_at);
+	append_element (element, "credits", credits);
+	append_element (element, "license", license);
 }
 
 
@@ -124,11 +125,11 @@ PackageItem::load_file (QString const& file_name)
 void
 PackageItem::save_file()
 {
-	mkpath (presets_manager()->directory().toStdString(), 0700);
+	mkpath (presets_manager()->model()->directory().toStdString(), 0700);
 
 	QString name = meta().name;
 	name.replace ('/', "_");
-	QString file_name = presets_manager()->directory() + "/" + name + ".haruhi-presets";
+	QString file_name = presets_manager()->model()->directory() + "/" + name + ".haruhi-presets";
 
 	QString to_delete;
 	if (_file_name != file_name)
