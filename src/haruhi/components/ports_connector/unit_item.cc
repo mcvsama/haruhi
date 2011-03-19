@@ -145,7 +145,7 @@ UnitItem::remove_port (Port* port)
 		PortsToItemsMap::iterator k = _ports.find (port);
 		if (k != _ports.end())
 		{
-			k->second->parent()->takeChild (k->second->indexOfChild (k->second));
+			k->second->parent()->removeChild (k->second);
 			delete (k->second);
 			_ports.erase (k);
 			if (port->group())
@@ -159,10 +159,43 @@ UnitItem::remove_port (Port* port)
 void
 UnitItem::update_port (Port* port)
 {
-	_ports[port]->update();
+	PortItem* port_item = _ports[port];
+	GroupItem* group_item = dynamic_cast<GroupItem*> (port_item->parent());
+	bool changed = false;
+
+	// If unit changed or gained its group, take it out of current parent:
+	if (group_item && group_item->group() != port->group())
+	{
+		group_item->removeChild (port_item);
+		cleanup_group_item (group_item);
+		group_item = 0;
+		changed = true;
+	}
+	else if (!group_item && port->group())
+	{
+		port_item->parent()->removeChild (port_item);
+		changed = true;
+	}
+
+	// Lost its group?
+	if (changed)
+	{
+		if (port->group() == 0)
+			addChild (port_item);
+		// Moved to new group?
+		else
+		{
+			if (port_item->parent())
+				port_item->parent()->removeChild (port_item);
+			group_item = find_or_create_group_item_for (port->group());
+			group_item->addChild (port_item);
+		}
+	}
+
+	port_item->update();
 	// Update group title if changed:
-	if (port->group())
-		find_or_create_group_item_for (port->group())->update();
+	if (group_item)
+		group_item->update();
 }
 
 
@@ -212,10 +245,18 @@ void
 UnitItem::cleanup_group (PortGroup* group)
 {
 	GroupItem* item = find_group_item_for (group);
-	if (item && item->childCount() == 0)
+	if (item)
+	   cleanup_group_item (item);
+}
+
+
+void
+UnitItem::cleanup_group_item (GroupItem* group_item)
+{
+	if (group_item->childCount() == 0)
 	{
-		item->parent()->takeChild (item->parent()->indexOfChild (item));
-		delete item;
+		group_item->parent()->removeChild (group_item);
+		delete group_item;
 	}
 }
 

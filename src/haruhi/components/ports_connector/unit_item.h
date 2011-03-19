@@ -102,10 +102,16 @@ class UnitItem:
 	find_or_create_group_item_for (PortGroup*);
 
 	/**
-	 * Removes group item if it is empty.
+	 * Removes group item for given group if it is empty.
 	 */
 	void
 	cleanup_group (PortGroup*);
+
+	/**
+	 * Removes group item if it is empty.
+	 */
+	void
+	cleanup_group_item (GroupItem*);
 
 	/**
 	 * Hides unit item if it has no children ports.
