@@ -347,6 +347,7 @@ SRC_HEADERS += haruhi/utility/mutex.h
 SRC_HEADERS += haruhi/utility/noncopyable.h
 SRC_HEADERS += haruhi/utility/numeric.h
 SRC_HEADERS += haruhi/utility/pool_allocator.h
+SRC_HEADERS += haruhi/utility/predicates.h
 SRC_HEADERS += haruhi/utility/ref_counted.h
 SRC_HEADERS += haruhi/utility/saveable_state.h
 SRC_HEADERS += haruhi/utility/semaphore.h

@@ -20,7 +20,6 @@
 #include <list>
 
 // Qt:
-#include <QtXml/QDomNode>
 #include <QtGui/QPushButton>
 #include <QtGui/QMenu>
 #include <QtGui/QTreeWidgetItem>
@@ -28,6 +27,7 @@
 // Haruhi:
 #include <haruhi/graph/unit.h>
 #include <haruhi/utility/saveable_state.h>
+#include <haruhi/utility/signal.h>
 #include <haruhi/settings/has_presets_settings.h>
 
 // Local:
@@ -38,14 +38,18 @@ namespace Haruhi {
 
 namespace PresetsManagerPrivate {
 
+class PackageItem;
 class PresetEditor;
 class PresetItem;
 class PresetsTree;
+class Package;
 
 }
 
 
-class PresetsManager: public QWidget
+class PresetsManager:
+	public QWidget,
+	public Signal::Receiver
 {
 	Q_OBJECT
 
@@ -122,6 +126,12 @@ class PresetsManager: public QWidget
 
 	void
 	save_preset (PresetsManagerPrivate::PresetItem* preset_item, bool with_patch);
+
+	PresetsManagerPrivate::PackageItem*
+	create_package_item (PresetsManagerPrivate::Package* package);
+
+	void
+	remove_package_item (PresetsManagerPrivate::PackageItem* package_item);
 
 	std::string
 	sanitize_urn (std::string const& urn) const;

@@ -14,9 +14,6 @@
 // Standard:
 #include <cstddef>
 
-// System:
-#include <uuid/uuid.h>//TODO XXX
-
 // Qt:
 #include <QtGui/QTreeWidgetItem>
 
@@ -25,6 +22,7 @@
 
 // Local:
 #include "helpers.h"
+#include "preset.h"
 #include "category_item.h"
 #include "preset_item.h"
 #include "presets_tree.h"
@@ -34,50 +32,12 @@ namespace Haruhi {
 
 namespace PresetsManagerPrivate {
 
-void
-PresetItem::Meta::save_state (QDomElement& element) const
-{
-	append_element (element, "name", name);
-	append_element (element, "version", version);
-}
-
-
-void
-PresetItem::Meta::load_state (QDomElement const& element)
-{
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
-	{
-		QDomElement e = n.toElement();
-		if (!e.isNull())
-		{
-			if (e.tagName() == "name")
-				name = e.text();
-			else if (e.tagName() == "version")
-				version = e.text();
-			else if (e.tagName() == "created-at")
-				created_at = e.text();
-		}
-	}
-}
-
-
-PresetItem::PresetItem (CategoryItem* parent):
-	QTreeWidgetItem (parent, QStringList(), Qt::ItemIsDragEnabled)
+PresetItem::PresetItem (CategoryItem* parent, Preset* preset):
+	QTreeWidgetItem (parent, QStringList(), Qt::ItemIsDragEnabled),
+	_preset (preset)
 {
 	setup();
-}
-
-
-void
-PresetItem::setup()
-{
-	setIcon (0, Resources::Icons16::preset());
-	QSize s = sizeHint (0);
-	if (s.height() < 18)
-	{
-		s.setHeight (18);
-		setSizeHint (0, s);
-	}
+	read();
 }
 
 
@@ -98,65 +58,27 @@ PresetItem::category_item() const
 void
 PresetItem::reload()
 {
-	setText (0, _meta.name);
+	setText (0, _preset->name());
 }
 
 
 void
-PresetItem::clear_patch_element (QDomDocument& document)
+PresetItem::read()
 {
-	_patch = document.createElement ("patch");
-}
-
-
-void
-PresetItem::ensure_has_uuid()
-{
-	// Generate UUID if this is a new preset:
-	if (_uuid == QString::null || _uuid.isEmpty())
-		generate_uuid();
-}
-
-
-void
-PresetItem::save_state (QDomElement& element) const
-{
-	element.setAttribute ("uuid", _uuid);
-	QDomElement meta_element = element.ownerDocument().createElement ("meta");
-	_meta.save_state (meta_element);
-	element.appendChild (meta_element);
-	element.appendChild (_patch.cloneNode (true));
-}
-
-
-void
-PresetItem::load_state (QDomElement const& element)
-{
-	_uuid = element.attribute ("uuid");
-	ensure_has_uuid();
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
-	{
-		QDomElement e = n.toElement();
-		if (!e.isNull())
-		{
-			if (e.tagName() == "meta")
-				_meta.load_state (e);
-			else if (e.tagName() == "patch")
-				_patch = e.cloneNode (true).toElement();
-		}
-	}
 	reload();
 }
 
 
 void
-PresetItem::generate_uuid()
+PresetItem::setup()
 {
-	char uuid_string[37];
-	uuid_t uuid;
-	::uuid_generate (uuid);
-	::uuid_unparse_lower (uuid, uuid_string);
-	_uuid = QString (uuid_string);
+	setIcon (0, Resources::Icons16::preset());
+	QSize s = sizeHint (0);
+	if (s.height() < 18)
+	{
+		s.setHeight (18);
+		setSizeHint (0, s);
+	}
 }
 
 } // namespace PresetsManagerPrivate

@@ -30,6 +30,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/utility/filesystem.h>
 #include <haruhi/utility/lexical_cast.h>
+#include <haruhi/utility/predicates.h>
 
 // Local:
 #include "model.h"
@@ -111,6 +112,13 @@ Model::create_package()
 {
 	_packages.push_back (Package());
 	return &_packages.back();
+}
+
+
+void
+Model::remove_package (Package* package)
+{
+	_packages.remove_if (PointerEquals<Package> (package));
 }
 
 

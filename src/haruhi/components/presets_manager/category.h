@@ -53,6 +53,30 @@ class Category: public SaveableState
 	void
 	set_name (QString const& name) { _name = name; }
 
+	/**
+	 * Presets accessor.
+	 */
+	Presets&
+	presets() { return _presets; }
+
+	/**
+	 * Presets accessor.
+	 */
+	Presets const&
+	presets() const { return _presets; }
+
+	/**
+	 * Creates new child preset.
+	 */
+	Preset*
+	create_preset();
+
+	/**
+	 * Removes preset from list by its pointer.
+	 */
+	void
+	remove_preset (Preset* preset);
+
 	/*
 	 * SaveableState API
 	 */

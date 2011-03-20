@@ -101,7 +101,7 @@ PresetEditor::load_package (PackageItem* package_item)
 	_category_item = 0;
 	_preset_item = 0;
 
-	_package->setText (package_item->meta().name);
+	_package->setText (package_item->package()->name());
 	_package->setEnabled (true);
 	_category->setText ("");
 	_category->setEnabled (false);
@@ -117,8 +117,9 @@ PresetEditor::load_package (PackageItem* package_item)
 void
 PresetEditor::save_package (PackageItem* package_item)
 {
-	package_item->meta().name = _package->text();
+	package_item->package()->set_name (_package->text());
 	package_item->reload();
+	_presets_manager->model()->changed();
 }
 
 
@@ -129,9 +130,9 @@ PresetEditor::load_category (CategoryItem* category_item)
 	_category_item = category_item;
 	_preset_item = 0;
 
-	_package->setText (category_item->package_item()->meta().name);
+	_package->setText (category_item->package_item()->package()->name());
 	_package->setEnabled (false);
-	_category->setText (category_item->name());
+	_category->setText (category_item->category()->name());
 	_category->setEnabled (true);
 	_name->setText ("");
 	_name->setEnabled (false);
@@ -145,8 +146,9 @@ PresetEditor::load_category (CategoryItem* category_item)
 void
 PresetEditor::save_category (CategoryItem* category_item)
 {
-	category_item->set_name (_category->text());
+	category_item->category()->set_name (_category->text());
 	category_item->reload();
+	_presets_manager->model()->changed();
 }
 
 
@@ -157,16 +159,15 @@ PresetEditor::load_preset (PresetItem* preset_item)
 	_category_item = 0;
 	_preset_item = preset_item;
 
-	PresetItem::Meta const& m = preset_item->meta();
-	_package->setText (preset_item->category_item()->package_item()->meta().name);
+	_package->setText (preset_item->category_item()->package_item()->package()->name());
 	_package->setEnabled (false);
-	_category->setText (preset_item->category_item()->name());
+	_category->setText (preset_item->category_item()->category()->name());
 	_category->setEnabled (false);
-	_name->setText (m.name);
+	_name->setText (preset_item->preset()->name());
 	_name->setEnabled (true);
-	_version->setText (m.version);
+	_version->setText (preset_item->preset()->version());
 	_version->setEnabled (true);
-	_favorite->setChecked (_presets_manager->favorited (_preset_item->uuid()));
+	_favorite->setChecked (_presets_manager->favorited (preset_item->preset()->uuid()));
 	_favorite->setEnabled (true);
 }
 
@@ -174,11 +175,11 @@ PresetEditor::load_preset (PresetItem* preset_item)
 void
 PresetEditor::save_preset (PresetItem* preset_item)
 {
-	PresetItem::Meta& m = preset_item->meta();
-	m.name = _name->text();
-	m.version = _version->text();
-	_presets_manager->set_favorited (preset_item->uuid(), _favorite->isChecked());
+	preset_item->preset()->set_name (_name->text());
+	preset_item->preset()->set_version (_version->text());
+	_presets_manager->set_favorited (preset_item->preset()->uuid(), _favorite->isChecked());
 	preset_item->reload();
+	_presets_manager->model()->changed();
 }
 
 
@@ -213,17 +214,17 @@ PresetEditor::update_details()
 		if (_package_item)
 		{
 			save_package (_package_item);
-			_package_item->save_file();
+			_package_item->package()->save_file();
 		}
 		else if (_category_item)
 		{
 			save_category (_category_item);
-			_category_item->package_item()->save_file();
+			_category_item->package_item()->package()->save_file();
 		}
 		else if (_preset_item)
 		{
 			save_preset (_preset_item);
-			_preset_item->category_item()->package_item()->save_file();
+			_preset_item->category_item()->package_item()->package()->save_file();
 		}
 	}
 	catch (Exception const& e)

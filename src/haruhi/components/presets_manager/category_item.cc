@@ -21,6 +21,8 @@
 #include <haruhi/config/all.h>
 
 // Local:
+#include "category.h"
+#include "preset_item.h"
 #include "package_item.h"
 #include "category_item.h"
 
@@ -29,23 +31,12 @@ namespace Haruhi {
 
 namespace PresetsManagerPrivate {
 
-CategoryItem::CategoryItem (QString const& name, QTreeWidgetItem* parent):
-	QTreeWidgetItem (parent, QStringList (name), Qt::ItemIsDragEnabled)
+CategoryItem::CategoryItem (QTreeWidgetItem* parent, Category* category):
+	QTreeWidgetItem (parent, QStringList(), Qt::ItemIsDragEnabled),
+	_category (category)
 {
 	setup();
-}
-
-
-void
-CategoryItem::setup()
-{
-	setIcon (0, Resources::Icons16::presets_category());
-	QSize s = sizeHint (0);
-	if (s.height() < 18)
-	{
-		s.setHeight (18);
-		setSizeHint (0, s);
-	}
+	read();
 }
 
 
@@ -60,6 +51,82 @@ CategoryItem::package_item() const
 			return c;
 	}
 	return 0;
+}
+
+
+void
+CategoryItem::reload()
+{
+	setText (0, _category->name());
+}
+
+
+void
+CategoryItem::read()
+{
+	reload();
+
+	typedef std::set<Preset*> PresetsSet;
+
+	// Read packages:
+	PresetsSet m_presets; // Model presets
+	PresetsSet t_presets; // TreeWidget items
+	std::map<Preset*, PresetItem*> pi_by_p;
+
+	for (Category::Presets::iterator p = _category->presets().begin(); p != _category->presets().end(); ++p)
+		m_presets.insert (&*p);
+
+	for (int i = 0; i < childCount(); ++i)
+	{
+		PresetItem* pi = dynamic_cast<PresetItem*> (child (i));
+		if (!pi)
+			continue;
+		pi_by_p[pi->preset()] = pi;
+		t_presets.insert (pi->preset());
+	}
+
+	PresetsSet added;
+	PresetsSet removed;
+	PresetsSet rest;
+	std::set_difference (m_presets.begin(), m_presets.end(), t_presets.begin(), t_presets.end(), std::inserter (added, added.end()));
+	std::set_difference (t_presets.begin(), t_presets.end(), m_presets.begin(), m_presets.end(), std::inserter (removed, removed.end()));
+	std::set_intersection (m_presets.begin(), m_presets.end(), t_presets.begin(), t_presets.end(), std::inserter (rest, rest.end()));
+
+	// Most safe is to remove items with removed packages first:
+	for (PresetsSet::iterator p = removed.begin(); p != removed.end(); ++p)
+		remove_preset_item (pi_by_p[*p]);
+	for (PresetsSet::iterator p = added.begin(); p != added.end(); ++p)
+		create_preset_item (*p);
+	for (PresetsSet::iterator p = rest.begin(); p != rest.end(); ++p)
+		pi_by_p[*p]->read();
+}
+
+
+PresetItem*
+CategoryItem::create_preset_item (Preset* preset)
+{
+	return new PresetItem (this, preset);
+}
+
+
+void
+CategoryItem::remove_preset_item (PresetItem* preset_item)
+{
+	takeChild (indexOfChild (preset_item));
+	delete preset_item;
+}
+
+
+void
+CategoryItem::setup()
+{
+	setIcon (0, Resources::Icons16::presets_category());
+	QSize s = sizeHint (0);
+	if (s.height() < 18)
+	{
+		s.setHeight (18);
+		setSizeHint (0, s);
+	}
 }
 
 } // namespace PresetsManagerPrivate

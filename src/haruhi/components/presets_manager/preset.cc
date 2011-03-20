@@ -24,14 +24,16 @@
 #include <haruhi/config/all.h>
 
 // Local:
-#include "package.h"
+#include "helpers.h"
+#include "preset.h"
 
 
 namespace Haruhi {
 
 namespace PresetsManagerPrivate {
 
-Preset::Preset()
+Preset::Preset():
+	_name ("<new preset>")
 {
 	generate_uuid();
 }
@@ -52,7 +54,7 @@ Preset::save_state (QDomElement& element) const
 	append_element (meta_el, "name", _name);
 	append_element (meta_el, "version", _version);
 	append_element (meta_el, "created-at", _created_at);
-	element.appendChild (meta_element);
+	element.appendChild (meta_el);
 	element.appendChild (_patch.cloneNode (true));
 }
 
@@ -70,7 +72,7 @@ Preset::load_state (QDomElement const& element)
 			continue;
 		else if (e.tagName() == "meta")
 		{
-			for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+			for (QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling())
 			{
 				QDomElement e = n.toElement();
 				if (e.isNull())

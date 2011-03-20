@@ -16,6 +16,8 @@
 #include <cstring>
 #include <cstdlib>
 #include <algorithm>
+#include <iterator>
+#include <set>
 
 // System:
 #include <sys/types.h>
@@ -26,7 +28,6 @@
 
 // Qt:
 #include <QtCore/QDir>
-#include <QtXml/QDomNode>
 #include <QtGui/QLayout>
 #include <QtGui/QTabWidget>
 #include <QtGui/QPushButton>
@@ -44,6 +45,9 @@
 #include <haruhi/utility/memory.h>
 
 // Local:
+#include "package.h"
+#include "category.h"
+#include "preset.h"
 #include "preset_editor.h"
 #include "package_item.h"
 #include "category_item.h"
@@ -131,6 +135,8 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 	std::string dir = sanitize_urn (_unit->urn());
 	try {
 		_model = Private::Model::get (all_presets_dir + "/" + QString::fromStdString (dir));
+		_model->on_change.connect (this, &PresetsManager::read);
+		read();
 	}
 	catch (Exception const& e)
 	{
@@ -139,6 +145,7 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 			"Another instance of Haruhi has locked the presets directory.\n"
 			"Presets manager will be disabled for this session.\n\nError message: %1\nDetail: %2";
 		QMessageBox::information (0, "Presets disabled", message.arg (e.what()).arg (e.details()));
+		setEnabled (false);
 	}
 
 	update_widgets();
@@ -174,8 +181,8 @@ PresetsManager::load_preset()
 		Private::PresetItem* preset_item = _tree->current_preset_item();
 		if (preset_item)
 		{
-			_saveable_unit->load_state (preset_item->patch());
-			emit preset_selected (preset_item->uuid(), preset_item->meta().name);
+			_saveable_unit->load_state (preset_item->preset()->patch());
+			emit preset_selected (preset_item->preset()->uuid(), preset_item->preset()->name());
 		}
 	}
 }
@@ -197,7 +204,7 @@ PresetsManager::save_preset()
 	if (preset_item)
 	{
 		save_preset (preset_item, true);
-		emit preset_selected (preset_item->uuid(), preset_item->meta().name);
+		emit preset_selected (preset_item->preset()->uuid(), preset_item->preset()->name());
 	}
 }
 
@@ -205,10 +212,12 @@ PresetsManager::save_preset()
 void
 PresetsManager::create_package()
 {
-	Private::PackageItem* package_item = new Private::PackageItem (_tree);
+	Private::Package* package = _model->create_package();
+	package->save_file();
+	Private::PackageItem* package_item = create_package_item (package);
+	// changed() should be called after adding the item, so read() won't add additional second item:
+	_model->changed();
 	_tree->clearSelection();
-	package_item->meta().name = "<new package>";
-	package_item->reload();
 	package_item->setSelected (true);
 	_editor->focus_package();
 }
@@ -233,9 +242,11 @@ PresetsManager::create_category()
 
 	if (package_item)
 	{
-		Private::CategoryItem* category_item = new Private::CategoryItem ("<new category>", package_item);
+		Private::Category* category = package_item->package()->create_category();
+		Private::CategoryItem* category_item = new Private::CategoryItem (package_item, category);
+		// changed() should be called after adding the item, so read() won't add additional second item:
+		_model->changed();
 		_tree->clearSelection();
-		category_item->reload();
 		category_item->setSelected (true);
 		_editor->focus_category();
 		package_item->setExpanded (true);
@@ -256,10 +267,11 @@ PresetsManager::create_preset()
 
 	if (category_item)
 	{
-		Private::PresetItem* preset_item = new Private::PresetItem (category_item);
+		Private::Preset* preset = category_item->category()->create_preset();
+		Private::PresetItem* preset_item = new Private::PresetItem (category_item, preset);
+		// changed() should be called after adding the item, so read() won't add additional second item:
+		_model->changed();
 		_tree->clearSelection();
-		preset_item->meta().name = "<new preset>";
-		preset_item->reload();
 		preset_item->setSelected (true);
 		_editor->focus_name();
 		category_item->setExpanded (true);
@@ -274,26 +286,31 @@ PresetsManager::destroy()
 	Private::PackageItem* package_item = _tree->current_package_item();
 	if (package_item)
 	{
-		if (QMessageBox::question (this, "Delete package", "Really delete package " + Qt::escape (package_item->meta().name) + "?",
+		if (QMessageBox::question (this, "Delete package", "Really delete package " + Qt::escape (package_item->package()->name()) + "?",
 								   QMessageBox::Yes | QMessageBox::Default, QMessageBox::Cancel | QMessageBox::Escape) == QMessageBox::Yes)
 		{
-			package_item->remove_file();
-			_tree->invisibleRootItem()->takeChild (_tree->invisibleRootItem()->indexOfChild (package_item));
-			delete package_item;
+			Private::Package* package = package_item->package();
+			remove_package_item (package_item);
+			package->remove_file();
+			_model->remove_package (package);
+			_model->changed();
 		}
 	}
 
 	Private::CategoryItem* category_item = _tree->current_category_item();
 	if (category_item)
 	{
-		if (QMessageBox::question (this, "Delete category", "Really delete category " + Qt::escape (category_item->name()) + "?",
+		if (QMessageBox::question (this, "Delete category", "Really delete category " + Qt::escape (category_item->category()->name()) + "?",
 								   QMessageBox::Yes | QMessageBox::Default, QMessageBox::Cancel | QMessageBox::Escape) == QMessageBox::Yes)
 		{
-			Private::PackageItem* package_item = category_item->package_item();
-			package_item->takeChild (package_item->indexOfChild (category_item));
-			delete category_item;
 			try {
-				package_item->save_file();
+				Private::Category* category = category_item->category();
+				Private::PackageItem* package_item = category_item->package_item();
+				package_item->takeChild (package_item->indexOfChild (category_item));
+				delete category_item;
+				package_item->package()->remove_category (category);
+				package_item->package()->save_file();
+				_model->changed();
 			}
 			catch (Exception const& e)
 			{
@@ -305,14 +322,17 @@ PresetsManager::destroy()
 	Private::PresetItem* preset_item = _tree->current_preset_item();
 	if (preset_item)
 	{
-		if (QMessageBox::question (this, "Delete preset", "Really delete preset " + Qt::escape (preset_item->meta().name) + "?",
+		if (QMessageBox::question (this, "Delete preset", "Really delete preset " + Qt::escape (preset_item->preset()->name()) + "?",
 								   QMessageBox::Yes | QMessageBox::Default, QMessageBox::Cancel | QMessageBox::Escape) == QMessageBox::Yes)
 		{
-			Private::CategoryItem* category_item = preset_item->category_item();
-			category_item->takeChild (category_item->indexOfChild (preset_item));
-			delete preset_item;
 			try {
-				category_item->package_item()->save_file();
+				Private::Preset* preset = preset_item->preset();
+				Private::CategoryItem* category_item = preset_item->category_item();
+				category_item->takeChild (category_item->indexOfChild (preset_item));
+				delete preset_item;
+				category_item->category()->remove_preset (preset);
+				category_item->package_item()->package()->save_file();
+				_model->changed();
 			}
 			catch (Exception const& e)
 			{
@@ -381,7 +401,7 @@ PresetsManager::show_favorites()
 		// If PresetItem, show/hide it.
 		if (preset_item)
 		{
-			preset_item->setHidden (only_favs && !favorited (preset_item->uuid()));
+			preset_item->setHidden (only_favs && !favorited (preset_item->preset()->uuid()));
 			// If shown, ensure that parent items are shown, too.
 			if (!preset_item->isHidden())
 			{
@@ -402,6 +422,54 @@ PresetsManager::show_favorites()
 
 
 void
+PresetsManager::read()
+{
+	typedef std::set<Private::Package*> PackagesSet;
+
+	// Read packages:
+	PackagesSet m_packages; // Model packages
+	PackagesSet t_packages; // TreeWidget items
+	std::map<Private::Package*, Private::PackageItem*> pi_by_p;
+
+	for (Private::Model::Packages::iterator p = _model->packages().begin(); p != _model->packages().end(); ++p)
+		m_packages.insert (&*p);
+
+	for (int i = 0; i < _tree->invisibleRootItem()->childCount(); ++i)
+	{
+		Private::PackageItem* pi = dynamic_cast<Private::PackageItem*> (_tree->invisibleRootItem()->child (i));
+		if (!pi)
+			continue;
+		pi_by_p[pi->package()] = pi;
+		t_packages.insert (pi->package());
+	}
+
+	PackagesSet added;
+	PackagesSet removed;
+	PackagesSet rest;
+	std::set_difference (m_packages.begin(), m_packages.end(), t_packages.begin(), t_packages.end(), std::inserter (added, added.end()));
+	std::set_difference (t_packages.begin(), t_packages.end(), m_packages.begin(), m_packages.end(), std::inserter (removed, removed.end()));
+	std::set_intersection (m_packages.begin(), m_packages.end(), t_packages.begin(), t_packages.end(), std::inserter (rest, rest.end()));
+
+	// Most safe is to remove items with removed packages first:
+	for (PackagesSet::iterator p = removed.begin(); p != removed.end(); ++p)
+		remove_package_item (pi_by_p[*p]);
+	for (PackagesSet::iterator p = added.begin(); p != added.end(); ++p)
+		create_package_item (*p);
+	for (PackagesSet::iterator p = rest.begin(); p != rest.end(); ++p)
+		pi_by_p[*p]->read();
+
+	// Reselect selected item to update presets editor in case the selected item has been changed
+	// in another PresetsManager instance:
+	QTreeWidgetItem* selected_item = _tree->selected_item();
+	if (selected_item)
+	{
+		_tree->clearSelection();
+		selected_item->setSelected (true);
+	}
+}
+
+
+void
 PresetsManager::save_preset (Private::PresetItem* preset_item, bool with_patch)
 {
 	if (_saveable_unit)
@@ -409,18 +477,33 @@ PresetsManager::save_preset (Private::PresetItem* preset_item, bool with_patch)
 		Private::PackageItem* package_item = preset_item->category_item()->package_item();
 		if (with_patch)
 		{
-			preset_item->clear_patch_element (package_item->document());
-			_saveable_unit->save_state (preset_item->patch());
+			preset_item->preset()->clear_patch_element (package_item->package()->document());
+			_saveable_unit->save_state (preset_item->preset()->patch());
 		}
 		_editor->save_preset (preset_item);
 		try {
-			package_item->save_file();
+			package_item->package()->save_file();
 		}
 		catch (Exception const& e)
 		{
 			QMessageBox::warning (this, "Error", Qt::escape (e.what()));
 		}
 	}
+}
+
+
+Private::PackageItem*
+PresetsManager::create_package_item (Private::Package* package)
+{
+	return new Private::PackageItem (_tree, package);
+}
+
+
+void
+PresetsManager::remove_package_item (Private::PackageItem* package_item)
+{
+	_tree->invisibleRootItem()->takeChild (_tree->invisibleRootItem()->indexOfChild (package_item));
+	delete package_item;
 }
 
 

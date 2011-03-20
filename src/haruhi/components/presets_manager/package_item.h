@@ -20,10 +20,8 @@
 // Qt:
 #include <QtGui/QTreeWidgetItem>
 
-// Haruhi:
-#include <haruhi/utility/saveable_state.h>
-
 // Local:
+#include "package.h"
 #include "presets_manager.h"
 
 
@@ -31,33 +29,16 @@ namespace Haruhi {
 
 namespace PresetsManagerPrivate {
 
+class Category;
 class CategoryItem;
 
 class PackageItem: public QTreeWidgetItem
 {
   public:
-	class Meta: public SaveableState
-	{
-	  public:
-		void
-		save_state (QDomElement& meta) const;
+	PackageItem (PresetsTree* parent, Package* package);
 
-		void
-		load_state (QDomElement const& meta);
-
-	  public:
-		QString		name;
-		QString		version;
-		QString		created_at;
-		QString		credits;
-		QString		license;
-	};
-
-  public:
-	PackageItem (PresetsTree* parent);
-
-	void
-	setup();
+	Package*
+	package() const { return _package; }
 
 	PresetsManager*
 	presets_manager() const { return _presets_manager; }
@@ -65,47 +46,22 @@ class PackageItem: public QTreeWidgetItem
 	void
 	reload();
 
-	Meta&
-	meta() { return _meta; }
+	void
+	read();
 
-	Meta const&
-	meta() const { return _meta; }
+	CategoryItem*
+	create_category_item (Category* category);
 
 	void
-	load_file (QString const& file_name);
-
-	void
-	save_file();
-
-	void
-	save_file (QString const& file_name);
-
-	void
-	remove_file();
-
-	QDomDocument&
-	document() { return _document; }
-
-	/*
-	 * SaveableState interface
-	 */
-
-	void
-	save_state (QDomElement& meta) const;
-
-	void
-	load_state (QDomElement const& meta);
+	remove_category_item (CategoryItem* category_item);
 
   private:
-	CategoryItem*
-	find_or_create_category (QString const& name);
+	void
+	setup();
 
   private:
 	PresetsManager*	_presets_manager;
-	QDomDocument	_document;
-	QString			_file_name;
-	QString			_unit_urn;
-	Meta			_meta;
+	Package*		_package;
 };
 
 } // namespace PresetsManagerPrivate

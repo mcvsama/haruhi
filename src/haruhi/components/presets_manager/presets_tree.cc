@@ -229,9 +229,9 @@ PresetsTree::dropEvent (QDropEvent* event)
 				preset_item->treeWidget()->clearSelection();
 				preset_item->setSelected (true);
 				// Save one or two files:
-				old_category_item->package_item()->save_file();
+				old_category_item->package_item()->package()->save_file();
 				if (new_category_item->package_item() != old_category_item->package_item())
-					new_category_item->package_item()->save_file();
+					new_category_item->package_item()->package()->save_file();
 			}
 			// Move Category to Package:
 			else if ((category_item = dynamic_cast<CategoryItem*> (_dragged_item)) && (package_item = dynamic_cast<PackageItem*> (to)))
@@ -244,9 +244,9 @@ PresetsTree::dropEvent (QDropEvent* event)
 				category_item->treeWidget()->clearSelection();
 				category_item->setSelected (true);
 				// Save one or two files:
-				old_package_item->save_file();
+				old_package_item->package()->save_file();
 				if (new_package_item != old_package_item)
-					new_package_item->save_file();
+					new_package_item->package()->save_file();
 			}
 		}
 	}

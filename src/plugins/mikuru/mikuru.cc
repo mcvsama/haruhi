@@ -349,11 +349,11 @@ Mikuru::graph_updated()
 		(*p)->graph_updated();
 	_parts_mutex.unlock();
 
-	if (general() && general()->envelopes())
-		general()->envelopes()->resize_buffers (s);
-
 	if (graph())
 		graph()->unlock();
+
+	if (general() && general()->envelopes())
+		general()->envelopes()->resize_buffers (s);
 }
 
 

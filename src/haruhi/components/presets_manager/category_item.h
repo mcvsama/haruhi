@@ -21,6 +21,7 @@
 #include <QtGui/QTreeWidgetItem>
 
 // Local:
+#include "category.h"
 #include "presets_manager.h"
 
 
@@ -28,30 +29,39 @@ namespace Haruhi {
 
 namespace PresetsManagerPrivate {
 
+class Preset;
+class PresetItem;
 class PackageItem;
 
 class CategoryItem: public QTreeWidgetItem
 {
   public:
-	CategoryItem (QString const& name, QTreeWidgetItem* parent);
+	CategoryItem (QTreeWidgetItem* parent, Category* category);
 
-	void
-	setup();
+	Category*
+	category() const { return _category; }
 
-	/**
-	 * Returns PackageItem as a parent or 0.
-	 */
 	PackageItem*
 	package_item() const;
 
 	void
-	reload() { }
-
-	QString
-	name() const { return text (0); }
+	reload();
 
 	void
-	set_name (QString const& name) { setText (0, name); }
+	read();
+
+	PresetItem*
+	create_preset_item (Preset* preset);
+
+	void
+	remove_preset_item (PresetItem* preset_item);
+
+  private:
+	void
+	setup();
+
+  private:
+	Category*	_category;
 };
 
 } // namespace PresetsManagerPrivate

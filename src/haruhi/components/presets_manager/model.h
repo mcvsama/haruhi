@@ -99,10 +99,16 @@ class Model
 	packages() const { return _packages; }
 
 	/**
-	 * Creates new package. Does not save it.
+	 * Creates new child package. Does not save it.
 	 */
 	Package*
 	create_package();
+
+	/**
+	 * Removes package from list by its pointer.
+	 */
+	void
+	remove_package (Package* package);
 
 	/**
 	 * Should be called when model changes, ie. packages/categories/presets are added or removed,

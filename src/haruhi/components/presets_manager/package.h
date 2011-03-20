@@ -47,11 +47,17 @@ class Package: public SaveableState
 	QString
 	name() const { return _name; }
 
+	void
+	set_name (QString const& name) { _name = name; }
+
 	/**
 	 * Package meta-information: version.
 	 */
 	QString
 	version() const { return _version; }
+
+	void
+	set_version (QString const& version) { _version = version; }
 
 	/**
 	 * Package meta-information: created_at.
@@ -59,17 +65,59 @@ class Package: public SaveableState
 	QString
 	created_at() const { return _created_at; }
 
+	void
+	set_created_at (QString const& created_at) { _created_at = created_at; }
+
 	/**
 	 * Package meta-information: created_at.
 	 */
 	QString
 	credits() const { return _credits; }
 
+	void
+	set_credits (QString const& credits) { _credits = credits; }
+
 	/**
 	 * Package meta-information: created_at.
 	 */
 	QString
 	license() const { return _license; }
+
+	void
+	set_license (QString const& license) { _license = license; }
+
+	/**
+	 * DOM document used for saved XML files.
+	 */
+	QDomDocument&
+	document() { return _document; }
+
+	QDomDocument const&
+	document() const { return _document; }
+
+	/**
+	 * Categories accessor.
+	 */
+	Categories&
+	categories() { return _categories; }
+
+	/**
+	 * Categories accessor.
+	 */
+	Categories const&
+	categories() const { return _categories; }
+
+	/**
+	 * Creates new child category.
+	 */
+	Category*
+	create_category();
+
+	/**
+	 * Removes category from list by its pointer.
+	 */
+	void
+	remove_category (Category* category);
 
 	/**
 	 * Returns base name of the package file.
@@ -117,14 +165,15 @@ class Package: public SaveableState
 	find_or_create_category (QString const& name);
 
   private:
-	QString		_loaded_file_name;
-	QString		_unit_urn;
-	QString		_name;
-	QString		_version;
-	QString		_created_at;
-	QString		_credits;
-	QString		_license;
-	Categories	_categories;
+	QString			_loaded_file_name;
+	QString			_unit_urn;
+	QString			_name;
+	QString			_version;
+	QString			_created_at;
+	QString			_credits;
+	QString			_license;
+	QDomDocument	_document;
+	Categories		_categories;
 };
 
 } // namespace PresetsManagerPrivate

@@ -27,6 +27,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/utility/filesystem.h>
 #include <haruhi/utility/exception.h>
+#include <haruhi/utility/predicates.h>
 
 // Local:
 #include "helpers.h"
@@ -37,8 +38,24 @@ namespace Haruhi {
 
 namespace PresetsManagerPrivate {
 
-Package::Package()
+Package::Package():
+	_name ("<new package>")
 {
+}
+
+
+Category*
+Package::create_category()
+{
+	_categories.push_back (Category());
+	return &_categories.back();
+}
+
+
+void
+Package::remove_category (Category* category)
+{
+	_categories.remove_if (PointerEquals<Category> (category));
 }
 
 
@@ -60,14 +77,13 @@ Package::remove_file()
 void
 Package::load_file (QString const& path)
 {
-	QDomDocument document;
 	QFile file (path);
 	if (file.open (IO_ReadOnly))
 	{
-		document.setContent (&file, true);
+		_document.setContent (&file, true);
 		file.close();
 
-		QDomElement root_element = document.documentElement();
+		QDomElement root_element = _document.documentElement();
 		if (root_element.tagName() == "haruhi-presets")
 		{
 			_unit_urn = root_element.attribute ("unit");
@@ -162,7 +178,7 @@ Package::load_state (QDomElement const& element)
 			continue;
 		else if (e.tagName() == "meta")
 		{
-			for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+			for (QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling())
 			{
 				QDomElement e = n.toElement();
 				if (e.isNull())
@@ -179,19 +195,10 @@ Package::load_state (QDomElement const& element)
 					_license = e.text();
 			}
 		}
-		else if (e.tagName() == "categories")
+		else if (e.tagName() == "category")
 		{
-			for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
-			{
-				QDomElement e = n.toElement();
-				if (e.isNull())
-					continue;
-				else if (e.tagName() == "category")
-				{
-					_categories.push_back (Category());
-					_categories.back().load_state (e);
-				}
-			}
+			_categories.push_back (Category());
+			_categories.back().load_state (e);
 		}
 	}
 }

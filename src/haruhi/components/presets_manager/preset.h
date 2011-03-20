@@ -47,6 +47,36 @@ class Preset: public SaveableState
 	set_name (QString const& name) { _name = name; }
 
 	/**
+	 * Preset version.
+	 */
+	QString
+	version() const { return _version; }
+
+	/**
+	 * Sets preset version.
+	 */
+	void
+	set_version (QString const& version) { _version = version; }
+
+	/**
+	 * Preset created_at.
+	 */
+	QString
+	created_at() const { return _created_at; }
+
+	/**
+	 * Sets preset created_at.
+	 */
+	void
+	set_created_at (QString const& created_at) { _created_at = created_at; }
+
+	/**
+	 * Returns preset UUID.
+	 */
+	QString
+	uuid() const { return _uuid; }
+
+	/**
 	 * Creates new XML node for patch.
 	 */
 	void

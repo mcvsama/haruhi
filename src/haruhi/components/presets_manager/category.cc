@@ -19,17 +19,35 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/utility/predicates.h>
 
 // Local:
-#include "package.h"
+#include "preset.h"
+#include "category.h"
 
 
 namespace Haruhi {
 
 namespace PresetsManagerPrivate {
 
-Category::Category()
+Category::Category():
+	_name ("<new category>")
 {
+}
+
+
+Preset*
+Category::create_preset()
+{
+	_presets.push_back (Preset());
+	return &_presets.back();
+}
+
+
+void
+Category::remove_preset (Preset* preset)
+{
+	_presets.remove_if (PointerEquals<Preset> (preset));
 }
 
 

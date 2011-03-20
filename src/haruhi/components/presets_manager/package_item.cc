@@ -14,19 +14,13 @@
 // Standard:
 #include <cstddef>
 
-// Qt:
-#include <QtCore/QTextStream>
-#include <QtCore/QFile>
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QTreeWidgetItemIterator>
-
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/utility/filesystem.h>
-#include <haruhi/utility/exception.h>
 
 // Local:
 #include "helpers.h"
+#include "package.h"
+#include "category.h"
 #include "package_item.h"
 #include "category_item.h"
 #include "preset_item.h"
@@ -37,45 +31,76 @@ namespace Haruhi {
 
 namespace PresetsManagerPrivate {
 
-void
-PackageItem::Meta::save_state (QDomElement& element) const
-{
-	append_element (element, "name", name);
-	append_element (element, "version", version);
-	append_element (element, "created-at", created_at);
-	append_element (element, "credits", credits);
-	append_element (element, "license", license);
-}
-
-
-void
-PackageItem::Meta::load_state (QDomElement const& element)
-{
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
-	{
-		QDomElement e = n.toElement();
-		if (!e.isNull())
-		{
-			if (e.tagName() == "name")
-				name = e.text();
-			else if (e.tagName() == "version")
-				version = e.text();
-			else if (e.tagName() == "created-at")
-				created_at = e.text();
-			else if (e.tagName() == "credits")
-				credits = e.text();
-			else if (e.tagName() == "license")
-				license = e.text();
-		}
-	}
-}
-
-
-PackageItem::PackageItem (PresetsTree* parent):
+PackageItem::PackageItem (PresetsTree* parent, Package* package):
 	QTreeWidgetItem (parent),
-	_presets_manager (parent->presets_manager())
+	_presets_manager (parent->presets_manager()),
+	_package (package)
 {
 	setup();
+	read();
+}
+
+
+void
+PackageItem::reload()
+{
+	setText (0, _package->name());
+}
+
+
+void
+PackageItem::read()
+{
+	reload();
+
+	typedef std::set<Category*> CategoriesSet;
+
+	// Read packages:
+	CategoriesSet m_categories; // Model categories
+	CategoriesSet t_categories; // TreeWidget items
+	std::map<Category*, CategoryItem*> ci_by_c;
+
+	for (Package::Categories::iterator p = _package->categories().begin(); p != _package->categories().end(); ++p)
+		m_categories.insert (&*p);
+
+	for (int i = 0; i < childCount(); ++i)
+	{
+		CategoryItem* ci = dynamic_cast<CategoryItem*> (child (i));
+		if (!ci)
+			continue;
+		ci_by_c[ci->category()] = ci;
+		t_categories.insert (ci->category());
+	}
+
+	CategoriesSet added;
+	CategoriesSet removed;
+	CategoriesSet rest;
+	std::set_difference (m_categories.begin(), m_categories.end(), t_categories.begin(), t_categories.end(), std::inserter (added, added.end()));
+	std::set_difference (t_categories.begin(), t_categories.end(), m_categories.begin(), m_categories.end(), std::inserter (removed, removed.end()));
+	std::set_intersection (m_categories.begin(), m_categories.end(), t_categories.begin(), t_categories.end(), std::inserter (rest, rest.end()));
+
+	// Most safe is to remove items with removed packages first:
+	for (CategoriesSet::iterator c = removed.begin(); c != removed.end(); ++c)
+		remove_category_item (ci_by_c[*c]);
+	for (CategoriesSet::iterator c = added.begin(); c != added.end(); ++c)
+		create_category_item (*c);
+	for (CategoriesSet::iterator c = rest.begin(); c != rest.end(); ++c)
+		ci_by_c[*c]->read();
+}
+
+
+CategoryItem*
+PackageItem::create_category_item (Category* category)
+{
+	return new CategoryItem (this, category);
+}
+
+
+void
+PackageItem::remove_category_item (CategoryItem* category_item)
+{
+	takeChild (indexOfChild (category_item));
+	delete category_item;
 }
 
 
@@ -89,160 +114,6 @@ PackageItem::setup()
 		s.setHeight (18);
 		setSizeHint (0, s);
 	}
-}
-
-
-void
-PackageItem::reload()
-{
-	setText (0, _meta.name);
-}
-
-
-void
-PackageItem::load_file (QString const& file_name)
-{
-	_file_name = file_name;
-
-	QFile file (file_name);
-	if (file.open (IO_ReadOnly))
-	{
-		_document.setContent (&file, true);
-		file.close();
-
-		QDomElement root_element = _document.documentElement();
-		if (root_element.tagName() == "haruhi-presets")
-		{
-			_unit_urn = root_element.attribute ("unit");
-			load_state (root_element);
-		}
-	}
-	else
-		throw Exception (QString ("Could not read presets package file '%1'.").arg (file_name));
-}
-
-
-void
-PackageItem::save_file()
-{
-	mkpath (presets_manager()->model()->directory().toStdString(), 0700);
-
-	QString name = meta().name;
-	name.replace ('/', "_");
-	QString file_name = presets_manager()->model()->directory() + "/" + name + ".haruhi-presets";
-
-	QString to_delete;
-	if (_file_name != file_name)
-		to_delete = _file_name;
-	_file_name = file_name;
-
-	// Create DOM document:
-	QDomDocument document;
-	QDomElement root_element = document.createElement ("haruhi-presets");
-	root_element.setAttribute ("unit", _unit_urn);
-	save_state (root_element);
-	document.appendChild (root_element);
-
-	// Save file:
-	QFile file (_file_name + "~");
-	if (!file.open (IO_WriteOnly))
-		throw Exception (QString ("Could not save package: ") + file.errorString());
-	QTextStream ts (&file);
-	ts << document.toString();
-	file.flush();
-	file.close();
-	::rename (_file_name + "~", _file_name);
-
-	if (to_delete != QString::null)
-		QFile::remove (to_delete);
-}
-
-
-void
-PackageItem::remove_file()
-{
-	QFile::remove (_file_name);
-}
-
-
-void
-PackageItem::save_state (QDomElement& element) const
-{
-	QDomDocument document = element.ownerDocument();
-	QDomElement meta_element = document.createElement ("meta");
-	_meta.save_state (meta_element);
-	element.appendChild (meta_element);
-
-	for (int i = 0; i < childCount(); ++i)
-	{
-		CategoryItem* category_item = dynamic_cast<CategoryItem*> (child (i));
-		if (category_item)
-		{
-			QDomElement presets_element = document.createElement ("presets");
-			presets_element.setAttribute ("category", category_item->name());
-
-			for (int j = 0; j < category_item->childCount(); ++j)
-			{
-				PresetItem* preset_item = dynamic_cast<PresetItem*> (category_item->child (j));
-				if (preset_item)
-				{
-					QDomElement preset_element = document.createElement ("preset");
-					preset_item->ensure_has_uuid();
-					preset_item->save_state (preset_element);
-					presets_element.appendChild (preset_element);
-				}
-			}
-			element.appendChild (presets_element);
-		}
-	}
-}
-
-
-void
-PackageItem::load_state (QDomElement const& element)
-{
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
-	{
-		QDomElement e = n.toElement();
-		if (!e.isNull())
-		{
-			if (e.tagName() == "meta")
-			{
-				_meta.load_state (e);
-				reload();
-			}
-			else if (e.tagName() == "presets")
-			{
-				CategoryItem* category_item = find_or_create_category (e.attribute ("category"));
-
-				for (QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling())
-				{
-					QDomElement e = n.toElement();
-					if (!e.isNull())
-					{
-						if (e.tagName() == "preset")
-						{
-							PresetItem* preset_item = new PresetItem (category_item);
-							preset_item->load_state (e);
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-
-CategoryItem*
-PackageItem::find_or_create_category (QString const& name)
-{
-	for (QTreeWidgetItemIterator item (this, QTreeWidgetItemIterator::NoChildren); *item; ++item)
-	{
-		CategoryItem* category_item = dynamic_cast<CategoryItem*> (*item);
-		if (category_item && category_item->name() == name)
-			return category_item;
-	}
-	return new CategoryItem (name, this);
 }
 
 } // namespace PresetsManagerPrivate

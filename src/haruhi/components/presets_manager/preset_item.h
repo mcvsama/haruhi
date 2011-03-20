@@ -20,10 +20,8 @@
 // Qt:
 #include <QtGui/QTreeWidgetItem>
 
-// Haruhi:
-#include <haruhi/utility/saveable_state.h>
-
 // Local:
+#include "preset.h"
 #include "presets_manager.h"
 
 
@@ -36,26 +34,10 @@ class CategoryItem;
 class PresetItem: public QTreeWidgetItem
 {
   public:
-	class Meta: public SaveableState
-	{
-	  public:
-		void
-		save_state (QDomElement& meta) const;
+	PresetItem (CategoryItem* parent, Preset* preset);
 
-		void
-		load_state (QDomElement const& meta);
-
-	  public:
-		QString		name;
-		QString		version;
-		QString		created_at;
-	};
-
-  public:
-	PresetItem (CategoryItem* parent);
-
-	void
-	setup();
+	Preset*
+	preset() const { return _preset; }
 
 	CategoryItem*
 	category_item() const;
@@ -63,50 +45,15 @@ class PresetItem: public QTreeWidgetItem
 	void
 	reload();
 
-	Meta&
-	meta() { return _meta; }
-
-	Meta const&
-	meta() const { return _meta; }
-
-	QDomElement&
-	patch() { return _patch; }
-
-	QDomElement const&
-	patch() const { return _patch; }
-
-	QString const&
-	uuid() const { return _uuid; }
-
 	void
-	clear_patch_element (QDomDocument& document);
-
-	// TODO remove
-	void
-	ensure_has_uuid();
-
-	/*
-	 * SaveableState interface
-	 */
-
-	void
-	save_state (QDomElement& meta) const;
-
-	void
-	load_state (QDomElement const& meta);
+	read();
 
   private:
-	/**
-	 * Generates and stores new UUID for this preset.
-	 * TODO remove
-	 */
 	void
-	generate_uuid();
+	setup();
 
   private:
-	QString		_uuid;
-	Meta		_meta;
-	QDomElement	_patch;
+	Preset*	_preset;
 };
 
 } // namespace PresetsManagerPrivate
