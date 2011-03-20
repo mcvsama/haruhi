@@ -87,15 +87,6 @@ class Package: public SaveableState
 	set_license (QString const& license) { _license = license; }
 
 	/**
-	 * DOM document used for saved XML files.
-	 */
-	QDomDocument&
-	document() { return _document; }
-
-	QDomDocument const&
-	document() const { return _document; }
-
-	/**
 	 * Categories accessor.
 	 */
 	Categories&
@@ -120,35 +111,13 @@ class Package: public SaveableState
 	remove_category (Category* category);
 
 	/**
-	 * Returns base name of the package file.
-	 * Can be called after name of the package has been set.
+	 * File name from which this package has been loaded.
 	 */
 	QString
-	file_name() const;
+	file_name() const { return _file_name; }
 
-	/**
-	 * Removes file associated with the package.
-	 */
 	void
-	remove_file();
-
-	/**
-	 * Loads package data from given file.
-	 */
-	void
-	load_file (QString const& path);
-
-	/**
-	 * Saves package to given file. Overwrites existing file.
-	 */
-	void
-	save_file (QString const& path);
-
-	/**
-	 * Saves package to currently used file.
-	 */
-	void
-	save_file();
+	set_file_name (QString const& file_name) { _file_name = file_name; }
 
 	/*
 	 * SaveableState API
@@ -165,14 +134,12 @@ class Package: public SaveableState
 	find_or_create_category (QString const& name);
 
   private:
-	QString			_loaded_file_name;
-	QString			_unit_urn;
 	QString			_name;
 	QString			_version;
 	QString			_created_at;
 	QString			_credits;
 	QString			_license;
-	QDomDocument	_document;
+	QString			_file_name;
 	Categories		_categories;
 };
 

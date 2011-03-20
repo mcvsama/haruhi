@@ -214,17 +214,17 @@ PresetEditor::update_details()
 		if (_package_item)
 		{
 			save_package (_package_item);
-			_package_item->package()->save_file();
+			_presets_manager->model()->save_state();
 		}
 		else if (_category_item)
 		{
 			save_category (_category_item);
-			_category_item->package_item()->package()->save_file();
+			_presets_manager->model()->save_state();
 		}
 		else if (_preset_item)
 		{
 			save_preset (_preset_item);
-			_preset_item->category_item()->package_item()->package()->save_file();
+			_presets_manager->model()->save_state();
 		}
 	}
 	catch (Exception const& e)

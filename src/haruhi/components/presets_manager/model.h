@@ -59,7 +59,7 @@ class Model
 	 * If not found, creates new one.
 	 */
 	static Model*
-	get (QString const& directory);
+	get (QString const& directory, QString const& unit_urn);
 
 	/**
 	 * Releases given model (deletes it if ref counter hits 0)
@@ -72,7 +72,7 @@ class Model
 	 * If there is already lock file, throws Locked exception.
 	 * \param	directory Directory path which contains package files.
 	 */
-	Model (QString const& directory);
+	Model (QString const& directory, QString const& unit_urn);
 
 	/**
 	 * Removes lock file from associated directory.
@@ -150,6 +150,7 @@ class Model
   private:
 	Packages			_packages;
 	QString				_directory;
+	QString				_unit_urn;
 	QString				_lock_file_name;
 	// Lock file descriptor:
 	int					_lock_file;

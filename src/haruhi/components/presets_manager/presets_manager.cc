@@ -134,7 +134,7 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 
 	std::string dir = sanitize_urn (_unit->urn());
 	try {
-		_model = Private::Model::get (all_presets_dir + "/" + QString::fromStdString (dir));
+		_model = Private::Model::get (all_presets_dir + "/" + QString::fromStdString (dir), QString::fromStdString (_unit->urn()));
 		_model->on_change.connect (this, &PresetsManager::read);
 		read();
 	}
@@ -213,9 +213,10 @@ void
 PresetsManager::create_package()
 {
 	Private::Package* package = _model->create_package();
-	package->save_file();
+	model()->save_state();
 	Private::PackageItem* package_item = create_package_item (package);
 	// changed() should be called after adding the item, so read() won't add additional second item:
+	_model->save_state();
 	_model->changed();
 	_tree->clearSelection();
 	package_item->setSelected (true);
@@ -245,6 +246,7 @@ PresetsManager::create_category()
 		Private::Category* category = package_item->package()->create_category();
 		Private::CategoryItem* category_item = new Private::CategoryItem (package_item, category);
 		// changed() should be called after adding the item, so read() won't add additional second item:
+		_model->save_state();
 		_model->changed();
 		_tree->clearSelection();
 		category_item->setSelected (true);
@@ -270,6 +272,7 @@ PresetsManager::create_preset()
 		Private::Preset* preset = category_item->category()->create_preset();
 		Private::PresetItem* preset_item = new Private::PresetItem (category_item, preset);
 		// changed() should be called after adding the item, so read() won't add additional second item:
+		_model->save_state();
 		_model->changed();
 		_tree->clearSelection();
 		preset_item->setSelected (true);
@@ -291,7 +294,6 @@ PresetsManager::destroy()
 		{
 			Private::Package* package = package_item->package();
 			remove_package_item (package_item);
-			package->remove_file();
 			_model->remove_package (package);
 			_model->changed();
 		}
@@ -309,7 +311,7 @@ PresetsManager::destroy()
 				package_item->removeChild (category_item);
 				delete category_item;
 				package_item->package()->remove_category (category);
-				package_item->package()->save_file();
+				_model->save_state();
 				_model->changed();
 			}
 			catch (Exception const& e)
@@ -331,7 +333,7 @@ PresetsManager::destroy()
 				category_item->removeChild (preset_item);
 				delete preset_item;
 				category_item->category()->remove_preset (preset);
-				category_item->package_item()->package()->save_file();
+				_model->save_state();
 				_model->changed();
 			}
 			catch (Exception const& e)
@@ -474,15 +476,11 @@ PresetsManager::save_preset (Private::PresetItem* preset_item, bool with_patch)
 {
 	if (_saveable_unit)
 	{
-		Private::PackageItem* package_item = preset_item->category_item()->package_item();
 		if (with_patch)
-		{
-			preset_item->preset()->clear_patch_element (package_item->package()->document());
-			_saveable_unit->save_state (preset_item->preset()->patch());
-		}
+			preset_item->preset()->save_state_of (_saveable_unit);
 		_editor->save_preset (preset_item);
 		try {
-			package_item->package()->save_file();
+			_model->save_state();
 		}
 		catch (Exception const& e)
 		{

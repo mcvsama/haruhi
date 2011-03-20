@@ -20,9 +20,11 @@
 #include <signal.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <libgen.h>
 
 // Qt:
 #include <QtCore/QDir>
+#include <QtCore/QTextStream>
 #include <QtGui/QMessageBox>
 #include <QtGui/QTextDocument>
 
@@ -46,7 +48,7 @@ Mutex				Model::_models_by_dir_mutex;
 
 
 Model*
-Model::get (QString const& directory)
+Model::get (QString const& directory, QString const& unit_urn)
 {
 	_models_by_dir_mutex.lock();
 
@@ -64,7 +66,7 @@ Model::get (QString const& directory)
 	}
 	else
 	{
-		res = new Model (directory);
+		res = new Model (directory, unit_urn);
 		res->load_state();
 		_models_by_dir[res] = 1;
 	}
@@ -93,8 +95,9 @@ Model::release (Model* model)
 }
 
 
-Model::Model (QString const& directory):
+Model::Model (QString const& directory, QString const& unit_urn):
 	_directory (directory),
+	_unit_urn (unit_urn),
 	_lock_file_name (directory + "/" + ".haruhi-lock.pid")
 {
 	acquire_lock();
@@ -118,6 +121,7 @@ Model::create_package()
 void
 Model::remove_package (Package* package)
 {
+	QFile::remove (package->file_name());
 	_packages.remove_if (PointerEquals<Package> (package));
 }
 
@@ -139,9 +143,21 @@ Model::load_state()
 	// Each entry in list represents one presets package:
 	for (QStringList::Iterator p = list.begin(); p != list.end(); ++p)
 	{
+		QString path = directory() + "/" + *p;
+		QFile file (path);
+		if (!file.open (IO_ReadOnly))
+			continue;
+		QDomDocument doc;
+		if (!doc.setContent (&file, true))
+			continue;
 		Package package;
-		package.load_file (directory() + "/" + *p);
-		_packages.push_back (package);
+		if (doc.documentElement().tagName() == "haruhi-presets")
+		{
+			Package package;
+			package.load_state (doc.documentElement());
+			package.set_file_name (path);
+			_packages.push_back (package);
+		}
 	}
 }
 
@@ -150,7 +166,39 @@ void
 Model::save_state()
 {
 	for (Packages::iterator p = _packages.begin(); p != _packages.end(); ++p)
-		p->save_file (directory() + "/" + p->file_name());
+	{
+		QString file_name = directory() + "/" + p->name().replace ('/', "_") + ".haruhi-presets";
+		QString to_delete = p->file_name() != file_name ? p->file_name() : QString::null;
+
+		if (p->file_name() == QString::null)
+			p->set_file_name (file_name);
+
+		char* copy = strdup (file_name.utf8());
+		char* dir = dirname (copy);
+		mkpath (dir, 0700);
+		free (copy);
+
+		// Create DOM document:
+		QDomDocument doc;
+		QDomElement root_element = doc.createElement ("haruhi-presets");
+		root_element.setAttribute ("unit", _unit_urn);
+		p->save_state (root_element);
+		doc.appendChild (root_element);
+
+		// Save file:
+		QFile file (file_name + "~");
+		if (!file.open (IO_WriteOnly))
+			throw Exception (QString ("Could not save package: ") + file.errorString());
+		QTextStream ts (&file);
+		ts << doc.toString();
+		file.flush();
+		file.close();
+		::rename (file_name + "~", file_name);
+		p->set_file_name (file_name);
+
+		if (to_delete != QString::null)
+			QFile::remove (to_delete);
+	}
 }
 
 

@@ -22,6 +22,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/utility/saveable_state.h>
 
 // Local:
 #include "helpers.h"
@@ -36,13 +37,15 @@ Preset::Preset():
 	_name ("<new preset>")
 {
 	generate_uuid();
+	_patch = _document.createElement ("patch");
 }
 
 
 void
-Preset::clear_patch_element (QDomDocument& document)
+Preset::save_state_of (SaveableState* saveable)
 {
-	_patch = document.createElement ("patch");
+	_patch = _document.createElement ("patch");
+	saveable->save_state (_patch);
 }
 
 
@@ -55,7 +58,7 @@ Preset::save_state (QDomElement& element) const
 	append_element (meta_el, "version", _version);
 	append_element (meta_el, "created-at", _created_at);
 	element.appendChild (meta_el);
-	element.appendChild (_patch.cloneNode (true));
+	element.appendChild (element.ownerDocument().importNode (_patch, true));
 }
 
 

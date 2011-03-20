@@ -77,19 +77,22 @@ class Preset: public SaveableState
 	uuid() const { return _uuid; }
 
 	/**
-	 * Creates new XML node for patch.
+	 * Calls save_state on given object and uses
+	 * saved DOM structure as patch.
 	 */
 	void
-	clear_patch_element (QDomDocument& document);
+	save_state_of (SaveableState* saveable);
 
 	/**
 	 * Patch XML element accessor.
+	 * Created in context of local document, use QDomDocument::importNode().
 	 */
 	QDomElement&
 	patch() { return _patch; }
 
 	/**
 	 * Patch XML element accessor.
+	 * Created in context of local document, use QDomDocument::importNode().
 	 */
 	QDomElement const&
 	patch() const { return _patch; }
@@ -109,11 +112,12 @@ class Preset: public SaveableState
 	generate_uuid();
 
   private:
-	QString		_uuid;
-	QString		_name;
-	QString		_version;
-	QString		_created_at;
-	QDomElement	_patch;
+	QString			_uuid;
+	QString			_name;
+	QString			_version;
+	QString			_created_at;
+	QDomDocument	_document;
+	QDomElement		_patch;
 };
 
 } // namespace PresetsManagerPrivate
