@@ -125,6 +125,8 @@ Backend::~Backend()
 	_create_device_button->disconnect();
 	_create_controller_button->disconnect();
 	_destroy_input_button->disconnect();
+
+	delete _transport;
 }
 
 

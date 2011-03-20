@@ -77,7 +77,7 @@ initialize()
 void
 deinitialize()
 {
-	delete lookup_table;
+	delete[] lookup_table;
 }
 
 } // namespace LookupPow

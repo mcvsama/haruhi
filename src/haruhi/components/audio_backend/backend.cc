@@ -138,6 +138,7 @@ Backend::~Backend()
 {
 	delete _master_volume_port;
 	delete _panic_port;
+	delete _transport;
 }
 
 

@@ -17,7 +17,8 @@
 #include <sstream>
 #include <string>
 
-// Lib:
+// Qt:
+#include <QtCore/QTextCodec>
 #include <QtGui/QApplication>
 #include <QtGui/QStackedWidget>
 #include <QtGui/QMainWindow>
@@ -85,6 +86,8 @@ Haruhi::Haruhi (int argc, char** argv, char** envp):
 Haruhi::~Haruhi()
 {
 	_haruhi = 0;
+
+	QPixmapCache::clear();
 }
 
 
@@ -92,6 +95,11 @@ void
 Haruhi::run_ui()
 {
 	_app = new QApplication (_argc, _argv);
+	// Qt preparations:
+	QTextCodec::setCodecForCStrings (QTextCodec::codecForName ("UTF-8"));
+	// Now casting QString to std::string|const char* will yield UTF-8 encoded strings.
+	// Also std::strings and const chars* are expected to be encoded in UTF-8.
+
 	_periodic_updater = new PeriodicUpdater (30);
 	QObject::connect (_app, SIGNAL (lastWindowClosed()), this, SLOT (quit_if_ok()));
 	session_loader();

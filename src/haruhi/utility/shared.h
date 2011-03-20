@@ -99,6 +99,11 @@ template<class T, class = void>
 				object (object),
 				references (1)
 			{ }
+
+			~Data()
+			{
+				delete object;
+			}
 		};
 
 	  public:

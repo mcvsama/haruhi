@@ -18,9 +18,6 @@
 #include <signal.h>
 #include <locale.h>
 
-// Qt:
-#include <QtCore/QTextCodec>
-
 // Haruhi:
 #include <haruhi/config/version.h>
 #include <haruhi/application/haruhi.h>
@@ -37,11 +34,6 @@ int main (int argc, char** argv, char** envp)
 
 	setenv ("LC_ALL", "POSIX", 1);
 	setlocale (LC_ALL, "POSIX");
-
-	// Qt preparations:
-	QTextCodec::setCodecForCStrings (QTextCodec::codecForName ("UTF-8"));
-	// Now casting QString to std::string|const char* will yield UTF-8 encoded strings.
-	// Also std::strings and const chars* are expected to be encoded in UTF-8.
 
 	// Lib initializations:
 	LookupPow::initialize();

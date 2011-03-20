@@ -121,6 +121,9 @@ AlsaTransport::connect (std::string const& client_name)
 {
 	if (snd_seq_open (&_seq, "default", SND_SEQ_OPEN_INPUT, SND_SEQ_NONBLOCK))
 		throw Exception ("could not open default ALSA midi sequencer", __func__);
+	// Free some not-sure-what-is-it-for cache allocated implicitly by ALSA, to prevent
+	// memory leaks inside alsalib:
+	snd_config_update_free_global();
 	snd_seq_set_client_name (_seq, client_name.c_str());
 	// Switch all ports online:
 	for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)

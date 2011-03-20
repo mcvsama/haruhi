@@ -145,11 +145,17 @@ UnitItem::remove_port (Port* port)
 		PortsToItemsMap::iterator k = _ports.find (port);
 		if (k != _ports.end())
 		{
-			k->second->parent()->removeChild (k->second);
-			delete (k->second);
+			PortItem* port_item = k->second;
+			GroupItem* group_item = 0;
+			if (port_item->parent())
+				group_item = dynamic_cast<GroupItem*> (port_item->parent());
+
+			port_item->parent()->removeChild (k->second);
+			delete (port_item);
 			_ports.erase (k);
-			if (port->group())
-				cleanup_group (port->group());
+
+			if (group_item)
+				cleanup_group_item (group_item);
 		}
 		update_visibility();
 	}
