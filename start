@@ -31,7 +31,7 @@ run="$executable" # run command (with gdb/valgrind)
 corefile="core"
 
 if [ "$o_run_in_valgrind" = "1" ]; then
-	run="valgrind $run"
+	run="valgrind --leak-check=full --show-reachable=yes $run"
 fi
 
 if [ "$o_run_in_gdb" = "1" ]; then
