@@ -99,7 +99,7 @@ PackageItem::create_category_item (Category* category)
 void
 PackageItem::remove_category_item (CategoryItem* category_item)
 {
-	takeChild (indexOfChild (category_item));
+	removeChild (category_item);
 	delete category_item;
 }
 

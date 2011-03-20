@@ -223,7 +223,7 @@ PresetsTree::dropEvent (QDropEvent* event)
 			{
 				CategoryItem* old_category_item = preset_item->category_item();
 				CategoryItem* new_category_item = category_item;
-				old_category_item->takeChild (old_category_item->indexOfChild (preset_item));
+				old_category_item->removeChild (preset_item);
 				new_category_item->addChild (preset_item);
 				new_category_item->setExpanded (true);
 				preset_item->treeWidget()->clearSelection();
@@ -238,7 +238,7 @@ PresetsTree::dropEvent (QDropEvent* event)
 			{
 				PackageItem* old_package_item = category_item->package_item();
 				PackageItem* new_package_item = package_item;
-				old_package_item->takeChild (old_package_item->indexOfChild (category_item));
+				old_package_item->removeChild (category_item);
 				new_package_item->addChild (category_item);
 				new_package_item->setExpanded (true);
 				category_item->treeWidget()->clearSelection();

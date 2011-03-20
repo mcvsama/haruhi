@@ -112,7 +112,7 @@ CategoryItem::create_preset_item (Preset* preset)
 void
 CategoryItem::remove_preset_item (PresetItem* preset_item)
 {
-	takeChild (indexOfChild (preset_item));
+	removeChild (preset_item);
 	delete preset_item;
 }
 

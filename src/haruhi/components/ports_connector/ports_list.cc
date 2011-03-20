@@ -139,9 +139,9 @@ PortsList::remove_unit (Unit* unit)
 	{
 		QTreeWidgetItem* li = _units[unit];
 		if (li->parent())
-			li->parent()->takeChild (li->parent()->indexOfChild (li));
+			li->parent()->removeChild (li);
 		else
-			li->treeWidget()->invisibleRootItem()->takeChild (li->treeWidget()->invisibleRootItem()->indexOfChild (li));
+			li->treeWidget()->invisibleRootItem()->removeChild (li);
 		delete li;
 		_units.erase (unit);
 	}

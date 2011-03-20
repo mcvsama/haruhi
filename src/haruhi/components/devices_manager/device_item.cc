@@ -43,15 +43,12 @@ DeviceItem::DeviceItem (Tree* parent, Device* device):
 DeviceItem::~DeviceItem()
 {
 	// Delete children:
-	while (childCount() > 0)
-	{
-		QTreeWidgetItem* c = child (0);
-		takeChild (0);
-		delete c;
-	}
+	QList<QTreeWidgetItem*> children = takeChildren();
+	while (!children.isEmpty())
+		delete children.takeFirst();
 	// Remove itself from External ports list view:
 	if (treeWidget())
-		treeWidget()->invisibleRootItem()->takeChild (treeWidget()->invisibleRootItem()->indexOfChild (this));
+		treeWidget()->invisibleRootItem()->removeChild (this);
 }
 
 

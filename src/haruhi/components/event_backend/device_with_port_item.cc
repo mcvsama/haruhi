@@ -45,12 +45,9 @@ DeviceWithPortItem::DeviceWithPortItem (Backend* p_backend, Tree* parent, Device
 DeviceWithPortItem::~DeviceWithPortItem()
 {
 	// Delete children:
-	while (childCount() > 0)
-	{
-		QTreeWidgetItem* c = child (0);
-		takeChild (0);
-		delete c;
-	}
+	QList<QTreeWidgetItem*> children = takeChildren();
+	while (!children.isEmpty())
+		delete children.takeFirst();
 	// TODO lock for _inputs map:
 	backend()->_inputs.erase (_transport_port);
 	backend()->transport()->destroy_port (_transport_port);

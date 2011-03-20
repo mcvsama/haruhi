@@ -56,7 +56,7 @@ InputItem::~InputItem()
 	_backend->graph()->unlock();
 	// Remove itself from External ports list view:
 	if (treeWidget())
-		treeWidget()->invisibleRootItem()->takeChild (treeWidget()->invisibleRootItem()->indexOfChild (this));
+		treeWidget()->invisibleRootItem()->removeChild (this);
 }
 
 

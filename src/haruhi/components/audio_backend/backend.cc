@@ -520,7 +520,7 @@ Backend::destroy_selected_input()
 	if (_inputs_list->selected_item())
 	{
 		QTreeWidgetItem* item = _inputs_list->selected_item();
-		_inputs_list->invisibleRootItem()->takeChild (_inputs_list->invisibleRootItem()->indexOfChild (item));
+		_inputs_list->invisibleRootItem()->removeChild (item);
 		delete item;
 	}
 }
@@ -532,7 +532,7 @@ Backend::destroy_selected_output()
 	if (_outputs_list->selected_item())
 	{
 		QTreeWidgetItem* item = _outputs_list->selected_item();
-		_outputs_list->invisibleRootItem()->takeChild (_inputs_list->invisibleRootItem()->indexOfChild (item));
+		_outputs_list->invisibleRootItem()->removeChild (item);
 		delete item;
 	}
 }

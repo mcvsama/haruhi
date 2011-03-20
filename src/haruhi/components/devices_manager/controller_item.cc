@@ -45,7 +45,7 @@ ControllerItem::~ControllerItem()
 {
 	// Remove itself from tree widget:
 	if (parent())
-		parent()->takeChild (parent()->indexOfChild (this));
+		parent()->removeChild (this);
 }
 
 

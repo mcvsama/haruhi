@@ -50,7 +50,7 @@ PortItem::~PortItem()
 {
 	// Remove itself from TreeWidget:
 	if (parent())
-		parent()->takeChild (parent()->indexOfChild (this));
+		parent()->removeChild (this);
 }
 
 

@@ -306,7 +306,7 @@ PresetsManager::destroy()
 			try {
 				Private::Category* category = category_item->category();
 				Private::PackageItem* package_item = category_item->package_item();
-				package_item->takeChild (package_item->indexOfChild (category_item));
+				package_item->removeChild (category_item);
 				delete category_item;
 				package_item->package()->remove_category (category);
 				package_item->package()->save_file();
@@ -328,7 +328,7 @@ PresetsManager::destroy()
 			try {
 				Private::Preset* preset = preset_item->preset();
 				Private::CategoryItem* category_item = preset_item->category_item();
-				category_item->takeChild (category_item->indexOfChild (preset_item));
+				category_item->removeChild (preset_item);
 				delete preset_item;
 				category_item->category()->remove_preset (preset);
 				category_item->package_item()->package()->save_file();
@@ -502,7 +502,7 @@ PresetsManager::create_package_item (Private::Package* package)
 void
 PresetsManager::remove_package_item (Private::PackageItem* package_item)
 {
-	_tree->invisibleRootItem()->takeChild (_tree->invisibleRootItem()->indexOfChild (package_item));
+	_tree->invisibleRootItem()->removeChild (package_item);
 	delete package_item;
 }
 
