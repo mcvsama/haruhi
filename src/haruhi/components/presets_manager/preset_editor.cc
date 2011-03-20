@@ -63,7 +63,7 @@ PresetEditor::PresetEditor (PresetsManager* presets_manager, QWidget* parent):
 	grid_layout->addWidget (_version = new QLineEdit (grid), 3, 1);
 	grid_layout->addWidget (_favorite = new QCheckBox ("Favorite preset", grid), 4, 0, 1, 2);
 
-	_update_details_button = new QPushButton (Resources::Icons16::save(), "Update de&tails", this);
+	_update_details_button = new QPushButton (Resources::Icons16::save(), "Save de&tails", this);
 	_update_details_button->setAccel (Qt::CTRL + Qt::Key_T);
 	QToolTip::add (_update_details_button, "Saves metadata without current patch");
 	QObject::connect (_update_details_button, SIGNAL (clicked()), this, SLOT (update_details()));
