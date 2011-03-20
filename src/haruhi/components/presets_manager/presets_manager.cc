@@ -271,6 +271,8 @@ PresetsManager::create_preset()
 	{
 		Private::Preset* preset = category_item->category()->create_preset();
 		Private::PresetItem* preset_item = new Private::PresetItem (category_item, preset);
+		_editor->load_preset (preset_item);
+		save_preset (preset_item, true);
 		// changed() should be called after adding the item, so read() won't add additional second item:
 		_model->save_state();
 		_model->changed();
