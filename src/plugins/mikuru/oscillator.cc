@@ -587,16 +587,16 @@ Oscillator::process_events()
 	_knob_phase->process_events();
 	_knob_noise_level->process_events();
 	// Voice:
-	_evdisp_amplitude->load_events();
-	_evdisp_frequency->load_events();
-	_evdisp_panorama->load_events();
-	_evdisp_detune->load_events();
-	_evdisp_pitchbend->load_events();
-	_evdisp_velocity_sens->load_events();
-	_evdisp_unison_index->load_events();
-	_evdisp_unison_spread->load_events();
-	_evdisp_unison_init->load_events();
-	_evdisp_unison_noise->load_events();
+	_evdisp_amplitude->process_events();
+	_evdisp_frequency->process_events();
+	_evdisp_panorama->process_events();
+	_evdisp_detune->process_events();
+	_evdisp_pitchbend->process_events();
+	_evdisp_velocity_sens->process_events();
+	_evdisp_unison_index->process_events();
+	_evdisp_unison_spread->process_events();
+	_evdisp_unison_init->process_events();
+	_evdisp_unison_noise->process_events();
 }
 
 

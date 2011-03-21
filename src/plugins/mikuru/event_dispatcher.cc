@@ -72,7 +72,7 @@ EventDispatcher::EventDispatcher (Haruhi::EventPort* port, int min, int max, Rec
 
 
 void
-EventDispatcher::load_events()
+EventDispatcher::process_events()
 {
 	Haruhi::EventBuffer* buffer = _port->event_buffer();
 	Haruhi::ControllerEvent const* ce = 0;

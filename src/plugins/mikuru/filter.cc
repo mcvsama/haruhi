@@ -216,10 +216,10 @@ Filter::process_events()
 {
 	if (_polyphonic_control)
 	{
-		_evdisp_frequency->load_events();
-		_evdisp_resonance->load_events();
-		_evdisp_gain->load_events();
-		_evdisp_attenuation->load_events();
+		_evdisp_frequency->process_events();
+		_evdisp_resonance->process_events();
+		_evdisp_gain->process_events();
+		_evdisp_attenuation->process_events();
 	}
 	else
 	{

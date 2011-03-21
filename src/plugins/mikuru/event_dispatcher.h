@@ -122,7 +122,7 @@ class EventDispatcher
 	 * either to Knob or directly to VoiceManager.
 	 */
 	void
-	load_events();
+	process_events();
 
   public:
 	Haruhi::EventPort*	_port;
