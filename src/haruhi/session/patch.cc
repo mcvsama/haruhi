@@ -487,7 +487,8 @@ Patch::create_plugins_menu()
 void
 Patch::load_plugin_request (int i)
 {
-	load_plugin (_urns[i]);
+	Plugin* plugin = load_plugin (_urns[i]);
+	_tabs->showPage (_plugins_to_frames_map[plugin]);
 }
 
 } // namespace Haruhi
