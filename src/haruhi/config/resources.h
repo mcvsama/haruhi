@@ -140,6 +140,14 @@ small_font();
 		HARUHI_CONFIG_HAS_ICON_16 (modulator, "modulator.png");
 		HARUHI_CONFIG_HAS_ICON_16 (filters, "filters.png");
 		HARUHI_CONFIG_HAS_ICON_16 (effects, "effects.png");
+		HARUHI_CONFIG_HAS_ICON_16 (filter_lpf, "filter-lpf.png");
+		HARUHI_CONFIG_HAS_ICON_16 (filter_bpf, "filter-bpf.png");
+		HARUHI_CONFIG_HAS_ICON_16 (filter_hpf, "filter-hpf.png");
+		HARUHI_CONFIG_HAS_ICON_16 (filter_notch, "filter-notch.png");
+		HARUHI_CONFIG_HAS_ICON_16 (filter_allpass, "filter-allpass.png");
+		HARUHI_CONFIG_HAS_ICON_16 (filter_peaking, "filter-peaking.png");
+		HARUHI_CONFIG_HAS_ICON_16 (filter_lowshelf, "filter-lowshelf.png");
+		HARUHI_CONFIG_HAS_ICON_16 (filter_highshelf, "filter-highshelf.png");
 
 #undef HARUHI_CONFIG_HAS_ICON_16
 	} // namespace Icons16

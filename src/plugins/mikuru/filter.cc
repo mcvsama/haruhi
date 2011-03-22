@@ -103,14 +103,14 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 
 	// Widgets/knobs:
 	_filter_type = new QComboBox (_panel);
-	_filter_type->addItem ("Low pass", RBJImpulseResponse::LowPass);
-	_filter_type->addItem ("High pass", RBJImpulseResponse::HighPass);
-	_filter_type->addItem ("Band pass", RBJImpulseResponse::BandPass);
-	_filter_type->addItem ("Notch", RBJImpulseResponse::Notch);
-	_filter_type->addItem ("All pass", RBJImpulseResponse::AllPass);
-	_filter_type->addItem ("Peaking", RBJImpulseResponse::Peaking);
-	_filter_type->addItem ("Low shelf", RBJImpulseResponse::LowShelf);
-	_filter_type->addItem ("High shelf", RBJImpulseResponse::HighShelf);
+	_filter_type->addItem (Resources::Icons16::filter_lpf(), "Low pass", RBJImpulseResponse::LowPass);
+	_filter_type->addItem (Resources::Icons16::filter_hpf(), "High pass", RBJImpulseResponse::HighPass);
+	_filter_type->addItem (Resources::Icons16::filter_bpf(), "Band pass", RBJImpulseResponse::BandPass);
+	_filter_type->addItem (Resources::Icons16::filter_notch(), "Notch", RBJImpulseResponse::Notch);
+	_filter_type->addItem (Resources::Icons16::filter_allpass(), "All pass", RBJImpulseResponse::AllPass);
+	_filter_type->addItem (Resources::Icons16::filter_peaking(), "Peaking", RBJImpulseResponse::Peaking);
+	_filter_type->addItem (Resources::Icons16::filter_lowshelf(), "Low shelf", RBJImpulseResponse::LowShelf);
+	_filter_type->addItem (Resources::Icons16::filter_highshelf(), "High shelf", RBJImpulseResponse::HighShelf);
 	_filter_type->setCurrentItem (p.type);
 	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_params()));
 	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_widgets()));
