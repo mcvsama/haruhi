@@ -50,7 +50,7 @@ CommonFilters::CommonFilters (Mikuru* mikuru, QWidget* parent):
 	QObject::connect (_filter_configuration, SIGNAL (activated (int)), this, SLOT (update_params()));
 	QObject::connect (_filter_configuration, SIGNAL (activated (int)), this, SLOT (update_widgets()));
 
-	_route_audio_input = new QCheckBox ("Route audio input", this);
+	_route_audio_input = new QCheckBox ("Route in audio input", this);
 	_route_audio_input->setChecked (p.route_audio_input);
 	QObject::connect (_route_audio_input, SIGNAL (toggled (bool)), this, SLOT (update_params()));
 
