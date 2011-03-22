@@ -142,6 +142,7 @@ class Session:
 		int		engine_thread_priority;
 		int		level_meter_fps;
 		float	tempo;
+		int		master_volume;
 	};
 
 	class MeterPanel: public QFrame

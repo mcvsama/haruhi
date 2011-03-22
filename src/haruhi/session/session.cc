@@ -219,7 +219,8 @@ Session::Parameters::Parameters():
 	transpose (0),
 	engine_thread_priority (50),
 	level_meter_fps (30),
-	tempo (120.0)
+	tempo (120.0),
+	master_volume (0)
 {
 	limit_values();
 }
@@ -231,32 +232,22 @@ Session::Parameters::load_state (QDomElement const& element)
 	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
 	{
 		QDomElement e = n.toElement();
-		if (!e.isNull())
-		{
-			if (e.tagName() == "tuning")
-				tuning = e.text().toInt();
-			else if (e.tagName() == "transpose")
-				transpose = e.text().toInt();
-			else if (e.tagName() == "engine-thread-priority")
-				engine_thread_priority = e.text().toInt();
-			else if (e.tagName() == "level-meter-fps")
-				level_meter_fps = e.text().toInt();
-			else if (e.tagName() == "tempo")
-				tempo = e.text().toFloat();
-		}
+		if (e.isNull())
+			continue;
+		else if (e.tagName() == "tuning")
+			tuning = e.text().toInt();
+		else if (e.tagName() == "transpose")
+			transpose = e.text().toInt();
+		else if (e.tagName() == "engine-thread-priority")
+			engine_thread_priority = e.text().toInt();
+		else if (e.tagName() == "level-meter-fps")
+			level_meter_fps = e.text().toInt();
+		else if (e.tagName() == "tempo")
+			tempo = e.text().toFloat();
+		else if (e.tagName() == "master-volume")
+			master_volume = e.text().toInt();
 	}
 	limit_values();
-}
-
-
-void
-Session::Parameters::limit_values()
-{
-	limit_value (tuning, -50, 50);
-	limit_value (transpose, -60, 60);
-	limit_value (engine_thread_priority, 1, 99);
-	limit_value (level_meter_fps, 10, 50);
-	limit_value (tempo, 20.0f, 400.0f);
 }
 
 
@@ -278,11 +269,27 @@ Session::Parameters::save_state (QDomElement& element) const
 	QDomElement par_tempo = element.ownerDocument().createElement ("tempo");
 	par_tempo.appendChild (element.ownerDocument().createTextNode (QString::number (tempo)));
 
+	QDomElement par_master_volume = element.ownerDocument().createElement ("master-volume");
+	par_master_volume.appendChild (element.ownerDocument().createTextNode (QString::number (master_volume)));
+
 	element.appendChild (par_tuning);
 	element.appendChild (par_transpose);
 	element.appendChild (par_engine_thread_priority);
 	element.appendChild (par_level_meter_fps);
 	element.appendChild (par_tempo);
+	element.appendChild (par_master_volume);
+}
+
+
+void
+Session::Parameters::limit_values()
+{
+	limit_value (tuning, -50, 50);
+	limit_value (transpose, -60, 60);
+	limit_value (engine_thread_priority, 1, 99);
+	limit_value (level_meter_fps, 10, 50);
+	limit_value (tempo, 20.0f, 400.0f);
+	limit_value (master_volume, static_cast<int> (MeterPanel::MinVolume), static_cast<int> (MeterPanel::MaxVolume));
 }
 
 
@@ -455,6 +462,7 @@ Session::apply_parameters()
 	graph()->set_master_tune (master_tune());
 	engine()->set_sched (Thread::SchedFIFO, _parameters.engine_thread_priority);
 	meter_panel()->level_meters_group()->set_fps (_parameters.level_meter_fps);
+	meter_panel()->master_volume()->setValue (_parameters.master_volume);
 }
 
 
@@ -568,44 +576,6 @@ Session::set_master_volume (Sample value, bool update_widget)
 
 
 void
-Session::save_state (QDomElement& element) const
-{
-	element.setAttribute ("name", name());
-
-	// Save parameters:
-	QDomElement parameters = element.ownerDocument().createElement ("parameters");
-	_parameters.save_state (parameters);
-
-	// Save audio-backend:
-	QDomElement audio_backend = element.ownerDocument().createElement ("audio-backend");
-	try {
-		dynamic_cast<SaveableState&> (*_audio_backend).save_state (audio_backend);
-		audio_backend.setAttribute ("id", _audio_backend->id());
-	}
-	catch (std::bad_cast const&)
-	{ }
-
-	// Save event-backend:
-	QDomElement event_backend = element.ownerDocument().createElement ("event-backend");
-	try {
-		dynamic_cast<SaveableState&> (*_event_backend).save_state (event_backend);
-		event_backend.setAttribute ("id", _event_backend->id());
-	}
-	catch (std::bad_cast const&)
-	{ }
-
-	// Save programs:
-	QDomElement program = element.ownerDocument().createElement ("program");
-	_program->save_state (program);
-
-	element.appendChild (parameters);
-	element.appendChild (audio_backend);
-	element.appendChild (event_backend);
-	element.appendChild (program);
-}
-
-
-void
 Session::load_state (QDomElement const& element)
 {
 	// Stop processing, if any runs:
@@ -668,6 +638,44 @@ Session::load_state (QDomElement const& element)
 	}
 	else
 		QMessageBox::warning (this, "Error while loading session", "Could not load session due to missing information in session file.");
+}
+
+
+void
+Session::save_state (QDomElement& element) const
+{
+	element.setAttribute ("name", name());
+
+	// Save parameters:
+	QDomElement parameters = element.ownerDocument().createElement ("parameters");
+	_parameters.save_state (parameters);
+
+	// Save audio-backend:
+	QDomElement audio_backend = element.ownerDocument().createElement ("audio-backend");
+	try {
+		dynamic_cast<SaveableState&> (*_audio_backend).save_state (audio_backend);
+		audio_backend.setAttribute ("id", _audio_backend->id());
+	}
+	catch (std::bad_cast const&)
+	{ }
+
+	// Save event-backend:
+	QDomElement event_backend = element.ownerDocument().createElement ("event-backend");
+	try {
+		dynamic_cast<SaveableState&> (*_event_backend).save_state (event_backend);
+		event_backend.setAttribute ("id", _event_backend->id());
+	}
+	catch (std::bad_cast const&)
+	{ }
+
+	// Save programs:
+	QDomElement program = element.ownerDocument().createElement ("program");
+	_program->save_state (program);
+
+	element.appendChild (parameters);
+	element.appendChild (audio_backend);
+	element.appendChild (event_backend);
+	element.appendChild (program);
 }
 
 
@@ -837,6 +845,7 @@ Session::audio_backend_state_change (bool)
 void
 Session::master_volume_changed (int value)
 {
+	_parameters.master_volume = value;
 	set_master_volume (value / static_cast<float> (Session::MeterPanel::MaxVolume), false);
 }
 
