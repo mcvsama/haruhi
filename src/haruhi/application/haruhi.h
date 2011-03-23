@@ -36,6 +36,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/components/devices_manager/settings.h>
 #include <haruhi/settings/settings.h>
+#include <haruhi/settings/haruhi_settings.h>
 #include <haruhi/settings/has_presets_settings.h>
 #include <haruhi/settings/session_loader_settings.h>
 #include <haruhi/utility/noncopyable.h>
@@ -110,6 +111,9 @@ class Haruhi:
 	Settings*
 	settings() const { return _settings; }
 
+	HaruhiSettings*
+	haruhi_settings() const { return _haruhi_settings; }
+
 	DevicesManager::Settings*
 	devices_manager_settings() const { return _devices_manager_settings; }
 
@@ -149,6 +153,7 @@ class Haruhi:
 	PeriodicUpdater*			_periodic_updater;
 	Session*					_session;
 	Settings*					_settings;
+	HaruhiSettings*				_haruhi_settings;
 	DevicesManager::Settings*	_devices_manager_settings;
 	HasPresetsSettings*			_has_presets_settings;
 	SessionLoaderSettings*		_session_loader_settings;

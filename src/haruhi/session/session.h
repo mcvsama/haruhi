@@ -78,14 +78,14 @@ namespace SessionPrivate {
 		QPushButton*	_reject_button;
 	};
 
-	class Global: public QWidget
+	class SessionGlobal: public QWidget
 	{
 		Q_OBJECT
 
 		friend class Session;
 
 	  public:
-		Global (Session*, QWidget* parent);
+		SessionGlobal (Session*, QWidget* parent);
 
 		void
 		load_params();
@@ -104,6 +104,31 @@ namespace SessionPrivate {
 		QSpinBox*	_tuning;
 		QLabel*		_tuning_hz;
 		QSpinBox*	_transpose;
+	};
+
+	class HaruhiGlobal: public QWidget
+	{
+		Q_OBJECT
+
+		friend class Session;
+
+	  public:
+		HaruhiGlobal (Session*, QWidget* parent);
+
+		void
+		load_params();
+
+	  private slots:
+		void
+		update_params();
+
+		void
+		update_widgets();
+
+	  private:
+		Session*	_session;
+		bool		_loading_params;
+
 		QSpinBox*	_engine_thread_priority;
 		QSpinBox*	_level_meter_fps;
 	};
@@ -139,8 +164,6 @@ class Session:
 	  public:
 		int		tuning; // -50…50 cents
 		int		transpose;
-		int		engine_thread_priority;
-		int		level_meter_fps;
 		float	tempo;
 		int		master_volume;
 	};
@@ -327,34 +350,35 @@ class Session:
 	create_container (QWidget* parent);
 
   private:
-	QString						_name;
-	QString						_file_name;
-	Parameters					_parameters;
-	Graph*						_graph;
+	QString							_name;
+	QString							_file_name;
+	Parameters						_parameters;
+	Graph*							_graph;
 
-	MeterPanel*					_meter_panel;
-	QStackedWidget*				_stack;
-	QLabel*						_session_name;
-	QPushButton*				_panic_button;
-	QPushButton*				_main_menu_button;
+	MeterPanel*						_meter_panel;
+	QStackedWidget*					_stack;
+	QLabel*							_session_name;
+	QPushButton*					_panic_button;
+	QPushButton*					_main_menu_button;
 
-	Program*					_program;
-	QTabWidget*					_session_settings;
-	QTabWidget*					_haruhi_settings;
+	Program*						_program;
+	QTabWidget*						_session_settings;
+	QTabWidget*						_haruhi_settings;
 
-	SessionPrivate::Global*		_session_global;
-	QWidget*					_audio_tab;
-	QWidget*					_event_tab;
+	SessionPrivate::SessionGlobal*	_session_global;
+	SessionPrivate::HaruhiGlobal*	_haruhi_global;
+	QWidget*						_audio_tab;
+	QWidget*						_event_tab;
 
 	// Links to main session components:
-	AudioBackend*				_audio_backend;
-	EventBackend*				_event_backend;
-	Engine*						_engine;
-	PluginLoader*				_plugin_loader;
-	DevicesManager::Panel*		_devices_manager;
+	AudioBackend*					_audio_backend;
+	EventBackend*					_event_backend;
+	Engine*							_engine;
+	PluginLoader*					_plugin_loader;
+	DevicesManager::Panel*			_devices_manager;
 
-	QDoubleSpinBox*				_tempo_spinbox;
-	QMenu*						_main_menu;
+	QDoubleSpinBox*					_tempo_spinbox;
+	QMenu*							_main_menu;
 };
 
 } // namespace Haruhi

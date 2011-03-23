@@ -323,11 +323,13 @@ SRC_MOCHDRS += haruhi/session/session_loader.h
 
 SRC_HEADERS += haruhi/settings/settings.h
 SRC_HEADERS += haruhi/settings/plugin_settings.h
+SRC_HEADERS += haruhi/settings/haruhi_settings.h
 SRC_HEADERS += haruhi/settings/has_presets_settings.h
 SRC_HEADERS += haruhi/settings/session_loader_settings.h
 
 SRC_SOURCES += haruhi/settings/settings.cc
 SRC_SOURCES += haruhi/settings/plugin_settings.cc
+SRC_SOURCES += haruhi/settings/haruhi_settings.cc
 SRC_SOURCES += haruhi/settings/has_presets_settings.cc
 SRC_SOURCES += haruhi/settings/session_loader_settings.cc
 

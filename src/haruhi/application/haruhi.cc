@@ -58,10 +58,12 @@ Haruhi::Haruhi (int argc, char** argv, char** envp):
 	_settings = new Settings (HARUHI_XDG_SETTINGS_HOME "/haruhi.conf", Settings::XDG_CONFIG,
 							  HARUHI_SHARED_DIRECTORY "/config/haruhi.conf");
 
+	_haruhi_settings = new HaruhiSettings();
 	_devices_manager_settings = new DevicesManager::Settings();
 	_has_presets_settings = new HasPresetsSettings();
 	_session_loader_settings = new SessionLoaderSettings();
 
+	_settings->register_module (_haruhi_settings);
 	_settings->register_module (_devices_manager_settings);
 	_settings->register_module (_has_presets_settings);
 	_settings->register_module (_session_loader_settings);
@@ -73,8 +75,9 @@ Haruhi::Haruhi (int argc, char** argv, char** envp):
 	_settings->save();
 
 	_settings->unregister_module (_has_presets_settings);
-	_settings->unregister_module (_devices_manager_settings);
 	_settings->unregister_module (_session_loader_settings);
+	_settings->unregister_module (_devices_manager_settings);
+	_settings->unregister_module (_haruhi_settings);
 
 	delete _has_presets_settings;
 	delete _devices_manager_settings;

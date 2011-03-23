@@ -38,6 +38,7 @@
 #include <haruhi/components/audio_backend/backend.h>
 #include <haruhi/components/event_backend/backend.h>
 #include <haruhi/session/periodic_updater.h>
+#include <haruhi/settings/haruhi_settings.h>
 #include <haruhi/settings/session_loader_settings.h>
 #include <haruhi/widgets/clickable_label.h>
 #include <haruhi/utility/numeric.h>
@@ -131,7 +132,7 @@ Private::SettingsDialog::validate_and_accept()
 }
 
 
-Private::Global::Global (Session* session, QWidget* parent):
+Private::SessionGlobal::SessionGlobal (Session* session, QWidget* parent):
 	QWidget (parent),
 	_session (session),
 	_loading_params (false)
@@ -152,6 +153,56 @@ Private::Global::Global (Session* session, QWidget* parent):
 	_transpose->setValue (0);
 	QObject::connect (_transpose, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 
+	QGridLayout* group_layout = new QGridLayout (this);
+	group_layout->addWidget (new QLabel ("Master tuning:", this), 0, 0);
+	group_layout->addWidget (_tuning, 0, 1);
+	group_layout->addWidget (_tuning_hz, 0, 2);
+	group_layout->addWidget (new QLabel ("Transpose:", this), 1, 0);
+	group_layout->addWidget (_transpose, 1, 1);
+	group_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed), 0, 3);
+	group_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 2, 0);
+
+	update_widgets();
+}
+
+
+void
+Private::SessionGlobal::load_params()
+{
+	_loading_params = true;
+	_tuning->setValue (_session->parameters().tuning);
+	_transpose->setValue (_session->parameters().transpose);
+	_loading_params = false;
+	update_widgets();
+}
+
+
+void
+Private::SessionGlobal::update_params()
+{
+	if (_loading_params)
+		return;
+	_session->parameters().tuning = _tuning->value();
+	_session->parameters().transpose = _transpose->value();
+	update_widgets();
+	_session->apply_parameters();
+}
+
+
+void
+Private::SessionGlobal::update_widgets()
+{
+	_tuning_hz->setText (QString::number (_session->master_tune(), 'f', 2) + "Hz");
+}
+
+
+Private::HaruhiGlobal::HaruhiGlobal (Session* session, QWidget* parent):
+	QWidget (parent),
+	_session (session),
+	_loading_params (false)
+{
+	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+
 	_engine_thread_priority = new QSpinBox (this);
 	_engine_thread_priority->setRange (1, 99);
 	_engine_thread_priority->setValue (50);
@@ -164,61 +215,55 @@ Private::Global::Global (Session* session, QWidget* parent):
 	QObject::connect (_level_meter_fps, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 
 	QGridLayout* group_layout = new QGridLayout (this);
-	group_layout->addWidget (new QLabel ("Master tuning:", this), 0, 0);
-	group_layout->addWidget (_tuning, 0, 1);
-	group_layout->addWidget (_tuning_hz, 0, 2);
-	group_layout->addWidget (new QLabel ("Transpose:", this), 1, 0);
-	group_layout->addWidget (_transpose, 1, 1);
-	group_layout->addWidget (new QLabel ("Engine thread priority:", this), 2, 0);
-	group_layout->addWidget (_engine_thread_priority, 2, 1);
-	group_layout->addWidget (new QLabel ("Level Meter FPS:", this), 3, 0);
-	group_layout->addWidget (_level_meter_fps, 3, 1);
-	group_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed), 0, 3);
-	group_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 4, 0);
+	group_layout->addWidget (new QLabel ("Engine thread priority:", this), 0, 0);
+	group_layout->addWidget (_engine_thread_priority, 0, 1);
+	group_layout->addWidget (new QLabel ("Level Meter FPS:", this), 1, 0);
+	group_layout->addWidget (_level_meter_fps, 1, 1);
+	group_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed), 0, 2);
+	group_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 2, 0);
 
 	update_widgets();
 }
 
 
 void
-Private::Global::load_params()
+Private::HaruhiGlobal::load_params()
 {
+	HaruhiSettings* haruhi_settings = Haruhi::haruhi()->haruhi_settings();
+
 	_loading_params = true;
-	_tuning->setValue (_session->parameters().tuning);
-	_transpose->setValue (_session->parameters().transpose);
-	_engine_thread_priority->setValue (_session->parameters().engine_thread_priority);
-	_level_meter_fps->setValue (_session->parameters().level_meter_fps);
+	_engine_thread_priority->setValue (haruhi_settings->engine_thread_priority());
+	_level_meter_fps->setValue (haruhi_settings->level_meter_fps());
 	_loading_params = false;
 	update_widgets();
 }
 
 
 void
-Private::Global::update_params()
+Private::HaruhiGlobal::update_params()
 {
 	if (_loading_params)
 		return;
-	_session->parameters().tuning = _tuning->value();
-	_session->parameters().transpose = _transpose->value();
-	_session->parameters().engine_thread_priority = _engine_thread_priority->value();
-	_session->parameters().level_meter_fps = _level_meter_fps->value();
+
+	HaruhiSettings* haruhi_settings = Haruhi::haruhi()->haruhi_settings();
+
+	haruhi_settings->set_engine_thread_priority (_engine_thread_priority->value());
+	haruhi_settings->set_level_meter_fps (_level_meter_fps->value());
+	haruhi_settings->save();
 	update_widgets();
 	_session->apply_parameters();
 }
 
 
 void
-Private::Global::update_widgets()
+Private::HaruhiGlobal::update_widgets()
 {
-	_tuning_hz->setText (QString::number (_session->master_tune(), 'f', 2) + "Hz");
 }
 
 
 Session::Parameters::Parameters():
 	tuning (0),
 	transpose (0),
-	engine_thread_priority (50),
-	level_meter_fps (30),
 	tempo (120.0),
 	master_volume (0)
 {
@@ -238,10 +283,6 @@ Session::Parameters::load_state (QDomElement const& element)
 			tuning = e.text().toInt();
 		else if (e.tagName() == "transpose")
 			transpose = e.text().toInt();
-		else if (e.tagName() == "engine-thread-priority")
-			engine_thread_priority = e.text().toInt();
-		else if (e.tagName() == "level-meter-fps")
-			level_meter_fps = e.text().toInt();
 		else if (e.tagName() == "tempo")
 			tempo = e.text().toFloat();
 		else if (e.tagName() == "master-volume")
@@ -260,12 +301,6 @@ Session::Parameters::save_state (QDomElement& element) const
 	QDomElement par_transpose = element.ownerDocument().createElement ("transpose");
 	par_transpose.appendChild (element.ownerDocument().createTextNode (QString::number (transpose)));
 
-	QDomElement par_engine_thread_priority = element.ownerDocument().createElement ("engine-thread-priority");
-	par_engine_thread_priority.appendChild (element.ownerDocument().createTextNode (QString::number (engine_thread_priority)));
-
-	QDomElement par_level_meter_fps = element.ownerDocument().createElement ("level-meter-fps");
-	par_level_meter_fps.appendChild (element.ownerDocument().createTextNode (QString::number (level_meter_fps)));
-
 	QDomElement par_tempo = element.ownerDocument().createElement ("tempo");
 	par_tempo.appendChild (element.ownerDocument().createTextNode (QString::number (tempo)));
 
@@ -274,8 +309,6 @@ Session::Parameters::save_state (QDomElement& element) const
 
 	element.appendChild (par_tuning);
 	element.appendChild (par_transpose);
-	element.appendChild (par_engine_thread_priority);
-	element.appendChild (par_level_meter_fps);
 	element.appendChild (par_tempo);
 	element.appendChild (par_master_volume);
 }
@@ -286,8 +319,6 @@ Session::Parameters::limit_values()
 {
 	limit_value (tuning, -50, 50);
 	limit_value (transpose, -60, 60);
-	limit_value (engine_thread_priority, 1, 99);
-	limit_value (level_meter_fps, 10, 50);
 	limit_value (tempo, 20.0f, 400.0f);
 	limit_value (master_volume, static_cast<int> (MeterPanel::MinVolume), static_cast<int> (MeterPanel::MaxVolume));
 }
@@ -384,7 +415,8 @@ Session::Session (QWidget* parent):
 	_haruhi_settings->setTabPosition (QTabWidget::South);
 	_haruhi_settings->setIconSize (QSize (32, 22));
 
-	_session_global = new Private::Global (this, _session_settings);
+	_session_global = new Private::SessionGlobal (this, _session_settings);
+	_haruhi_global = new Private::HaruhiGlobal (this, _session_settings);
 	_audio_tab = create_container (this);
 	_event_tab = create_container (this);
 
@@ -419,10 +451,11 @@ Session::Session (QWidget* parent):
 	layout->addLayout (bottom_layout);
 
 	// Add tabs:
-	_session_settings->addTab (_session_global, Resources::Icons22::configure(), "Global");
+	_session_settings->addTab (_session_global, Resources::Icons22::configure(), "Session settings");
 	_session_settings->addTab (_audio_tab, Resources::Icons22::show_audio(), "Audio backend");
 	_session_settings->addTab (_event_tab, Resources::Icons22::show_event(), "Input devices");
 
+	_haruhi_settings->addTab (_haruhi_global, Resources::Icons22::configure(), "Haruhi settings");
 	_haruhi_settings->addTab (_devices_manager, Resources::Icons22::show_event(), "Devices manager");
 
 	// Start engine and backends before program is loaded:
@@ -459,9 +492,11 @@ Session::~Session()
 void
 Session::apply_parameters()
 {
+	HaruhiSettings* haruhi_settings = Haruhi::haruhi()->haruhi_settings();
+
 	graph()->set_master_tune (master_tune());
-	engine()->set_sched (Thread::SchedFIFO, _parameters.engine_thread_priority);
-	meter_panel()->level_meters_group()->set_fps (_parameters.level_meter_fps);
+	engine()->set_sched (Thread::SchedFIFO, haruhi_settings->engine_thread_priority());
+	meter_panel()->level_meters_group()->set_fps (haruhi_settings->level_meter_fps());
 	meter_panel()->master_volume()->setValue (_parameters.master_volume);
 }
 
@@ -630,6 +665,7 @@ Session::load_state (QDomElement const& element)
 		{
 			parameters().load_state (parameters_element);
 			_session_global->load_params();
+			_haruhi_global->load_params();
 			apply_parameters();
 		}
 
