@@ -43,7 +43,8 @@ namespace DevicesManager {
 
 Panel::Panel (QWidget* parent, Settings* settings):
 	QWidget (parent),
-	_settings (settings)
+	_settings (settings),
+	_event_backend (0)
 {
 	_tree = new Tree (this, &settings->model());
 	QObject::connect (_tree, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_items (const QPoint&)));
@@ -201,12 +202,17 @@ Panel::learn_from_midi()
 	QTreeWidgetItem* item = _tree->selected_item();
 	if (item)
 	{
-		ControllerItem* controller_item = dynamic_cast<ControllerItem*> (item);
-		if (controller_item)
+		if (_event_backend && _event_backend->transport()->learning_possible())
 		{
-			controller_item->learn();
-			_learning_items.insert (controller_item);
+			ControllerItem* controller_item = dynamic_cast<ControllerItem*> (item);
+			if (controller_item)
+			{
+				controller_item->learn();
+				_learning_items.insert (controller_item);
+			}
 		}
+		else
+			QMessageBox::information (this, "Connect input device", "First, connect an input device to any of Haruhi external ports.");
 	}
 }
 

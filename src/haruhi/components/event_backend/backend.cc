@@ -441,9 +441,14 @@ Backend::learn_from_midi()
 {
 	if (_tree->selected_item())
 	{
-		ControllerWithPortItem* item = dynamic_cast<ControllerWithPortItem*> (_tree->selected_item());
-		if (item)
-			item->learn();
+		if (_transport->learning_possible())
+		{
+			ControllerWithPortItem* item = dynamic_cast<ControllerWithPortItem*> (_tree->selected_item());
+			if (item)
+				item->learn();
+		}
+		else
+			QMessageBox::information (this, "Connect input device", "First, connect an input device to any of Haruhi external ports.");
 	}
 }
 

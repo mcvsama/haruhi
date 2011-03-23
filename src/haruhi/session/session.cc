@@ -822,6 +822,8 @@ Session::stop_event_backend()
 		}
 		catch (std::bad_cast const&)
 		{ }
+		if (_devices_manager)
+			_devices_manager->set_event_backend (0);
 		_graph->unregister_event_backend();
 		delete _event_backend;
 	}
@@ -862,6 +864,7 @@ Session::start_event_backend()
 		// Connect EventBackend and DevicesManager:
 		event_backend->device_saved_as_template.connect (_devices_manager->settings(), &DevicesManager::Settings::add_device);
 		event_backend->on_event.connect (_devices_manager, &DevicesManager::Panel::on_event);
+		_devices_manager->set_event_backend (event_backend);
 		_devices_manager->settings()->model().on_change.connect (event_backend, &EventBackendImpl::Backend::devices_manager_updated);
 	}
 	catch (Exception const& e)

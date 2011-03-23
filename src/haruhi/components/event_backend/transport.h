@@ -51,7 +51,7 @@ class Transport
 		rename (std::string const&) = 0;
 
 		Transport*
-		transport() { return _transport; }
+		transport() const { return _transport; }
 
 		/**
 		 * Returns event buffer to use
@@ -126,6 +126,14 @@ class Transport
 	 */
 	virtual void
 	sync() = 0;
+
+	/**
+	 * Returns true if there learning from incoming transport events is possible,
+	 * that is at least one MIDI source is connected to any of transport's
+	 * ports.
+	 */
+	virtual bool
+	learning_possible() const = 0;
 
   private:
 	Backend* _backend;

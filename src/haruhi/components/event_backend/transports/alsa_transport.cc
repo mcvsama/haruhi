@@ -34,8 +34,11 @@ AlsaTransport::ALSAPort::ALSAPort (Transport* transport, Direction direction, st
 	Port (transport),
 	_direction (direction),
 	_name (name),
-	_alsa_port (0)
+	_alsa_port (0),
+	_alsa_port_info (0)
 {
+	if (::snd_seq_port_info_malloc (&_alsa_port_info))
+		throw;
 	reinit();
 }
 
@@ -43,6 +46,8 @@ AlsaTransport::ALSAPort::ALSAPort (Transport* transport, Direction direction, st
 AlsaTransport::ALSAPort::~ALSAPort()
 {
 	destroy();
+	if (_alsa_port_info)
+		::snd_seq_port_info_free (_alsa_port_info);
 }
 
 
@@ -52,25 +57,31 @@ AlsaTransport::ALSAPort::rename (std::string const& new_name)
 	_name = new_name;
 	if (transport()->connected())
 	{
-		AlsaTransport* alsa_transport = static_cast<AlsaTransport*> (transport());
-		snd_seq_port_info_t* info = 0;
-		try {
-			// Rename ALSA port:
-			if (snd_seq_port_info_malloc (&info) < 0)
-				throw;
-			if (snd_seq_get_port_info (alsa_transport->seq(), _alsa_port, info) < 0)
-				throw;
-			snd_seq_port_info_set_name (info, new_name.c_str());
-			if (snd_seq_set_port_info (alsa_transport->seq(), _alsa_port, info) < 0)
-				throw;
-			snd_seq_port_info_free (info);
-		}
-		catch (...)
+		// These calls may fail, but so what?
+		if (snd_seq_get_port_info (alsa_transport()->seq(), _alsa_port, _alsa_port_info) >= 0)
 		{
-			if (info)
-				snd_seq_port_info_free (info);
+			snd_seq_port_info_set_name (_alsa_port_info, new_name.c_str());
+			snd_seq_set_port_info (alsa_transport()->seq(), _alsa_port, _alsa_port_info);
 		}
 	}
+}
+
+
+int
+AlsaTransport::ALSAPort::readers() const
+{
+	if (snd_seq_get_port_info (alsa_transport()->seq(), _alsa_port, _alsa_port_info) >= 0)
+		return snd_seq_port_info_get_read_use (_alsa_port_info);
+	return 0;
+}
+
+
+int
+AlsaTransport::ALSAPort::writers() const
+{
+	if (snd_seq_get_port_info (alsa_transport()->seq(), _alsa_port, _alsa_port_info) >= 0)
+		return snd_seq_port_info_get_write_use (_alsa_port_info);
+	return 0;
 }
 
 
@@ -208,6 +219,16 @@ AlsaTransport::sync()
 		}
 		::snd_seq_free_event (e);
 	}
+}
+
+
+bool
+AlsaTransport::learning_possible() const
+{
+	for (Ports::const_iterator p = _ports.begin(); p != _ports.end(); ++p)
+		if (p->second->writers() > 0)
+			return true;
+	return false;
 }
 
 

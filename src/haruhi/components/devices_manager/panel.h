@@ -58,6 +58,18 @@ class Panel:
 	~Panel();
 
 	/**
+	 * Returns coupled EventBackend.
+	 */
+	EventBackendImpl::Backend*
+	event_backend() const { return _event_backend; }
+
+	/**
+	 * Sets EventBackend.
+	 */
+	void
+	set_event_backend (EventBackendImpl::Backend* event_backend) { _event_backend = event_backend; }
+
+	/**
 	 * Returns Settings object used by this panel.
 	 */
 	Settings*
@@ -96,15 +108,16 @@ class Panel:
 	save_settings();
 
   private:
-	Tree*				_tree;
-	Settings*			_settings;
-	QStackedWidget*		_stack;
-	QPushButton*		_create_device_button;
-	QPushButton*		_create_controller_button;
-	QPushButton*		_destroy_input_button;
-	DeviceDialog*		_device_dialog;
-	ControllerDialog*	_controller_dialog;
-	LearningItems		_learning_items;
+	Tree*						_tree;
+	Settings*					_settings;
+	QStackedWidget*				_stack;
+	QPushButton*				_create_device_button;
+	QPushButton*				_create_controller_button;
+	QPushButton*				_destroy_input_button;
+	DeviceDialog*				_device_dialog;
+	ControllerDialog*			_controller_dialog;
+	LearningItems				_learning_items;
+	EventBackendImpl::Backend*	_event_backend;
 };
 
 } // namespace DevicesManager

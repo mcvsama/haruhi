@@ -56,6 +56,18 @@ class AlsaTransport: public Transport
 		void
 		rename (std::string const&);
 
+		/**
+		 * Returns the number of ALSA clients listening on this port.
+		 */
+		int
+		readers() const;
+
+		/**
+		 * Returns the number of ALSA clients writing to this port.
+		 */
+		int
+		writers() const;
+
 	  private:
 		/**
 		 * Creates actual ALSA port.
@@ -70,10 +82,14 @@ class AlsaTransport: public Transport
 		void
 		destroy();
 
+		AlsaTransport*
+		alsa_transport() const { return static_cast<AlsaTransport*> (transport()); }
+
 	  private:
-		Direction	_direction;
-		std::string	_name;
-		int			_alsa_port;
+		Direction				_direction;
+		std::string				_name;
+		int						_alsa_port;
+		snd_seq_port_info_t*	_alsa_port_info;
 	};
 
 	friend class ALSAPort;
@@ -116,6 +132,9 @@ class AlsaTransport: public Transport
 
 	void
 	sync();
+
+	bool
+	learning_possible() const;
 
   private:
 	/**
