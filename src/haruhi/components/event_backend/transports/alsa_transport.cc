@@ -30,7 +30,7 @@ namespace Haruhi {
 
 namespace EventBackendImpl {
 
-AlsaTransport::ALSAPort::ALSAPort (Transport* transport, Direction direction, std::string const& name):
+AlsaTransport::AlsaPort::AlsaPort (Transport* transport, Direction direction, std::string const& name):
 	Port (transport),
 	_direction (direction),
 	_name (name),
@@ -43,7 +43,7 @@ AlsaTransport::ALSAPort::ALSAPort (Transport* transport, Direction direction, st
 }
 
 
-AlsaTransport::ALSAPort::~ALSAPort()
+AlsaTransport::AlsaPort::~AlsaPort()
 {
 	destroy();
 	if (_alsa_port_info)
@@ -52,7 +52,7 @@ AlsaTransport::ALSAPort::~ALSAPort()
 
 
 void
-AlsaTransport::ALSAPort::rename (std::string const& new_name)
+AlsaTransport::AlsaPort::rename (std::string const& new_name)
 {
 	_name = new_name;
 	if (transport()->connected())
@@ -68,7 +68,7 @@ AlsaTransport::ALSAPort::rename (std::string const& new_name)
 
 
 int
-AlsaTransport::ALSAPort::readers() const
+AlsaTransport::AlsaPort::readers() const
 {
 	if (snd_seq_get_port_info (alsa_transport()->seq(), _alsa_port, _alsa_port_info) >= 0)
 		return snd_seq_port_info_get_read_use (_alsa_port_info);
@@ -77,7 +77,7 @@ AlsaTransport::ALSAPort::readers() const
 
 
 int
-AlsaTransport::ALSAPort::writers() const
+AlsaTransport::AlsaPort::writers() const
 {
 	if (snd_seq_get_port_info (alsa_transport()->seq(), _alsa_port, _alsa_port_info) >= 0)
 		return snd_seq_port_info_get_write_use (_alsa_port_info);
@@ -86,7 +86,7 @@ AlsaTransport::ALSAPort::writers() const
 
 
 void
-AlsaTransport::ALSAPort::reinit()
+AlsaTransport::AlsaPort::reinit()
 {
 	if (transport()->connected())
 	{
@@ -108,7 +108,7 @@ AlsaTransport::ALSAPort::reinit()
 
 
 void
-AlsaTransport::ALSAPort::destroy()
+AlsaTransport::AlsaPort::destroy()
 {
 	if (transport()->connected())
 		snd_seq_delete_port (static_cast<AlsaTransport*> (transport())->seq(), _alsa_port);
@@ -166,7 +166,7 @@ AlsaTransport::connected() const
 AlsaTransport::Port*
 AlsaTransport::create_input (std::string const& port_name)
 {
-	ALSAPort* port = new ALSAPort (this, ALSAPort::Input, port_name);
+	AlsaPort* port = new AlsaPort (this, AlsaPort::Input, port_name);
 	_ports[port->alsa_port()] = port;
 	return port;
 }
@@ -175,7 +175,7 @@ AlsaTransport::create_input (std::string const& port_name)
 AlsaTransport::Port*
 AlsaTransport::create_output (std::string const& port_name)
 {
-	ALSAPort* port = new ALSAPort (this, ALSAPort::Output, port_name);
+	AlsaPort* port = new AlsaPort (this, AlsaPort::Output, port_name);
 	_ports[port->alsa_port()] = port;
 	return port;
 }
@@ -184,7 +184,7 @@ AlsaTransport::create_output (std::string const& port_name)
 void
 AlsaTransport::destroy_port (Port* port)
 {
-	_ports.erase (static_cast<ALSAPort*> (port)->alsa_port());
+	_ports.erase (static_cast<AlsaPort*> (port)->alsa_port());
 	delete port;
 }
 

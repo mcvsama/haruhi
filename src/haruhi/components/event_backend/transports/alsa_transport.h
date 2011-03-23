@@ -38,7 +38,7 @@ namespace EventBackendImpl {
 class AlsaTransport: public Transport
 {
   public:
-	class ALSAPort: public Port
+	class AlsaPort: public Port
 	{
 		friend class AlsaTransport;
 
@@ -46,9 +46,9 @@ class AlsaTransport: public Transport
 		enum Direction { Input, Output };
 
 	  public:
-		ALSAPort (Transport*, Direction, std::string const& name);
+		AlsaPort (Transport*, Direction, std::string const& name);
 
-		~ALSAPort();
+		~AlsaPort();
 
 		int
 		alsa_port() const { return _alsa_port; }
@@ -92,10 +92,10 @@ class AlsaTransport: public Transport
 		snd_seq_port_info_t*	_alsa_port_info;
 	};
 
-	friend class ALSAPort;
+	friend class AlsaPort;
 
   private:
-	typedef std::map<int, ALSAPort*> Ports;
+	typedef std::map<int, AlsaPort*> Ports;
 
   public:
 	AlsaTransport (Backend* backend);
