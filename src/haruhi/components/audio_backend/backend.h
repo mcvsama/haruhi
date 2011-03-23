@@ -21,7 +21,6 @@
 #include <utility>
 
 // Qt:
-#include <QtCore/QTimer>
 #include <QtGui/QLayout>
 #include <QtGui/QPushButton>
 #include <QtGui/QWhatsThis>

@@ -20,7 +20,6 @@
 #include <cmath>
 
 // Qt:
-#include <QtCore/QTimer>
 #include <QtGui/QApplication>
 #include <QtGui/QMessageBox>
 #include <QtGui/QToolTip>

@@ -202,6 +202,9 @@ class Backend:
 	 * Handles event notification from transport.
 	 * Finds learnables waiting for event and notifies
 	 * them about event.
+	 *
+	 * This is used to learn connections between event backend ports
+	 * and learning ports.
 	 */
 	void
 	handle_event_for_learnables (MIDI::Event const& event, EventPort* port);
@@ -232,7 +235,8 @@ class Backend:
 	configure_selected_item();
 
 	/**
-	 * Puts currently selected item into learning mode.
+	 * Puts currently selected item into learning mode
+	 * (used to configure filters in the item).
 	 */
 	void
 	learn_from_midi();

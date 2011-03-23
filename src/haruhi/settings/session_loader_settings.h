@@ -43,13 +43,17 @@ class SessionLoaderSettings: public Settings::Module
 
 		RecentSession (QString const& name, QString const& file_name, Timestamp timestamp);
 
+		/*
+		 * SaveableState API
+		 */
+
 		void
 		save_state (QDomElement& element) const;
 
 		void
 		load_state (QDomElement const& element);
 
-		/**
+		/*
 		 * Predicates used by standard algorithms.
 		 */
 

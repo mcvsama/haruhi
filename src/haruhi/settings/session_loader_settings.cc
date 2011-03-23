@@ -123,14 +123,14 @@ SessionLoaderSettings::load_state (QDomElement const& element)
 		QDomElement e = n.toElement();
 		if (e.isNull())
 			continue;
-		if (e.tagName() == "recent-sessions")
+		else if (e.tagName() == "recent-sessions")
 		{
 			for (QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling())
 			{
 				QDomElement e = n.toElement();
 				if (e.isNull())
 					continue;
-				if (e.tagName() == "recent-session")
+				else if (e.tagName() == "recent-session")
 				{
 					RecentSession rs;
 					rs.load_state (e);
