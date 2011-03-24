@@ -35,7 +35,7 @@ namespace Haruhi {
 namespace DevicesManager {
 
 DeviceDialog::DeviceDialog (QWidget* parent, Flags flags):
-	QWidget (parent),
+	QDialog (parent),
 	_flags (flags)
 {
 	setCaption ("Device configuration");
@@ -111,6 +111,7 @@ void
 DeviceDialog::update_widgets()
 {
 	_save_button->setEnabled (!_name->text().isEmpty());
+	_save_button->setDefault (true);
 }
 
 

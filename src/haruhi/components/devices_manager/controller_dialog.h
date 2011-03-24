@@ -18,7 +18,7 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QWidget>
+#include <QtGui/QDialog>
 #include <QtGui/QCheckBox>
 #include <QtGui/QComboBox>
 #include <QtGui/QSpinBox>
@@ -33,7 +33,7 @@ namespace Haruhi {
 
 namespace DevicesManager {
 
-class ControllerDialog: public QWidget
+class ControllerDialog: public QDialog
 {
 	Q_OBJECT
 

@@ -36,7 +36,7 @@ namespace Haruhi {
 namespace DevicesManager {
 
 ControllerDialog::ControllerDialog (QWidget* parent):
-	QWidget (parent)
+	QDialog (parent)
 {
 	setCaption ("Controller configuration");
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
@@ -248,6 +248,8 @@ ControllerDialog::update_widgets()
 					 _channel_pressure_checkbox->isChecked() || _key_pressure_checkbox->isChecked();
 	_smoothing_label->setEnabled (smoothing);
 	_smoothing->setEnabled (smoothing);
+
+	_save_button->setDefault (true);
 }
 
 

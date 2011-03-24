@@ -19,7 +19,7 @@
 #include <stdint.h>
 
 // Qt:
-#include <QtGui/QWidget>
+#include <QtGui/QDialog>
 #include <QtGui/QPushButton>
 #include <QtGui/QLineEdit>
 #include <QtGui/QCheckBox>
@@ -32,7 +32,7 @@ namespace Haruhi {
 
 namespace DevicesManager {
 
-class DeviceDialog: public QWidget
+class DeviceDialog: public QDialog
 {
 	Q_OBJECT
 
