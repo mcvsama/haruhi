@@ -24,6 +24,7 @@
 #include <QtGui/QGroupBox>
 #include <QtGui/QGridLayout>
 #include <QtGui/QTextDocument>
+#include <QtGui/QApplication>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -52,16 +53,27 @@ PresetEditor::PresetEditor (PresetsManager* presets_manager, QWidget* parent):
 	QGroupBox* grid = new QGroupBox (this);
 	grid->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
 
+	_package = new QLineEdit (grid);
+	_category = new QLineEdit (grid);
+	_name = new QLineEdit (grid);
+	_version = new QLineEdit (grid);
+	_favorite = new QCheckBox ("Favorite preset", grid);
+
+	connect (_package, SIGNAL (returnPressed()), SLOT (update_details()));
+	connect (_category, SIGNAL (returnPressed()), SLOT (update_details()));
+	connect (_name, SIGNAL (returnPressed()), SLOT (update_details()));
+	connect (_version, SIGNAL (returnPressed()), SLOT (update_details()));
+
 	QGridLayout* grid_layout = new QGridLayout (grid);
 	grid_layout->addWidget (new QLabel ("Package:", grid), 0, 0);
-	grid_layout->addWidget (_package = new QLineEdit (grid), 0, 1);
+	grid_layout->addWidget (_package, 0, 1);
 	grid_layout->addWidget (new QLabel ("Category:", grid), 1, 0);
-	grid_layout->addWidget (_category = new QLineEdit (grid), 1, 1);
+	grid_layout->addWidget (_category, 1, 1);
 	grid_layout->addWidget (new QLabel ("Preset name:", grid), 2, 0);
-	grid_layout->addWidget (_name = new QLineEdit (grid), 2, 1);
+	grid_layout->addWidget (_name, 2, 1);
 	grid_layout->addWidget (new QLabel ("Version:", grid), 3, 0);
-	grid_layout->addWidget (_version = new QLineEdit (grid), 3, 1);
-	grid_layout->addWidget (_favorite = new QCheckBox ("Favorite preset", grid), 4, 0, 1, 2);
+	grid_layout->addWidget (_version, 3, 1);
+	grid_layout->addWidget (_favorite, 4, 0, 1, 2);
 
 	_update_details_button = new QPushButton (Resources::Icons16::save(), "Save de&tails", this);
 	_update_details_button->setAccel (Qt::CTRL + Qt::Key_T);
@@ -79,6 +91,8 @@ PresetEditor::PresetEditor (PresetsManager* presets_manager, QWidget* parent):
 	layout->addWidget (grid);
 	layout->addLayout (hor_layout);
 	layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
+
+	update_widgets();
 }
 
 
@@ -111,6 +125,8 @@ PresetEditor::load_package (PackageItem* package_item)
 	_version->setEnabled (false);
 	_favorite->setChecked (false);
 	_favorite->setEnabled (false);
+
+	update_widgets();
 }
 
 
@@ -210,6 +226,7 @@ PresetEditor::focus_name()
 void
 PresetEditor::update_details()
 {
+	QWidget* focused = QApplication::focusWidget();
 	try {
 		if (_package_item)
 		{
@@ -231,6 +248,15 @@ PresetEditor::update_details()
 	{
 		QMessageBox::warning (this, "Error", Qt::escape (e.what()));
 	}
+	if (focused)
+		focused->setFocus();
+}
+
+
+void
+PresetEditor::update_widgets()
+{
+	_update_details_button->setDefault (true);
 }
 
 } // namespace PresetsManagerPrivate

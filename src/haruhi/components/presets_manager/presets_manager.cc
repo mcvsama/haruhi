@@ -68,8 +68,6 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 	_has_presets_settings = Haruhi::haruhi()->has_presets_settings();
 
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	QWidget* right_panel = new QWidget (this);
-	right_panel->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
 
 	_create_menu = new QMenu (this);
 	_create_package_action = _create_menu->addAction (Resources::Icons16::presets_package(), "Package", this, SLOT (create_package()));
@@ -81,53 +79,50 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 	QObject::connect (_tree, SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
 	QObject::connect (_tree, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (load_preset (QTreeWidgetItem*)));
 
-	_editor = new Private::PresetEditor (this, right_panel);
+	_editor = new Private::PresetEditor (this, this);
 
 	_only_favs_button = new QPushButton (Resources::Icons16::favorite(), "Show favorites only");
 	_only_favs_button->setCheckable (true);
 	QObject::connect (_only_favs_button, SIGNAL (toggled (bool)), this, SLOT (show_favorites()));
 
-	_load_button = new QPushButton (Resources::Icons16::load(), "Load", right_panel);
+	_load_button = new QPushButton (Resources::Icons16::load(), "Load", this);
 	QObject::connect (_load_button, SIGNAL (clicked()), this, SLOT (load_preset()));
 
-	_save_button = new QPushButton (Resources::Icons16::save(), "Save patch", right_panel);
+	_save_button = new QPushButton (Resources::Icons16::save(), "Save patch", this);
 	QObject::connect (_save_button, SIGNAL (clicked()), this, SLOT (save_preset()));
 
-	_create_button = new QPushButton (Resources::Icons16::save_as(), "Create", right_panel);
+	_create_button = new QPushButton (Resources::Icons16::save_as(), "Create", this);
 	_create_button->setPopup (_create_menu);
 
-	_destroy_button = new QPushButton (Resources::Icons16::remove(), "Destroy…", right_panel);
+	_destroy_button = new QPushButton (Resources::Icons16::remove(), "Destroy…", this);
 	QObject::connect (_destroy_button, SIGNAL (clicked()), this, SLOT (destroy()));
 
 	// Layouts:
 
-	QHBoxLayout* h1 = new QHBoxLayout (this);
-	h1->setMargin (0);
-	h1->setSpacing (Config::Spacing);
-
 	QVBoxLayout* v1 = new QVBoxLayout();
 	v1->setSpacing (Config::Spacing);
-
-	QVBoxLayout* v2 = new QVBoxLayout (right_panel);
-	v2->setMargin (0);
-	v2->setSpacing (Config::Spacing);
-
-	QHBoxLayout* h2 = new QHBoxLayout();
-	h2->setSpacing (Config::Spacing);
-
 	v1->addWidget (_only_favs_button);
 	v1->addWidget (_tree);
 
-	h1->addLayout (v1);
-	h1->addWidget (right_panel);
-
+	QHBoxLayout* h2 = new QHBoxLayout();
+	h2->setSpacing (Config::Spacing);
 	h2->addWidget (_load_button);
 	h2->addWidget (_save_button);
 	h2->addWidget (_create_button);
 	h2->addWidget (_destroy_button);
 
+	QVBoxLayout* v2 = new QVBoxLayout();
+	v2->setMargin (0);
+	v2->setSpacing (Config::Spacing);
+	v2->setSizeConstraint (QLayout::SetFixedSize);
 	v2->addLayout (h2);
 	v2->addWidget (_editor);
+
+	QHBoxLayout* h1 = new QHBoxLayout (this);
+	h1->setMargin (0);
+	h1->setSpacing (Config::Spacing);
+	h1->addLayout (v1);
+	h1->addLayout (v2);
 
 	QString all_presets_dir = Settings::data_home() + "/presets";
 	mkpath (all_presets_dir.toStdString(), 0700);

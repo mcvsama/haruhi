@@ -77,6 +77,9 @@ class PresetEditor: public QWidget
 	void
 	update_details();
 
+	void
+	update_widgets();
+
   signals:
 	/**
 	 * Emitted when user clicks "Update details" button.
