@@ -49,7 +49,8 @@ LFO::Osc::Osc (float start_phase):
 	_phase (start_phase),
 	_current_delay_sample (0),
 	_current_fade_in_sample (0),
-	_current_fade_out_sample (0)
+	_current_fade_out_sample (0),
+	_released (false)
 { }
 
 
@@ -60,6 +61,7 @@ LFO::Osc::reset (float start_phase)
 	_current_delay_sample = 0;
 	_current_fade_in_sample = 0;
 	_current_fade_out_sample = 0;
+	_released = false;
 }
 
 
@@ -91,7 +93,7 @@ LFO::Osc::advance (unsigned int samples)
 			dep *= pow2 (1.0f * std::min (_current_fade_in_sample, _fade_in_samples) / _fade_in_samples);
 		}
 		// Fade out:
-		else if (_fade_out_enabled)
+		else if (_fade_out_enabled && _released)
 		{
 			_current_fade_out_sample += samples;
 			dep *= pow2 (1.0f - 1.0f * std::min (_current_fade_out_sample, _fade_out_samples) / _fade_out_samples);
@@ -433,6 +435,9 @@ LFO::voice_created (VoiceManager*, Voice* voice)
 void
 LFO::voice_released (VoiceManager*, Voice* voice)
 {
+	Oscs::iterator x = _oscs.find (voice);
+	if (x != _oscs.end())
+		x->second->release();
 }
 
 
@@ -601,9 +606,10 @@ LFO::update_widgets()
 {
 	bool random = _params.wave_type.get() == Params::LFO::RandomSquare || _params.wave_type.get() == Params::LFO::RandomTriangle;
 	bool continuous = _params.mode.get() == Params::LFO::CommonContinuous;
+	bool keysync = _params.mode.get() == Params::LFO::CommonKeySync;
 	_knob_delay->setEnabled (!continuous);
 	_knob_fade_in->setEnabled (!continuous);
-	_knob_fade_out->setEnabled (!continuous && _params.fade_out_enabled);
+	_knob_fade_out->setEnabled (!keysync && !continuous && _params.fade_out_enabled);
 	_knob_phase->setEnabled (!continuous && !_random_start_phase->isChecked());
 	_knob_wave_shape->setEnabled (!random);
 	_plot->setEnabled (!random);

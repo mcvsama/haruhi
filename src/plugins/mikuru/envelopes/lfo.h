@@ -59,6 +59,9 @@ class LFO: public Envelope
 		void
 		reset (float start_phase);
 
+		void
+		release() { _released = true; }
+
 		/**
 		 * \param	wave is Wave object to use.
 		 */
@@ -132,6 +135,7 @@ class LFO: public Envelope
 		unsigned int			_current_delay_sample;
 		unsigned int			_current_fade_in_sample;
 		unsigned int			_current_fade_out_sample;
+		bool					_released;
 	};
 
 	class RandomWave: public DSP::ParametricWave
