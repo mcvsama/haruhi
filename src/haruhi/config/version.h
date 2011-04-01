@@ -23,6 +23,7 @@ namespace Version {
  */
 extern const char* commit;
 extern const char* branch;
+extern const char* version;
 
 } // namespace Version
 } // namespace Haruhi

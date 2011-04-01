@@ -18,6 +18,17 @@
 
 #include <cstdio>
 
+#ifdef __SSE__
+#define HARUHI_SSE1
+#endif
+
+#ifdef __SSE2__
+#define HARUHI_SSE2
+#endif
+
+#ifdef __SSE3__
+#define HARUHI_SSE3
+#endif
 
 #undef assert
 

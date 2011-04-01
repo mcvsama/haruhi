@@ -13,7 +13,7 @@ LDFLAGS			= $(foreach lib, $(LIBS), -l$(lib)) $(PKGCONFIG_LIBS)
 AR				= ar
 MOC				= $(QT_PREFIX)/bin/moc
 
-.PHONY: first all dep help dist clean depclean distclean
+.PHONY: first all dep help dist clean depclean distclean release releases
 .DEFAULT: all
 MAKEFLAGS = --silent
 
@@ -26,7 +26,9 @@ TARGETS =
 
 #### Helpers ####
 
-distdir		= dist/$(DIST)
+distdir		= .build/$(DIST)
+reldir		= release/$(DIST)
+reldir_pkg	= $(reldir)/haruhi-$(HARUHI_VERSION)-$(DIST)
 prepdir		= $(shell mkdir -p "$$(dirname "$(strip $(1))")")
 mkmocs		= $(foreach file, $(1), $(dir $(file))$(shell basename '$(file)' $(suffix $(file))).moc.cc)
 mkobjs		= $(foreach file, $(1), $(distdir)/$(dir $(file))$(shell basename '$(file)' $(suffix $(file))).o)
@@ -86,6 +88,7 @@ $(VERSION_FILE): $(COMMIT_FILE) $(BRANCH_FILE)
 	@echo "namespace Haruhi { namespace Version {" >>$@
 	@echo "	const char* commit = \"$(COMMIT_REAL)\";" >>$@
 	@echo "	const char* branch = \"$(BRANCH_REAL)\";" >>$@
+	@echo "	const char* version = \"$(HARUHI_VERSION)\";" >>$@
 	@echo "} }" >>$@
 
 $(call mkobjs, $(VERSION_FILE)): $(VERSION_FILE)
@@ -106,7 +109,9 @@ help:
 	@echo '  dep        Generates dependencies.'
 	@echo '  clean      Cleans source tree.'
 	@echo '  depclean   Removes dep files.'
-	@echo '  distclean  Cleans dist tree.'
+	@echo '  distclean  Cleans dist directory.'
+	@echo '  release    Creates release.'
+	@echo '  releases   Creates all configured releases.'
 	@echo '  help       Shows this help.'
 
 clean:
@@ -117,6 +122,25 @@ depclean:
 
 distclean:
 	@rm -f $(DEPFILES) $(MOCOBJS) $(OBJECTS) $(NODEP_OBJECTS)
+
+release:
+	@echo Making release: $(DIST)
+	@make clean distclean all
+	@rm -rf $(reldir)
+	@mkdir -p $(reldir_pkg)
+	@mkdir -p $(reldir_pkg)/share
+	@cp -Ra ../share/config $(reldir_pkg)/share/
+	@mkdir -p $(reldir_pkg)/share/images/16
+	@mkdir -p $(reldir_pkg)/share/images/22
+	@cp -Ra ../share/images/16/*.png $(reldir_pkg)/share/images/16/
+	@cp -Ra ../share/images/22/*.png $(reldir_pkg)/share/images/22/
+	@cp -Ra ../share/images/*.png $(reldir_pkg)/share/images/
+	@cp $(distdir)/haruhi.run $(reldir_pkg)/haruhi
+	@strip $(reldir_pkg)/haruhi
+	@cd $(reldir) && tar zcf haruhi-$(HARUHI_VERSION)-$(DIST).tar.gz haruhi-$(HARUHI_VERSION)-$(DIST) && cd -
+
+releases:
+	@for r in $(DISTS); do DIST="$$r" make release; done
 
 $(distdir)/Makefile.dep: Makefile Makefile.sources $(DEPFILES)
 	$(call prepdir, $@)
