@@ -136,7 +136,9 @@ release:
 	@cp -Ra ../share/images/22/*.png $(reldir_pkg)/share/images/22/
 	@cp -Ra ../share/images/*.png $(reldir_pkg)/share/images/
 	@cp $(distdir)/haruhi.run $(reldir_pkg)/haruhi
+ifneq ($(DIST),debug)
 	@strip $(reldir_pkg)/haruhi
+endif
 	@cd $(reldir) && tar zcf haruhi-$(HARUHI_VERSION)-$(DIST).tar.gz haruhi-$(HARUHI_VERSION)-$(DIST) && cd -
 
 releases:
