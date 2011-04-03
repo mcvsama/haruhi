@@ -140,14 +140,14 @@ class Graph: public RecursiveMutex
 	/**
 	 * Returns current sample rate.
 	 */
-	std::size_t
+	unsigned int
 	sample_rate() const { return _sample_rate; }
 
 	/**
 	 * Sets sample rate and updates all connected port buffers.
 	 */
 	void
-	set_sample_rate (std::size_t sample_rate);
+	set_sample_rate (unsigned int sample_rate);
 
 	/**
 	 * Returns current graph tempo.
@@ -231,7 +231,7 @@ class Graph: public RecursiveMutex
 
 	// Graph parameters:
 	std::size_t		_buffer_size;
-	std::size_t		_sample_rate;
+	unsigned int	_sample_rate;
 	float			_tempo;
 	float			_master_tune;
 
