@@ -60,6 +60,7 @@ Mikuru::Mikuru (std::string const& urn, std::string const& title, int id, QWidge
 	Haruhi::Plugin (urn, title, id, parent),
 	_patch (this),
 	_current_load (0.0f),
+	_current_load_denominator (0),
 	_general (0),
 	_common_filters (0),
 	_mix_L (64),
@@ -151,7 +152,7 @@ Mikuru::Mikuru (std::string const& urn, std::string const& title, int id, QWidge
 	// UI timer:
 	_update_ui_timer = new QTimer (this);
 	QObject::connect (_update_ui_timer, SIGNAL (timeout()), this, SLOT (update_ui()));
-	_update_ui_timer->start (100); // 10 fps
+	_update_ui_timer->start (200); // 5 fps
 }
 
 
@@ -298,8 +299,8 @@ Mikuru::process()
 
 	_parts_mutex.unlock();
 
-	float period_time = 1.0f * graph()->buffer_size() / graph()->sample_rate();
-	_current_load = 1.0e-6f * t_total.microseconds() / period_time;
+	// Compute load:
+	add_to_load (t_total.microseconds());
 }
 
 
@@ -503,8 +504,10 @@ Mikuru::update_ui()
 	for (Mikuru::Parts::iterator t = _parts.begin(); t != _parts.end(); ++t)
 		i += (*t)->voice_manager()->current_polyphony();
 	_current_voices_label->setText (QString ("%1").arg (i));
-	_current_load_label->setText (QString ("%1%").arg (100.0f * _current_load, 3, 'f', 1, '0'));
-	_current_load_per_voice_label->setText (QString ("%1%").arg (i ? 100.0f * _current_load / i : 0.0f, 3, 'f', 1, '0'));
+	float load = current_load();
+	_current_load_label->setText (QString ("%1%").arg (100.0f * load, 3, 'f', 1, '0'));
+	_current_load_per_voice_label->setText (QString ("%1%").arg (i ? 100.0f * load / i : 0.0f, 3, 'f', 1, '0'));
+	reset_load();
 }
 
 
@@ -697,6 +700,32 @@ Mikuru::select_thread_for_new_voice()
 	}
 	_synth_threads_mutex.unlock();
 	return *f;
+}
+
+
+void
+Mikuru::add_to_load (uint64_t microseconds)
+{
+	float period_time = 1.0f * graph()->buffer_size() / graph()->sample_rate();
+	_current_load += 1.0e-6f * microseconds / period_time;
+	_current_load_denominator += 1;
+}
+
+
+void
+Mikuru::reset_load()
+{
+	_current_load = 0.0f;
+	_current_load_denominator = 0;
+}
+
+
+float
+Mikuru::current_load()
+{
+	if (_current_load_denominator > 0)
+		return _current_load / _current_load_denominator;
+	return 0.0f;
 }
 
 

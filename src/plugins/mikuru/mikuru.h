@@ -287,6 +287,15 @@ class Mikuru:
 	MikuruPrivate::SynthThread*
 	select_thread_for_new_voice();
 
+	void
+	add_to_load (uint64_t microseconds);
+
+	void
+	reset_load();
+
+	float
+	current_load();
+
   private:
 	MikuruPrivate::SynthThreads		_synth_threads;
 	RecursiveMutex					_synth_threads_mutex;
@@ -299,6 +308,7 @@ class Mikuru:
 	QLabel*							_current_load_label;
 	QLabel*							_current_load_per_voice_label;
 	float							_current_load;
+	int								_current_load_denominator;
 	QPushButton*					_add_part;
 	QPushButton*					_del_part;
 	QTimer*							_update_ui_timer;
