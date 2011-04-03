@@ -127,7 +127,7 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 	QObject::connect (_stages, SIGNAL (activated (int)), this, SLOT (update_widgets()));
 	QObject::connect (_stages, SIGNAL (activated (int)), this, SLOT (update_impulse_response()));
 
-	_limiter_enabled = new QCheckBox ("Q limiter", _panel);
+	_limiter_enabled = new QCheckBox ("Limit", _panel);
 	_limiter_enabled->setChecked (_params.limiter_enabled);
 	QToolTip::add (_limiter_enabled, "Automatic attenuation limit");
 	QObject::connect (_limiter_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));

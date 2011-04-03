@@ -87,9 +87,10 @@ Mikuru::Mikuru (std::string const& urn, std::string const& title, int id, QWidge
 
 	// Widgets:
 
-	_enabled = new QCheckBox ("Enabled (Note On)", this);
-	QObject::connect (_enabled, SIGNAL (toggled (bool)), this, SLOT (update_params()));
-	_enabled->setChecked (true);
+	_muted = new QPushButton ("Mute (disable Note On)", this);
+	QObject::connect (_muted, SIGNAL (toggled (bool)), this, SLOT (update_params()));
+	_muted->setCheckable (true);
+	_muted->setChecked (false);
 
 	_current_voices_label = new QLabel ("", this);
 	_current_voices_label->setFixedWidth (50);
@@ -114,6 +115,7 @@ Mikuru::Mikuru (std::string const& urn, std::string const& title, int id, QWidge
 	_tabs_widget = new QTabWidget (this);
 	_tabs_widget->setTabPosition (QTabWidget::North);
 	_tabs_widget->setMovable (true);
+	_tabs_widget->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Maximum);
 	QObject::connect (_tabs_widget, SIGNAL (currentChanged (QWidget*)), this, SLOT (update_widgets()));
 
 	_general = new Private::General (this, this);
@@ -124,11 +126,11 @@ Mikuru::Mikuru (std::string const& urn, std::string const& title, int id, QWidge
 
 	// Layouts:
 
-	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Maximum);
 
 	QHBoxLayout* hor_layout = new QHBoxLayout();
 	hor_layout->setSpacing (Config::Spacing);
-	hor_layout->addWidget (_enabled);
+	hor_layout->addWidget (_muted);
 	hor_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 	hor_layout->addWidget (_current_voices_label);
 	hor_layout->addWidget (new QLabel (" voices"));
@@ -142,12 +144,14 @@ Mikuru::Mikuru (std::string const& urn, std::string const& title, int id, QWidge
 	hor_layout->addWidget (_add_part);
 	hor_layout->addWidget (_del_part);
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	QGridLayout* layout = new QGridLayout (this);
+	layout->setColumnStretch (1, 1);
 	layout->setMargin (0);
 	layout->setSpacing (Config::Spacing);
-	layout->addLayout (hor_layout);
-	layout->addWidget (_tabs_widget);
-	layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
+	layout->addLayout (hor_layout, 0, 0);
+	layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed), 0, 1);
+	layout->addWidget (_tabs_widget, 1, 0);
+	layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding), 2, 0);
 
 	// UI timer:
 	_update_ui_timer = new QTimer (this);
@@ -421,7 +425,7 @@ Mikuru::free_id (std::string const& group, int id)
 void
 Mikuru::update_params()
 {
-	atomic (_param_enabled) = _enabled->isChecked();
+	atomic (_param_enabled) = !_muted->isChecked();
 }
 
 

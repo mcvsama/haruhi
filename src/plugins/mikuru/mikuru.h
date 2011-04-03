@@ -303,7 +303,7 @@ class Mikuru:
 	RecursiveMutex					_parts_mutex;
 	MikuruPrivate::Patch			_patch;
 
-	QCheckBox*						_enabled;
+	QPushButton*					_muted;
 	QLabel*							_current_voices_label;
 	QLabel*							_current_load_label;
 	QLabel*							_current_load_per_voice_label;
