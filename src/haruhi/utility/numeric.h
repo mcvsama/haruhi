@@ -43,6 +43,25 @@ cut (int value)
 }
 
 
+inline void
+undenormalize (float& sample)
+{
+	union { float f; unsigned int i; } u = { f: sample };
+	if ((u.i & 0x7f800000) == 0)
+		sample = 0.0f;
+}
+
+
+template<class Value>
+	inline Value
+	ifnan (Value const& test, Value val)
+	{
+		if (std::isnan (test))
+			return val;
+		return test;
+	}
+
+
 template<class Value>
 	inline void
 	limit_value (Value& value, Value min, Value max)
