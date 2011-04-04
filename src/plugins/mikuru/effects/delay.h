@@ -35,24 +35,15 @@ class Delay: public Effect
 
 	~Delay();
 
-	int
-	id() const { return _id; }
+	void
+	graph_updated() { }
 
 	void
-	process (Haruhi::AudioBuffer* buffer, unsigned int channel);
-
-  private:
-	/*
-	 * Effect API
-	 */
-
-	Params::Effect&
-	effect_params() { return _params; }
+	process (Haruhi::AudioBuffer* in1, Haruhi::AudioBuffer* in2, Haruhi::AudioBuffer* out1, Haruhi::AudioBuffer* out2);
 
   private:
 	Mikuru*			_mikuru;
-	int				_id;
-	Params::Effect	_params;
+	Params::Effect*	_params;
 };
 
 } // namespace MikuruPrivate

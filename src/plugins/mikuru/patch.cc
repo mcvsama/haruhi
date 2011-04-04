@@ -241,19 +241,37 @@ Patch::save_state (QDomElement& element) const
 			{
 				QDomElement effect_element = element.ownerDocument().createElement ("effect");
 				Waveshaper* waveshaper;
+				Reverb* reverb;
 
 				if ((waveshaper = dynamic_cast<Waveshaper*> (*ef)))
 				{
-					Params::Waveshaper params (*waveshaper->params());
+					Params::Waveshaper params (*waveshaper->Waveshaper::params());
 
 					effect_element.setAttribute ("type", "waveshaper");
 					effect_element.setAttribute ("id", waveshaper->id());
 					// Knobs:
+					save_parameter (effect_element, "wet", waveshaper->knob_wet());
+					save_parameter (effect_element, "panorama", waveshaper->knob_panorama());
 					save_parameter (effect_element, "gain", waveshaper->_knob_gain);
 					save_parameter (effect_element, "parameter", waveshaper->_knob_parameter);
 					// Other:
 					save_parameter (effect_element, "enabled", params.enabled);
 					save_parameter (effect_element, "type", params.type);
+				}
+				else if ((reverb = dynamic_cast<Reverb*> (*ef)))
+				{
+					Params::Reverb params (*reverb->Reverb::params());
+
+					effect_element.setAttribute ("type", "reverb");
+					effect_element.setAttribute ("id", reverb->id());
+					// Knobs:
+					save_parameter (effect_element, "wet", reverb->knob_wet());
+					save_parameter (effect_element, "panorama", reverb->knob_panorama());
+					save_parameter (effect_element, "room-size", reverb->_knob_room_size);
+					save_parameter (effect_element, "width", reverb->_knob_width);
+					save_parameter (effect_element, "damp", reverb->_knob_damp);
+					// Other:
+					save_parameter (effect_element, "enabled", params.enabled);
 				}
 
 				// Tab position:
@@ -593,6 +611,8 @@ Patch::load_state (QDomElement const& element)
 						create_parameters (e, parameters);
 
 						// Knobs:
+						load_parameter (parameters, "wet", waveshaper->knob_wet());
+						load_parameter (parameters, "panorama", waveshaper->knob_panorama());
 						load_parameter (parameters, "gain", waveshaper->_knob_gain);
 						load_parameter (parameters, "parameter", waveshaper->_knob_parameter);
 						// Other:
@@ -600,6 +620,24 @@ Patch::load_state (QDomElement const& element)
 						load_parameter (parameters, "type", params->type);
 
 						waveshaper->load_params();
+					}
+					else if (e.attribute ("type") == "reverb")
+					{
+						Reverb* reverb = part->effects()->add_reverb (e.attribute ("id").toInt());
+						Params::Reverb* params = reverb->params();
+
+						create_parameters (e, parameters);
+
+						// Knobs:
+						load_parameter (parameters, "wet", reverb->knob_wet());
+						load_parameter (parameters, "panorama", reverb->knob_panorama());
+						load_parameter (parameters, "room-size", reverb->_knob_room_size);
+						load_parameter (parameters, "width", reverb->_knob_width);
+						load_parameter (parameters, "damp", reverb->_knob_damp);
+						// Other:
+						load_parameter (parameters, "enabled", params->enabled);
+
+						reverb->load_params();
 					}
 				}
 			}

@@ -406,6 +406,8 @@ SRC_SOURCES += plugins/mikuru/effects/effect.cc
 SRC_SOURCES += plugins/mikuru/effects/reverb.cc
 SRC_SOURCES += plugins/mikuru/effects/waveshaper.cc
 
+SRC_MOCHDRS += plugins/mikuru/effects/effect.h
+SRC_MOCHDRS += plugins/mikuru/effects/reverb.h
 SRC_MOCHDRS += plugins/mikuru/effects/waveshaper.h
 
 ######## /plugins/mikuru/envelopes ########

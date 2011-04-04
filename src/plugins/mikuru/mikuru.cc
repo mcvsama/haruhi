@@ -157,6 +157,8 @@ Mikuru::Mikuru (std::string const& urn, std::string const& title, int id, QWidge
 	_update_ui_timer = new QTimer (this);
 	QObject::connect (_update_ui_timer, SIGNAL (timeout()), this, SLOT (update_ui()));
 	_update_ui_timer->start (200); // 5 fps
+
+	update_params();
 }
 
 

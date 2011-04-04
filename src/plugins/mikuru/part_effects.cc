@@ -20,6 +20,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/utility/simd_ops.h>
 
 // Local:
 #include "mikuru.h"
@@ -77,12 +78,73 @@ PartEffects::PartEffects (Part* part, Mikuru* mikuru, QWidget* parent):
 
 
 void
-PartEffects::process (Haruhi::AudioBuffer* buffer, unsigned int channel)
+PartEffects::process (Haruhi::AudioBuffer* ch1, Haruhi::AudioBuffer* ch2)
 {
+	Haruhi::AudioBuffer* a1 = ch1;
+	Haruhi::AudioBuffer* a2 = ch2;
+	Haruhi::AudioBuffer* b1 = &_buf1;
+	Haruhi::AudioBuffer* b2 = &_buf2;
+
 	_effects_mutex.lock();
 	// TODO change relative filter position when tab is moved.
 	for (EffectsList::iterator e = _effects.begin(); e != _effects.end(); ++e)
-		(*e)->process (buffer, channel);
+	{
+		(*e)->process_events();
+		if (!(*e)->enabled())
+			continue;
+		(*e)->process (a1, a2, b1, b2);
+
+		// Dry/wet param:
+		float const wet = (*e)->params()->wet.to_f();
+		float const pan = (*e)->params()->panorama.to_f();
+		float const pan1 = 1.0f - bound (+pan, 0.0f, 1.0f);
+		float const pan2 = 1.0f - bound (-pan, 0.0f, 1.0f);
+		if (wet >= 0.5)
+		{
+			// inputX *= 2.0 * (1.0 - wet)
+			// outputX *= panX
+			// outputX += inputX
+			a1->attenuate (2.0f * (1.0f - wet));
+			a2->attenuate (2.0f * (1.0f - wet));
+			b1->attenuate (pan1);
+			b2->attenuate (pan2);
+			b1->add (a1);
+			b2->add (a2);
+		}
+		else
+		{
+			// outputX *= 2.0 * wet * panX
+			// outputX += inputX
+			b1->attenuate (pan1 * 2.0f * wet);
+			b2->attenuate (pan2 * 2.0f * wet);
+			b1->add (a1);
+			b2->add (a2);
+		}
+
+		// Swap input/output:
+		std::swap (a1, b1);
+		std::swap (a2, b2);
+	}
+	_effects_mutex.unlock();
+
+	if (a1 == &_buf1)
+	{
+		ch1->fill (&_buf1);
+		ch2->fill (&_buf2);
+	}
+}
+
+
+void
+PartEffects::graph_updated()
+{
+	unsigned int bs = _mikuru->graph()->buffer_size();
+	_buf1.resize (bs);
+	_buf2.resize (bs);
+
+	_effects_mutex.lock();
+	for (EffectsList::iterator e = _effects.begin(); e != _effects.end(); ++e)
+		(*e)->graph_updated();
 	_effects_mutex.unlock();
 }
 

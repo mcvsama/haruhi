@@ -48,17 +48,18 @@
 
 #define HARUHI_MIKURU_PARAMS_STANDARD_METHODS(klass)							\
 	klass();																	\
+	virtual ~klass() { }														\
 	klass (klass& other) {														\
 		operator= (other);														\
 	}																			\
-	klass& operator= (klass& other) {											\
+	virtual klass& operator= (klass& other) {									\
 		set_controller_params (other);											\
 		set_non_controller_params (other);										\
 		return *this;															\
 	}																			\
-	void set_controller_params (klass& other);									\
-	void set_non_controller_params (klass& other);								\
-	void sanitize();
+	virtual void set_controller_params (klass& other);							\
+	virtual void set_non_controller_params (klass& other);						\
+	virtual void sanitize();
 
 #define HARUHI_MIKURU_PARAM(name, min, max, denominator, deflt)					\
 	name##Min = min,															\
@@ -374,6 +375,14 @@ struct Params
 	{
 		HARUHI_MIKURU_PARAMS_STANDARD_METHODS (Effect)
 
+		enum {
+			HARUHI_MIKURU_PARAM (Wet,					       0,	+1000000,	+1000000,	 +500000)
+			HARUHI_MIKURU_PARAM (Panorama,				-1000000,	+1000000,	+1000000,	       0)
+		};
+
+		Haruhi::ControllerParam wet;
+		Haruhi::ControllerParam panorama;
+
 		Haruhi::Param<int> enabled;
 	};
 
@@ -393,6 +402,26 @@ struct Params
 		Haruhi::ControllerParam parameter;
 
 		Haruhi::Param<int> type;
+	};
+
+	/**
+	 * Effect: Reverb
+	 */
+	struct Reverb: public Effect
+	{
+		HARUHI_MIKURU_PARAMS_STANDARD_METHODS (Reverb)
+
+		enum {
+			HARUHI_MIKURU_PARAM (RoomSize,				       0,	+1000000,	+1000000,	 +500000)
+			HARUHI_MIKURU_PARAM (Width,					       0,	+1000000,	+1000000,	+1000000)
+			HARUHI_MIKURU_PARAM (Damp,					       0,	+1000000,	+1000000,	 +500000)
+		};
+
+		Haruhi::ControllerParam room_size;
+		Haruhi::ControllerParam width;
+		Haruhi::ControllerParam damp;
+
+		Haruhi::Param<int> mode;
 	};
 };
 

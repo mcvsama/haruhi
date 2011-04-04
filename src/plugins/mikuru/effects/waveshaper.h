@@ -80,25 +80,20 @@ class Waveshaper: public Effect
 	~Waveshaper();
 
 	Params::Waveshaper*
-	params() { return &_params; }
+	params() const { return _params; }
 
 	/*
 	 * Effect API
 	 */
-
-	int
-	id() const { return _id; }
 
 	void
-	process (Haruhi::AudioBuffer* buffer, unsigned int channel);
+	graph_updated() { }
 
-  private:
-	/*
-	 * Effect API
-	 */
+	void
+	process_events();
 
-	Params::Effect&
-	effect_params() { return _params; }
+	void
+	process (Haruhi::AudioBuffer* in1, Haruhi::AudioBuffer* in2, Haruhi::AudioBuffer* out1, Haruhi::AudioBuffer* out2);
 
   public slots:
 	/**
@@ -126,8 +121,7 @@ class Waveshaper: public Effect
 
   private:
 	Mikuru*				_mikuru;
-	int					_id;
-	Params::Waveshaper	_params;
+	Params::Waveshaper*	_params;
 	bool				_loading_params;
 
 	Shapers				_shapers;

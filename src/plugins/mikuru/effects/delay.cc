@@ -22,21 +22,20 @@
 namespace MikuruPrivate {
 
 Delay::Delay (int id, Mikuru* mikuru, QWidget* parent):
-	Effect (parent),
-	_mikuru (mikuru)
+	Effect (id, "delays", mikuru, "Delay", new Params::Effect(), parent),
+	_mikuru (mikuru),
+	_params (static_cast<Params::Effect*> (Effect::params()))
 {
-	_id = (id == 0) ? _mikuru->allocate_id ("delays") : _mikuru->reserve_id ("delays", id);
 }
 
 
 Delay::~Delay()
 {
-	_mikuru->free_id ("delays", _id);
 }
 
 
 void
-Delay::process (Haruhi::AudioBuffer* buffer, unsigned int channel)
+Delay::process (Haruhi::AudioBuffer* in1, Haruhi::AudioBuffer* in2, Haruhi::AudioBuffer* out1, Haruhi::AudioBuffer* out2)
 {
 }
 

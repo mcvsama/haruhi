@@ -90,13 +90,13 @@ namespace Waveshapers {
 
 } // namespace Waveshapers
 
+
 Waveshaper::Waveshaper (int id, Mikuru* mikuru, QWidget* parent):
-	Effect (parent),
+	Effect (id, "waveshapers", mikuru, "Waveshaper", new Params::Waveshaper(), parent),
 	_mikuru (mikuru),
+	_params (static_cast<Params::Waveshaper*> (Effect::params())),
 	_loading_params (false)
 {
-	_id = (id == 0) ? _mikuru->allocate_id ("waveshapers") : _mikuru->reserve_id ("waveshapers", id);
-
 	_shapers.push_back (new Shaper (Waveshapers::gloubi_boulga, false));
 	_shapers.push_back (new Shaper (Waveshapers::gloubi_boulga_simple, false));
 	_shapers.push_back (new Shaper (Waveshapers::warmth, false));
@@ -120,14 +120,16 @@ Waveshaper::Waveshaper (int id, Mikuru* mikuru, QWidget* parent):
 
 	if (_mikuru->graph())
 		_mikuru->graph()->lock();
-	_port_group = new Haruhi::PortGroup (_mikuru->graph(), QString ("Waveshaper %1").arg (this->id()).toStdString());
-	_port_gain = new Haruhi::EventPort (_mikuru, "Gain", Haruhi::Port::Input, _port_group);
-	_port_parameter = new Haruhi::EventPort (_mikuru, "Parameter", Haruhi::Port::Input, _port_group);
+	_port_gain = new Haruhi::EventPort (_mikuru, "Gain", Haruhi::Port::Input, port_group());
+	_port_parameter = new Haruhi::EventPort (_mikuru, "Parameter", Haruhi::Port::Input, port_group());
 	if (_mikuru->graph())
 		_mikuru->graph()->unlock();
 
-	_knob_gain = new Haruhi::Knob (parent_widget(), _port_gain, &_params.gain, "Gain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveshaper::Gain, 100), 2);
-	_knob_parameter = new Haruhi::Knob (parent_widget(), _port_parameter, &_params.parameter, "Parameter", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveshaper::Parameter, 100), 2);
+	_knob_gain = new Haruhi::Knob (parent_widget(), _port_gain, &_params->gain, "Gain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveshaper::Gain, 100), 2);
+	_knob_parameter = new Haruhi::Knob (parent_widget(), _port_parameter, &_params->parameter, "Parameter", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveshaper::Parameter, 100), 2);
+
+	_knob_gain->set_unit_bay (_mikuru->unit_bay());
+	_knob_parameter->set_unit_bay (_mikuru->unit_bay());
 
 	QHBoxLayout* label_and_combo_layout = new QHBoxLayout (label_and_combo);
 	label_and_combo_layout->setMargin (0);
@@ -154,8 +156,6 @@ Waveshaper::Waveshaper (int id, Mikuru* mikuru, QWidget* parent):
 
 Waveshaper::~Waveshaper()
 {
-	_mikuru->free_id ("waveshapers", _id);
-
 	delete _knob_gain;
 	delete _knob_parameter;
 
@@ -171,14 +171,29 @@ Waveshaper::~Waveshaper()
 
 
 void
-Waveshaper::process (Haruhi::AudioBuffer* buffer, unsigned int channel)
+Waveshaper::process_events()
+{
+	Effect::process_events();
+
+	_knob_gain->process_events();
+	_knob_parameter->process_events();
+}
+
+
+void
+Waveshaper::process (Haruhi::AudioBuffer* in1, Haruhi::AudioBuffer* in2, Haruhi::AudioBuffer* out1, Haruhi::AudioBuffer* out2)
 {
 	Shaper::Function f = current_shaper()->function;
-	float gain = _params.gain.to_f();
-	float parameter = _params.parameter.to_f();
+	float gain = _params->gain.to_f();
+	float parameter = _params->parameter.to_f();
 
-	for (Sample* s = buffer->begin(); s != buffer->end(); ++s)
-		*s = (*f) (gain * *s, parameter);
+	Sample* in;
+	Sample* out;
+
+	for (in = in1->begin(), out = out1->begin(); in != in1->end(); ++in, ++out)
+		*out = (*f) (gain * *in, parameter);
+	for (in = in2->begin(), out = out2->begin(); in != in2->end(); ++in, ++out)
+		*out = (*f) (gain * *in, parameter);
 }
 
 
@@ -186,7 +201,7 @@ void
 Waveshaper::load_params()
 {
 	// Copy params:
-	Params::Waveshaper p (_params);
+	Params::Waveshaper p (*_params);
 	_loading_params = true;
 
 	Effect::load_params();
@@ -201,7 +216,7 @@ Waveshaper::load_params()
 void
 Waveshaper::load_params (Params::Waveshaper& params)
 {
-	_params = params;
+	*_params = params;
 	load_params();
 }
 
@@ -214,11 +229,11 @@ Waveshaper::update_params()
 
 	Effect::update_params();
 
-	_params.type.set (_waveshaper_type_combo->currentIndex());
+	_params->type.set (_waveshaper_type_combo->currentIndex());
 
 	// Knob params are updated automatically using #assign_parameter.
 
-	_params.sanitize();
+	_params->sanitize();
 }
 
 
@@ -232,7 +247,7 @@ Waveshaper::update_widgets()
 Shaper*
 Waveshaper::current_shaper()
 {
-	return _waveshaper_type_combo->itemData (_params.type.get()).value<Shaper*>();
+	return _waveshaper_type_combo->itemData (_params->type.get()).value<Shaper*>();
 }
 
 } // namespace MikuruPrivate

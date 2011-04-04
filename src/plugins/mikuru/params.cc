@@ -619,6 +619,8 @@ Params::EG::sanitize()
 
 Params::Effect::Effect():
 	// Controller:
+	HARUHI_MIKURU_CONSTRUCT (wet, Wet),
+	HARUHI_MIKURU_CONSTRUCT (panorama, Panorama),
 	// Non-controller:
 	enabled (0, 1, 1)
 {
@@ -628,6 +630,8 @@ Params::Effect::Effect():
 void
 Params::Effect::set_controller_params (Effect& other)
 {
+	HARUHI_MIKURU_COPY (wet)
+	HARUHI_MIKURU_COPY (panorama)
 }
 
 
@@ -642,6 +646,8 @@ void
 Params::Effect::sanitize()
 {
 	HARUHI_MIKURU_SANITIZE (enabled)
+	HARUHI_MIKURU_SANITIZE (wet)
+	HARUHI_MIKURU_SANITIZE (panorama)
 }
 
 
@@ -658,6 +664,8 @@ Params::Waveshaper::Waveshaper():
 void
 Params::Waveshaper::set_controller_params (Waveshaper& other)
 {
+	Effect::set_controller_params (other);
+
 	HARUHI_MIKURU_COPY (gain)
 	HARUHI_MIKURU_COPY (parameter)
 }
@@ -666,6 +674,8 @@ Params::Waveshaper::set_controller_params (Waveshaper& other)
 void
 Params::Waveshaper::set_non_controller_params (Waveshaper& other)
 {
+	Effect::set_non_controller_params (other);
+
 	HARUHI_MIKURU_COPY (type)
 }
 
@@ -673,9 +683,54 @@ Params::Waveshaper::set_non_controller_params (Waveshaper& other)
 void
 Params::Waveshaper::sanitize()
 {
+	Effect::sanitize();
+
 	HARUHI_MIKURU_SANITIZE (gain)
 	HARUHI_MIKURU_SANITIZE (parameter)
 	HARUHI_MIKURU_SANITIZE (type)
+}
+
+
+Params::Reverb::Reverb():
+	// Controller:
+	HARUHI_MIKURU_CONSTRUCT (room_size, RoomSize),
+	HARUHI_MIKURU_CONSTRUCT (width, Width),
+	HARUHI_MIKURU_CONSTRUCT (damp, Damp),
+	// Non-controller:
+	mode (0, 1, 0)
+{
+}
+
+
+void
+Params::Reverb::set_controller_params (Reverb& other)
+{
+	Effect::set_controller_params (other);
+
+	HARUHI_MIKURU_COPY (room_size)
+	HARUHI_MIKURU_COPY (width)
+	HARUHI_MIKURU_COPY (damp)
+}
+
+
+void
+Params::Reverb::set_non_controller_params (Reverb& other)
+{
+	Effect::set_non_controller_params (other);
+
+	HARUHI_MIKURU_COPY (mode)
+}
+
+
+void
+Params::Reverb::sanitize()
+{
+	Effect::sanitize();
+
+	HARUHI_MIKURU_SANITIZE (room_size)
+	HARUHI_MIKURU_SANITIZE (width)
+	HARUHI_MIKURU_SANITIZE (damp)
+	HARUHI_MIKURU_SANITIZE (mode)
 }
 
 } // namespace MikuruPrivate

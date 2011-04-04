@@ -28,6 +28,7 @@
 
 // Haruhi:
 #include <haruhi/utility/mutex.h>
+#include <haruhi/graph/audio_buffer.h>
 
 // Local:
 #include "effects/effect.h"
@@ -65,7 +66,10 @@ class PartEffects: public QWidget
 	effect_tab_position (Effect* effect) const { return _tabs->indexOf (effect); }
 
 	void
-	process (Haruhi::AudioBuffer* buffer, unsigned int channel);
+	process (Haruhi::AudioBuffer* ch1, Haruhi::AudioBuffer* ch2);
+
+	void
+	graph_updated();
 
   public slots:
 	Delay*
@@ -94,17 +98,19 @@ class PartEffects: public QWidget
 	update_widgets();
 
   private:
-	Mikuru*			_mikuru;
-	Part*			_part;
-	EffectsList		_effects;
-	Mutex			_effects_mutex;
+	Mikuru*				_mikuru;
+	Part*				_part;
+	EffectsList			_effects;
+	Mutex				_effects_mutex;
+	Haruhi::AudioBuffer	_buf1;
+	Haruhi::AudioBuffer	_buf2;
 
-	QPushButton*	_add_effect;
-	QPushButton*	_remove_effect;
-	QMenu*			_effects_menu;
-	QTabWidget*		_tabs;
-	QStackedWidget*	_stack;
-	QLabel*			_placeholder;
+	QPushButton*		_add_effect;
+	QPushButton*		_remove_effect;
+	QMenu*				_effects_menu;
+	QTabWidget*			_tabs;
+	QStackedWidget*		_stack;
+	QLabel*				_placeholder;
 };
 
 } // namespace MikuruPrivate

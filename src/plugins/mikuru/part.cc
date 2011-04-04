@@ -117,8 +117,7 @@ Part::process_effects()
 	if (_oscillator->oscillator_params()->pseudo_stereo.get())
 		_buffer_2->negate();
 
-	_effects->process (_buffer_1, 0);
-	_effects->process (_buffer_2, 1);
+	_effects->process (_buffer_1, _buffer_2);
 }
 
 
@@ -126,6 +125,7 @@ void
 Part::graph_updated()
 {
 	_voice_manager->graph_updated();
+	_effects->graph_updated();
 }
 
 
