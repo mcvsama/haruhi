@@ -166,6 +166,21 @@ small_font();
 #undef HARUHI_CONFIG_HAS_ICON_22
 	} // namespace Icons22
 
+	namespace NoteIcons
+	{
+#define HARUHI_CONFIG_HAS_NOTE_ICON(key, file) \
+		HARUHI_CONFIG_HAS_ICON(key, HARUHI_SHARED_DIRECTORY"/images/notes/"file)
+
+		HARUHI_CONFIG_HAS_NOTE_ICON (note_01, "note-01.png");
+		HARUHI_CONFIG_HAS_NOTE_ICON (note_02, "note-02.png");
+		HARUHI_CONFIG_HAS_NOTE_ICON (note_04, "note-04.png");
+		HARUHI_CONFIG_HAS_NOTE_ICON (note_08, "note-08.png");
+		HARUHI_CONFIG_HAS_NOTE_ICON (note_16, "note-16.png");
+		HARUHI_CONFIG_HAS_NOTE_ICON (note_32, "note-32.png");
+
+#undef HARUHI_CONFIG_HAS_NOTE_ICON
+	} // namespace NoteIcons
+
 #undef HARUHI_CONFIG_HAS_ICON
 
 } // namespace Config
