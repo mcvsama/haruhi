@@ -282,10 +282,6 @@ class Reverb: public Effect
 	update_params();
 
   private:
-	void
-	update_widgets() { }
-
-  private:
 	Mikuru*				_mikuru;
 	Params::Reverb*		_params;
 	bool				_loading_params;

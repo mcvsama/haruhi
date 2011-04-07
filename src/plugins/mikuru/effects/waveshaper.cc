@@ -111,10 +111,10 @@ Waveshaper::Waveshaper (int id, Mikuru* mikuru, QWidget* parent):
 	QLabel* type_label = new QLabel ("Waveshaper type:", label_and_combo);
 
 	_waveshaper_type_combo = new QComboBox (label_and_combo);
-	_waveshaper_type_combo->addItem ("Gloubi-boulga", qVariantFromValue (_shapers[0]));
-	_waveshaper_type_combo->addItem ("Gloubi-boulga simple (fast)", qVariantFromValue (_shapers[1]));
-	_waveshaper_type_combo->addItem ("Warmth", qVariantFromValue (_shapers[2]));
-	_waveshaper_type_combo->addItem ("Saturation", qVariantFromValue (_shapers[3]));
+	_waveshaper_type_combo->addItem ("Gloubi-boulga", QVariant::fromValue (_shapers[0]));
+	_waveshaper_type_combo->addItem ("Gloubi-boulga simple (fast)", QVariant::fromValue (_shapers[1]));
+	_waveshaper_type_combo->addItem ("Warmth", QVariant::fromValue (_shapers[2]));
+	_waveshaper_type_combo->addItem ("Saturation", QVariant::fromValue (_shapers[3]));
 	QObject::connect (_waveshaper_type_combo, SIGNAL (activated (int)), this, SLOT (update_params()));
 	QObject::connect (_waveshaper_type_combo, SIGNAL (activated (int)), this, SLOT (update_widgets()));
 
@@ -125,8 +125,8 @@ Waveshaper::Waveshaper (int id, Mikuru* mikuru, QWidget* parent):
 	if (_mikuru->graph())
 		_mikuru->graph()->unlock();
 
-	_knob_gain = new Haruhi::Knob (parent_widget(), _port_gain, &_params->gain, "Gain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveshaper::Gain, 100), 2);
-	_knob_parameter = new Haruhi::Knob (parent_widget(), _port_parameter, &_params->parameter, "Parameter", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveshaper::Parameter, 100), 2);
+	_knob_gain = new Haruhi::Knob (this, _port_gain, &_params->gain, "Gain", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveshaper::Gain, 100), 2);
+	_knob_parameter = new Haruhi::Knob (this, _port_parameter, &_params->parameter, "Parameter", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Waveshaper::Parameter, 100), 2);
 
 	_knob_gain->set_unit_bay (_mikuru->unit_bay());
 	_knob_parameter->set_unit_bay (_mikuru->unit_bay());

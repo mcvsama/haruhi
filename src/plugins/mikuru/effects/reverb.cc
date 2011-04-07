@@ -16,6 +16,7 @@
 
 // Qt:
 #include <QtGui/QPicture>
+#include <QtGui/QLayout>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -286,7 +287,7 @@ Reverb::Reverb (int id, Mikuru* mikuru, QWidget* parent):
 	_mikuru (mikuru),
 	_params (static_cast<Params::Reverb*> (Effect::params())),
 	_loading_params (false),
-	_reverb_model (mikuru->graph() ? mikuru->graph()->sample_rate() : 44100)
+	_reverb_model (mikuru->graph()->sample_rate())
 {
 	_freeze_mode = new QPushButton ("Freeze", this);
 	_freeze_mode->setCheckable (true);
@@ -301,9 +302,9 @@ Reverb::Reverb (int id, Mikuru* mikuru, QWidget* parent):
 	if (_mikuru->graph())
 		_mikuru->graph()->unlock();
 
-	_knob_room_size = new Haruhi::Knob (parent_widget(), _port_room_size, &_params->room_size, "Room size", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Reverb::RoomSize, 100), 2);
-	_knob_width = new Haruhi::Knob (parent_widget(), _port_width, &_params->width, "Width", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Reverb::Width, 100), 2);
-	_knob_damp = new Haruhi::Knob (parent_widget(), _port_damp, &_params->damp, "Damp", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Reverb::Damp, 100), 2);
+	_knob_room_size = new Haruhi::Knob (this, _port_room_size, &_params->room_size, "Room size", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Reverb::RoomSize, 100), 2);
+	_knob_width = new Haruhi::Knob (this, _port_width, &_params->width, "Width", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Reverb::Width, 100), 2);
+	_knob_damp = new Haruhi::Knob (this, _port_damp, &_params->damp, "Damp", HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Reverb::Damp, 100), 2);
 
 	_knob_room_size->set_unit_bay (_mikuru->unit_bay());
 	_knob_width->set_unit_bay (_mikuru->unit_bay());
@@ -387,7 +388,6 @@ Reverb::load_params()
 	_freeze_mode->setChecked (p.mode);
 
 	_loading_params = false;
-	update_widgets();
 }
 
 
