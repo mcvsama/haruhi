@@ -26,6 +26,19 @@ namespace Haruhi {
 
 namespace DSP {
 
+DelayLine::DelayLine():
+	_data (0),
+	_max_delay (64),
+	_size (1),
+	_delay (0),
+	_wpos (0)
+{
+	set_max_delay (64);
+	set_delay (0);
+	clear();
+}
+
+
 DelayLine::DelayLine (std::size_t delay, std::size_t max_delay, std::size_t size):
 	_data (0),
 	_max_delay (max_delay),
@@ -63,6 +76,7 @@ DelayLine::set_max_delay (std::size_t max_delay)
 	if (_delay > _max_delay)
 		_delay = _max_delay;
 
+	_wpos = 0;
 	clear();
 }
 

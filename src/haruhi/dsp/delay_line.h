@@ -29,12 +29,25 @@ class DelayLine
 {
   public:
 	/**
-	 * \param	buffer_size is number of samples write/read each time.
-	 * \param	delay is number of samples to delay.
+	 * Creates delay line with some default (probably non-usable) parameters.
+	 * Call set_* functions to override them.
+	 */
+	DelayLine();
+
+	/**
+	 * \param	delay is the delay length measured in samples number.
+	 * \param	max_delay is maximum ever used delay measured in samples number.
+	 *          Tells how big buffer should be preallocated.
 	 * \param	size is number of samples read/written each time.
 	 * 			MUST be >= than max_delay.
 	 */
 	DelayLine (std::size_t delay, std::size_t max_delay, std::size_t size);
+
+	/**
+	 * Returns current delay in samples.
+	 */
+	std::size_t
+	delay() const { return _delay; }
 
 	/**
 	 * Should be called only after read and before next write.
@@ -44,11 +57,23 @@ class DelayLine
 	set_delay (std::size_t delay);
 
 	/**
+	 * Returns max possible delay (buffer size) in samples.
+	 */
+	std::size_t
+	max_delay() const { return _max_delay; }
+
+	/**
 	 * Sets maximum delay in samples.
 	 * Max delay MUST be >= size set with set_size().
 	 */
 	void
 	set_max_delay (std::size_t max_delay);
+
+	/**
+	 * Returns number of samples read/written by read() and write() functions.
+	 */
+	std::size_t
+	size() const { return _size; }
 
 	/**
 	 * Should be called only after read and before next write.
@@ -59,7 +84,7 @@ class DelayLine
 	set_size (std::size_t size);
 
 	/**
-	 * Writes buffer-size samples to delay line.
+	 * Writes samples to delay line.
 	 * Set number of samples with set_size();
 	 * \param	data is pointer to source buffer.
 	 */
@@ -67,7 +92,7 @@ class DelayLine
 	write (Sample const* data);
 
 	/**
-	 * Reads delayed buffer-size samples from delay line.
+	 * Reads delayed samples from delay line.
 	 * Subsequent calls between writings always will return the same result.
 	 * \param	data is pointer to output buffer.
 	 */
