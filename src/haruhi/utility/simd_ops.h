@@ -178,6 +178,34 @@ add_buffers (float* target, float* source, size_t size)
 
 
 /**
+ * Computes target = target + source * attenuation
+ * Arrays must be 16-byte aligned.
+ *
+ * \param	size Number of floats in arrays.
+ */
+static inline void
+add_buffers (float* target, float* source, float attenuate_source, size_t size)
+{
+#ifdef HARUHI_SSE1
+	__m128* xs = CAST_TO_MM128 (source);
+	__m128* xt = CAST_TO_MM128 (target);
+	__m128 att = _mm_set_ps1 (attenuate_source);
+	for (size_t i = 0; i < size / VECSIZE; ++i)
+	{
+		*xt = _mm_add_ps (*xt, _mm_mul_ps (att, *xs));
+		++xs;
+		++xt;
+	}
+	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
+		target[i] += attenuate_source * source[i];
+#else
+	for (size_t i = 0; i < size; ++i)
+		target[i] += attenuate_source * source[i];
+#endif
+}
+
+
+/**
  * Computes target = target + scalar
  * Arrays must be 16-byte aligned.
  *

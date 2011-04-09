@@ -80,6 +80,15 @@ class AudioBuffer: public Buffer
 	}
 
 	/**
+	 * Calls add().
+	 */
+	void
+	mixin (Buffer const* other, Sample attenuate_other)
+	{
+		add (other, attenuate_other);
+	}
+
+	/**
 	 * Adds (mixes) other buffer to this.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
@@ -90,6 +99,19 @@ class AudioBuffer: public Buffer
 		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
 		assert (buf->size() == size());
 		SIMD::add_buffers (begin(), buf->begin(), size());
+	}
+
+	/**
+	 * Adds (mixes) attenuated other buffer to this.
+	 * Other buffer must be static_castable to AudioBuffer.
+	 */
+	void
+	add (Buffer const* other, Sample attenuate_other)
+	{
+		assert (other->type() == AudioBuffer::TYPE);
+		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
+		assert (buf->size() == size());
+		SIMD::add_buffers (begin(), buf->begin(), attenuate_other, size());
 	}
 
 	/**
