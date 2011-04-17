@@ -52,27 +52,34 @@ Model::get (QString const& directory, QString const& unit_urn)
 {
 	_models_by_dir_mutex.lock();
 
-	Model* res = 0;
-	ModelsByDir::iterator m;
+	try {
+		Model* res = 0;
+		ModelsByDir::iterator m;
 
-	for (m = _models_by_dir.begin(); m != _models_by_dir.end(); ++m)
-		if (m->first->directory() == directory)
-			break;
+		for (m = _models_by_dir.begin(); m != _models_by_dir.end(); ++m)
+			if (m->first->directory() == directory)
+				break;
 
-	if (m != _models_by_dir.end())
-	{
-		m->second += 1;
-		res = m->first;
+		if (m != _models_by_dir.end())
+		{
+			m->second += 1;
+			res = m->first;
+		}
+		else
+		{
+			res = new Model (directory, unit_urn);
+			res->load_state();
+			_models_by_dir[res] = 1;
+		}
+
+		_models_by_dir_mutex.unlock();
+		return res;
 	}
-	else
+	catch (...)
 	{
-		res = new Model (directory, unit_urn);
-		res->load_state();
-		_models_by_dir[res] = 1;
+		_models_by_dir_mutex.unlock();
+		throw;
 	}
-
-	_models_by_dir_mutex.unlock();
-	return res;
 }
 
 
@@ -81,17 +88,24 @@ Model::release (Model* model)
 {
 	_models_by_dir_mutex.lock();
 
-	ModelsByDir::iterator m = _models_by_dir.find (model);
-	assert (m != _models_by_dir.end());
+	try {
+		ModelsByDir::iterator m = _models_by_dir.find (model);
+		assert (m != _models_by_dir.end());
 
-	m->second -= 1;
-	if (m->second == 0)
-	{
-		delete model;
-		_models_by_dir.erase (model);
+		m->second -= 1;
+		if (m->second == 0)
+		{
+			delete model;
+			_models_by_dir.erase (model);
+		}
+
+		_models_by_dir_mutex.unlock();
 	}
-
-	_models_by_dir_mutex.unlock();
+	catch (...)
+	{
+		_models_by_dir_mutex.unlock();
+		throw;
+	}
 }
 
 
