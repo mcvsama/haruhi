@@ -107,13 +107,13 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 
 	_devices_combobox = new QComboBox (event_box);
 
-	QPushButton* devices_add = new QPushButton (Resources::Icons16::add(), "", audio_box);
-	devices_add->setFixedWidth (devices_add->height());
-	QObject::connect (devices_add, SIGNAL (clicked()), this, SLOT (add_selected_device()));
+	_devices_add = new QPushButton (Resources::Icons16::add(), "", audio_box);
+	_devices_add->setFixedWidth (_devices_add->height());
+	QObject::connect (_devices_add, SIGNAL (clicked()), this, SLOT (add_selected_device()));
 
-	QPushButton* devices_del = new QPushButton (Resources::Icons16::remove(), "", audio_box);
-	devices_del->setFixedWidth (devices_del->height());
-	QObject::connect (devices_del, SIGNAL (clicked()), this, SLOT (del_selected_device()));
+	_devices_del = new QPushButton (Resources::Icons16::remove(), "", audio_box);
+	_devices_del->setFixedWidth (_devices_del->height());
+	QObject::connect (_devices_del, SIGNAL (clicked()), this, SLOT (del_selected_device()));
 
 	_devices_list = new QListWidget (audio_box);
 
@@ -135,8 +135,8 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	event_grid->setSpacing (Config::Spacing);
 	event_grid->setMargin (2 * Config::Margin);
 	event_grid->addWidget (_devices_combobox, 0, 0);
-	event_grid->addWidget (devices_add, 0, 1);
-	event_grid->addWidget (devices_del, 0, 2);
+	event_grid->addWidget (_devices_add, 0, 1);
+	event_grid->addWidget (_devices_del, 0, 2);
 	event_grid->addWidget (_devices_list, 1, 0, 1, 3);
 
 	QVBoxLayout* new_layout = new QVBoxLayout (_new_tab);
@@ -327,6 +327,8 @@ SessionLoader::populate_devices_combo()
 	}
 
 	_devices_combobox->setEnabled (_devices_combobox->count() > 0);
+	_devices_add->setEnabled (_devices_combobox->count() > 0);
+	_devices_del->setEnabled (_devices_list->count() > 0);
 }
 
 

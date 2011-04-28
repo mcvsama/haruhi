@@ -170,6 +170,8 @@ class SessionLoader: public QDialog
 	QLineEdit*		_new_session_name;
 	QSpinBox*		_new_session_audio_inputs;
 	QSpinBox*		_new_session_audio_outputs;
+	QPushButton*	_devices_add;
+	QPushButton*	_devices_del;
 	QComboBox*		_devices_combobox;
 	QListWidget*	_devices_list;
 	QTreeWidget*	_recent_listview;
