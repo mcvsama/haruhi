@@ -133,6 +133,7 @@ LFO::RandomWave::operator() (Haruhi::Sample register phase, Haruhi::Sample) cons
 		case Triangle:
 			return phase * (_curr_value - _prev_value) + _prev_value;
 	}
+	return 0;
 }
 
 

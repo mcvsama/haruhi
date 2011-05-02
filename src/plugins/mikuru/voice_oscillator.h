@@ -220,7 +220,7 @@ class VoiceOscillator
 	void
 	fill_without_noised_unison (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
 	{
-		Sample f, d, l, h, sum1, sum2, tmpsum;
+		Sample f, d, l, sum1, sum2, tmpsum;
 		Sample* const o1 = output1->begin();
 		Sample* const o2 = output2->begin();
 		Sample* const fs = _frequency_source->begin();
@@ -234,7 +234,6 @@ class VoiceOscillator
 			f = fs[i];
 			d = unison_delta (f);
 			l = f - d * _half_unison_number;
-			h = f + f - l;
 			f = l;
 			limit_value (f, 0.0f, 0.5f);
 			// Add unisons:
@@ -269,7 +268,7 @@ class VoiceOscillator
 	void
 	fill_with_noised_unison (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
 	{
-		Sample e, f, d, l, h, z, sum1, sum2, tmpsum;
+		Sample e, f, d, l, z, sum1, sum2, tmpsum;
 		Sample* const o1 = output1->begin();
 		Sample* const o2 = output2->begin();
 		Sample* const fs = _frequency_source->begin();
@@ -284,7 +283,6 @@ class VoiceOscillator
 			e = std::sqrt (f) * _unison_noise;
 			d = unison_delta (f);
 			l = f - d * _half_unison_number;
-			h = f + f - l;
 			f = l;
 			limit_value (f, 0.0f, 0.5f);
 			// Add unisons:
