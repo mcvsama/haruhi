@@ -116,16 +116,13 @@ Filter::Filter (FilterID filter_id, Haruhi::PortGroup* port_group, QString const
 	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_widgets()));
 	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_impulse_response()));
 
-	_stages = new QComboBox (_panel);
-	_stages->addItem ("1 stage");
-	_stages->addItem ("2 stages");
-	_stages->addItem ("3 stages");
-	_stages->addItem ("4 stages");
-	_stages->addItem ("5 stages");
-	_stages->setCurrentItem (p.stages.get() - 1);
-	QObject::connect (_stages, SIGNAL (activated (int)), this, SLOT (update_params()));
-	QObject::connect (_stages, SIGNAL (activated (int)), this, SLOT (update_widgets()));
-	QObject::connect (_stages, SIGNAL (activated (int)), this, SLOT (update_impulse_response()));
+	_stages = new QSpinBox (_panel);
+	_stages->setSuffix (" stages");
+	_stages->setRange (1, 5);
+	_stages->setValue (p.stages.get());
+	QObject::connect (_stages, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
+	QObject::connect (_stages, SIGNAL (valueChanged (int)), this, SLOT (update_widgets()));
+	QObject::connect (_stages, SIGNAL (valueChanged (int)), this, SLOT (update_impulse_response()));
 
 	_limiter_enabled = new QCheckBox ("Limit", _panel);
 	_limiter_enabled->setChecked (_params.limiter_enabled);
@@ -249,7 +246,7 @@ Filter::load_params()
 
 	_filter_label->checkbox()->setChecked (p.enabled);
 	_filter_type->setCurrentItem (p.type);
-	_stages->setCurrentItem (p.stages.get() - 1);
+	_stages->setValue (p.stages.get());
 	_limiter_enabled->setChecked (p.limiter_enabled);
 
 	_loading_params = false;
@@ -274,7 +271,7 @@ Filter::update_params()
 	Params::Filter p;
 	p.enabled = _filter_label->checkbox()->isChecked();
 	p.type = _filter_type->currentItem();
-	p.stages = _stages->currentItem() + 1;
+	p.stages = _stages->value();
 	p.limiter_enabled = _limiter_enabled->isChecked();
 	_params.set_non_controller_params (p);
 

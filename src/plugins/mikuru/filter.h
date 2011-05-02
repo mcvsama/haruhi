@@ -137,7 +137,7 @@ class Filter:
 	QWidget*						_panel;
 	Haruhi::FrequencyResponsePlot*	_response_plot;
 	QComboBox*						_filter_type;
-	QComboBox*						_stages;
+	QSpinBox*						_stages;
 	QCheckBox*						_limiter_enabled;
 	Haruhi::Knob*					_knob_frequency;
 	Haruhi::Knob*					_knob_resonance;
