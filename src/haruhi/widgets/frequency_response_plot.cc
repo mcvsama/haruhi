@@ -156,7 +156,7 @@ FrequencyResponsePlot::paintEvent (QPaintEvent* paint_event)
 		QPolygonF response_line, response_polygon;
 		for (int x = 0; x < n; ++x)
 		{
-			point = QPointF (x, h - log_meter (_values[x], lower_db, upper_db) * h);
+			point = QPointF (x, ifnan (h - log_meter (_values[x], lower_db, upper_db) * h, 0.0f));
 			response_polygon << point;
 			response_line << point;
 		}
