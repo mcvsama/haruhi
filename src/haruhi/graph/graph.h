@@ -150,7 +150,8 @@ class Graph: public RecursiveMutex
 	set_sample_rate (unsigned int sample_rate);
 
 	/**
-	 * Returns current graph tempo.
+	 * Returns current graph tempo measured
+	 * in quarter notes per minute (BPM).
 	 */
 	float
 	tempo() const { return _tempo; }

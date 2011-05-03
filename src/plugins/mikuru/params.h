@@ -24,7 +24,7 @@
 
 
 /*
- * Global macros.
+ * Global/external macros.
  */
 
 // Useful for ControllerProxy constructors:

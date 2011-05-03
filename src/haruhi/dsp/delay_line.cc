@@ -124,9 +124,7 @@ DelayLine::read (Sample* data)
 		std::copy (_data, _data + pos, data + n);
 	}
 	else
-	{
 		std::copy (_data + pos - _size, _data + pos, data);
-	}
 }
 
 
