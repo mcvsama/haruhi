@@ -68,6 +68,9 @@ class Effect: public QWidget
 	virtual void
 	process (Haruhi::AudioBuffer* in1, Haruhi::AudioBuffer* in2, Haruhi::AudioBuffer* out1, Haruhi::AudioBuffer* out2) = 0;
 
+	virtual void
+	panic() = 0;
+
   public slots:
 	/**
 	 * Loads widgets values from Params struct.

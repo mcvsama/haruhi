@@ -69,6 +69,9 @@ class PartEffects: public QWidget
 	process (Haruhi::AudioBuffer* ch1, Haruhi::AudioBuffer* ch2);
 
 	void
+	panic();
+
+	void
 	graph_updated();
 
   public slots:

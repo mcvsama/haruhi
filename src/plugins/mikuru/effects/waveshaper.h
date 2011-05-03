@@ -95,6 +95,9 @@ class Waveshaper: public Effect
 	void
 	process (Haruhi::AudioBuffer* in1, Haruhi::AudioBuffer* in2, Haruhi::AudioBuffer* out1, Haruhi::AudioBuffer* out2);
 
+	void
+	panic();
+
   public slots:
 	/**
 	 * Loads widgets values from Params struct.

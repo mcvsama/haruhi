@@ -50,6 +50,7 @@
 #include "general.h"
 #include "common_filters.h"
 #include "double_filter.h"
+#include "part_effects.h"
 #include "params.h"
 
 
@@ -315,7 +316,10 @@ Mikuru::panic()
 {
 	_parts_mutex.lock();
 	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
+	{
 		(*p)->voice_manager()->panic();
+		(*p)->effects()->panic();
+	}
 	_parts_mutex.unlock();
 }
 

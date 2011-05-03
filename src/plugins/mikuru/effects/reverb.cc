@@ -377,6 +377,13 @@ Reverb::process (Haruhi::AudioBuffer* in1, Haruhi::AudioBuffer* in2, Haruhi::Aud
 
 
 void
+Reverb::panic()
+{
+	_reverb_model.clear();
+}
+
+
+void
 Reverb::load_params()
 {
 	// Copy params:

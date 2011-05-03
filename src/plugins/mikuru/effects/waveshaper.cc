@@ -198,6 +198,12 @@ Waveshaper::process (Haruhi::AudioBuffer* in1, Haruhi::AudioBuffer* in2, Haruhi:
 
 
 void
+Waveshaper::panic()
+{
+}
+
+
+void
 Waveshaper::load_params()
 {
 	// Copy params:

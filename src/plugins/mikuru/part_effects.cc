@@ -136,6 +136,16 @@ PartEffects::process (Haruhi::AudioBuffer* ch1, Haruhi::AudioBuffer* ch2)
 
 
 void
+PartEffects::panic()
+{
+	_effects_mutex.lock();
+	for (EffectsList::iterator e = _effects.begin(); e != _effects.end(); ++e)
+		(*e)->panic();
+	_effects_mutex.unlock();
+}
+
+
+void
 PartEffects::graph_updated()
 {
 	unsigned int bs = _mikuru->graph()->buffer_size();
