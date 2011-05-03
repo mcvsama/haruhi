@@ -13,6 +13,7 @@
 
 // Standard:
 #include <cstddef>
+#include <limits>
 
 // Qt:
 #include <QtGui/QApplication>
@@ -90,7 +91,10 @@ FrequencyResponsePlot::replot (bool force)
 			for (int x = 0; x < n; ++x)
 			{
 				float k = std::exp (1.0f * x / n * std::log (static_cast<float> (MaxFreq))) + MinFreq;
-				_values[x] = _num_stages * 10.0 * std::log10 (_impulse_response->response (k / s + 1.0 / (2 * MaxFreq)));
+				float r = _impulse_response->response (k / s + 1.0 / (2 * MaxFreq));
+				_values[x] = r >= 0.0
+					? _num_stages * 10.0 * std::log10 (r)
+					: -std::numeric_limits<float>::infinity();
 			}
 			_to_repaint_buffer = true;
 			_to_replot = false;
@@ -152,7 +156,7 @@ FrequencyResponsePlot::paintEvent (QPaintEvent* paint_event)
 		QPolygonF response_line, response_polygon;
 		for (int x = 0; x < n; ++x)
 		{
-			point = QPointF (x, ifnan (h - log_meter (_values[x], lower_db, upper_db) * h, 0.0f));
+			point = QPointF (x, h - log_meter (_values[x], lower_db, upper_db) * h);
 			response_polygon << point;
 			response_line << point;
 		}
