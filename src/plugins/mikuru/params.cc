@@ -733,6 +733,82 @@ Params::Reverb::sanitize()
 	HARUHI_MIKURU_SANITIZE (mode)
 }
 
+
+Params::Delay::Delay():
+	// Controller:
+	HARUHI_MIKURU_CONSTRUCT (feedback_l, Feedback),
+	HARUHI_MIKURU_CONSTRUCT (feedback_r, Feedback),
+	HARUHI_MIKURU_CONSTRUCT (cross_feedback_l, CrossFeedback),
+	HARUHI_MIKURU_CONSTRUCT (cross_feedback_r, CrossFeedback),
+	HARUHI_MIKURU_CONSTRUCT (level_l, Level),
+	HARUHI_MIKURU_CONSTRUCT (level_r, Level),
+	// Non-controller:
+	tempo (20000, 400000, 120000),
+	enabled_l (0, 1, 1),
+	enabled_r (0, 1, 1),
+	note_length_l (1, 32, 4),
+	note_length_r (1, 32, 4),
+	note_multiplicator_l (1, 32, 1),
+	note_multiplicator_r (1, 32, 1),
+	note_adjust_l (-2500, +2500, 0),
+	note_adjust_r (-2500, +2500, 0)
+{
+}
+
+
+void
+Params::Delay::set_controller_params (Delay& other)
+{
+	Effect::set_controller_params (other);
+
+	HARUHI_MIKURU_COPY (feedback_l)
+	HARUHI_MIKURU_COPY (feedback_r)
+	HARUHI_MIKURU_COPY (cross_feedback_l)
+	HARUHI_MIKURU_COPY (cross_feedback_r)
+	HARUHI_MIKURU_COPY (level_l)
+	HARUHI_MIKURU_COPY (level_r)
+}
+
+
+void
+Params::Delay::set_non_controller_params (Delay& other)
+{
+	Effect::set_non_controller_params (other);
+
+	HARUHI_MIKURU_COPY (tempo)
+	HARUHI_MIKURU_COPY (enabled_l)
+	HARUHI_MIKURU_COPY (enabled_r)
+	HARUHI_MIKURU_COPY (note_length_l)
+	HARUHI_MIKURU_COPY (note_length_r)
+	HARUHI_MIKURU_COPY (note_multiplicator_l)
+	HARUHI_MIKURU_COPY (note_multiplicator_r)
+	HARUHI_MIKURU_COPY (note_adjust_l)
+	HARUHI_MIKURU_COPY (note_adjust_r)
+}
+
+
+void
+Params::Delay::sanitize()
+{
+	Effect::sanitize();
+
+	HARUHI_MIKURU_SANITIZE (feedback_l)
+	HARUHI_MIKURU_SANITIZE (feedback_r)
+	HARUHI_MIKURU_SANITIZE (cross_feedback_l)
+	HARUHI_MIKURU_SANITIZE (cross_feedback_r)
+	HARUHI_MIKURU_SANITIZE (level_l)
+	HARUHI_MIKURU_SANITIZE (level_r)
+	HARUHI_MIKURU_SANITIZE (tempo)
+	HARUHI_MIKURU_SANITIZE (enabled_l)
+	HARUHI_MIKURU_SANITIZE (enabled_r)
+	HARUHI_MIKURU_SANITIZE (note_length_l)
+	HARUHI_MIKURU_SANITIZE (note_length_r)
+	HARUHI_MIKURU_SANITIZE (note_multiplicator_l)
+	HARUHI_MIKURU_SANITIZE (note_multiplicator_r)
+	HARUHI_MIKURU_SANITIZE (note_adjust_l)
+	HARUHI_MIKURU_SANITIZE (note_adjust_r)
+}
+
 } // namespace MikuruPrivate
 
 #undef HARUHI_MIKURU_COPY_ATOMIC

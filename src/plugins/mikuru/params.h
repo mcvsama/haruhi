@@ -423,6 +423,37 @@ struct Params
 
 		Haruhi::Param<int> mode;
 	};
+
+	/**
+	 * Effect: Delay
+	 */
+	struct Delay: public Effect
+	{
+		HARUHI_MIKURU_PARAMS_STANDARD_METHODS (Delay)
+
+		enum {
+			HARUHI_MIKURU_PARAM (Feedback,				       0,	+1000000,	+1000000,	       0)
+			HARUHI_MIKURU_PARAM (CrossFeedback,			       0,	+1000000,	+1000000,	       0)
+			HARUHI_MIKURU_PARAM (Level,					       0,	+1000000,	+1000000,	       0)
+		};
+
+		Haruhi::ControllerParam feedback_l;
+		Haruhi::ControllerParam feedback_r;
+		Haruhi::ControllerParam cross_feedback_l;
+		Haruhi::ControllerParam cross_feedback_r;
+		Haruhi::ControllerParam level_l;
+		Haruhi::ControllerParam level_r;
+
+		Haruhi::Param<int> tempo; // 1000 * BPM. 0 means to use Graph BPM
+		Haruhi::Param<int> enabled_l;
+		Haruhi::Param<int> enabled_r;
+		Haruhi::Param<int> note_length_l;
+		Haruhi::Param<int> note_length_r;
+		Haruhi::Param<int> note_multiplicator_l;
+		Haruhi::Param<int> note_multiplicator_r;
+		Haruhi::Param<int> note_adjust_l;
+		Haruhi::Param<int> note_adjust_r;
+	};
 };
 
 } // namespace MikuruPrivate

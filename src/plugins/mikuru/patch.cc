@@ -242,6 +242,7 @@ Patch::save_state (QDomElement& element) const
 				QDomElement effect_element = element.ownerDocument().createElement ("effect");
 				Waveshaper* waveshaper;
 				Reverb* reverb;
+				Delay* delay;
 
 				if ((waveshaper = dynamic_cast<Waveshaper*> (*ef)))
 				{
@@ -272,6 +273,34 @@ Patch::save_state (QDomElement& element) const
 					save_parameter (effect_element, "damp", reverb->_knob_damp);
 					// Other:
 					save_parameter (effect_element, "enabled", params.enabled);
+					save_parameter (effect_element, "mode", params.mode);
+				}
+				else if ((delay = dynamic_cast<Delay*> (*ef)))
+				{
+					Params::Delay params (*delay->Delay::params());
+
+					effect_element.setAttribute ("type", "delay");
+					effect_element.setAttribute ("id", delay->id());
+					// Knobs:
+					save_parameter (effect_element, "wet", reverb->knob_wet());
+					save_parameter (effect_element, "panorama", reverb->knob_panorama());
+					save_parameter (effect_element, "left-feedback", delay->channel_panels()[0]->knob_feedback());
+					save_parameter (effect_element, "left-cross-feedback", delay->channel_panels()[0]->knob_cross_feedback());
+					save_parameter (effect_element, "left-level", delay->channel_panels()[0]->knob_level());
+					save_parameter (effect_element, "right-feedback", delay->channel_panels()[1]->knob_feedback());
+					save_parameter (effect_element, "right-cross-feedback", delay->channel_panels()[1]->knob_cross_feedback());
+					save_parameter (effect_element, "right-level", delay->channel_panels()[1]->knob_level());
+					// Other:
+					save_parameter (effect_element, "enabled", params.enabled);
+					save_parameter (effect_element, "tempo", params.tempo);
+					save_parameter (effect_element, "enabled-left", params.enabled_l);
+					save_parameter (effect_element, "enabled-right", params.enabled_r);
+					save_parameter (effect_element, "note-length-left", params.note_length_l);
+					save_parameter (effect_element, "note-length-right", params.note_length_r);
+					save_parameter (effect_element, "note-multiplicator-left", params.note_multiplicator_l);
+					save_parameter (effect_element, "note-multiplicator-right", params.note_multiplicator_r);
+					save_parameter (effect_element, "note-adjust-left", params.note_adjust_l);
+					save_parameter (effect_element, "note-adjust-right", params.note_adjust_r);
 				}
 
 				// Tab position:
@@ -638,6 +667,36 @@ Patch::load_state (QDomElement const& element)
 						load_parameter (parameters, "enabled", params->enabled);
 
 						reverb->load_params();
+					}
+					else if (e.attribute ("type") == "delay")
+					{
+						Delay* delay = part->effects()->add_delay (e.attribute ("id").toInt());
+						Params::Delay* params = delay->params();
+
+						create_parameters (e, parameters);
+
+						// Knobs:
+						load_parameter (parameters, "wet", reverb->knob_wet());
+						load_parameter (parameters, "panorama", reverb->knob_panorama());
+						load_parameter (parameters, "left-feedback", delay->channel_panels()[0]->knob_feedback());
+						load_parameter (parameters, "left-cross-feedback", delay->channel_panels()[0]->knob_cross_feedback());
+						load_parameter (parameters, "left-level", delay->channel_panels()[0]->knob_level());
+						load_parameter (parameters, "right-feedback", delay->channel_panels()[1]->knob_feedback());
+						load_parameter (parameters, "right-cross-feedback", delay->channel_panels()[1]->knob_cross_feedback());
+						load_parameter (parameters, "right-level", delay->channel_panels()[1]->knob_level());
+						// Other:
+						load_parameter (parameters, "enabled", params->enabled);
+						load_parameter (parameters, "tempo", params->tempo);
+						load_parameter (parameters, "enabled-left", params->enabled_l);
+						load_parameter (parameters, "enabled-right", params->enabled_r);
+						load_parameter (parameters, "note-length-left", params->note_length_l);
+						load_parameter (parameters, "note-length-right", params->note_length_r);
+						load_parameter (parameters, "note-multiplicator-left", params->note_multiplicator_l);
+						load_parameter (parameters, "note-multiplicator-right", params->note_multiplicator_r);
+						load_parameter (parameters, "note-adjust-left", params->note_adjust_l);
+						load_parameter (parameters, "note-adjust-right", params->note_adjust_r);
+
+						delay->load_params();
 					}
 				}
 			}
