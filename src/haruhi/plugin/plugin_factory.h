@@ -27,6 +27,14 @@ class Plugin;
 class PluginFactory
 {
   public:
+	enum Type
+	{
+		Synthesizer	= 0,
+		Effect		= 1,
+		Other		= 2,
+	};
+
+  public:
 	PluginFactory();
 
 	virtual ~PluginFactory() { }
@@ -55,6 +63,12 @@ class PluginFactory
 	 */
 	virtual const char*
 	title() const = 0;
+
+	/**
+	 * Returns type of the plugin.
+	 */
+	virtual Type
+	type() const = 0;
 
 	/**
 	 * Returns plugin author name. May be name of an individual,

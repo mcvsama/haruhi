@@ -373,6 +373,9 @@ class MikuruFactory: public Haruhi::PluginFactory
 	const char*
 	title() const { return "Mikuru"; }
 
+	Type
+	type() const { return Synthesizer; }
+
 	const char*
 	author() const { return "Michał <mcv> Gawron"; }
 

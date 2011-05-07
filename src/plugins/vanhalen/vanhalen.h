@@ -106,6 +106,9 @@ class VanHalenFactory: public Haruhi::PluginFactory
 	const char*
 	title() const { return "VanHalen testing unit"; }
 
+	Type
+	type() const { return Effect; }
+
 	const char*
 	author() const { return "Michał <mcv> Gawron"; }
 
