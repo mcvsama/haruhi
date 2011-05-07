@@ -27,9 +27,6 @@ class Plugin;
 class PluginFactory
 {
   public:
-	typedef std::map<std::string, std::string> InformationMap;
-
-  public:
 	PluginFactory();
 
 	virtual ~PluginFactory() { }
@@ -48,10 +45,39 @@ class PluginFactory
 	destroy_plugin (Plugin*) = 0;
 
 	/**
-	 * Returns information about created plugins.
+	 * Returns plugin URN.
 	 */
-	virtual InformationMap const&
-	information() const = 0;
+	virtual const char*
+	urn() const = 0;
+
+	/**
+	 * Returns plugin name/title.
+	 */
+	virtual const char*
+	title() const = 0;
+
+	/**
+	 * Returns plugin author name. May be name of an individual,
+	 * nick or company name.
+	 */
+	virtual const char*
+	author() const = 0;
+
+	/**
+	 * Returns plugin author contact URIs. Should be standard URIs like:
+	 * - xmpp:jabberid@example.org
+	 * - mailto:email@example.org
+	 * - http://authors-website.example.org
+	 * Array must end with 0 value. May return 0.
+	 */
+	virtual const char**
+	author_contacts() const = 0;
+
+	/**
+	 * License contents.
+	 */
+	virtual const char*
+	license() const = 0;
 };
 
 } // namespace Haruhi

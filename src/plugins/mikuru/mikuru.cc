@@ -742,20 +742,13 @@ Mikuru::current_load()
 MikuruFactory::MikuruFactory():
 	Haruhi::PluginFactory()
 {
-	_information["haruhi:urn"] = "urn://haruhi.mulabs.org/synth/mikuru/1";
-	_information["haruhi:presets.directory"] = "mikuru-1";
-	_information["haruhi:title"] = "Mikuru";
-	_information["haruhi:author.name"] = "Michał <mcv> Gawron";
-	_information["haruhi:author.contact.0"] = "mailto:michal@gawron.name";
-	_information["haruhi:author.contact.1"] = "xmpp:mcv@jabber.org";
-	_information["haruhi:license"] = "GPL-3.0";
 }
 
 
 Haruhi::Plugin*
 MikuruFactory::create_plugin (int id, QWidget* parent)
 {
-	return new Mikuru (_information["haruhi:urn"], _information["haruhi:title"], id, parent);
+	return new Mikuru (urn(), title(), id, parent);
 }
 
 
@@ -766,9 +759,10 @@ MikuruFactory::destroy_plugin (Haruhi::Plugin* plugin)
 }
 
 
-MikuruFactory::InformationMap const&
-MikuruFactory::information() const
+const char**
+MikuruFactory::author_contacts() const
 {
-	return _information;
+	static const char* _author_contacts[] = { "mailto:michal@gawron.name", "xmpp:mcv@jabber.org", 0 };
+	return _author_contacts;
 }
 

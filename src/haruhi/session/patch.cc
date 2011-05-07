@@ -468,16 +468,10 @@ Patch::create_plugins_menu()
 	PluginLoader::PluginFactories const& list = session()->plugin_loader()->plugin_factories();
 	for (PluginLoader::PluginFactories::const_iterator u = list.begin(); u != list.end(); ++u)
 	{
-		PluginFactory::InformationMap::const_iterator title = (*u)->information().find ("haruhi:title");
-		PluginFactory::InformationMap::const_iterator urn = (*u)->information().find ("haruhi:urn");
-
-		if (title != (*u)->information().end() && urn != (*u)->information().end())
-		{
-			action_id += 1;
-			action = _plugins_menu->addAction (QString::fromStdString (title->second), _plugins_mapper, SLOT (map()));
-			_plugins_mapper->setMapping (action, action_id);
-			_urns[action_id] = QString::fromStdString (urn->second);
-		}
+		action_id += 1;
+		action = _plugins_menu->addAction (QString::fromStdString ((*u)->title()), _plugins_mapper, SLOT (map()));
+		_plugins_mapper->setMapping (action, action_id);
+		_urns[action_id] = QString::fromStdString ((*u)->urn());
 	}
 
 	QObject::connect (_plugins_mapper, SIGNAL (mapped (int)), this, SLOT (load_plugin_request (int)));

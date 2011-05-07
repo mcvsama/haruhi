@@ -100,11 +100,20 @@ class VanHalenFactory: public Haruhi::PluginFactory
 	void
 	destroy_plugin (Haruhi::Plugin* plugin);
 
-	InformationMap const&
-	information() const;
+	const char*
+	urn() const { return  "urn://haruhi.mulabs.org/synth/vanhalen/1"; }
 
-  private:
-	InformationMap _information;
+	const char*
+	title() const { return "VanHalen testing unit"; }
+
+	const char*
+	author() const { return "Michał <mcv> Gawron"; }
+
+	const char**
+	author_contacts() const { return 0; }
+
+	const char*
+	license() const { return "GPL-3.0"; }
 };
 
 #endif

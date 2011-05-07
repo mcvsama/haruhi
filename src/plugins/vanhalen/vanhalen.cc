@@ -194,20 +194,13 @@ VanHalen::graph_updated()
 VanHalenFactory::VanHalenFactory():
 	Haruhi::PluginFactory()
 {
-	_information["haruhi:urn"] = "urn://haruhi.mulabs.org/synth/vanhalen/1";
-	_information["haruhi:presets.directory"] = "vanhalen-1";
-	_information["haruhi:title"] = "VanHalen";
-	_information["haruhi:author.name"] = "Michał <mcv> Gawron";
-	_information["haruhi:author.contact.0"] = "mailto:michal@gawron.name";
-	_information["haruhi:author.contact.1"] = "xmpp:mcv@jabber.org";
-	_information["haruhi:license"] = "GPL-3.0";
 }
 
 
 Haruhi::Plugin*
 VanHalenFactory::create_plugin (int id, QWidget* parent)
 {
-	return new VanHalen (_information["haruhi:urn"], _information["haruhi:title"], id, parent);
+	return new VanHalen (urn(), title(), id, parent);
 }
 
 
@@ -215,12 +208,5 @@ void
 VanHalenFactory::destroy_plugin (Haruhi::Plugin* plugin)
 {
 	delete plugin;
-}
-
-
-VanHalenFactory::InformationMap const&
-VanHalenFactory::information() const
-{
-	return _information;
 }
 

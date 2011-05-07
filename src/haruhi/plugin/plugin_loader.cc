@@ -81,14 +81,8 @@ PluginFactory*
 PluginLoader::find_factory (std::string const& urn) const
 {
 	for (PluginFactories::const_iterator f = _plugin_factories.begin();  f != _plugin_factories.end();  ++f)
-	{
-		PluginFactory::InformationMap const& map = (*f)->information();
-		PluginFactory::InformationMap::const_iterator i = map.find ("haruhi:urn");
-		if (i == map.end())
-			continue;
-		if (i->second == urn)
+		if ((*f)->urn() == urn)
 			return *f;
-	}
 	return 0;
 }
 
