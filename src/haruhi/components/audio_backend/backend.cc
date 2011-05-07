@@ -130,6 +130,7 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	layout->addLayout (lists_layout);
 
 	update_widgets();
+	Unit::enable();
 }
 
 
@@ -151,7 +152,6 @@ Backend::connected() const
 void
 Backend::enable()
 {
-	Unit::enable();
 	_transport->activate();
 }
 
@@ -160,7 +160,7 @@ void
 Backend::disable()
 {
 	_transport->deactivate();
-	Unit::disable();
+	// Don't call Unit::disable() as we never want to be truly disabled from processing rounds.
 }
 
 
@@ -187,9 +187,6 @@ Backend::unregistered()
 void
 Backend::process()
 {
-	if (graph()->dummy())
-		return;
-
 	sync_inputs();
 }
 
