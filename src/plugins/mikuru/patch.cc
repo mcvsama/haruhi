@@ -676,8 +676,8 @@ Patch::load_state (QDomElement const& element)
 						create_parameters (e, parameters);
 
 						// Knobs:
-						load_parameter (parameters, "wet", reverb->knob_wet());
-						load_parameter (parameters, "panorama", reverb->knob_panorama());
+						load_parameter (parameters, "wet", delay->knob_wet());
+						load_parameter (parameters, "panorama", delay->knob_panorama());
 						load_parameter (parameters, "left-feedback", delay->channel_panels()[0]->knob_feedback());
 						load_parameter (parameters, "left-cross-feedback", delay->channel_panels()[0]->knob_cross_feedback());
 						load_parameter (parameters, "left-level", delay->channel_panels()[0]->knob_level());
