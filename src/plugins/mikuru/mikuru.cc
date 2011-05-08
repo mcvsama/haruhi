@@ -205,13 +205,6 @@ Mikuru::unregistered()
 }
 
 
-std::string
-Mikuru::name() const
-{
-	return "Mikuru";
-}
-
-
 void
 Mikuru::process()
 {

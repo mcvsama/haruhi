@@ -82,13 +82,6 @@ VanHalen::unregistered()
 }
 
 
-std::string
-VanHalen::name() const
-{
-	return "VanHalen";
-}
-
-
 void
 VanHalen::process()
 {

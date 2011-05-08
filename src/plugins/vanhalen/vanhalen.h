@@ -54,9 +54,6 @@ class VanHalen:
 	void
 	unregistered();
 
-	std::string
-	name() const;
-
 	void
 	process();
 
