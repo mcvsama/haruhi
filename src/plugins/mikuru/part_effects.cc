@@ -247,8 +247,10 @@ PartEffects::destroy_all_effects()
 void
 PartEffects::show_first()
 {
+	_effects_mutex.lock();
 	if (!_effects.empty())
 		_tabs->showPage (_effects.front());
+	_effects_mutex.unlock();
 }
 
 
