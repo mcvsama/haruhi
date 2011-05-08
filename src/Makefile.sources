@@ -485,13 +485,13 @@ SRC_MOCHDRS += plugins/mikuru/part.h
 SRC_MOCHDRS += plugins/mikuru/part_effects.h
 SRC_MOCHDRS += plugins/mikuru/part_filters.h
 
-######### /plugins/vanhalen ########
+######### /plugins/bugfuzzer ########
 
-SRC_HEADERS += plugins/vanhalen/vanhalen.h
+SRC_HEADERS += plugins/bugfuzzer/bugfuzzer.h
 
-SRC_SOURCES += plugins/vanhalen/vanhalen.cc
+SRC_SOURCES += plugins/bugfuzzer/bugfuzzer.cc
 
-SRC_MOCHDRS += plugins/vanhalen/vanhalen.h
+SRC_MOCHDRS += plugins/bugfuzzer/bugfuzzer.h
 
 ################
 

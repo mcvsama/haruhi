@@ -25,7 +25,7 @@
 
 // Factories:
 #include <plugins/mikuru/mikuru.h>
-#include <plugins/vanhalen/vanhalen.h>
+#include <plugins/bugfuzzer/bugfuzzer.h>
 
 // Local:
 #include "plugin_loader.h"
@@ -36,7 +36,7 @@ namespace Haruhi {
 PluginLoader::PluginLoader()
 {
 	_plugin_factories.push_back (new MikuruFactory());
-	_plugin_factories.push_back (new VanHalenFactory());
+	_plugin_factories.push_back (new BugFuzzerFactory());
 }
 
 
