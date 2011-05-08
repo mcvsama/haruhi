@@ -93,9 +93,15 @@ template<unsigned int tOrder, int tResponseType>
 			{
 				if (std::distance (begin, end) < Order)
 				{
-					*output++ = 0.0f;
+					for (InputIterator k = begin; k != end; ++k)
+						*output++ = 0.0f;
 					return;
 				}
+
+				// Protect from denormals by adding a constant.
+				// This will propagate to further stages:
+				for (InputIterator c = begin; c != end; ++c)
+					*c += 1e-30;
 
 				std::copy (begin, end, output);
 
