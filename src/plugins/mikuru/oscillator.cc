@@ -608,6 +608,13 @@ Oscillator::wavetable()
 
 
 void
+Oscillator::switch_wavetables()
+{
+	_wave_computer->switch_wavetables();
+}
+
+
+void
 Oscillator::load_waveform_params()
 {
 	_loading_params = true;

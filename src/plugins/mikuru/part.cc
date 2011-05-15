@@ -107,6 +107,9 @@ Part::mix_voices()
 
 	// Mix all voices into part's buffers:
 	_voice_manager->mix_voices (_buffer_1, _buffer_2);
+
+	// Switch to newly computed wavetable if necessary:
+	_oscillator->switch_wavetables();
 }
 
 

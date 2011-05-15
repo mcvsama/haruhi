@@ -160,6 +160,12 @@ class Oscillator:
 	DSP::Wavetable*
 	wavetable();
 
+	/**
+	 * Switches double-buffered wavetable in WaveComputer.
+	 */
+	void
+	switch_wavetables();
+
   public slots:
 	/**
 	 * Loads widgets values from Params struct.

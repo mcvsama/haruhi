@@ -33,6 +33,11 @@ namespace MikuruPrivate {
 
 namespace DSP = Haruhi::DSP;
 
+/**
+ * Contains double-buffered wavetable.
+ * Recomputes/fills them in separate thread when
+ * ordered with given wave function.
+ */
 class WaveComputer: public Thread
 {
   public:
@@ -45,15 +50,24 @@ class WaveComputer: public Thread
 	 * \entry	Any thread.
 	 */
 	DSP::Wavetable*
-	wavetable() const { return _current; }
+	wavetable() const { return _current.load(); }
 
 	/**
 	 * Recomputes wavetables for new wave.
+	 * Wavetable returned by wavetable() function does not change
+	 * until switch_wavetable() is called.
 	 * \entry	Any thread.
 	 * \threadsafe
 	 */
 	void
 	update (Shared<DSP::Wave> const& wave);
+
+	/**
+	 * Switches wavetables, if newly computed wavetable is available.
+	 * Otherwise does nothing.
+	 */
+	void
+	switch_wavetables();
 
 	/**
 	 * Stops computing thread. Must be called before joining.
@@ -71,14 +85,15 @@ class WaveComputer: public Thread
 	run();
 
   private:
-	Shared<DSP::Wave>	_wave;
-	Mutex				_wave_mutex;
-	DSP::Wavetable*		_wavetables[2];
-	DSP::Wavetable*		_current;
-	int					_current_n;
-	Semaphore			_start;
-	Semaphore			_exit;
-	Semaphore			_exited;
+	Shared<DSP::Wave>		_wave;
+	Mutex					_wave_mutex;
+	DSP::Wavetable*			_wavetables[2];
+	Atomic<DSP::Wavetable*>	_current;
+	Atomic<int>				_current_n;
+	Atomic<int>				_computed_n;
+	Semaphore				_start;
+	Semaphore				_exit;
+	Semaphore				_exited;
 };
 
 } // namespace MikuruPrivate

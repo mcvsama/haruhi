@@ -32,6 +32,7 @@ WaveComputer::WaveComputer():
 	_wave (0),
 	_current (0),
 	_current_n (0),
+	_computed_n (0),
 	_start (0),
 	_exit (0),
 	_exited (0)
@@ -67,6 +68,14 @@ WaveComputer::update (Shared<DSP::Wave> const& wave)
 
 
 void
+WaveComputer::switch_wavetables()
+{
+	_current_n = _computed_n;
+	_current.store (_wavetables[_current_n.load()]);
+}
+
+
+void
 WaveComputer::stop()
 {
 	_exit.post();
@@ -92,11 +101,9 @@ WaveComputer::run()
 
 		if (&*wave)
 		{
-			int n = (_current_n + 1) % 2;
+			int n = (_current_n.load() + 1) % 2;
 			DSP::FFTFiller (&*wave, true).fill (_wavetables[n], 4096);
-			_current_n = n;
-
-			atomic (_current) = _wavetables[n];
+			_computed_n.store (n);
 
 			// Emit configured signal:
 			finished (wave);
