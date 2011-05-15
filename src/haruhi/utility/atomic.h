@@ -35,8 +35,13 @@ template<class Type>
 template<>
 	class Atomic<unsigned int>
 	{
+		typedef Atomic<unsigned int> This;
+
 	  public:
 		Atomic (unsigned int init = 0): _value (init)	{ }
+		Atomic (This const& other)						{ store (other.load()); }
+		This& operator= (This const& other)				{ store (other.load()); return *this; }
+
 		unsigned int	load() const					{ return static_cast<unsigned int> (g_atomic_int_get (&_value)); }
 		void			store (unsigned int value)		{ g_atomic_int_set (&_value, static_cast<int> (value)); }
 		void			add (unsigned int value)		{ g_atomic_int_add (&_value, static_cast<int> (value)); }
@@ -56,8 +61,13 @@ template<>
 template<>
 	class Atomic<int>
 	{
+		typedef Atomic<int> This;
+
 	  public:
 		Atomic (int init = 0): _value (init)			{ }
+		Atomic (This const& other)						{ store (other.load()); }
+		This& operator= (This const& other)				{ store (other.load()); return *this; }
+
 		int				load() const					{ return g_atomic_int_get (&_value); }
 		void			store (int value)				{ g_atomic_int_set (&_value, value); }
 		void			add (int value)					{ g_atomic_int_add (&_value, value); }
@@ -77,8 +87,13 @@ template<>
 template<>
 	class Atomic<bool>
 	{
+		typedef Atomic<bool> This;
+
 	  public:
 		Atomic (bool init = false): _value (init)		{ }
+		Atomic (This const& other)						{ store (other.load()); }
+		This& operator= (This const& other)				{ store (other.load()); return *this; }
+
 		bool			load() const					{ return static_cast<bool> (_value.load()); }
 		void			store (bool value)				{ _value.store (static_cast<int> (value)); }
 
@@ -90,9 +105,12 @@ template<>
 template<>
 	class Atomic<float>
 	{
+		typedef Atomic<float> This;
+
 	  public:
-		Atomic (float init = false): _value (init)
-		{ }
+		Atomic (float init = false): _value (init)		{ }
+		Atomic (This const& other)						{ store (other.load()); }
+		This& operator= (This const& other)				{ store (other.load()); return *this; }
 
 		float
 		load() const
@@ -118,8 +136,13 @@ template<>
 template<class Type>
 	class Atomic<Type*>
 	{
+		typedef Atomic<Type*> This;
+
 	  public:
 		Atomic (Type* init = 0): _value (init)			{ }
+		Atomic (This const& other)						{ store (other.load()); }
+		This& operator= (This const& other)				{ store (other.load()); return *this; }
+
 		Type*			load() const					{ return static_cast<Type*> (g_atomic_pointer_get (&_value)); }
 		void			store (Type* value)				{ g_atomic_pointer_set (&_value, value); }
 
