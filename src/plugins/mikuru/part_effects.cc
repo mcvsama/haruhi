@@ -74,6 +74,7 @@ PartEffects::PartEffects (Part* part, Mikuru* mikuru, QWidget* parent):
 	layout->addWidget (_stack);
 
 	update_widgets();
+	graph_updated();
 }
 
 
@@ -148,6 +149,9 @@ PartEffects::panic()
 void
 PartEffects::graph_updated()
 {
+	if (!_mikuru->graph())
+		return;
+
 	unsigned int bs = _mikuru->graph()->buffer_size();
 	_buf1.resize (bs);
 	_buf2.resize (bs);
