@@ -370,7 +370,7 @@ Knob::create_context_menu()
 	_context_menu->addAction (Resources::Icons16::configure(), "Con&figure", this, SLOT (configure()));
 
 	// Add Connect/Disconnect menu items:
-	if (unit_bay())
+	if (unit_bay() && event_port())
 	{
 		_context_menu->addSeparator();
 		_connect_menu = _context_menu->addMenu (Resources::Icons16::connect(), "&Connect");
