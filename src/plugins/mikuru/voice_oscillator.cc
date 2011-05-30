@@ -47,7 +47,7 @@ VoiceOscillator::set_phase (Sample phase)
 {
 	for (int i = 0; i < _unison_number; ++i)
 	{
-		_phases[i] = phase;
+		_phases[i] = 0.5f * (1.0f + phase);
 		phase += _initial_phase_spread;
 	}
 }
