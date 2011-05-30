@@ -134,6 +134,8 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	_knob_noise_level			= new Haruhi::Knob (this, _port_noise_level, &_oscillator_params.noise_level, "Noise lvl",
 													HARUHI_MIKURU_PARAMS_FOR_KNOB_WITH_STEPS (Params::Oscillator::NoiseLevel, 200), 2);
 
+	QObject::connect (_knob_phase, SIGNAL (changed (int)), this, SLOT (update_phase_marker()));
+
 	// Set unit bay:
 	Haruhi::Knob* all_knobs[] = {
 		_knob_wave_shape, _knob_modulator_amplitude, _knob_modulator_index, _knob_modulator_shape,
@@ -197,6 +199,7 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	base_plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	base_plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_base_wave_plot = new Haruhi::WavePlot (base_plot_frame);
+	_base_wave_plot->set_phase_marker_enabled (true);
 	QToolTip::add (_base_wave_plot, "Base wave");
 	QVBoxLayout* base_plot_frame_layout = new QVBoxLayout (base_plot_frame);
 	base_plot_frame_layout->setMargin (0);
@@ -207,6 +210,7 @@ Oscillator::Oscillator (Part* part, Haruhi::PortGroup* port_group, QString const
 	harmonics_plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	harmonics_plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_final_wave_plot = new Haruhi::WavePlot (harmonics_plot_frame);
+	_final_wave_plot->set_phase_marker_enabled (true);
 	QToolTip::add (_final_wave_plot, "Wave with harmonics and modulation");
 	QVBoxLayout* harmonics_plot_frame_layout = new QVBoxLayout (harmonics_plot_frame);
 	harmonics_plot_frame_layout->setMargin (0);
@@ -782,6 +786,17 @@ Oscillator::show_harmonics()
 
 
 void
+Oscillator::update_phase_marker()
+{
+	float pos = 0.5f * (1.0f + _oscillator_params.phase.to_f());
+	_base_wave_plot->set_phase_marker_position (pos);
+	_base_wave_plot->plot_shape();
+	_final_wave_plot->set_phase_marker_position (pos);
+	_final_wave_plot->plot_shape();
+}
+
+
+void
 Oscillator::setup_params()
 {
 	_waveform_params.wave_shape.on_change.connect (this, &Oscillator::recompute_wave);
@@ -884,6 +899,8 @@ Oscillator::update_wave_plot (Shared<DSP::Wave> const& wave)
 
 				_final_wave_plot->assign_wave (modulated_wave, false, true);
 				_final_wave_plot->post_plot_shape();
+
+				update_phase_marker();
 			}
 		}
 	}

@@ -220,6 +220,12 @@ class Oscillator:
 	void
 	show_harmonics();
 
+	/**
+	 * Updates phase marker on wave plots.
+	 */
+	void
+	update_phase_marker();
+
   private:
 	/**
 	 * Sets up params callbacks.
