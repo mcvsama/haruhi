@@ -29,21 +29,7 @@ POOL_ALLOCATOR_FOR (ControllerEvent)
 POOL_ALLOCATOR_FOR (VoiceEvent)
 POOL_ALLOCATOR_FOR (VoiceControllerEvent)
 
-
 VoiceID VoiceEvent::_last_voice_id = 0;
-
-
-VoiceEvent::VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Type type, Frequency frequency, Value value):
-	Event (timestamp),
-	_key_id (key_id),
-	_voice_id (voice_id),
-	_type (type),
-	_frequency (frequency),
-	_value (value)
-{
-	if (_voice_id == VoiceAuto)
-		_voice_id = ++_last_voice_id;
-}
 
 
 VoiceEvent::Frequency

@@ -72,15 +72,20 @@ class Event: public FastShared
 	};
 
   public:
-	Event (Timestamp timestamp):
-		_timestamp (timestamp)
+	Event (EventType type, Timestamp timestamp):
+		_timestamp (timestamp),
+		_event_type (type)
 	{ }
 
   protected:
 	// Hide copy constructor from public:
 	Event (Event const& other):
-		_timestamp (other._timestamp)
+		_timestamp (other._timestamp),
+		_event_type (other._event_type)
 	{ }
+
+	void
+	set_event_type (EventType type) { _event_type = type; }
 
   public:
 	virtual ~Event() { }
@@ -97,11 +102,12 @@ class Event: public FastShared
 	/**
 	 * Identifies descendant class.
 	 */
-	virtual EventType
-	event_type() const = 0;
+	EventType
+	event_type() const { return _event_type; }
 
   private:
-	Timestamp _timestamp;
+	Timestamp	_timestamp;
+	EventType	_event_type;
 };
 
 
@@ -114,7 +120,7 @@ class ControllerEvent: public Event
 
   public:
 	ControllerEvent (Timestamp timestamp, Value value):
-		Event (timestamp),
+		Event (ControllerEventType, timestamp),
 		_value (value)
 	{ }
 
@@ -130,9 +136,6 @@ class ControllerEvent: public Event
 
 	ControllerEvent*
 	clone() const { return new ControllerEvent (*this); }
-
-	EventType
-	event_type() const { return ControllerEventType; }
 
   private:
 	Value _value;
@@ -154,7 +157,17 @@ class VoiceEvent: public Event
 	typedef ControllerEvent::Value Value;
 
   public:
-	VoiceEvent (Timestamp, KeyID, VoiceID, Type, Frequency, Value);
+	VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Type type, Frequency frequency, Value value):
+		Event (VoiceEventType, timestamp),
+		_key_id (key_id),
+		_voice_id (voice_id),
+		_type (type),
+		_frequency (frequency),
+		_value (value)
+	{
+		if (_voice_id == VoiceAuto)
+			_voice_id = ++_last_voice_id;
+	}
 
   protected:
 	VoiceEvent (VoiceEvent const& other):
@@ -188,9 +201,6 @@ class VoiceEvent: public Event
 	static Frequency
 	frequency_from_key_id (KeyID, float master_tune);
 
-	EventType
-	event_type() const { return VoiceEventType; }
-
   private:
 	KeyID _key_id;
 	VoiceID	_voice_id;
@@ -209,7 +219,9 @@ class VoiceControllerEvent: public ControllerEvent
 	VoiceControllerEvent (Timestamp timestamp, VoiceID voice_id, Value value):
 		ControllerEvent (timestamp, value),
 		_voice_id (voice_id)
-	{ }
+	{
+		set_event_type (VoiceControllerEventType);
+	}
 
   protected:
 	VoiceControllerEvent (VoiceControllerEvent const& other):
@@ -223,9 +235,6 @@ class VoiceControllerEvent: public ControllerEvent
 
 	VoiceControllerEvent*
 	clone() const { return new VoiceControllerEvent (*this); }
-
-	EventType
-	event_type() const { return VoiceControllerEventType; }
 
   private:
 	VoiceID _voice_id;
