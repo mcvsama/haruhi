@@ -32,14 +32,8 @@ Buffer::TypeID EventBuffer::TYPE = "Haruhi::EventBuffer";
 
 
 EventBuffer::EventBuffer():
-	_events (new EventsMultiset())
+	Buffer (EventBuffer::TYPE)
 {
-}
-
-
-EventBuffer::~EventBuffer()
-{
-	delete _events;
 }
 
 
@@ -49,11 +43,7 @@ EventBuffer::mixin (Buffer const* other)
 	if (other->type() != EventBuffer::TYPE)
 		throw Exception ("incompatible buffers");
 	EventBuffer const* other_buffer = static_cast<EventBuffer const*> (other);
-	EventsMultiset* aux = new EventsMultiset();
-	std::merge (_events->begin(), _events->end(), other_buffer->_events->begin(), other_buffer->_events->end(),
-				std::insert_iterator<EventsMultiset> (*aux, aux->begin()), EventsMultiset::key_compare());
-	delete _events;
-	_events = aux;
+	_events.insert (_events.end(), other_buffer->_events.begin(), other_buffer->_events.end());
 }
 
 } // namespace Haruhi

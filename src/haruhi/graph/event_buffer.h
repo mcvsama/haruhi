@@ -35,20 +35,15 @@ class EventBuffer: public Buffer
 	USES_POOL_ALLOCATOR (EventBuffer)
 
   public:
-	typedef std::multiset<Shared<Event>, Event::SharedStrictWeakOrdering> EventsMultiset;
+	typedef std::vector<Shared<Event> > Events;
 
 	static TypeID TYPE;
 
   public:
 	EventBuffer();
 
-	~EventBuffer();
-
-	TypeID
-	type() const { return EventBuffer::TYPE; }
-
 	void
-	clear() { _events->clear(); }
+	clear() { _events.clear(); }
 
 	/**
 	 * Mixes in other buffer into this one.
@@ -58,19 +53,38 @@ class EventBuffer: public Buffer
 	mixin (Buffer const*);
 
 	void
-	push (Shared<Event> const& event) { _events->insert (event); }
+	push (Shared<Event> const& event) { _sorted = false; _events.push_back (event); }
 
-	EventsMultiset const&
-	events() const { return *_events; }
+	/**
+	 * May resort events.
+	 */
+	Events&
+	events() { ensure_sorted(); return _events; }
+
+	Events const&
+	events() const { ensure_sorted(); return _events; }
 
 	/**
 	 * \returns	true if and only if buffer has no pending events.
 	 */
 	bool
-	empty() const { return _events->empty(); }
+	empty() const { return _events.empty(); }
 
   private:
-	EventsMultiset* _events;
+	void
+	ensure_sorted() const
+	{
+		if (!_sorted)
+		{
+			std::sort (_events.begin(), _events.end(), _less_function);
+			_sorted = true;
+		}
+	}
+
+  private:
+	mutable bool					_sorted;
+	mutable Events					_events;
+	Event::SharedStrictWeakOrdering	_less_function;
 };
 
 } // namespace Haruhi

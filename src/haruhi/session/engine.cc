@@ -64,8 +64,8 @@ void
 Engine::adjust_master_volume()
 {
 	EventBuffer* buffer = _session->graph()->audio_backend()->master_volume_port()->event_buffer();
-	EventBuffer::EventsMultiset const& events = buffer->events();
-	for (EventBuffer::EventsMultiset::const_iterator e = events.begin(); e != events.end(); ++e)
+	EventBuffer::Events const& events = buffer->events();
+	for (EventBuffer::Events::const_iterator e = events.begin(); e != events.end(); ++e)
 	{
 		if ((*e)->event_type() == Event::ControllerEventType)
 		{
@@ -80,8 +80,8 @@ void
 Engine::check_panic_button()
 {
 	EventBuffer* buffer = _session->graph()->audio_backend()->panic_port()->event_buffer();
-	EventBuffer::EventsMultiset const& events = buffer->events();
-	for (EventBuffer::EventsMultiset::const_iterator e = events.begin(); e != events.end(); ++e)
+	EventBuffer::Events const& events = buffer->events();
+	for (EventBuffer::Events::const_iterator e = events.begin(); e != events.end(); ++e)
 	{
 		if ((*e)->event_type() == Event::ControllerEventType)
 		{

@@ -555,7 +555,7 @@ Mikuru::process_voice_events()
 	_port_sustain->sync();
 	buffer = _port_sustain->event_buffer();
 	// Find most recent ControllerEvent, throw the rest:
-	for (Haruhi::EventBuffer::EventsMultiset::reverse_iterator e = buffer->events().rbegin(); e != buffer->events().rend(); ++e)
+	for (Haruhi::EventBuffer::Events::reverse_iterator e = buffer->events().rbegin(); e != buffer->events().rend(); ++e)
 	{
 		if ((*e)->event_type() == Haruhi::Event::ControllerEventType)
 		{
@@ -570,7 +570,7 @@ Mikuru::process_voice_events()
 	_port_keyboard->sync();
 	buffer = _port_keyboard->event_buffer();
 	int enabled = atomic (_param_enabled);
-	for (Haruhi::EventBuffer::EventsMultiset::iterator e = buffer->events().begin(); e != buffer->events().end(); ++e)
+	for (Haruhi::EventBuffer::Events::iterator e = buffer->events().begin(); e != buffer->events().end(); ++e)
 	{
 		if ((*e)->event_type() == Haruhi::Event::VoiceEventType)
 		{

@@ -103,7 +103,7 @@ ControllerProxy::process_events()
 	if (!buffer->events().empty())
 	{
 		// Use last controller value from buffer:
-		for (EventBuffer::EventsMultiset::reverse_iterator e = buffer->events().rbegin(); e != buffer->events().rend(); ++e)
+		for (EventBuffer::Events::const_reverse_iterator e = buffer->events().rbegin(); e != buffer->events().rend(); ++e)
 		{
 			if (e != buffer->events().rend())
 			{

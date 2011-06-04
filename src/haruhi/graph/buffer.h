@@ -17,6 +17,9 @@
 // Standard:
 #include <cstddef>
 
+// Haruhi:
+#include <haruhi/utility/noncopyable.h>
+
 
 namespace Haruhi {
 
@@ -28,20 +31,24 @@ namespace Haruhi {
  * to type-name string. Every subclass should define constant like eg.
  * EventBuffer::TYPE to the string.
  */
-class Buffer
+class Buffer: public Noncopyable
 {
   public:
 	typedef const char* TypeID;
 
   public:
+	Buffer (TypeID type):
+		_type (type)
+	{ }
+
 	virtual ~Buffer() { }
 
 	/**
 	 * Returns string (pointer) that identifies
 	 * type. Comparison is done using pointers, not string contents.
 	 */
-	virtual TypeID
-	type() const = 0;
+	TypeID
+	type() const { return _type; }
 
 	/**
 	 * Clears buffer.
@@ -54,6 +61,9 @@ class Buffer
 	 */
 	virtual void
 	mixin (Buffer const*) = 0;
+
+  private:
+	TypeID _type;
 };
 
 } // namespace Haruhi

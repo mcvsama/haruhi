@@ -42,9 +42,6 @@ class AudioBuffer: public Buffer
 
 	~AudioBuffer();
 
-	TypeID
-	type() const { return AudioBuffer::TYPE; }
-
 	/**
 	 * Clears (zeroes) buffer.
 	 */

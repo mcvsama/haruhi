@@ -83,7 +83,7 @@ EventDispatcher::process_events()
 	if (!buffer->events().empty())
 	{
 		// Use last controller value:
-		for (Haruhi::EventBuffer::EventsMultiset::const_iterator e = buffer->events().begin(); e != buffer->events().end(); ++e)
+		for (Haruhi::EventBuffer::Events::const_iterator e = buffer->events().begin(); e != buffer->events().end(); ++e)
 		{
 			switch ((*e)->event_type())
 			{

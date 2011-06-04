@@ -220,7 +220,7 @@ VoiceManager::buffer_voice_event (Haruhi::VoiceEvent* voice_event)
 void
 VoiceManager::process_buffered_events()
 {
-	for (Haruhi::EventBuffer::EventsMultiset::iterator e = _events_buffer.events().begin(); e != _events_buffer.events().end(); ++e)
+	for (Haruhi::EventBuffer::Events::iterator e = _events_buffer.events().begin(); e != _events_buffer.events().end(); ++e)
 		voice_event (static_cast<Haruhi::VoiceEvent const*> (e->get()));
 	_events_buffer.clear();
 }

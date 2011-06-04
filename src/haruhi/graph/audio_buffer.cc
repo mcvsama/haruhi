@@ -32,6 +32,7 @@ Buffer::TypeID AudioBuffer::TYPE = "Haruhi::AudioBuffer";
 
 
 AudioBuffer::AudioBuffer (std::size_t samples):
+	Buffer (AudioBuffer::TYPE),
 	// Allocate aligned memory for SIMD instructions:
 	_data (allocate (samples)),
 	_size (samples),
