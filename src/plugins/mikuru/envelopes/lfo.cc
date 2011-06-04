@@ -192,6 +192,8 @@ LFO::~LFO()
 	delete _port_output;
 	delete _port_wave_shape;
 	delete _port_fade_out;
+	delete _port_group;
+
 	// Delete remaining Oscs:
 	for (Oscs::iterator x = _oscs.begin(); x != _oscs.end(); ++x)
 		delete x->second;

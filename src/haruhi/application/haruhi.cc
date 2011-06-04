@@ -79,9 +79,10 @@ Haruhi::Haruhi (int argc, char** argv, char** envp):
 	_settings->unregister_module (_devices_manager_settings);
 	_settings->unregister_module (_haruhi_settings);
 
+	delete _session_loader_settings;
 	delete _has_presets_settings;
 	delete _devices_manager_settings;
-	delete _session_loader_settings;
+	delete _haruhi_settings;
 	delete _settings;
 }
 

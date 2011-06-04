@@ -78,7 +78,16 @@ Reverb::AllpassFilter::clear()
 }
 
 
-Reverb::Model::Model (unsigned int sample_rate)
+Reverb::Model::Model (unsigned int sample_rate):
+	_gain (0.0f),
+	_room_size (0.0f),
+	_room_size1 (0.0f),
+	_damp (0.0f),
+	_damp1 (0.0f),
+	_wet1 (0.0f),
+	_wet2 (0.0f),
+	_width (0.0f),
+	_mode (NormalMode)
 {
 	scale_buffers (sample_rate);
 
