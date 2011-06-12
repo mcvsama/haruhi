@@ -111,6 +111,12 @@ class Envelopes: public QWidget
 
   private:
 	void
+	lock_graph_and_envelopes();
+
+	void
+	unlock_graph_and_envelopes();
+
+	void
 	update_widgets();
 
   private:

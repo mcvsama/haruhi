@@ -91,9 +91,9 @@ Envelopes::~Envelopes()
 	QWidget* page;
 	while ((page = _tabs->currentPage()))
 		_tabs->removePage (page);
-	_envelopes_mutex.lock();
+	lock_graph_and_envelopes();
 	std::for_each (_envelopes.begin(), _envelopes.end(), delete_operator<Envelope*>);
-	_envelopes_mutex.unlock();
+	unlock_graph_and_envelopes();
 }
 
 
@@ -120,40 +120,40 @@ Envelopes::resize_buffers (std::size_t size)
 void
 Envelopes::notify_voice_created (VoiceManager* voice_manager, Voice* voice)
 {
-	_envelopes_mutex.lock();
+	lock_graph_and_envelopes();
 	for (EnvelopesList::iterator e = _envelopes.begin(); e != _envelopes.end(); ++e)
 		(*e)->voice_created (voice_manager, voice);
-	_envelopes_mutex.unlock();
+	unlock_graph_and_envelopes();
 }
 
 
 void
 Envelopes::notify_voice_released (VoiceManager* voice_manager, Voice* voice)
 {
-	_envelopes_mutex.lock();
+	lock_graph_and_envelopes();
 	for (EnvelopesList::iterator e = _envelopes.begin(); e != _envelopes.end(); ++e)
 		(*e)->voice_released (voice_manager, voice);
-	_envelopes_mutex.unlock();
+	unlock_graph_and_envelopes();
 }
 
 
 void
 Envelopes::notify_voice_dropped (VoiceManager* voice_manager, Voice* voice)
 {
-	_envelopes_mutex.lock();
+	lock_graph_and_envelopes();
 	for (EnvelopesList::iterator e = _envelopes.begin(); e != _envelopes.end(); ++e)
 		(*e)->voice_dropped (voice_manager, voice);
-	_envelopes_mutex.unlock();
+	unlock_graph_and_envelopes();
 }
 
 
 void
 Envelopes::notify_new_part (Part* part)
 {
-	_envelopes_mutex.lock();
+	lock_graph_and_envelopes();
 	for (EnvelopesList::iterator e = _envelopes.begin(); e != _envelopes.end(); ++e)
 		(*e)->new_part (part);
-	_envelopes_mutex.unlock();
+	unlock_graph_and_envelopes();
 }
 
 
@@ -161,9 +161,9 @@ ADSR*
 Envelopes::add_adsr (int id)
 {
 	ADSR* envelope = new ADSR (id, _mikuru, this);
-	_envelopes_mutex.lock();
+	lock_graph_and_envelopes();
 	_envelopes.push_back (envelope);
-	_envelopes_mutex.unlock();
+	unlock_graph_and_envelopes();
 	_tabs->addTab (envelope, Resources::Icons16::adsr(), QString ("ADSR %1").arg (envelope->id()));
 	_tabs->showPage (envelope);
 	update_widgets();
@@ -175,9 +175,9 @@ EG*
 Envelopes::add_eg (int id)
 {
 	EG* envelope = new EG (id, _mikuru, this);
-	_envelopes_mutex.lock();
+	lock_graph_and_envelopes();
 	_envelopes.push_back (envelope);
-	_envelopes_mutex.unlock();
+	unlock_graph_and_envelopes();
 	_tabs->addTab (envelope, Resources::Icons16::eg(), QString ("EG %1").arg (envelope->id()));
 	_tabs->showPage (envelope);
 	update_widgets();
@@ -189,9 +189,9 @@ LFO*
 Envelopes::add_lfo (int id)
 {
 	LFO* envelope = new LFO (id, _mikuru, this);
-	_envelopes_mutex.lock();
+	lock_graph_and_envelopes();
 	_envelopes.push_back (envelope);
-	_envelopes_mutex.unlock();
+	unlock_graph_and_envelopes();
 	_tabs->addTab (envelope, Resources::Icons16::lfo(), QString ("LFO %1").arg (envelope->id()));
 	_tabs->showPage (envelope);
 	update_widgets();
@@ -208,9 +208,9 @@ Envelopes::destroy_envelope()
 	Envelope* envelope = dynamic_cast<Envelope*> (tab);
 	if (!envelope)
 		return;
-	_envelopes_mutex.lock();
+	lock_graph_and_envelopes();
 	_envelopes.remove (envelope);
-	_envelopes_mutex.unlock();
+	unlock_graph_and_envelopes();
 	_tabs->removePage (envelope);
 	delete envelope;
 	update_widgets();
@@ -220,9 +220,9 @@ Envelopes::destroy_envelope()
 void
 Envelopes::destroy_envelope (Envelope* envelope)
 {
-	_envelopes_mutex.lock();
+	lock_graph_and_envelopes();
 	_envelopes.remove (envelope);
-	_envelopes_mutex.unlock();
+	unlock_graph_and_envelopes();
 	_tabs->removePage (envelope);
 	delete envelope;
 	update_widgets();
@@ -232,13 +232,14 @@ Envelopes::destroy_envelope (Envelope* envelope)
 void
 Envelopes::destroy_all_envelopes()
 {
-	_envelopes_mutex.lock();
+	lock_graph_and_envelopes();
 	while (_envelopes.size() > 0)
 	{
 		destroy_envelope (_envelopes.front());
-		_envelopes_mutex.yield();
+		unlock_graph_and_envelopes();
+		lock_graph_and_envelopes();
 	}
-	_envelopes_mutex.unlock();
+	unlock_graph_and_envelopes();
 }
 
 
@@ -259,6 +260,24 @@ Envelopes::update_widgets()
 		_stack->setCurrentWidget (_placeholder);
 	_remove_envelope->setEnabled (_tabs->currentPage());
 	_tabs->setMargin (Config::Spacing - 1);
+}
+
+
+void
+Envelopes::lock_graph_and_envelopes()
+{
+	if (_mikuru->graph())
+		_mikuru->graph()->lock();
+	_envelopes_mutex.lock();
+}
+
+
+void
+Envelopes::unlock_graph_and_envelopes()
+{
+	_envelopes_mutex.unlock();
+	if (_mikuru->graph())
+		_mikuru->graph()->unlock();
 }
 
 } // namespace MikuruPrivate
