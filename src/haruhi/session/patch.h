@@ -91,10 +91,14 @@ namespace PatchPrivate {
 		favorited (bool);
 
 	  private:
+		void
+		update_widgets();
+
+	  private:
 		Patch*			_patch;
 		Plugin*			_plugin;
 		QStackedWidget*	_stack;
-		QCheckBox*		_favorite_checkbox;
+		QPushButton*	_favorite_button;
 		QString			_preset_uuid;
 		QLabel*			_preset_name;
 		QPushButton*	_presets_button;

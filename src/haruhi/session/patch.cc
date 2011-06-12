@@ -122,9 +122,12 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 
 		// Presets manager/favoriting:
 
-		_favorite_checkbox = new QCheckBox ("Favorite", bar);
-		_favorite_checkbox->setEnabled (false);
-		QObject::connect (_favorite_checkbox, SIGNAL (toggled (bool)), this, SLOT (favorited (bool)));
+		_favorite_button = new QPushButton ("Favorite", bar);
+		_favorite_button->clearFocus();
+		_favorite_button->setFlat (true);
+		_favorite_button->setCheckable (true);
+		_favorite_button->setEnabled (false);
+		QObject::connect (_favorite_button, SIGNAL (toggled (bool)), this, SLOT (favorited (bool)));
 	}
 
 	bar->setPaletteForegroundColor (QColor (0xff, 0xff, 0xff));
@@ -148,7 +151,7 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 		bar_layout->addItem (new QSpacerItem (5, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
 		bar_layout->addWidget (_preset_name);
 		bar_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-		bar_layout->addWidget (_favorite_checkbox);
+		bar_layout->addWidget (_favorite_button);
 		bar_layout->addItem (new QSpacerItem (10, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
 		bar_layout->addWidget (_presets_button);
 	}
@@ -160,6 +163,8 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	layout->setSpacing (Config::Spacing);
 	layout->addWidget (bar);
 	layout->addWidget (_stack);
+
+	update_widgets();
 }
 
 
@@ -202,8 +207,9 @@ PluginTab::set_preset (QString const& uuid, QString const& name)
 	{
 		_preset_uuid = uuid;
 		_preset_name->setText (name);
-		_favorite_checkbox->setEnabled (!uuid.isNull());
-		_favorite_checkbox->setChecked (_presets_manager->favorited (uuid));
+		_favorite_button->setEnabled (!uuid.isNull());
+		_favorite_button->setChecked (_presets_manager->favorited (uuid));
+		update_widgets();
 	}
 }
 
@@ -212,7 +218,19 @@ void
 PluginTab::favorited (bool set)
 {
 	if (_presets_manager)
+	{
 		_presets_manager->set_favorited (_preset_uuid, set);
+		update_widgets();
+	}
+}
+
+
+void
+PluginTab::update_widgets()
+{
+	_favorite_button->setPaletteForegroundColor (QColor (0xff, 0xff, 0xff));
+	_favorite_button->setPaletteBackgroundColor (_favorite_button->isChecked() ? QColor (0x00, 0xff, 0x00) : QColor (0x00, 0x2A, 0x5B));
+	_favorite_button->setAutoFillBackground (false);
 }
 
 } // namespace PatchPrivate
@@ -240,14 +258,14 @@ Patch::Patch (Session* session, std::string const& title, QWidget* parent):
 
 	_tabs = new QTabWidget (this);
 	_tabs->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	_tabs->setTabPosition (QTabWidget::South);
+	_tabs->setTabPosition (QTabWidget::North);
 	_tabs->setIconSize (QSize (32, 22));
 	_tabs->setMovable (true);
 	_tabs->setCornerWidget (add_plugin_frame, Qt::BottomRightCorner);
 
 	_connections_tab = new Private::ConnectionsTab (this, _tabs);
 
-	_tabs->addTab (_connections_tab, Resources::Icons22::connections(), "Connections");
+	_tabs->addTab (_connections_tab, Resources::Icons22::connections(), "Wires");
 
 	// Layouts:
 
