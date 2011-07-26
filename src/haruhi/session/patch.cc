@@ -228,9 +228,12 @@ PluginTab::favorited (bool set)
 void
 PluginTab::update_widgets()
 {
-	_favorite_button->setPaletteForegroundColor (QColor (0xff, 0xff, 0xff));
-	_favorite_button->setPaletteBackgroundColor (_favorite_button->isChecked() ? QColor (0x00, 0xff, 0x00) : QColor (0x00, 0x2A, 0x5B));
-	_favorite_button->setAutoFillBackground (false);
+	if (dynamic_cast<HasPresets*> (_plugin))
+	{
+		_favorite_button->setPaletteForegroundColor (QColor (0xff, 0xff, 0xff));
+		_favorite_button->setPaletteBackgroundColor (_favorite_button->isChecked() ? QColor (0x00, 0xff, 0x00) : QColor (0x00, 0x2A, 0x5B));
+		_favorite_button->setAutoFillBackground (false);
+	}
 }
 
 } // namespace PatchPrivate
