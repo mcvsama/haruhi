@@ -26,6 +26,7 @@
 // Factories:
 #include <plugins/mikuru/mikuru.h>
 #include <plugins/bugfuzzer/bugfuzzer.h>
+#include <plugins/eg/eg.h>
 
 // Local:
 #include "plugin_loader.h"
@@ -37,6 +38,7 @@ PluginLoader::PluginLoader()
 {
 	_plugin_factories.push_back (new MikuruFactory());
 	_plugin_factories.push_back (new BugFuzzerFactory());
+	_plugin_factories.push_back (new EGFactory());
 }
 
 

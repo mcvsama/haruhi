@@ -31,7 +31,8 @@ class PluginFactory
 	{
 		Synthesizer	= 0,
 		Effect		= 1,
-		Other		= 2,
+		Envelope	= 2,
+		Other		= 3,
 	};
 
   public:

@@ -495,6 +495,14 @@ SRC_SOURCES += plugins/bugfuzzer/bugfuzzer.cc
 
 SRC_MOCHDRS += plugins/bugfuzzer/bugfuzzer.h
 
+######### /plugins/eg ########
+
+SRC_HEADERS += plugins/eg/eg.h
+
+SRC_SOURCES += plugins/eg/eg.cc
+
+SRC_MOCHDRS += plugins/eg/eg.h
+
 ################
 
 VERSION_FILE := haruhi/config/version.cc
