@@ -732,12 +732,6 @@ Mikuru::current_load()
 }
 
 
-MikuruFactory::MikuruFactory():
-	Haruhi::PluginFactory()
-{
-}
-
-
 Haruhi::Plugin*
 MikuruFactory::create_plugin (int id, QWidget* parent)
 {

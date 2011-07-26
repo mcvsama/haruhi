@@ -356,8 +356,6 @@ class Mikuru:
 class MikuruFactory: public Haruhi::PluginFactory
 {
   public:
-	MikuruFactory();
-
 	Haruhi::Plugin*
 	create_plugin (int id, QWidget* parent);
 
