@@ -16,6 +16,7 @@
 
 // Standard:
 #include <cstddef>
+#include <vector>
 
 // System:
 #include <unistd.h>
@@ -104,6 +105,9 @@ class Haruhi:
 	 */
 	static int
 	detected_cores();
+
+	static std::vector<const char*>
+	features();
 
 	Session*
 	session() const { return _session; }

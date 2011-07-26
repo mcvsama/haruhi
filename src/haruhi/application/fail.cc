@@ -27,6 +27,7 @@
 #include <haruhi/utility/backtrace.h>
 
 #include "fail.h"
+#include "haruhi.h"
 
 
 namespace Haruhi {
@@ -34,26 +35,13 @@ namespace Haruhi {
 void
 fail (int signum)
 {
-	std::vector<const char*> features;
-#ifdef HARUHI_SSE1
-	features.push_back ("HARUHI_SSE1");
-#endif
-#ifdef HARUHI_SSE2
-	features.push_back ("HARUHI_SSE2");
-#endif
-#ifdef HARUHI_SSE3
-	features.push_back ("HARUHI_SSE3");
-#endif
-#ifdef HARUHI_IEEE754
-	features.push_back ("HARUHI_IEEE754");
-#endif
-
+	std::vector<const char*> features = ::Haruhi::Haruhi::features();
 	std::clog << "------------------------------------------------------------------------------------------------" << std::endl;
 	std::clog << "Haruhi died by signal. Please submit following bug report to http://haruhi.mulabs.org/report-bug" << std::endl << std::endl;
 	std::clog << "  signal: " << signum << std::endl;
 	std::clog << "  source info: " << std::endl;
-	std::cout << "    commit: " << Haruhi::Version::commit << std::endl;
-	std::cout << "    branch: " << Haruhi::Version::branch << std::endl;
+	std::cout << "    commit: " << ::Haruhi::Version::commit << std::endl;
+	std::cout << "    branch: " << ::Haruhi::Version::branch << std::endl;
 	std::clog << "  features: ";
 	std::copy (features.begin(), features.end(), std::ostream_iterator<const char*> (std::clog, " "));
 	std::clog << std::endl;

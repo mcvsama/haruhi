@@ -43,7 +43,15 @@ int main (int argc, char** argv, char** envp)
 
 	try {
 		if (argc == 2 && (strcmp (argv[1], "-v") == 0 || strcmp (argv[1], "--version") == 0))
-			std::cout << "Haruhi  commit: " << Haruhi::Version::commit << "  branch: " << Haruhi::Version::branch << std::endl;
+		{
+			std::cout << "Haruhi" << std::endl;
+			std::cout << "Commit: " << Haruhi::Version::commit << std::endl;
+			std::cout << "Branch: " << Haruhi::Version::branch << std::endl;
+			std::clog << "Features: ";
+			std::vector<const char*> features = ::Haruhi::Haruhi::features();
+			std::copy (features.begin(), features.end(), std::ostream_iterator<const char*> (std::clog, " "));
+			std::clog << std::endl;
+		}
 		else
 			Haruhi::Haruhi haruhi (argc, argv, envp);
 	}

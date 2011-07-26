@@ -138,6 +138,28 @@ Haruhi::detected_cores()
 }
 
 
+std::vector<const char*>
+Haruhi::features()
+{
+	std::vector<const char*> features;
+
+#ifdef HARUHI_SSE1
+	features.push_back ("SSE1");
+#endif
+#ifdef HARUHI_SSE2
+	features.push_back ("SSE2");
+#endif
+#ifdef HARUHI_SSE3
+	features.push_back ("SSE3");
+#endif
+#ifdef HARUHI_IEEE754
+	features.push_back ("IEEE754");
+#endif
+
+	return features;
+}
+
+
 void
 Haruhi::call_out (boost::function<void()> callback)
 {
