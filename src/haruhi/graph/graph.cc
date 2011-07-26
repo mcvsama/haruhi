@@ -32,6 +32,7 @@ namespace Haruhi {
 Graph::Graph():
 	RecursiveMutex(),
 	_inside_processing_round (false),
+	_next_tempo_tick (0),
 	_buffer_size (0),
 	_sample_rate (0),
 	_tempo (120.0),
@@ -153,6 +154,7 @@ Graph::leave_processing_round()
 		if (!(*k)->_synced && (*k)->_enabled)
 			(*k)->sync();
 	_inside_processing_round = false;
+	compute_next_tempo_tick();
 	unlock();
 }
 
@@ -223,6 +225,16 @@ Graph::now()
 	struct timeval t;
 	::gettimeofday (&t, 0);
 	return t.tv_sec * 1000000 + t.tv_usec;
+}
+
+
+void
+Graph::compute_next_tempo_tick()
+{
+	if (_next_tempo_tick >= _buffer_size)
+		_next_tempo_tick -= _buffer_size;
+	else
+		_next_tempo_tick = _sample_rate / _tempo;
 }
 
 } // namespace Haruhi

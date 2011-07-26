@@ -205,6 +205,17 @@ class Graph: public RecursiveMutex
 	bool
 	dummy() const { return _dummy_syncing; }
 
+	/**
+	 * Returns number of samples from the beginning of current processing round
+	 * to the next tempo tick.
+	 */
+	uint64_t
+	next_tempo_tick() const { return _next_tempo_tick; }
+
+  private:
+	void
+	compute_next_tempo_tick();
+
   public:
 	// Signals.
 	// It is not defined from within what thread these signals will be emited.
@@ -229,6 +240,7 @@ class Graph: public RecursiveMutex
 
 	// Timestamp of last enter_processing_round:
 	Timestamp		_timestamp;
+	unsigned int	_next_tempo_tick;
 
 	// Graph parameters:
 	std::size_t		_buffer_size;
