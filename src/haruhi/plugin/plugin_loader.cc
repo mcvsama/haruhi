@@ -24,7 +24,7 @@
 #include <haruhi/utility/exception.h>
 
 // Factories:
-#include <plugins/mikuru/mikuru.h>
+#include <plugins/mikuru-legacy/mikuru.h>
 #include <plugins/bugfuzzer/bugfuzzer.h>
 #include <plugins/eg/eg.h>
 
