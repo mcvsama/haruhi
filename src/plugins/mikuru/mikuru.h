@@ -77,6 +77,7 @@ class Mikuru:
 
   public:
 	typedef std::list<MikuruPrivate::Part*>  Parts;
+	// XXX deprecated in favor of utility/IDAllocator
 	typedef std::set<int>  IDs;
 
   public:
@@ -171,12 +172,14 @@ class Mikuru:
 
 	/**
 	 * Support for unique IDs for parts, LFOs, ADSRs, etc.
+	 * XXX deprecated in favor of utility/IDAllocator
 	 */
 	IDs&
 	ids (std::string const& group) { return _ids_sets[group]; }
 
 	/**
 	 * Allocates new ID.
+	 * XXX deprecated in favor of utility/IDAllocator
 	 */
 	int
 	allocate_id (std::string const& group);
@@ -184,12 +187,14 @@ class Mikuru:
 	/**
 	 * Reserves given ID. If not possible (already reserved)
 	 * returns new ID.
+	 * XXX deprecated in favor of utility/IDAllocator
 	 */
 	int
 	reserve_id (std::string const& group, int id);
 
 	/**
 	 * Frees given ID.
+	 * XXX deprecated in favor of utility/IDAllocator
 	 */
 	void
 	free_id (std::string const& group, int id);
@@ -349,6 +354,7 @@ class Mikuru:
 	//
 
 	int								_param_enabled;
+	// XXX deprecated in favor of utility/IDAllocator
 	std::map<std::string, IDs>		_ids_sets;
 };
 
