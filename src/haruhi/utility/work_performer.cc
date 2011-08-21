@@ -22,6 +22,8 @@
 WorkPerformer::Performer::Performer (WorkPerformer* work_performer):
 	_work_performer (work_performer)
 {
+	// 128k stack should be sufficient for most operations:
+	set_stack_size (128 * 1024);
 }
 
 
@@ -70,6 +72,14 @@ WorkPerformer::add (Unit* unit)
 	_queue.push (unit);
 	_queue_mutex.unlock();
 	_queue_semaphore.post();
+}
+
+
+void
+WorkPerformer::set_sched (Thread::SchedType sched_type, int priority)
+{
+	for (std::list<Performer*>::iterator p = _performers.begin(); p != _performers.end(); ++p)
+		(*p)->set_sched (sched_type, priority);
 }
 
 

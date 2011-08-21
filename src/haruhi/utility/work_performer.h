@@ -106,6 +106,12 @@ class WorkPerformer
 	void
 	add (Unit*);
 
+	/**
+	 * Set scheduling parameter for all threads.
+	 */
+	void
+	set_sched (Thread::SchedType, int priority);
+
   private:
 	/**
 	 * Take unit from the queue. If there are no units ready, wait
