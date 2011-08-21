@@ -91,6 +91,14 @@ class Thread
 	set_stack_size (std::size_t size);
 
 	/**
+	 * Waits for thread to finish.
+	 * May be called by many other threads, but MUST NOT
+	 * be called from within this thread.
+	 */
+	virtual void
+	wait();
+
+	/**
 	 * Forces calling thread to relinquish use of its processor,
 	 * and to wait in the run queue.
 	 */
@@ -99,14 +107,6 @@ class Thread
 
 	static ID
 	id();
-
-	/**
-	 * Waits for thread to finish.
-	 * May be called by many other threads, but MUST NOT
-	 * be called from within this thread.
-	 */
-	virtual void
-	wait();
 
   protected:
 	virtual void

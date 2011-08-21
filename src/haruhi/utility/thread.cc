@@ -102,6 +102,14 @@ Thread::set_stack_size (std::size_t size)
 
 
 void
+Thread::wait()
+{
+	_wait.lock();
+	_wait.unlock();
+}
+
+
+void
 Thread::yield()
 {
 	::pthread_yield();
@@ -112,14 +120,6 @@ Thread::ID
 Thread::id()
 {
 	return ::pthread_self();
-}
-
-
-void
-Thread::wait()
-{
-	_wait.lock();
-	_wait.unlock();
 }
 
 
