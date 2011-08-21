@@ -27,7 +27,7 @@
 class Semaphore
 {
   public:
-	Semaphore (int value);
+	Semaphore (int value = 0);
 
 	~Semaphore();
 
