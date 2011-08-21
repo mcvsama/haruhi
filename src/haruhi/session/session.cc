@@ -350,6 +350,7 @@ Session::Session (QWidget* parent):
 	_audio_backend (0),
 	_event_backend (0),
 	_engine (0),
+	_work_performer (new WorkPerformer (Haruhi::Haruhi::detected_cores())),
 	_plugin_loader (new PluginLoader()),
 	_devices_manager (0)
 {
@@ -486,6 +487,7 @@ Session::~Session()
 	stop_audio_backend();
 	stop_event_backend();
 	delete _graph;
+	delete _work_performer;
 }
 
 
@@ -495,7 +497,9 @@ Session::apply_parameters()
 	HaruhiSettings* haruhi_settings = Haruhi::haruhi()->haruhi_settings();
 
 	graph()->set_master_tune (master_tune());
-	engine()->set_sched (Thread::SchedFIFO, haruhi_settings->engine_thread_priority());
+	int prio = haruhi_settings->engine_thread_priority();
+	engine()->set_sched (Thread::SchedFIFO, prio);
+	work_performer()->set_sched (Thread::SchedFIFO, prio);
 	meter_panel()->level_meters_group()->set_fps (haruhi_settings->level_meter_fps());
 	meter_panel()->master_volume()->setValue (_parameters.master_volume);
 }

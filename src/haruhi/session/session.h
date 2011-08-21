@@ -39,6 +39,7 @@
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/signal.h>
+#include <haruhi/utility/work_performer.h>
 #include <haruhi/widgets/level_meter.h>
 #include <haruhi/widgets/dial_control.h>
 
@@ -221,6 +222,9 @@ class Session:
 	Engine*
 	engine() const { return _engine; }
 
+	WorkPerformer*
+	work_performer() const { return _work_performer; }
+
 	QString const&
 	name() const { return _name; }
 
@@ -374,6 +378,7 @@ class Session:
 	AudioBackend*					_audio_backend;
 	EventBackend*					_event_backend;
 	Engine*							_engine;
+	WorkPerformer*					_work_performer;
 	PluginLoader*					_plugin_loader;
 	DevicesManager::Panel*			_devices_manager;
 
