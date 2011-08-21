@@ -360,6 +360,7 @@ SRC_HEADERS += haruhi/utility/signal.h
 SRC_HEADERS += haruhi/utility/sse_pow.h
 SRC_HEADERS += haruhi/utility/thread.h
 SRC_HEADERS += haruhi/utility/timing.h
+SRC_HEADERS += haruhi/utility/work_performer.h
 
 SRC_SOURCES += haruhi/utility/backtrace.cc
 SRC_SOURCES += haruhi/utility/condition.cc
@@ -370,6 +371,7 @@ SRC_SOURCES += haruhi/utility/mutex.cc
 SRC_SOURCES += haruhi/utility/semaphore.cc
 SRC_SOURCES += haruhi/utility/sse_pow.cc
 SRC_SOURCES += haruhi/utility/thread.cc
+SRC_SOURCES += haruhi/utility/work_performer.cc
 
 ######### /widgets ########
 
