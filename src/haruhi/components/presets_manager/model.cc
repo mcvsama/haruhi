@@ -230,7 +230,7 @@ Model::acquire_lock()
 			// Write our pid to file:
 			QString pid = QString ("%1").arg (::getpid());
 			if (::write (_lock_file, pid.ascii(), strlen (pid.ascii())) == -1)
-				throw Locked ("failed to write Mikuru's PID to the lock file");
+				throw Locked ("failed to write Haruhi's PID to the lock file");
 			break;
 		}
 		else
