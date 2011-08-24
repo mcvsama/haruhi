@@ -18,24 +18,24 @@
 #include "id_allocator.h"
 
 
-int
+unsigned int
 IDAllocator::allocate_id()
 {
-	int id = 1;
+	unsigned int id = 1;
 	for (; !_ids.insert (id).second; ++id)
 		;
 	return id;
 }
 
-int
-IDAllocator::reserve_id (int id)
+unsigned int
+IDAllocator::reserve_id (unsigned int id)
 {
 	return _ids.insert (id).second ? id : allocate_id();
 }
 
 
 void
-IDAllocator::free_id (int id)
+IDAllocator::free_id (unsigned int id)
 {
 	_ids.erase (id);
 }

@@ -22,27 +22,27 @@
 class IDAllocator
 {
   public:
-	typedef std::set<int>  IDs;
+	typedef std::set<unsigned int>  IDs;
 
   public:
 	/**
 	 * Allocates new ID.
 	 */
-	int
+	unsigned int
 	allocate_id();
 
 	/**
 	 * Reserves given ID. If not possible (already reserved)
 	 * returns new ID.
 	 */
-	int
-	reserve_id (int id);
+	unsigned int
+	reserve_id (unsigned int id);
 
 	/**
 	 * Frees given ID.
 	 */
 	void
-	free_id (int id);
+	free_id (unsigned int id);
 
 	/**
 	 * Remove all IDs.
