@@ -14,6 +14,9 @@
 // Standard:
 #include <cstddef>
 
+// Qt:
+#include <QtGui/QLayout>
+
 // Haruhi:
 #include <haruhi/config/all.h>
 
@@ -34,6 +37,13 @@ Plugin::Plugin (std::string const& urn, std::string const& title, int id, QWidge
 
 	_part_manager = new PartManager (this);
 	_part_manager_widget = new PartManagerWidget (this, _part_manager);
+	_part_manager->set_widget (_part_manager_widget);
+
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (0);
+	layout->setSpacing (Config::Spacing);
+	layout->addWidget (_part_manager_widget);
+	layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }
 
 

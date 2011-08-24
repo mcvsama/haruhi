@@ -13,12 +13,14 @@
 
 // Standard:
 #include <cstddef>
+#include <algorithm>
 
 // Haruhi:
 #include <haruhi/config/all.h>
 
 // Local:
 #include "part_manager.h"
+#include "part_manager_widget.h"
 
 
 namespace Yuki {
@@ -26,6 +28,57 @@ namespace Yuki {
 PartManager::PartManager (Plugin* plugin):
 	_plugin (plugin)
 {
+}
+
+
+void
+PartManager::add_part()
+{
+	Part* p = new Part();
+	_parts.push_back (p);
+	widget()->add_part (p);
+}
+
+
+void
+PartManager::remove_part (Part* part)
+{
+	_parts.remove (part);
+	widget()->remove_part (part);
+	delete part;
+}
+
+
+void
+PartManager::remove_all_parts()
+{
+	Parts ps = _parts;
+	for (Parts::iterator p = ps.begin(); p != ps.end(); ++p)
+		remove_part (*p);
+}
+
+
+void
+PartManager::ensure_there_is_at_least_one_part()
+{
+	if (_parts.empty())
+		add_part();
+}
+
+
+void
+PartManager::set_part_position (Part* part, unsigned int position)
+{
+	_parts_mutex.lock();
+	assert (position < _parts.size());
+	Parts::iterator i = std::find (_parts.begin(), _parts.end(), part);
+	Parts::iterator b = _parts.begin();
+	std::advance (b, position);
+	assert (i != _parts.end());
+	assert (b != _parts.end());
+	_parts.remove (*i);
+	_parts.insert (b, *i);
+	_parts_mutex.unlock();
 }
 
 } // namespace Yuki

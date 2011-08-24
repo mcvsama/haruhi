@@ -21,6 +21,9 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 
+// Local:
+#include "has_widget.h"
+
 
 namespace Yuki {
 
@@ -28,11 +31,14 @@ class PartWidget;
 class PartManager;
 class WaveComputer;
 
-class Part
+class Part: public HasWidget<PartWidget>
 {
   public:
-	PartWidget*
-	widget() const { return _widget; }
+	/**
+	 * Return part ID. Used by user to distinguish between different parts.
+	 */
+	unsigned int
+	id() const { return _id; }
 
 	/**
 	 * Return WaveComputer for this part.
@@ -42,8 +48,8 @@ class Part
 	wave_computer() const;
 
   private:
-	PartWidget*		_widget;
 	PartManager*	_part_manager;
+	unsigned int	_id;
 };
 
 typedef std::list<Part*>  Parts;

@@ -22,8 +22,10 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/utility/mutex.h>
 
 // Local:
+#include "has_widget.h"
 #include "part.h"
 #include "part_widget.h"
 
@@ -32,7 +34,7 @@ namespace Yuki {
 
 class Plugin;
 
-class PartManager
+class PartManager: public HasWidget<PartManagerWidget>
 {
   public:
 	PartManager (Plugin*);
@@ -53,48 +55,43 @@ class PartManager
 	plugin() const { return _plugin; }
 
 	/**
-	 * Return tab-position of given part.
+	 * Add new Part.
+	 * Add UI widget.
 	 */
-	int
-	part_tab_position (Part* part) const { return _tabs->indexOf (part->widget()); }
+	void
+	add_part();
 
-  public slots:
 	/**
-	 * Add first Part (and tab widget) if there are none.
+	 * Remove given Part.
+	 * Remove UI widget.
+	 */
+	void
+	remove_part (Part*);
+
+	/**
+	 * Remove all Parts.
+	 * Remove UI widgets.
+	 */
+	void
+	remove_all_parts();
+
+	/**
+	 * Add first Part (and tab widget) if there is none.
 	 */
 	void
 	ensure_there_is_at_least_one_part();
 
 	/**
-	 * Create new part (oscillator, filters, etc).
-	 */
-	Part*
-	add_part();
-
-	/**
-	 * Destroy currently selected (as a tab) part.
-	 * Remove tab widget and associated Part object.
+	 * Moves part position in a list of parts.
+	 * Position counts from 0.
 	 */
 	void
-	del_part();
-
-	/**
-	 * Destroy part by its pointer.
-	 * Remove tab widget.
-	 */
-	void
-	del_part (Part*);
-
-	/**
-	 * Remove all tabs and Parts.
-	 */
-	void
-	del_all_parts();
+	set_part_position (Part*, unsigned int position);
 
   private:
-	Plugin*		_plugin;
-	Parts		_parts;
-	QTabWidget*	_tabs;
+	Plugin*				_plugin;
+	Parts				_parts;
+	Mutex				_parts_mutex;
 };
 
 } // namespace Yuki
