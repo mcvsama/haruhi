@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__PLUGINS__YUKI__OSCILLATOR_H__INCLUDED
-#define HARUHI__PLUGINS__YUKI__OSCILLATOR_H__INCLUDED
+#ifndef HARUHI__PLUGINS__YUKI__OSCILLATOR_WIDGET_H__INCLUDED
+#define HARUHI__PLUGINS__YUKI__OSCILLATOR_WIDGET_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -20,14 +20,10 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 
-// Local:
-#include "has_widget.h"
-#include "oscillator_widget.h"
-
 
 namespace Yuki {
 
-class Oscillator: public HasWidget<OscillatorWidget>
+class OscillatorWidget
 {
 };
 
