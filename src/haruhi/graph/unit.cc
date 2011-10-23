@@ -54,8 +54,25 @@ Unit::~Unit()
 	if (graph())
 		throw Exception ("unregister unit before deletion");
 	// Check if all ports have been unregistered:
-	if (_inputs.size() > 0 || _outputs.size() > 0)
-		throw Exception ("delete all ports before deleting unit");
+	if (!_inputs.empty() || !_outputs.empty())
+	{
+		std::string ports;
+		if (!_inputs.empty())
+		{
+			ports += "inputs: ";
+			for (Ports::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
+				ports += (p == _inputs.begin() ? "" : ", ") + (*p)->name();
+		}
+		if (!_outputs.empty())
+		{
+			if (!ports.empty())
+				ports += "; ";
+			ports += "outputs: ";
+			for (Ports::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
+				ports += (p == _outputs.begin() ? "" : ", ") + (*p)->name();
+		}
+		throw Exception (("delete all ports before deleting unit (" + ports + ")").c_str());
+	}
 	_processing_mutex.unlock();
 }
 
