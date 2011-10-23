@@ -494,6 +494,7 @@ SRC_MOCHDRS += plugins/mikuru-legacy/part_filters.h
 SRC_HEADERS += plugins/yuki/oscillator.h
 SRC_HEADERS += plugins/yuki/part.h
 SRC_HEADERS += plugins/yuki/part_manager.h
+SRC_HEADERS += plugins/yuki/part_manager_widget.h
 SRC_HEADERS += plugins/yuki/part_widget.h
 SRC_HEADERS += plugins/yuki/plugin.h
 SRC_HEADERS += plugins/yuki/voice.h
@@ -504,6 +505,7 @@ SRC_HEADERS += plugins/yuki/yuki.h
 SRC_SOURCES += plugins/yuki/oscillator.cc
 SRC_SOURCES += plugins/yuki/part.cc
 SRC_SOURCES += plugins/yuki/part_manager.cc
+SRC_SOURCES += plugins/yuki/part_manager_widget.cc
 SRC_SOURCES += plugins/yuki/part_widget.cc
 SRC_SOURCES += plugins/yuki/plugin.cc
 SRC_SOURCES += plugins/yuki/voice.cc
@@ -513,6 +515,7 @@ SRC_SOURCES += plugins/yuki/yuki.cc
 
 SRC_MOCHDRS += plugins/yuki/plugin.h
 SRC_MOCHDRS += plugins/yuki/part_widget.h
+SRC_MOCHDRS += plugins/yuki/part_manager_widget.h
 
 ######### /plugins/bugfuzzer ########
 

@@ -28,17 +28,21 @@
 namespace Yuki {
 
 class Part;
+class PartManagerWidget;
 
 class PartWidget: public QWidget
 {
 	Q_OBJECT
 
   public:
+	PartWidget (PartManagerWidget*, Part*);
+
 	Part*
 	part() const { return _part; }
 
   private:
-	Part*	_part;
+	PartManagerWidget*	_part_manager_widget;
+	Part*				_part;
 };
 
 } // namespace Yuki

@@ -11,25 +11,39 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
+#ifndef HARUHI__PLUGINS__YUKI__PART_MANAGER_WIDGET_H__INCLUDED
+#define HARUHI__PLUGINS__YUKI__PART_MANAGER_WIDGET_H__INCLUDED
+
 // Standard:
 #include <cstddef>
+
+// Qt:
+#include <QtGui/QWidget>
 
 // Haruhi:
 #include <haruhi/config/all.h>
 
-// Local:
-#include "part_widget.h"
-#include "part_manager_widget.h"
-
 
 namespace Yuki {
 
-PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
-	QWidget (part_manager_widget),
-	_part_manager_widget (part_manager_widget),
-	_part (part)
+class Plugin;
+class PartManager;
+
+class PartManagerWidget: public QWidget
 {
-}
+	Q_OBJECT
+
+  public:
+	PartManagerWidget (QWidget* parent, PartManager*);
+
+	Plugin*
+	plugin() const;
+
+  private:
+	PartManager* _part_manager;
+};
 
 } // namespace Yuki
+
+#endif
 

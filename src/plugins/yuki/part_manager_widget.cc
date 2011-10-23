@@ -18,17 +18,23 @@
 #include <haruhi/config/all.h>
 
 // Local:
-#include "part_widget.h"
 #include "part_manager_widget.h"
+#include "part_manager.h"
 
 
 namespace Yuki {
 
-PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
-	QWidget (part_manager_widget),
-	_part_manager_widget (part_manager_widget),
-	_part (part)
+PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager):
+	QWidget (parent),
+	_part_manager (part_manager)
 {
+}
+
+
+Plugin*
+PartManagerWidget::plugin() const
+{
+	return _part_manager->plugin();
 }
 
 } // namespace Yuki

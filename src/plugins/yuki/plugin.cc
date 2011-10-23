@@ -20,6 +20,7 @@
 // Local:
 #include "plugin.h"
 #include "part_manager.h"
+#include "part_manager_widget.h"
 
 
 namespace Yuki {
@@ -27,31 +28,44 @@ namespace Yuki {
 Plugin::Plugin (std::string const& urn, std::string const& title, int id, QWidget* parent):
 	Haruhi::Plugin (urn, title, id, parent)
 {
+	_audio_out[0] = new Haruhi::AudioPort (this, "Ouput 1", Haruhi::Port::Output, 0, Haruhi::Port::StandardAudio);
+	_audio_out[1] = new Haruhi::AudioPort (this, "Ouput 2", Haruhi::Port::Output, 0, Haruhi::Port::StandardAudio);
+	_voice_in = new Haruhi::EventPort (this, "Voice control", Haruhi::Port::Input, 0, Haruhi::Port::ControlKeyboard);
+
 	_part_manager = new PartManager (this);
+	_part_manager_widget = new PartManagerWidget (this, _part_manager);
 }
 
 
 Plugin::~Plugin()
 {
+	delete _part_manager_widget;
 	delete _part_manager;
+
+	delete _voice_in;
+	delete _audio_out[0];
+	delete _audio_out[1];
 }
 
 
 void
 Plugin::registered()
 {
+	enable();
 }
 
 
 void
 Plugin::unregistered()
 {
+	panic();
 }
 
 
 void
 Plugin::process()
 {
+	clear_outputs();
 }
 
 
@@ -64,6 +78,7 @@ Plugin::panic()
 void
 Plugin::graph_updated()
 {
+	Unit::graph_updated();
 }
 
 } // namespace Yuki

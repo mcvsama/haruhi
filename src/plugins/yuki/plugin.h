@@ -21,11 +21,14 @@
 #include <haruhi/config/all.h>
 #include <haruhi/utility/id_allocator.h>
 #include <haruhi/plugin/plugin.h>
+#include <haruhi/graph/audio_port.h>
+#include <haruhi/graph/event_port.h>
 
 
 namespace Yuki {
 
 class PartManager;
+class PartManagerWidget;
 class WaveComputer;
 
 class Plugin: public Haruhi::Plugin
@@ -60,43 +63,13 @@ class Plugin: public Haruhi::Plugin
 	graph_updated();
 
   private:
-	/**
-	 * This method will sync all inputs except
-	 * those manually synced (keyboard and sustain).
-	 */
-	void
-	sync_some_inputs();
+	PartManager*		_part_manager;
+	PartManagerWidget*	_part_manager_widget;
+	WaveComputer*		_wave_computer;
 
-	/**
-	 * Stops all synthesizer threads.
-	 */
-	void
-	stop_threads();
-
-	void
-	process_voice_events();
-
-	void
-	process_controller_events();
-
-	void
-	process_voices();
-
-	void
-	process_parts();
-
-	void
-	add_to_load (uint64_t microseconds);
-
-	void
-	reset_load();
-
-	float
-	current_load();
-
-  private:
-	PartManager*	_part_manager;
-	WaveComputer*	_wave_computer;
+	// Ports (0 = L, 1 = R):
+	Haruhi::AudioPort*	_audio_out[2];
+	Haruhi::EventPort*	_voice_in;
 };
 
 } // namespace Yuki
