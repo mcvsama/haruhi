@@ -32,7 +32,8 @@ Buffer::TypeID EventBuffer::TYPE = "Haruhi::EventBuffer";
 
 
 EventBuffer::EventBuffer():
-	Buffer (EventBuffer::TYPE)
+	Buffer (EventBuffer::TYPE),
+	_sorted (true)
 {
 }
 
