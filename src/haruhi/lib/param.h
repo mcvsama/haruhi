@@ -16,38 +16,70 @@
 
 // Standard:
 #include <cstddef>
+#include <string>
 
 // Haruhi:
 #include <haruhi/utility/atomic.h>
 #include <haruhi/utility/numeric.h>
 #include <haruhi/utility/signal.h>
+#include <haruhi/utility/saveable_state.h>
 
 
 namespace Haruhi {
+
+/**
+ * Defines common base methods for all types of parameters.
+ */
+class BaseParam: public SaveableState
+{
+  public:
+	virtual ~BaseParam() { }
+
+	/**
+	 * Return parameter unique name.
+	 */
+	virtual const char*
+	name() const = 0;
+
+	/**
+	 * Resets parameter to default value.
+	 */
+	virtual void
+	reset() = 0;
+
+	/**
+	 * Enforces value to be between [minimum, maximum].
+	 */
+	virtual void
+	sanitize() = 0;
+};
+
 
 /**
  * General type parameter supporting
  * min/max and sanitization.
  */
 template<class tType>
-	class Param
+	class Param: public BaseParam
 	{
 	  public:
 		typedef tType Type;
 
 	  public:
-		Param():
+		Param (const char* name = ""):
 			_minimum (0),
 			_maximum (0),
 			_default_value (0),
-			_value (0)
+			_value (0),
+			_name (name)
 		{ }
 
-		Param (Type const& minimum, Type const& maximum, Type const& default_value):
+		Param (Type const& minimum, Type const& maximum, Type const& default_value, const char* name):
 			_minimum (minimum),
 			_maximum (maximum),
 			_default_value (default_value),
-			_value (default_value)
+			_value (default_value),
+			_name (name)
 		{ }
 
 		Param (Param const& other) { operator= (other); }
@@ -62,6 +94,9 @@ template<class tType>
 			on_change();
 			return *this;
 		}
+
+		const char*
+		name() const { return _name.c_str(); }
 
 		operator Type() const { return get(); }
 
@@ -83,23 +118,32 @@ template<class tType>
 		Type
 		default_value() const { return _default_value; }
 
-		/**
-		 * Resets parameter to default value.
+		/*
+		 * BaseParam implementation
 		 */
-		virtual void
+
+		void
 		reset() { set (_default_value); }
 
-		/**
-		 * Enforces value to be between [minimum, maximum].
-		 */
-		virtual void
+		void
 		sanitize() { set (bound (get(), _minimum, _maximum)); }
 
-		/**
-		 * Returns pointer to value parameter.
+		/*
+		 * SaveableState implementation
 		 */
-		volatile int*
-		parameter() { return &_value; }
+
+		void
+		save_state (QDomElement& parent) const
+		{
+			parent.setAttribute ("value", QString ("%1").arg (get()));
+			parent.appendChild (parent.ownerDocument().createTextNode (QString::number (get())));
+		}
+
+		void
+		load_state (QDomElement const& parent)
+		{
+			set (bound<int> (parent.text().toInt(), minimum(), maximum()));
+		}
 
 	  public:
 		// Emited when parameter gets changed:
@@ -110,6 +154,7 @@ template<class tType>
 		Type			_maximum;
 		Type			_default_value;
 		Atomic<Type>	_value;
+		std::string		_name;
 	};
 
 } // namespace Haruhi

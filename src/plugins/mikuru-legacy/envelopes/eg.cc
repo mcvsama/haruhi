@@ -46,9 +46,9 @@ EG::EG (int id, Mikuru* mikuru, QWidget* parent):
 	_mute_point_controls (false),
 	_buffer (mikuru->graph()->buffer_size()),
 	_segment_duration (Params::EG::SegmentDurationMin, Params::EG::SegmentDurationMax,
-					   Params::EG::SegmentDurationDefault, Params::EG::SegmentDurationDenominator),
+					   Params::EG::SegmentDurationDefault, Params::EG::SegmentDurationDenominator, "segment_duration"),
 	_point_value (Params::EG::PointValueMin, Params::EG::PointValueMax,
-				  Params::EG::PointValueDefault, Params::EG::PointValueDenominator)
+				  Params::EG::PointValueDefault, Params::EG::PointValueDenominator, "point_value")
 {
 	_id = (id == 0) ? _mikuru->allocate_id ("egs") : _mikuru->reserve_id ("egs", id);
 

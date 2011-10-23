@@ -25,10 +25,10 @@
 
 
 #define HARUHI_MIKURU_CONSTRUCT(var, name) \
-	var (name##Min, name##Max, name##Default, name##Denominator)
+	var (name##Min, name##Max, name##Default, name##Denominator, #var)
 
-#define HARUHI_MIKURU_COPY(name) \
-	name = other.name;
+#define HARUHI_MIKURU_COPY(var) \
+	var = other.var;
 
 #define HARUHI_MIKURU_SANITIZE(var) \
 	var.sanitize();
@@ -44,8 +44,8 @@ Params::General::General():
 	HARUHI_MIKURU_CONSTRUCT (stereo_width, StereoWidth),
 	HARUHI_MIKURU_CONSTRUCT (input_volume, InputVolume),
 	// Non-controller:
-	polyphony (0, 512, 32),
-	enable_audio_input (0, 1, 0)
+	polyphony (0, 512, 32, "polyphony"),
+	enable_audio_input (0, 1, 0, "enable_audio_input")
 {
 }
 
@@ -89,10 +89,10 @@ Params::Filter::Filter():
 	HARUHI_MIKURU_CONSTRUCT (gain, Gain),
 	HARUHI_MIKURU_CONSTRUCT (attenuation, Attenuation),
 	// Non-controller:
-	enabled (0, 1, 0),
-	type (0, 7, RBJImpulseResponse::LowPass),
-	stages (1, 5, 1),
-	limiter_enabled (0, 1, 1)
+	enabled (0, 1, 0, "enabled"),
+	type (0, 7, RBJImpulseResponse::LowPass, "type"),
+	stages (1, 5, 1, "stages"),
+	limiter_enabled (0, 1, 1, "limiter_enabled")
 {
 }
 
@@ -133,8 +133,8 @@ Params::Filter::sanitize()
 
 Params::CommonFilters::CommonFilters():
 	// Non-controller:
-	filter_configuration (0, 1, FilterConfigurationSerial),
-	route_audio_input (0, 1, 0)
+	filter_configuration (0, 1, FilterConfigurationSerial, "filter_configuration"),
+	route_audio_input (0, 1, 0, "route_audio_input")
 {
 }
 
@@ -163,7 +163,7 @@ Params::CommonFilters::sanitize()
 
 Params::Part::Part():
 	// Non-controller:
-	enabled (0, 1, 1)
+	enabled (0, 1, 1, "enabled")
 {
 }
 
@@ -190,7 +190,7 @@ Params::Part::sanitize()
 
 Params::PartFilters::PartFilters():
 	// Non-controller:
-	filter_configuration (0, 1, FilterConfigurationSerial)
+	filter_configuration (0, 1, FilterConfigurationSerial, "filter_configuration")
 {
 }
 
@@ -222,14 +222,14 @@ Params::Waveform::Waveform():
 	HARUHI_MIKURU_CONSTRUCT (modulator_index, ModulatorIndex),
 	HARUHI_MIKURU_CONSTRUCT (modulator_shape, ModulatorShape),
 	// Non-controller:
-	wave_type (0, 8, 0),
-	modulator_type (0, 1, DSP::ModulatedWave::Ring),
-	modulator_wave_type (0, 3, 0)
+	wave_type (0, 8, 0, "wave_type"),
+	modulator_type (0, 1, DSP::ModulatedWave::Ring, "modulator_type"),
+	modulator_wave_type (0, 3, 0, "modulator_wave_type")
 {
 	for (int i = 0; i < HarmonicsNumber; ++i)
-		harmonics[i] = Haruhi::Param<int> (HarmonicMin, HarmonicMax, HarmonicDefault);
+		harmonics[i] = Haruhi::Param<int> (HarmonicMin, HarmonicMax, HarmonicDefault, "harmonic");
 	for (int i = 0; i < HarmonicsNumber; ++i)
-		phases[i] = Haruhi::Param<int> (PhaseMin, PhaseMax, PhaseDefault);
+		phases[i] = Haruhi::Param<int> (PhaseMin, PhaseMax, PhaseDefault, "phase");
 }
 
 
@@ -280,20 +280,20 @@ Params::Oscillator::Oscillator():
 	HARUHI_MIKURU_CONSTRUCT (phase, Phase),
 	HARUHI_MIKURU_CONSTRUCT (noise_level, NoiseLevel),
 	// Non-controller:
-	wave_enabled (0, 1, 1),
-	noise_enabled (0, 1, 0),
-	frequency_mod_range (0, 60, 12),
-	pitchbend_enabled (0, 1, 1),
-	pitchbend_released (0, 1, 0),
-	pitchbend_up_semitones (0, 60, 2),
-	pitchbend_down_semitones (0, 60, 2),
-	transposition_semitones (-60, 60, 0),
-	monophonic (0, 1, 0),
-	monophonic_retrigger (0, 1, 0),
-	monophonic_key_priority (0, 3, LastPressed),
-	const_portamento_time (0, 1, 1),
-	unison_stereo (0, 1, 1),
-	pseudo_stereo (0, 1, 0)
+	wave_enabled (0, 1, 1, "wave_enabled"),
+	noise_enabled (0, 1, 0, "noise_enabled"),
+	frequency_mod_range (0, 60, 12, "frequency_mod_range"),
+	pitchbend_enabled (0, 1, 1, "pitchbend_enabled"),
+	pitchbend_released (0, 1, 0, "pitchbend_released"),
+	pitchbend_up_semitones (0, 60, 2, "pitchbend_up_semitones"),
+	pitchbend_down_semitones (0, 60, 2, "pitchbend_down_semitones"),
+	transposition_semitones (-60, 60, 0, "transposition_semitones"),
+	monophonic (0, 1, 0, "monophonic"),
+	monophonic_retrigger (0, 1, 0, "monophonic_retrigger"),
+	monophonic_key_priority (0, 3, LastPressed, "monophonic_key_priority"),
+	const_portamento_time (0, 1, 1, "const_portamento_time"),
+	unison_stereo (0, 1, 1, "unison_stereo"),
+	pseudo_stereo (0, 1, 0, "pseudo_stereo")
 {
 }
 
@@ -419,12 +419,12 @@ Params::ADSR::ADSR():
 	HARUHI_MIKURU_CONSTRUCT (sustain_hold, SustainHold),
 	HARUHI_MIKURU_CONSTRUCT (release, Release),
 	// Non-controller:
-	enabled (0, 1, 1),
-	direct_adsr (0, 1, 1),
-	forced_release (0, 1, 0),
-	sustain_enabled (0, 1, 1),
-	function (0, 4, Linear),
-	mode (0, 1, Polyphonic)
+	enabled (0, 1, 1, "enabled"),
+	direct_adsr (0, 1, 1, "direct_adsr"),
+	forced_release (0, 1, 0, "forced_release"),
+	sustain_enabled (0, 1, 1, "sustain_enabled"),
+	function (0, 4, Linear, "function"),
+	mode (0, 1, Polyphonic, "mode")
 {
 }
 
@@ -484,16 +484,16 @@ Params::LFO::LFO():
 	HARUHI_MIKURU_CONSTRUCT (wave_shape, WaveShape),
 	HARUHI_MIKURU_CONSTRUCT (fade_out, FadeOut),
 	// Non-controller:
-	enabled (0, 1, 1),
-	wave_type (0, 6, Sine),
-	wave_invert (0, 1, 0),
-	function (0, 4, Linear),
-	mode (0, 2, Polyphonic),
-	tempo_sync (0, 1, 0),
-	tempo_numerator (1, 32, 1),
-	tempo_denominator (1, 32, 1),
-	random_start_phase (0, 1, 0),
-	fade_out_enabled (0, 1, 0)
+	enabled (0, 1, 1, "enabled"),
+	wave_type (0, 6, Sine, "wave_type"),
+	wave_invert (0, 1, 0, "wave_invert"),
+	function (0, 4, Linear, "function"),
+	mode (0, 2, Polyphonic, "mode"),
+	tempo_sync (0, 1, 0, "tempo_sync"),
+	tempo_numerator (1, 32, 1, "tempo_numerator"),
+	tempo_denominator (1, 32, 1, "tempo_denominator"),
+	random_start_phase (0, 1, 0, "random_start_phase"),
+	fade_out_enabled (0, 1, 0, "fade_out_enabled")
 {
 }
 
@@ -555,14 +555,14 @@ Params::LFO::sanitize()
 Params::EG::EG():
 	// Controller:
 	// Non-controller:
-	enabled (0, 1, 1),
-	segments (2, MaxPoints - 1, 2),
-	sustain_point (1, MaxPoints - 1, 0)
+	enabled (0, 1, 1, "enabled"),
+	segments (2, MaxPoints - 1, 2, "segments"),
+	sustain_point (1, MaxPoints - 1, 0, "sustain_point")
 {
 	for (int i = 0; i < MaxPoints; ++i)
 	{
-		values[i] = Haruhi::Param<unsigned int> (PointValueMin, PointValueMax, PointValueDefault);
-		durations[i] = Haruhi::Param<unsigned int> (SegmentDurationMin, SegmentDurationMax, SegmentDurationDefault);
+		values[i] = Haruhi::Param<unsigned int> (PointValueMin, PointValueMax, PointValueDefault, "value");
+		durations[i] = Haruhi::Param<unsigned int> (SegmentDurationMin, SegmentDurationMax, SegmentDurationDefault, "duration");
 	}
 }
 
@@ -622,7 +622,7 @@ Params::Effect::Effect():
 	HARUHI_MIKURU_CONSTRUCT (wet, Wet),
 	HARUHI_MIKURU_CONSTRUCT (panorama, Panorama),
 	// Non-controller:
-	enabled (0, 1, 1)
+	enabled (0, 1, 1, "enabled")
 {
 }
 
@@ -656,7 +656,7 @@ Params::Waveshaper::Waveshaper():
 	HARUHI_MIKURU_CONSTRUCT (gain, Gain),
 	HARUHI_MIKURU_CONSTRUCT (parameter, Parameter),
 	// Non-controller:
-	type (0, 3, 0)
+	type (0, 3, 0, "type")
 {
 }
 
@@ -697,7 +697,7 @@ Params::Reverb::Reverb():
 	HARUHI_MIKURU_CONSTRUCT (width, Width),
 	HARUHI_MIKURU_CONSTRUCT (damp, Damp),
 	// Non-controller:
-	mode (0, 1, 0)
+	mode (0, 1, 0, "mode")
 {
 }
 
@@ -743,15 +743,15 @@ Params::Delay::Delay():
 	HARUHI_MIKURU_CONSTRUCT (level_l, Level),
 	HARUHI_MIKURU_CONSTRUCT (level_r, Level),
 	// Non-controller:
-	tempo (20000, 400000, 120000),
-	enabled_l (0, 1, 1),
-	enabled_r (0, 1, 1),
-	note_length_l (1, 32, 4),
-	note_length_r (1, 32, 4),
-	note_multiplicator_l (1, 32, 1),
-	note_multiplicator_r (1, 32, 1),
-	note_adjust_l (-2500, +2500, 0),
-	note_adjust_r (-2500, +2500, 0)
+	tempo (20000, 400000, 120000, "tempo"),
+	enabled_l (0, 1, 1, "enabled_l"),
+	enabled_r (0, 1, 1, "enabled_r"),
+	note_length_l (1, 32, 4, "note_length_l"),
+	note_length_r (1, 32, 4, "note_length_r"),
+	note_multiplicator_l (1, 32, 1, "note_multiplicator_l"),
+	note_multiplicator_r (1, 32, 1, "note_multiplicator_r"),
+	note_adjust_l (-2500, +2500, 0, "note_adjust_l"),
+	note_adjust_r (-2500, +2500, 0, "note_adjust_r")
 {
 }
 

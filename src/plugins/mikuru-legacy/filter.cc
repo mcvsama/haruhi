@@ -268,12 +268,10 @@ Filter::update_params()
 	if (_loading_params)
 		return;
 
-	Params::Filter p;
-	p.enabled = _filter_label->checkbox()->isChecked();
-	p.type = _filter_type->currentItem();
-	p.stages = _stages->value();
-	p.limiter_enabled = _limiter_enabled->isChecked();
-	_params.set_non_controller_params (p);
+	_params.enabled = _filter_label->checkbox()->isChecked();
+	_params.type = _filter_type->currentItem();
+	_params.stages = _stages->value();
+	_params.limiter_enabled = _limiter_enabled->isChecked();
 
 	// Knob params are updated automatically using #assign_parameter.
 }

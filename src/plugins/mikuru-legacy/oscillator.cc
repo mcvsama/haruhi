@@ -715,7 +715,14 @@ Oscillator::update_waveform_params()
 
 	// Knob params are updated automatically using #assign_parameter.
 
-	_waveform_params.set_non_controller_params (pw);
+	_waveform_params.wave_type = pw.wave_type;
+	_waveform_params.modulator_type = pw.modulator_type;
+	_waveform_params.modulator_wave_type = pw.modulator_wave_type;
+	for (Sliders::size_type i = 0; i < _harmonics_sliders.size(); ++i)
+		_waveform_params.harmonics[i] = pw.harmonics[i];
+	for (Sliders::size_type i = 0; i < _phases_sliders.size(); ++i)
+		_waveform_params.phases[i] = pw.phases[i];
+
 	recompute_wave();
 }
 
@@ -726,26 +733,22 @@ Oscillator::update_oscillator_params()
 	if (_loading_params)
 		return;
 
-	Params::Oscillator po;
-
-	po.wave_enabled = _wave_enabled->isChecked();
-	po.noise_enabled = _noise_enabled->isChecked();
-	po.frequency_mod_range = _frequency_modulation_range->value();
-	po.pitchbend_enabled = _pitchbend_enabled->isChecked();
-	po.pitchbend_released = _pitchbend_released->isChecked();
-	po.pitchbend_up_semitones = _pitchbend_up_semitones->value();
-	po.pitchbend_down_semitones = -_pitchbend_down_semitones->value();
-	po.transposition_semitones = _transposition_semitones->value();
-	po.monophonic = _monophonic->isChecked();
-	po.monophonic_retrigger = _monophonic_retrigger->isChecked();
-	po.monophonic_key_priority = _monophonic_key_priority->currentItem();
-	po.const_portamento_time = _const_portamento_time->isChecked();
-	po.unison_stereo = _unison_stereo->isChecked();
-	po.pseudo_stereo = _pseudo_stereo->isChecked();
+	_oscillator_params.wave_enabled = _wave_enabled->isChecked();
+	_oscillator_params.noise_enabled = _noise_enabled->isChecked();
+	_oscillator_params.frequency_mod_range = _frequency_modulation_range->value();
+	_oscillator_params.pitchbend_enabled = _pitchbend_enabled->isChecked();
+	_oscillator_params.pitchbend_released = _pitchbend_released->isChecked();
+	_oscillator_params.pitchbend_up_semitones = _pitchbend_up_semitones->value();
+	_oscillator_params.pitchbend_down_semitones = -_pitchbend_down_semitones->value();
+	_oscillator_params.transposition_semitones = _transposition_semitones->value();
+	_oscillator_params.monophonic = _monophonic->isChecked();
+	_oscillator_params.monophonic_retrigger = _monophonic_retrigger->isChecked();
+	_oscillator_params.monophonic_key_priority = _monophonic_key_priority->currentItem();
+	_oscillator_params.const_portamento_time = _const_portamento_time->isChecked();
+	_oscillator_params.unison_stereo = _unison_stereo->isChecked();
+	_oscillator_params.pseudo_stereo = _pseudo_stereo->isChecked();
 
 	// Knob params are updated automatically using #assign_parameter.
-
-	_oscillator_params.set_non_controller_params (po);
 }
 
 

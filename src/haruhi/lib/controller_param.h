@@ -19,8 +19,6 @@
 
 // Haruhi:
 #include <haruhi/utility/atomic.h>
-#include <haruhi/utility/saveable_state.h>
-#include <haruhi/utility/atomic.h>
 #include <haruhi/lib/param.h>
 
 
@@ -29,15 +27,14 @@ namespace Haruhi {
 /**
  * Param that can be controlled by Haruhi::Controller.
  */
-class ControllerParam:
-	public Param<int>,
-	public SaveableState
+class ControllerParam: public Param<int>
 {
   public:
 	/**
 	 * Inline for performance reasons.
 	 */
-	ControllerParam():
+	ControllerParam (const char* name = ""):
+		Param (name),
 		_denominator (1),
 		_1_div_denominator (1.0f / _denominator)
 	{ }
@@ -45,8 +42,8 @@ class ControllerParam:
 	/**
 	 * Inline for performance reasons.
 	 */
-	ControllerParam (int minimum, int maximum, int default_value, int denominator = 1):
-		Param<int> (minimum, maximum, default_value),
+	ControllerParam (int minimum, int maximum, int default_value, int denominator, const char* name):
+		Param (minimum, maximum, default_value, name),
 		_denominator (denominator),
 		_1_div_denominator (1.0f / _denominator)
 	{ }
@@ -73,16 +70,6 @@ class ControllerParam:
 	 */
 	float
 	to_f() const { return _1_div_denominator * get(); }
-
-	/*
-	 * SaveableState API
-	 */
-
-    void
-    save_state (QDomElement&) const;
-
-    void
-    load_state (QDomElement const&);
 
   private:
 	int		_denominator;

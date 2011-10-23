@@ -281,7 +281,6 @@ SRC_HEADERS += haruhi/lib/midi.h
 SRC_HEADERS += haruhi/lib/param.h
 
 SRC_SOURCES += haruhi/lib/controller.cc
-SRC_SOURCES += haruhi/lib/controller_param.cc
 SRC_SOURCES += haruhi/lib/controller_proxy.cc
 SRC_SOURCES += haruhi/lib/midi.cc
 
@@ -491,8 +490,10 @@ SRC_MOCHDRS += plugins/mikuru-legacy/part_filters.h
 
 ######### /plugins/yuki ########
 
+SRC_HEADERS += plugins/yuki/has_widget.h
 SRC_HEADERS += plugins/yuki/oscillator.h
 SRC_HEADERS += plugins/yuki/oscillator_widget.h
+SRC_HEADERS += plugins/yuki/params.h
 SRC_HEADERS += plugins/yuki/part.h
 SRC_HEADERS += plugins/yuki/part_manager.h
 SRC_HEADERS += plugins/yuki/part_manager_widget.h
@@ -505,6 +506,7 @@ SRC_HEADERS += plugins/yuki/yuki.h
 
 SRC_SOURCES += plugins/yuki/oscillator.cc
 SRC_SOURCES += plugins/yuki/oscillator_widget.cc
+SRC_SOURCES += plugins/yuki/params.cc
 SRC_SOURCES += plugins/yuki/part.cc
 SRC_SOURCES += plugins/yuki/part_manager.cc
 SRC_SOURCES += plugins/yuki/part_manager_widget.cc
