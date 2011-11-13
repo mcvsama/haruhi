@@ -43,11 +43,11 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 	_stack->addWidget (_main);
 	_stack->addWidget (_tabs);
 
-	_show_main_button = new QPushButton ("Main controls", this);
+	_show_main_button = new QPushButton (Resources::Icons16::main(), "Main controls", this);
 	_show_main_button->setCheckable (true);
 	QObject::connect (_show_main_button, SIGNAL (toggled (bool)), this, SLOT (show_main()));
 
-	_show_tabs_button = new QPushButton ("Parts", this);
+	_show_tabs_button = new QPushButton (Resources::Icons16::parts(), "Parts", this);
 	_show_tabs_button->setCheckable (true);
 	QObject::connect (_show_tabs_button, SIGNAL (toggled (bool)), this, SLOT (show_parts()));
 
@@ -90,7 +90,7 @@ PartManagerWidget::add_part (Part* part)
 {
 	PartWidget* pw = new PartWidget (this, part);
 	part->set_widget (pw);
-	_tabs->addTab (pw, QString ("Part %1").arg (part->id()));
+	_tabs->addTab (pw, Resources::Icons16::wave_sine(), QString ("Part %1").arg (part->id()));
 	_tabs->setCurrentWidget (pw);
 	update_widgets();
 	show_parts();
@@ -166,7 +166,7 @@ PartManagerWidget::remove_current_part()
 void
 PartManagerWidget::update_widgets()
 {
-	_remove_part_button->setEnabled (_show_tabs_button->isChecked() && _tabs->count() > 1);
+	_remove_part_button->setEnabled (_show_tabs_button->isChecked() && _tabs->count() > 0);
 }
 
 } // namespace Yuki

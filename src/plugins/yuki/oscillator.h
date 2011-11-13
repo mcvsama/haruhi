@@ -29,6 +29,10 @@ namespace Yuki {
 
 class Oscillator: public HasWidget<OscillatorWidget>
 {
+  public:
+	Oscillator();
+
+	virtual ~Oscillator();
 };
 
 } // namespace Yuki

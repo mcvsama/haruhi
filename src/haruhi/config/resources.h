@@ -148,6 +148,8 @@ small_font();
 		HARUHI_CONFIG_HAS_ICON_16 (filter_peaking, "filter-peaking.png");
 		HARUHI_CONFIG_HAS_ICON_16 (filter_lowshelf, "filter-lowshelf.png");
 		HARUHI_CONFIG_HAS_ICON_16 (filter_highshelf, "filter-highshelf.png");
+		HARUHI_CONFIG_HAS_ICON_16 (main, "main.png");
+		HARUHI_CONFIG_HAS_ICON_16 (parts, "parts.png");
 
 #undef HARUHI_CONFIG_HAS_ICON_16
 	} // namespace Icons16

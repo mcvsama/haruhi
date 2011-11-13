@@ -23,6 +23,7 @@
 
 // Local:
 #include "has_widget.h"
+#include "has_id.h"
 
 
 namespace Yuki {
@@ -31,15 +32,11 @@ class PartWidget;
 class PartManager;
 class WaveComputer;
 
-class Part: public HasWidget<PartWidget>
+class Part:
+	public HasWidget<PartWidget>,
+	public HasID
 {
   public:
-	/**
-	 * Return part ID. Used by user to distinguish between different parts.
-	 */
-	unsigned int
-	id() const { return _id; }
-
 	/**
 	 * Return WaveComputer for this part.
 	 * Uses plugin's global WaveComputer.
@@ -49,7 +46,6 @@ class Part: public HasWidget<PartWidget>
 
   private:
 	PartManager*	_part_manager;
-	unsigned int	_id;
 };
 
 typedef std::list<Part*>  Parts;

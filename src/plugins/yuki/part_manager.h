@@ -23,6 +23,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/mutex.h>
+#include <haruhi/utility/id_allocator.h>
 
 // Local:
 #include "has_widget.h"
@@ -92,6 +93,7 @@ class PartManager: public HasWidget<PartManagerWidget>
 	Plugin*				_plugin;
 	Parts				_parts;
 	Mutex				_parts_mutex;
+	IDAllocator			_id_alloc;
 };
 
 } // namespace Yuki
