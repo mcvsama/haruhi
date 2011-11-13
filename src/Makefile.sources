@@ -490,6 +490,7 @@ SRC_MOCHDRS += plugins/mikuru-legacy/part_filters.h
 
 ######### /plugins/yuki ########
 
+SRC_HEADERS += plugins/yuki/has_id.h
 SRC_HEADERS += plugins/yuki/has_widget.h
 SRC_HEADERS += plugins/yuki/oscillator.h
 SRC_HEADERS += plugins/yuki/oscillator_widget.h
@@ -501,6 +502,7 @@ SRC_HEADERS += plugins/yuki/part_widget.h
 SRC_HEADERS += plugins/yuki/plugin.h
 SRC_HEADERS += plugins/yuki/voice.h
 SRC_HEADERS += plugins/yuki/voice_manager.h
+SRC_HEADERS += plugins/yuki/voice_oscillator.h
 SRC_HEADERS += plugins/yuki/wave_computer.h
 SRC_HEADERS += plugins/yuki/yuki.h
 
@@ -514,6 +516,7 @@ SRC_SOURCES += plugins/yuki/part_widget.cc
 SRC_SOURCES += plugins/yuki/plugin.cc
 SRC_SOURCES += plugins/yuki/voice.cc
 SRC_SOURCES += plugins/yuki/voice_manager.cc
+SRC_SOURCES += plugins/yuki/voice_oscillator.cc
 SRC_SOURCES += plugins/yuki/wave_computer.cc
 SRC_SOURCES += plugins/yuki/yuki.cc
 

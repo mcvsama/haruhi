@@ -33,6 +33,7 @@ WorkPerformer::Performer::run()
 	Unit* unit = 0;
 	while ((unit = _work_performer->take_unit()))
 	{
+		unit->_is_ready.store (false);
 		unit->execute();
 		unit->_is_ready.store (true);
 		unit->_wait_sem.post();

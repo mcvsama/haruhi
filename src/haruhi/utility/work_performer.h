@@ -24,13 +24,14 @@
 #include <haruhi/utility/semaphore.h>
 #include <haruhi/utility/thread.h>
 #include <haruhi/utility/atomic.h>
+#include <haruhi/utility/noncopyable.h>
 
 
 /**
  * WorkPerformer queues work units (WorkUnit) and executes them in the context
- * of the current thread.
+ * of separate thread.
  */
-class WorkPerformer
+class WorkPerformer: private Noncopyable
 {
   private:
 	/**
@@ -52,7 +53,7 @@ class WorkPerformer
 	/**
 	 * Implements code that needs to be executed in a separate thread.
 	 */
-	class Unit
+	class Unit: private Noncopyable
 	{
 		friend class Performer;
 
@@ -68,6 +69,9 @@ class WorkPerformer
 		virtual void
 		execute() = 0;
 
+		/**
+		 * Return true if execute() method is finished.
+		 */
 		bool
 		is_ready() { return _is_ready.load(); }
 
@@ -98,9 +102,8 @@ class WorkPerformer
 	~WorkPerformer();
 
 	/**
-	 * Add work unit to the queue.
-	 * Object pushed to the queue will be deleted with delete operator in the context
-	 * of executing thread (method execute()).
+	 * Add work unit to the queue. The same object may be used
+	 * over and over, but not simultaneously.
 	 * \threadsafe
 	 */
 	void
