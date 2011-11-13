@@ -20,11 +20,18 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 
+// Local:
+#include "params.h"
+#include "voice_oscillator.h"
+
 
 namespace Yuki {
 
 class Voice
 {
+  private:
+	Params::Voice	_params;
+	VoiceOscillator	_vosc;
 };
 
 } // namespace Yuki
