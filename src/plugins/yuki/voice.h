@@ -16,9 +16,11 @@
 
 // Standard:
 #include <cstddef>
+#include <set>
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/graph/event.h>
 
 // Local:
 #include "params.h"
@@ -27,11 +29,75 @@
 
 namespace Yuki {
 
+class Voice;
+
+typedef std::set<Voice*> Voices;
+
 class Voice
 {
+  public:
+	enum State { NotStarted, Voicing, Dropped, Finished };
+
+  public:
+	Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp);
+
+	/**
+	 * Return voice's ID which came in Haruhi::VoiceEvent.
+	 */
+	Haruhi::VoiceID
+	id() const { return _id; }
+
+	/**
+	 * Return voice's timestamp.
+	 */
+	Haruhi::Timestamp
+	timestamp() const { return _timestamp; }
+
+	/**
+	 * Return current voice state.
+	 */
+	State
+	state() const { return _state; }
+
+	/**
+	 * Drop voice. Voice does not immediately stop sounding.
+	 * Use finished() to check if voice generation is really finished.
+	 */
+	void
+	drop();
+
+	/**
+	 * Synthesize voice and store output in buffers.
+	 * \return	true if buffers were modified, false otherwise.
+	 */
+	bool
+	render (Haruhi::AudioBuffer*, Haruhi::AudioBuffer*);
+
+	/**
+	 * Update buffers sizes.
+	 */
+	void
+	graph_updated();
+
+  public:
+	/**
+	 * Return older from the two voices by comparing
+	 * their timestamps.
+	 */
+	static Voice*
+	return_older (Voice* a, Voice* b)
+	{
+		if (a->timestamp() < b->timestamp())
+			return a;
+		return b;
+	}
+
   private:
-	Params::Voice	_params;
-	VoiceOscillator	_vosc;
+	Haruhi::VoiceID		_id;
+	Haruhi::Timestamp	_timestamp;
+	State				_state;
+	Params::Voice		_params;
+	VoiceOscillator		_vosc;
 };
 
 } // namespace Yuki

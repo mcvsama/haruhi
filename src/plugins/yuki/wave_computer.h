@@ -25,7 +25,8 @@
 namespace Yuki {
 
 /**
- * Adds computing tasks to sessions's low-priority work performer.
+ * Adds wave-computing tasks to sessions's low-priority work performer.
+ * Signals when work is done.
  */
 class WaveComputer
 {

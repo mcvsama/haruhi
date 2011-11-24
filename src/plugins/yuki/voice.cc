@@ -23,5 +23,31 @@
 
 namespace Yuki {
 
+Voice::Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp):
+	_id (id),
+	_timestamp (timestamp),
+	_state (NotStarted)
+{
+}
+
+
+void
+Voice::drop()
+{
+}
+
+
+bool
+Voice::render (Haruhi::AudioBuffer*, Haruhi::AudioBuffer*)
+{
+	return false;
+}
+
+
+void
+Voice::graph_updated()
+{
+}
+
 } // namespace Yuki
 

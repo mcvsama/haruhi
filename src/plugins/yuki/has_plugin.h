@@ -12,41 +12,43 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__PLUGINS__YUKI__HAS_WIDGET_H__INCLUDED
-#define HARUHI__PLUGINS__YUKI__HAS_WIDGET_H__INCLUDED
+#ifndef HARUHI__PLUGINS__YUKI__HAS_PLUGIN_H__INCLUDED
+#define HARUHI__PLUGINS__YUKI__HAS_PLUGIN_H__INCLUDED
 
 // Standard:
 #include <cstddef>
 
 // Haruhi:
-#include <haruhi/config/all.h>
+#include <haruhi/graph/graph.h>
+
+// Local:
+#include "plugin.h"
 
 
 namespace Yuki {
 
-template<class WidgetClass>
-	class HasWidget
-	{
-	  public:
-		HasWidget():
-			_widget (0)
-		{ }
+class HasPlugin
+{
+  public:
+	HasPlugin (Plugin* plugin):
+		_plugin (plugin)
+	{ }
 
-		/**
-		 * Return associated UI object.
-		 */
-		WidgetClass*
-		widget() const { return _widget; }
+	/**
+	 * Return pointer to the Yuki Plugin.
+	 */
+	Plugin*
+	plugin() const { return _plugin; }
 
-		/**
-		 * Set associated UI object.
-		 */
-		void
-		set_widget (WidgetClass* widget) { _widget = widget; }
+	/**
+	 * Shortcut to plugin()->graph().
+	 */
+	Haruhi::Graph*
+	graph() const { return _plugin->graph(); }
 
-	  private:
-		WidgetClass* _widget;
-	};
+  private:
+	Plugin* _plugin;
+};
 
 } // namespace Yuki
 

@@ -22,6 +22,8 @@
 #include <haruhi/config/all.h>
 
 
+namespace Yuki {
+
 class HasID
 {
   public:
@@ -44,6 +46,8 @@ class HasID
   private:
 	unsigned int _id;
 };
+
+} // namespace Yuki
 
 #endif
 
