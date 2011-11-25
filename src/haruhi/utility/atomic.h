@@ -223,13 +223,13 @@ template<>
 		{
 			union { float f; int i; } u;
 			u.f = value;
-			g_atomic_int_set (&_reference, u.i);
+			g_atomic_int_set (reinterpret_cast<int volatile*> (&_reference), u.i);
 		}
 
 		operator float() const
 		{
 			union { float f; int i; } u;
-			u.i = g_atomic_int_get (&_reference);
+			u.i = g_atomic_int_get (reinterpret_cast<int volatile*> (&_reference));
 			return u.f;
 		}
 
@@ -252,12 +252,12 @@ template<class Type>
 		void
 		operator= (Type* const& value)
 		{
-			g_atomic_pointer_set (reinterpret_cast<volatile gpointer*> (&_reference), static_cast<gpointer> (value));
+			g_atomic_pointer_set (reinterpret_cast<gpointer volatile*> (&_reference), static_cast<gpointer> (value));
 		}
 
 		operator Type*() const
 		{
-			return static_cast<Type*> (g_atomic_pointer_get (reinterpret_cast<volatile gpointer*> (&_reference)));
+			return static_cast<Type*> (g_atomic_pointer_get (reinterpret_cast<gpointer volatile*> (&_reference)));
 		}
 
 	  private:
