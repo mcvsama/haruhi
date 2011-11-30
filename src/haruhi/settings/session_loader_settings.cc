@@ -42,7 +42,7 @@ SessionLoaderSettings::RecentSession::save_state (QDomElement& element) const
 {
 	element.setAttribute ("name", name);
 	element.setAttribute ("file-name", file_name);
-	element.setAttribute ("timestamp", timestamp);
+	element.setAttribute ("timestamp", static_cast<qlonglong> (timestamp));
 }
 
 

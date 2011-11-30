@@ -177,7 +177,7 @@ Graph::set_buffer_size (std::size_t buffer_size)
 
 
 void
-Graph::set_sample_rate (std::size_t sample_rate)
+Graph::set_sample_rate (unsigned int sample_rate)
 {
 	_sample_rate = sample_rate;
 	for (Units::iterator k = _units.begin();  k != _units.end();  ++k)

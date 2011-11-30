@@ -157,7 +157,7 @@ void
 DelayModel::update_delay_buffer()
 {
 	// Max note * 4 quarter notes * min expected tempo * current sample rate (+2 is for float<->int conversion safety):
-	std::size_t max_delay = std::max (static_cast<unsigned int> (4.0f * (60.0f / MinimumTempo) * _sample_rate + 2), _buffer_size);
+	std::size_t max_delay = std::max (static_cast<std::size_t> (4.0f * (60.0f / MinimumTempo) * _sample_rate + 2), _buffer_size);
 	if (_delay_line.max_delay() != max_delay)
 		_delay_line.set_max_delay (max_delay);
 }
