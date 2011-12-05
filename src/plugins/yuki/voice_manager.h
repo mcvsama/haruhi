@@ -16,14 +16,16 @@
 
 // Standard:
 #include <cstddef>
+#include <map>
+#include <vector>
 
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/graph/event.h>
+#include <haruhi/utility/work_performer.h>
 
 // Local:
-#include "has_plugin.h"
 #include "voice.h"
 
 
@@ -32,12 +34,13 @@ namespace Yuki {
 /**
  * Creates/destroys/mixes Voices upon incoming Core Events.
  */
-class VoiceManager: public HasPlugin
+class VoiceManager
 {
 	typedef std::map<Haruhi::VoiceID, Voices::iterator> ID2VoiceMap;
+	typedef std::vector<WorkPerformer::Unit*> WorkUnits;
 
   public:
-	VoiceManager (Plugin* plugin);
+	VoiceManager();
 
 	~VoiceManager();
 
@@ -67,27 +70,47 @@ class VoiceManager: public HasPlugin
 
 	/**
 	 * Return number of sounding voices.
+	 * Does not include voices that has been just dropped, although
+	 * they will contribute to the mixed result for a short while
+	 * (a couple of milliseconds).
 	 */
 	unsigned int
 	current_voices_number() { return _active_voices_number; }
 
 	/**
-	 * Forward 'graph_updated' message to all voices.
+	 * Update internal buffers params and forward
+	 * 'graph_updated' message to all voices.
 	 */
 	void
-	graph_updated();
+	graph_updated (unsigned int sample_rate, std::size_t buffer_size);
 
 	/**
-	 * Mix all voices into given buffers.
-	 * This operation is done in separate thread(s),
-	 * using prioritized WorkPerformer from Haruhi's
-	 * Session object.
+	 * Start rendering of all voices.
 	 *
-	 * This function blocks until data is ready.
-	 * Buffers are not cleared before operation.
+	 * This function is non-blocking. It will create a WorkUnit
+	 * and pass it to given WorkPerformer.
+	 *
+	 * Use wait_for_render() to wait until rendering is done.
+	 * Use mix_result() to mix rendered voices into given output buffers.
 	 */
 	void
-	render (Haruhi::AudioBuffer*, Haruhi::AudioBuffer*);
+	render (WorkPerformer*);
+
+	/**
+	 * Block until rendering is done.
+	 */
+	void
+	wait_for_render();
+
+	/**
+	 * Mix rendered voices into output buffer.
+	 * Remove voices that are finished.
+	 *
+	 * Call render() once and wait with wait_for_render() in each
+	 * processing round before mixing result.
+	 */
+	void
+	mix_result (Haruhi::AudioBuffer*, Haruhi::AudioBuffer*);
 
   private:
 	/**
@@ -108,11 +131,22 @@ class VoiceManager: public HasPlugin
 	void
 	kill_voices();
 
+	/**
+	 * Render given voice into temporary buffers and add result to the output buffers.
+	 */
+	static void
+	render_voice (Voice* voice,
+				  Haruhi::AudioBuffer* tmp1, Haruhi::AudioBuffer* tmp2,
+				  Haruhi::AudioBuffer* out1, Haruhi::AudioBuffer* out2);
+
   private:
 	Voices				_voices;
+	WorkUnits			_work_units;
 	ID2VoiceMap			_voices_by_id;
-	Haruhi::AudioBuffer	_tmpbuf1;
-	Haruhi::AudioBuffer	_tmpbuf2;
+	Haruhi::AudioBuffer	_tmp_voice_buf1;
+	Haruhi::AudioBuffer	_tmp_voice_buf2;
+	Haruhi::AudioBuffer	_tmp_mixed_buf1;
+	Haruhi::AudioBuffer	_tmp_mixed_buf2;
 	unsigned int		_active_voices_number;
 	unsigned int		_max_polyphony;
 };

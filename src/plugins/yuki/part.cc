@@ -21,9 +21,23 @@
 #include "part.h"
 #include "part_manager.h"
 #include "plugin.h"
+#include "voice_manager.h"
 
 
 namespace Yuki {
+
+Part::Part (PartManager* part_manager):
+	_part_manager (part_manager),
+	_voice_manager (new VoiceManager())
+{
+}
+
+
+Part::~Part()
+{
+	delete _voice_manager;
+}
+
 
 WaveComputer*
 Part::wave_computer() const

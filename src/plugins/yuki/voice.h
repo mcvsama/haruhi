@@ -67,7 +67,7 @@ class Voice
 	drop();
 
 	/**
-	 * Synthesize voice and store output in buffers.
+	 * Synthesize voice and fill output buffers.
 	 * \return	true if buffers were modified, false otherwise.
 	 */
 	bool
@@ -77,7 +77,7 @@ class Voice
 	 * Update buffers sizes.
 	 */
 	void
-	graph_updated();
+	graph_updated (unsigned int sample_rate, std::size_t buffer_size);
 
   public:
 	/**

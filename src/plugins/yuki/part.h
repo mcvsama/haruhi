@@ -31,12 +31,17 @@ namespace Yuki {
 class PartWidget;
 class PartManager;
 class WaveComputer;
+class VoiceManager;
 
 class Part:
 	public HasWidget<PartWidget>,
 	public HasID
 {
   public:
+	Part (PartManager* part_manager);
+
+	~Part();
+
 	/**
 	 * Return WaveComputer for this part.
 	 * Uses plugin's global WaveComputer.
@@ -46,6 +51,7 @@ class Part:
 
   private:
 	PartManager*	_part_manager;
+	VoiceManager*	_voice_manager;
 };
 
 typedef std::list<Part*>  Parts;

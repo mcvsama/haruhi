@@ -45,7 +45,7 @@ Voice::render (Haruhi::AudioBuffer*, Haruhi::AudioBuffer*)
 
 
 void
-Voice::graph_updated()
+Voice::graph_updated (unsigned int sample_rate, std::size_t buffer_size)
 {
 }
 

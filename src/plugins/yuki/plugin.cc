@@ -76,6 +76,8 @@ void
 Plugin::process()
 {
 	clear_outputs();
+
+	// TODO handle input voice events
 }
 
 

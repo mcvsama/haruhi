@@ -34,7 +34,7 @@ PartManager::PartManager (Plugin* plugin):
 void
 PartManager::add_part()
 {
-	Part* p = new Part();
+	Part* p = new Part (this);
 	p->set_id (_id_alloc.allocate_id());
 	_parts.push_back (p);
 	widget()->add_part (p);

@@ -13,10 +13,15 @@
 
 // Standard:
 #include <cstddef>
+#include <algorithm>
+
+// Lib:
+#include <boost/bind.hpp>
 
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/memory.h>
+#include <haruhi/utility/work_performer.h>
 
 // Local:
 #include "voice_manager.h"
@@ -24,8 +29,7 @@
 
 namespace Yuki {
 
-VoiceManager::VoiceManager (Plugin* plugin):
-	HasPlugin (plugin),
+VoiceManager::VoiceManager():
 	_active_voices_number (0),
 	_max_polyphony (0)
 { }
@@ -74,34 +78,62 @@ VoiceManager::panic()
 
 
 void
-VoiceManager::graph_updated()
+VoiceManager::graph_updated (unsigned int sample_rate, std::size_t buffer_size)
 {
-	unsigned int bs = graph()->buffer_size();
-	_tmpbuf1.resize (bs);
-	_tmpbuf2.resize (bs);
+	_tmp_voice_buf1.resize (buffer_size);
+	_tmp_voice_buf2.resize (buffer_size);
+	_tmp_mixed_buf1.resize (buffer_size);
+	_tmp_mixed_buf2.resize (buffer_size);
 
 	for (Voices::iterator v = _voices.begin(); v != _voices.end(); ++v)
-		(*v)->graph_updated();
+		(*v)->graph_updated (sample_rate, buffer_size);
 }
 
 
 void
-VoiceManager::render (Haruhi::AudioBuffer* b1, Haruhi::AudioBuffer* b2)
+VoiceManager::render (WorkPerformer* work_performer)
 {
-	b1->clear();
-	b2->clear();
+	assert (_work_units.empty());
+
+	_tmp_mixed_buf1.clear();
+	_tmp_mixed_buf2.clear();
+
+	for (Voices::iterator v = _voices.begin(); v != _voices.end(); ++v)
+	{
+		WorkPerformer::Unit* wu = WorkPerformer::make_unit (boost::bind (VoiceManager::render_voice, *v,
+																		 &_tmp_voice_buf1, &_tmp_voice_buf2,
+																		 &_tmp_mixed_buf1, &_tmp_mixed_buf2));
+		_work_units.push_back (wu);
+	}
+
+	for (WorkUnits::size_type i = 0, n = _work_units.size(); i < n; ++i)
+		work_performer->add (_work_units[i]);
+}
+
+
+void
+VoiceManager::wait_for_render()
+{
+	for (WorkUnits::size_type i = 0, n = _work_units.size(); i < n; ++i)
+		_work_units[i]->wait();
+
+	std::for_each (_work_units.begin(), _work_units.end(), delete_operator<WorkPerformer::Unit*>);
+	_work_units.clear();
+}
+
+
+void
+VoiceManager::mix_result (Haruhi::AudioBuffer* b1, Haruhi::AudioBuffer* b2)
+{
+	b1->fill (&_tmp_mixed_buf1);
+	b2->fill (&_tmp_mixed_buf2);
 
 	for (Voices::iterator v = _voices.begin(); v != _voices.end(); )
 	{
-		if ((*v)->render (&_tmpbuf1, &_tmpbuf2))
-		{
-			b1->add (&_tmpbuf1);
-			b2->add (&_tmpbuf2);
-		}
-
 		if ((*v)->state() == Voice::Finished)
 		{
 			_voices_by_id.erase ((*v)->id());
+			delete *v;
 			_voices.erase (v++);
 		}
 		else
@@ -147,6 +179,19 @@ VoiceManager::kill_voices()
 	std::for_each (_voices.begin(), _voices.end(), delete_operator<Voice*>);
 	_voices.clear();
 	_voices_by_id.clear();
+}
+
+
+void
+VoiceManager::render_voice (Voice* voice,
+							Haruhi::AudioBuffer* tmp1, Haruhi::AudioBuffer* tmp2,
+							Haruhi::AudioBuffer* mix1, Haruhi::AudioBuffer* mix2)
+{
+	if (voice->render (tmp1, tmp2))
+	{
+		mix1->add (tmp1);
+		mix2->add (tmp2);
+	}
 }
 
 } // namespace Yuki
