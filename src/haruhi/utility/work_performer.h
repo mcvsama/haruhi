@@ -96,8 +96,7 @@ class WorkPerformer: private Noncopyable
 	WorkPerformer (unsigned int threads_number);
 
 	/**
-	 * Waits for threads to finish.
-	 * Posts dummy work units.
+	 * Waits for threads to finish before return.
 	 */
 	~WorkPerformer();
 
@@ -114,6 +113,26 @@ class WorkPerformer: private Noncopyable
 	 */
 	void
 	set_sched (Thread::SchedType, int priority);
+
+	/**
+	 * Unit adaptor.
+	 */
+	template<class Function>
+		static Unit*
+		make_unit (Function fun)
+		{
+			struct Specialized: public Unit
+			{
+				Specialized (Function fun): _fun (fun) { }
+
+				void execute() { _fun(); }
+
+			  private:
+				Function _fun;
+			};
+
+			return new Specialized (fun);
+		};
 
   private:
 	/**
