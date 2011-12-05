@@ -35,6 +35,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/graph/graph.h>
+#include <haruhi/application/services.h>
 #include <haruhi/components/audio_backend/backend.h>
 #include <haruhi/components/event_backend/backend.h>
 #include <haruhi/session/periodic_updater.h>
@@ -350,8 +351,6 @@ Session::Session (QWidget* parent):
 	_audio_backend (0),
 	_event_backend (0),
 	_engine (0),
-	_hi_priority_work_performer (new WorkPerformer (Haruhi::Haruhi::detected_cores())),
-	_lo_priority_work_performer (new WorkPerformer (Haruhi::Haruhi::detected_cores())),
 	_plugin_loader (new PluginLoader()),
 	_devices_manager (0)
 {
@@ -488,8 +487,6 @@ Session::~Session()
 	stop_audio_backend();
 	stop_event_backend();
 	delete _graph;
-	delete _hi_priority_work_performer;
-	delete _lo_priority_work_performer;
 }
 
 
@@ -501,8 +498,8 @@ Session::apply_parameters()
 	graph()->set_master_tune (master_tune());
 	int prio = haruhi_settings->engine_thread_priority();
 	engine()->set_sched (Thread::SchedFIFO, prio);
-	hi_priority_work_performer()->set_sched (Thread::SchedFIFO, prio);
-	lo_priority_work_performer()->set_sched (Thread::SchedOther, 0);
+	Services::hi_priority_work_performer()->set_sched (Thread::SchedFIFO, prio);
+	Services::lo_priority_work_performer()->set_sched (Thread::SchedOther, 0);
 	meter_panel()->level_meters_group()->set_fps (haruhi_settings->level_meter_fps());
 	meter_panel()->master_volume()->setValue (_parameters.master_volume);
 }

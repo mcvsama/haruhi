@@ -222,18 +222,6 @@ class Session:
 	Engine*
 	engine() const { return _engine; }
 
-	/**
-	 * High priority work performer. Runs in real-time scheduling.
-	 */
-	WorkPerformer*
-	hi_priority_work_performer() const { return _hi_priority_work_performer; }
-
-	/**
-	 * Low priority work performer. Runs in normal scheduling.
-	 */
-	WorkPerformer*
-	lo_priority_work_performer() const { return _lo_priority_work_performer; }
-
 	QString const&
 	name() const { return _name; }
 
@@ -387,8 +375,6 @@ class Session:
 	AudioBackend*					_audio_backend;
 	EventBackend*					_event_backend;
 	Engine*							_engine;
-	WorkPerformer*					_hi_priority_work_performer;
-	WorkPerformer*					_lo_priority_work_performer;
 	PluginLoader*					_plugin_loader;
 	DevicesManager::Panel*			_devices_manager;
 

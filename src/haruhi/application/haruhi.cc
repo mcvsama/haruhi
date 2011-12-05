@@ -33,6 +33,7 @@
 
 // Local:
 #include "haruhi.h"
+#include "services.h"
 
 
 namespace Haruhi {
@@ -52,6 +53,8 @@ Haruhi::Haruhi (int argc, char** argv, char** envp):
 		throw Exception ("only one instance of Haruhi is allowed");
 
 	_haruhi = this;
+
+	Services::initialize();
 
 	QPixmapCache::setCacheLimit (2048); // 2MB cache
 
@@ -89,6 +92,8 @@ Haruhi::Haruhi (int argc, char** argv, char** envp):
 
 Haruhi::~Haruhi()
 {
+	Services::deinitialize();
+
 	_haruhi = 0;
 
 	QPixmapCache::clear();

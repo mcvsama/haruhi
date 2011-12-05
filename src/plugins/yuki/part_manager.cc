@@ -105,6 +105,7 @@ PartManager::process()
 {
 	_parts_mutex.lock();
 
+	_voice_in->sync();
 	Haruhi::EventBuffer const* buffer = _voice_in->event_buffer();
 	bool const enabled = _params.enabled.get();
 
