@@ -29,6 +29,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/application/services.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/graph/event_buffer.h>
 #include <haruhi/dsp/functions.h>
@@ -635,7 +636,7 @@ void
 Mikuru::set_threads_number (int threads)
 {
 	if (threads == 0)
-		threads = Haruhi::Haruhi::detected_cores();
+		threads = Haruhi::Services::detected_cores();
 
 	threads = std::min (16, std::max (1, threads));
 

@@ -100,12 +100,6 @@ class Haruhi:
 	static Haruhi*
 	haruhi() { return _haruhi; }
 
-	/**
-	 * \returns	detected processor cores.
-	 */
-	static int
-	detected_cores();
-
 	static std::vector<const char*>
 	features();
 
@@ -150,7 +144,6 @@ class Haruhi:
   private:
 	// Haruhi pointer:
 	static Haruhi*				_haruhi;
-	static int					_detected_cores;
 
 	// Links to main application components:
 	QApplication*				_app;

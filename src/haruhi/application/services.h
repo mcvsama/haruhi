@@ -45,9 +45,16 @@ class Services
 	static WorkPerformer*
 	lo_priority_work_performer() { return _lo_priority_work_performer; }
 
+	/**
+	 * Return number of detected processor cores.
+	 */
+	static unsigned int
+	detected_cores();
+
   private:
 	static WorkPerformer*	_hi_priority_work_performer;
 	static WorkPerformer*	_lo_priority_work_performer;
+	static signed int		_detected_cores;
 };
 
 } // namespace Haruhi

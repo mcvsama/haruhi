@@ -13,8 +13,6 @@
 
 // Standard:
 #include <cstddef>
-#include <fstream>
-#include <sstream>
 #include <string>
 
 // Qt:
@@ -39,7 +37,6 @@
 namespace Haruhi {
 
 Haruhi* Haruhi::_haruhi = 0;
-int Haruhi::_detected_cores = -1;
 
 
 Haruhi::Haruhi (int argc, char** argv, char** envp):
@@ -118,28 +115,6 @@ Haruhi::run_ui()
 	delete _session;
 	delete _periodic_updater;
 	delete _app;
-}
-
-
-int
-Haruhi::detected_cores()
-{
-	if (_detected_cores != -1)
-		return _detected_cores;
-
-	_detected_cores = 0;
-	std::ifstream cpuinfo ("/proc/cpuinfo");
-	std::string line;
-	while (cpuinfo.good())
-	{
-		std::getline (cpuinfo, line);
-		std::istringstream s (line);
-		std::string name, colon;
-		s >> name >> colon;
-		if (name == "processor" && colon == ":")
-			++_detected_cores;
-	}
-	return _detected_cores;
 }
 
 
