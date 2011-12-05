@@ -123,10 +123,13 @@ VoiceManager::wait_for_render()
 
 
 void
-VoiceManager::mix_result (Haruhi::AudioBuffer* b1, Haruhi::AudioBuffer* b2)
+VoiceManager::mix_rendering_result (Haruhi::AudioBuffer* b1, Haruhi::AudioBuffer* b2)
 {
-	b1->fill (&_tmp_mixed_buf1);
-	b2->fill (&_tmp_mixed_buf2);
+	assert (b1 != 0);
+	assert (b2 != 0);
+
+	b1->add (&_tmp_mixed_buf1);
+	b2->add (&_tmp_mixed_buf2);
 
 	for (Voices::iterator v = _voices.begin(); v != _voices.end(); )
 	{

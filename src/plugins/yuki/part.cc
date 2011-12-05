@@ -31,6 +31,8 @@ Part::Part (PartManager* part_manager):
 	_part_manager (part_manager),
 	_voice_manager (new VoiceManager())
 {
+	// Initially resize buffers:
+	graph_updated();
 }
 
 
@@ -74,6 +76,30 @@ Part::graph_updated()
 {
 	Haruhi::Graph* graph = _part_manager->graph();
 	_voice_manager->graph_updated (graph->sample_rate(), graph->buffer_size());
+}
+
+
+void
+Part::render (WorkPerformer* work_performer)
+{
+	_voice_manager->render (work_performer);
+}
+
+
+void
+Part::wait_for_render()
+{
+	_voice_manager->wait_for_render();
+}
+
+
+void
+Part::mix_rendering_result (Haruhi::AudioBuffer* b1, Haruhi::AudioBuffer* b2)
+{
+	assert (b1 != 0);
+	assert (b2 != 0);
+
+	_voice_manager->mix_rendering_result (b1, b2);
 }
 
 } // namespace Yuki

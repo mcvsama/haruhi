@@ -110,7 +110,7 @@ class VoiceManager
 	 * processing round before mixing result.
 	 */
 	void
-	mix_result (Haruhi::AudioBuffer*, Haruhi::AudioBuffer*);
+	mix_rendering_result (Haruhi::AudioBuffer*, Haruhi::AudioBuffer*);
 
   private:
 	/**

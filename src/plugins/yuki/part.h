@@ -21,6 +21,8 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/graph/event.h>
+#include <haruhi/graph/audio_buffer.h>
+#include <haruhi/utility/work_performer.h>
 
 // Local:
 #include "has_widget.h"
@@ -75,6 +77,25 @@ class Part:
 	 */
 	void
 	graph_updated();
+
+	/**
+	 * Start voices rendering.
+	 * Use given WorkPerformer object.
+	 */
+	void
+	render (WorkPerformer*);
+
+	/**
+	 * Wait until voice rendering is done.
+	 */
+	void
+	wait_for_render();
+
+	/**
+	 * Mix rendered voices into given buffers.
+	 */
+	void
+	mix_rendering_result (Haruhi::AudioBuffer*, Haruhi::AudioBuffer*);
 
   private:
 	Params::Part	_params;

@@ -18,6 +18,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/graph/event_buffer.h>
+#include <haruhi/application/services.h>
 
 // Local:
 #include "part_manager.h"
@@ -121,7 +122,16 @@ PartManager::process()
 	}
 
 	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
+	{
 		(*p)->process();
+		(*p)->render (Haruhi::Services::hi_priority_work_performer());
+	}
+
+	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
+	{
+		(*p)->wait_for_render();
+		(*p)->mix_rendering_result (_audio_out[0]->audio_buffer(), _audio_out[1]->audio_buffer());
+	}
 
 	_parts_mutex.unlock();
 }

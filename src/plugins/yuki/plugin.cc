@@ -53,6 +53,7 @@ Plugin::~Plugin()
 void
 Plugin::registered()
 {
+	graph_updated(); // Initially resize buffers.
 	enable();
 }
 
