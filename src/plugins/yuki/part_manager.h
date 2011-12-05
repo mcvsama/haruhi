@@ -22,11 +22,16 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/graph/event_buffer.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/id_allocator.h>
+#include <haruhi/graph/audio_port.h>
+#include <haruhi/graph/event_port.h>
 
 // Local:
 #include "has_widget.h"
+#include "has_plugin.h"
+#include "params.h"
 #include "part.h"
 #include "part_widget.h"
 
@@ -35,10 +40,14 @@ namespace Yuki {
 
 class Plugin;
 
-class PartManager: public HasWidget<PartManagerWidget>
+class PartManager:
+	public HasWidget<PartManagerWidget>,
+	public HasPlugin
 {
   public:
 	PartManager (Plugin*);
+
+	~PartManager();
 
 	/**
 	 * Return reference to set of Parts used by synth.
@@ -48,12 +57,6 @@ class PartManager: public HasWidget<PartManagerWidget>
 
 	Parts const&
 	parts() const { return _parts; }
-
-	/**
-	 * Return Plugin instance that owns this PartManager.
-	 */
-	Plugin*
-	plugin() const { return _plugin; }
 
 	/**
 	 * Add new Part.
@@ -89,11 +92,33 @@ class PartManager: public HasWidget<PartManagerWidget>
 	void
 	set_part_position (Part*, unsigned int position);
 
+	/**
+	 * Process events.
+	 */
+	void
+	process();
+
+	/**
+	 * Panic all voices.
+	 */
+	void
+	panic();
+
+	/**
+	 * Resize buffers, etc.
+	 */
+	void
+	graph_updated();
+
   private:
-	Plugin*				_plugin;
-	Parts				_parts;
-	Mutex				_parts_mutex;
-	IDAllocator			_id_alloc;
+	Params::MainControls	_params;
+	Parts					_parts;
+	Mutex					_parts_mutex;
+	IDAllocator				_id_alloc;
+
+	// Ports (0 = L, 1 = R):
+	Haruhi::AudioPort*		_audio_out[2];
+	Haruhi::EventPort*		_voice_in;
 };
 
 } // namespace Yuki

@@ -16,6 +16,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/graph/event.h>
 
 // Local:
 #include "part.h"
@@ -43,6 +44,36 @@ WaveComputer*
 Part::wave_computer() const
 {
 	return _part_manager->plugin()->wave_computer();
+}
+
+
+void
+Part::handle_voice_event (Haruhi::VoiceEvent const* event)
+{
+	if (_params.enabled.get())
+		_voice_manager->handle_voice_event (event);
+}
+
+
+void
+Part::process()
+{
+	// TODO process controllers
+}
+
+
+void
+Part::panic()
+{
+	_voice_manager->panic();
+}
+
+
+void
+Part::graph_updated()
+{
+	Haruhi::Graph* graph = _part_manager->graph();
+	_voice_manager->graph_updated (graph->sample_rate(), graph->buffer_size());
 }
 
 } // namespace Yuki

@@ -69,6 +69,13 @@ class VoiceManager
 	panic();
 
 	/**
+	 * Update internal buffers params and forward
+	 * 'graph_updated' message to all voices.
+	 */
+	void
+	graph_updated (unsigned int sample_rate, std::size_t buffer_size);
+
+	/**
 	 * Return number of sounding voices.
 	 * Does not include voices that has been just dropped, although
 	 * they will contribute to the mixed result for a short while
@@ -76,13 +83,6 @@ class VoiceManager
 	 */
 	unsigned int
 	current_voices_number() { return _active_voices_number; }
-
-	/**
-	 * Update internal buffers params and forward
-	 * 'graph_updated' message to all voices.
-	 */
-	void
-	graph_updated (unsigned int sample_rate, std::size_t buffer_size);
 
 	/**
 	 * Start rendering of all voices.

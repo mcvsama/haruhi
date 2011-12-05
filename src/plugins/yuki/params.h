@@ -126,9 +126,10 @@ struct Params
 		Haruhi::ControllerParam panorama;
 		Haruhi::ControllerParam stereo_width;
 
+		Haruhi::Param<int> enabled;
 		Haruhi::Param<unsigned int> polyphony;
 
-		static const int NUM_PARAMS = 5;
+		static const int NUM_PARAMS = 6;
 	};
 
 	/**

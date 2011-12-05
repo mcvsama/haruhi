@@ -20,10 +20,12 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/graph/event.h>
 
 // Local:
 #include "has_widget.h"
 #include "has_id.h"
+#include "params.h"
 
 
 namespace Yuki {
@@ -49,7 +51,33 @@ class Part:
 	WaveComputer*
 	wave_computer() const;
 
+	/**
+	 * Handle voice input event.
+	 * Pass it to the voice manager if conditions are met.
+	 */
+	void
+	handle_voice_event (Haruhi::VoiceEvent const*);
+
+	/**
+	 * Process events.
+	 */
+	void
+	process();
+
+	/**
+	 * Panic all voices.
+	 */
+	void
+	panic();
+
+	/**
+	 * Resize buffers, etc.
+	 */
+	void
+	graph_updated();
+
   private:
+	Params::Part	_params;
 	PartManager*	_part_manager;
 	VoiceManager*	_voice_manager;
 };

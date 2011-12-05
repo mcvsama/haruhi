@@ -31,10 +31,6 @@ namespace Yuki {
 Plugin::Plugin (std::string const& urn, std::string const& title, int id, QWidget* parent):
 	Haruhi::Plugin (urn, title, id, parent)
 {
-	_audio_out[0] = new Haruhi::AudioPort (this, "Ouput 1", Haruhi::Port::Output, 0, Haruhi::Port::StandardAudio);
-	_audio_out[1] = new Haruhi::AudioPort (this, "Ouput 2", Haruhi::Port::Output, 0, Haruhi::Port::StandardAudio);
-	_voice_in = new Haruhi::EventPort (this, "Voice control", Haruhi::Port::Input, 0, Haruhi::Port::ControlKeyboard);
-
 	_part_manager = new PartManager (this);
 	_part_manager_widget = new PartManagerWidget (this, _part_manager);
 	_part_manager->set_widget (_part_manager_widget);
@@ -51,10 +47,6 @@ Plugin::~Plugin()
 {
 	delete _part_manager_widget;
 	delete _part_manager;
-
-	delete _voice_in;
-	delete _audio_out[0];
-	delete _audio_out[1];
 }
 
 
@@ -76,14 +68,14 @@ void
 Plugin::process()
 {
 	clear_outputs();
-
-	// TODO handle input voice events
+	_part_manager->process();
 }
 
 
 void
 Plugin::panic()
 {
+	_part_manager->panic();
 }
 
 
@@ -91,6 +83,7 @@ void
 Plugin::graph_updated()
 {
 	Unit::graph_updated();
+	_part_manager->graph_updated();
 }
 
 } // namespace Yuki

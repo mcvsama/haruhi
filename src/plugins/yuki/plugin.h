@@ -19,10 +19,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/utility/id_allocator.h>
 #include <haruhi/plugin/plugin.h>
-#include <haruhi/graph/audio_port.h>
-#include <haruhi/graph/event_port.h>
 
 
 namespace Yuki {
@@ -66,10 +63,6 @@ class Plugin: public Haruhi::Plugin
 	PartManager*		_part_manager;
 	PartManagerWidget*	_part_manager_widget;
 	WaveComputer*		_wave_computer;
-
-	// Ports (0 = L, 1 = R):
-	Haruhi::AudioPort*	_audio_out[2];
-	Haruhi::EventPort*	_voice_in;
 };
 
 } // namespace Yuki

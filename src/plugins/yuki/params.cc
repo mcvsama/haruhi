@@ -50,6 +50,7 @@ Params::MainControls::MainControls():
 	HARUHI_YUKI_CONSTRUCT (detune, Detune),
 	HARUHI_YUKI_CONSTRUCT (panorama, Panorama),
 	HARUHI_YUKI_CONSTRUCT (stereo_width, StereoWidth),
+	enabled (0, 1, 1, "enabled"),
 	polyphony (0, 512, 32, "polyphony")
 {
 }
@@ -60,6 +61,7 @@ HARUHI_YUKI_DEFINE_PARAMS (MainControls)
 	HARUHI_YUKI_DEFINE_PARAM (detune)
 	HARUHI_YUKI_DEFINE_PARAM (panorama)
 	HARUHI_YUKI_DEFINE_PARAM (stereo_width)
+	HARUHI_YUKI_DEFINE_PARAM (enabled)
 	HARUHI_YUKI_DEFINE_PARAM (polyphony)
 HARUHI_YUKI_FINISH_DEFINITION()
 
