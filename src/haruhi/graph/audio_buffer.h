@@ -57,6 +57,8 @@ class AudioBuffer: public Buffer
 	{
 		assert (other->type() == AudioBuffer::TYPE);
 		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
+		assert (begin() != 0);
+		assert (buf->begin() != 0);
 		assert (buf->size() == size());
 		SIMD::copy_buffer (begin(), buf->begin(), size());
 	}
@@ -94,6 +96,8 @@ class AudioBuffer: public Buffer
 	{
 		assert (other->type() == AudioBuffer::TYPE);
 		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
+		assert (begin() != 0);
+		assert (buf->begin() != 0);
 		assert (buf->size() == size());
 		SIMD::add_buffers (begin(), buf->begin(), size());
 	}
@@ -107,6 +111,8 @@ class AudioBuffer: public Buffer
 	{
 		assert (other->type() == AudioBuffer::TYPE);
 		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
+		assert (begin() != 0);
+		assert (buf->begin() != 0);
 		assert (buf->size() == size());
 		SIMD::add_buffers (begin(), buf->begin(), attenuate_other, size());
 	}
@@ -120,6 +126,8 @@ class AudioBuffer: public Buffer
 	{
 		assert (other->type() == AudioBuffer::TYPE);
 		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
+		assert (begin() != 0);
+		assert (buf->begin() != 0);
 		assert (buf->size() == size());
 		SIMD::sub_buffers (begin(), buf->begin(), size());
 	}
@@ -133,6 +141,8 @@ class AudioBuffer: public Buffer
 	{
 		assert (other->type() == AudioBuffer::TYPE);
 		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
+		assert (begin() != 0);
+		assert (buf->begin() != 0);
 		assert (buf->size() == size());
 		SIMD::multiply_buffers (begin(), buf->begin(), size());
 	}
