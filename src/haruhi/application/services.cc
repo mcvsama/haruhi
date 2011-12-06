@@ -16,6 +16,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -28,9 +29,26 @@
 
 namespace Haruhi {
 
-WorkPerformer*	Services::_hi_priority_work_performer;
-WorkPerformer*	Services::_lo_priority_work_performer;
-signed int		Services::_detected_cores;
+WorkPerformer*			Services::_hi_priority_work_performer;
+WorkPerformer*			Services::_lo_priority_work_performer;
+signed int				Services::_detected_cores;
+P::CallOutDispatcher*	Services::_call_out_dispatcher;
+
+
+namespace P {
+
+void
+CallOutDispatcher::customEvent (QEvent* event)
+{
+	Services::CallOutEvent* coe = dynamic_cast<Services::CallOutEvent*> (event);
+	if (coe)
+	{
+		coe->accept();
+		coe->call_out();
+	}
+}
+
+} // namespace P
 
 
 void
@@ -38,6 +56,7 @@ Services::initialize()
 {
 	_hi_priority_work_performer = new WorkPerformer (detected_cores());
 	_lo_priority_work_performer = new WorkPerformer (detected_cores());
+	_call_out_dispatcher = new P::CallOutDispatcher();
 }
 
 
@@ -46,6 +65,7 @@ Services::deinitialize()
 {
 	delete _hi_priority_work_performer;
 	delete _lo_priority_work_performer;
+	delete _call_out_dispatcher;
 }
 
 
@@ -68,6 +88,37 @@ Services::detected_cores()
 			++_detected_cores;
 	}
 	return _detected_cores;
+}
+
+
+std::vector<const char*>
+Services::features()
+{
+	std::vector<const char*> features;
+
+#ifdef HARUHI_SSE1
+	features.push_back ("SSE1");
+#endif
+#ifdef HARUHI_SSE2
+	features.push_back ("SSE2");
+#endif
+#ifdef HARUHI_SSE3
+	features.push_back ("SSE3");
+#endif
+#ifdef HARUHI_IEEE754
+	features.push_back ("IEEE754");
+#endif
+
+	return features;
+}
+
+
+Services::CallOutEvent*
+Services::call_out (boost::function<void()> callback)
+{
+	CallOutEvent* e = new CallOutEvent (callback);
+	QApplication::postEvent (_call_out_dispatcher, e);
+	return e;
 }
 
 } // namespace Haruhi

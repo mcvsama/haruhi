@@ -24,6 +24,7 @@
 
 // Local:
 #include <haruhi/config/version.h>
+#include <haruhi/application/services.h>
 #include <haruhi/utility/backtrace.h>
 
 #include "fail.h"
@@ -35,7 +36,7 @@ namespace Haruhi {
 void
 fail (int signum)
 {
-	std::vector<const char*> features = ::Haruhi::Haruhi::features();
+	std::vector<const char*> features = Services::features();
 	std::clog << "------------------------------------------------------------------------------------------------" << std::endl;
 	std::clog << "Haruhi died by signal. Please submit following bug report to http://haruhi.mulabs.org/report-bug" << std::endl << std::endl;
 	std::clog << "  signal: " << signum << std::endl;

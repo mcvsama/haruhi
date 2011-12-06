@@ -46,6 +46,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/application/haruhi.h>
+#include <haruhi/application/services.h>
 #include <haruhi/graph/audio_port.h>
 #include <haruhi/graph/event_port.h>
 
@@ -306,14 +307,14 @@ PortsConnector::remove_unit (Unit* unit)
 void
 PortsConnector::unit_registered (Unit*)
 {
-	call_out (boost::bind (&PortsConnector::graph_changed, this));
+	_call_outs.push_back (Services::call_out (boost::bind (&PortsConnector::graph_changed, this)));
 }
 
 
 void
 PortsConnector::unit_unregistered (Unit* unit)
 {
-	call_out (boost::bind (&PortsConnector::graph_changed, this));
+	_call_outs.push_back (Services::call_out (boost::bind (&PortsConnector::graph_changed, this)));
 	if (_external_units.find (unit) != _external_units.end())
 		_external_units.erase (unit);
 }
@@ -322,55 +323,57 @@ PortsConnector::unit_unregistered (Unit* unit)
 void
 PortsConnector::unit_retitled (Unit*)
 {
-	call_out (boost::bind (&PortsConnector::graph_changed, this));
+	_call_outs.push_back (Services::call_out (boost::bind (&PortsConnector::graph_changed, this)));
 }
 
 
 void
 PortsConnector::port_renamed (Port*)
 {
-	call_out (boost::bind (&PortsConnector::graph_changed, this));
+	_call_outs.push_back (Services::call_out (boost::bind (&PortsConnector::graph_changed, this)));
 }
 
 
 void
 PortsConnector::port_connected_to (Port*, Port*)
 {
-	call_out (boost::bind (&PortsConnector::graph_changed, this));
+	_call_outs.push_back (Services::call_out (boost::bind (&PortsConnector::graph_changed, this)));
 }
 
 
 void
 PortsConnector::port_disconnected_from (Port*, Port*)
 {
-	call_out (boost::bind (&PortsConnector::graph_changed, this));
+	_call_outs.push_back (Services::call_out (boost::bind (&PortsConnector::graph_changed, this)));
 }
 
 
 void
 PortsConnector::port_registered (Port*, Unit*)
 {
-	call_out (boost::bind (&PortsConnector::graph_changed, this));
+	_call_outs.push_back (Services::call_out (boost::bind (&PortsConnector::graph_changed, this)));
 }
 
 
 void
 PortsConnector::port_unregistered (Port*, Unit*)
 {
-	call_out (boost::bind (&PortsConnector::graph_changed, this));
+	_call_outs.push_back (Services::call_out (boost::bind (&PortsConnector::graph_changed, this)));
 }
 
 
 void
 PortsConnector::port_group_renamed (PortGroup*)
 {
-	call_out (boost::bind (&PortsConnector::graph_changed, this));
+	_call_outs.push_back (Services::call_out (boost::bind (&PortsConnector::graph_changed, this)));
 }
 
 
 void
 PortsConnector::graph_changed()
 {
+	remove_call_outs();
+
 	_unit_bay->graph()->lock();
 
 	_ipanel->list()->read_units();
@@ -384,22 +387,10 @@ PortsConnector::graph_changed()
 
 
 void
-PortsConnector::call_out (boost::function<void()> callback)
+PortsConnector::remove_call_outs()
 {
-	QApplication::removePostedEvents (this, Haruhi::CallOutEvent);
-	QApplication::postEvent (this, new Haruhi::CallOut (callback));
-}
-
-
-void
-PortsConnector::customEvent (QEvent* event)
-{
-	Haruhi::CallOut* co = dynamic_cast<Haruhi::CallOut*> (event);
-	if (co)
-	{
-		co->accept();
-		co->call_out();
-	}
+	for (CallOutEvents::size_type i = 0; i < _call_outs.size(); ++i)
+		_call_outs[i]->cancel();
 }
 
 

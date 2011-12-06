@@ -41,6 +41,7 @@ SRC_SOURCES += haruhi/application/main.cc
 SRC_SOURCES += haruhi/application/services.cc
 
 SRC_MOCHDRS += haruhi/application/haruhi.h
+SRC_MOCHDRS += haruhi/application/services.h
 
 ######## /components/audio_backend/transports ########
 

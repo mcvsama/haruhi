@@ -21,6 +21,7 @@
 // Haruhi:
 #include <haruhi/config/version.h>
 #include <haruhi/application/haruhi.h>
+#include <haruhi/application/services.h>
 #include <haruhi/application/fail.h>
 #include <haruhi/utility/backtrace.h>
 #include <haruhi/utility/fast_pow.h>
@@ -48,7 +49,7 @@ int main (int argc, char** argv, char** envp)
 			std::cout << "Commit: " << Haruhi::Version::commit << std::endl;
 			std::cout << "Branch: " << Haruhi::Version::branch << std::endl;
 			std::clog << "Features: ";
-			std::vector<const char*> features = ::Haruhi::Haruhi::features();
+			std::vector<const char*> features = Haruhi::Services::features();
 			std::copy (features.begin(), features.end(), std::ostream_iterator<const char*> (std::clog, " "));
 			std::clog << std::endl;
 		}

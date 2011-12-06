@@ -118,35 +118,6 @@ Haruhi::run_ui()
 }
 
 
-std::vector<const char*>
-Haruhi::features()
-{
-	std::vector<const char*> features;
-
-#ifdef HARUHI_SSE1
-	features.push_back ("SSE1");
-#endif
-#ifdef HARUHI_SSE2
-	features.push_back ("SSE2");
-#endif
-#ifdef HARUHI_SSE3
-	features.push_back ("SSE3");
-#endif
-#ifdef HARUHI_IEEE754
-	features.push_back ("IEEE754");
-#endif
-
-	return features;
-}
-
-
-void
-Haruhi::call_out (boost::function<void()> callback)
-{
-	QApplication::postEvent (this, new CallOut (callback));
-}
-
-
 void
 Haruhi::session_loader()
 {
@@ -176,18 +147,6 @@ Haruhi::quit_if_ok()
 {
 	if (_ok_to_quit)
 		_app->quit();
-}
-
-
-void
-Haruhi::customEvent (QEvent* event)
-{
-	CallOut* co = dynamic_cast<CallOut*> (event);
-	if (co)
-	{
-		co->accept();
-		co->call_out();
-	}
 }
 
 } // namespace Haruhi

@@ -16,6 +16,12 @@
 
 // Standard:
 #include <cstddef>
+#include <vector>
+#include <map>
+#include <set>
+
+// Lib:
+#include <boost/function.hpp>
 
 // Qt:
 #include <QtGui/QWidget>
@@ -31,6 +37,7 @@
 
 // Haruhi:
 #include <haruhi/application/haruhi.h>
+#include <haruhi/application/services.h>
 #include <haruhi/graph/predicates.h>
 #include <haruhi/session/unit_bay.h>
 #include <haruhi/utility/signal.h>
@@ -63,6 +70,7 @@ class PortsConnector:
 	typedef std::set<Unit*> UnitsSet;
 	typedef std::set<PortsConnectorPrivate::PortItem*> PortItems;
 	typedef std::map<Port*, PortsConnectorPrivate::PortItem*> PortsToItemsMap;
+	typedef std::vector<Services::CallOutEvent*> CallOutEvents;
 
   public:
 	typedef PortsConnectorPrivate::Connector	Connector;
@@ -114,7 +122,7 @@ class PortsConnector:
 	void
 	list_view_moved();
 
-  	void
+	void
 	list_view_changed();
 
 	void
@@ -179,15 +187,12 @@ class PortsConnector:
 	graph_changed();
 
 	/**
-	 * Registers given callback to be called from within main Qt event queue.
+	 * Remove all created callouts.
 	 */
 	void
-	call_out (boost::function<void()> callback);
+	remove_call_outs();
 
   private:
-	void
-	customEvent (QEvent*);
-
 	template<class Port>
 		inline void
 		operate_on_ports (PortsConnectorPrivate::Operation operation, Port* oport, Port* iport);
@@ -249,6 +254,7 @@ class PortsConnector:
 	PortsToItemsMap						_ports_to_items;		// Maps ports to items in lists.
 	PortItems							_highlighted_items;		// Currently highlighted items set.
 	bool								_highlight_connected;	// Perform highlighting?
+	CallOutEvents						_call_outs;
 };
 
 } // namespace Haruhi
