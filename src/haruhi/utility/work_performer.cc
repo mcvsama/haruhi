@@ -19,8 +19,9 @@
 #include "work_performer.h"
 
 
-WorkPerformer::Performer::Performer (WorkPerformer* work_performer):
-	_work_performer (work_performer)
+WorkPerformer::Performer::Performer (WorkPerformer* work_performer, unsigned int thread_id):
+	_work_performer (work_performer),
+	_thread_id (thread_id)
 {
 	// 128k stack should be sufficient for most operations:
 	set_stack_size (128 * 1024);
@@ -34,6 +35,7 @@ WorkPerformer::Performer::run()
 	while ((unit = _work_performer->take_unit()))
 	{
 		unit->_is_ready.store (false);
+		unit->_thread_id = _thread_id;
 		unit->execute();
 		unit->_is_ready.store (true);
 		unit->_wait_sem.post();
@@ -47,7 +49,7 @@ WorkPerformer::WorkPerformer (unsigned int threads_number)
 
 	for (unsigned int i = 0; i < threads_number; ++i)
 	{
-		Performer* p = new Performer (this);
+		Performer* p = new Performer (this, i);
 		_performers.push_back (p);
 		p->start();
 	}
@@ -56,9 +58,9 @@ WorkPerformer::WorkPerformer (unsigned int threads_number)
 
 WorkPerformer::~WorkPerformer()
 {
-	for (std::list<Performer*>::size_type i = 0; i < _performers.size(); ++i)
+	for (std::vector<Performer*>::size_type i = 0; i < _performers.size(); ++i)
 		_queue_semaphore.post();
-	for (std::list<Performer*>::iterator p = _performers.begin(); p != _performers.end(); ++p)
+	for (std::vector<Performer*>::iterator p = _performers.begin(); p != _performers.end(); ++p)
 	{
 		(*p)->wait();
 		delete *p;
@@ -79,7 +81,7 @@ WorkPerformer::add (Unit* unit)
 void
 WorkPerformer::set_sched (Thread::SchedType sched_type, int priority)
 {
-	for (std::list<Performer*>::iterator p = _performers.begin(); p != _performers.end(); ++p)
+	for (std::vector<Performer*>::iterator p = _performers.begin(); p != _performers.end(); ++p)
 		(*p)->set_sched (sched_type, priority);
 }
 

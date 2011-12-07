@@ -40,13 +40,14 @@ class WorkPerformer: private Noncopyable
 	class Performer: public Thread
 	{
 	  public:
-		Performer (WorkPerformer*);
+		Performer (WorkPerformer*, unsigned int thread_id);
 
 		void
 		run();
 
 	  private:
-		WorkPerformer* _work_performer;
+		WorkPerformer*	_work_performer;
+		unsigned int	_thread_id;
 	};
 
   public:
@@ -82,9 +83,17 @@ class WorkPerformer: private Noncopyable
 		void
 		wait() { _wait_sem.wait(); }
 
+		/**
+		 * Return thread ID, which is a number between 0 and threads_num-1.
+		 * Tells to which executing thread this work unit has been assigned.
+		 */
+		unsigned int
+		thread_id() const { return _thread_id; }
+
 	  private:
 		Atomic<bool>	_is_ready;
 		Semaphore		_wait_sem;
+		unsigned int	_thread_id;
 	};
 
   private:
@@ -93,6 +102,10 @@ class WorkPerformer: private Noncopyable
 	friend class Performer;
 
   public:
+	/**
+	 * Create WorkPerformer with given number of threads.
+	 * The number of threads never changes.
+	 */
 	WorkPerformer (unsigned int threads_number);
 
 	/**
@@ -113,6 +126,12 @@ class WorkPerformer: private Noncopyable
 	 */
 	void
 	set_sched (Thread::SchedType, int priority);
+
+	/**
+	 * Return number of threads created.
+	 */
+	unsigned int
+	threads_number() const { return _performers.size(); }
 
 	/**
 	 * Unit adaptor.
@@ -148,7 +167,7 @@ class WorkPerformer: private Noncopyable
 	Units					_queue;
 	Mutex					_queue_mutex;
 	Semaphore				_queue_semaphore;
-	std::list<Performer*>	_performers;
+	std::vector<Performer*>	_performers;
 };
 
 #endif
