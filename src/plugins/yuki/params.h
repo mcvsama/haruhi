@@ -139,9 +139,30 @@ struct Params
 	{
 		HARUHI_YUKI_PARAMS_STANDARD_METHODS (Part)
 
-		Haruhi::Param<int> enabled;
+		HARUHI_YUKI_PARAM (Volume,					       0,	+1000000,	+1000000,	 +938445) // -1.5dB/20*log_10/exp
+		HARUHI_YUKI_PARAM (PortamentoTime,			       0,	+1000000,	 +100000,	       0)
+		HARUHI_YUKI_PARAM (Phase,					-1000000,	+1000000,	+1000000,	       0)
+		HARUHI_YUKI_PARAM (NoiseLevel,				       0,	+1000000,	+1000000,	       0)
 
-		static const int NUM_PARAMS = 1;
+		Haruhi::ControllerParam volume;
+		Haruhi::ControllerParam portamento_time;
+		Haruhi::ControllerParam phase;
+		Haruhi::ControllerParam noise_level;
+
+		Haruhi::Param<int> part_enabled;
+		Haruhi::Param<int> wave_enabled;
+		Haruhi::Param<int> noise_enabled;
+		Haruhi::Param<int> frequency_mod_range;
+		Haruhi::Param<int> pitchbend_enabled;
+		Haruhi::Param<int> pitchbend_released;
+		Haruhi::Param<int> pitchbend_up_semitones;
+		Haruhi::Param<int> pitchbend_down_semitones;
+		Haruhi::Param<int> transposition_semitones;
+		Haruhi::Param<int> const_portamento_time;
+		Haruhi::Param<int> unison_stereo;
+		Haruhi::Param<int> pseudo_stereo;
+
+		static const int NUM_PARAMS = 16;
 	};
 
 	/**
@@ -174,38 +195,6 @@ struct Params
 		Haruhi::Param<int> phases[HarmonicsNumber];
 
 		static const int NUM_PARAMS = 7 + HarmonicsNumber + HarmonicsNumber;
-	};
-
-	/**
-	 * Part-specific params.
-	 */
-	struct Oscillator: public SaveableParams<Oscillator>
-	{
-		HARUHI_YUKI_PARAMS_STANDARD_METHODS (Oscillator)
-
-		HARUHI_YUKI_PARAM (Volume,					       0,	+1000000,	+1000000,	 +938445) // -1.5dB/20*log_10/exp
-		HARUHI_YUKI_PARAM (PortamentoTime,			       0,	+1000000,	 +100000,	       0)
-		HARUHI_YUKI_PARAM (Phase,					-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (NoiseLevel,				       0,	+1000000,	+1000000,	       0)
-
-		Haruhi::ControllerParam volume;
-		Haruhi::ControllerParam portamento_time;
-		Haruhi::ControllerParam phase;
-		Haruhi::ControllerParam noise_level;
-
-		Haruhi::Param<int> wave_enabled;
-		Haruhi::Param<int> noise_enabled;
-		Haruhi::Param<int> frequency_mod_range;
-		Haruhi::Param<int> pitchbend_enabled;
-		Haruhi::Param<int> pitchbend_released;
-		Haruhi::Param<int> pitchbend_up_semitones;
-		Haruhi::Param<int> pitchbend_down_semitones;
-		Haruhi::Param<int> transposition_semitones;
-		Haruhi::Param<int> const_portamento_time;
-		Haruhi::Param<int> unison_stereo;
-		Haruhi::Param<int> pseudo_stereo;
-
-		static const int NUM_PARAMS = 15;
 	};
 
 	/**
