@@ -29,7 +29,7 @@ namespace Yuki {
 
 Part::Part (PartManager* part_manager, WorkPerformer* work_performer):
 	_part_manager (part_manager),
-	_voice_manager (new VoiceManager (work_performer))
+	_voice_manager (new VoiceManager (&_params, work_performer))
 {
 	// Initially resize buffers:
 	graph_updated();
@@ -53,7 +53,7 @@ Part::wave_computer() const
 void
 Part::handle_voice_event (Haruhi::VoiceEvent const* event)
 {
-	if (_params.enabled.get())
+	if (_params.part_enabled.get())
 		_voice_manager->handle_voice_event (event);
 }
 

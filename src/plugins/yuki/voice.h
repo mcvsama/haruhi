@@ -21,6 +21,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/graph/event.h>
+#include <haruhi/dsp/ramp_smoother.h>
 
 // Local:
 #include "params.h"
@@ -47,12 +48,12 @@ class Voice
 		void
 		graph_updated (unsigned int sample_rate, std::size_t buffer_size);
 
-		Haruhi::AudioBuffer output_1;
-		Haruhi::AudioBuffer output_2;
+		Haruhi::AudioBuffer amplitude_buf;
+		Haruhi::AudioBuffer frequency_buf;
 	};
 
   public:
-	Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp, unsigned int sample_rate, std::size_t buffer_size);
+	Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp, Params::Part* part_params, Sample amplitude, Sample frequency, unsigned int sample_rate, std::size_t buffer_size);
 
 	/**
 	 * Return voice's ID which came in Haruhi::VoiceEvent.
@@ -98,6 +99,12 @@ class Voice
 	void
 	graph_updated (unsigned int sample_rate, std::size_t buffer_size);
 
+	/**
+	 * RW accessor to Voice params.
+	 */
+	Params::Voice*
+	params() { return &_params; }
+
   public:
 	/**
 	 * Return older from the two voices by comparing
@@ -116,9 +123,24 @@ class Voice
 	Haruhi::Timestamp	_timestamp;
 	State				_state;
 	Params::Voice		_params;
+	Params::Part*		_part_params;
+	Sample				_amplitude;
+	Sample				_frequency;
+	unsigned int		_sample_rate;
+	std::size_t			_buffer_size;
+
 	VoiceOscillator		_vosc;
+
 	Haruhi::AudioBuffer	_output_1;
 	Haruhi::AudioBuffer	_output_2;
+
+	// Smoothers:
+	DSP::RampSmoother	_smoother_amplitude;
+	DSP::RampSmoother	_smoother_frequency;
+	DSP::RampSmoother	_smoother_pitchbend;
+	DSP::RampSmoother	_smoother_panorama_1;
+	DSP::RampSmoother	_smoother_panorama_2;
+
 };
 
 } // namespace Yuki

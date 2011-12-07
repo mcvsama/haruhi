@@ -27,6 +27,7 @@
 
 // Local:
 #include "voice.h"
+#include "params.h"
 
 
 namespace Yuki {
@@ -59,7 +60,7 @@ class VoiceManager
 	};
 
   public:
-	VoiceManager (WorkPerformer*);
+	VoiceManager (Params::Part*, WorkPerformer*);
 
 	~VoiceManager();
 
@@ -152,6 +153,7 @@ class VoiceManager
 
   private:
 	WorkPerformer*		_work_performer;
+	Params::Part*		_part_params;
 	Voices				_voices;
 	WorkUnits			_work_units;
 	ID2VoiceMap			_voices_by_id;

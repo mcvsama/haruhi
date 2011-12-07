@@ -46,7 +46,7 @@ VoiceManager::RenderWorkUnit::mix_result (Haruhi::AudioBuffer* output_1, Haruhi:
 }
 
 
-VoiceManager::VoiceManager (WorkPerformer* work_performer):
+VoiceManager::VoiceManager (Params::Part* part_params, WorkPerformer* work_performer):
 	_work_performer (work_performer),
 	_sample_rate (0),
 	_buffer_size (0),
@@ -77,7 +77,8 @@ VoiceManager::handle_voice_event (Haruhi::VoiceEvent const* event)
 		delete find_voice_by_id (event->voice_id());
 
 		Haruhi::VoiceID id = event->voice_id();
-		_voices_by_id[id] = _voices.insert (new Voice (id, event->timestamp(), _sample_rate, _buffer_size)).first;
+		Voice* v = new Voice (id, event->timestamp(), _part_params, event->value(), event->frequency() / _sample_rate, _sample_rate, _buffer_size);
+		_voices_by_id[id] = _voices.insert (v).first;
 		_active_voices_number++;
 
 		check_polyphony_limit();

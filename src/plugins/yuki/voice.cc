@@ -26,15 +26,20 @@ namespace Yuki {
 void
 Voice::SharedResources::graph_updated (unsigned int, std::size_t buffer_size)
 {
-	output_1.resize (buffer_size);
-	output_2.resize (buffer_size);
+	amplitude_buf.resize (buffer_size);
+	frequency_buf.resize (buffer_size);
 }
 
 
-Voice::Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp, unsigned int sample_rate, std::size_t buffer_size):
+Voice::Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp, Params::Part* part_params, Sample amplitude, Sample frequency, unsigned int sample_rate, std::size_t buffer_size):
 	_id (id),
 	_timestamp (timestamp),
-	_state (NotStarted)
+	_state (NotStarted),
+	_part_params (part_params),
+	_amplitude (amplitude),
+	_frequency (frequency),
+	_sample_rate (sample_rate),
+	_buffer_size (buffer_size)
 {
 	_state = Voicing;
 
@@ -52,9 +57,21 @@ Voice::drop()
 bool
 Voice::render (SharedResources* res)
 {
-	_output_1[0] = +0.1;
-	_output_2[0] = -0.1;
-	return true;
+	// Setup VoiceOscillator:
+	_vosc.set_amplitude_source (&res->amplitude_buf);
+	_vosc.set_frequency_source (&res->frequency_buf);
+	_vosc.set_phase (_part_params->phase.to_f());
+	_vosc.set_initial_phases_spread (_params.unison_init.to_f());
+
+	// Setup smoothers for 5ms/50ms. Response time must be independent from sample rate.
+	_smoother_amplitude.set_samples (0.005f * _sample_rate);
+	_smoother_frequency.set_samples (0.005f * _sample_rate);
+	_smoother_pitchbend.set_samples (0.05f * _sample_rate);
+	_smoother_panorama_1.set_samples (0.005f * _sample_rate);
+	_smoother_panorama_2.set_samples (0.005f * _sample_rate);
+
+	// TODO
+	return false;
 }
 
 
@@ -67,8 +84,11 @@ Voice::mix_result (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2)
 
 
 void
-Voice::graph_updated (unsigned int, std::size_t buffer_size)
+Voice::graph_updated (unsigned int sample_rate, std::size_t buffer_size)
 {
+	_sample_rate = sample_rate;
+	_buffer_size = buffer_size;
+
 	_output_1.resize (buffer_size);
 	_output_2.resize (buffer_size);
 }
