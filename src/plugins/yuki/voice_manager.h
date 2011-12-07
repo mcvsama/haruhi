@@ -156,6 +156,8 @@ class VoiceManager
 	WorkUnits			_work_units;
 	ID2VoiceMap			_voices_by_id;
 	SharedResourcesVec	_shared_resources_vec;
+	unsigned int		_sample_rate;
+	std::size_t			_buffer_size;
 	Haruhi::AudioBuffer	_output_1;
 	Haruhi::AudioBuffer	_output_2;
 	unsigned int		_active_voices_number;

@@ -36,7 +36,7 @@ typedef std::set<Voice*> Voices;
 class Voice
 {
   public:
-	enum State { NotStarted, Voicing, Dropped, Finished };
+	enum State { NotStarted, Attacking, Voicing, Dropped, Finished };
 
 	/**
 	 * Shared buffers for each thread of the RT work performer.
@@ -52,7 +52,7 @@ class Voice
 	};
 
   public:
-	Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp);
+	Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp, unsigned int sample_rate, std::size_t buffer_size);
 
 	/**
 	 * Return voice's ID which came in Haruhi::VoiceEvent.
@@ -80,11 +80,17 @@ class Voice
 	drop();
 
 	/**
-	 * Synthesize voice and fill output buffers output_{1,2} in SharedResources object.
+	 * Render voice.
 	 * \return	true if something were actually synthesized, false otherwise.
 	 */
 	bool
 	render (SharedResources*);
+
+	/**
+	 * Mix rendered voice into given buffers.
+	 */
+	void
+	mix_result (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2) const;
 
 	/**
 	 * Update buffers sizes.
@@ -111,6 +117,8 @@ class Voice
 	State				_state;
 	Params::Voice		_params;
 	VoiceOscillator		_vosc;
+	Haruhi::AudioBuffer	_output_1;
+	Haruhi::AudioBuffer	_output_2;
 };
 
 } // namespace Yuki

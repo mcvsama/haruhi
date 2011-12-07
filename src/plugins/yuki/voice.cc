@@ -31,12 +31,14 @@ Voice::SharedResources::graph_updated (unsigned int, std::size_t buffer_size)
 }
 
 
-Voice::Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp):
+Voice::Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp, unsigned int sample_rate, std::size_t buffer_size):
 	_id (id),
 	_timestamp (timestamp),
 	_state (NotStarted)
 {
 	_state = Voicing;
+
+	graph_updated (sample_rate, buffer_size);
 }
 
 
@@ -50,13 +52,25 @@ Voice::drop()
 bool
 Voice::render (SharedResources* res)
 {
-	return false;
+	_output_1[0] = +0.1;
+	_output_2[0] = -0.1;
+	return true;
 }
 
 
 void
-Voice::graph_updated (unsigned int sample_rate, std::size_t buffer_size)
+Voice::mix_result (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2) const
 {
+	output_1->mixin (&_output_1);
+	output_2->mixin (&_output_2);
+}
+
+
+void
+Voice::graph_updated (unsigned int, std::size_t buffer_size)
+{
+	_output_1.resize (buffer_size);
+	_output_2.resize (buffer_size);
 }
 
 } // namespace Yuki
