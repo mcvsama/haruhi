@@ -23,22 +23,32 @@
 
 namespace Yuki {
 
+void
+Voice::SharedResources::graph_updated (unsigned int, std::size_t buffer_size)
+{
+	output_1.resize (buffer_size);
+	output_2.resize (buffer_size);
+}
+
+
 Voice::Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp):
 	_id (id),
 	_timestamp (timestamp),
 	_state (NotStarted)
 {
+	_state = Voicing;
 }
 
 
 void
 Voice::drop()
 {
+	_state = Finished;
 }
 
 
 bool
-Voice::render (Haruhi::AudioBuffer*, Haruhi::AudioBuffer*)
+Voice::render (SharedResources* res)
 {
 	return false;
 }

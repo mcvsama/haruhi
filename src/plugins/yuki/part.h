@@ -42,7 +42,7 @@ class Part:
 	public HasID
 {
   public:
-	Part (PartManager* part_manager);
+	Part (PartManager*, WorkPerformer*);
 
 	~Part();
 
@@ -80,10 +80,9 @@ class Part:
 
 	/**
 	 * Start voices rendering.
-	 * Use given WorkPerformer object.
 	 */
 	void
-	render (WorkPerformer*);
+	render();
 
 	/**
 	 * Wait until voice rendering is done.

@@ -27,9 +27,9 @@
 
 namespace Yuki {
 
-Part::Part (PartManager* part_manager):
+Part::Part (PartManager* part_manager, WorkPerformer* work_performer):
 	_part_manager (part_manager),
-	_voice_manager (new VoiceManager())
+	_voice_manager (new VoiceManager (work_performer))
 {
 	// Initially resize buffers:
 	graph_updated();
@@ -81,9 +81,9 @@ Part::graph_updated()
 
 
 void
-Part::render (WorkPerformer* work_performer)
+Part::render()
 {
-	_voice_manager->render (work_performer);
+	_voice_manager->render();
 }
 
 

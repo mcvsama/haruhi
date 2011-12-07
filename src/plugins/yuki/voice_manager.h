@@ -36,11 +36,30 @@ namespace Yuki {
  */
 class VoiceManager
 {
+	class RenderWorkUnit;
+
 	typedef std::map<Haruhi::VoiceID, Voices::iterator> ID2VoiceMap;
-	typedef std::vector<WorkPerformer::Unit*> WorkUnits;
+	typedef std::vector<RenderWorkUnit*> WorkUnits;
+	typedef std::vector<Voice::SharedResources*> SharedResourcesVec;
+
+	class RenderWorkUnit: public WorkPerformer::Unit
+	{
+	  public:
+		RenderWorkUnit (Voice* voice, SharedResourcesVec& resources_vec);
+
+		void
+		execute();
+
+		void
+		mix_result (Haruhi::AudioBuffer*, Haruhi::AudioBuffer*) const;
+
+	  private:
+		Voice*				_voice;
+		SharedResourcesVec&	_resources_vec;
+	};
 
   public:
-	VoiceManager();
+	VoiceManager (WorkPerformer*);
 
 	~VoiceManager();
 
@@ -88,13 +107,13 @@ class VoiceManager
 	 * Start rendering of all voices.
 	 *
 	 * This function is non-blocking. It will create a WorkUnit
-	 * and pass it to given WorkPerformer.
+	 * and pass it to configured WorkPerformer.
 	 *
 	 * Use wait_for_render() to wait until rendering is done.
 	 * Use mix_result() to mix rendered voices into given output buffers.
 	 */
 	void
-	render (WorkPerformer*);
+	render();
 
 	/**
 	 * Block until rendering is done.
@@ -131,22 +150,14 @@ class VoiceManager
 	void
 	kill_voices();
 
-	/**
-	 * Render given voice into temporary buffers and add result to the output buffers.
-	 */
-	static void
-	render_voice (Voice* voice,
-				  Haruhi::AudioBuffer* tmp1, Haruhi::AudioBuffer* tmp2,
-				  Haruhi::AudioBuffer* out1, Haruhi::AudioBuffer* out2);
-
   private:
+	WorkPerformer*		_work_performer;
 	Voices				_voices;
 	WorkUnits			_work_units;
 	ID2VoiceMap			_voices_by_id;
-	Haruhi::AudioBuffer	_tmp_voice_buf1;
-	Haruhi::AudioBuffer	_tmp_voice_buf2;
-	Haruhi::AudioBuffer	_tmp_mixed_buf1;
-	Haruhi::AudioBuffer	_tmp_mixed_buf2;
+	SharedResourcesVec	_shared_resources_vec;
+	Haruhi::AudioBuffer	_output_1;
+	Haruhi::AudioBuffer	_output_2;
 	unsigned int		_active_voices_number;
 	unsigned int		_max_polyphony;
 };

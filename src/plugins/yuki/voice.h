@@ -38,6 +38,19 @@ class Voice
   public:
 	enum State { NotStarted, Voicing, Dropped, Finished };
 
+	/**
+	 * Shared buffers for each thread of the RT work performer.
+	 * Used by Voices that are being synthesized.
+	 */
+	struct SharedResources
+	{
+		void
+		graph_updated (unsigned int sample_rate, std::size_t buffer_size);
+
+		Haruhi::AudioBuffer output_1;
+		Haruhi::AudioBuffer output_2;
+	};
+
   public:
 	Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp);
 
@@ -67,11 +80,11 @@ class Voice
 	drop();
 
 	/**
-	 * Synthesize voice and fill output buffers.
-	 * \return	true if buffers were modified, false otherwise.
+	 * Synthesize voice and fill output buffers output_{1,2} in SharedResources object.
+	 * \return	true if something were actually synthesized, false otherwise.
 	 */
 	bool
-	render (Haruhi::AudioBuffer*, Haruhi::AudioBuffer*);
+	render (SharedResources*);
 
 	/**
 	 * Update buffers sizes.

@@ -15,9 +15,6 @@
 #include <cstddef>
 #include <algorithm>
 
-// Lib:
-#include <boost/bind.hpp>
-
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/memory.h>
@@ -29,15 +26,44 @@
 
 namespace Yuki {
 
-VoiceManager::VoiceManager():
+VoiceManager::RenderWorkUnit::RenderWorkUnit (Voice* voice, SharedResourcesVec& resources_vec):
+	_voice (voice),
+	_resources_vec (resources_vec)
+{ }
+
+
+void
+VoiceManager::RenderWorkUnit::execute()
+{
+	_voice->render (_resources_vec[thread_id()]);
+}
+
+
+void
+VoiceManager::RenderWorkUnit::mix_result (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2) const
+{
+	Voice::SharedResources const* sh = _resources_vec[thread_id()];
+	output_1->mixin (&sh->output_1);
+	output_2->mixin (&sh->output_2);
+}
+
+
+VoiceManager::VoiceManager (WorkPerformer* work_performer):
+	_work_performer (work_performer),
 	_active_voices_number (0),
 	_max_polyphony (0)
-{ }
+{
+	for (unsigned int i = 0; i < _work_performer->threads_number(); ++i)
+		_shared_resources_vec.push_back (new Voice::SharedResources());
+}
 
 
 VoiceManager::~VoiceManager()
 {
 	kill_voices();
+
+	for (unsigned int i = 0; i < _work_performer->threads_number(); ++i)
+		delete _shared_resources_vec[i];
 }
 
 
@@ -80,10 +106,11 @@ VoiceManager::panic()
 void
 VoiceManager::graph_updated (unsigned int sample_rate, std::size_t buffer_size)
 {
-	_tmp_voice_buf1.resize (buffer_size);
-	_tmp_voice_buf2.resize (buffer_size);
-	_tmp_mixed_buf1.resize (buffer_size);
-	_tmp_mixed_buf2.resize (buffer_size);
+	_output_1.resize (buffer_size);
+	_output_2.resize (buffer_size);
+
+	for (SharedResourcesVec::iterator s = _shared_resources_vec.begin(); s != _shared_resources_vec.end(); ++s)
+		(*s)->graph_updated (sample_rate, buffer_size);
 
 	for (Voices::iterator v = _voices.begin(); v != _voices.end(); ++v)
 		(*v)->graph_updated (sample_rate, buffer_size);
@@ -91,31 +118,29 @@ VoiceManager::graph_updated (unsigned int sample_rate, std::size_t buffer_size)
 
 
 void
-VoiceManager::render (WorkPerformer* work_performer)
+VoiceManager::render()
 {
 	assert (_work_units.empty());
 
-	_tmp_mixed_buf1.clear();
-	_tmp_mixed_buf2.clear();
-
 	for (Voices::iterator v = _voices.begin(); v != _voices.end(); ++v)
-	{
-		WorkPerformer::Unit* wu = WorkPerformer::make_unit (boost::bind (VoiceManager::render_voice, *v,
-																		 &_tmp_voice_buf1, &_tmp_voice_buf2,
-																		 &_tmp_mixed_buf1, &_tmp_mixed_buf2));
-		_work_units.push_back (wu);
-	}
+		_work_units.push_back (new RenderWorkUnit (*v, _shared_resources_vec));
 
 	for (WorkUnits::size_type i = 0, n = _work_units.size(); i < n; ++i)
-		work_performer->add (_work_units[i]);
+		_work_performer->add (_work_units[i]);
 }
 
 
 void
 VoiceManager::wait_for_render()
 {
+	_output_1.clear();
+	_output_2.clear();
+
 	for (WorkUnits::size_type i = 0, n = _work_units.size(); i < n; ++i)
+	{
 		_work_units[i]->wait();
+		_work_units[i]->mix_result (&_output_1, &_output_2);
+	}
 
 	std::for_each (_work_units.begin(), _work_units.end(), delete_operator<WorkPerformer::Unit*>);
 	_work_units.clear();
@@ -128,8 +153,8 @@ VoiceManager::mix_rendering_result (Haruhi::AudioBuffer* b1, Haruhi::AudioBuffer
 	assert (b1 != 0);
 	assert (b2 != 0);
 
-	b1->add (&_tmp_mixed_buf1);
-	b2->add (&_tmp_mixed_buf2);
+	b1->add (&_output_1);
+	b2->add (&_output_2);
 
 	for (Voices::iterator v = _voices.begin(); v != _voices.end(); )
 	{
@@ -182,19 +207,6 @@ VoiceManager::kill_voices()
 	std::for_each (_voices.begin(), _voices.end(), delete_operator<Voice*>);
 	_voices.clear();
 	_voices_by_id.clear();
-}
-
-
-void
-VoiceManager::render_voice (Voice* voice,
-							Haruhi::AudioBuffer* tmp1, Haruhi::AudioBuffer* tmp2,
-							Haruhi::AudioBuffer* mix1, Haruhi::AudioBuffer* mix2)
-{
-	if (voice->render (tmp1, tmp2))
-	{
-		mix1->add (tmp1);
-		mix2->add (tmp2);
-	}
 }
 
 } // namespace Yuki
