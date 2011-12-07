@@ -60,7 +60,7 @@ class Services
 	{
 	  public:
 		CallOutEvent (boost::function<void()> callback):
-			QEvent (static_cast<QEvent::Type> (QEvent::User)),
+			QEvent (QEvent::User),
 			_cancelled (false),
 			_callback (callback)
 		{ }

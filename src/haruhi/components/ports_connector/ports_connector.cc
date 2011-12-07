@@ -391,6 +391,7 @@ PortsConnector::remove_call_outs()
 {
 	for (CallOutEvents::size_type i = 0; i < _call_outs.size(); ++i)
 		_call_outs[i]->cancel();
+	_call_outs.clear();
 }
 
 
