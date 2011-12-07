@@ -59,6 +59,9 @@ class Plugin: public Haruhi::Plugin
 	void
 	graph_updated();
 
+	int
+	voices_number() const;
+
   private:
 	PartManager*		_part_manager;
 	PartManagerWidget*	_part_manager_widget;

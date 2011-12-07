@@ -103,5 +103,12 @@ Part::mix_rendering_result (Haruhi::AudioBuffer* b1, Haruhi::AudioBuffer* b2)
 	_voice_manager->mix_rendering_result (b1, b2);
 }
 
+
+unsigned int
+Part::voices_number() const
+{
+	return _voice_manager->current_voices_number();
+}
+
 } // namespace Yuki
 

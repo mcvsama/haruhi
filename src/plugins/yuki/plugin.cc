@@ -87,5 +87,15 @@ Plugin::graph_updated()
 	_part_manager->graph_updated();
 }
 
+
+int
+Plugin::voices_number() const
+{
+	unsigned int sum = 0;
+	for (Parts::iterator p = _part_manager->parts().begin(); p != _part_manager->parts().end(); ++p)
+		sum += (*p)->voices_number();
+	return sum;
+}
+
 } // namespace Yuki
 
