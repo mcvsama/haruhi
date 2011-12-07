@@ -33,6 +33,7 @@ Part::Part (PartManager* part_manager):
 {
 	// Initially resize buffers:
 	graph_updated();
+	_voice_manager->set_max_polyphony (64);
 }
 
 

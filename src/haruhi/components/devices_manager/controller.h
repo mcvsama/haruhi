@@ -134,11 +134,12 @@ class Controller: public SaveableState
 	int		smoothing;
 
   private:
-	QString							_name;
+	QString			_name;
 	// Used for value smoothing:
-	SmoothingParams					_controller_smoother;
-	SmoothingParams					_channel_pressure_smoother;
-	SmoothingParams					_key_pressure_smoother[128];
+	SmoothingParams	_controller_smoother;
+	SmoothingParams	_channel_pressure_smoother;
+	SmoothingParams	_key_pressure_smoother[128];
+	VoiceID			_voice_ids[128];
 };
 
 } // namespace DevicesManager

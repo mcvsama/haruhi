@@ -50,6 +50,8 @@ Controller::Controller (QString const& name):
 	smoothing (0),
 	_name (name)
 {
+	for (size_t i = 0; i < ARRAY_SIZE(_voice_ids); ++i)
+		_voice_ids[i] = 0;
 }
 
 
@@ -133,11 +135,13 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 		case MIDI::Event::NoteOn:
 			if (note_filter && (note_channel == 0 || note_channel == midi_event.note_on.channel + 1))
 			{
-				buffer.push (new VoiceEvent (t, midi_event.note_on.note, VoiceAuto,
-											 (midi_event.note_on.velocity == 0)? VoiceEvent::Release : VoiceEvent::Create,
-											 VoiceEvent::frequency_from_key_id (midi_event.note_on.note, graph->master_tune()),
-											 midi_event.note_on.velocity / 127.0f));
-				buffer.push (new VoiceControllerEvent (t, midi_event.note_on.note, midi_event.note_on.velocity / 127.0f));
+				float velocity = midi_event.note_on.velocity / 127.0f;
+				VoiceEvent* ve = new VoiceEvent (t, midi_event.note_on.note, VoiceAuto,
+												 (midi_event.note_on.velocity == 0)? VoiceEvent::Release : VoiceEvent::Create,
+												 VoiceEvent::frequency_from_key_id (midi_event.note_on.note, graph->master_tune()), velocity);
+				_voice_ids[midi_event.note_on.note] = ve->voice_id();
+				buffer.push (ve);
+				buffer.push (new VoiceControllerEvent (t, midi_event.note_on.note, velocity));
 				handled = true;
 			}
 			break;
@@ -145,10 +149,10 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 		case MIDI::Event::NoteOff:
 			if (note_filter && (note_channel == 0 || note_channel == midi_event.note_off.channel + 1))
 			{
+				float velocity = midi_event.note_off.velocity / 127.0f;
 				buffer.push (new VoiceControllerEvent (t, midi_event.note_off.note, midi_event.note_off.velocity / 127.0f));
-				buffer.push (new VoiceEvent (t, midi_event.note_off.note, VoiceAuto, VoiceEvent::Release,
-											 VoiceEvent::frequency_from_key_id (midi_event.note_off.note, graph->master_tune()),
-											 midi_event.note_off.velocity / 127.0f));
+				buffer.push (new VoiceEvent (t, midi_event.note_off.note, _voice_ids[midi_event.note_off.note], VoiceEvent::Release,
+											 VoiceEvent::frequency_from_key_id (midi_event.note_off.note, graph->master_tune()), velocity));
 				handled = true;
 			}
 			break;

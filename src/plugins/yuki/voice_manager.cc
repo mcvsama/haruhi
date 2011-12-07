@@ -154,7 +154,7 @@ VoiceManager::check_polyphony_limit()
 		Voice* oldest = 0;
 		for (Voices::iterator v = _voices.begin(); v != _voices.end(); ++v)
 		{
-			if (!(*v)->state() == Voice::Dropped)
+			if ((*v)->state() == Voice::Dropped || (*v)->state() == Voice::Finished)
 				continue;
 			oldest = oldest
 				? Voice::return_older (*v, oldest)
