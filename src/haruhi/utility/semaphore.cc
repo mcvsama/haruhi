@@ -22,7 +22,8 @@
 #include "semaphore.h"
 
 
-Semaphore::Semaphore (int value)
+Semaphore::Semaphore (int value):
+	_initial_value (value)
 {
 	::sem_init (&_semaphore, 0, value);
 }
@@ -31,6 +32,23 @@ Semaphore::Semaphore (int value)
 Semaphore::~Semaphore()
 {
 	::sem_destroy (&_semaphore);
+}
+
+
+void
+Semaphore::reset()
+{
+	::sem_destroy (&_semaphore);
+	::sem_init (&_semaphore, 0, _initial_value);
+}
+
+
+int
+Semaphore::value() const
+{
+	int result;
+	::sem_getvalue (&_semaphore, &result);
+	return result < 0 ? 0 : result;
 }
 
 

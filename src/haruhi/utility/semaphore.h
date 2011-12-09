@@ -32,6 +32,22 @@ class Semaphore
 	~Semaphore();
 
 	/**
+	 * Reset semaphore to initial value.
+	 * No thead should wait on semaphore at the moment
+	 * of the call.
+	 */
+	void
+	reset();
+
+	/**
+	 * Return semaphore value. If there are
+	 * threads waiting on a semaphore, it will still
+	 * return 0 instead of negative number.
+	 */
+	int
+	value() const;
+
+	/**
 	 * Locks semaphore.
 	 */
 	void
@@ -51,7 +67,8 @@ class Semaphore
 	post() const;
 
   private:
-	::sem_t mutable _semaphore;
+	::sem_t mutable	_semaphore;
+	int				_initial_value;
 };
 
 #endif
