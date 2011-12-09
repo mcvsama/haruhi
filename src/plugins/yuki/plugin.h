@@ -26,7 +26,6 @@ namespace Yuki {
 
 class PartManager;
 class PartManagerWidget;
-class WaveComputer;
 
 class Plugin: public Haruhi::Plugin
 {
@@ -36,9 +35,6 @@ class Plugin: public Haruhi::Plugin
 	Plugin (std::string const& urn, std::string const& title, int id, QWidget* parent);
 
 	virtual ~Plugin();
-
-	WaveComputer*
-	wave_computer() const { return _wave_computer; }
 
 	/*
 	 * Plugin implementation.
@@ -65,7 +61,6 @@ class Plugin: public Haruhi::Plugin
   private:
 	PartManager*		_part_manager;
 	PartManagerWidget*	_part_manager_widget;
-	WaveComputer*		_wave_computer;
 };
 
 } // namespace Yuki

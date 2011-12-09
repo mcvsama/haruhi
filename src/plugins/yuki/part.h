@@ -34,7 +34,6 @@ namespace Yuki {
 
 class PartWidget;
 class PartManager;
-class WaveComputer;
 class VoiceManager;
 
 class Part:
@@ -45,13 +44,6 @@ class Part:
 	Part (PartManager*, WorkPerformer*);
 
 	~Part();
-
-	/**
-	 * Return WaveComputer for this part.
-	 * Uses plugin's global WaveComputer.
-	 */
-	WaveComputer*
-	wave_computer() const;
 
 	/**
 	 * Handle voice input event.
