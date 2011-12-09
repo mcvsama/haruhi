@@ -23,8 +23,8 @@ WorkPerformer::Performer::Performer (WorkPerformer* work_performer, unsigned int
 	_work_performer (work_performer),
 	_thread_id (thread_id)
 {
-	// 128k stack should be sufficient for most operations:
-	set_stack_size (128 * 1024);
+	// 32k-words stack (128k on 32-bit, 256k on 64-bit system) should be sufficient for most operations:
+	set_stack_size (32 * sizeof (size_t) * 1024);
 }
 
 
