@@ -22,6 +22,9 @@
 #include <pthread.h>
 #include <errno.h>
 
+// Haruhi:
+#include <haruhi/utility/noncopyable.h>
+
 
 /**
  * MutexPermissionException
@@ -38,7 +41,7 @@ class MutexPermissionException: public std::runtime_error
 /**
  * OO-oriented mutex.
  */
-class Mutex
+class Mutex: private Noncopyable
 {
   public:
 	/**

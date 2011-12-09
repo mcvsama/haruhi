@@ -22,6 +22,9 @@
 // System:
 #include <pthread.h>
 
+// Haruhi:
+#include <haruhi/utility/noncopyable.h>
+
 
 /**
  * ConditionPermissionException
@@ -38,7 +41,7 @@ class ConditionPermissionException: public std::runtime_error
 /**
  * OO-oriented condition variable.
  */
-class Condition
+class Condition: private Noncopyable
 {
   public:
 	Condition();

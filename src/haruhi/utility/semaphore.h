@@ -20,11 +20,14 @@
 // System:
 #include <semaphore.h>
 
+// Haruhi:
+#include <haruhi/utility/noncopyable.h>
+
 
 /**
  * OO-oriented semaphore.
  */
-class Semaphore
+class Semaphore: private Noncopyable
 {
   public:
 	Semaphore (int value = 0);

@@ -28,7 +28,7 @@
  * of this type MUST be allocated on heap (using 'new' operator).
  * Explicit deletion of this object is permitted.
  */
-class RefCounted: public Noncopyable
+class RefCounted: private Noncopyable
 {
   public:
 	RefCounted():

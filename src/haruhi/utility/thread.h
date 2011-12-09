@@ -23,13 +23,14 @@
 // Haruhi:
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/atomic.h>
+#include <haruhi/utility/noncopyable.h>
 
 
 /**
  * Thread is created in "detached" state, that means it will
  * automatically free its resources after exit.
  */
-class Thread
+class Thread: private Noncopyable
 {
   public:
 	enum {
@@ -43,11 +44,6 @@ class Thread
 	};
 
 	typedef pthread_t ID;
-
-  private:
-	// Noncopyable:
-	Thread (Thread const&);
-	Thread& operator= (Thread const&);
 
   public:
 	Thread();

@@ -20,19 +20,20 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/utility/noncopyable.h>
 
 
 namespace Haruhi {
 
 namespace DSP {
 
-class Wave
+class Wave: private Noncopyable
 {
   public:
 	/**
 	 * \param	immutable should be true if function does not change shape
-	 * 			between calls to operator() without changing wave's parameters.
-	 * 			Typically true, but noise functions will set this to false.
+	 *			between calls to operator() without changing wave's parameters.
+	 *			Typically true, but noise functions will set this to false.
 	 */
 	Wave (bool immutable);
 
@@ -51,9 +52,9 @@ class Wave
 	 * Returns function's sample.
 	 * \param	phase is the phase in range [0, 1].
 	 * \param	frequency is the base frequency of the signal this sample will
-	 * 			be used in (this is for limiting bandwidth). This is absolute
-	 * 			frequency (in range [0..1]). If you want to get highest possible
-	 * 			bandwidth, pass 0.0.
+	 *			be used in (this is for limiting bandwidth). This is absolute
+	 *			frequency (in range [0..1]). If you want to get highest possible
+	 *			bandwidth, pass 0.0.
 	 */
 	virtual Sample
 	operator() (Sample register phase, Sample frequency) const = 0;
