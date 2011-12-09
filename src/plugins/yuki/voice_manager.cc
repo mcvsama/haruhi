@@ -50,6 +50,7 @@ VoiceManager::VoiceManager (Params::Part* part_params, WorkPerformer* work_perfo
 	_work_performer (work_performer),
 	_sample_rate (0),
 	_buffer_size (0),
+	_wavetable (0),
 	_active_voices_number (0),
 	_max_polyphony (0)
 {
@@ -78,6 +79,7 @@ VoiceManager::handle_voice_event (Haruhi::VoiceEvent const* event)
 
 		Haruhi::VoiceID id = event->voice_id();
 		Voice* v = new Voice (id, event->timestamp(), _part_params, event->value(), event->frequency() / _sample_rate, _sample_rate, _buffer_size);
+		v->set_wavetable (_wavetable);
 		_voices_by_id[id] = _voices.insert (v).first;
 		_active_voices_number++;
 
@@ -118,6 +120,16 @@ VoiceManager::graph_updated (unsigned int sample_rate, std::size_t buffer_size)
 
 	for (Voices::iterator v = _voices.begin(); v != _voices.end(); ++v)
 		(*v)->graph_updated (sample_rate, buffer_size);
+}
+
+
+void
+VoiceManager::set_wavetable (DSP::Wavetable* wavetable)
+{
+	_wavetable = wavetable;
+
+	for (Voices::iterator v = _voices.begin(); v != _voices.end(); ++v)
+		(*v)->set_wavetable (_wavetable);
 }
 
 

@@ -96,6 +96,12 @@ class VoiceManager
 	graph_updated (unsigned int sample_rate, std::size_t buffer_size);
 
 	/**
+	 * Make all current and future voices use given Wavetable.
+	 */
+	void
+	set_wavetable (DSP::Wavetable*);
+
+	/**
 	 * Return number of sounding voices.
 	 * Does not include voices that has been just dropped, although
 	 * they will contribute to the mixed result for a short while
@@ -160,6 +166,7 @@ class VoiceManager
 	SharedResourcesVec	_shared_resources_vec;
 	unsigned int		_sample_rate;
 	std::size_t			_buffer_size;
+	DSP::Wavetable*		_wavetable;
 	Haruhi::AudioBuffer	_output_1;
 	Haruhi::AudioBuffer	_output_2;
 	unsigned int		_active_voices_number;

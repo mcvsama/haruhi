@@ -13,10 +13,17 @@
 
 // Standard:
 #include <cstddef>
+#include <utility>
+
+// Lib:
+#include <boost/bind.hpp>
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/application/services.h>
 #include <haruhi/graph/event.h>
+#include <haruhi/dsp/fft_filler.h>
+#include <haruhi/dsp/functions.h>
 
 // Local:
 #include "part.h"
@@ -27,26 +34,73 @@
 
 namespace Yuki {
 
+Part::UpdateWavetableWorkUnit::UpdateWavetableWorkUnit (Part* part):
+	_part (part),
+	_wave (0),
+	_wavetable (0),
+	_serial (0),
+	_is_cancelled (false)
+{ }
+
+
+void
+Part::UpdateWavetableWorkUnit::reset (DSP::Wave* wave, DSP::Wavetable* wavetable, unsigned int serial)
+{
+	_wave = wave;
+	_wavetable = wavetable;
+	_serial = serial;
+	_is_cancelled.store (false);
+}
+
+
+void
+Part::UpdateWavetableWorkUnit::execute()
+{
+	DSP::FFTFiller filler (_wave, true);
+	filler.set_cancel_predicate (boost::bind (&UpdateWavetableWorkUnit::is_cancelled, this));
+	filler.fill (_wavetable, 4096);
+
+	if (!filler.was_interrupted())
+	{
+		// We're sure that Part still exists as long as this object exist,
+		// because Part will wait for us in its destructor.
+		_part->switch_wavetables();
+	}
+}
+
+
 Part::Part (PartManager* part_manager, WorkPerformer* work_performer):
 	_part_manager (part_manager),
-	_voice_manager (new VoiceManager (&_params, work_performer))
+	_voice_manager (new VoiceManager (&_params, work_performer)),
+	_switch_wavetables (false),
+	_wt_update_request (0),
+	_wt_serial (0),
+	_wt_wu (0),
+	_wt_wu_ever_started (false)
 {
+	_voice_manager->set_max_polyphony (64);
+
+	// Double buffering of wavetables. The one with index 0 is always
+	// the one currently used.
+	_wavetables[0] = new DSP::Wavetable();
+	_wavetables[1] = new DSP::Wavetable();
+	_wt_wu = new UpdateWavetableWorkUnit (this);
+
 	// Initially resize buffers:
 	graph_updated();
-	_voice_manager->set_max_polyphony (64);
+	// Initially compute wavetable. Also makes it possible to wait
+	// on work unit in the destructor:
+	update_wavetable();
 }
 
 
 Part::~Part()
 {
+	// _wt_wu is never normally being waited on, so it's ok to wait here.
+	_wt_wu->wait();
+
+	delete _wt_wu;
 	delete _voice_manager;
-}
-
-
-WaveComputer*
-Part::wave_computer() const
-{
-	return _part_manager->plugin()->wave_computer();
 }
 
 
@@ -80,9 +134,47 @@ Part::graph_updated()
 }
 
 
+// TODO detect that parameter has changed and call this update_wavetable()
+void
+Part::update_wavetable()
+{
+	_wt_update_request.inc();
+	check_wavetable_update_process();
+}
+
+
+void
+Part::check_wavetable_update_process()
+{
+	unsigned int update_request = _wt_update_request.load();
+
+	if (update_request != _wt_serial.load())
+	{
+		if (!_wt_wu_ever_started || (_wt_wu->is_ready() && _wt_wu->serial() != update_request))
+		{
+			// TODO wave
+			_wt_wu->reset (new DSP::ParametricWaves::Sine(), _wavetables[1], update_request);
+			_wt_wu_ever_started = true;
+			Haruhi::Services::lo_priority_work_performer()->add (_wt_wu);
+		}
+		else if (_wt_wu->serial() != update_request)
+			_wt_wu->cancel();
+	}
+}
+
+
 void
 Part::render()
 {
+	check_wavetable_update_process();
+
+	if (_switch_wavetables.load())
+	{
+		std::swap (_wavetables[0], _wavetables[1]);
+		_switch_wavetables.store (false);
+		_voice_manager->set_wavetable (_wavetables[0]);
+	}
+
 	_voice_manager->render();
 }
 
@@ -108,6 +200,14 @@ unsigned int
 Part::voices_number() const
 {
 	return _voice_manager->current_voices_number();
+}
+
+
+void
+Part::switch_wavetables()
+{
+	_wt_serial.inc();
+	_switch_wavetables.store (true);
 }
 
 } // namespace Yuki

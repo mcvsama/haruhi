@@ -93,5 +93,12 @@ Voice::graph_updated (unsigned int sample_rate, std::size_t buffer_size)
 	_output_2.resize (buffer_size);
 }
 
+
+void
+Voice::set_wavetable (DSP::Wavetable* wavetable)
+{
+	_vosc.set_wavetable (wavetable);
+}
+
 } // namespace Yuki
 

@@ -100,6 +100,12 @@ class Voice
 	graph_updated (unsigned int sample_rate, std::size_t buffer_size);
 
 	/**
+	 * Make voice use given Wavetable.
+	 */
+	void
+	set_wavetable (DSP::Wavetable*);
+
+	/**
 	 * RW accessor to Voice params.
 	 */
 	Params::Voice*

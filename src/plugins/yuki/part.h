@@ -20,8 +20,11 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/dsp/wave.h>
+#include <haruhi/dsp/wavetable.h>
 #include <haruhi/graph/event.h>
 #include <haruhi/graph/audio_buffer.h>
+#include <haruhi/utility/atomic.h>
 #include <haruhi/utility/work_performer.h>
 
 // Local:
@@ -32,6 +35,8 @@
 
 namespace Yuki {
 
+namespace DSP = Haruhi::DSP;
+
 class PartWidget;
 class PartManager;
 class VoiceManager;
@@ -40,8 +45,59 @@ class Part:
 	public HasWidget<PartWidget>,
 	public HasID
 {
+	class UpdateWavetableWorkUnit: public WorkPerformer::Unit
+	{
+	  public:
+		/**
+		 * \param	wavetable is the wavetable to update.
+		 */
+		UpdateWavetableWorkUnit (Part*);
+
+		/**
+		 * Prepare work unit for another work.
+		 * \param	wave Wave to be used in wavetable.
+		 * \param	wavetable Target wavetable object.
+		 * \param	serial Update request ID.
+		 */
+		void
+		reset (DSP::Wave* wave, DSP::Wavetable* wavetable, unsigned int serial);
+
+		/**
+		 * Recompute wavetable.
+		 */
+		void
+		execute();
+
+		/**
+		 * Cancel computations in the middle as soon as possible.
+		 */
+		void
+		cancel() { _is_cancelled.store (true); }
+
+		/**
+		 * Return serial.
+		 */
+		unsigned int
+		serial() const { return _serial; }
+
+	  private:
+		/**
+		 * Return true if the unit was marked as cancelled
+		 * with cancel() method.
+		 */
+		bool
+		is_cancelled() const { return _is_cancelled.load(); }
+
+	  private:
+		Part*			_part;
+		DSP::Wave*		_wave;
+		DSP::Wavetable*	_wavetable;
+		unsigned int	_serial;
+		Atomic<bool>	_is_cancelled;
+	};
+
   public:
-	Part (PartManager*, WorkPerformer*);
+	Part (PartManager*, WorkPerformer* rendering_work_performer);
 
 	~Part();
 
@@ -71,6 +127,14 @@ class Part:
 	graph_updated();
 
 	/**
+	 * Update wavetable according to new parameters.
+	 * Switch double-buffered wavetables.
+	 * Do not propagate new wavetable to VoiceManager
+	 */
+	void
+	update_wavetable();
+
+	/**
 	 * Start voices rendering.
 	 */
 	void
@@ -95,9 +159,35 @@ class Part:
 	voices_number() const;
 
   private:
-	Params::Part	_params;
-	PartManager*	_part_manager;
-	VoiceManager*	_voice_manager;
+	/**
+	 * Check if work unit for wavetable update
+	 * is finished. Ensure that update actually
+	 * takes place if needed.
+	 *
+	 * Called on each processing round.
+	 */
+	void
+	check_wavetable_update_process();
+
+	/**
+	 * Switch double buffered wavetables.
+	 * Propagate notification to the voice manager.
+	 *
+	 * \entry	UpdateWavetableWorkUnit (WorkPerformer)
+	 */
+	void
+	switch_wavetables();
+
+  private:
+	PartManager*				_part_manager;
+	VoiceManager*				_voice_manager;
+	Params::Part				_params;
+	DSP::Wavetable*				_wavetables[2];
+	Atomic<bool>				_switch_wavetables;
+	Atomic<unsigned int>		_wt_update_request;
+	Atomic<unsigned int>		_wt_serial;
+	UpdateWavetableWorkUnit*	_wt_wu;
+	bool						_wt_wu_ever_started;
 };
 
 typedef std::list<Part*>  Parts;
