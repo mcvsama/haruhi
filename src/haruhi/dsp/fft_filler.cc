@@ -30,7 +30,9 @@ namespace DSP {
 
 FFTFiller::FFTFiller (Wave* wave, bool autoscale):
 	_wave (wave),
-	_autoscale (autoscale)
+	_autoscale (autoscale),
+	_cancel_predicate (0),
+	_was_interrupted (false)
 {
 }
 
@@ -38,6 +40,10 @@ FFTFiller::FFTFiller (Wave* wave, bool autoscale):
 void
 FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 {
+#define CHECK_INTERRUPT do { if (interrupt()) { wavetable->drop_tables(); return; } } while (false)
+
+	_was_interrupted = false;
+
 	typedef std::map<float, Sample*> Tables;
 
 	if (samples < 4096)
@@ -56,7 +62,10 @@ FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 
 	// Create wavetables:
 	for (Tables::iterator t = tables.begin(); t != tables.end(); ++t)
+	{
+		CHECK_INTERRUPT;
 		wavetable->add_table (t->second, t->first);
+	}
 
 	FFT::Vector source (samples);
 	FFT::Vector target (samples);
@@ -82,6 +91,8 @@ FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 	// 0 frequency is at index 0, max freq is at index samples/2.
 	for (Tables::iterator t = tables.begin(); t != tables.end(); ++t)
 	{
+		CHECK_INTERRUPT;
+
 		int range = (int)samples * t->first; // t->first is max_frequency
 
 		int samples_left = 1.0f / (2.0f * t->first);
@@ -97,6 +108,8 @@ FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 		for (unsigned int i = 0; i < samples; ++i)
 			t->second[i] = target[i].real();
 	}
+
+#undef CHECK_INTERRUPT
 }
 
 } // namespace DSP

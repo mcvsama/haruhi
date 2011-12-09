@@ -19,6 +19,9 @@
 #include <cmath>
 #include <vector>
 
+// Lib:
+#include <boost/function.hpp>
+
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/dsp/wave.h>
@@ -42,15 +45,47 @@ class FFTFiller: public Wavetable::Filler
 	 */
 	FFTFiller (Wave* wave, bool autoscale);
 
+	/**
+	 * Set cancel predicate.
+	 *
+	 * If cancel predicate returns true, the filling is interrupted and
+	 * fill() method returns false. Cancel predicate should be as fast as possible,
+	 * since it will be called many times during the fill.
+	 */
+	void
+	set_cancel_predicate (boost::function<bool()> cancel_predicate) { _cancel_predicate = cancel_predicate; }
+
+	/**
+	 * Fill the wavetable.
+	 */
 	void
 	fill (Wavetable* wavetable, unsigned int samples);
 
+	/**
+	 * Return the wave used to fill wavetables.
+	 */
 	Wave*
 	wave() const { return _wave; }
 
+	/**
+	 * Return true if last fill operation was interrupted by cancel predicate.
+	 */
+	bool
+	was_interrupted() const { return _was_interrupted; }
+
   private:
-	Wave*	_wave;
-	bool	_autoscale;
+	/**
+	 * Return true if cancel predicate is set and returns true.
+	 * Also set _was_interrupted flag.
+	 */
+	bool
+	interrupt() { return _was_interrupted = _cancel_predicate && _cancel_predicate(); }
+
+  private:
+	Wave*					_wave;
+	bool					_autoscale;
+	boost::function<bool()>	_cancel_predicate;
+	bool					_was_interrupted;
 };
 
 } // namespace DSP
