@@ -31,7 +31,7 @@ namespace Haruhi {
 
 WorkPerformer*			Services::_hi_priority_work_performer;
 WorkPerformer*			Services::_lo_priority_work_performer;
-signed int				Services::_detected_cores;
+signed int				Services::_detected_cores = -1;
 P::CallOutDispatcher*	Services::_call_out_dispatcher;
 
 
