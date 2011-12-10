@@ -69,6 +69,65 @@ Part::UpdateWavetableWorkUnit::execute()
 }
 
 
+Part::PartPorts::PartPorts (Plugin* plugin, unsigned int part_id):
+	HasPlugin (plugin)
+{
+	_port_group = new Haruhi::PortGroup (graph(), QString ("Part %1").arg (part_id).toStdString());
+
+	if (graph())
+		graph()->lock();
+	wave_shape			= new Haruhi::EventPort (plugin, "Wave shape", Haruhi::Port::Input, _port_group);
+	modulator_amplitude	= new Haruhi::EventPort (plugin, "Wave modulator amplitude", Haruhi::Port::Input, _port_group);
+	modulator_index		= new Haruhi::EventPort (plugin, "Wave modulator index", Haruhi::Port::Input, _port_group);
+	modulator_shape		= new Haruhi::EventPort (plugin, "Wave modulator shape", Haruhi::Port::Input, _port_group);
+	volume				= new Haruhi::EventPort (plugin, "Volume", Haruhi::Port::Input, _port_group);
+	amplitude			= new Haruhi::EventPort (plugin, "Amplitude modulation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	frequency			= new Haruhi::EventPort (plugin, "Frequency modulation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	panorama			= new Haruhi::EventPort (plugin, "Panorama", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	detune				= new Haruhi::EventPort (plugin, "Detune", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	pitchbend			= new Haruhi::EventPort (plugin, "Pitchbend", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	velocity_sens		= new Haruhi::EventPort (plugin, "Velocity sensitivity", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	unison_index		= new Haruhi::EventPort (plugin, "Unison index", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	unison_spread		= new Haruhi::EventPort (plugin, "Unison spread", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	unison_init			= new Haruhi::EventPort (plugin, "Unison init. φ", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	unison_noise		= new Haruhi::EventPort (plugin, "Unison noise", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	portamento_time		= new Haruhi::EventPort (plugin, "Portamento time", Haruhi::Port::Input, _port_group);
+	phase				= new Haruhi::EventPort (plugin, "Phase", Haruhi::Port::Input, _port_group);
+	noise_level			= new Haruhi::EventPort (plugin, "Noise level", Haruhi::Port::Input, _port_group);
+	if (graph())
+		graph()->unlock();
+}
+
+
+Part::PartPorts::~PartPorts()
+{
+	if (graph())
+		graph()->lock();
+	delete wave_shape;
+	delete modulator_amplitude;
+	delete modulator_index;
+	delete modulator_shape;
+	delete volume;
+	delete amplitude;
+	delete frequency;
+	delete panorama;
+	delete detune;
+	delete pitchbend;
+	delete velocity_sens;
+	delete unison_index;
+	delete unison_spread;
+	delete unison_init;
+	delete unison_noise;
+	delete portamento_time;
+	delete phase;
+	delete noise_level;
+	if (graph())
+		graph()->unlock();
+
+	delete _port_group;
+}
+
+
 Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Main* main_params):
 	_part_manager (part_manager),
 	_voice_manager (new VoiceManager (main_params, &_part_params, &_voice_params, work_performer)),
@@ -76,7 +135,8 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 	_wt_update_request (0),
 	_wt_serial (0),
 	_wt_wu (0),
-	_wt_wu_ever_started (false)
+	_wt_wu_ever_started (false),
+	_ports (_part_manager->plugin(), id())
 {
 	_voice_manager->set_max_polyphony (64);
 

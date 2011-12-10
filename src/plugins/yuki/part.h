@@ -23,13 +23,16 @@
 #include <haruhi/dsp/wave.h>
 #include <haruhi/dsp/wavetable.h>
 #include <haruhi/graph/event.h>
+#include <haruhi/graph/event_port.h>
 #include <haruhi/graph/audio_buffer.h>
+#include <haruhi/graph/port_group.h>
 #include <haruhi/utility/atomic.h>
 #include <haruhi/utility/work_performer.h>
 
 // Local:
 #include "has_widget.h"
 #include "has_id.h"
+#include "has_plugin.h"
 #include "params.h"
 
 
@@ -45,6 +48,8 @@ class Part:
 	public HasWidget<PartWidget>,
 	public HasID
 {
+	friend class PartWidget;
+
 	class UpdateWavetableWorkUnit: public WorkPerformer::Unit
 	{
 	  public:
@@ -97,6 +102,46 @@ class Part:
 	};
 
   public:
+	/**
+	 * Contains Haruhi ports created for the part.
+	 */
+	class PartPorts: public HasPlugin
+	{
+	  public:
+		PartPorts (Plugin* plugin, unsigned int part_id);
+
+		~PartPorts();
+
+	  public:
+		// Waveform ports:
+		Haruhi::EventPort*	wave_shape;
+		Haruhi::EventPort*	modulator_amplitude;
+		Haruhi::EventPort*	modulator_index;
+		Haruhi::EventPort*	modulator_shape;
+
+		// Part ports:
+		Haruhi::EventPort*	volume;
+		Haruhi::EventPort*	portamento_time;
+		Haruhi::EventPort*	phase;
+
+		// Polyphonic-input ports:
+		Haruhi::EventPort*	amplitude;
+		Haruhi::EventPort*	frequency;
+		Haruhi::EventPort*	panorama;
+		Haruhi::EventPort*	detune;
+		Haruhi::EventPort*	pitchbend;
+		Haruhi::EventPort*	velocity_sens;
+		Haruhi::EventPort*	unison_index;
+		Haruhi::EventPort*	unison_spread;
+		Haruhi::EventPort*	unison_init;
+		Haruhi::EventPort*	unison_noise;
+		Haruhi::EventPort*	noise_level;
+
+	  private:
+		Haruhi::PortGroup*	_port_group;
+	};
+
+  public:
 	Part (PartManager*, WorkPerformer* rendering_work_performer, Params::Main* main_params);
 
 	~Part();
@@ -112,6 +157,12 @@ class Part:
 	 */
 	Params::Voice*
 	voice_params();
+
+	/**
+	 * Return ports list created by the part.
+	 */
+	PartPorts*
+	ports();
 
 	/**
 	 * Handle voice input event.
@@ -201,6 +252,7 @@ class Part:
 	Atomic<unsigned int>		_wt_serial;
 	UpdateWavetableWorkUnit*	_wt_wu;
 	bool						_wt_wu_ever_started;
+	PartPorts					_ports;
 };
 
 
@@ -239,6 +291,13 @@ inline Params::Voice*
 Part::voice_params()
 {
 	return &_voice_params;
+}
+
+
+inline Part::PartPorts*
+Part::ports()
+{
+	return &_ports;
 }
 
 } // namespace Yuki
