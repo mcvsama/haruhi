@@ -495,8 +495,6 @@ SRC_MOCHDRS += haruhi/widgets/level_meter.h
 
 SRC_HEADERS += plugins/yuki/has_id.h
 SRC_HEADERS += plugins/yuki/has_widget.h
-SRC_HEADERS += plugins/yuki/oscillator.h
-SRC_HEADERS += plugins/yuki/oscillator_widget.h
 SRC_HEADERS += plugins/yuki/params.h
 SRC_HEADERS += plugins/yuki/part.h
 SRC_HEADERS += plugins/yuki/part_manager.h
@@ -508,8 +506,6 @@ SRC_HEADERS += plugins/yuki/voice_manager.h
 SRC_HEADERS += plugins/yuki/voice_oscillator.h
 SRC_HEADERS += plugins/yuki/yuki.h
 
-SRC_SOURCES += plugins/yuki/oscillator.cc
-SRC_SOURCES += plugins/yuki/oscillator_widget.cc
 SRC_SOURCES += plugins/yuki/params.cc
 SRC_SOURCES += plugins/yuki/part.cc
 SRC_SOURCES += plugins/yuki/part_manager.cc
