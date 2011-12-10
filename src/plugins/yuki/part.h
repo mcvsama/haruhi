@@ -142,7 +142,7 @@ class Part:
 	};
 
   public:
-	Part (PartManager*, WorkPerformer* rendering_work_performer, Params::Main* main_params);
+	Part (PartManager*, WorkPerformer* rendering_work_performer, Params::Main* main_params, unsigned int id);
 
 	~Part();
 

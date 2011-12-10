@@ -27,7 +27,7 @@ namespace Yuki {
 class HasID
 {
   public:
-	HasID();
+	HasID (unsigned int id = 0);
 
 	/**
 	 * Return part ID. Used by user to distinguish between different parts.
@@ -47,8 +47,8 @@ class HasID
 
 
 inline
-HasID::HasID():
-	_id (0)
+HasID::HasID (unsigned int id):
+	_id (id)
 { }
 
 

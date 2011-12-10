@@ -128,7 +128,8 @@ Part::PartPorts::~PartPorts()
 }
 
 
-Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Main* main_params):
+Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Main* main_params, unsigned int id):
+	HasID (id),
 	_part_manager (part_manager),
 	_voice_manager (new VoiceManager (main_params, &_part_params, &_voice_params, work_performer)),
 	_switch_wavetables (false),
@@ -136,7 +137,7 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 	_wt_serial (0),
 	_wt_wu (0),
 	_wt_wu_ever_started (false),
-	_ports (_part_manager->plugin(), id())
+	_ports (_part_manager->plugin(), this->id())
 {
 	_voice_manager->set_max_polyphony (64);
 

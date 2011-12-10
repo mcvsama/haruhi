@@ -48,8 +48,7 @@ PartManager::~PartManager()
 void
 PartManager::add_part()
 {
-	Part* p = new Part (this, Haruhi::Services::hi_priority_work_performer(), &_main_params);
-	p->set_id (_id_alloc.allocate_id());
+	Part* p = new Part (this, Haruhi::Services::hi_priority_work_performer(), &_main_params, _id_alloc.allocate_id());
 	_parts_mutex.lock();
 	_parts.push_back (p);
 	_parts_mutex.unlock();
