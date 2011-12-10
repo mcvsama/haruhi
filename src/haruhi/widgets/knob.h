@@ -91,19 +91,19 @@ class Knob:
 		validate (QString&, int&) const;
 
 		float
-		show_min() const { return _show_min; }
+		show_min() const;
 
 		float
-		show_max() const { return _show_max; }
+		show_max() const;
 
 		int
-		decimals() const { return _decimals; }
+		decimals() const;
 
 		bool
-		volume_scale() const { return _volume_scale; }
+		volume_scale() const;
 
 		float
-		volume_scale_exp() const { return _volume_scale_exp; }
+		volume_scale_exp() const;
 
 		void
 		set_volume_scale (bool setting, float exp = 1.0f);
@@ -113,7 +113,7 @@ class Knob:
 		 * that is it does not care about any knob.
 		 */
 		void
-		set_detached (bool setting) { _detached = setting; }
+		set_detached (bool setting);
 
 	  protected:
 		/*
@@ -163,20 +163,20 @@ class Knob:
 	 * Returns true if volume scale has been enabled.
 	 */
 	bool
-	volume_scale() const { return _spin_box->volume_scale(); }
+	volume_scale() const;
 
 	/**
 	 * Returns volume scale exponent.
 	 */
 	float
-	volume_scale_exp() const { return _spin_box->volume_scale_exp(); }
+	volume_scale_exp() const;
 
 	/**
 	 * Enables/disables volume scale (shown in dB).
 	 * \param	exp is power value, usually M_E.
 	 */
 	void
-	set_volume_scale (bool setting, float exp = 1.0f) { _spin_box->set_volume_scale (setting, exp); }
+	set_volume_scale (bool setting, float exp = 1.0f);
 
 	/**
 	 * Reads ControllerProxy::Config and updates widgets.
@@ -197,7 +197,7 @@ class Knob:
 	 */
 
 	bool
-	mouse_pressed() { return _dial_control->mouse_pressed(); }
+	mouse_pressed();
 
 	/*
 	 * PeriodicUpdater::Receiver API
@@ -268,10 +268,10 @@ class Knob:
 	disconnect_from_all();
 
 	void
-	start_learning_slot() { start_learning(); }
+	start_learning_slot();
 
 	void
-	stop_learning_slot() { stop_learning(); }
+	stop_learning_slot();
 
   signals:
 	void
@@ -293,6 +293,90 @@ class Knob:
 	QMenu*				_connect_menu;
 	QMenu*				_disconnect_menu;
 };
+
+
+inline float
+Knob::SpinBox::show_min() const
+{
+	return _show_min;
+}
+
+
+inline float
+Knob::SpinBox::show_max() const
+{
+	return _show_max;
+}
+
+
+inline int
+Knob::SpinBox::decimals() const
+{
+	return _decimals;
+}
+
+
+inline bool
+Knob::SpinBox::volume_scale() const
+{
+	return _volume_scale;
+}
+
+
+inline float
+Knob::SpinBox::volume_scale_exp() const
+{
+	return _volume_scale_exp;
+}
+
+
+inline void
+Knob::SpinBox::set_detached (bool setting)
+{
+	_detached = setting;
+}
+
+
+inline bool
+Knob::volume_scale() const
+{
+	return _spin_box->volume_scale();
+}
+
+
+inline float
+Knob::volume_scale_exp() const
+{
+	return _spin_box->volume_scale_exp();
+}
+
+
+inline void
+Knob::set_volume_scale (bool setting, float exp)
+{
+	_spin_box->set_volume_scale (setting, exp);
+}
+
+
+inline bool
+Knob::mouse_pressed()
+{
+	return _dial_control->mouse_pressed();
+}
+
+
+inline void
+Knob::start_learning_slot()
+{
+	start_learning();
+}
+
+
+inline void
+Knob::stop_learning_slot()
+{
+	stop_learning();
+}
 
 } // namespace Haruhi
 
