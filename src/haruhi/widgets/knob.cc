@@ -56,14 +56,14 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	ControllerProxy::Config& c = _knob->controller_proxy().config();
 
 	QLabel* curve_label = new QLabel ("Response curve:", this);
-	Knob::SpinBox* curve_spinbox = new Knob::SpinBox (this, _knob, -1000, 1000, -1.0, 1.0, 100, 1);
+	Knob::SpinBox* curve_spinbox = new Knob::SpinBox (this, _knob, -1000, 1000, -1.0, 1.0, 1, 100);
 	curve_spinbox->set_detached (true);
 	curve_spinbox->setValue (c.curve * 1000.0);
 	curve_spinbox->setFixedWidth (80);
 	_curve_spinbox = curve_spinbox;
 
 	QLabel* range_min_label = new QLabel ("Range minimum:", this);
-	Knob::SpinBox* user_limit_min_spinbox = new Knob::SpinBox (this, _knob, c.hard_limit_min, c.hard_limit_max, s->show_min(), s->show_max(), s->singleStep(), s->decimals());
+	Knob::SpinBox* user_limit_min_spinbox = new Knob::SpinBox (this, _knob, c.hard_limit_min, c.hard_limit_max, s->shown_min(), s->shown_max(), s->shown_decimals(), s->singleStep());
 	user_limit_min_spinbox->set_detached (true);
 	user_limit_min_spinbox->setValue (c.user_limit_min);
 	user_limit_min_spinbox->setFixedWidth (80);
@@ -72,7 +72,7 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	_user_limit_min_spinbox = user_limit_min_spinbox;
 
 	QLabel* range_max_label = new QLabel ("Range maximum:", this);
-	Knob::SpinBox* user_limit_max_spinbox = new Knob::SpinBox (this, _knob, c.hard_limit_min, c.hard_limit_max, s->show_min(), s->show_max(), s->singleStep(), s->decimals());
+	Knob::SpinBox* user_limit_max_spinbox = new Knob::SpinBox (this, _knob, c.hard_limit_min, c.hard_limit_max, s->shown_min(), s->shown_max(), s->shown_decimals(), s->singleStep());
 	user_limit_max_spinbox->set_detached (true);
 	user_limit_max_spinbox->setValue (c.user_limit_max);
 	user_limit_max_spinbox->setFixedWidth (80);
@@ -145,16 +145,16 @@ KnobProperties::limit_max_updated()
 }
 
 
-Knob::SpinBox::SpinBox (QWidget* parent, Knob* knob, int user_limit_min, int user_limit_max, float show_min, float show_max, int step, int decimals):
+Knob::SpinBox::SpinBox (QWidget* parent, Knob* knob, int user_limit_min, int user_limit_max, float shown_min, float shown_max, int shown_decimals, int step):
 	QSpinBox (parent),
 	_knob (knob),
-	_show_min (show_min),
-	_show_max (show_max),
-	_decimals (decimals),
+	_shown_min (shown_min),
+	_shown_max (shown_max),
+	_shown_decimals (shown_decimals),
 	_detached (false),
 	_volume_scale (false)
 {
-	_validator = new QDoubleValidator (show_min, show_max, decimals, this);
+	_validator = new QDoubleValidator (shown_min, shown_max, shown_decimals, this);
 	QSpinBox::setMinimum (user_limit_min);
 	QSpinBox::setMaximum (user_limit_max);
 	QSpinBox::setSingleStep (step);
@@ -190,7 +190,7 @@ Knob::SpinBox::textFromValue (int value) const
 		return QString ("%1").arg (20.0 * std::log10 (std::pow (x, _volume_scale_exp)), 0, 'f', 1);
 	}
 	else
-		return QString ("%1").arg (int_to_float (value), 0, 'f', _decimals);
+		return QString ("%1").arg (int_to_float (value), 0, 'f', _shown_decimals);
 }
 
 
@@ -214,8 +214,8 @@ Knob::SpinBox::int_to_float (int x) const
 	int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy().config().hard_limit_min;
 	int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy().config().hard_limit_max;
 
-	float f = renormalize (x, hard_limit_min, hard_limit_max, _show_min, _show_max);
-	if (f < 0.0 && f > 0.5 * -std::pow (0.1, _decimals))
+	float f = renormalize (x, hard_limit_min, hard_limit_max, _shown_min, _shown_max);
+	if (f < 0.0 && f > 0.5 * -std::pow (0.1, _shown_decimals))
 		f = 0.0;
 	return f;
 }
@@ -227,57 +227,30 @@ Knob::SpinBox::float_to_int (float y) const
 	int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy().config().hard_limit_min;
 	int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy().config().hard_limit_max;
 
-	return renormalize (y, _show_min, _show_max, hard_limit_min, hard_limit_max);
+	return renormalize (y, _shown_min, _shown_max, hard_limit_min, hard_limit_max);
 }
 
 
 Knob::Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param,
-			QString const& label, float show_min, float show_max, int step, int decimals):
+			QString const& label, float shown_min, float shown_max, int step, int shown_decimals):
 	QFrame (parent),
 	Controller (event_port, controller_param),
 	_prevent_recursion (false),
 	_connect_signal_mapper (0),
 	_disconnect_signal_mapper (0)
 {
-	int const hard_limit_min = controller_proxy().config().hard_limit_min;
-	int const hard_limit_max = controller_proxy().config().hard_limit_max;
-	int const user_limit_min = controller_proxy().config().user_limit_min;
-	int const user_limit_max = controller_proxy().config().user_limit_max;
+	initialize (label, shown_min, shown_max, shown_decimals, step);
+}
 
-	setFrameStyle (QFrame::StyledPanel | QFrame::Raised);
-	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-	_dial_control = new DialControl (this, hard_limit_min, hard_limit_max, controller_proxy().config().reverse (controller_proxy().param()->get()));
-	_spin_box = new SpinBox (this, this, user_limit_min, user_limit_max, show_min, show_max, step, decimals);
-	_label = new QLabel (label, this);
-	_label->setBuddy (_spin_box);
-	_label->setTextFormat (Qt::PlainText);
-	_context_menu = new QMenu (this);
-	_std_text_color = _label->paletteForegroundColor();
-
-	QObject::connect (_dial_control, SIGNAL (valueChanged (int)), this, SLOT (dial_changed (int)));
-	QObject::connect (_spin_box, SIGNAL (valueChanged (int)), this, SLOT (spin_changed (int)));
-
-	// Layouts:
-
-	QHBoxLayout* label_layout = new QHBoxLayout();
-	label_layout->setSpacing (0);
-	label_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
-	label_layout->addWidget (_label);
-	label_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
-
-	QHBoxLayout* dial_layout = new QHBoxLayout();
-	dial_layout->setSpacing (0);
-	dial_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
-	dial_layout->addWidget (_dial_control);
-	dial_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
-
-	QVBoxLayout* layout = new QVBoxLayout (this);
-	layout->setMargin (Config::Margin);
-	layout->setSpacing (Config::Spacing + 2);
-	layout->addLayout (label_layout);
-	layout->addLayout (dial_layout);
-	layout->addWidget (_spin_box);
+Knob::Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param, QString const& label):
+	QFrame (parent),
+	Controller (event_port, controller_param),
+	_prevent_recursion (false),
+	_connect_signal_mapper (0),
+	_disconnect_signal_mapper (0)
+{
+	initialize (label, controller_param->shown_min(), controller_param->shown_max(), controller_param->shown_decimals(), controller_param->step());
 }
 
 
@@ -327,6 +300,51 @@ Knob::configure()
 		dialog->apply();
 		read_config();
 	}
+}
+
+
+void
+Knob::initialize (QString const& label, float shown_min, float shown_max, int shown_decimals, int step)
+{
+	int const hard_limit_min = controller_proxy().config().hard_limit_min;
+	int const hard_limit_max = controller_proxy().config().hard_limit_max;
+	int const user_limit_min = controller_proxy().config().user_limit_min;
+	int const user_limit_max = controller_proxy().config().user_limit_max;
+
+	setFrameStyle (QFrame::StyledPanel | QFrame::Raised);
+	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+	_dial_control = new DialControl (this, hard_limit_min, hard_limit_max, controller_proxy().config().reverse (controller_proxy().param()->get()));
+	_spin_box = new SpinBox (this, this, user_limit_min, user_limit_max, shown_min, shown_max, shown_decimals, step);
+	_label = new QLabel (label, this);
+	_label->setBuddy (_spin_box);
+	_label->setTextFormat (Qt::PlainText);
+	_context_menu = new QMenu (this);
+	_std_text_color = _label->paletteForegroundColor();
+
+	QObject::connect (_dial_control, SIGNAL (valueChanged (int)), this, SLOT (dial_changed (int)));
+	QObject::connect (_spin_box, SIGNAL (valueChanged (int)), this, SLOT (spin_changed (int)));
+
+	// Layouts:
+
+	QHBoxLayout* label_layout = new QHBoxLayout();
+	label_layout->setSpacing (0);
+	label_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
+	label_layout->addWidget (_label);
+	label_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
+
+	QHBoxLayout* dial_layout = new QHBoxLayout();
+	dial_layout->setSpacing (0);
+	dial_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
+	dial_layout->addWidget (_dial_control);
+	dial_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
+
+	QVBoxLayout* layout = new QVBoxLayout (this);
+	layout->setMargin (Config::Margin);
+	layout->setSpacing (Config::Spacing + 2);
+	layout->addLayout (label_layout);
+	layout->addLayout (dial_layout);
+	layout->addWidget (_spin_box);
 }
 
 

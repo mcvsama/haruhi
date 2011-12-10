@@ -81,7 +81,7 @@ class Knob:
 	class SpinBox: public QSpinBox
 	{
 	  public:
-		SpinBox (QWidget* parent, Knob* knob, int user_limit_min, int user_limit_max, float show_min, float show_max, int step, int decimals);
+		SpinBox (QWidget* parent, Knob* knob, int user_limit_min, int user_limit_max, float shown_min, float shown_max, int shown_decimals, int step);
 
 		/*
 		 * QSpinBox API
@@ -91,13 +91,13 @@ class Knob:
 		validate (QString&, int&) const;
 
 		float
-		show_min() const;
+		shown_min() const;
 
 		float
-		show_max() const;
+		shown_max() const;
 
 		int
-		decimals() const;
+		shown_decimals() const;
 
 		bool
 		volume_scale() const;
@@ -135,9 +135,9 @@ class Knob:
 
 	  private:
 		Knob*				_knob;
-		float				_show_min;
-		float				_show_max;
-		int					_decimals;
+		float				_shown_min;
+		float				_shown_max;
+		int					_shown_decimals;
 		QDoubleValidator*	_validator;
 		bool				_detached;
 		bool				_volume_scale;
@@ -148,16 +148,25 @@ class Knob:
 
   public:
 	/**
-	 * Creates Knob.
+	 * Create Knob.
 	 *
 	 * \param	parent: Parent widget.
+	 * \param	event_port: EventPort coupled with this knob.
+	 * \param	controller_param: Parameter to be controlled by this knob.
 	 * \param	label: Displayed label.
-	 * \param	show_min, show_max: Values range shown in spinbox.
+	 * \param	shown_min, shown_max: Values range shown in spinbox.
 	 * \param	step: Change step.
-	 * \param	decimals: How many decimal digits should be shown in spinbox.
+	 * \param	shown_decimals: How many decimal digits should be shown in spinbox.
 	 */
 	Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param,
-		  QString const& label, float show_min, float show_max, int step, int decimals);
+		  QString const& label, float shown_min, float shown_max, int step, int shown_decimals);
+
+	/**
+	 * Create Knob.
+	 * Similar to the previous constructor, but takes shown_min/max, step and decimals params
+	 * from the controller_param itself.
+	 */
+	Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param, QString const& label);
 
 	/**
 	 * Returns true if volume scale has been enabled.
@@ -225,6 +234,12 @@ class Knob:
 	configure();
 
   private:
+	/**
+	 * Common ctor code.
+	 */
+	void
+	initialize (QString const& label, float shown_min, float shown_max, int shown_decimals, int step);
+
 	void
 	update_widgets();
 
@@ -296,23 +311,23 @@ class Knob:
 
 
 inline float
-Knob::SpinBox::show_min() const
+Knob::SpinBox::shown_min() const
 {
-	return _show_min;
+	return _shown_min;
 }
 
 
 inline float
-Knob::SpinBox::show_max() const
+Knob::SpinBox::shown_max() const
 {
-	return _show_max;
+	return _shown_max;
 }
 
 
 inline int
-Knob::SpinBox::decimals() const
+Knob::SpinBox::shown_decimals() const
 {
-	return _decimals;
+	return _shown_decimals;
 }
 
 

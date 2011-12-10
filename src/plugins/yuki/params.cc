@@ -14,6 +14,7 @@
 // Standard:
 #include <cstddef>
 #include <algorithm>
+#include <limits>
 
 // Haruhi:
 #include <haruhi/utility/numeric.h>
@@ -26,30 +27,46 @@
 #include <QtXml/QDomElement>
 
 
-#define HARUHI_YUKI_CONSTRUCT(var, name)												\
-	var (name##Min, name##Max, name##Default, name##Denominator, #name)
+#define HARUHI_YUKI_CONSTRUCT(var, name, shown_decimals)										\
+	var (name##Min,																				\
+		 name##Max,																				\
+		 name##Default,																			\
+		 name##Denominator,																		\
+		 #name,																					\
+		 1.0f * name##Min / name##Denominator,													\
+		 1.0f * name##Max / name##Denominator,													\
+		 shown_decimals,																		\
+		 (name##Max - name##Min) / 200)
 
-#define HARUHI_YUKI_DEFINE_PARAMS(klass)												\
-	void																				\
-	Params::klass::get_params (Haruhi::BaseParam const** tab, size_t max_entries) const	\
-	{																					\
+#define HARUHI_YUKI_CONSTRUCT_EXPLICIT(var, name, shown_min, shown_max, shown_decimals, step)	\
+	var (name##Min,																				\
+		 name##Max,																				\
+		 name##Default,																			\
+		 name##Denominator,																		\
+		 #name,																					\
+		 shown_min, shown_max, shown_decimals, step)
+
+#define HARUHI_YUKI_DEFINE_PARAMS(klass)														\
+	void																						\
+	Params::klass::get_params (Haruhi::BaseParam const** tab, size_t max_entries) const			\
+	{																							\
 		size_t pos = 0;
 
-#define HARUHI_YUKI_DEFINE_PARAM(param)													\
+#define HARUHI_YUKI_DEFINE_PARAM(param)															\
 		tab[pos++] = &param;
 
-#define HARUHI_YUKI_FINISH_DEFINITION()													\
-		assert (pos == max_entries);													\
+#define HARUHI_YUKI_FINISH_DEFINITION()															\
+		assert (pos == max_entries);															\
 	}
 
 
 namespace Yuki {
 
 Params::Main::Main():
-	HARUHI_YUKI_CONSTRUCT (volume, Volume),
-	HARUHI_YUKI_CONSTRUCT (detune, Detune),
-	HARUHI_YUKI_CONSTRUCT (panorama, Panorama),
-	HARUHI_YUKI_CONSTRUCT (stereo_width, StereoWidth),
+	HARUHI_YUKI_CONSTRUCT_EXPLICIT (volume, Volume, -std::numeric_limits<float>::infinity(), 0.0f, 2, (VolumeMax - VolumeMin) / 500),
+	HARUHI_YUKI_CONSTRUCT (detune, Detune, 2),
+	HARUHI_YUKI_CONSTRUCT (panorama, Panorama, 2),
+	HARUHI_YUKI_CONSTRUCT (stereo_width, StereoWidth, 2),
 	enabled (0, 1, 1, "enabled"),
 	polyphony (0, 512, 32, "polyphony")
 {
@@ -67,10 +84,14 @@ HARUHI_YUKI_FINISH_DEFINITION()
 
 
 Params::Part::Part():
-	HARUHI_YUKI_CONSTRUCT (volume, Volume),
-	HARUHI_YUKI_CONSTRUCT (portamento_time, PortamentoTime),
-	HARUHI_YUKI_CONSTRUCT (phase, Phase),
-	HARUHI_YUKI_CONSTRUCT (noise_level, NoiseLevel),
+	HARUHI_YUKI_CONSTRUCT_EXPLICIT (volume, Volume, -std::numeric_limits<float>::infinity(), 0.0f, 2, (VolumeMax - VolumeMin) / 500),
+	HARUHI_YUKI_CONSTRUCT (portamento_time, PortamentoTime, 2),
+	HARUHI_YUKI_CONSTRUCT (phase, Phase, 2),
+	HARUHI_YUKI_CONSTRUCT (noise_level, NoiseLevel, 2),
+	HARUHI_YUKI_CONSTRUCT (wave_shape, WaveShape, 2),
+	HARUHI_YUKI_CONSTRUCT (modulator_amplitude, ModulatorAmplitude, 2),
+	HARUHI_YUKI_CONSTRUCT (modulator_index, ModulatorIndex, 0),
+	HARUHI_YUKI_CONSTRUCT (modulator_shape, ModulatorShape, 2),
 	part_enabled (0, 1, 1, "part_enabled"),
 	wave_enabled (0, 1, 1, "wave_enabled"),
 	noise_enabled (0, 1, 0, "noise_enabled"),
@@ -81,8 +102,15 @@ Params::Part::Part():
 	transposition_semitones (-60, 60, 0, "transposition_semitones"),
 	const_portamento_time (0, 1, 1, "const_portamento_time"),
 	unison_stereo (0, 1, 1, "unison_stereo"),
-	pseudo_stereo (0, 1, 0, "pseudo_stereo")
+	pseudo_stereo (0, 1, 0, "pseudo_stereo"),
+	wave_type (0, 8, 0, "wave_type"),
+	modulator_type (0, 1, Haruhi::DSP::ModulatedWave::Ring, "modulator_type"),
+	modulator_wave_type (0, 3, 0, "modulator_wave_type")
 {
+	for (int i = 0; i < HarmonicsNumber; ++i)
+		harmonics[i] = Haruhi::Param<int> (HarmonicMin, HarmonicMax, HarmonicDefault, QString ("harmonic[%1]").arg (i).utf8());
+	for (int i = 0; i < HarmonicsNumber; ++i)
+		harmonic_phases[i] = Haruhi::Param<int> (HarmonicPhaseMin, HarmonicPhaseMax, HarmonicPhaseDefault, QString ("harmonic-phase[%1]").arg (i).utf8());
 }
 
 
@@ -102,26 +130,6 @@ HARUHI_YUKI_DEFINE_PARAMS (Part)
 	HARUHI_YUKI_DEFINE_PARAM (const_portamento_time)
 	HARUHI_YUKI_DEFINE_PARAM (unison_stereo)
 	HARUHI_YUKI_DEFINE_PARAM (pseudo_stereo)
-HARUHI_YUKI_FINISH_DEFINITION()
-
-
-Params::Waveform::Waveform():
-	HARUHI_YUKI_CONSTRUCT (wave_shape, WaveShape),
-	HARUHI_YUKI_CONSTRUCT (modulator_amplitude, ModulatorAmplitude),
-	HARUHI_YUKI_CONSTRUCT (modulator_index, ModulatorIndex),
-	HARUHI_YUKI_CONSTRUCT (modulator_shape, ModulatorShape),
-	wave_type (0, 8, 0, "wave_type"),
-	modulator_type (0, 1, Haruhi::DSP::ModulatedWave::Ring, "modulator_type"),
-	modulator_wave_type (0, 3, 0, "modulator_wave_type")
-{
-	for (int i = 0; i < HarmonicsNumber; ++i)
-		harmonics[i] = Haruhi::Param<int> (HarmonicMin, HarmonicMax, HarmonicDefault, QString ("harmonic[%1]").arg (i).utf8());
-	for (int i = 0; i < HarmonicsNumber; ++i)
-		phases[i] = Haruhi::Param<int> (PhaseMin, PhaseMax, PhaseDefault, QString ("phase[%1]").arg (i).utf8());
-}
-
-
-HARUHI_YUKI_DEFINE_PARAMS (Waveform)
 	HARUHI_YUKI_DEFINE_PARAM (wave_shape)
 	HARUHI_YUKI_DEFINE_PARAM (modulator_amplitude)
 	HARUHI_YUKI_DEFINE_PARAM (modulator_index)
@@ -132,22 +140,22 @@ HARUHI_YUKI_DEFINE_PARAMS (Waveform)
 	for (int k = 0; k < HarmonicsNumber; ++k)
 		HARUHI_YUKI_DEFINE_PARAM (harmonics[k]);
 	for (int k = 0; k < HarmonicsNumber; ++k)
-		HARUHI_YUKI_DEFINE_PARAM (phases[k]);
+		HARUHI_YUKI_DEFINE_PARAM (harmonic_phases[k]);
 HARUHI_YUKI_FINISH_DEFINITION()
 
 
 Params::Voice::Voice():
-	HARUHI_YUKI_CONSTRUCT (adsr, Adsr),
-	HARUHI_YUKI_CONSTRUCT (amplitude, Amplitude),
-	HARUHI_YUKI_CONSTRUCT (frequency, Frequency),
-	HARUHI_YUKI_CONSTRUCT (panorama, Panorama),
-	HARUHI_YUKI_CONSTRUCT (detune, Detune),
-	HARUHI_YUKI_CONSTRUCT (pitchbend, Pitchbend),
-	HARUHI_YUKI_CONSTRUCT (velocity_sens, VelocitySens),
-	HARUHI_YUKI_CONSTRUCT (unison_index, UnisonIndex),
-	HARUHI_YUKI_CONSTRUCT (unison_spread, UnisonSpread),
-	HARUHI_YUKI_CONSTRUCT (unison_init, UnisonInit),
-	HARUHI_YUKI_CONSTRUCT (unison_noise, UnisonNoise)
+	HARUHI_YUKI_CONSTRUCT (adsr, Adsr, 2),
+	HARUHI_YUKI_CONSTRUCT (amplitude, Amplitude, 2),
+	HARUHI_YUKI_CONSTRUCT (frequency, Frequency, 2),
+	HARUHI_YUKI_CONSTRUCT (panorama, Panorama, 2),
+	HARUHI_YUKI_CONSTRUCT (detune, Detune, 2),
+	HARUHI_YUKI_CONSTRUCT (pitchbend, Pitchbend, 2),
+	HARUHI_YUKI_CONSTRUCT (velocity_sens, VelocitySens, 2),
+	HARUHI_YUKI_CONSTRUCT (unison_index, UnisonIndex, 0),
+	HARUHI_YUKI_CONSTRUCT (unison_spread, UnisonSpread, 2),
+	HARUHI_YUKI_CONSTRUCT (unison_init, UnisonInit, 2),
+	HARUHI_YUKI_CONSTRUCT (unison_noise, UnisonNoise, 2)
 {
 }
 
@@ -169,4 +177,8 @@ HARUHI_YUKI_FINISH_DEFINITION()
 } // namespace Yuki
 
 #undef HARUHI_YUKI_CONSTRUCT
+#undef HARUHI_YUKI_CONSTRUCT_EXPLICIT
+#undef HARUHI_YUKI_DEFINE_PARAMS
+#undef HARUHI_YUKI_DEFINE_PARAM
+#undef HARUHI_YUKI_FINISH_DEFINITION
 

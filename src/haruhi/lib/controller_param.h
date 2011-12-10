@@ -26,13 +26,16 @@ namespace Haruhi {
 
 /**
  * Param that can be controlled by Haruhi::Controller.
+ * Also contains useful information for some controller widgets,
+ * eg. min/max shown value, number of decimal digits shown, etc.
  */
 class ControllerParam: public Param<int>
 {
   public:
 	ControllerParam (const char* name = "");
 
-	ControllerParam (int minimum, int maximum, int default_value, int denominator, const char* name);
+	ControllerParam (int minimum, int maximum, int default_value, int denominator, const char* name,
+					 float shown_min = 0.0f, float shown_max = 1.0f, int shown_decimals = 1, int step = 1);
 
 	ControllerParam (ControllerParam const& other);
 
@@ -48,9 +51,25 @@ class ControllerParam: public Param<int>
 	float
 	to_f() const;
 
+	float
+	shown_min() const;
+
+	float
+	shown_max() const;
+
+	int
+	shown_decimals() const;
+
+	int
+	step() const;
+
   private:
 	int		_denominator;
 	float	_1_div_denominator;
+	float	_shown_min;
+	float	_shown_max;
+	int		_shown_decimals;
+	int		_step;
 };
 
 
@@ -63,20 +82,28 @@ ControllerParam::ControllerParam (const char* name):
 
 
 inline
-ControllerParam::ControllerParam (int minimum, int maximum, int default_value, int denominator, const char* name):
+ControllerParam::ControllerParam (int minimum, int maximum, int default_value, int denominator, const char* name,
+								  float shown_min, float shown_max, int shown_decimals, int step):
 	Param (minimum, maximum, default_value, name),
 	_denominator (denominator),
-	_1_div_denominator (1.0f / _denominator)
+	_1_div_denominator (1.0f / _denominator),
+	_shown_min (shown_min),
+	_shown_max (shown_max),
+	_shown_decimals (shown_decimals),
+	_step (step)
 { }
 
 
 inline
 ControllerParam::ControllerParam (ControllerParam const& other):
-	Param (other)
-{
-	_denominator = other._denominator;
-	_1_div_denominator = other._1_div_denominator;
-}
+	Param (other),
+	_denominator (other._denominator),
+	_1_div_denominator (other._1_div_denominator),
+	_shown_min (other._shown_min),
+	_shown_max (other._shown_max),
+	_shown_decimals (other._shown_decimals),
+	_step (other._step)
+{ }
 
 
 inline ControllerParam&
@@ -85,6 +112,10 @@ ControllerParam::operator= (ControllerParam const& other)
 	Param<int>::operator= (other);
 	_denominator = other._denominator;
 	_1_div_denominator = other._1_div_denominator;
+	_shown_min = other._shown_min;
+	_shown_max = other._shown_max;
+	_shown_decimals = other._shown_decimals;
+	_step = other._step;
 	return *this;
 }
 
@@ -100,6 +131,34 @@ inline float
 ControllerParam::to_f() const
 {
 	return _1_div_denominator * get();
+}
+
+
+inline float
+ControllerParam::shown_min() const
+{
+	return _shown_min;
+}
+
+
+inline float
+ControllerParam::shown_max() const
+{
+	return _shown_max;
+}
+
+
+inline int
+ControllerParam::shown_decimals() const
+{
+	return _shown_decimals;
+}
+
+
+inline int
+ControllerParam::step() const
+{
+	return _step;
 }
 
 } // namespace Haruhi

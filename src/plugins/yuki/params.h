@@ -137,11 +137,25 @@ struct Params
 		HARUHI_YUKI_PARAM (PortamentoTime,			       0,	+1000000,	 +100000,	       0)
 		HARUHI_YUKI_PARAM (Phase,					-1000000,	+1000000,	+1000000,	       0)
 		HARUHI_YUKI_PARAM (NoiseLevel,				       0,	+1000000,	+1000000,	       0)
+		HARUHI_YUKI_PARAM (WaveShape,				       0,	+1000000,	+1000000,	       0)
+		HARUHI_YUKI_PARAM (ModulatorAmplitude,		       0,	+1000000,	+1000000,	       0)
+		HARUHI_YUKI_PARAM (ModulatorIndex,			      +1,	     +32,	      +1,	      +1)
+		HARUHI_YUKI_PARAM (ModulatorShape,			       0,	+1000000,	+1000000,	       0)
+		HARUHI_YUKI_PARAM (Harmonic,				-1000000,	+1000000,	+1000000,	       0)
+		HARUHI_YUKI_PARAM (HarmonicPhase,			-1000000,	+1000000,	+1000000,	       0)
+
+		enum {
+			HarmonicsNumber = Haruhi::DSP::HarmonicsWave::HarmonicsNumber
+		};
 
 		Haruhi::ControllerParam volume;
 		Haruhi::ControllerParam portamento_time;
 		Haruhi::ControllerParam phase;
 		Haruhi::ControllerParam noise_level;
+		Haruhi::ControllerParam wave_shape;
+		Haruhi::ControllerParam modulator_amplitude;
+		Haruhi::ControllerParam modulator_index;
+		Haruhi::ControllerParam modulator_shape;
 
 		Haruhi::Param<int> part_enabled;
 		Haruhi::Param<int> wave_enabled;
@@ -154,40 +168,13 @@ struct Params
 		Haruhi::Param<int> const_portamento_time;
 		Haruhi::Param<int> unison_stereo;
 		Haruhi::Param<int> pseudo_stereo;
-
-		static const int NUM_PARAMS = 15;
-	};
-
-	/**
-	 * Part-specific params.
-	 */
-	struct Waveform: public SaveableParams<Waveform>
-	{
-		HARUHI_YUKI_PARAMS_STANDARD_METHODS (Waveform)
-
-		HARUHI_YUKI_PARAM (WaveShape,				       0,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (ModulatorAmplitude,		       0,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (ModulatorIndex,			      +1,	     +32,	      +1,	      +1)
-		HARUHI_YUKI_PARAM (ModulatorShape,			       0,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (Harmonic,				-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (Phase,					-1000000,	+1000000,	+1000000,	       0)
-
-		enum {
-			HarmonicsNumber = Haruhi::DSP::HarmonicsWave::HarmonicsNumber
-		};
-
-		Haruhi::ControllerParam wave_shape;
-		Haruhi::ControllerParam modulator_amplitude;
-		Haruhi::ControllerParam modulator_index;
-		Haruhi::ControllerParam modulator_shape;
-
 		Haruhi::Param<unsigned int> wave_type;
 		Haruhi::Param<unsigned int> modulator_type;
 		Haruhi::Param<unsigned int> modulator_wave_type;
 		Haruhi::Param<int> harmonics[HarmonicsNumber];
-		Haruhi::Param<int> phases[HarmonicsNumber];
+		Haruhi::Param<int> harmonic_phases[HarmonicsNumber];
 
-		static const int NUM_PARAMS = 7 + HarmonicsNumber + HarmonicsNumber;
+		static const int NUM_PARAMS = 22 + HarmonicsNumber + HarmonicsNumber;
 	};
 
 	/**
