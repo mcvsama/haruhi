@@ -400,96 +400,96 @@ SRC_MOCHDRS += haruhi/widgets/frequency_response_plot.h
 SRC_MOCHDRS += haruhi/widgets/knob.h
 SRC_MOCHDRS += haruhi/widgets/level_meter.h
 
-######## /plugins/mikuru-legacy/effects ########
-
-SRC_HEADERS += plugins/mikuru-legacy/effects/delay.h
-SRC_HEADERS += plugins/mikuru-legacy/effects/effect.h
-SRC_HEADERS += plugins/mikuru-legacy/effects/reverb.h
-SRC_HEADERS += plugins/mikuru-legacy/effects/waveshaper.h
-
-SRC_SOURCES += plugins/mikuru-legacy/effects/delay.cc
-SRC_SOURCES += plugins/mikuru-legacy/effects/effect.cc
-SRC_SOURCES += plugins/mikuru-legacy/effects/reverb.cc
-SRC_SOURCES += plugins/mikuru-legacy/effects/waveshaper.cc
-
-SRC_MOCHDRS += plugins/mikuru-legacy/effects/delay.h
-SRC_MOCHDRS += plugins/mikuru-legacy/effects/effect.h
-SRC_MOCHDRS += plugins/mikuru-legacy/effects/reverb.h
-SRC_MOCHDRS += plugins/mikuru-legacy/effects/waveshaper.h
-
-######## /plugins/mikuru-legacy/envelopes ########
-
-SRC_HEADERS += plugins/mikuru-legacy/envelopes/adsr.h
-SRC_HEADERS += plugins/mikuru-legacy/envelopes/envelope.h
-SRC_HEADERS += plugins/mikuru-legacy/envelopes/eg.h
-SRC_HEADERS += plugins/mikuru-legacy/envelopes/lfo.h
-
-SRC_SOURCES += plugins/mikuru-legacy/envelopes/adsr.cc
-SRC_SOURCES += plugins/mikuru-legacy/envelopes/envelope.cc
-SRC_SOURCES += plugins/mikuru-legacy/envelopes/eg.cc
-SRC_SOURCES += plugins/mikuru-legacy/envelopes/lfo.cc
-
-SRC_MOCHDRS += plugins/mikuru-legacy/envelopes/adsr.h
-SRC_MOCHDRS += plugins/mikuru-legacy/envelopes/eg.h
-SRC_MOCHDRS += plugins/mikuru-legacy/envelopes/lfo.h
-
-######## /plugins/mikuru ########
-
-SRC_HEADERS += plugins/mikuru-legacy/common_filters.h
-SRC_HEADERS += plugins/mikuru-legacy/double_filter.h
-SRC_HEADERS += plugins/mikuru-legacy/effects.h
-SRC_HEADERS += plugins/mikuru-legacy/envelopes.h
-SRC_HEADERS += plugins/mikuru-legacy/event_dispatcher.h
-SRC_HEADERS += plugins/mikuru-legacy/filter.h
-SRC_HEADERS += plugins/mikuru-legacy/general.h
-SRC_HEADERS += plugins/mikuru-legacy/mikuru.h
-SRC_HEADERS += plugins/mikuru-legacy/oscillator.h
-SRC_HEADERS += plugins/mikuru-legacy/params.h
-SRC_HEADERS += plugins/mikuru-legacy/part.h
-SRC_HEADERS += plugins/mikuru-legacy/part_effects.h
-SRC_HEADERS += plugins/mikuru-legacy/part_filters.h
-SRC_HEADERS += plugins/mikuru-legacy/patch.h
-SRC_HEADERS += plugins/mikuru-legacy/rbj_impulse_response.h
-SRC_HEADERS += plugins/mikuru-legacy/synth_thread.h
-SRC_HEADERS += plugins/mikuru-legacy/voice.h
-SRC_HEADERS += plugins/mikuru-legacy/voice_commons.h
-SRC_HEADERS += plugins/mikuru-legacy/voice_manager.h
-SRC_HEADERS += plugins/mikuru-legacy/voice_oscillator.h
-SRC_HEADERS += plugins/mikuru-legacy/wave_computer.h
-SRC_HEADERS += plugins/mikuru-legacy/widgets.h
-
-SRC_SOURCES += plugins/mikuru-legacy/common_filters.cc
-SRC_SOURCES += plugins/mikuru-legacy/double_filter.cc
-SRC_SOURCES += plugins/mikuru-legacy/effects.cc
-SRC_SOURCES += plugins/mikuru-legacy/envelopes.cc
-SRC_SOURCES += plugins/mikuru-legacy/event_dispatcher.cc
-SRC_SOURCES += plugins/mikuru-legacy/filter.cc
-SRC_SOURCES += plugins/mikuru-legacy/general.cc
-SRC_SOURCES += plugins/mikuru-legacy/mikuru.cc
-SRC_SOURCES += plugins/mikuru-legacy/oscillator.cc
-SRC_SOURCES += plugins/mikuru-legacy/params.cc
-SRC_SOURCES += plugins/mikuru-legacy/part.cc
-SRC_SOURCES += plugins/mikuru-legacy/part_effects.cc
-SRC_SOURCES += plugins/mikuru-legacy/part_filters.cc
-SRC_SOURCES += plugins/mikuru-legacy/patch.cc
-SRC_SOURCES += plugins/mikuru-legacy/rbj_impulse_response.cc
-SRC_SOURCES += plugins/mikuru-legacy/synth_thread.cc
-SRC_SOURCES += plugins/mikuru-legacy/voice.cc
-SRC_SOURCES += plugins/mikuru-legacy/voice_commons.cc
-SRC_SOURCES += plugins/mikuru-legacy/voice_manager.cc
-SRC_SOURCES += plugins/mikuru-legacy/voice_oscillator.cc
-SRC_SOURCES += plugins/mikuru-legacy/wave_computer.cc
-SRC_SOURCES += plugins/mikuru-legacy/widgets.cc
-
-SRC_MOCHDRS += plugins/mikuru-legacy/common_filters.h
-SRC_MOCHDRS += plugins/mikuru-legacy/envelopes.h
-SRC_MOCHDRS += plugins/mikuru-legacy/filter.h
-SRC_MOCHDRS += plugins/mikuru-legacy/general.h
-SRC_MOCHDRS += plugins/mikuru-legacy/mikuru.h
-SRC_MOCHDRS += plugins/mikuru-legacy/oscillator.h
-SRC_MOCHDRS += plugins/mikuru-legacy/part.h
-SRC_MOCHDRS += plugins/mikuru-legacy/part_effects.h
-SRC_MOCHDRS += plugins/mikuru-legacy/part_filters.h
+######### /plugins/mikuru-legacy/effects ########
+#
+#SRC_HEADERS += plugins/mikuru-legacy/effects/delay.h
+#SRC_HEADERS += plugins/mikuru-legacy/effects/effect.h
+#SRC_HEADERS += plugins/mikuru-legacy/effects/reverb.h
+#SRC_HEADERS += plugins/mikuru-legacy/effects/waveshaper.h
+#
+#SRC_SOURCES += plugins/mikuru-legacy/effects/delay.cc
+#SRC_SOURCES += plugins/mikuru-legacy/effects/effect.cc
+#SRC_SOURCES += plugins/mikuru-legacy/effects/reverb.cc
+#SRC_SOURCES += plugins/mikuru-legacy/effects/waveshaper.cc
+#
+#SRC_MOCHDRS += plugins/mikuru-legacy/effects/delay.h
+#SRC_MOCHDRS += plugins/mikuru-legacy/effects/effect.h
+#SRC_MOCHDRS += plugins/mikuru-legacy/effects/reverb.h
+#SRC_MOCHDRS += plugins/mikuru-legacy/effects/waveshaper.h
+#
+######### /plugins/mikuru-legacy/envelopes ########
+#
+#SRC_HEADERS += plugins/mikuru-legacy/envelopes/adsr.h
+#SRC_HEADERS += plugins/mikuru-legacy/envelopes/envelope.h
+#SRC_HEADERS += plugins/mikuru-legacy/envelopes/eg.h
+#SRC_HEADERS += plugins/mikuru-legacy/envelopes/lfo.h
+#
+#SRC_SOURCES += plugins/mikuru-legacy/envelopes/adsr.cc
+#SRC_SOURCES += plugins/mikuru-legacy/envelopes/envelope.cc
+#SRC_SOURCES += plugins/mikuru-legacy/envelopes/eg.cc
+#SRC_SOURCES += plugins/mikuru-legacy/envelopes/lfo.cc
+#
+#SRC_MOCHDRS += plugins/mikuru-legacy/envelopes/adsr.h
+#SRC_MOCHDRS += plugins/mikuru-legacy/envelopes/eg.h
+#SRC_MOCHDRS += plugins/mikuru-legacy/envelopes/lfo.h
+#
+######### /plugins/mikuru ########
+#
+#SRC_HEADERS += plugins/mikuru-legacy/common_filters.h
+#SRC_HEADERS += plugins/mikuru-legacy/double_filter.h
+#SRC_HEADERS += plugins/mikuru-legacy/effects.h
+#SRC_HEADERS += plugins/mikuru-legacy/envelopes.h
+#SRC_HEADERS += plugins/mikuru-legacy/event_dispatcher.h
+#SRC_HEADERS += plugins/mikuru-legacy/filter.h
+#SRC_HEADERS += plugins/mikuru-legacy/general.h
+#SRC_HEADERS += plugins/mikuru-legacy/mikuru.h
+#SRC_HEADERS += plugins/mikuru-legacy/oscillator.h
+#SRC_HEADERS += plugins/mikuru-legacy/params.h
+#SRC_HEADERS += plugins/mikuru-legacy/part.h
+#SRC_HEADERS += plugins/mikuru-legacy/part_effects.h
+#SRC_HEADERS += plugins/mikuru-legacy/part_filters.h
+#SRC_HEADERS += plugins/mikuru-legacy/patch.h
+#SRC_HEADERS += plugins/mikuru-legacy/rbj_impulse_response.h
+#SRC_HEADERS += plugins/mikuru-legacy/synth_thread.h
+#SRC_HEADERS += plugins/mikuru-legacy/voice.h
+#SRC_HEADERS += plugins/mikuru-legacy/voice_commons.h
+#SRC_HEADERS += plugins/mikuru-legacy/voice_manager.h
+#SRC_HEADERS += plugins/mikuru-legacy/voice_oscillator.h
+#SRC_HEADERS += plugins/mikuru-legacy/wave_computer.h
+#SRC_HEADERS += plugins/mikuru-legacy/widgets.h
+#
+#SRC_SOURCES += plugins/mikuru-legacy/common_filters.cc
+#SRC_SOURCES += plugins/mikuru-legacy/double_filter.cc
+#SRC_SOURCES += plugins/mikuru-legacy/effects.cc
+#SRC_SOURCES += plugins/mikuru-legacy/envelopes.cc
+#SRC_SOURCES += plugins/mikuru-legacy/event_dispatcher.cc
+#SRC_SOURCES += plugins/mikuru-legacy/filter.cc
+#SRC_SOURCES += plugins/mikuru-legacy/general.cc
+#SRC_SOURCES += plugins/mikuru-legacy/mikuru.cc
+#SRC_SOURCES += plugins/mikuru-legacy/oscillator.cc
+#SRC_SOURCES += plugins/mikuru-legacy/params.cc
+#SRC_SOURCES += plugins/mikuru-legacy/part.cc
+#SRC_SOURCES += plugins/mikuru-legacy/part_effects.cc
+#SRC_SOURCES += plugins/mikuru-legacy/part_filters.cc
+#SRC_SOURCES += plugins/mikuru-legacy/patch.cc
+#SRC_SOURCES += plugins/mikuru-legacy/rbj_impulse_response.cc
+#SRC_SOURCES += plugins/mikuru-legacy/synth_thread.cc
+#SRC_SOURCES += plugins/mikuru-legacy/voice.cc
+#SRC_SOURCES += plugins/mikuru-legacy/voice_commons.cc
+#SRC_SOURCES += plugins/mikuru-legacy/voice_manager.cc
+#SRC_SOURCES += plugins/mikuru-legacy/voice_oscillator.cc
+#SRC_SOURCES += plugins/mikuru-legacy/wave_computer.cc
+#SRC_SOURCES += plugins/mikuru-legacy/widgets.cc
+#
+#SRC_MOCHDRS += plugins/mikuru-legacy/common_filters.h
+#SRC_MOCHDRS += plugins/mikuru-legacy/envelopes.h
+#SRC_MOCHDRS += plugins/mikuru-legacy/filter.h
+#SRC_MOCHDRS += plugins/mikuru-legacy/general.h
+#SRC_MOCHDRS += plugins/mikuru-legacy/mikuru.h
+#SRC_MOCHDRS += plugins/mikuru-legacy/oscillator.h
+#SRC_MOCHDRS += plugins/mikuru-legacy/part.h
+#SRC_MOCHDRS += plugins/mikuru-legacy/part_effects.h
+#SRC_MOCHDRS += plugins/mikuru-legacy/part_filters.h
 
 ######### /plugins/yuki ########
 
