@@ -38,6 +38,7 @@ PartManager::PartManager (Plugin* plugin):
 
 PartManager::~PartManager()
 {
+	remove_all_parts();
 	delete _voice_in;
 	delete _audio_out[0];
 	delete _audio_out[1];
@@ -52,7 +53,7 @@ PartManager::add_part()
 	_parts_mutex.lock();
 	_parts.push_back (p);
 	_parts_mutex.unlock();
-	widget()->add_part (p);
+	part_added (p);
 }
 
 
@@ -62,7 +63,7 @@ PartManager::remove_part (Part* part)
 	_parts_mutex.lock();
 	_parts.remove (part);
 	_parts_mutex.unlock();
-	widget()->remove_part (part);
+	part_removed (part);
 	_id_alloc.free_id (part->id());
 	delete part;
 }

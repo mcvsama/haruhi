@@ -25,6 +25,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/utility/signal.h>
 
 
 namespace Yuki {
@@ -33,7 +34,9 @@ class Plugin;
 class Part;
 class PartManager;
 
-class PartManagerWidget: public QWidget
+class PartManagerWidget:
+	public QWidget,
+	public Signal::Receiver
 {
 	Q_OBJECT
 

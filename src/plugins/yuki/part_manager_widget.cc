@@ -75,6 +75,9 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 
 	show_main();
 	update_widgets();
+
+	_part_manager->part_added.connect (this, &PartManagerWidget::add_part);
+	_part_manager->part_removed.connect (this, &PartManagerWidget::remove_part);
 }
 
 

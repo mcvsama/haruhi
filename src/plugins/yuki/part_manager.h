@@ -60,27 +60,24 @@ class PartManager:
 
 	/**
 	 * Add new Part.
-	 * Add UI widget.
 	 */
 	void
 	add_part();
 
 	/**
 	 * Remove given Part.
-	 * Remove UI widget.
 	 */
 	void
 	remove_part (Part*);
 
 	/**
 	 * Remove all Parts.
-	 * Remove UI widgets.
 	 */
 	void
 	remove_all_parts();
 
 	/**
-	 * Add first Part (and tab widget) if there is none.
+	 * Add first Part if there is none.
 	 */
 	void
 	ensure_there_is_at_least_one_part();
@@ -109,6 +106,10 @@ class PartManager:
 	 */
 	void
 	graph_updated();
+
+  public:
+	Signal::Emiter1<Part*>	part_added;
+	Signal::Emiter1<Part*>	part_removed;
 
   private:
 	Params::Main		_main_params;
