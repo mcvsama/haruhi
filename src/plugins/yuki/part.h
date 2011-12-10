@@ -102,6 +102,18 @@ class Part:
 	~Part();
 
 	/**
+	 * Return part params.
+	 */
+	Params::Part*
+	part_params();
+
+	/**
+	 * Return voice params template.
+	 */
+	Params::Voice*
+	voice_params();
+
+	/**
 	 * Handle voice input event.
 	 * Pass it to the voice manager if conditions are met.
 	 */
@@ -181,7 +193,8 @@ class Part:
   private:
 	PartManager*				_part_manager;
 	VoiceManager*				_voice_manager;
-	Params::Part				_params;
+	Params::Part				_part_params;
+	Params::Voice				_voice_params;
 	DSP::Wavetable*				_wavetables[2];
 	Atomic<bool>				_switch_wavetables;
 	Atomic<unsigned int>		_wt_update_request;
@@ -212,6 +225,20 @@ inline bool
 Part::UpdateWavetableWorkUnit::is_cancelled() const
 {
 	return _is_cancelled.load();
+}
+
+
+inline Params::Part*
+Part::part_params()
+{
+	return &_part_params;
+}
+
+
+inline Params::Voice*
+Part::voice_params()
+{
+	return &_voice_params;
 }
 
 } // namespace Yuki

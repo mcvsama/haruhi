@@ -71,7 +71,7 @@ Part::UpdateWavetableWorkUnit::execute()
 
 Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Main* main_params):
 	_part_manager (part_manager),
-	_voice_manager (new VoiceManager (main_params, &_params, work_performer)),
+	_voice_manager (new VoiceManager (main_params, &_part_params, &_voice_params, work_performer)),
 	_switch_wavetables (false),
 	_wt_update_request (0),
 	_wt_serial (0),
@@ -107,7 +107,7 @@ Part::~Part()
 void
 Part::handle_voice_event (Haruhi::VoiceEvent const* event)
 {
-	if (_params.part_enabled.get())
+	if (_part_params.part_enabled.get())
 		_voice_manager->handle_voice_event (event);
 }
 

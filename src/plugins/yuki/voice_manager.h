@@ -60,7 +60,7 @@ class VoiceManager
 	};
 
   public:
-	VoiceManager (Params::Main*, Params::Part*, WorkPerformer*);
+	VoiceManager (Params::Main*, Params::Part*, Params::Voice*, WorkPerformer*);
 
 	~VoiceManager();
 
@@ -161,6 +161,7 @@ class VoiceManager
 	WorkPerformer*		_work_performer;
 	Params::Main*		_main_params;
 	Params::Part*		_part_params;
+	Params::Voice*		_voice_params;
 	Voices				_voices;
 	WorkUnits			_work_units;
 	ID2VoiceMap			_voices_by_id;

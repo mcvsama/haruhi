@@ -54,7 +54,10 @@ class Voice
 	};
 
   public:
-	Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp, Params::Main* main_params, Params::Part* part_params,
+	/**
+	 * \param	voice_params Voice params template.
+	 */
+	Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp, Params::Main* main_params, Params::Part* part_params, Params::Voice* voice_params,
 		   Sample amplitude, Sample frequency, unsigned int sample_rate, std::size_t buffer_size);
 
 	/**
