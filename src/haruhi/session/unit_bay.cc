@@ -36,7 +36,7 @@ UnitBayAware::set_unit_bay (UnitBay* unit_bay)
 }
 
 
-UnitBay::UnitBay (std::string const& urn, std::string const& title, int id, QWidget* parent):
+UnitBay::UnitBay (std::string const& urn, std::string const& title, int id, QWidget*):
 	Unit (urn, title, id)
 {
 }

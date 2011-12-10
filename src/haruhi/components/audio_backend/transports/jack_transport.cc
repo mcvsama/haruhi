@@ -296,7 +296,7 @@ JackTransport::ignore_sigpipe()
 
 
 int
-JackTransport::c_process (jack_nframes_t samples)
+JackTransport::c_process (jack_nframes_t)
 {
 	lock_ports();
 	for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)

@@ -55,12 +55,10 @@ class Noise: public Wave
 	{ }
 
 	/**
-	 * Returns sample from base function with added harmonics.
-	 * \param	phase is ignored.
-	 * \param	frequency is ignored.
+	 * Returns noise sample.
 	 */
 	virtual Sample
-	operator() (Sample register phase, Sample frequency) const
+	operator() (Sample, Sample) const
 	{
 		return get();
 	}

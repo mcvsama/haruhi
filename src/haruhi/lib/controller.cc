@@ -92,7 +92,7 @@ Controller::process_event (ControllerEvent const* event)
 
 
 void
-Controller::learned_connection (EventBackend::EventTypes, EventPort* learned_port)
+Controller::learned_connection (EventBackend::EventTypes, EventPort*)
 {
 	_learning.store (false);
 	// We're callback from engine thread, not UI thread, so use safe update method:

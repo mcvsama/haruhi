@@ -66,84 +66,57 @@ template<class tType>
 		typedef tType Type;
 
 	  public:
-		Param (const char* name = ""):
-			_minimum (0),
-			_maximum (0),
-			_default_value (0),
-			_value (0),
-			_name (name)
-		{ }
+		Param (const char* name = "");
 
-		Param (Type const& minimum, Type const& maximum, Type const& default_value, const char* name):
-			_minimum (minimum),
-			_maximum (maximum),
-			_default_value (default_value),
-			_value (default_value),
-			_name (name)
-		{ }
+		Param (Type const& minimum, Type const& maximum, Type const& default_value, const char* name);
 
-		Param (Param const& other) { operator= (other); }
+		Param (Param const& other);
 
 		Param&
-		operator= (Param const& other)
-		{
-			_minimum = other._minimum;
-			_maximum = other._maximum;
-			_default_value = other._default_value;
-			_value = other._value;
-			on_change();
-			return *this;
-		}
+		operator= (Param const& other);
 
 		const char*
-		name() const { return _name.c_str(); }
+		name() const;
 
-		operator Type() const { return get(); }
-
-		void
-		operator= (Type const& value) { set (value); }
-
-		Type
-		get() const { return _value.load(); }
+		operator Type() const;
 
 		void
-		set (Type const& value) { _value.store (value); on_change(); }
+		operator= (Type const& value);
 
 		Type
-		minimum() const { return _minimum; }
+		get() const;
+
+		void
+		set (Type const& value);
 
 		Type
-		maximum() const { return _maximum; }
+		minimum() const;
 
 		Type
-		default_value() const { return _default_value; }
+		maximum() const;
+
+		Type
+		default_value() const;
 
 		/*
 		 * BaseParam implementation
 		 */
 
 		void
-		reset() { set (_default_value); }
+		reset();
 
 		void
-		sanitize() { set (bound (get(), _minimum, _maximum)); }
+		sanitize();
 
 		/*
 		 * SaveableState implementation
 		 */
 
 		void
-		save_state (QDomElement& parent) const
-		{
-			parent.setAttribute ("value", QString ("%1").arg (get()));
-			parent.appendChild (parent.ownerDocument().createTextNode (QString::number (get())));
-		}
+		save_state (QDomElement& parent) const;
 
 		void
-		load_state (QDomElement const& parent)
-		{
-			set (bound<int> (parent.text().toInt(), minimum(), maximum()));
-		}
+		load_state (QDomElement const& parent);
 
 	  public:
 		// Emited when parameter gets changed:
@@ -156,6 +129,144 @@ template<class tType>
 		Atomic<Type>	_value;
 		std::string		_name;
 	};
+
+
+template<class tType>
+	Param<tType>::Param (const char* name):
+		_minimum (0),
+		_maximum (0),
+		_default_value (0),
+		_value (0),
+		_name (name)
+	{ }
+
+
+template<class tType>
+	inline
+	Param<tType>::Param (Type const& minimum, Type const& maximum, Type const& default_value, const char* name):
+		_minimum (minimum),
+		_maximum (maximum),
+		_default_value (default_value),
+		_value (default_value),
+		_name (name)
+	{ }
+
+
+template<class tType>
+	Param<tType>::Param (Param const& other)
+	{
+		operator= (other);
+	}
+
+
+template<class tType>
+	inline Param<tType>&
+	Param<tType>::operator= (Param const& other)
+	{
+		_minimum = other._minimum;
+		_maximum = other._maximum;
+		_default_value = other._default_value;
+		_value = other._value;
+		on_change();
+		return *this;
+	}
+
+
+template<class tType>
+	inline const char*
+	Param<tType>::name() const
+	{
+		return _name.c_str();
+	}
+
+
+template<class tType>
+	inline
+	Param<tType>::operator Type() const
+	{
+		return get();
+	}
+
+
+template<class tType>
+	inline void
+	Param<tType>::operator= (Type const& value)
+	{
+		set (value);
+	}
+
+
+template<class tType>
+	inline tType
+	Param<tType>::get() const
+	{
+		return _value.load();
+	}
+
+
+template<class tType>
+	inline void
+	Param<tType>::set (Type const& value)
+	{
+		_value.store (value); on_change();
+	}
+
+
+template<class tType>
+	inline tType
+	Param<tType>::minimum() const
+	{
+		return _minimum;
+	}
+
+
+template<class tType>
+	inline tType
+	Param<tType>::maximum() const
+	{
+		return _maximum;
+	}
+
+
+template<class tType>
+	inline tType
+	Param<tType>::default_value() const
+	{
+		return _default_value;
+	}
+
+
+template<class tType>
+	inline void
+	Param<tType>::reset()
+	{
+		set (_default_value);
+	}
+
+
+template<class tType>
+	inline void
+	Param<tType>::sanitize()
+	{
+		set (bound (get(), _minimum, _maximum));
+	}
+
+
+template<class tType>
+	inline void
+	Param<tType>::save_state (QDomElement& parent) const
+	{
+		parent.setAttribute ("value", QString ("%1").arg (get()));
+		parent.appendChild (parent.ownerDocument().createTextNode (QString::number (get())));
+	}
+
+
+template<class tType>
+	inline void
+	Param<tType>::load_state (QDomElement const& parent)
+	{
+		set (bound<int> (parent.text().toInt(), minimum(), maximum()));
+	}
 
 } // namespace Haruhi
 

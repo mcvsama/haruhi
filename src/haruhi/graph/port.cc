@@ -153,7 +153,7 @@ Port::sync()
 
 
 void
-Port::start_learning (EventBackend::EventTypes event_types)
+Port::start_learning (EventBackend::EventTypes)
 {
 	Graph* graph = this->graph();
 	if (!graph)

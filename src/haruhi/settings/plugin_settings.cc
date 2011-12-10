@@ -27,13 +27,13 @@ PluginSettings::PluginSettings():
 
 
 void
-PluginSettings::save_state (QDomElement& element) const
+PluginSettings::save_state (QDomElement&) const
 {
 }
 
 
 void
-PluginSettings::load_state (QDomElement const& element)
+PluginSettings::load_state (QDomElement const&)
 {
 }
 

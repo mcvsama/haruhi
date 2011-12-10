@@ -130,14 +130,14 @@ LevelMeter::reset_peak()
 
 
 void
-LevelMeter::paintEvent (QPaintEvent* event)
+LevelMeter::paintEvent (QPaintEvent*)
 {
 	if (_prev_size != size())
 	{
 		repaint_bar_buffer();
 		_prev_size = size();
 	}
- 
+
 	const int w = width();
 	const int h = height();
 	const int k = h - _z_top + 1;
@@ -224,7 +224,7 @@ LevelMetersGroup::Scale::Scale (QWidget* parent, float lower_db, float upper_db,
 
 
 void
-LevelMetersGroup::Scale::paintEvent (QPaintEvent* event)
+LevelMetersGroup::Scale::paintEvent (QPaintEvent*)
 {
 	QPainter painter (this);
 	painter.setPen (QColorGroup::Text);

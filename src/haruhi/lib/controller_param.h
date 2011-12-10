@@ -30,51 +30,77 @@ namespace Haruhi {
 class ControllerParam: public Param<int>
 {
   public:
-	/**
-	 * Inline for performance reasons.
-	 */
-	ControllerParam (const char* name = ""):
-		Param (name),
-		_denominator (1),
-		_1_div_denominator (1.0f / _denominator)
-	{ }
+	ControllerParam (const char* name = "");
 
-	/**
-	 * Inline for performance reasons.
-	 */
-	ControllerParam (int minimum, int maximum, int default_value, int denominator, const char* name):
-		Param (minimum, maximum, default_value, name),
-		_denominator (denominator),
-		_1_div_denominator (1.0f / _denominator)
-	{ }
+	ControllerParam (int minimum, int maximum, int default_value, int denominator, const char* name);
 
-	ControllerParam (ControllerParam const& other) { *this = other; }
+	ControllerParam (ControllerParam const& other);
 
-	/**
-	 * Inline for performance reasons.
-	 */
 	ControllerParam&
-	operator= (ControllerParam const& other)
-	{
-		Param<int>::operator= (other);
-		_denominator = other._denominator;
-		_1_div_denominator = other._1_div_denominator;
-		return *this;
-	}
+	operator= (ControllerParam const& other);
 
 	int
-	denominator() const { return _denominator; }
+	denominator() const;
 
 	/**
-	 * Returns value divided by denominator and casted to float.
+	 * Return value divided by denominator and casted to float.
 	 */
 	float
-	to_f() const { return _1_div_denominator * get(); }
+	to_f() const;
 
   private:
 	int		_denominator;
 	float	_1_div_denominator;
 };
+
+
+inline
+ControllerParam::ControllerParam (const char* name):
+	Param (name),
+	_denominator (1),
+	_1_div_denominator (1.0f / _denominator)
+{ }
+
+
+inline
+ControllerParam::ControllerParam (int minimum, int maximum, int default_value, int denominator, const char* name):
+	Param (minimum, maximum, default_value, name),
+	_denominator (denominator),
+	_1_div_denominator (1.0f / _denominator)
+{ }
+
+
+inline
+ControllerParam::ControllerParam (ControllerParam const& other):
+	Param (other)
+{
+	_denominator = other._denominator;
+	_1_div_denominator = other._1_div_denominator;
+}
+
+
+inline ControllerParam&
+ControllerParam::operator= (ControllerParam const& other)
+{
+	Param<int>::operator= (other);
+	_denominator = other._denominator;
+	_1_div_denominator = other._1_div_denominator;
+	return *this;
+}
+
+
+inline int
+ControllerParam::denominator() const
+{
+	return _denominator;
+}
+
+
+inline float
+ControllerParam::to_f() const
+{
+	return _1_div_denominator * get();
+}
 
 } // namespace Haruhi
 

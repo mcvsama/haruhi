@@ -259,7 +259,7 @@ template<class SubClass>
 
 template<class SubClass>
 	inline void
-	Params::SaveableParams<SubClass>::load_state (QDomElement const& element)
+	Params::SaveableParams<SubClass>::load_state (QDomElement const& /*element*/)
 	{
 		// TODO
 	}
