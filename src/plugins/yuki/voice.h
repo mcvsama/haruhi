@@ -37,7 +37,7 @@ typedef std::set<Voice*> Voices;
 class Voice
 {
   public:
-	enum State { NotStarted, Attacking, Voicing, Dropped, Finished };
+	enum State { Voicing, Dropped, Finished };
 
 	/**
 	 * Shared buffers for each thread of the RT work performer.
@@ -48,12 +48,14 @@ class Voice
 		void
 		graph_updated (unsigned int sample_rate, std::size_t buffer_size);
 
-		Haruhi::AudioBuffer amplitude_buf;
-		Haruhi::AudioBuffer frequency_buf;
+		Haruhi::AudioBuffer	amplitude_buf;
+		Haruhi::AudioBuffer	frequency_buf;
+		Haruhi::AudioBuffer	tmp_buf;
 	};
 
   public:
-	Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp, Params::Part* part_params, Sample amplitude, Sample frequency, unsigned int sample_rate, std::size_t buffer_size);
+	Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp, Params::Main* main_params, Params::Part* part_params,
+		   Sample amplitude, Sample frequency, unsigned int sample_rate, std::size_t buffer_size);
 
 	/**
 	 * Return voice's ID which came in Haruhi::VoiceEvent.
@@ -111,6 +113,20 @@ class Voice
 	Params::Voice*
 	params();
 
+	/**
+	 * Set voice amplitude.
+	 * \param	amplitude Amplitude value [0..1]
+	 */
+	void
+	set_amplitude (Sample amplitude);
+
+	/**
+	 * Set new target absolute frequency of the voice.
+	 * \param	frequency Absolute frequency [0..0.5]
+	 */
+	void
+	set_frequency (Sample frequency);
+
   public:
 	/**
 	 * Return older from the two voices by comparing
@@ -120,18 +136,40 @@ class Voice
 	return_older (Voice* a, Voice* b);
 
   private:
+	/**
+	 * Update glide/portamento params when
+	 * voice frequency changes.
+	 */
+	void
+	update_glide_parameters();
+
+	/**
+	 * Prepare amplitude buffer as amplitude source for VoiceOscillator.
+	 * \param	amplitude_buf Buffer where result is stored.
+	 */
+	void
+	prepare_amplitude_buffer (Haruhi::AudioBuffer* amplitude_buf);
+
+	/**
+	 * Prepare frequency buffer as frequency source for VoiceOscillator.
+	 * \param	frequency_buf Buffer where result is stored.
+	 * \param	tmp_buf Helper buffer.
+	 */
+	void
+	prepare_frequency_buffer (Haruhi::AudioBuffer* frequency_buf, Haruhi::AudioBuffer* tmp_buf);
+
+  private:
 	Haruhi::VoiceID		_id;
 	Haruhi::Timestamp	_timestamp;
 	State				_state;
 	Params::Voice		_params;
 	Params::Part*		_part_params;
+	Params::Main*		_main_params;
 	Sample				_amplitude;
 	Sample				_frequency;
 	unsigned int		_sample_rate;
 	std::size_t			_buffer_size;
-
 	VoiceOscillator		_vosc;
-
 	Haruhi::AudioBuffer	_output_1;
 	Haruhi::AudioBuffer	_output_2;
 
@@ -142,6 +180,22 @@ class Voice
 	DSP::RampSmoother	_smoother_panorama_1;
 	DSP::RampSmoother	_smoother_panorama_2;
 
+	// Glide params:
+	Sample				_target_frequency;
+	Sample				_frequency_change;
+
+	// Pitchbend params:
+	float				_last_pitchbend_value;
+
+	// Attack/drop: when voice starts to sound, it does not start immediately but instead
+	// in a time period defined by _attack_samples. Similarly with dropping.
+	std::size_t			_attack_sample;
+	std::size_t			_attack_samples;
+	std::size_t			_drop_sample;
+	std::size_t			_drop_samples;
+
+	// Set initially to true, reset after first mixin():
+	bool				_first_pass;
 };
 
 
@@ -169,7 +223,7 @@ Voice::state() const
 inline void
 Voice::drop()
 {
-	_state = Finished;
+	_state = Dropped;
 }
 
 
@@ -192,6 +246,21 @@ inline void
 Voice::set_wavetable (DSP::Wavetable* wavetable)
 {
 	_vosc.set_wavetable (wavetable);
+}
+
+
+inline void
+Voice::set_amplitude (Sample amplitude)
+{
+	_amplitude = amplitude;
+}
+
+
+inline void
+Voice::set_frequency (Sample frequency)
+{
+	_target_frequency = frequency;
+	update_glide_parameters();
 }
 
 

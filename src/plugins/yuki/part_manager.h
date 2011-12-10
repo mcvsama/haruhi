@@ -111,14 +111,14 @@ class PartManager:
 	graph_updated();
 
   private:
-	Params::MainControls	_params;
-	Parts					_parts;
-	Mutex					_parts_mutex;
-	IDAllocator				_id_alloc;
+	Params::Main		_main_params;
+	Parts				_parts;
+	Mutex				_parts_mutex;
+	IDAllocator			_id_alloc;
 
 	// Ports (0 = L, 1 = R):
-	Haruhi::AudioPort*		_audio_out[2];
-	Haruhi::EventPort*		_voice_in;
+	Haruhi::AudioPort*	_audio_out[2];
+	Haruhi::EventPort*	_voice_in;
 };
 
 

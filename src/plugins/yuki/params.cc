@@ -45,7 +45,7 @@
 
 namespace Yuki {
 
-Params::MainControls::MainControls():
+Params::Main::Main():
 	HARUHI_YUKI_CONSTRUCT (volume, Volume),
 	HARUHI_YUKI_CONSTRUCT (detune, Detune),
 	HARUHI_YUKI_CONSTRUCT (panorama, Panorama),
@@ -56,7 +56,7 @@ Params::MainControls::MainControls():
 }
 
 
-HARUHI_YUKI_DEFINE_PARAMS (MainControls)
+HARUHI_YUKI_DEFINE_PARAMS (Main)
 	HARUHI_YUKI_DEFINE_PARAM (volume)
 	HARUHI_YUKI_DEFINE_PARAM (detune)
 	HARUHI_YUKI_DEFINE_PARAM (panorama)
@@ -76,7 +76,6 @@ Params::Part::Part():
 	noise_enabled (0, 1, 0, "noise_enabled"),
 	frequency_mod_range (0, 60, 12, "frequency_mod_range"),
 	pitchbend_enabled (0, 1, 1, "pitchbend_enabled"),
-	pitchbend_released (0, 1, 0, "pitchbend_released"),
 	pitchbend_up_semitones (0, 60, 2, "pitchbend_up_semitones"),
 	pitchbend_down_semitones (0, 60, 2, "pitchbend_down_semitones"),
 	transposition_semitones (-60, 60, 0, "transposition_semitones"),
@@ -97,7 +96,6 @@ HARUHI_YUKI_DEFINE_PARAMS (Part)
 	HARUHI_YUKI_DEFINE_PARAM (noise_enabled)
 	HARUHI_YUKI_DEFINE_PARAM (frequency_mod_range)
 	HARUHI_YUKI_DEFINE_PARAM (pitchbend_enabled)
-	HARUHI_YUKI_DEFINE_PARAM (pitchbend_released)
 	HARUHI_YUKI_DEFINE_PARAM (pitchbend_up_semitones)
 	HARUHI_YUKI_DEFINE_PARAM (pitchbend_down_semitones)
 	HARUHI_YUKI_DEFINE_PARAM (transposition_semitones)

@@ -97,7 +97,7 @@ class Part:
 	};
 
   public:
-	Part (PartManager*, WorkPerformer* rendering_work_performer);
+	Part (PartManager*, WorkPerformer* rendering_work_performer, Params::Main* main_params);
 
 	~Part();
 

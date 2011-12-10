@@ -69,9 +69,9 @@ Part::UpdateWavetableWorkUnit::execute()
 }
 
 
-Part::Part (PartManager* part_manager, WorkPerformer* work_performer):
+Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Main* main_params):
 	_part_manager (part_manager),
-	_voice_manager (new VoiceManager (&_params, work_performer)),
+	_voice_manager (new VoiceManager (main_params, &_params, work_performer)),
 	_switch_wavetables (false),
 	_wt_update_request (0),
 	_wt_serial (0),

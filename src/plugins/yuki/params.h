@@ -106,9 +106,9 @@ struct Params
 	/**
 	 * Main control panel params.
 	 */
-	struct MainControls: public SaveableParams<MainControls>
+	struct Main: public SaveableParams<Main>
 	{
-		HARUHI_YUKI_PARAMS_STANDARD_METHODS (MainControls)
+		HARUHI_YUKI_PARAMS_STANDARD_METHODS (Main)
 
 		HARUHI_YUKI_PARAM (Volume,					       0,	+1000000,	+1000000,	 +938445) // -1.5dB/20*log_10/exp
 		HARUHI_YUKI_PARAM (Panorama,				-1000000,	+1000000,	+1000000,	       0)
@@ -148,7 +148,6 @@ struct Params
 		Haruhi::Param<int> noise_enabled;
 		Haruhi::Param<int> frequency_mod_range;
 		Haruhi::Param<int> pitchbend_enabled;
-		Haruhi::Param<int> pitchbend_released;
 		Haruhi::Param<int> pitchbend_up_semitones;
 		Haruhi::Param<int> pitchbend_down_semitones;
 		Haruhi::Param<int> transposition_semitones;
@@ -156,7 +155,7 @@ struct Params
 		Haruhi::Param<int> unison_stereo;
 		Haruhi::Param<int> pseudo_stereo;
 
-		static const int NUM_PARAMS = 16;
+		static const int NUM_PARAMS = 15;
 	};
 
 	/**

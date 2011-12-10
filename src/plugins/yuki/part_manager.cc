@@ -47,7 +47,7 @@ PartManager::~PartManager()
 void
 PartManager::add_part()
 {
-	Part* p = new Part (this, Haruhi::Services::hi_priority_work_performer());
+	Part* p = new Part (this, Haruhi::Services::hi_priority_work_performer(), &_main_params);
 	p->set_id (_id_alloc.allocate_id());
 	_parts_mutex.lock();
 	_parts.push_back (p);
@@ -108,7 +108,7 @@ PartManager::process()
 
 	_voice_in->sync();
 	Haruhi::EventBuffer const* buffer = _voice_in->event_buffer();
-	bool const enabled = _params.enabled.get();
+	bool const enabled = _main_params.enabled.get();
 
 	for (Haruhi::EventBuffer::Events::const_iterator e = buffer->events().begin(); e != buffer->events().end(); ++e)
 	{
