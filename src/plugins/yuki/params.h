@@ -51,7 +51,9 @@
 	typedef klass ThisType;														\
 	klass();																	\
 	virtual ~klass() { }														\
-	void get_params (Haruhi::BaseParam const**, size_t max_entries) const;
+	protected:																	\
+	void get_params (Haruhi::BaseParam const**, size_t max_entries) const;		\
+	public:
 
 #define HARUHI_YUKI_PARAM(name, min, max, denominator, deflt)					\
 	enum {																		\
@@ -73,38 +75,30 @@ struct Params
 			typedef Haruhi::BaseParam SubClass::* MemberBaseParamPtr;
 
 		  public:
+			/**
+			 * Sanitize params - call .sanitize() on each param.
+			 */
 			void
-			sanitize()
-			{
-				Haruhi::BaseParam const** params = reinterpret_cast<Haruhi::BaseParam const**> (alloca (sizeof (Haruhi::BaseParam*) * SubClass::NUM_PARAMS));
-				get_params (params, SubClass::NUM_PARAMS);
-				for (int i = 0; i < SubClass::NUM_PARAMS; ++i)
-					params[i]->sanitize();
-			}
+			sanitize();
 
+			/**
+			 * Dump/marshal all parameters into XML node.
+			 */
 			void
-			save_state (QDomElement& parent) const
-			{
-				Haruhi::BaseParam const** params = reinterpret_cast<Haruhi::BaseParam const**> (alloca (sizeof (Haruhi::BaseParam*) * SubClass::NUM_PARAMS));
-				get_params (params, SubClass::NUM_PARAMS);
-				for (int i = 0; i < SubClass::NUM_PARAMS; ++i)
-				{
-					// TODO Save knob settings in UI widget's save_state().
-					// TODO Or make it possible to access curve params from Param<>.
-					// TODO Or just move curve/user-limits to Param<>.
-					QDomElement param_el = parent.ownerDocument().createElement ("parameter");
-					param_el.setAttribute ("name", params[i]->name());
-					params[i]->save_state (param_el);
-					parent.appendChild (param_el);
-				}
-			}
+			save_state (QDomElement& parent) const;
 
+			/**
+			 * Restore parameter values from XML.
+			 */
 			void
-			load_state (QDomElement const& element)
-			{
-				// TODO
-			}
+			load_state (QDomElement const& element);
 
+		  protected:
+			/**
+			 * Get array of params.
+			 * \param	tab Here will be stored array of pointers to params.
+			 * \param	max_entries Max number of entries to be stored (length of the tab array).
+			 */
 			virtual void
 			get_params (Haruhi::BaseParam const** tab, size_t max_entries) const = 0;
 		};
@@ -231,6 +225,44 @@ struct Params
 		static const int NUM_PARAMS = 22;
 	};
 };
+
+
+template<class SubClass>
+	inline void
+	Params::SaveableParams<SubClass>::sanitize()
+	{
+		Haruhi::BaseParam const** params = reinterpret_cast<Haruhi::BaseParam const**> (alloca (sizeof (Haruhi::BaseParam*) * SubClass::NUM_PARAMS));
+		get_params (params, SubClass::NUM_PARAMS);
+		for (int i = 0; i < SubClass::NUM_PARAMS; ++i)
+			params[i]->sanitize();
+	}
+
+
+template<class SubClass>
+	inline void
+	Params::SaveableParams<SubClass>::save_state (QDomElement& parent) const
+	{
+		Haruhi::BaseParam const** params = reinterpret_cast<Haruhi::BaseParam const**> (alloca (sizeof (Haruhi::BaseParam*) * SubClass::NUM_PARAMS));
+		get_params (params, SubClass::NUM_PARAMS);
+		for (int i = 0; i < SubClass::NUM_PARAMS; ++i)
+		{
+			// TODO Save knob settings in UI widget's save_state().
+			// TODO Or make it possible to access curve params from Param<>.
+			// TODO Or just move curve/user-limits to Param<>.
+			QDomElement param_el = parent.ownerDocument().createElement ("parameter");
+			param_el.setAttribute ("name", params[i]->name());
+			params[i]->save_state (param_el);
+			parent.appendChild (param_el);
+		}
+	}
+
+
+template<class SubClass>
+	inline void
+	Params::SaveableParams<SubClass>::load_state (QDomElement const& element)
+	{
+		// TODO
+	}
 
 } // namespace Yuki
 

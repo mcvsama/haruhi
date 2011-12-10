@@ -49,43 +49,43 @@ class VoiceOscillator
 	 * Enable/disable wavetable generator.
 	 */
 	void
-	set_wavetable_enabled (bool enabled) { _wavetable_enabled = enabled; }
+	set_wavetable_enabled (bool enabled);
 
 	/**
 	 * Set new wavetable. May be 0.
 	 */
 	void
-	set_wavetable (DSP::Wavetable* wavetable) { _wavetable = wavetable; }
+	set_wavetable (DSP::Wavetable* wavetable);
 
 	/**
 	 * Return currently used wavetable.
 	 */
 	DSP::Wavetable*
-	wavetable() const { return _wavetable; }
+	wavetable() const;
 
 	/**
 	 * Set frequency source buffer.
 	 */
 	void
-	set_frequency_source (Haruhi::AudioBuffer* source) { _frequency_source = source; }
+	set_frequency_source (Haruhi::AudioBuffer* source);
 
 	/**
 	 * Set amplitude source buffer.
 	 */
 	void
-	set_amplitude_source (Haruhi::AudioBuffer* source) { _amplitude_source = source; }
+	set_amplitude_source (Haruhi::AudioBuffer* source);
 
 	/**
 	 * Enable/disable noise generator.
 	 */
 	void
-	set_noise_enabled (bool enabled) { _noise_enabled = enabled; }
+	set_noise_enabled (bool enabled);
 
 	/**
 	 * Set noise amplitude.
 	 */
 	void
-	set_noise_amplitude (Sample amplitude) { _noise_amplitude = amplitude; }
+	set_noise_amplitude (Sample amplitude);
 
 	/**
 	 * Argument: [-1.0…1.0]
@@ -97,7 +97,7 @@ class VoiceOscillator
 	 * Argument: [-1.0…1.0]
 	 */
 	void
-	set_initial_phases_spread (Sample spread) { _initial_phase_spread = spread; }
+	set_initial_phases_spread (Sample spread);
 
 	/**
 	 * Argument: [1…MaxUnison]
@@ -109,225 +109,47 @@ class VoiceOscillator
 	 * Argument: [0…1.0]
 	 */
 	void
-	set_unison_spread (Sample spread)
-	{
-		if (_unison_spread != spread)
-		{
-			_unison_spread = (1.0f / 20.0f) * spread;
-			update_unison_coefficients();
-		}
-	}
+	set_unison_spread (Sample spread);
 
 	/**
 	 * Argument: [0…1.0] (0.0 disables noise completely).
 	 */
 	void
-	set_unison_noise (Sample noise) { _unison_noise = (1.0f / 20.f) * noise; }
+	set_unison_noise (Sample noise);
 
 	/**
 	 * Enable/disable stereo spread of unison voices.
 	 */
 	void
-	set_unison_stereo (bool stereo) { _unison_stereo = stereo; }
+	set_unison_stereo (bool stereo);
 
 	/**
 	 * Fill output buffer.
 	 */
 	void
-	fill (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
-	{
-		assert (output1 != 0);
-		assert (output2 != 0);
-		assert (output1->size() == output2->size());
-
-		Sample* const o1 = output1->begin();
-		Sample* const o2 = output2->begin();
-		bool mul = false;
-
-		// Synthesize wave:
-		if (_wavetable == 0 || !_wavetable_enabled)
-		{
-			output1->clear();
-			output2->clear();
-		}
-		else
-		{
-			if (_unison_noise > 0.0f)
-				fill_with_noised_unison (output1, output2);
-			else
-				fill_without_noised_unison (output1, output2);
-			mul = true;
-		}
-
-		// Add noise:
-		if (_noise_enabled && _noise_amplitude > 0.0f)
-		{
-			for (std::size_t i = 0, n = output1->size(); i < n; ++i)
-			{
-				float const x = _noise_amplitude * _noise.get (_noise_state);
-				o1[i] += x;
-				o2[i] += x;
-			}
-			mul = true;
-		}
-
-		if (mul)
-		{
-			// Multiply samples by _volume and divide samples by _unison_number:
-			// (these coefficients have been obtained by listening tests):
-			float amp = FastPow::pow (_1_div_unison_number, _unison_stereo ? 0.4f : 0.75f);
-			SIMD::multiply_buffers_and_by_scalar (o1, o2, _amplitude_source->begin(), output1->size(), amp);
-		}
-	}
+	fill (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2);
 
   private:
-	Sample
-	unison_delta (Sample const& f)
-	{
-		return f * _unison_relative_spread;
-	}
-
-	void
-	update_unison_coefficients()
-	{
-		_unison_relative_spread = _unison_spread / _unison_number;
-		_half_unison_number = (_unison_number - 1) / 2.0f;
-		_1_div_unison_number = 1.0f / _unison_number;
-		// Distribution lookup table:
-		if (_unison_number == 1)
-			_distribution_lookup[0] = 1.0f;
-		else if (_unison_number == 2)
-			_distribution_lookup[0] = _distribution_lookup[1] = 1.0f;
-		else
-		{
-			for (int i = 0; i <= _unison_number / 2; ++i)
-				_distribution_lookup[i] = 1.0f * (i + 1) / (_unison_number / 2 + 1);
-			for (int i = 0; i <= _unison_number / 2; ++i)
-				_distribution_lookup[_unison_number - i - 1] = _distribution_lookup[i];
-		}
-	}
-
-	void
-	initialize_stereo_unison_lookup()
-	{
-		// Lookup table for stereo unison:
-		for (int p = 0; p < _unison_number; ++p)
-			_stereo_unison_lookup[p] = pow2 (_1_div_unison_number * (p + 1));
-	}
-
-	void
-	fill_without_noised_unison (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
-	{
-		Sample f, d, l, sum1, sum2, tmpsum;
-		Sample* const o1 = output1->begin();
-		Sample* const o2 = output2->begin();
-		Sample* const fs = _frequency_source->begin();
-
-		initialize_stereo_unison_lookup();
-
-		// Oscillate:
-		for (std::size_t i = 0, n = output1->size(); i < n; ++i)
-		{
-			sum1 = sum2 = 0.0f;
-			f = fs[i];
-			d = unison_delta (f);
-			l = f - d * _half_unison_number;
-			f = l;
-			limit_value (f, 0.0f, 0.5f);
-			// Add unisons:
-			if (_unison_stereo)
-			{
-				for (int p = 0; p < _unison_number; ++p)
-				{
-					_phases[p] = mod1 (_phases[p] + f);
-					tmpsum = (*_wavetable)(_phases[p], f);
-					// Stereo:
-					sum1 += _stereo_unison_lookup[p] * tmpsum;
-					sum2 += _stereo_unison_lookup[_unison_number - p - 1] * tmpsum;
-					f += d;
-				}
-			}
-			else
-			{
-				for (int p = 0; p < _unison_number; ++p)
-				{
-					_phases[p] = mod1 (_phases[p] + f);
-					tmpsum = (*_wavetable)(_phases[p], f);
-					sum1 += tmpsum;
-					sum2 += tmpsum;
-					f += d;
-				}
-			}
-			o1[i] = sum1;
-			o2[i] = sum2;
-		}
-	}
-
-	void
-	fill_with_noised_unison (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
-	{
-		Sample e, f, d, l, z, sum1, sum2, tmpsum;
-		Sample* const o1 = output1->begin();
-		Sample* const o2 = output2->begin();
-		Sample* const fs = _frequency_source->begin();
-
-		initialize_stereo_unison_lookup();
-
-		// Oscillate:
-		for (std::size_t i = 0, n = output1->size(); i < n; ++i)
-		{
-			sum1 = sum2 = 0.0f;
-			f = fs[i];
-			e = std::sqrt (f) * _unison_noise;
-			d = unison_delta (f);
-			l = f - d * _half_unison_number;
-			f = l;
-			limit_value (f, 0.0f, 0.5f);
-			// Add unisons:
-			if (_unison_stereo)
-			{
-				for (int p = 0; p < _unison_number; ++p)
-				{
-					z = f + e * noise_sample() * _distribution_lookup[p];
-					_phases[p] = mod1 (_phases[p] + z);
-					// Don't take z as wave's frequency, because this might result in frequent jumping
-					// between two wavetables and unwanted audible noise on some notes. It's better to get
-					// some (inaudible) aliasing than that:
-					tmpsum = (*_wavetable)(_phases[p], f);
-					// Stereo:
-					sum1 += _stereo_unison_lookup[p] * tmpsum;
-					sum2 += _stereo_unison_lookup[_unison_number - p - 1] * tmpsum;
-					f += d;
-				}
-			}
-			else
-			{
-				for (int p = 0; p < _unison_number; ++p)
-				{
-					z = f + e * noise_sample() * _distribution_lookup[p];
-					_phases[p] = mod1 (_phases[p] + z);
-					// Don't take z as wave's frequency, because this might result in frequent jumping
-					// between two wavetables and unwanted audible noise on some notes. It's better to get
-					// some (inaudible) aliasing than that:
-					tmpsum = (*_wavetable)(_phases[p], f);
-					sum1 += tmpsum;
-					sum2 += tmpsum;
-					f += d;
-				}
-			}
-			o1[i] = sum1;
-			o2[i] = sum2;
-		}
-	}
-
 	/**
 	 * Return random sample in range [-2.0..2.0] with triangular distribution.
 	 */
 	Sample
-	noise_sample()
-	{
-		return _noise.get (_noise_state) + _noise.get (_noise_state);
-	}
+	noise_sample();
+
+	Sample
+	unison_delta (Sample const& f);
+
+	void
+	update_unison_coefficients();
+
+	void
+	initialize_stereo_unison_lookup();
+
+	void
+	fill_without_noised_unison (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2);
+
+	void
+	fill_with_noised_unison (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2);
 
   private:
 	bool					_wavetable_enabled;
@@ -354,6 +176,286 @@ class VoiceOscillator
 	bool					_noise_enabled;
 	Sample					_noise_amplitude;
 };
+
+
+inline void
+VoiceOscillator::set_wavetable_enabled (bool enabled)
+{
+	_wavetable_enabled = enabled;
+}
+
+
+inline void
+VoiceOscillator::set_wavetable (DSP::Wavetable* wavetable)
+{
+	_wavetable = wavetable;
+}
+
+
+inline DSP::Wavetable*
+VoiceOscillator::wavetable() const
+{
+	return _wavetable;
+}
+
+
+inline void
+VoiceOscillator::set_frequency_source (Haruhi::AudioBuffer* source)
+{
+	_frequency_source = source;
+}
+
+
+inline void
+VoiceOscillator::set_amplitude_source (Haruhi::AudioBuffer* source)
+{
+	_amplitude_source = source;
+}
+
+
+inline void
+VoiceOscillator::set_noise_enabled (bool enabled)
+{
+	_noise_enabled = enabled;
+}
+
+
+inline void
+VoiceOscillator::set_noise_amplitude (Sample amplitude)
+{
+	_noise_amplitude = amplitude;
+}
+
+
+inline void
+VoiceOscillator::set_initial_phases_spread (Sample spread)
+{
+	_initial_phase_spread = spread;
+}
+
+
+inline void
+VoiceOscillator::set_unison_spread (Sample spread)
+{
+	if (_unison_spread != spread)
+	{
+		_unison_spread = (1.0f / 20.0f) * spread;
+		update_unison_coefficients();
+	}
+}
+
+
+inline void
+VoiceOscillator::set_unison_noise (Sample noise)
+{
+	_unison_noise = (1.0f / 20.f) * noise;
+}
+
+
+inline void
+VoiceOscillator::set_unison_stereo (bool stereo)
+{
+	_unison_stereo = stereo;
+}
+
+
+inline void
+VoiceOscillator::fill (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
+{
+	assert (output1 != 0);
+	assert (output2 != 0);
+	assert (output1->size() == output2->size());
+
+	Sample* const o1 = output1->begin();
+	Sample* const o2 = output2->begin();
+	bool mul = false;
+
+	// Synthesize wave:
+	if (_wavetable == 0 || !_wavetable_enabled)
+	{
+		output1->clear();
+		output2->clear();
+	}
+	else
+	{
+		if (_unison_noise > 0.0f)
+			fill_with_noised_unison (output1, output2);
+		else
+			fill_without_noised_unison (output1, output2);
+		mul = true;
+	}
+
+	// Add noise:
+	if (_noise_enabled && _noise_amplitude > 0.0f)
+	{
+		for (std::size_t i = 0, n = output1->size(); i < n; ++i)
+		{
+			float const x = _noise_amplitude * _noise.get (_noise_state);
+			o1[i] += x;
+			o2[i] += x;
+		}
+		mul = true;
+	}
+
+	if (mul)
+	{
+		// Multiply samples by _volume and divide samples by _unison_number:
+		// (these coefficients have been obtained by listening tests):
+		float amp = FastPow::pow (_1_div_unison_number, _unison_stereo ? 0.4f : 0.75f);
+		SIMD::multiply_buffers_and_by_scalar (o1, o2, _amplitude_source->begin(), output1->size(), amp);
+	}
+}
+
+
+inline Sample
+VoiceOscillator::noise_sample()
+{
+	return _noise.get (_noise_state) + _noise.get (_noise_state);
+}
+
+
+inline Sample
+VoiceOscillator::unison_delta (Sample const& f)
+{
+	return f * _unison_relative_spread;
+}
+
+
+inline void
+VoiceOscillator::update_unison_coefficients()
+{
+	_unison_relative_spread = _unison_spread / _unison_number;
+	_half_unison_number = (_unison_number - 1) / 2.0f;
+	_1_div_unison_number = 1.0f / _unison_number;
+	// Distribution lookup table:
+	if (_unison_number == 1)
+		_distribution_lookup[0] = 1.0f;
+	else if (_unison_number == 2)
+		_distribution_lookup[0] = _distribution_lookup[1] = 1.0f;
+	else
+	{
+		for (int i = 0; i <= _unison_number / 2; ++i)
+			_distribution_lookup[i] = 1.0f * (i + 1) / (_unison_number / 2 + 1);
+		for (int i = 0; i <= _unison_number / 2; ++i)
+			_distribution_lookup[_unison_number - i - 1] = _distribution_lookup[i];
+	}
+}
+
+
+inline void
+VoiceOscillator::initialize_stereo_unison_lookup()
+{
+	// Lookup table for stereo unison:
+	for (int p = 0; p < _unison_number; ++p)
+		_stereo_unison_lookup[p] = pow2 (_1_div_unison_number * (p + 1));
+}
+
+
+inline void
+VoiceOscillator::fill_without_noised_unison (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
+{
+	Sample f, d, l, sum1, sum2, tmpsum;
+	Sample* const o1 = output1->begin();
+	Sample* const o2 = output2->begin();
+	Sample* const fs = _frequency_source->begin();
+
+	initialize_stereo_unison_lookup();
+
+	// Oscillate:
+	for (std::size_t i = 0, n = output1->size(); i < n; ++i)
+	{
+		sum1 = sum2 = 0.0f;
+		f = fs[i];
+		d = unison_delta (f);
+		l = f - d * _half_unison_number;
+		f = l;
+		limit_value (f, 0.0f, 0.5f);
+		// Add unisons:
+		if (_unison_stereo)
+		{
+			for (int p = 0; p < _unison_number; ++p)
+			{
+				_phases[p] = mod1 (_phases[p] + f);
+				tmpsum = (*_wavetable)(_phases[p], f);
+				// Stereo:
+				sum1 += _stereo_unison_lookup[p] * tmpsum;
+				sum2 += _stereo_unison_lookup[_unison_number - p - 1] * tmpsum;
+				f += d;
+			}
+		}
+		else
+		{
+			for (int p = 0; p < _unison_number; ++p)
+			{
+				_phases[p] = mod1 (_phases[p] + f);
+				tmpsum = (*_wavetable)(_phases[p], f);
+				sum1 += tmpsum;
+				sum2 += tmpsum;
+				f += d;
+			}
+		}
+		o1[i] = sum1;
+		o2[i] = sum2;
+	}
+}
+
+
+inline void
+VoiceOscillator::fill_with_noised_unison (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
+{
+	Sample e, f, d, l, z, sum1, sum2, tmpsum;
+	Sample* const o1 = output1->begin();
+	Sample* const o2 = output2->begin();
+	Sample* const fs = _frequency_source->begin();
+
+	initialize_stereo_unison_lookup();
+
+	// Oscillate:
+	for (std::size_t i = 0, n = output1->size(); i < n; ++i)
+	{
+		sum1 = sum2 = 0.0f;
+		f = fs[i];
+		e = std::sqrt (f) * _unison_noise;
+		d = unison_delta (f);
+		l = f - d * _half_unison_number;
+		f = l;
+		limit_value (f, 0.0f, 0.5f);
+		// Add unisons:
+		if (_unison_stereo)
+		{
+			for (int p = 0; p < _unison_number; ++p)
+			{
+				z = f + e * noise_sample() * _distribution_lookup[p];
+				_phases[p] = mod1 (_phases[p] + z);
+				// Don't take z as wave's frequency, because this might result in frequent jumping
+				// between two wavetables and unwanted audible noise on some notes. It's better to get
+				// some (inaudible) aliasing than that:
+				tmpsum = (*_wavetable)(_phases[p], f);
+				// Stereo:
+				sum1 += _stereo_unison_lookup[p] * tmpsum;
+				sum2 += _stereo_unison_lookup[_unison_number - p - 1] * tmpsum;
+				f += d;
+			}
+		}
+		else
+		{
+			for (int p = 0; p < _unison_number; ++p)
+			{
+				z = f + e * noise_sample() * _distribution_lookup[p];
+				_phases[p] = mod1 (_phases[p] + z);
+				// Don't take z as wave's frequency, because this might result in frequent jumping
+				// between two wavetables and unwanted audible noise on some notes. It's better to get
+				// some (inaudible) aliasing than that:
+				tmpsum = (*_wavetable)(_phases[p], f);
+				sum1 += tmpsum;
+				sum2 += tmpsum;
+				f += d;
+			}
+		}
+		o1[i] = sum1;
+		o2[i] = sum2;
+	}
+}
 
 } // namespace MikuruPrivate
 

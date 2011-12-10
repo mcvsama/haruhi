@@ -59,19 +59,19 @@ class Voice
 	 * Return voice's ID which came in Haruhi::VoiceEvent.
 	 */
 	Haruhi::VoiceID
-	id() const { return _id; }
+	id() const;
 
 	/**
 	 * Return voice's timestamp.
 	 */
 	Haruhi::Timestamp
-	timestamp() const { return _timestamp; }
+	timestamp() const;
 
 	/**
 	 * Return current voice state.
 	 */
 	State
-	state() const { return _state; }
+	state() const;
 
 	/**
 	 * Drop voice. Voice does not immediately stop sounding.
@@ -109,7 +109,7 @@ class Voice
 	 * RW accessor to Voice params.
 	 */
 	Params::Voice*
-	params() { return &_params; }
+	params();
 
   public:
 	/**
@@ -117,12 +117,7 @@ class Voice
 	 * their timestamps.
 	 */
 	static Voice*
-	return_older (Voice* a, Voice* b)
-	{
-		if (a->timestamp() < b->timestamp())
-			return a;
-		return b;
-	}
+	return_older (Voice* a, Voice* b);
 
   private:
 	Haruhi::VoiceID		_id;
@@ -148,6 +143,65 @@ class Voice
 	DSP::RampSmoother	_smoother_panorama_2;
 
 };
+
+
+inline Haruhi::VoiceID
+Voice::id() const
+{
+	return _id;
+}
+
+
+inline Haruhi::Timestamp
+Voice::timestamp() const
+{
+	return _timestamp;
+}
+
+
+inline Voice::State
+Voice::state() const
+{
+	return _state;
+}
+
+
+inline void
+Voice::drop()
+{
+	_state = Finished;
+}
+
+
+inline void
+Voice::mix_result (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2) const
+{
+	output_1->mixin (&_output_1);
+	output_2->mixin (&_output_2);
+}
+
+
+inline Params::Voice*
+Voice::params()
+{
+	return &_params;
+}
+
+
+inline void
+Voice::set_wavetable (DSP::Wavetable* wavetable)
+{
+	_vosc.set_wavetable (wavetable);
+}
+
+
+inline Voice*
+Voice::return_older (Voice* a, Voice* b)
+{
+	if (a->timestamp() < b->timestamp())
+		return a;
+	return b;
+}
 
 } // namespace Yuki
 

@@ -38,12 +38,19 @@ class PartWidget: public QWidget
 	PartWidget (PartManagerWidget*, Part*);
 
 	Part*
-	part() const { return _part; }
+	part() const;
 
   private:
 	PartManagerWidget*	_part_manager_widget;
 	Part*				_part;
 };
+
+
+inline Part*
+PartWidget::part() const
+{
+	return _part;
+}
 
 } // namespace Yuki
 

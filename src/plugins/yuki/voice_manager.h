@@ -68,13 +68,13 @@ class VoiceManager
 	 * Gets maximum polyphony.
 	 */
 	unsigned int
-	max_polyphony() const { return _max_polyphony; }
+	max_polyphony() const;
 
 	/**
 	 * Sets maximum polyphony.
 	 */
 	void
-	set_max_polyphony (unsigned int num) { _max_polyphony = num; }
+	set_max_polyphony (unsigned int num);
 
 	/**
 	 * Processes new VoiceEvent.
@@ -108,7 +108,7 @@ class VoiceManager
 	 * (a couple of milliseconds).
 	 */
 	unsigned int
-	current_voices_number() { return _active_voices_number; }
+	current_voices_number();
 
 	/**
 	 * Start rendering of all voices.
@@ -172,6 +172,27 @@ class VoiceManager
 	unsigned int		_active_voices_number;
 	unsigned int		_max_polyphony;
 };
+
+
+inline unsigned int
+VoiceManager::max_polyphony() const
+{
+	return _max_polyphony;
+}
+
+
+inline void
+VoiceManager::set_max_polyphony (unsigned int num)
+{
+	_max_polyphony = num;
+}
+
+
+inline unsigned int
+VoiceManager::current_voices_number()
+{
+	return _active_voices_number;
+}
 
 } // namespace Yuki
 

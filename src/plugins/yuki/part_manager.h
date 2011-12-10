@@ -53,10 +53,10 @@ class PartManager:
 	 * Return reference to set of Parts used by synth.
 	 */
 	Parts&
-	parts() { return _parts; }
+	parts();
 
 	Parts const&
-	parts() const { return _parts; }
+	parts() const;
 
 	/**
 	 * Add new Part.
@@ -120,6 +120,20 @@ class PartManager:
 	Haruhi::AudioPort*		_audio_out[2];
 	Haruhi::EventPort*		_voice_in;
 };
+
+
+inline Parts&
+PartManager::parts()
+{
+	return _parts;
+}
+
+
+inline Parts const&
+PartManager::parts() const
+{
+	return _parts;
+}
 
 } // namespace Yuki
 

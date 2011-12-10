@@ -28,25 +28,46 @@ template<class WidgetClass>
 	class HasWidget
 	{
 	  public:
-		HasWidget():
-			_widget (0)
-		{ }
+		HasWidget();
 
 		/**
 		 * Return associated UI object.
 		 */
 		WidgetClass*
-		widget() const { return _widget; }
+		widget() const;
 
 		/**
 		 * Set associated UI object.
 		 */
 		void
-		set_widget (WidgetClass* widget) { _widget = widget; }
+		set_widget (WidgetClass* widget);
 
 	  private:
 		WidgetClass* _widget;
 	};
+
+
+template<class WidgetClass>
+	inline
+	HasWidget<WidgetClass>::HasWidget():
+		_widget (0)
+	{ }
+
+
+template<class WidgetClass>
+	inline WidgetClass*
+	HasWidget<WidgetClass>::widget() const
+	{
+		return _widget;
+	}
+
+
+template<class WidgetClass>
+	inline void
+	HasWidget<WidgetClass>::set_widget (WidgetClass* widget)
+	{
+		_widget = widget;
+	}
 
 } // namespace Yuki
 

@@ -27,25 +27,43 @@ namespace Yuki {
 class HasID
 {
   public:
-	HasID():
-		_id (0)
-	{ }
+	HasID();
 
 	/**
 	 * Return part ID. Used by user to distinguish between different parts.
 	 */
 	unsigned int
-	id() const { return _id; }
+	id() const;
 
 	/**
 	 * Set part ID.
 	 */
 	void
-	set_id (unsigned int id) { _id = id; }
+	set_id (unsigned int id);
 
   private:
 	unsigned int _id;
 };
+
+
+inline
+HasID::HasID():
+	_id (0)
+{ }
+
+
+inline unsigned int
+HasID::id() const
+{
+	return _id;
+}
+
+
+inline void
+HasID::set_id (unsigned int id)
+{
+	_id = id;
+}
 
 } // namespace Yuki
 

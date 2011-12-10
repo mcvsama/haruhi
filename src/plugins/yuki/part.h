@@ -72,13 +72,13 @@ class Part:
 		 * Cancel computations in the middle as soon as possible.
 		 */
 		void
-		cancel() { _is_cancelled.store (true); }
+		cancel();
 
 		/**
 		 * Return serial.
 		 */
 		unsigned int
-		serial() const { return _serial; }
+		serial() const;
 
 	  private:
 		/**
@@ -86,7 +86,7 @@ class Part:
 		 * with cancel() method.
 		 */
 		bool
-		is_cancelled() const { return _is_cancelled.load(); }
+		is_cancelled() const;
 
 	  private:
 		Part*			_part;
@@ -190,7 +190,29 @@ class Part:
 	bool						_wt_wu_ever_started;
 };
 
+
 typedef std::list<Part*>  Parts;
+
+
+inline void
+Part::UpdateWavetableWorkUnit::cancel()
+{
+	_is_cancelled.store (true);
+}
+
+
+inline unsigned int
+Part::UpdateWavetableWorkUnit::serial() const
+{
+	return _serial;
+}
+
+
+inline bool
+Part::UpdateWavetableWorkUnit::is_cancelled() const
+{
+	return _is_cancelled.load();
+}
 
 } // namespace Yuki
 

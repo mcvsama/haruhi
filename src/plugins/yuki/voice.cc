@@ -44,13 +44,7 @@ Voice::Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp, Params::Part* par
 	_state = Voicing;
 
 	graph_updated (sample_rate, buffer_size);
-}
 
-
-void
-Voice::drop()
-{
-	_state = Finished;
 }
 
 
@@ -72,14 +66,6 @@ Voice::render (SharedResources* res)
 
 	// TODO
 	return false;
-}
-
-
-void
-Voice::mix_result (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2) const
-{
-	output_1->mixin (&_output_1);
-	output_2->mixin (&_output_2);
 }
 
 
