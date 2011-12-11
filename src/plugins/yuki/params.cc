@@ -36,7 +36,7 @@
 		 1.0f * name##Min / name##Denominator,													\
 		 1.0f * name##Max / name##Denominator,													\
 		 shown_decimals,																		\
-		 (name##Max - name##Min) / 200)
+		 (name##Max - name##Min) / 400)
 
 #define HARUHI_YUKI_CONSTRUCT_EXPLICIT(var, name, shown_min, shown_max, shown_decimals, step)	\
 	var (name##Min,																				\
