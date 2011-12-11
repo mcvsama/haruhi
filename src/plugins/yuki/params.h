@@ -156,6 +156,8 @@ struct Params
 		Haruhi::ControllerParam modulator_amplitude;
 		Haruhi::ControllerParam modulator_index;
 		Haruhi::ControllerParam modulator_shape;
+		Haruhi::ControllerParam harmonics[HarmonicsNumber];
+		Haruhi::ControllerParam harmonic_phases[HarmonicsNumber];
 
 		Haruhi::Param<int> part_enabled;
 		Haruhi::Param<int> wave_enabled;
@@ -171,8 +173,6 @@ struct Params
 		Haruhi::Param<unsigned int> wave_type;
 		Haruhi::Param<unsigned int> modulator_type;
 		Haruhi::Param<unsigned int> modulator_wave_type;
-		Haruhi::Param<int> harmonics[HarmonicsNumber];
-		Haruhi::Param<int> harmonic_phases[HarmonicsNumber];
 
 		static const int NUM_PARAMS = 22 + HarmonicsNumber + HarmonicsNumber;
 	};

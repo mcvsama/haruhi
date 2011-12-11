@@ -24,6 +24,7 @@
 #include <haruhi/graph/event.h>
 #include <haruhi/dsp/fft_filler.h>
 #include <haruhi/dsp/functions.h>
+#include <haruhi/dsp/modulated_wave.h>
 
 // Local:
 #include "part.h"
@@ -36,7 +37,8 @@ namespace Yuki {
 
 Part::UpdateWavetableWorkUnit::UpdateWavetableWorkUnit (Part* part):
 	_part (part),
-	_wave (0),
+	_base_wave (0),
+	_modulator_wave (0),
 	_wavetable (0),
 	_serial (0),
 	_is_cancelled (false)
@@ -44,9 +46,10 @@ Part::UpdateWavetableWorkUnit::UpdateWavetableWorkUnit (Part* part):
 
 
 void
-Part::UpdateWavetableWorkUnit::reset (DSP::Wave* wave, DSP::Wavetable* wavetable, unsigned int serial)
+Part::UpdateWavetableWorkUnit::reset (DSP::ParametricWave* base_wave, DSP::ParametricWave* modulator_wave, DSP::Wavetable* wavetable, unsigned int serial)
 {
-	_wave = wave;
+	_base_wave = base_wave->clone();
+	_modulator_wave = modulator_wave->clone();
 	_wavetable = wavetable;
 	_serial = serial;
 	_is_cancelled.store (false);
@@ -56,7 +59,27 @@ Part::UpdateWavetableWorkUnit::reset (DSP::Wave* wave, DSP::Wavetable* wavetable
 void
 Part::UpdateWavetableWorkUnit::execute()
 {
-	DSP::FFTFiller filler (_wave, true);
+	Params::Part* pp = _part->part_params();
+
+	_base_wave->set_param (pp->wave_shape.to_f());
+	_modulator_wave->set_param (pp->modulator_shape.to_f());
+
+	// Add harmonics:
+	DSP::HarmonicsWave hw (_base_wave);
+	for (std::size_t i = 0; i < Params::Part::HarmonicsNumber; ++i)
+	{
+		float h = pp->harmonics[i].to_f();
+		float p = pp->harmonic_phases[i].to_f();
+		// Apply exponential curve to harmonic value:
+		h = h > 0 ? FastPow::pow (h, M_E) : -FastPow::pow (-h, M_E);
+		hw.set_harmonic (i, h, p);
+	}
+
+	// Add modulation:
+	DSP::ModulatedWave xw (&hw, _modulator_wave, static_cast<DSP::ModulatedWave::Type> (pp->modulator_type.get()),
+						   pp->modulator_amplitude.to_f(), pp->modulator_index.get(), false);
+
+	DSP::FFTFiller filler (&xw, true);
 	filler.set_cancel_predicate (boost::bind (&UpdateWavetableWorkUnit::is_cancelled, this));
 	filler.fill (_wavetable, 4096);
 
@@ -66,6 +89,9 @@ Part::UpdateWavetableWorkUnit::execute()
 		// because Part will wait for us in its destructor.
 		_part->wavetable_computed (_serial);
 	}
+
+	delete _base_wave;
+	delete _modulator_wave;
 }
 
 
@@ -101,6 +127,7 @@ Part::PartPorts::PartPorts (Plugin* plugin, unsigned int part_id):
 
 Part::PartPorts::~PartPorts()
 {
+// TODO check if 'if's are needed:
 	if (graph())
 		graph()->lock();
 	delete wave_shape;
@@ -141,6 +168,21 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 {
 	_voice_manager->set_max_polyphony (64);
 
+	_base_waves[0] = new DSP::ParametricWaves::Sine();
+	_base_waves[1] = new DSP::ParametricWaves::Triangle();
+	_base_waves[2] = new DSP::ParametricWaves::Square();
+	_base_waves[3] = new DSP::ParametricWaves::Sawtooth();
+	_base_waves[4] = new DSP::ParametricWaves::Pulse();
+	_base_waves[5] = new DSP::ParametricWaves::Power();
+	_base_waves[6] = new DSP::ParametricWaves::Gauss();
+	_base_waves[7] = new DSP::ParametricWaves::Diode();
+	_base_waves[8] = new DSP::ParametricWaves::Chirp();
+
+	_modulator_waves[0] = new DSP::ParametricWaves::Sine();
+	_modulator_waves[1] = new DSP::ParametricWaves::Triangle();
+	_modulator_waves[2] = new DSP::ParametricWaves::Square();
+	_modulator_waves[3] = new DSP::ParametricWaves::Sawtooth();
+
 	// Double buffering of wavetables. The one with index 0 is always
 	// the one currently used.
 	_wavetables[0] = new DSP::Wavetable();
@@ -158,7 +200,14 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 Part::~Part()
 {
 	// _wt_wu is never normally being waited on, so it's ok to wait here.
+	// Must wait since it can still use Waves. It also needs to be deleted.
 	_wt_wu->wait();
+
+	for (size_t i = 0; i < ARRAY_SIZE (_base_waves); ++i)
+		delete _base_waves[i];
+
+	for (size_t i = 0; i < ARRAY_SIZE (_modulator_waves); ++i)
+		delete _modulator_waves[i];
 
 	delete _wt_wu;
 	delete _voice_manager;
@@ -195,7 +244,12 @@ Part::graph_updated()
 }
 
 
-// TODO detect that parameter has changed and call this update_wavetable()
+void
+Part::params_updated()
+{
+}
+
+
 void
 Part::update_wavetable()
 {
@@ -212,13 +266,12 @@ Part::check_wavetable_update_process()
 	{
 		if (!_wt_wu_ever_started || (_wt_wu->is_ready() && _wt_wu->serial() != update_request))
 		{
-			// TODO wave
-			_wt_wu->reset (new DSP::ParametricWaves::Sine(), _wavetables[1], update_request);
+			// Prepare work unit:
+			_wt_wu->reset (base_wave(), modulator_wave(), _wavetables[1], update_request);
 			_wt_wu_ever_started = true;
+
 			Haruhi::Services::lo_priority_work_performer()->add (_wt_wu);
 		}
-		else if (_wt_wu->serial() != update_request)
-			_wt_wu->cancel();
 	}
 }
 

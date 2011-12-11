@@ -31,11 +31,17 @@
 #include <haruhi/widgets/knob.h>
 #include <haruhi/widgets/wave_plot.h>
 
+// Local:
+#include "part.h"
+
 
 namespace Yuki {
 
+namespace DSP = Haruhi::DSP;
+
 class Part;
 class PartManagerWidget;
+class Slider;
 
 class PartWidget: public QWidget
 {
@@ -49,8 +55,53 @@ class PartWidget: public QWidget
 
 	~PartWidget();
 
+	/**
+	 * Link to associated Part object.
+	 */
 	Part*
 	part() const;
+
+  private slots:
+	/**
+	 * Called when wave params change.
+	 * \entry	UI thread
+	 */
+	void
+	wave_params_updated();
+
+	/**
+	 * Called when oscillator params change.
+	 */
+	void
+	oscillator_params_updated();
+
+	/**
+	 * Called when 'Harmonics' button is clicked.
+	 * \entry	UI thread
+	 */
+	void
+	show_harmonics();
+
+	/**
+	 * Update phase marker on wave plots.
+	 * \entry	UI thread
+	 */
+	void
+	update_phase_marker();
+
+	/**
+	 * Update widgets deps (enable/disable, etc.)
+	 *
+	 */
+	void
+	update_widgets();
+
+  private:
+	/**
+	 * Highlights selected button.
+	 */
+	void
+	set_button_highlighted (QPushButton* button, bool highlight);
 
   private:
 	PartManagerWidget*	_part_manager_widget;
@@ -90,8 +141,6 @@ class PartWidget: public QWidget
 	Buttons				_harmonics_resets;
 	Sliders				_harmonic_phases_sliders;
 	Buttons				_harmonic_phases_resets;
-	QColor				_std_button_bg;
-	QColor				_std_button_fg;
 	QWidget*			_harmonics_tab;
 	QWidget*			_harmonic_phases_tab;
 	QDialog*			_harmonics_window;
@@ -100,22 +149,38 @@ class PartWidget: public QWidget
 	// Pitchbend/transposition:
 	QCheckBox*			_const_portamento_time;
 	QCheckBox*			_pitchbend_enabled;
-	QCheckBox*			_pitchbend_released;
 	QSpinBox*			_pitchbend_up_semitones;
 	QSpinBox*			_pitchbend_down_semitones;
 	QSpinBox*			_transposition_semitones;
 	QSpinBox*			_frequency_modulation_range;
-
-	// Monophonic:
-	QCheckBox*			_monophonic;
-	QCheckBox*			_monophonic_retrigger;
-	QComboBox*			_monophonic_key_priority;
 
 	// Other:
 	QCheckBox*			_unison_stereo;
 	QCheckBox*			_pseudo_stereo;
 	QPushButton*		_wave_enabled;
 	QPushButton*		_noise_enabled;
+	QColor				_std_button_bg;
+	QColor				_std_button_fg;
+};
+
+
+/**
+ * Slider that implements slot reset() which
+ * sets slider value to 0.
+ */
+class Slider: public QSlider
+{
+	Q_OBJECT
+
+  public:
+	Slider (int min_value, int max_value, int page_step, int value, Qt::Orientation orientation, QWidget* parent);
+
+  public slots:
+	/**
+	 * Set slider value to 0.
+	 */
+	void
+	reset();
 };
 
 
@@ -123,6 +188,32 @@ inline Part*
 PartWidget::part() const
 {
 	return _part;
+}
+
+
+inline void
+PartWidget::set_button_highlighted (QPushButton* button, bool highlight)
+{
+	button->setPaletteBackgroundColor (highlight ? QColor (0x00, 0xff, 0x00) : _std_button_bg);
+	button->setPaletteForegroundColor (highlight ? QColor (0x00, 0x00, 0x00) : _std_button_fg);
+}
+
+
+inline
+Slider::Slider (int min_value, int max_value, int page_step, int value, Qt::Orientation orientation, QWidget* parent):
+	QSlider (orientation, parent)
+{
+	setMinimum (min_value);
+	setMaximum (max_value);
+	setPageStep (page_step);
+	setValue (value);
+}
+
+
+inline void
+Slider::reset()
+{
+	setValue (0);
 }
 
 } // namespace Yuki

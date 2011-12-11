@@ -108,9 +108,9 @@ Params::Part::Part():
 	modulator_wave_type (0, 3, 0, "modulator_wave_type")
 {
 	for (int i = 0; i < HarmonicsNumber; ++i)
-		harmonics[i] = Haruhi::Param<int> (HarmonicMin, HarmonicMax, HarmonicDefault, QString ("harmonic[%1]").arg (i).utf8());
+		harmonics[i] = Haruhi::ControllerParam (HarmonicMin, HarmonicMax, HarmonicDefault, HarmonicDenominator, QString ("harmonic[%1]").arg (i).utf8());
 	for (int i = 0; i < HarmonicsNumber; ++i)
-		harmonic_phases[i] = Haruhi::Param<int> (HarmonicPhaseMin, HarmonicPhaseMax, HarmonicPhaseDefault, QString ("harmonic-phase[%1]").arg (i).utf8());
+		harmonic_phases[i] = Haruhi::ControllerParam (HarmonicPhaseMin, HarmonicPhaseMax, HarmonicPhaseDefault, HarmonicPhaseDenominator, QString ("harmonic-phase[%1]").arg (i).utf8());
 }
 
 
@@ -134,13 +134,13 @@ HARUHI_YUKI_DEFINE_PARAMS (Part)
 	HARUHI_YUKI_DEFINE_PARAM (modulator_amplitude)
 	HARUHI_YUKI_DEFINE_PARAM (modulator_index)
 	HARUHI_YUKI_DEFINE_PARAM (modulator_shape)
-	HARUHI_YUKI_DEFINE_PARAM (wave_type)
-	HARUHI_YUKI_DEFINE_PARAM (modulator_type)
-	HARUHI_YUKI_DEFINE_PARAM (modulator_wave_type)
 	for (int k = 0; k < HarmonicsNumber; ++k)
 		HARUHI_YUKI_DEFINE_PARAM (harmonics[k]);
 	for (int k = 0; k < HarmonicsNumber; ++k)
 		HARUHI_YUKI_DEFINE_PARAM (harmonic_phases[k]);
+	HARUHI_YUKI_DEFINE_PARAM (wave_type)
+	HARUHI_YUKI_DEFINE_PARAM (modulator_type)
+	HARUHI_YUKI_DEFINE_PARAM (modulator_wave_type)
 HARUHI_YUKI_FINISH_DEFINITION()
 
 

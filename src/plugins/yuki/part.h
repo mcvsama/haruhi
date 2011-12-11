@@ -20,14 +20,15 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/dsp/wave.h>
 #include <haruhi/dsp/wavetable.h>
+#include <haruhi/dsp/parametric_wave.h>
 #include <haruhi/graph/event.h>
 #include <haruhi/graph/event_port.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/graph/port_group.h>
 #include <haruhi/utility/atomic.h>
 #include <haruhi/utility/work_performer.h>
+#include <haruhi/utility/numeric.h>
 
 // Local:
 #include "has_widget.h"
@@ -60,12 +61,13 @@ class Part:
 
 		/**
 		 * Prepare work unit for another work.
-		 * \param	wave Wave to be used in wavetable.
+		 * \param	base_wave Base wave for computation. It's cloned inside.
+		 * \param	modulator_wave Modulator wave. It's cloned.
 		 * \param	wavetable Target wavetable object.
 		 * \param	serial Update request ID.
 		 */
 		void
-		reset (DSP::Wave* wave, DSP::Wavetable* wavetable, unsigned int serial);
+		reset (DSP::ParametricWave* base_wave, DSP::ParametricWave* modulator_wave, DSP::Wavetable* wavetable, unsigned int serial);
 
 		/**
 		 * Recompute wavetable.
@@ -94,11 +96,12 @@ class Part:
 		is_cancelled() const;
 
 	  private:
-		Part*			_part;
-		DSP::Wave*		_wave;
-		DSP::Wavetable*	_wavetable;
-		unsigned int	_serial;
-		Atomic<bool>	_is_cancelled;
+		Part*					_part;
+		DSP::ParametricWave*	_base_wave;
+		DSP::ParametricWave*	_modulator_wave;
+		DSP::Wavetable*			_wavetable;
+		unsigned int			_serial;
+		Atomic<bool>			_is_cancelled;
 	};
 
   public:
@@ -147,6 +150,12 @@ class Part:
 	~Part();
 
 	/**
+	 * Return PartManager that manages this Part.
+	 */
+	PartManager*
+	part_manager() const;
+
+	/**
 	 * Return part params.
 	 */
 	Params::Part*
@@ -190,6 +199,12 @@ class Part:
 	graph_updated();
 
 	/**
+	 * Params has been changed and update is needed.
+	 */
+	void
+	params_updated();
+
+	/**
 	 * Update wavetable according to new parameters.
 	 * Switch double-buffered wavetables.
 	 * Do not propagate new wavetable to VoiceManager
@@ -221,6 +236,18 @@ class Part:
 	unsigned int
 	voices_number() const;
 
+	/**
+	 * Return currently selected base wave object.
+	 */
+	DSP::ParametricWave*
+	base_wave() const;
+
+	/**
+	 * Return currently selected modulator wave object.
+	 */
+	DSP::ParametricWave*
+	modulator_wave() const;
+
   private:
 	/**
 	 * Check if work unit for wavetable update
@@ -249,6 +276,8 @@ class Part:
 	VoiceManager*				_voice_manager;
 	Params::Part				_part_params;
 	Params::Voice				_voice_params;
+	DSP::ParametricWave*		_base_waves[9];
+	DSP::ParametricWave*		_modulator_waves[4];
 	DSP::Wavetable*				_wavetables[2];
 	Atomic<bool>				_switch_wavetables;
 	Atomic<unsigned int>		_wt_update_request;
@@ -283,6 +312,13 @@ Part::UpdateWavetableWorkUnit::is_cancelled() const
 }
 
 
+inline PartManager*
+Part::part_manager() const
+{
+	return _part_manager;
+}
+
+
 inline Params::Part*
 Part::part_params()
 {
@@ -301,6 +337,20 @@ inline Part::PartPorts*
 Part::ports()
 {
 	return &_ports;
+}
+
+
+inline DSP::ParametricWave*
+Part::base_wave() const
+{
+	return _base_waves[bound (_part_params.wave_type.get(), 0u, static_cast<unsigned int> (ARRAY_SIZE (_base_waves) - 1))];
+}
+
+
+inline DSP::ParametricWave*
+Part::modulator_wave() const
+{
+	return _modulator_waves[bound (_part_params.modulator_wave_type.get(), 0u, static_cast<unsigned int> (ARRAY_SIZE (_modulator_waves) - 1))];
 }
 
 } // namespace Yuki

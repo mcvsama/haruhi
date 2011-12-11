@@ -20,6 +20,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/plugin/plugin.h>
+#include <haruhi/session/unit_bay.h>
 
 
 namespace Yuki {
@@ -27,7 +28,9 @@ namespace Yuki {
 class PartManager;
 class PartManagerWidget;
 
-class Plugin: public Haruhi::Plugin
+class Plugin:
+	public Haruhi::Plugin,
+	public Haruhi::UnitBayAware
 {
 	Q_OBJECT
 
