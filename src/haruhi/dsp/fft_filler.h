@@ -42,8 +42,9 @@ class FFTFiller: public Wavetable::Filler
 	 * Creates filler.
 	 * \param	wave is a wave object to use.
 	 * \param	autoscale tells whether to force values to be within [-1..1].
+	 * \param	scale_epsilon Don't autoscale if max value is smaller than this.
 	 */
-	FFTFiller (Wave* wave, bool autoscale);
+	FFTFiller (Wave* wave, bool autoscale, Sample scale_epsilon = 0.0f);
 
 	/**
 	 * Set cancel predicate.
@@ -84,6 +85,7 @@ class FFTFiller: public Wavetable::Filler
   private:
 	Wave*					_wave;
 	bool					_autoscale;
+	Sample					_scale_epsilon;
 	boost::function<bool()>	_cancel_predicate;
 	bool					_was_interrupted;
 };

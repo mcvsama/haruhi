@@ -28,9 +28,10 @@ namespace Haruhi {
 
 namespace DSP {
 
-FFTFiller::FFTFiller (Wave* wave, bool autoscale):
+FFTFiller::FFTFiller (Wave* wave, bool autoscale, Sample scale_epsilon):
 	_wave (wave),
 	_autoscale (autoscale),
+	_scale_epsilon (scale_epsilon),
 	_cancel_predicate (0),
 	_was_interrupted (false)
 {
@@ -82,7 +83,7 @@ FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 		if ((new_max = std::abs (source[i].real())) > max)
 			max = new_max;
 	}
-	if (_autoscale && max > 0.0f)
+	if (_autoscale && max > _scale_epsilon)
 		for (unsigned int i = 0; i < samples; ++i)
 			source[i].real() /= max;
 	forward.transform();

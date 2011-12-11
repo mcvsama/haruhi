@@ -58,7 +58,7 @@ Part::UpdateWavetableWorkUnit::execute()
 {
 	DSP::Wave* wave = _part->final_wave();
 
-	DSP::FFTFiller filler (wave, true);
+	DSP::FFTFiller filler (wave, true, 0.000001f);
 	filler.set_cancel_predicate (boost::bind (&UpdateWavetableWorkUnit::is_cancelled, this));
 	filler.fill (_wavetable, 4096);
 
