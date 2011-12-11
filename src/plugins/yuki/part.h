@@ -27,6 +27,7 @@
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/graph/port_group.h>
 #include <haruhi/utility/atomic.h>
+#include <haruhi/utility/signal.h>
 #include <haruhi/utility/work_performer.h>
 #include <haruhi/utility/numeric.h>
 
@@ -47,7 +48,8 @@ class VoiceManager;
 
 class Part:
 	public HasWidget<PartWidget>,
-	public HasID
+	public HasID,
+	public Signal::Receiver
 {
 	friend class PartWidget;
 
@@ -182,7 +184,7 @@ class Part:
 	 * Process events.
 	 */
 	void
-	process();
+	process_events();
 
 	/**
 	 * Panic all voices.

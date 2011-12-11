@@ -123,7 +123,7 @@ PartManager::process()
 
 	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
 	{
-		(*p)->process();
+		(*p)->process_events();
 		(*p)->render();
 	}
 

@@ -172,6 +172,13 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 	// Initially compute wavetable. Also makes it possible to wait
 	// on work unit in the destructor:
 	update_wavetable();
+
+	// Listen on params change:
+	_part_params.wave_shape.on_change.connect (this, &Part::update_wavetable);
+	_part_params.modulator_amplitude.on_change.connect (this, &Part::update_wavetable);
+	_part_params.modulator_index.on_change.connect (this, &Part::update_wavetable);
+	_part_params.modulator_shape.on_change.connect (this, &Part::update_wavetable);
+	//TODO rest of the non-polyphonic params
 }
 
 
@@ -201,9 +208,10 @@ Part::handle_voice_event (Haruhi::VoiceEvent const* event)
 
 
 void
-Part::process()
+Part::process_events()
 {
-	// TODO process controllers
+	if (widget())
+		widget()->process_events();
 }
 
 

@@ -62,6 +62,8 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_knob_phase					= new Haruhi::Knob (this, ports->phase, &pp->phase, "Phase");
 	_knob_noise_level			= new Haruhi::Knob (this, ports->noise_level, &pp->noise_level, "Noise lvl");
 
+	QObject::connect (_knob_phase, SIGNAL (changed (int)), this, SLOT (update_phase_marker()));
+
 	// Set unit bay on all knobs:
 
 	Haruhi::Knob* all_knobs[] = {
@@ -383,6 +385,12 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	wave_params_updated();
 	update_widgets();
+
+	// Listen on certain params changes:
+	pp->wave_shape.on_change.connect (this, &PartWidget::update_wave_plots);
+	pp->modulator_amplitude.on_change.connect (this, &PartWidget::update_wave_plots);
+	pp->modulator_index.on_change.connect (this, &PartWidget::update_wave_plots);
+	pp->modulator_shape.on_change.connect (this, &PartWidget::update_wave_plots);
 }
 
 
@@ -406,6 +414,28 @@ PartWidget::~PartWidget()
 	delete _knob_noise_level;
 
 	delete _cached_final_wave;
+}
+
+
+void
+PartWidget::process_events()
+{
+	_knob_wave_shape->process_events();
+	_knob_modulator_amplitude->process_events();
+	_knob_modulator_index->process_events();
+	_knob_modulator_shape->process_events();
+	_knob_volume->process_events();
+	_knob_panorama->process_events();
+	_knob_detune->process_events();
+	_knob_pitchbend->process_events();
+	_knob_velocity_sens->process_events();
+	_knob_unison_index->process_events();
+	_knob_unison_spread->process_events();
+	_knob_unison_init->process_events();
+	_knob_unison_noise->process_events();
+	_knob_portamento_time->process_events();
+	_knob_phase->process_events();
+	_knob_noise_level->process_events();
 }
 
 

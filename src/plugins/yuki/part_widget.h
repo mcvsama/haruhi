@@ -31,6 +31,7 @@
 #include <haruhi/widgets/knob.h>
 #include <haruhi/widgets/wave_plot.h>
 #include <haruhi/dsp/wave.h>
+#include <haruhi/utility/signal.h>
 
 // Local:
 #include "part.h"
@@ -44,7 +45,9 @@ class Part;
 class PartManagerWidget;
 class Slider;
 
-class PartWidget: public QWidget
+class PartWidget:
+	public QWidget,
+	public Signal::Receiver
 {
 	Q_OBJECT
 
@@ -61,6 +64,13 @@ class PartWidget: public QWidget
 	 */
 	Part*
 	part() const;
+
+	/**
+	 * Make knobs process events.
+	 * \entry	Engine thread
+	 */
+	void
+	process_events();
 
   private slots:
 	/**
