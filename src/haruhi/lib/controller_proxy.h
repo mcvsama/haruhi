@@ -163,6 +163,27 @@ class ControllerProxy: public SaveableState
 	Widget*				_widget;
 };
 
+
+inline int
+ControllerProxy::Config::forward (int in) const
+{
+	return renormalize (encurve (in), hard_limit_min, hard_limit_max, user_limit_min, user_limit_max);
+}
+
+
+inline int
+ControllerProxy::Config::reverse (int in) const
+{
+	return decurve (renormalize (in, user_limit_min, user_limit_max, hard_limit_min, hard_limit_max));
+}
+
+
+inline int
+ControllerProxy::Config::forward_normalized (float in) const
+{
+	return forward (renormalize (in, 0.0f, 1.0f, 1.0f * hard_limit_min, 1.0f * hard_limit_max));
+}
+
 } // namespace Haruhi
 
 #endif
