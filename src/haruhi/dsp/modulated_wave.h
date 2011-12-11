@@ -62,13 +62,13 @@ class ModulatedWave: public Wave
 	 * Returns wave object.
 	 */
 	Wave*
-	wave() const { return _wave; }
+	wave() const;
 
 	/**
 	 * Returns modulator wave object.
 	 */
 	Wave*
-	modulator() const { return _modulator; }
+	modulator() const;
 
 	/**
 	 * Sets new wave to be decorated. Drops old wave if auto_delete has been set.
@@ -87,14 +87,14 @@ class ModulatedWave: public Wave
 	 * (If wave is 0, it's not deleted.)
 	 */
 	void
-	set_auto_delete_wave (bool set) { _auto_delete_wave = set; }
+	set_auto_delete_wave (bool set);
 
 	/**
 	 * Tells whether to delete used modulating wave upon destruction.
 	 * (If modulator is 0, it's not deleted.)
 	 */
 	void
-	set_auto_delete_modulator (bool set) { _auto_delete_modulator = set; }
+	set_auto_delete_modulator (bool set);
 
   private:
 	Sample
@@ -113,6 +113,34 @@ class ModulatedWave: public Wave
 	bool			_auto_delete_modulator;
 	ValueFunction	_value_function;
 };
+
+
+inline Wave*
+ModulatedWave::wave() const
+{
+	return _wave;
+}
+
+
+inline Wave*
+ModulatedWave::modulator() const
+{
+	return _modulator;
+}
+
+
+inline void
+ModulatedWave::set_auto_delete_wave (bool set)
+{
+	_auto_delete_wave = set;
+}
+
+
+inline void
+ModulatedWave::set_auto_delete_modulator (bool set)
+{
+	_auto_delete_modulator = set;
+}
 
 } // namespace DSP
 
