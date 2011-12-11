@@ -30,6 +30,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/widgets/knob.h>
 #include <haruhi/widgets/wave_plot.h>
+#include <haruhi/dsp/wave.h>
 
 // Local:
 #include "part.h"
@@ -103,9 +104,17 @@ class PartWidget: public QWidget
 	void
 	set_button_highlighted (QPushButton* button, bool highlight);
 
+	/**
+	 * Connected to part's waves_updated signal.
+	 * \entry	UI thread
+	 */
+	void
+	update_wave_plots();
+
   private:
 	PartManagerWidget*	_part_manager_widget;
 	Part*				_part;
+	DSP::Wave*			_cached_final_wave;
 
 	// Waveform knobs:
 	Haruhi::Knob*		_knob_wave_shape;

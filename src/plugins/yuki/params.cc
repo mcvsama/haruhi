@@ -111,6 +111,8 @@ Params::Part::Part():
 		harmonics[i] = Haruhi::ControllerParam (HarmonicMin, HarmonicMax, HarmonicDefault, HarmonicDenominator, QString ("harmonic[%1]").arg (i).utf8());
 	for (int i = 0; i < HarmonicsNumber; ++i)
 		harmonic_phases[i] = Haruhi::ControllerParam (HarmonicPhaseMin, HarmonicPhaseMax, HarmonicPhaseDefault, HarmonicPhaseDenominator, QString ("harmonic-phase[%1]").arg (i).utf8());
+	// First/base harmonic should be fully max:
+	harmonics[0].set (HarmonicMax);
 }
 
 

@@ -36,7 +36,8 @@ namespace Yuki {
 PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QWidget (part_manager_widget),
 	_part_manager_widget (part_manager_widget),
-	_part (part)
+	_part (part),
+	_cached_final_wave (0)
 {
 	// Knobs:
 
@@ -380,6 +381,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_std_button_bg = _harmonics_resets[0]->paletteBackgroundColor();
 	_std_button_fg = _harmonics_resets[0]->paletteForegroundColor();
 
+	wave_params_updated();
 	update_widgets();
 }
 
@@ -402,6 +404,8 @@ PartWidget::~PartWidget()
 	delete _knob_portamento_time;
 	delete _knob_phase;
 	delete _knob_noise_level;
+
+	delete _cached_final_wave;
 }
 
 
@@ -418,6 +422,7 @@ PartWidget::wave_params_updated()
 	for (Sliders::size_type i = 0; i < _harmonic_phases_sliders.size(); ++i)
 		pp->harmonic_phases[i].set (_harmonic_phases_sliders[i]->value());
 
+	update_wave_plots();
 	_part->update_wavetable();
 }
 
@@ -480,6 +485,28 @@ PartWidget::update_widgets()
 	{
 		set_button_highlighted (_harmonics_resets[i], _harmonics_sliders[i]->value() != 0);
 		set_button_highlighted (_harmonic_phases_resets[i], _harmonic_phases_sliders[i]->value() != 0);
+	}
+}
+
+
+void
+PartWidget::update_wave_plots()
+{
+	delete _cached_final_wave;
+	_cached_final_wave = _part->final_wave();
+
+	if (DSP::ModulatedWave* modulated_wave = dynamic_cast<DSP::ModulatedWave*> (_cached_final_wave))
+	{
+		if (DSP::HarmonicsWave* harmonics_wave = dynamic_cast<DSP::HarmonicsWave*> (modulated_wave->wave()))
+		{
+			if (DSP::ParametricWave* parametric_wave = dynamic_cast<DSP::ParametricWave*> (harmonics_wave->wave()))
+			{
+				_base_wave_plot->assign_wave (parametric_wave, false, true, false);
+				_final_wave_plot->assign_wave (modulated_wave, false, true, false);
+				// This will also call plot_shape() on plots:
+				update_phase_marker();
+			}
+		}
 	}
 }
 
