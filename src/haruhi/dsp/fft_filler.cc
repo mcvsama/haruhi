@@ -40,7 +40,7 @@ FFTFiller::FFTFiller (Wave* wave, bool autoscale):
 void
 FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 {
-#define CHECK_INTERRUPT do { if (interrupt()) { wavetable->drop_tables(); return; } } while (false)
+#define CHECK_INTERRUPT do { if (interrupted()) { wavetable->drop_tables(); return; } } while (false)
 
 	_was_interrupted = false;
 

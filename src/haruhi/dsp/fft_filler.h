@@ -53,7 +53,7 @@ class FFTFiller: public Wavetable::Filler
 	 * since it will be called many times during the fill.
 	 */
 	void
-	set_cancel_predicate (boost::function<bool()> cancel_predicate) { _cancel_predicate = cancel_predicate; }
+	set_cancel_predicate (boost::function<bool()> cancel_predicate);
 
 	/**
 	 * Fill the wavetable.
@@ -65,13 +65,13 @@ class FFTFiller: public Wavetable::Filler
 	 * Return the wave used to fill wavetables.
 	 */
 	Wave*
-	wave() const { return _wave; }
+	wave() const;
 
 	/**
 	 * Return true if last fill operation was interrupted by cancel predicate.
 	 */
 	bool
-	was_interrupted() const { return _was_interrupted; }
+	was_interrupted() const;
 
   private:
 	/**
@@ -79,7 +79,7 @@ class FFTFiller: public Wavetable::Filler
 	 * Also set _was_interrupted flag.
 	 */
 	bool
-	interrupt() { return _was_interrupted = _cancel_predicate && _cancel_predicate(); }
+	interrupted();
 
   private:
 	Wave*					_wave;
@@ -87,6 +87,34 @@ class FFTFiller: public Wavetable::Filler
 	boost::function<bool()>	_cancel_predicate;
 	bool					_was_interrupted;
 };
+
+
+inline void
+FFTFiller::set_cancel_predicate (boost::function<bool()> cancel_predicate)
+{
+	_cancel_predicate = cancel_predicate;
+}
+
+
+inline Wave*
+FFTFiller::wave() const
+{
+	return _wave;
+}
+
+
+inline bool
+FFTFiller::was_interrupted() const
+{
+	return _was_interrupted;
+}
+
+
+inline bool
+FFTFiller::interrupted()
+{
+	return _was_interrupted = _cancel_predicate && _cancel_predicate();
+}
 
 } // namespace DSP
 
