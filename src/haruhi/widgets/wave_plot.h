@@ -82,7 +82,7 @@ class WavePlot: public QWidget
 	 * \entry	Any thread.
 	 */
 	DSP::Wave*
-	wave() const { return _wave; }
+	wave() const;
 
 	/**
 	 * Replots the wave.
@@ -104,14 +104,14 @@ class WavePlot: public QWidget
 	 * \param	enable: Enable phase marker?
 	 */
 	void
-	set_phase_marker_enabled (bool enable) { _phase_enabled = enable; }
+	set_phase_marker_enabled (bool enable);
 
 	/**
 	 * Sets position of phase marker.
 	 * \param	position: [0..1].
 	 */
 	void
-	set_phase_marker_position (float position) { _phase_position = position; }
+	set_phase_marker_position (float position);
 
   protected:
 	void
@@ -150,6 +150,27 @@ class WavePlot: public QWidget
 	bool				_phase_enabled;
 	float				_phase_position;
 };
+
+
+inline DSP::Wave*
+WavePlot::wave() const
+{
+	return _wave;
+}
+
+
+inline void
+WavePlot::set_phase_marker_enabled (bool enable)
+{
+	_phase_enabled = enable;
+}
+
+
+inline void
+WavePlot::set_phase_marker_position (float position)
+{
+	_phase_position = position;
+}
 
 } // namespace Haruhi
 
