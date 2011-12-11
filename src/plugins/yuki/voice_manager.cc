@@ -85,7 +85,6 @@ VoiceManager::handle_voice_event (Haruhi::VoiceEvent const* event)
 		// This is not a normal situation, so killing instead of dropping is OK.
 		if (Voice* ov = find_voice_by_id (id))
 		{
-			static int ovnum = 0;
 			if (ov->state() == Voice::Voicing)
 			{
 				_voices.erase (ov);
