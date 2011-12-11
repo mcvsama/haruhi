@@ -4,7 +4,7 @@
 
 QT_FLAGS = -DHARUHI_CONFIG_UI_QT4 -DQT_NO_DEBUG -DQT_QT3SUPPORT_LIB -DQT3_SUPPORT -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED -I/usr/share/qt/mkspecs/linux-g++
 QT_PREFIX = /usr
-QT_LIBS	= -lQt3Support -lQtGui -lQtCore
+QT_LIBS	= -lQt3Support -lQtGui -lQtCore -lQtXml
 
 PKGCONFIG_LIBS	+= $(shell pkg-config jack --libs)
 PKGCONFIG_LIBS	+= $(shell pkg-config alsa --libs)
@@ -24,7 +24,7 @@ ifeq ($(PROFILING), 1)
 endif
 
 LDFLAGS			+= -rdynamic $(LDFLAGS_$(DIST)) $(PROFILING_LDFLAGS)
-LIBS			+= m dl
+LIBS			+= m dl pthread uuid
 CXXFLAGS		+= -pthread -rdynamic -I. -Wall $(CXXFLAGS_$(DIST)) $(PROFILING_CXXFLAGS) $(foreach feature, $(HARUHI_FEATURES), -D$(feature))
 CXXFLAGS_s		:= $(CXXFLAGS)
 CXXFLAGS		+= -DCXXFLAGS='"$(CXXFLAGS_s)"'
