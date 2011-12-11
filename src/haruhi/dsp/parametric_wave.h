@@ -36,6 +36,12 @@ class ParametricWave: public Wave
 	ParametricWave (bool immutable);
 
 	/**
+	 * Return clone of the wave.
+	 */
+	virtual ParametricWave*
+	clone() const = 0;
+
+	/**
 	 * \threadsafe
 	 */
 	void

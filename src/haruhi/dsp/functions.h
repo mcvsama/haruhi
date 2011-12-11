@@ -75,12 +75,19 @@ template<class Sample>
 
 namespace ParametricWaves {
 
+#define HARUHI_CLONABLE(klass)		\
+	ParametricWave*	clone() const {	\
+		return new klass();			\
+	}
+
 	/**
 	 * Argument: [0, 1.0]. Value for 0.0 == value for 1.0.
 	 */
 	class Sine: public ParametricWave
 	{
 	  public:
+		HARUHI_CLONABLE (Sine)
+
 		Sine():
 			ParametricWave (true)
 		{ }
@@ -102,6 +109,8 @@ namespace ParametricWaves {
 	class Triangle: public ParametricWave
 	{
 	  public:
+		HARUHI_CLONABLE (Triangle)
+
 		Triangle():
 			ParametricWave (true)
 		{ }
@@ -132,6 +141,8 @@ namespace ParametricWaves {
 	class Square: public ParametricWave
 	{
 	  public:
+		HARUHI_CLONABLE (Square)
+
 		Square():
 			ParametricWave (true)
 		{ }
@@ -158,6 +169,8 @@ namespace ParametricWaves {
 	class Sawtooth: public ParametricWave
 	{
 	  public:
+		HARUHI_CLONABLE (Sawtooth)
+
 		Sawtooth():
 			ParametricWave (true)
 		{ }
@@ -185,6 +198,8 @@ namespace ParametricWaves {
 	class Pulse: public ParametricWave
 	{
 	  public:
+		HARUHI_CLONABLE (Pulse)
+
 		Pulse():
 			ParametricWave (true)
 		{ }
@@ -208,6 +223,8 @@ namespace ParametricWaves {
 	class Power: public ParametricWave
 	{
 	  public:
+		HARUHI_CLONABLE (Power)
+
 		Power():
 			ParametricWave (true)
 		{ }
@@ -228,6 +245,8 @@ namespace ParametricWaves {
 	class Gauss: public ParametricWave
 	{
 	  public:
+		HARUHI_CLONABLE (Gauss)
+
 		Gauss():
 			ParametricWave (true)
 		{ }
@@ -250,6 +269,8 @@ namespace ParametricWaves {
 	class Diode: public ParametricWave
 	{
 	  public:
+		HARUHI_CLONABLE (Diode)
+
 		Diode():
 			ParametricWave (true)
 		{ }
@@ -277,6 +298,8 @@ namespace ParametricWaves {
 	class Chirp: public ParametricWave
 	{
 	  public:
+		HARUHI_CLONABLE (Chirp)
+
 		Chirp():
 			ParametricWave (true)
 		{ }
@@ -293,6 +316,8 @@ namespace ParametricWaves {
 			return std::sin (x / 2.0f) * std::sin (a * x * x);
 		}
 	};
+
+#undef HARUHI_CLONABLE
 
 } // namespace ParametricWaves
 
