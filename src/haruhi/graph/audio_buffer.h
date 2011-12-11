@@ -46,142 +46,105 @@ class AudioBuffer: public Buffer
 	 * Clears (zeroes) buffer.
 	 */
 	void
-	clear() { SIMD::clear_buffer (begin(), size()); }
+	clear();
 
 	/**
 	 * Fills this buffer from other buffer.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	fill (Buffer const* other)
-	{
-		assert (other->type() == AudioBuffer::TYPE);
-		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
-		assert (begin() != 0);
-		assert (buf->begin() != 0);
-		assert (buf->size() == size());
-		SIMD::copy_buffer (begin(), buf->begin(), size());
-	}
+	fill (Buffer const* other);
 
 	/**
 	 * Fills this buffer with given scalar.
 	 */
 	void
-	fill (Sample value) { SIMD::fill_buffer (begin(), size(), value); }
+	fill (Sample value);
 
 	/**
 	 * Calls add().
 	 */
 	void
-	mixin (Buffer const* other)
-	{
-		add (other);
-	}
+	mixin (Buffer const* other);
 
 	/**
 	 * Calls add().
 	 */
 	void
-	mixin (Buffer const* other, Sample attenuate_other)
-	{
-		add (other, attenuate_other);
-	}
+	mixin (Buffer const* other, Sample attenuate_other);
 
 	/**
 	 * Adds (mixes) other buffer to this.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	add (Buffer const* other)
-	{
-		assert (other->type() == AudioBuffer::TYPE);
-		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
-		assert (begin() != 0);
-		assert (buf->begin() != 0);
-		assert (buf->size() == size());
-		SIMD::add_buffers (begin(), buf->begin(), size());
-	}
+	add (Buffer const* other);
 
 	/**
 	 * Adds (mixes) attenuated other buffer to this.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	add (Buffer const* other, Sample attenuate_other)
-	{
-		assert (other->type() == AudioBuffer::TYPE);
-		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
-		assert (begin() != 0);
-		assert (buf->begin() != 0);
-		assert (buf->size() == size());
-		SIMD::add_buffers (begin(), buf->begin(), attenuate_other, size());
-	}
+	add (Buffer const* other, Sample attenuate_other);
 
 	/**
 	 * Substracts other buffer from this.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	sub (Buffer const* other)
-	{
-		assert (other->type() == AudioBuffer::TYPE);
-		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
-		assert (begin() != 0);
-		assert (buf->begin() != 0);
-		assert (buf->size() == size());
-		SIMD::sub_buffers (begin(), buf->begin(), size());
-	}
+	sub (Buffer const* other);
 
 	/**
 	 * Attenuates this buffer by other buffer.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	attenuate (Buffer const* other)
-	{
-		assert (other->type() == AudioBuffer::TYPE);
-		AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
-		assert (begin() != 0);
-		assert (buf->begin() != 0);
-		assert (buf->size() == size());
-		SIMD::multiply_buffers (begin(), buf->begin(), size());
-	}
+	attenuate (Buffer const* other);
 
 	/**
 	 * Attenuates this buffer by scalar.
 	 */
 	void
-	attenuate (Sample value)
-	{
-		SIMD::multiply_buffer_by_scalar (begin(), size(), value);
-	}
+	attenuate (Sample value);
 
 	/**
 	 * Negates this buffer.
 	 */
 	void
-	negate()
-	{
-		SIMD::negate_buffer (begin(), size());
-	}
+	negate();
 
+	/**
+	 * Resize buffer to given number of samples.
+	 */
 	void
 	resize (std::size_t size);
 
+	/**
+	 * Return buffer size (in samples).
+	 */
 	std::size_t
-	size() const { return _size; }
+	size() const;
 
+	/**
+	 * Return pointer to the buffer.
+	 */
 	Sample*
-	begin() const { return _data; }
+	begin() const;
 
+	/**
+	 * Return pointer to past-the end sample in buffer.
+	 */
 	Sample*
-	end() const { return _end; }
+	end() const;
 
+	/**
+	 * Shorthand methods for accessing samples in buffer.
+	 */
 	Sample&
-	operator[] (std::size_t const i) { return _data[i]; }
+	operator[] (std::size_t const i);
 
 	Sample const&
-	operator[] (std::size_t const i) const { return _data[i]; }
+	operator[] (std::size_t const i) const;
 
   public:
 	/**
@@ -190,30 +153,169 @@ class AudioBuffer: public Buffer
 	 * instructions can be used on it.
 	 */
 	static Sample*
-	allocate (std::size_t samples)
-	{
-		if (samples == 0)
-			return 0;
-		void* ret;
-		if (posix_memalign (&ret, 32, sizeof (Sample) * samples) != 0)
-			return 0;
-		return static_cast<Sample*> (ret);
-	}
+	allocate (std::size_t samples);
 
 	/**
 	 * Deallocates memory allocated with allocate().
 	 */
 	static void
-	deallocate (Sample* buffer)
-	{
-		free (buffer);
-	}
+	deallocate (Sample* buffer);
 
   public:
 	Sample*		_data;
 	std::size_t	_size;
 	Sample*		_end;
 };
+
+
+inline void
+AudioBuffer::clear() { SIMD::clear_buffer (begin(), size()); }
+
+
+inline void
+AudioBuffer::fill (Buffer const* other)
+{
+	assert (other->type() == AudioBuffer::TYPE);
+	AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
+	assert (begin() != 0);
+	assert (buf->begin() != 0);
+	assert (buf->size() == size());
+	SIMD::copy_buffer (begin(), buf->begin(), size());
+}
+
+
+inline void
+AudioBuffer::fill (Sample value) { SIMD::fill_buffer (begin(), size(), value); }
+
+
+inline void
+AudioBuffer::mixin (Buffer const* other)
+{
+	add (other);
+}
+
+
+inline void
+AudioBuffer::mixin (Buffer const* other, Sample attenuate_other)
+{
+	add (other, attenuate_other);
+}
+
+
+inline void
+AudioBuffer::add (Buffer const* other)
+{
+	assert (other->type() == AudioBuffer::TYPE);
+	AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
+	assert (begin() != 0);
+	assert (buf->begin() != 0);
+	assert (buf->size() == size());
+	SIMD::add_buffers (begin(), buf->begin(), size());
+}
+
+
+inline void
+AudioBuffer::add (Buffer const* other, Sample attenuate_other)
+{
+	assert (other->type() == AudioBuffer::TYPE);
+	AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
+	assert (begin() != 0);
+	assert (buf->begin() != 0);
+	assert (buf->size() == size());
+	SIMD::add_buffers (begin(), buf->begin(), attenuate_other, size());
+}
+
+
+inline void
+AudioBuffer::sub (Buffer const* other)
+{
+	assert (other->type() == AudioBuffer::TYPE);
+	AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
+	assert (begin() != 0);
+	assert (buf->begin() != 0);
+	assert (buf->size() == size());
+	SIMD::sub_buffers (begin(), buf->begin(), size());
+}
+
+
+inline void
+AudioBuffer::attenuate (Buffer const* other)
+{
+	assert (other->type() == AudioBuffer::TYPE);
+	AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
+	assert (begin() != 0);
+	assert (buf->begin() != 0);
+	assert (buf->size() == size());
+	SIMD::multiply_buffers (begin(), buf->begin(), size());
+}
+
+
+inline void
+AudioBuffer::attenuate (Sample value)
+{
+	SIMD::multiply_buffer_by_scalar (begin(), size(), value);
+}
+
+
+inline void
+AudioBuffer::negate()
+{
+	SIMD::negate_buffer (begin(), size());
+}
+
+
+inline std::size_t
+AudioBuffer::size() const
+{
+	return _size;
+}
+
+
+inline Sample*
+AudioBuffer::begin() const
+{
+	return _data;
+}
+
+
+inline Sample*
+AudioBuffer::end() const
+{
+	return _end;
+}
+
+
+inline Sample&
+AudioBuffer::operator[] (std::size_t const i)
+{
+	return _data[i];
+}
+
+
+inline Sample const&
+AudioBuffer::operator[] (std::size_t const i) const
+{
+	return _data[i];
+}
+
+
+inline Sample*
+AudioBuffer::allocate (std::size_t samples)
+{
+	if (samples == 0)
+		return 0;
+	void* ret;
+	if (posix_memalign (&ret, 32, sizeof (Sample) * samples) != 0)
+		return 0;
+	return static_cast<Sample*> (ret);
+}
+
+
+inline void
+AudioBuffer::deallocate (Sample* buffer)
+{
+	free (buffer);
+}
 
 } // namespace Haruhi
 

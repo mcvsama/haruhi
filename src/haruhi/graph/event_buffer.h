@@ -43,7 +43,7 @@ class EventBuffer: public Buffer
 	EventBuffer();
 
 	void
-	clear() { _events.clear(); }
+	clear();
 
 	/**
 	 * Mixes in other buffer into this one.
@@ -53,39 +53,80 @@ class EventBuffer: public Buffer
 	mixin (Buffer const*);
 
 	void
-	push (Shared<Event> const& event) { _sorted = false; _events.push_back (event); }
+	push (Shared<Event> const& event);
 
 	/**
 	 * May resort events.
 	 */
 	Events&
-	events() { ensure_sorted(); return _events; }
+	events();
 
 	Events const&
-	events() const { ensure_sorted(); return _events; }
+	events() const;
 
 	/**
 	 * \returns	true if and only if buffer has no pending events.
 	 */
 	bool
-	empty() const { return _events.empty(); }
+	empty() const;
 
   private:
 	void
-	ensure_sorted() const
-	{
-		if (!_sorted)
-		{
-			std::sort (_events.begin(), _events.end(), _less_function);
-			_sorted = true;
-		}
-	}
+	ensure_sorted() const;
 
   private:
 	mutable bool					_sorted;
 	mutable Events					_events;
 	Event::SharedStrictWeakOrdering	_less_function;
 };
+
+
+inline void
+EventBuffer::clear()
+{
+	_events.clear();
+}
+
+
+inline void
+EventBuffer::push (Shared<Event> const& event)
+{
+	_sorted = false; _events.push_back (event);
+}
+
+
+inline EventBuffer::Events&
+EventBuffer::events()
+{
+	ensure_sorted();
+	return _events;
+}
+
+
+inline EventBuffer::Events const&
+EventBuffer::events() const
+{
+	ensure_sorted();
+	return _events;
+}
+
+
+inline bool
+EventBuffer::empty() const
+{
+	return _events.empty();
+}
+
+
+inline void
+EventBuffer::ensure_sorted() const
+{
+	if (!_sorted)
+	{
+		std::sort (_events.begin(), _events.end(), _less_function);
+		_sorted = true;
+	}
+}
 
 } // namespace Haruhi
 
