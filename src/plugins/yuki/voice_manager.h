@@ -24,6 +24,7 @@
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/graph/event.h>
 #include <haruhi/utility/work_performer.h>
+#include <haruhi/utility/pool_allocator.h>
 
 // Local:
 #include "voice.h"
@@ -45,6 +46,8 @@ class VoiceManager
 
 	class RenderWorkUnit: public WorkPerformer::Unit
 	{
+		USES_POOL_ALLOCATOR (RenderWorkUnit)
+
 	  public:
 		RenderWorkUnit (Voice* voice, SharedResourcesVec& resources_vec);
 

@@ -26,6 +26,9 @@
 
 namespace Yuki {
 
+POOL_ALLOCATOR_FOR (VoiceManager::RenderWorkUnit)
+
+
 VoiceManager::RenderWorkUnit::RenderWorkUnit (Voice* voice, SharedResourcesVec& resources_vec):
 	_voice (voice),
 	_resources_vec (resources_vec)
