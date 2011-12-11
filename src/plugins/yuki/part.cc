@@ -25,6 +25,7 @@
 #include <haruhi/dsp/fft_filler.h>
 #include <haruhi/dsp/functions.h>
 #include <haruhi/dsp/modulated_wave.h>
+#include <haruhi/utility/fast_pow.h>
 
 // Local:
 #include "part.h"
@@ -37,8 +38,6 @@ namespace Yuki {
 
 Part::UpdateWavetableWorkUnit::UpdateWavetableWorkUnit (Part* part):
 	_part (part),
-	_base_wave (0),
-	_modulator_wave (0),
 	_wavetable (0),
 	_serial (0),
 	_is_cancelled (false)
@@ -46,10 +45,8 @@ Part::UpdateWavetableWorkUnit::UpdateWavetableWorkUnit (Part* part):
 
 
 void
-Part::UpdateWavetableWorkUnit::reset (DSP::ParametricWave* base_wave, DSP::ParametricWave* modulator_wave, DSP::Wavetable* wavetable, unsigned int serial)
+Part::UpdateWavetableWorkUnit::reset (DSP::Wavetable* wavetable, unsigned int serial)
 {
-	_base_wave = base_wave->clone();
-	_modulator_wave = modulator_wave->clone();
 	_wavetable = wavetable;
 	_serial = serial;
 	_is_cancelled.store (false);
@@ -59,27 +56,9 @@ Part::UpdateWavetableWorkUnit::reset (DSP::ParametricWave* base_wave, DSP::Param
 void
 Part::UpdateWavetableWorkUnit::execute()
 {
-	Params::Part* pp = _part->part_params();
+	DSP::Wave* wave = _part->final_wave();
 
-	_base_wave->set_param (pp->wave_shape.to_f());
-	_modulator_wave->set_param (pp->modulator_shape.to_f());
-
-	// Add harmonics:
-	DSP::HarmonicsWave hw (_base_wave);
-	for (std::size_t i = 0; i < Params::Part::HarmonicsNumber; ++i)
-	{
-		float h = pp->harmonics[i].to_f();
-		float p = pp->harmonic_phases[i].to_f();
-		// Apply exponential curve to harmonic value:
-		h = h > 0 ? FastPow::pow (h, M_E) : -FastPow::pow (-h, M_E);
-		hw.set_harmonic (i, h, p);
-	}
-
-	// Add modulation:
-	DSP::ModulatedWave xw (&hw, _modulator_wave, static_cast<DSP::ModulatedWave::Type> (pp->modulator_type.get()),
-						   pp->modulator_amplitude.to_f(), pp->modulator_index.get(), false);
-
-	DSP::FFTFiller filler (&xw, true);
+	DSP::FFTFiller filler (wave, true);
 	filler.set_cancel_predicate (boost::bind (&UpdateWavetableWorkUnit::is_cancelled, this));
 	filler.fill (_wavetable, 4096);
 
@@ -90,8 +69,7 @@ Part::UpdateWavetableWorkUnit::execute()
 		_part->wavetable_computed (_serial);
 	}
 
-	delete _base_wave;
-	delete _modulator_wave;
+	delete wave;
 }
 
 
@@ -267,7 +245,7 @@ Part::check_wavetable_update_process()
 		if (!_wt_wu_ever_started || (_wt_wu->is_ready() && _wt_wu->serial() != update_request))
 		{
 			// Prepare work unit:
-			_wt_wu->reset (base_wave(), modulator_wave(), _wavetables[1], update_request);
+			_wt_wu->reset (_wavetables[1], update_request);
 			_wt_wu_ever_started = true;
 
 			Haruhi::Services::lo_priority_work_performer()->add (_wt_wu);
@@ -313,6 +291,32 @@ unsigned int
 Part::voices_number() const
 {
 	return _voice_manager->current_voices_number();
+}
+
+
+DSP::Wave*
+Part::final_wave() const
+{
+	DSP::ParametricWave* bw = base_wave()->clone();
+	DSP::ParametricWave* mw = modulator_wave()->clone();
+
+	bw->set_param (_part_params.wave_shape.to_f());
+	mw->set_param (_part_params.modulator_shape.to_f());
+
+	// Add harmonics:
+	DSP::HarmonicsWave* hw = new DSP::HarmonicsWave (bw, true);
+	for (std::size_t i = 0; i < Params::Part::HarmonicsNumber; ++i)
+	{
+		float h = _part_params.harmonics[i].to_f();
+		float p = _part_params.harmonic_phases[i].to_f();
+		// Apply exponential curve to harmonic value:
+		h = h > 0 ? FastPow::pow (h, M_E) : -FastPow::pow (-h, M_E);
+		hw->set_harmonic (i, h, p);
+	}
+
+	// Add modulation:
+	return new DSP::ModulatedWave (hw, mw, static_cast<DSP::ModulatedWave::Type> (_part_params.modulator_type.get()),
+								   _part_params.modulator_amplitude.to_f(), _part_params.modulator_index.get(), true, true);
 }
 
 

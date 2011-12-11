@@ -67,7 +67,7 @@ class Part:
 		 * \param	serial Update request ID.
 		 */
 		void
-		reset (DSP::ParametricWave* base_wave, DSP::ParametricWave* modulator_wave, DSP::Wavetable* wavetable, unsigned int serial);
+		reset (DSP::Wavetable* wavetable, unsigned int serial);
 
 		/**
 		 * Recompute wavetable.
@@ -97,8 +97,6 @@ class Part:
 
 	  private:
 		Part*					_part;
-		DSP::ParametricWave*	_base_wave;
-		DSP::ParametricWave*	_modulator_wave;
 		DSP::Wavetable*			_wavetable;
 		unsigned int			_serial;
 		Atomic<bool>			_is_cancelled;
@@ -247,6 +245,15 @@ class Part:
 	 */
 	DSP::ParametricWave*
 	modulator_wave() const;
+
+	/**
+	 * Allocate Wave* that incorporates harmonics and modulation
+	 * taken from parameters object at the time of the call.
+	 * Must be deleted after use.
+	 * \threadsafe
+	 */
+	DSP::Wave*
+	final_wave() const;
 
   private:
 	/**
