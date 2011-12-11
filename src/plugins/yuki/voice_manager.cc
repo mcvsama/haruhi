@@ -79,13 +79,24 @@ VoiceManager::handle_voice_event (Haruhi::VoiceEvent const* event)
 {
 	if (event->type() == Haruhi::VoiceEvent::Create)
 	{
+		Haruhi::VoiceID id = event->voice_id();
+
 		// If there is already voice with the same voice_id, kill it first.
 		// This is not a normal situation, so killing instead of dropping is OK.
-		delete find_voice_by_id (event->voice_id());
+		if (Voice* ov = find_voice_by_id (id))
+		{
+			static int ovnum = 0;
+			if (ov->state() == Voice::Voicing)
+			{
+				_voices.erase (ov);
+				_active_voices_number--;
+				delete ov;
+			}
+		}
 
-		Haruhi::VoiceID id = event->voice_id();
 		Voice* v = new Voice (id, event->timestamp(), _main_params, _part_params, _voice_params, event->value(), event->frequency() / _sample_rate, _sample_rate, _buffer_size);
 		v->set_wavetable (_wavetable);
+
 		_voices_by_id[id] = _voices.insert (v).first;
 		_active_voices_number++;
 
@@ -95,7 +106,7 @@ VoiceManager::handle_voice_event (Haruhi::VoiceEvent const* event)
 	else if (event->type() == Haruhi::VoiceEvent::Release || event->type() == Haruhi::VoiceEvent::Drop)
 	{
 		Voice* v = find_voice_by_id (event->voice_id());
-		if (v)
+		if (v && v->state() == Voice::Voicing)
 		{
 			v->drop();
 			_active_voices_number--;
