@@ -90,7 +90,7 @@ Params::Part::Part():
 	HARUHI_YUKI_CONSTRUCT (noise_level, NoiseLevel, 2),
 	HARUHI_YUKI_CONSTRUCT (wave_shape, WaveShape, 2),
 	HARUHI_YUKI_CONSTRUCT (modulator_amplitude, ModulatorAmplitude, 2),
-	HARUHI_YUKI_CONSTRUCT (modulator_index, ModulatorIndex, 0),
+	HARUHI_YUKI_CONSTRUCT_EXPLICIT (modulator_index, ModulatorIndex, ModulatorIndexMin, ModulatorIndexMax, 0, 1),
 	HARUHI_YUKI_CONSTRUCT (modulator_shape, ModulatorShape, 2),
 	part_enabled (0, 1, 1, "part_enabled"),
 	wave_enabled (0, 1, 1, "wave_enabled"),
@@ -154,7 +154,7 @@ Params::Voice::Voice():
 	HARUHI_YUKI_CONSTRUCT (detune, Detune, 2),
 	HARUHI_YUKI_CONSTRUCT (pitchbend, Pitchbend, 2),
 	HARUHI_YUKI_CONSTRUCT (velocity_sens, VelocitySens, 2),
-	HARUHI_YUKI_CONSTRUCT (unison_index, UnisonIndex, 0),
+	HARUHI_YUKI_CONSTRUCT_EXPLICIT (unison_index, UnisonIndex, UnisonIndexMin, UnisonIndexMax, 0, 1),
 	HARUHI_YUKI_CONSTRUCT (unison_spread, UnisonSpread, 2),
 	HARUHI_YUKI_CONSTRUCT (unison_init, UnisonInit, 2),
 	HARUHI_YUKI_CONSTRUCT (unison_noise, UnisonNoise, 2)
