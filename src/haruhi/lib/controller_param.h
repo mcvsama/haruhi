@@ -32,7 +32,7 @@ namespace Haruhi {
 class ControllerParam: public Param<int>
 {
   public:
-	ControllerParam (const char* name = "");
+	explicit ControllerParam (const char* name = "");
 
 	ControllerParam (int minimum, int maximum, int default_value, int denominator, const char* name,
 					 float shown_min = 0.0f, float shown_max = 1.0f, int shown_decimals = 1, int step = 1);

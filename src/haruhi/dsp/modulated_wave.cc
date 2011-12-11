@@ -58,7 +58,7 @@ ModulatedWave::~ModulatedWave()
 Sample
 ModulatedWave::operator() (Sample phase, Sample frequency) const
 {
-	return (this->*_value_function) (phase, frequency);	
+	return (this->*_value_function) (phase, frequency);
 }
 
 
