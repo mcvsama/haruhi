@@ -64,7 +64,7 @@ Part::UpdateWavetableWorkUnit::execute()
 	{
 		// We're sure that Part still exists as long as this object exist,
 		// because Part will wait for us in its destructor.
-		_part->switch_wavetables();
+		_part->wavetable_computed (_serial);
 	}
 }
 
@@ -200,7 +200,6 @@ void
 Part::update_wavetable()
 {
 	_wt_update_request.inc();
-	check_wavetable_update_process();
 }
 
 
@@ -227,14 +226,14 @@ Part::check_wavetable_update_process()
 void
 Part::render()
 {
-	check_wavetable_update_process();
-
 	if (_switch_wavetables.load())
 	{
 		std::swap (_wavetables[0], _wavetables[1]);
 		_switch_wavetables.store (false);
 		_voice_manager->set_wavetable (_wavetables[0]);
 	}
+
+	check_wavetable_update_process();
 
 	_voice_manager->render();
 }
@@ -265,9 +264,9 @@ Part::voices_number() const
 
 
 void
-Part::switch_wavetables()
+Part::wavetable_computed (unsigned int serial)
 {
-	_wt_serial.inc();
+	_wt_serial.store (serial);
 	_switch_wavetables.store (true);
 }
 

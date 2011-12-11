@@ -233,13 +233,16 @@ class Part:
 	check_wavetable_update_process();
 
 	/**
-	 * Switch double buffered wavetables.
-	 * Propagate notification to the voice manager.
+	 * Notify that new wavetable with given serial number
+	 * has been computed.
+	 *
+	 * Switches wavetables and propagates notification
+	 * to the voice manager.
 	 *
 	 * \entry	UpdateWavetableWorkUnit (WorkPerformer)
 	 */
 	void
-	switch_wavetables();
+	wavetable_computed (unsigned int serial);
 
   private:
 	PartManager*				_part_manager;
