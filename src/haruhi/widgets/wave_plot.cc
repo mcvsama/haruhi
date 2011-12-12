@@ -191,8 +191,9 @@ WavePlot::paintEvent (QPaintEvent* paint_event)
 			// Phase marker:
 			if (_phase_enabled)
 			{
+				QColor color = isEnabled() ? QColor (0x00, 0x00, 0xdd) : QColor (0xc0, 0xc0, 0xc0);
 				painter.setRenderHint (QPainter::Antialiasing, false);
-				painter.setPen (QPen (QColor (0x00, 0x00, 0xdd), 1, Qt::DotLine));
+				painter.setPen (QPen (color, 1, Qt::DotLine));
 				painter.setBrush (Qt::NoBrush);
 				int xpos = std::min (static_cast<int> (_phase_position * w), w - 1);
 				painter.drawLine (xpos, 0, xpos, h);
