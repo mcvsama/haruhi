@@ -184,7 +184,6 @@ struct Params
 	{
 		HARUHI_YUKI_PARAMS_STANDARD_METHODS (Voice)
 
-		HARUHI_YUKI_PARAM (Adsr,					       0,	+1000000,	+1000000,	+1000000)
 		HARUHI_YUKI_PARAM (Amplitude,				       0,	+1000000,	+1000000,	+1000000)
 		HARUHI_YUKI_PARAM (Frequency,				-1000000,	+1000000,	+1000000,	       0)
 		HARUHI_YUKI_PARAM (Panorama,				-1000000,	+1000000,	+1000000,	       0)
@@ -196,7 +195,6 @@ struct Params
 		HARUHI_YUKI_PARAM (UnisonInit,				-1000000,	+1000000,	+1000000,	       0)
 		HARUHI_YUKI_PARAM (UnisonNoise,				       0,	+1000000,	+1000000,	       0)
 
-		Haruhi::ControllerParam adsr;
 		Haruhi::ControllerParam amplitude;
 		Haruhi::ControllerParam frequency;
 		Haruhi::ControllerParam panorama;

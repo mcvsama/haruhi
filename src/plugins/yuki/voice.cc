@@ -200,7 +200,7 @@ Voice::prepare_amplitude_buffer (Haruhi::AudioBuffer* buffer)
 	// Amplitude velocity sensing:
 	float sens = _params.velocity_sens.to_f();
 	sens = (sens >= 0.0 ? 1 - sens + _amplitude * sens : sens * _amplitude + 1.0f);
-	float f = sens * _part_params->volume.to_f() * _params.amplitude.to_f() * _params.adsr.to_f();
+	float f = sens * _part_params->volume.to_f() * _params.amplitude.to_f();
 
 	if (_first_pass)
 		_smoother_amplitude.reset (f);
