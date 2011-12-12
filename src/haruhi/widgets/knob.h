@@ -169,6 +169,18 @@ class Knob:
 	Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param, QString const& label);
 
 	/**
+	 * Create Knob. Use external ControllerProxy instead of own one.
+	 */
+	Knob (QWidget* parent, ControllerProxy* controller_proxy,
+		  QString const& label, float shown_min, float shown_max, int step, int shown_decimals);
+
+	/**
+	 * Create Knob. Use external ControllerProxy and min/max/step/decimals params taken from the
+	 * controlled parameter itself.
+	 */
+	Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& label);
+
+	/**
 	 * Returns true if volume scale has been enabled.
 	 */
 	bool

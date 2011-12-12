@@ -27,15 +27,24 @@
 namespace Haruhi {
 
 Controller::Controller (EventPort* event_port, ControllerParam* controller_param):
-	_controller_proxy (event_port, controller_param),
+	_controller_proxy (new ControllerProxy (event_port, controller_param)),
+	_own_controller_proxy (true),
 	_unit_bay (0),
 	_learning (false),
-	on_voice_controller_event (_controller_proxy.on_voice_controller_event)
+	on_voice_controller_event (_controller_proxy->on_voice_controller_event)
 {
-	if (event_port)
-		event_port->learned_connection_signal.connect (this, &Controller::learned_connection);
-	_controller_proxy.set_widget (this);
-	schedule_for_update();
+	initialize();
+}
+
+
+Controller::Controller (ControllerProxy* controller_proxy):
+	_controller_proxy (controller_proxy),
+	_own_controller_proxy (false),
+	_unit_bay (0),
+	_learning (false),
+	on_voice_controller_event (_controller_proxy->on_voice_controller_event)
+{
+	initialize();
 }
 
 
@@ -44,16 +53,19 @@ Controller::~Controller()
 	Signal::Receiver::disconnect_all_signals();
 	// Ensure that ControllerProxy will not request periodic-update
 	// on this widget anymore:
-	_controller_proxy.set_widget (0);
+	_controller_proxy->set_widget (0);
 	// Forget current periodic-update request:
 	forget_about_update();
+	// If controller proxy was owned by us, delete it:
+	if (_own_controller_proxy)
+		delete _controller_proxy;
 }
 
 
 void
 Controller::start_learning()
 {
-	EventPort* port = _controller_proxy.event_port();
+	EventPort* port = _controller_proxy->event_port();
 	if (port)
 	{
 		port->start_learning (EventBackend::Controller | EventBackend::Pitchbend);
@@ -66,7 +78,7 @@ Controller::start_learning()
 void
 Controller::stop_learning()
 {
-	EventPort* port = _controller_proxy.event_port();
+	EventPort* port = _controller_proxy->event_port();
 	if (port)
 	{
 		port->stop_learning();
@@ -80,7 +92,7 @@ void
 Controller::process_events()
 {
 	if (!mouse_pressed())
-		controller_proxy().process_events();
+		controller_proxy()->process_events();
 }
 
 
@@ -88,7 +100,17 @@ void
 Controller::process_event (ControllerEvent const* event)
 {
 	if (!mouse_pressed())
-		controller_proxy().process_event (event);
+		controller_proxy()->process_event (event);
+}
+
+
+void
+Controller::initialize()
+{
+	if (event_port())
+		event_port()->learned_connection_signal.connect (this, &Controller::learned_connection);
+	_controller_proxy->set_widget (this);
+	schedule_for_update();
 }
 
 

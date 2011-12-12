@@ -76,9 +76,9 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	// Configure knobs:
 
-	_knob_portamento_time->controller_proxy().config().curve = 1.0;
-	_knob_portamento_time->controller_proxy().config().user_limit_max = 0.5f * Params::Part::PortamentoTimeDenominator;
-	_knob_portamento_time->controller_proxy().apply_config();
+	_knob_portamento_time->controller_proxy()->config().curve = 1.0;
+	_knob_portamento_time->controller_proxy()->config().user_limit_max = 0.5f * Params::Part::PortamentoTimeDenominator;
+	_knob_portamento_time->controller_proxy()->apply_config();
 
 	_knob_volume->set_volume_scale (true, M_E);
 

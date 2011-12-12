@@ -33,7 +33,7 @@ class UnitBay;
  *
  * Controller should be always unregistered from PeriodicUpdater
  * before ControllerProxies are deleted, to prevent race conditions from PeriodicUpdater.
- * Since Controller has its own ControllerProxy, this is done automatically for you.
+ * If you create a Controller with its own ControllerProxy, this will be done automatically for you.
  *
  * Classes that inherit Controller must implement periodic_update() method (by PeriodicUpdater)
  * that will read controlled param and update itself according to its value.
@@ -43,7 +43,17 @@ class Controller:
 	public Signal::Receiver
 {
   public:
+	/**
+	 * Create a Controller with its own ControllerProxy inside.
+	 */
 	Controller (EventPort* event_port, ControllerParam* controller_param);
+
+	/**
+	 * Create a Controller with external ControllerProxy.
+	 * There can be only one Controller per ControllerProxy.
+	 * Remember that the Controller MUST be destroyed first, before ControllerProxy.
+	 */
+	Controller (ControllerProxy* controller_proxy);
 
 	virtual ~Controller();
 
@@ -51,13 +61,13 @@ class Controller:
 	 * Returns associated ControllerParam.
 	 */
 	ControllerParam*
-	param() const { return _controller_proxy.param(); }
+	param() const { return _controller_proxy->param(); }
 
 	/**
 	 * Returns associated EventPort.
 	 */
 	EventPort*
-	event_port() const { return _controller_proxy.event_port(); }
+	event_port() const { return _controller_proxy->event_port(); }
 
 	/**
 	 * Associate this Controller with UnitBay, so widget can
@@ -73,13 +83,10 @@ class Controller:
 	unit_bay() const { return _unit_bay; }
 
 	/**
-	 * Returns ControllerProxy owned by this Controller.
+	 * Return ControllerProxy owned by this Controller.
 	 */
-	ControllerProxy&
+	ControllerProxy*
 	controller_proxy() { return _controller_proxy; }
-
-	ControllerProxy const&
-	controller_proxy() const { return _controller_proxy; }
 
 	/**
 	 * Puts controller into (MIDI) learning mode.
@@ -136,6 +143,12 @@ class Controller:
 
   private:
 	/**
+	 * Common construction code.
+	 */
+	void
+	initialize();
+
+	/**
 	 * Callback from Port's learned_connection_signal.
 	 * Updates UI and learning state. It's not defined from within
 	 * what thread this method will be called.
@@ -144,9 +157,10 @@ class Controller:
 	learned_connection (EventBackend::EventTypes, EventPort*);
 
   private:
-	ControllerProxy	_controller_proxy;
-	UnitBay*		_unit_bay;
-	Atomic<bool>	_learning;
+	ControllerProxy*	_controller_proxy;
+	bool				_own_controller_proxy;
+	UnitBay*			_unit_bay;
+	Atomic<bool>		_learning;
 
   public:
 	/**
