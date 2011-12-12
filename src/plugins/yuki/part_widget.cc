@@ -521,9 +521,9 @@ PartWidget::update_widgets()
 void
 PartWidget::update_wave_plots()
 {
-	delete _cached_final_wave;
-	_cached_final_wave = _part->final_wave();
+	DSP::Wave* previous_final_wave = _cached_final_wave;
 
+	_cached_final_wave = _part->final_wave();
 	if (DSP::ModulatedWave* modulated_wave = dynamic_cast<DSP::ModulatedWave*> (_cached_final_wave))
 	{
 		if (DSP::HarmonicsWave* harmonics_wave = dynamic_cast<DSP::HarmonicsWave*> (modulated_wave->wave()))
@@ -537,6 +537,8 @@ PartWidget::update_wave_plots()
 			}
 		}
 	}
+
+	delete previous_final_wave;
 }
 
 } // namespace Yuki
