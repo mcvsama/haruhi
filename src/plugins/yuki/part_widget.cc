@@ -41,26 +41,24 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 {
 	// Knobs:
 
-	Params::Part* pp = _part->part_params();
-	Params::Voice* vp = _part->voice_params();
-	Part::PartPorts* ports = _part->ports();
+	Part::PartControllerProxies* proxies = _part->proxies();
 
-	_knob_wave_shape			= new Haruhi::Knob (this, ports->wave_shape, &pp->wave_shape, "Shape");
-	_knob_modulator_amplitude	= new Haruhi::Knob (this, ports->modulator_amplitude, &pp->modulator_amplitude, "Mod.amp.");
-	_knob_modulator_index		= new Haruhi::Knob (this, ports->modulator_index, &pp->modulator_index, "Mod.index");
-	_knob_modulator_shape		= new Haruhi::Knob (this, ports->modulator_shape, &pp->modulator_shape, "Mod.shape");
-	_knob_volume				= new Haruhi::Knob (this, ports->volume, &pp->volume, "Volume dB");
-	_knob_panorama				= new Haruhi::Knob (this, ports->panorama, &vp->panorama, "Panorama");
-	_knob_detune				= new Haruhi::Knob (this, ports->detune, &vp->detune, "Detune");
-	_knob_pitchbend				= new Haruhi::Knob (this, ports->pitchbend, &vp->pitchbend, "Pitch");
-	_knob_unison_index			= new Haruhi::Knob (this, ports->unison_index, &vp->unison_index, "Unison");
-	_knob_unison_spread			= new Haruhi::Knob (this, ports->unison_spread, &vp->unison_spread, "U.spread");
-	_knob_unison_init			= new Haruhi::Knob (this, ports->unison_init, &vp->unison_init, "U.init.φ");
-	_knob_unison_noise			= new Haruhi::Knob (this, ports->unison_noise, &vp->unison_noise, "U.noise");
-	_knob_velocity_sens			= new Haruhi::Knob (this, ports->velocity_sens, &vp->velocity_sens, "Vel.sens.");
-	_knob_portamento_time		= new Haruhi::Knob (this, ports->portamento_time, &pp->portamento_time, "Glide");
-	_knob_phase					= new Haruhi::Knob (this, ports->phase, &pp->phase, "Phase");
-	_knob_noise_level			= new Haruhi::Knob (this, ports->noise_level, &pp->noise_level, "Noise lvl");
+	_knob_wave_shape			= new Haruhi::Knob (this, proxies->wave_shape, "Shape");
+	_knob_modulator_amplitude	= new Haruhi::Knob (this, proxies->modulator_amplitude, "Mod.amp.");
+	_knob_modulator_index		= new Haruhi::Knob (this, proxies->modulator_index, "Mod.index");
+	_knob_modulator_shape		= new Haruhi::Knob (this, proxies->modulator_shape, "Mod.shape");
+	_knob_volume				= new Haruhi::Knob (this, proxies->volume, "Volume dB");
+	_knob_panorama				= new Haruhi::Knob (this, proxies->panorama, "Panorama");
+	_knob_detune				= new Haruhi::Knob (this, proxies->detune, "Detune");
+	_knob_pitchbend				= new Haruhi::Knob (this, proxies->pitchbend, "Pitch");
+	_knob_unison_index			= new Haruhi::Knob (this, proxies->unison_index, "Unison");
+	_knob_unison_spread			= new Haruhi::Knob (this, proxies->unison_spread, "U.spread");
+	_knob_unison_init			= new Haruhi::Knob (this, proxies->unison_init, "U.init.φ");
+	_knob_unison_noise			= new Haruhi::Knob (this, proxies->unison_noise, "U.noise");
+	_knob_velocity_sens			= new Haruhi::Knob (this, proxies->velocity_sens, "Vel.sens.");
+	_knob_portamento_time		= new Haruhi::Knob (this, proxies->portamento_time, "Glide");
+	_knob_phase					= new Haruhi::Knob (this, proxies->phase, "Phase");
+	_knob_noise_level			= new Haruhi::Knob (this, proxies->noise_level, "Noise lvl");
 
 	QObject::connect (_knob_phase, SIGNAL (changed (int)), this, SLOT (update_phase_marker()));
 
@@ -116,6 +114,9 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	harmonics_plot_frame_layout->setMargin (0);
 	harmonics_plot_frame_layout->setSpacing (Config::Spacing);
 	harmonics_plot_frame_layout->addWidget (_final_wave_plot);
+
+	// Shorthand link to part params:
+	Params::Part* pp = _part->part_params();
 
 	// Wave type:
 

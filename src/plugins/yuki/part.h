@@ -26,6 +26,7 @@
 #include <haruhi/graph/event_port.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/graph/port_group.h>
+#include <haruhi/lib/controller_proxy.h>
 #include <haruhi/utility/atomic.h>
 #include <haruhi/utility/signal.h>
 #include <haruhi/utility/work_performer.h>
@@ -111,37 +112,71 @@ class Part:
 	class PartPorts: public HasPlugin
 	{
 	  public:
-		PartPorts (Plugin* plugin, unsigned int part_id);
+		PartPorts (Plugin*, unsigned int part_id);
 
 		~PartPorts();
 
 	  public:
 		// Waveform ports:
-		Haruhi::EventPort*	wave_shape;
-		Haruhi::EventPort*	modulator_amplitude;
-		Haruhi::EventPort*	modulator_index;
-		Haruhi::EventPort*	modulator_shape;
+		Haruhi::EventPort* wave_shape;
+		Haruhi::EventPort* modulator_amplitude;
+		Haruhi::EventPort* modulator_index;
+		Haruhi::EventPort* modulator_shape;
 
 		// Part ports:
-		Haruhi::EventPort*	volume;
-		Haruhi::EventPort*	portamento_time;
-		Haruhi::EventPort*	phase;
+		Haruhi::EventPort* volume;
+		Haruhi::EventPort* portamento_time;
+		Haruhi::EventPort* phase;
 
 		// Polyphonic-input ports:
-		Haruhi::EventPort*	amplitude;
-		Haruhi::EventPort*	frequency;
-		Haruhi::EventPort*	panorama;
-		Haruhi::EventPort*	detune;
-		Haruhi::EventPort*	pitchbend;
-		Haruhi::EventPort*	velocity_sens;
-		Haruhi::EventPort*	unison_index;
-		Haruhi::EventPort*	unison_spread;
-		Haruhi::EventPort*	unison_init;
-		Haruhi::EventPort*	unison_noise;
-		Haruhi::EventPort*	noise_level;
+		Haruhi::EventPort* amplitude;
+		Haruhi::EventPort* frequency;
+		Haruhi::EventPort* panorama;
+		Haruhi::EventPort* detune;
+		Haruhi::EventPort* pitchbend;
+		Haruhi::EventPort* velocity_sens;
+		Haruhi::EventPort* unison_index;
+		Haruhi::EventPort* unison_spread;
+		Haruhi::EventPort* unison_init;
+		Haruhi::EventPort* unison_noise;
+		Haruhi::EventPort* noise_level;
 
 	  private:
-		Haruhi::PortGroup*	_port_group;
+		Haruhi::PortGroup* _port_group;
+	};
+
+	/**
+	 * Contains ControllerProxies that connect event ports and params.
+	 */
+	class PartControllerProxies
+	{
+	  public:
+		PartControllerProxies (PartPorts*, Params::Part*, Params::Voice*);
+
+		~PartControllerProxies();
+
+	  public:
+		// Part:
+		Haruhi::ControllerProxy* volume;
+		Haruhi::ControllerProxy* portamento_time;
+		Haruhi::ControllerProxy* phase;
+		Haruhi::ControllerProxy* noise_level;
+		Haruhi::ControllerProxy* wave_shape;
+		Haruhi::ControllerProxy* modulator_amplitude;
+		Haruhi::ControllerProxy* modulator_index;
+		Haruhi::ControllerProxy* modulator_shape;
+
+		// Voice:
+		Haruhi::ControllerProxy* amplitude;
+		Haruhi::ControllerProxy* frequency;
+		Haruhi::ControllerProxy* panorama;
+		Haruhi::ControllerProxy* detune;
+		Haruhi::ControllerProxy* pitchbend;
+		Haruhi::ControllerProxy* velocity_sens;
+		Haruhi::ControllerProxy* unison_index;
+		Haruhi::ControllerProxy* unison_spread;
+		Haruhi::ControllerProxy* unison_init;
+		Haruhi::ControllerProxy* unison_noise;
 	};
 
   public:
@@ -168,10 +203,11 @@ class Part:
 	voice_params();
 
 	/**
-	 * Return ports list created by the part.
+	 * Return proxies list created by the part.
+	 * Needed for the widget to link Knobs to proxies.
 	 */
-	PartPorts*
-	ports();
+	PartControllerProxies*
+	proxies();
 
 	/**
 	 * Handle voice input event.
@@ -294,6 +330,7 @@ class Part:
 	UpdateWavetableWorkUnit*	_wt_wu;
 	bool						_wt_wu_ever_started;
 	PartPorts					_ports;
+	PartControllerProxies		_proxies;
 };
 
 
@@ -342,10 +379,10 @@ Part::voice_params()
 }
 
 
-inline Part::PartPorts*
-Part::ports()
+inline Part::PartControllerProxies*
+Part::proxies()
 {
-	return &_ports;
+	return &_proxies;
 }
 
 

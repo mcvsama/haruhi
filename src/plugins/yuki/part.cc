@@ -133,6 +133,58 @@ Part::PartPorts::~PartPorts()
 }
 
 
+Part::PartControllerProxies::PartControllerProxies (PartPorts* part_ports, Params::Part* part_params, Params::Voice* voice_params)
+{
+#define NEW_CONTROLLER_PROXY(name) name = new Haruhi::ControllerProxy (part_ports->name, &part_params->name);
+	NEW_CONTROLLER_PROXY (volume);
+	NEW_CONTROLLER_PROXY (portamento_time);
+	NEW_CONTROLLER_PROXY (phase);
+	NEW_CONTROLLER_PROXY (noise_level);
+	NEW_CONTROLLER_PROXY (wave_shape);
+	NEW_CONTROLLER_PROXY (modulator_amplitude);
+	NEW_CONTROLLER_PROXY (modulator_index);
+	NEW_CONTROLLER_PROXY (modulator_shape);
+#undef NEW_CONTROLLER_PROXY
+
+#define NEW_CONTROLLER_PROXY(name) name = new Haruhi::ControllerProxy (part_ports->name, &voice_params->name);
+	NEW_CONTROLLER_PROXY (amplitude);
+	NEW_CONTROLLER_PROXY (frequency);
+	NEW_CONTROLLER_PROXY (panorama);
+	NEW_CONTROLLER_PROXY (detune);
+	NEW_CONTROLLER_PROXY (pitchbend);
+	NEW_CONTROLLER_PROXY (velocity_sens);
+	NEW_CONTROLLER_PROXY (unison_index);
+	NEW_CONTROLLER_PROXY (unison_spread);
+	NEW_CONTROLLER_PROXY (unison_init);
+	NEW_CONTROLLER_PROXY (unison_noise);
+#undef NEW_CONTROLLER_PROXY
+}
+
+
+Part::PartControllerProxies::~PartControllerProxies()
+{
+	delete volume;
+	delete portamento_time;
+	delete phase;
+	delete noise_level;
+	delete wave_shape;
+	delete modulator_amplitude;
+	delete modulator_index;
+	delete modulator_shape;
+
+	delete amplitude;
+	delete frequency;
+	delete panorama;
+	delete detune;
+	delete pitchbend;
+	delete velocity_sens;
+	delete unison_index;
+	delete unison_spread;
+	delete unison_init;
+	delete unison_noise;
+}
+
+
 Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Main* main_params, unsigned int id):
 	HasID (id),
 	_part_manager (part_manager),
@@ -142,7 +194,8 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 	_wt_serial (0),
 	_wt_wu (0),
 	_wt_wu_ever_started (false),
-	_ports (_part_manager->plugin(), this->id())
+	_ports (_part_manager->plugin(), this->id()),
+	_proxies (&_ports, &_part_params, &_voice_params)
 {
 	_voice_manager->set_max_polyphony (64);
 

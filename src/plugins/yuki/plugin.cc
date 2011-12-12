@@ -68,6 +68,7 @@ Plugin::unregistered()
 void
 Plugin::process()
 {
+	sync_inputs();
 	clear_outputs();
 	_part_manager->process();
 }
