@@ -442,16 +442,16 @@ PartWidget::wave_params_updated()
 {
 	Params::Part* pp = _part->part_params();
 
+	// Update params that are not controller by knobs:
 	pp->wave_type = _wave_type->currentItem();
 	pp->modulator_type = _modulator_type->currentItem();
 	pp->modulator_wave_type = _modulator_wave_type->currentItem();
-	for (Sliders::size_type i = 0; i < _harmonics_sliders.size(); ++i)
+	for (std::size_t i = 0; i < ARRAY_SIZE (pp->harmonics); ++i)
 		pp->harmonics[i].set (_harmonics_sliders[i]->value());
-	for (Sliders::size_type i = 0; i < _harmonic_phases_sliders.size(); ++i)
+	for (std::size_t i = 0; i < ARRAY_SIZE (pp->harmonic_phases); ++i)
 		pp->harmonic_phases[i].set (_harmonic_phases_sliders[i]->value());
 
 	update_wave_plots();
-	_part->update_wavetable();
 }
 
 

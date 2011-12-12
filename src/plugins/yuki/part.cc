@@ -173,12 +173,19 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 	// on work unit in the destructor:
 	update_wavetable();
 
-	// Listen on params change:
+	// Listen on params change. Only on params that need additional
+	// action when they change (eg. updating wavetable).
+	_part_params.wave_type.on_change.connect (this, &Part::update_wavetable);
+	_part_params.modulator_wave_type.on_change.connect (this, &Part::update_wavetable);
+	_part_params.modulator_type.on_change.connect (this, &Part::update_wavetable);
 	_part_params.wave_shape.on_change.connect (this, &Part::update_wavetable);
 	_part_params.modulator_amplitude.on_change.connect (this, &Part::update_wavetable);
 	_part_params.modulator_index.on_change.connect (this, &Part::update_wavetable);
 	_part_params.modulator_shape.on_change.connect (this, &Part::update_wavetable);
-	//TODO rest of the non-polyphonic params
+	for (std::size_t i = 0; i < ARRAY_SIZE (_part_params.harmonics); ++i)
+		_part_params.harmonics[i].on_change.connect (this, &Part::update_wavetable);
+	for (std::size_t i = 0; i < ARRAY_SIZE (_part_params.harmonic_phases); ++i)
+		_part_params.harmonic_phases[i].on_change.connect (this, &Part::update_wavetable);
 }
 
 
