@@ -241,8 +241,9 @@ Model::acquire_lock()
 				throw Locked (QString ("failed to obtain lock '%1'"));
 			// Read PID:
 			char buf[16] = {0};
-			read (_lock_file, buf, 15);
-			int pid = lexical_cast<int> (buf);
+			int pid = 0;
+			if (read (_lock_file, buf, 15) != -1)
+				pid = lexical_cast<int> (buf);
 			// Check if other process exist:
 			if (pid != 0 && kill (pid, 0) != 0)
 				unlink (_lock_file_name);
