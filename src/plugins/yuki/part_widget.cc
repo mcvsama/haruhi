@@ -159,13 +159,11 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_harmonics_window->hide();
 	_harmonics_window->setWindowTitle ("Harmonics & Phases");
 
-	_harmonics_and_phases_tabs = new QTabWidget (_harmonics_window);
-
 	// Harmonics:
 
-	_harmonics_tab = new QWidget (_harmonics_and_phases_tabs);
-	_harmonics_tab->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	QWidget* harmonics_grid = new QWidget (_harmonics_tab);
+	_harmonics_widget = new QWidget (_harmonics_window);
+	_harmonics_widget->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+	QWidget* harmonics_grid = new QWidget (_harmonics_widget);
 	QGridLayout* harmonics_layout = new QGridLayout (harmonics_grid);
 	harmonics_layout->setSpacing (0);
 	for (Sliders::size_type i = 0; i < Params::Part::HarmonicsNumber; ++i)
@@ -195,16 +193,16 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 		_harmonics_sliders.push_back (slider);
 		_harmonics_resets.push_back (reset);
 	}
-	QHBoxLayout* harmonics_tab_layout = new QHBoxLayout (_harmonics_tab);
+	QHBoxLayout* harmonics_tab_layout = new QHBoxLayout (_harmonics_widget);
 	harmonics_tab_layout->setMargin (0);
 	harmonics_tab_layout->setSpacing (0);
 	harmonics_tab_layout->addWidget (harmonics_grid);
 
 	// Phases:
 
-	_harmonic_phases_tab = new QWidget (_harmonics_and_phases_tabs);
-	_harmonic_phases_tab->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	QWidget* phases_grid = new QWidget (_harmonic_phases_tab);
+	_harmonic_phases_widget = new QWidget (_harmonics_window);
+	_harmonic_phases_widget->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+	QWidget* phases_grid = new QWidget (_harmonic_phases_widget);
 	QGridLayout* phases_layout = new QGridLayout (phases_grid);
 	phases_layout->setSpacing (0);
 	for (Sliders::size_type i = 0; i < Params::Part::HarmonicsNumber; ++i)
@@ -234,13 +232,10 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 		_harmonic_phases_sliders.push_back (slider);
 		_harmonic_phases_resets.push_back (reset);
 	}
-	QHBoxLayout* phases_tab_layout = new QHBoxLayout (_harmonic_phases_tab);
+	QHBoxLayout* phases_tab_layout = new QHBoxLayout (_harmonic_phases_widget);
 	phases_tab_layout->setMargin (0);
 	phases_tab_layout->setSpacing (0);
 	phases_tab_layout->addWidget (phases_grid);
-
-	_harmonics_and_phases_tabs->addTab (_harmonics_tab, "Harmonics");
-	_harmonics_and_phases_tabs->addTab (_harmonic_phases_tab, "Phases");
 
 	// Unison stereo:
 	_unison_stereo = new QCheckBox ("Unison stereo", this);
@@ -377,7 +372,10 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QVBoxLayout* harmonics_window_layout = new QVBoxLayout (_harmonics_window);
 	harmonics_window_layout->setMargin (Config::DialogMargin);
 	harmonics_window_layout->setSpacing (Config::Spacing);
-	harmonics_window_layout->addWidget (_harmonics_and_phases_tabs);
+	harmonics_window_layout->addWidget (new QLabel ("Harmonics:", _harmonics_window));
+	harmonics_window_layout->addWidget (_harmonics_widget);
+	harmonics_window_layout->addWidget (new QLabel ("Phases:", _harmonics_window));
+	harmonics_window_layout->addWidget (_harmonic_phases_widget);
 
 	// Save standard button colors:
 	_std_button_bg = _harmonics_resets[0]->paletteBackgroundColor();
@@ -508,8 +506,8 @@ PartWidget::update_widgets()
 	_knob_modulator_shape->setEnabled (immutable);
 	_modulator_type->setEnabled (immutable);
 	_modulator_wave_type->setEnabled (immutable);
-	_harmonics_tab->setEnabled (immutable);
-	_harmonic_phases_tab->setEnabled (immutable);
+	_harmonics_widget->setEnabled (immutable);
+	_harmonic_phases_widget->setEnabled (immutable);
 
 	for (Sliders::size_type i = 0; i < Params::Part::HarmonicsNumber; ++i)
 	{

@@ -160,10 +160,9 @@ class PartWidget:
 	Buttons				_harmonics_resets;
 	Sliders				_harmonic_phases_sliders;
 	Buttons				_harmonic_phases_resets;
-	QWidget*			_harmonics_tab;
-	QWidget*			_harmonic_phases_tab;
+	QWidget*			_harmonics_widget;
+	QWidget*			_harmonic_phases_widget;
 	QDialog*			_harmonics_window;
-	QTabWidget*			_harmonics_and_phases_tabs;
 
 	// Pitchbend/transposition:
 	QCheckBox*			_const_portamento_time;
