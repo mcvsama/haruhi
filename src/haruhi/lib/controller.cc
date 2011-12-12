@@ -29,7 +29,8 @@ namespace Haruhi {
 Controller::Controller (EventPort* event_port, ControllerParam* controller_param):
 	_controller_proxy (event_port, controller_param),
 	_unit_bay (0),
-	_learning (false)
+	_learning (false),
+	on_voice_controller_event (_controller_proxy.on_voice_controller_event)
 {
 	if (event_port)
 		event_port->learned_connection_signal.connect (this, &Controller::learned_connection);

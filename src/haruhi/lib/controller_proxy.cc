@@ -81,30 +81,35 @@ ControllerProxy::process_events()
 
 	if (!buffer->events().empty())
 	{
+		bool found_ce = false;
+		bool found_vce = false;
+
 		// Use last controller value from buffer:
-		for (EventBuffer::Events::const_reverse_iterator e = buffer->events().rbegin(); e != buffer->events().rend(); ++e)
+		for (EventBuffer::Events::const_reverse_iterator e = buffer->events().rbegin(); e != buffer->events().rend() && !(found_ce && found_vce); ++e)
 		{
-			if (e != buffer->events().rend())
+			switch ((*e)->event_type())
 			{
-				if ((*e)->event_type() == Event::ControllerEventType)
-				{
-					process_event (static_cast<ControllerEvent const*> (e->get()));
+				case Event::ControllerEventType:
+					if (!found_ce)
+					{
+						process_event (static_cast<ControllerEvent const*> (e->get()));
+						found_ce = true;
+					}
 					break;
-				}
+
+				case Event::VoiceControllerEventType:
+					if (!found_vce)
+					{
+						on_voice_controller_event (static_cast<VoiceControllerEvent const*> (e->get()));
+						found_vce = true;
+					}
+					break;
+
+				default:
+					break;
 			}
 		}
 	}
-}
-
-
-void
-ControllerProxy::process_event (ControllerEvent const* event)
-{
-	// Update parameter:
-	param()->set (_config.forward_normalized (event->value()));
-	// Schedule update for paired Widget:
-	if (_widget)
-		_widget->schedule_for_update();
 }
 
 

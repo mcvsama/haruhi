@@ -23,6 +23,7 @@
 #include <haruhi/lib/controller_param.h>
 #include <haruhi/session/periodic_updater.h>
 #include <haruhi/utility/saveable_state.h>
+#include <haruhi/utility/signal.h>
 
 
 namespace Haruhi {
@@ -156,6 +157,13 @@ class ControllerProxy: public SaveableState
 	void
 	load_state (QDomElement const&);
 
+  public:
+	/**
+	 * Emited when VoiceControllerEvent is encountered
+	 * in process_events().
+	 */
+	Signal::Emiter1<VoiceControllerEvent const*> on_voice_controller_event;
+
   private:
 	Config				_config;
 	ControllerParam*	_param;
@@ -217,6 +225,17 @@ inline void
 ControllerProxy::set_widget (Widget* widget)
 {
 	_widget = widget;
+}
+
+
+inline void
+ControllerProxy::process_event (ControllerEvent const* event)
+{
+	// Update parameter:
+	param()->set (_config.forward_normalized (event->value()));
+	// Schedule update for paired Widget:
+	if (_widget)
+		_widget->schedule_for_update();
 }
 
 } // namespace Haruhi

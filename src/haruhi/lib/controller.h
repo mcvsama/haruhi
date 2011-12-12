@@ -21,6 +21,7 @@
 #include <haruhi/graph/event_backend.h>
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/utility/atomic.h>
+#include <haruhi/utility/signal.h>
 
 
 namespace Haruhi {
@@ -32,10 +33,10 @@ class UnitBay;
  *
  * Controller should be always unregistered from PeriodicUpdater
  * before ControllerProxies are deleted, to prevent race conditions from PeriodicUpdater.
- * Since Controller has its own ControllerProxy, This is done automatically for you.
+ * Since Controller has its own ControllerProxy, this is done automatically for you.
  *
  * Classes that inherit Controller must implement periodic_update() method (by PeriodicUpdater)
- * that should read controlled param and update itself according to its value.
+ * that will read controlled param and update itself according to its value.
  */
 class Controller:
 	public ControllerProxy::Widget,
@@ -146,6 +147,16 @@ class Controller:
 	ControllerProxy	_controller_proxy;
 	UnitBay*		_unit_bay;
 	Atomic<bool>	_learning;
+
+  public:
+	/**
+	 * Emited when VoiceControllerEvent is encountered
+	 * in process_events().
+	 *
+	 * Actually, this is just reference to
+	 * ControllerProxy::on_voice_controller_event.
+	 */
+	Signal::Emiter1<VoiceControllerEvent const*>& on_voice_controller_event;
 };
 
 } // namespace Haruhi
