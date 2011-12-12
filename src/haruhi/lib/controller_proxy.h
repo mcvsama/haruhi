@@ -98,30 +98,30 @@ class ControllerProxy: public SaveableState
   public:
 	/**
 	 * \param	event_port is event port connected to this proxy.
-	 * 			Proxy does not take ownership of the port.
+	 *			Proxy does not take ownership of the port.
 	 * \param	param is controller param controlled by this proxy.
-	 * 			Proxy does not take ownership of the param.
+	 *			Proxy does not take ownership of the param.
 	 */
 	ControllerProxy (EventPort* event_port, ControllerParam* param);
 
 	EventPort*
-	event_port() const { return _event_port; }
+	event_port() const;
 
 	ControllerParam*
-	param() const { return _param; }
+	param() const;
 
 	Config&
-	config() { return _config; }
+	config();
 
 	Config const&
-	config() const { return _config; }
+	config() const;
 
 	/**
 	 * Assigns Widget to be notified of parameter updates.
 	 * \entry	any thread
 	 */
 	void
-	set_widget (Widget* widget) { _widget = widget; }
+	set_widget (Widget* widget);
 
 	/**
 	 * Tells proxy that config has been updated
@@ -182,6 +182,41 @@ inline int
 ControllerProxy::Config::forward_normalized (float in) const
 {
 	return forward (renormalize (in, 0.0f, 1.0f, 1.0f * hard_limit_min, 1.0f * hard_limit_max));
+}
+
+
+inline EventPort*
+ControllerProxy::event_port() const
+{
+	return _event_port;
+}
+
+
+inline ControllerParam*
+ControllerProxy::param() const
+{
+	return _param;
+}
+
+
+inline ControllerProxy::Config&
+ControllerProxy::config()
+{
+	return _config;
+}
+
+
+inline ControllerProxy::Config const&
+ControllerProxy::config() const
+{
+	return _config;
+}
+
+
+inline void
+ControllerProxy::set_widget (Widget* widget)
+{
+	_widget = widget;
 }
 
 } // namespace Haruhi
