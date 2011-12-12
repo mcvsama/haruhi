@@ -61,32 +61,32 @@ class Controller:
 	 * Returns associated ControllerParam.
 	 */
 	ControllerParam*
-	param() const { return _controller_proxy->param(); }
+	param() const;
 
 	/**
 	 * Returns associated EventPort.
 	 */
 	EventPort*
-	event_port() const { return _controller_proxy->event_port(); }
+	event_port() const;
 
 	/**
 	 * Associate this Controller with UnitBay, so widget can
 	 * create a list of ports it can connect to, for example in popup menu.
 	 */
 	void
-	set_unit_bay (UnitBay* unit_bay) { _unit_bay = unit_bay; }
+	set_unit_bay (UnitBay* unit_bay);
 
 	/**
 	 * Returns associated UnitBay.
 	 */
 	UnitBay*
-	unit_bay() const { return _unit_bay; }
+	unit_bay() const;
 
 	/**
 	 * Return ControllerProxy owned by this Controller.
 	 */
 	ControllerProxy*
-	controller_proxy() { return _controller_proxy; }
+	controller_proxy();
 
 	/**
 	 * Puts controller into (MIDI) learning mode.
@@ -125,7 +125,7 @@ class Controller:
 	 * at the moment. By default returns false.
 	 */
 	virtual bool
-	mouse_pressed() { return false; }
+	mouse_pressed();
 
   protected:
 	/**
@@ -139,7 +139,7 @@ class Controller:
 	 * Returns true if Controller is in 'learning' mode.
 	 */
 	bool
-	learning() { return _learning.load(); }
+	learning();
 
   private:
 	/**
@@ -172,6 +172,55 @@ class Controller:
 	 */
 	Signal::Emiter1<VoiceControllerEvent const*>& on_voice_controller_event;
 };
+
+
+inline ControllerParam*
+Controller::param() const
+{
+	return _controller_proxy->param();
+}
+
+
+inline EventPort*
+Controller::event_port() const
+{
+	return _controller_proxy->event_port();
+}
+
+
+inline void
+Controller::set_unit_bay (UnitBay* unit_bay)
+{
+	_unit_bay = unit_bay;
+}
+
+
+inline UnitBay*
+Controller::unit_bay() const
+{
+	return _unit_bay;
+}
+
+
+inline ControllerProxy*
+Controller::controller_proxy()
+{
+	return _controller_proxy;
+}
+
+
+inline bool
+Controller::mouse_pressed()
+{
+	return false;
+}
+
+
+inline bool
+Controller::learning()
+{
+	return _learning.load();
+}
 
 } // namespace Haruhi
 
