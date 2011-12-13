@@ -81,25 +81,23 @@ VoiceManager::handle_voice_event (Haruhi::VoiceEvent const* event)
 	{
 		Haruhi::VoiceID id = event->voice_id();
 
-		// If there is already voice with the same voice_id, kill it first.
-		// This is not a normal situation, so killing instead of dropping is OK.
-		if (Voice* ov = find_voice_by_id (id))
+		// If there is already voice with the same voice_id, don't create new voice.
+		// Instead update its parameters.
+		if (Voice* v = find_voice_by_id (id))
 		{
-			if (ov->state() == Voice::Voicing)
-			{
-				_voices.erase (ov);
-				_active_voices_number--;
-				delete ov;
-			}
+			v->set_amplitude (event->value());
+			v->set_frequency (event->frequency() / _sample_rate);
 		}
+		else
+		{
+			Voice* v = new Voice (id, event->timestamp(), _main_params, _part_params, _voice_params, event->value(), event->frequency() / _sample_rate, _sample_rate, _buffer_size);
+			v->set_wavetable (_wavetable);
 
-		Voice* v = new Voice (id, event->timestamp(), _main_params, _part_params, _voice_params, event->value(), event->frequency() / _sample_rate, _sample_rate, _buffer_size);
-		v->set_wavetable (_wavetable);
+			_voices_by_id[id] = _voices.insert (v).first;
+			_active_voices_number++;
 
-		_voices_by_id[id] = _voices.insert (v).first;
-		_active_voices_number++;
-
-		check_polyphony_limit();
+			check_polyphony_limit();
+		}
 	}
 	// FIXME Perhaps we should have only Release event in Graph?
 	else if (event->type() == Haruhi::VoiceEvent::Release || event->type() == Haruhi::VoiceEvent::Drop)
