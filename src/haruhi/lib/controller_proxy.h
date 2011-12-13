@@ -75,6 +75,13 @@ class ControllerProxy: public SaveableState
 		reverse (int in) const;
 
 		/**
+		 * Denormalize input value from range [0.0, 1.0] to
+		 * range specified by the limits.
+		 */
+		int
+		denormalize (float in) const;
+
+		/**
 		 * The same as forward(), but takes input value normalized
 		 * into range [0.0, 1.0].
 		 */
@@ -146,6 +153,26 @@ class ControllerProxy: public SaveableState
 	void
 	process_event (ControllerEvent const*);
 
+	/**
+	 * Set normal value.
+	 * Apply curves and limits.
+	 */
+	void
+	set_value (int value);
+
+	/**
+	 * Set absolute value.
+	 * Do not apply any curves to the parameter.
+	 */
+	void
+	set_absolute_value (int value);
+
+	/**
+	 * Reset param to default value.
+	 */
+	void
+	reset_value();
+
 	/*
 	 * SaveableState API
 	 * Saves ControllerProxy configuration (curves, etc.)
@@ -162,7 +189,7 @@ class ControllerProxy: public SaveableState
 	 * Emited when VoiceControllerEvent is encountered
 	 * in process_events().
 	 */
-	Signal::Emiter1<VoiceControllerEvent const*> on_voice_controller_event;
+	Signal::Emiter2<VoiceControllerEvent const*, int> on_voice_controller_event;
 
   private:
 	Config				_config;
@@ -187,9 +214,16 @@ ControllerProxy::Config::reverse (int in) const
 
 
 inline int
+ControllerProxy::Config::denormalize (float in) const
+{
+	return renormalize (in, 0.0f, 1.0f, 1.0f * hard_limit_min, 1.0f * hard_limit_max);
+}
+
+
+inline int
 ControllerProxy::Config::forward_normalized (float in) const
 {
-	return forward (renormalize (in, 0.0f, 1.0f, 1.0f * hard_limit_min, 1.0f * hard_limit_max));
+	return forward (denormalize (in));
 }
 
 
@@ -231,9 +265,30 @@ ControllerProxy::set_widget (Widget* widget)
 inline void
 ControllerProxy::process_event (ControllerEvent const* event)
 {
-	// Update parameter:
-	param()->set (_config.forward_normalized (event->value()));
-	// Schedule update for paired Widget:
+	set_value (_config.denormalize (event->value()));
+}
+
+
+inline void
+ControllerProxy::set_value (int value)
+{
+	set_absolute_value (_config.forward (value));
+}
+
+
+inline void
+ControllerProxy::set_absolute_value (int value)
+{
+	param()->set (value);
+	if (_widget)
+		_widget->schedule_for_update();
+}
+
+
+inline void
+ControllerProxy::reset_value()
+{
+	param()->reset();
 	if (_widget)
 		_widget->schedule_for_update();
 }

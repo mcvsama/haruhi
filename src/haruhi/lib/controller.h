@@ -170,7 +170,7 @@ class Controller:
 	 * Actually, this is just reference to
 	 * ControllerProxy::on_voice_controller_event.
 	 */
-	Signal::Emiter1<VoiceControllerEvent const*>& on_voice_controller_event;
+	Signal::Emiter2<VoiceControllerEvent const*, int>& on_voice_controller_event;
 };
 
 

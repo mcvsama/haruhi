@@ -26,6 +26,7 @@
 #include <haruhi/dsp/functions.h>
 #include <haruhi/dsp/modulated_wave.h>
 #include <haruhi/utility/fast_pow.h>
+#include <haruhi/utility/signal.h>
 
 // Local:
 #include "part.h"
@@ -133,56 +134,46 @@ Part::PartPorts::~PartPorts()
 }
 
 
-Part::PartControllerProxies::PartControllerProxies (PartPorts* part_ports, Params::Part* part_params, Params::Voice* voice_params)
-{
-#define NEW_CONTROLLER_PROXY(name) name = new Haruhi::ControllerProxy (part_ports->name, &part_params->name);
-	NEW_CONTROLLER_PROXY (volume);
-	NEW_CONTROLLER_PROXY (portamento_time);
-	NEW_CONTROLLER_PROXY (phase);
-	NEW_CONTROLLER_PROXY (noise_level);
-	NEW_CONTROLLER_PROXY (wave_shape);
-	NEW_CONTROLLER_PROXY (modulator_amplitude);
-	NEW_CONTROLLER_PROXY (modulator_index);
-	NEW_CONTROLLER_PROXY (modulator_shape);
-#undef NEW_CONTROLLER_PROXY
-
-#define NEW_CONTROLLER_PROXY(name) name = new Haruhi::ControllerProxy (part_ports->name, &voice_params->name);
-	NEW_CONTROLLER_PROXY (amplitude);
-	NEW_CONTROLLER_PROXY (frequency);
-	NEW_CONTROLLER_PROXY (panorama);
-	NEW_CONTROLLER_PROXY (detune);
-	NEW_CONTROLLER_PROXY (pitchbend);
-	NEW_CONTROLLER_PROXY (velocity_sens);
-	NEW_CONTROLLER_PROXY (unison_index);
-	NEW_CONTROLLER_PROXY (unison_spread);
-	NEW_CONTROLLER_PROXY (unison_init);
-	NEW_CONTROLLER_PROXY (unison_noise);
-#undef NEW_CONTROLLER_PROXY
-}
+Part::PartControllerProxies::PartControllerProxies (PartPorts* part_ports, Params::Part* part_params, Params::Voice* voice_params):
+#define CONSTRUCT_CONTROLLER_PROXY(name) name (part_ports->name, &part_params->name)
+	CONSTRUCT_CONTROLLER_PROXY (volume),
+	CONSTRUCT_CONTROLLER_PROXY (portamento_time),
+	CONSTRUCT_CONTROLLER_PROXY (phase),
+	CONSTRUCT_CONTROLLER_PROXY (noise_level),
+	CONSTRUCT_CONTROLLER_PROXY (wave_shape),
+	CONSTRUCT_CONTROLLER_PROXY (modulator_amplitude),
+	CONSTRUCT_CONTROLLER_PROXY (modulator_index),
+	CONSTRUCT_CONTROLLER_PROXY (modulator_shape),
+#undef CONSTRUCT_CONTROLLER_PROXY
+#define CONSTRUCT_CONTROLLER_PROXY(name) name (part_ports->name, &voice_params->name)
+	CONSTRUCT_CONTROLLER_PROXY (amplitude),
+	CONSTRUCT_CONTROLLER_PROXY (frequency),
+	CONSTRUCT_CONTROLLER_PROXY (panorama),
+	CONSTRUCT_CONTROLLER_PROXY (detune),
+	CONSTRUCT_CONTROLLER_PROXY (pitchbend),
+	CONSTRUCT_CONTROLLER_PROXY (velocity_sens),
+	CONSTRUCT_CONTROLLER_PROXY (unison_index),
+	CONSTRUCT_CONTROLLER_PROXY (unison_spread),
+	CONSTRUCT_CONTROLLER_PROXY (unison_init),
+	CONSTRUCT_CONTROLLER_PROXY (unison_noise)
+#undef CONSTRUCT_CONTROLLER_PROXY
+{ }
 
 
-Part::PartControllerProxies::~PartControllerProxies()
-{
-	delete volume;
-	delete portamento_time;
-	delete phase;
-	delete noise_level;
-	delete wave_shape;
-	delete modulator_amplitude;
-	delete modulator_index;
-	delete modulator_shape;
-
-	delete amplitude;
-	delete frequency;
-	delete panorama;
-	delete detune;
-	delete pitchbend;
-	delete velocity_sens;
-	delete unison_index;
-	delete unison_spread;
-	delete unison_init;
-	delete unison_noise;
-}
+Part::VoiceParamProxies::VoiceParamProxies (VoiceManager* voice_manager):
+#define CONSTRUCT_VOICE_PARAM_PROXY(name) name (voice_manager, &Params::Voice::name)
+	CONSTRUCT_VOICE_PARAM_PROXY (amplitude),
+	CONSTRUCT_VOICE_PARAM_PROXY (frequency),
+	CONSTRUCT_VOICE_PARAM_PROXY (panorama),
+	CONSTRUCT_VOICE_PARAM_PROXY (detune),
+	CONSTRUCT_VOICE_PARAM_PROXY (pitchbend),
+	CONSTRUCT_VOICE_PARAM_PROXY (velocity_sens),
+	CONSTRUCT_VOICE_PARAM_PROXY (unison_index),
+	CONSTRUCT_VOICE_PARAM_PROXY (unison_spread),
+	CONSTRUCT_VOICE_PARAM_PROXY (unison_init),
+	CONSTRUCT_VOICE_PARAM_PROXY (unison_noise)
+#undef CONSTRUCT_VOICE_PARAM_PROXY
+{ }
 
 
 Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Main* main_params, unsigned int id):
@@ -195,7 +186,8 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 	_wt_wu (0),
 	_wt_wu_ever_started (false),
 	_ports (_part_manager->plugin(), this->id()),
-	_proxies (&_ports, &_part_params, &_voice_params)
+	_proxies (&_ports, &_part_params, &_voice_params),
+	_voice_param_proxies (_voice_manager)
 {
 	_voice_manager->set_max_polyphony (64);
 
@@ -226,24 +218,45 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 	// on work unit in the destructor:
 	update_wavetable();
 
+#define UPDATE_WAVETABLE_ON_CHANGE(x) x.on_change.connect (this, &Part::update_wavetable)
 	// Listen on params change. Only on params that need additional
 	// action when they change (eg. updating wavetable).
-	_part_params.wave_type.on_change.connect (this, &Part::update_wavetable);
-	_part_params.modulator_wave_type.on_change.connect (this, &Part::update_wavetable);
-	_part_params.modulator_type.on_change.connect (this, &Part::update_wavetable);
-	_part_params.wave_shape.on_change.connect (this, &Part::update_wavetable);
-	_part_params.modulator_amplitude.on_change.connect (this, &Part::update_wavetable);
-	_part_params.modulator_index.on_change.connect (this, &Part::update_wavetable);
-	_part_params.modulator_shape.on_change.connect (this, &Part::update_wavetable);
+	UPDATE_WAVETABLE_ON_CHANGE (_part_params.wave_type);
+	UPDATE_WAVETABLE_ON_CHANGE (_part_params.modulator_wave_type);
+	UPDATE_WAVETABLE_ON_CHANGE (_part_params.modulator_type);
+	UPDATE_WAVETABLE_ON_CHANGE (_part_params.wave_shape);
+	UPDATE_WAVETABLE_ON_CHANGE (_part_params.modulator_amplitude);
+	UPDATE_WAVETABLE_ON_CHANGE (_part_params.modulator_index);
+	UPDATE_WAVETABLE_ON_CHANGE (_part_params.modulator_shape);
 	for (std::size_t i = 0; i < ARRAY_SIZE (_part_params.harmonics); ++i)
-		_part_params.harmonics[i].on_change.connect (this, &Part::update_wavetable);
+		UPDATE_WAVETABLE_ON_CHANGE (_part_params.harmonics[i]);
 	for (std::size_t i = 0; i < ARRAY_SIZE (_part_params.harmonic_phases); ++i)
-		_part_params.harmonic_phases[i].on_change.connect (this, &Part::update_wavetable);
+		UPDATE_WAVETABLE_ON_CHANGE (_part_params.harmonic_phases[i]);
+#undef UPDATE_WAVETABLE_ON_CHANGE
+
+#define UPDATE_VOICES_ON_VCE(name) \
+	_proxies.name.on_voice_controller_event.connect (&_voice_param_proxies.name, &VoiceParamUpdater::handle_event); \
+	_voice_params.name.on_change_with_value.connect (&_voice_param_proxies.name, &VoiceParamUpdater::handle_change)
+	// Listen for polyphonic events:
+	UPDATE_VOICES_ON_VCE (amplitude);
+	UPDATE_VOICES_ON_VCE (frequency);
+	UPDATE_VOICES_ON_VCE (panorama);
+	UPDATE_VOICES_ON_VCE (detune);
+	UPDATE_VOICES_ON_VCE (pitchbend);
+	UPDATE_VOICES_ON_VCE (velocity_sens);
+	UPDATE_VOICES_ON_VCE (unison_index);
+	UPDATE_VOICES_ON_VCE (unison_spread);
+	UPDATE_VOICES_ON_VCE (unison_init);
+	UPDATE_VOICES_ON_VCE (unison_noise);
+#undef UPDATE_VOICES_ON_VCE
 }
 
 
 Part::~Part()
 {
+	// Disconnect listeners way before proxies and part are destroyed.
+	Signal::Receiver::disconnect_all_signals();
+
 	// _wt_wu is never normally being waited on, so it's ok to wait here.
 	// Must wait since it can still use Waves. It also needs to be deleted.
 	_wt_wu->wait();
@@ -270,8 +283,24 @@ Part::handle_voice_event (Haruhi::VoiceEvent const* event)
 void
 Part::process_events()
 {
-	if (widget())
-		widget()->process_events();
+	_proxies.volume.process_events();
+	_proxies.portamento_time.process_events();
+	_proxies.phase.process_events();
+	_proxies.noise_level.process_events();
+	_proxies.wave_shape.process_events();
+	_proxies.modulator_amplitude.process_events();
+	_proxies.modulator_index.process_events();
+	_proxies.modulator_shape.process_events();
+	_proxies.amplitude.process_events();
+	_proxies.frequency.process_events();
+	_proxies.panorama.process_events();
+	_proxies.detune.process_events();
+	_proxies.pitchbend.process_events();
+	_proxies.velocity_sens.process_events();
+	_proxies.unison_index.process_events();
+	_proxies.unison_spread.process_events();
+	_proxies.unison_init.process_events();
+	_proxies.unison_noise.process_events();
 }
 
 

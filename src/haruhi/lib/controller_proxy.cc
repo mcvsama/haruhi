@@ -92,7 +92,8 @@ ControllerProxy::process_events()
 				case Event::ControllerEventType:
 					if (!found_ce)
 					{
-						process_event (static_cast<ControllerEvent const*> (e->get()));
+						ControllerEvent const* ce = static_cast<ControllerEvent const*> (e->get());
+						process_event (ce);
 						found_ce = true;
 					}
 					break;
@@ -100,7 +101,8 @@ ControllerProxy::process_events()
 				case Event::VoiceControllerEventType:
 					if (!found_vce)
 					{
-						on_voice_controller_event (static_cast<VoiceControllerEvent const*> (e->get()));
+						VoiceControllerEvent const* vce = static_cast<VoiceControllerEvent const*> (e->get());
+						on_voice_controller_event (vce, _config.forward_normalized (vce->value()));
 						found_vce = true;
 					}
 					break;

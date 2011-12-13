@@ -125,7 +125,7 @@ KnobProperties::apply()
 	_knob->controller_proxy()->config().curve = _curve_spinbox->value() / 1000.0;
 	_knob->controller_proxy()->config().user_limit_min = _user_limit_min_spinbox->value();
 	_knob->controller_proxy()->config().user_limit_max = _user_limit_max_spinbox->value();
-	_knob->param()->set (value);
+	_knob->controller_proxy()->set_absolute_value (value);
 }
 
 
@@ -298,8 +298,7 @@ Knob::periodic_update()
 void
 Knob::reset()
 {
-	controller_proxy()->param()->reset();
-	schedule_for_update();
+	controller_proxy()->reset_value();
 }
 
 
@@ -381,10 +380,8 @@ Knob::create_context_menu()
 	_action_id = 0;
 	_context_menu->clear();
 
-	if (_connect_signal_mapper)
-		delete _connect_signal_mapper;
-	if (_disconnect_signal_mapper)
-		delete _disconnect_signal_mapper;
+	delete _connect_signal_mapper;
+	delete _disconnect_signal_mapper;
 	_context_menu_port_map.clear();
 
 	_connect_signal_mapper = new QSignalMapper (this);
@@ -549,8 +546,7 @@ Knob::dial_changed (int value)
 {
 	if (_prevent_recursion)
 		return;
-	param()->set (controller_proxy()->config().forward (value));
-	schedule_for_update();
+	controller_proxy()->set_value (value);
 }
 
 
@@ -559,8 +555,7 @@ Knob::spin_changed (int value)
 {
 	if (_prevent_recursion)
 		return;
-	param()->set (value);
-	schedule_for_update();
+	controller_proxy()->set_absolute_value (value);
 }
 
 

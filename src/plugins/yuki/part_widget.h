@@ -65,13 +65,6 @@ class PartWidget:
 	Part*
 	part() const;
 
-	/**
-	 * Make knobs process events.
-	 * \entry	Engine thread
-	 */
-	void
-	process_events();
-
   private slots:
 	/**
 	 * Called when wave params change.

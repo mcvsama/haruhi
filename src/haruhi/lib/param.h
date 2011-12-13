@@ -119,8 +119,16 @@ template<class tType>
 		load_state (QDomElement const& parent);
 
 	  public:
-		// Emited when parameter gets changed:
-		Signal::Emiter0	on_change;
+		/**
+		 * Emited when parameter has changed:
+		 */
+		Signal::Emiter0 on_change;
+
+		/**
+		 * Emited after on_change when parameter has changed.
+		 * New value is given as parameter.
+		 */
+		Signal::Emiter1<Type> on_change_with_value;
 
 	  private:
 		Type			_minimum;
@@ -168,6 +176,7 @@ template<class tType>
 		_default_value = other._default_value;
 		_value = other._value;
 		on_change();
+		on_change_with_value (_value.load());
 		return *this;
 	}
 
@@ -208,7 +217,9 @@ template<class tType>
 	inline void
 	Param<tType>::set (Type const& value)
 	{
-		_value.store (value); on_change();
+		_value.store (value);
+		on_change();
+		on_change_with_value (value);
 	}
 
 

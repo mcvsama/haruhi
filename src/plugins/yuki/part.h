@@ -37,6 +37,7 @@
 #include "has_id.h"
 #include "has_plugin.h"
 #include "params.h"
+#include "voice_manager.h"
 
 
 namespace Yuki {
@@ -105,6 +106,26 @@ class Part:
 		Atomic<bool>			_is_cancelled;
 	};
 
+	/**
+	 * Helper class that forwards Voice parameter (given by pointer to member) update notification
+	 * to the voice manager (which updates voice(s)).
+	 */
+	class VoiceParamUpdater: public Signal::Receiver
+	{
+	  public:
+		VoiceParamUpdater (VoiceManager* voice_manager, Params::Voice::PointerToControllerParam param_ptr);
+
+		void
+		handle_change (int value);
+
+		void
+		handle_event (Haruhi::VoiceControllerEvent const* event, int value);
+
+	  private:
+		VoiceManager*								_voice_manager;
+		Params::Voice::PointerToControllerParam		_param_ptr;
+	};
+
   public:
 	/**
 	 * Contains Haruhi ports created for the part.
@@ -153,30 +174,51 @@ class Part:
 	  public:
 		PartControllerProxies (PartPorts*, Params::Part*, Params::Voice*);
 
-		~PartControllerProxies();
-
 	  public:
 		// Part:
-		Haruhi::ControllerProxy* volume;
-		Haruhi::ControllerProxy* portamento_time;
-		Haruhi::ControllerProxy* phase;
-		Haruhi::ControllerProxy* noise_level;
-		Haruhi::ControllerProxy* wave_shape;
-		Haruhi::ControllerProxy* modulator_amplitude;
-		Haruhi::ControllerProxy* modulator_index;
-		Haruhi::ControllerProxy* modulator_shape;
+		Haruhi::ControllerProxy volume;
+		Haruhi::ControllerProxy portamento_time;
+		Haruhi::ControllerProxy phase;
+		Haruhi::ControllerProxy noise_level;
+		Haruhi::ControllerProxy wave_shape;
+		Haruhi::ControllerProxy modulator_amplitude;
+		Haruhi::ControllerProxy modulator_index;
+		Haruhi::ControllerProxy modulator_shape;
 
 		// Voice:
-		Haruhi::ControllerProxy* amplitude;
-		Haruhi::ControllerProxy* frequency;
-		Haruhi::ControllerProxy* panorama;
-		Haruhi::ControllerProxy* detune;
-		Haruhi::ControllerProxy* pitchbend;
-		Haruhi::ControllerProxy* velocity_sens;
-		Haruhi::ControllerProxy* unison_index;
-		Haruhi::ControllerProxy* unison_spread;
-		Haruhi::ControllerProxy* unison_init;
-		Haruhi::ControllerProxy* unison_noise;
+		Haruhi::ControllerProxy amplitude;
+		Haruhi::ControllerProxy frequency;
+		Haruhi::ControllerProxy panorama;
+		Haruhi::ControllerProxy detune;
+		Haruhi::ControllerProxy pitchbend;
+		Haruhi::ControllerProxy velocity_sens;
+		Haruhi::ControllerProxy unison_index;
+		Haruhi::ControllerProxy unison_spread;
+		Haruhi::ControllerProxy unison_init;
+		Haruhi::ControllerProxy unison_noise;
+	};
+
+	/**
+	 * Contains receivers of ControllerProxy notifications
+	 * that voice parameters have changed.
+	 * There receivers update all existing voices' params.
+	 */
+	class VoiceParamProxies
+	{
+	  public:
+		VoiceParamProxies (VoiceManager*);
+
+	  public:
+		VoiceParamUpdater amplitude;
+		VoiceParamUpdater frequency;
+		VoiceParamUpdater panorama;
+		VoiceParamUpdater detune;
+		VoiceParamUpdater pitchbend;
+		VoiceParamUpdater velocity_sens;
+		VoiceParamUpdater unison_index;
+		VoiceParamUpdater unison_spread;
+		VoiceParamUpdater unison_init;
+		VoiceParamUpdater unison_noise;
 	};
 
   public:
@@ -331,6 +373,7 @@ class Part:
 	bool						_wt_wu_ever_started;
 	PartPorts					_ports;
 	PartControllerProxies		_proxies;
+	VoiceParamProxies			_voice_param_proxies;
 };
 
 
@@ -348,6 +391,27 @@ inline unsigned int
 Part::UpdateWavetableWorkUnit::serial() const
 {
 	return _serial;
+}
+
+
+inline
+Part::VoiceParamUpdater::VoiceParamUpdater (VoiceManager* voice_manager, Params::Voice::PointerToControllerParam param_ptr):
+	_voice_manager (voice_manager),
+	_param_ptr (param_ptr)
+{ }
+
+
+inline void
+Part::VoiceParamUpdater::handle_change (int value)
+{
+	_voice_manager->update_voice_parameter (_param_ptr, value);
+}
+
+
+inline void
+Part::VoiceParamUpdater::handle_event (Haruhi::VoiceControllerEvent const* event, int value)
+{
+	_voice_manager->update_voice_parameter (event->voice_id(), _param_ptr, value);
 }
 
 
