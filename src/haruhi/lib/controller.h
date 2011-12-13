@@ -104,29 +104,6 @@ class Controller:
 	void
 	stop_learning();
 
-	/**
-	 * Processes events on ControllerProxy unless user is interacting
-	 * with controller's UI at the moment.
-	 * You should call this method instead of accessing ControllerProxy.
-	 */
-	void
-	process_events();
-
-	/**
-	 * Processes given event on ControllerProxy unless user is interacting
-	 * with controller's UI at the moment.
-	 * You should call this method instead of accessing ControllerProxy.
-	 */
-	void
-	process_event (ControllerEvent const*);
-
-	/**
-	 * Returns true if user is moving dial with the mouse
-	 * at the moment. By default returns false.
-	 */
-	virtual bool
-	mouse_pressed();
-
   protected:
 	/**
 	 * Called whenever learning is started/stopped.
@@ -165,7 +142,7 @@ class Controller:
   public:
 	/**
 	 * Emited when VoiceControllerEvent is encountered
-	 * in process_events().
+	 * in ControllerProxy::process_events().
 	 *
 	 * Actually, this is just reference to
 	 * ControllerProxy::on_voice_controller_event.
@@ -206,13 +183,6 @@ inline ControllerProxy*
 Controller::controller_proxy()
 {
 	return _controller_proxy;
-}
-
-
-inline bool
-Controller::mouse_pressed()
-{
-	return false;
 }
 
 

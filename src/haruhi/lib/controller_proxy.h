@@ -50,6 +50,16 @@ class ControllerProxy: public SaveableState
 	 */
 	class Widget: public PeriodicUpdater::Receiver
 	{
+	  public:
+		/**
+		 * Return true if user is controlling the widget right now
+		 * (eg. moving the knob dial).
+		 *
+		 * Tells ControllerProxy that it should ignore input events.
+		 * Default implementation always returns false.
+		 */
+		virtual bool
+		user_override();
 	};
 
 	/**
@@ -199,6 +209,13 @@ class ControllerProxy: public SaveableState
 };
 
 
+inline bool
+ControllerProxy::Widget::user_override()
+{
+	return false;
+}
+
+
 inline int
 ControllerProxy::Config::forward (int in) const
 {
@@ -265,6 +282,8 @@ ControllerProxy::set_widget (Widget* widget)
 inline void
 ControllerProxy::process_event (ControllerEvent const* event)
 {
+	if (_widget && _widget->user_override())
+		return;
 	set_value (_config.denormalize (event->value()));
 }
 

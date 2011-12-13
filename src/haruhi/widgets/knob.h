@@ -214,11 +214,11 @@ class Knob:
 	read();
 
 	/*
-	 * Controller API
+	 * ControllerProxy::Widget API
 	 */
 
 	bool
-	mouse_pressed();
+	user_override();
 
 	/*
 	 * PeriodicUpdater::Receiver API
@@ -386,7 +386,7 @@ Knob::set_volume_scale (bool setting, float exp)
 
 
 inline bool
-Knob::mouse_pressed()
+Knob::user_override()
 {
 	return _dial_control->mouse_pressed();
 }
