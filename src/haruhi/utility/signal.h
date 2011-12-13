@@ -20,6 +20,9 @@
 #include <algorithm>
 #include <list>
 
+// Lib:
+#include <boost/function.hpp>
+
 
 namespace Signal {
 
@@ -343,6 +346,26 @@ EMITER_TEMPLATE_SIGNATURE
 				Method _m;
 			};
 
+		template<class Receiver>
+			class BoostFunctionConnection: public ConnectionBase
+			{
+				typedef boost::function<void (EMITER_PARAMETER_TYPES_LIST)> Callback;
+
+			  public:
+				BoostFunctionConnection (SignalBase* signal, Callback c):
+					_c (c)
+				{ }
+
+				void
+				call (EMITER_PARAMETERS_LIST)
+				{
+					_c (EMITER_ARGUMENTS_LIST);
+				}
+
+			  private:
+				Callback _c;
+			};
+
 		typedef std::list<ConnectionBase*> Connections;
 
 	  public:
@@ -363,6 +386,14 @@ EMITER_TEMPLATE_SIGNATURE
 				Connection<Receiver>* connection = new Connection<Receiver> (this, receiver, method);
 				_connections.push_back (connection);
 				receiver->_connections.push_back (connection);
+			}
+
+		template<class Receiver>
+			void
+			connect (boost::function<void (EMITER_PARAMETER_TYPES_LIST)> const& function)
+			{
+				Connection<Receiver>* connection = new BoostFunctionConnection<Receiver> (this, function);
+				_connections.push_back (connection);
 			}
 
 		template<class Receiver>
