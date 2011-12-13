@@ -381,6 +381,9 @@ Part::mix_rendering_result (Haruhi::AudioBuffer* b1, Haruhi::AudioBuffer* b2)
 	assert (b2 != 0);
 
 	_voice_manager->mix_rendering_result (b1, b2);
+
+	if (_part_params.pseudo_stereo.get())
+		b2->negate();
 }
 
 
