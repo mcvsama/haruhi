@@ -182,6 +182,8 @@ struct Params
 	 */
 	struct Voice: public SaveableParams<Voice>
 	{
+		typedef Haruhi::ControllerParam Voice::* PointerToControllerParam;
+
 		HARUHI_YUKI_PARAMS_STANDARD_METHODS (Voice)
 
 		HARUHI_YUKI_PARAM (Amplitude,				       0,	+1000000,	+1000000,	+1000000)

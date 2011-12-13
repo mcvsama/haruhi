@@ -141,6 +141,18 @@ class VoiceManager
 	void
 	mix_rendering_result (Haruhi::AudioBuffer*, Haruhi::AudioBuffer*);
 
+	/**
+	 * Update particular parameter of all voices.
+	 */
+	void
+	update_voice_parameter (Params::Voice::PointerToControllerParam, int value);
+
+	/**
+	 * Update particular parameter of a particular voice.
+	 */
+	void
+	update_voice_parameter (Haruhi::VoiceID, Params::Voice::PointerToControllerParam, int value);
+
   private:
 	/**
 	 * Check polyphony limit and drop excess voices.
