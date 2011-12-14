@@ -183,6 +183,9 @@ struct Params
 		Haruhi::ControllerParam unison_noise;
 
 		static const int NUM_PARAMS = 22;
+
+		// Embedded dual Filter params:
+		Filter filter[2];
 	};
 
 	/**
@@ -235,9 +238,10 @@ struct Params
 
 		static const int NUM_PARAMS = 22 + HarmonicsNumber + HarmonicsNumber;
 
-		// Embedded params:
-		Voice	voice;
-		Filter	filter[2];
+		// Embedded Voice params template:
+		Voice voice;
+		// Embedded Filter params templates:
+		Filter filter[2];
 	};
 };
 
