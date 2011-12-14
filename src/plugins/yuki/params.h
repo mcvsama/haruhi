@@ -127,6 +127,31 @@ struct Params
 	};
 
 	/**
+	 * Filter parameters.
+	 */
+	struct Filter: public SaveableParams<Filter>
+	{
+		HARUHI_YUKI_PARAMS_STANDARD_METHODS (Filter)
+
+		HARUHI_YUKI_PARAM (Frequency,				       0,	+2400000,	 +100000,	 +100000)
+		HARUHI_YUKI_PARAM (Resonance,				       0,	+1000000,	 +100000,	 +100000)
+		HARUHI_YUKI_PARAM (Gain,					       0,	+2000000,	 +100000,	       0)
+		HARUHI_YUKI_PARAM (Attenuation,				       0,	+1000000,	+1000000,	+1000000)
+
+		Haruhi::ControllerParam frequency;
+		Haruhi::ControllerParam resonance;
+		Haruhi::ControllerParam gain;
+		Haruhi::ControllerParam attenuation;
+
+		Haruhi::Param<int> enabled;
+		Haruhi::Param<int> type;
+		Haruhi::Param<int> stages;
+		Haruhi::Param<int> limiter_enabled;
+
+		static const int NUM_PARAMS = 8;
+	};
+
+	/**
 	 * General Part-specific params.
 	 */
 	struct Part: public SaveableParams<Part>
@@ -144,9 +169,7 @@ struct Params
 		HARUHI_YUKI_PARAM (Harmonic,				-1000000,	+1000000,	+1000000,	       0)
 		HARUHI_YUKI_PARAM (HarmonicPhase,			-1000000,	+1000000,	+1000000,	       0)
 
-		enum {
-			HarmonicsNumber = Haruhi::DSP::HarmonicsWave::HarmonicsNumber
-		};
+		static const unsigned int HarmonicsNumber = Haruhi::DSP::HarmonicsWave::HarmonicsNumber;
 
 		Haruhi::ControllerParam volume;
 		Haruhi::ControllerParam portamento_time;
@@ -174,8 +197,12 @@ struct Params
 		Haruhi::Param<unsigned int> modulator_type;
 		Haruhi::Param<unsigned int> modulator_wave_type;
 		Haruhi::Param<unsigned int> auto_center;
+		Haruhi::Param<unsigned int> filter_configuration;
 
 		static const int NUM_PARAMS = 22 + HarmonicsNumber + HarmonicsNumber;
+
+		// Filter params embedded into this params:
+		Filter filter[2];
 	};
 
 	/**

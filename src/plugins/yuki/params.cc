@@ -83,6 +83,31 @@ HARUHI_YUKI_DEFINE_PARAMS (Main)
 HARUHI_YUKI_FINISH_DEFINITION()
 
 
+Params::Filter::Filter():
+	HARUHI_YUKI_CONSTRUCT (frequency, Frequency, 2),
+	HARUHI_YUKI_CONSTRUCT (resonance, Resonance, 2),
+	HARUHI_YUKI_CONSTRUCT (gain, Gain, 2),
+	HARUHI_YUKI_CONSTRUCT (attenuation, Attenuation, 2),
+	enabled (0, 1, 0, "enabled"),
+	type (0, 7, 0, "type"),
+	stages (1, 5, 1, "stages"),
+	limiter_enabled (0, 1, 1, "limiter_enabled")
+{
+}
+
+
+HARUHI_YUKI_DEFINE_PARAMS (Filter)
+	HARUHI_YUKI_DEFINE_PARAM (frequency)
+	HARUHI_YUKI_DEFINE_PARAM (resonance)
+	HARUHI_YUKI_DEFINE_PARAM (gain)
+	HARUHI_YUKI_DEFINE_PARAM (attenuation)
+	HARUHI_YUKI_DEFINE_PARAM (enabled)
+	HARUHI_YUKI_DEFINE_PARAM (type)
+	HARUHI_YUKI_DEFINE_PARAM (stages)
+	HARUHI_YUKI_DEFINE_PARAM (limiter_enabled)
+HARUHI_YUKI_FINISH_DEFINITION()
+
+
 Params::Part::Part():
 	HARUHI_YUKI_CONSTRUCT_EXPLICIT (volume, Volume, -std::numeric_limits<float>::infinity(), 0.0f, 2, (VolumeMax - VolumeMin) / 500),
 	HARUHI_YUKI_CONSTRUCT (portamento_time, PortamentoTime, 2),
@@ -108,9 +133,9 @@ Params::Part::Part():
 	modulator_wave_type (0, 3, 0, "modulator_wave_type"),
 	auto_center (0, 1, 1, "auto_center")
 {
-	for (int i = 0; i < HarmonicsNumber; ++i)
+	for (unsigned int i = 0; i < HarmonicsNumber; ++i)
 		harmonics[i] = Haruhi::ControllerParam (HarmonicMin, HarmonicMax, HarmonicDefault, HarmonicDenominator, QString ("harmonic[%1]").arg (i).utf8());
-	for (int i = 0; i < HarmonicsNumber; ++i)
+	for (unsigned int i = 0; i < HarmonicsNumber; ++i)
 		harmonic_phases[i] = Haruhi::ControllerParam (HarmonicPhaseMin, HarmonicPhaseMax, HarmonicPhaseDefault, HarmonicPhaseDenominator, QString ("harmonic-phase[%1]").arg (i).utf8());
 	// First/base harmonic should be fully max:
 	harmonics[0].set (HarmonicMax);
@@ -137,9 +162,9 @@ HARUHI_YUKI_DEFINE_PARAMS (Part)
 	HARUHI_YUKI_DEFINE_PARAM (modulator_amplitude)
 	HARUHI_YUKI_DEFINE_PARAM (modulator_index)
 	HARUHI_YUKI_DEFINE_PARAM (modulator_shape)
-	for (int k = 0; k < HarmonicsNumber; ++k)
+	for (unsigned int k = 0; k < HarmonicsNumber; ++k)
 		HARUHI_YUKI_DEFINE_PARAM (harmonics[k]);
-	for (int k = 0; k < HarmonicsNumber; ++k)
+	for (unsigned int k = 0; k < HarmonicsNumber; ++k)
 		HARUHI_YUKI_DEFINE_PARAM (harmonic_phases[k]);
 	HARUHI_YUKI_DEFINE_PARAM (wave_type)
 	HARUHI_YUKI_DEFINE_PARAM (modulator_type)
