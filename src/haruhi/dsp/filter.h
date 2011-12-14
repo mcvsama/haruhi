@@ -36,52 +36,32 @@ template<unsigned int tOrder, int tResponseType>
 	class Filter
 	{
 	  public:
-		enum {
-			Order			= tOrder,
-			ResponseType	= tResponseType
-		};
+		static const unsigned int Order = tOrder;
+		static const int ResponseType = tResponseType;
 
 	  private:
 		typedef ImpulseResponse<Order, ResponseType> ImpulseResponseType;
 
 	  public:
 		/**
-		 * Creates filter with no impulse response.
+		 * Create filter with no impulse response.
 		 */
-		Filter():
-			_impulse_response (0),
-			_last_serial (0)
-		{ }
+		Filter();
 
 		/**
-		 * Creates filter with given impulse response.
+		 * Create filter with given impulse response.
 		 * Filter does not take ownership of impulse_response.
 		 */
-		Filter (ImpulseResponseType* impulse_response):
-			_impulse_response (0),
-			_last_serial (0)
-		{
-			assign_impulse_response (impulse_response);
-		}
+		Filter (ImpulseResponseType* impulse_response);
 
 		/**
 		 * Resets the filter to state as it is newly created.
 		 */
 		void
-		reset()
-		{
-			std::fill (_px, _px + Order, 0.0f);
-			std::fill (_py, _py + Order, 0.0f);
-		}
+		reset();
 
 		void
-		assign_impulse_response (ImpulseResponseType* impulse_response)
-		{
-			_impulse_response = impulse_response;
-
-			std::fill (_px, _px + Order, 0.0f);
-			std::fill (_py, _py + Order, 0.0f);
-		}
+		assign_impulse_response (ImpulseResponseType* impulse_response);
 
 		/**
 		 * Note: input and output sequences must be distinct!
@@ -89,106 +69,20 @@ template<unsigned int tOrder, int tResponseType>
 		 */
 		template<class InputIterator, class OutputIterator>
 			void
-			transform (InputIterator begin, InputIterator end, OutputIterator output)
-			{
-				if (std::distance (begin, end) < Order)
-				{
-					for (InputIterator k = begin; k != end; ++k)
-						*output++ = 0.0f;
-					return;
-				}
-
-				// Protect from denormals by adding a constant.
-				// This will propagate to further stages:
-				for (InputIterator c = begin; c != end; ++c)
-					*c += 1e-30;
-
-				std::copy (begin, end, output);
-
-				if (_impulse_response)
-				{
-					InputIterator current = begin;
-
-					// If this is IIR filter:
-					if (ResponseType == static_cast<int> (IIR))
-					{
-						// Filter first part using previous-buffers:
-						for (int i = 0; i < Order - 1; ++i, ++current, ++output)
-							*output = mixed_advance_iir (current, output, i);
-
-						// Filter the rest:
-						for (; current != end; ++current, ++output)
-							*output = advance_iir (current, output);
-
-						// Store last samples as previous-buffer for next round
-						// (current and output are now after the end of sequences):
-						for (int i = 0; i < Order - 1; ++i)
-						{
-							_px[i] = current[-i-1];
-							_py[i] = output[-i-1];
-						}
-					}
-					// If this is FIR filter:
-					else
-					{
-						// Filter first part using previous-buffers:
-						for (int i = 0; i < Order - 1; ++i, ++current, ++output)
-							*output = mixed_advance_fir (current, i);
-
-						// Filter the rest:
-						for (; current != end; ++current, ++output)
-							*output = advance_fir (current);
-
-						// Store last samples as previous-buffer for next round
-						// (current and output are now after the end of sequences):
-						for (int i = 0; i < Order - 1; ++i)
-							_px[i] = current[-i-1];
-					}
-				}
-			}
+			transform (InputIterator begin, InputIterator end, OutputIterator output);
 
 	  private:
 		Sample
-		advance_fir (Sample* x)
-		{
-			Sample (&b)[Order] = _impulse_response->b;
-			Sample register sum = 0.0;
-			for (int i = 0; i < Order; ++i)
-				sum += b[i] * x[-i];
-			return sum;
-		}
+		advance_fir (Sample* x);
 
 		Sample
-		advance_iir (Sample* x, Sample* y)
-		{
-			Sample (&a)[Order] = _impulse_response->a;
-			Sample (&b)[Order] = _impulse_response->b;
-			Sample register sum = 0.0;
-			for (int i = 0; i < Order; ++i)
-				sum += b[i] * x[-i] - a[i] * y[-i];
-			return sum;
-		}
+		advance_iir (Sample* x, Sample* y);
 
 		Sample
-		mixed_advance_fir (Sample* x, int position)
-		{
-			Sample (&b)[Order] = _impulse_response->b;
-			Sample register sum = 0.0;
-			for (int i = 0; i < Order; ++i)
-				sum += b[i] * (i > position ? _px[i-1-position] : x[-i]);
-			return sum;
-		}
+		mixed_advance_fir (Sample* x, int position);
 
 		Sample
-		mixed_advance_iir (Sample* x, Sample* y, int position)
-		{
-			Sample (&a)[Order] = _impulse_response->a;
-			Sample (&b)[Order] = _impulse_response->b;
-			Sample register sum = 0.0;
-			for (int i = 0; i < Order; ++i)
-				sum += b[i] * (i > position ? _px[i-1-position] : x[-i]) - a[i] * (i > position ? _py[i-1-position] : y[-i]);
-			return sum;
-		}
+		mixed_advance_iir (Sample* x, Sample* y, int position);
 
 	  private:
 		ImpulseResponseType*					_impulse_response;
@@ -197,6 +91,156 @@ template<unsigned int tOrder, int tResponseType>
 		Sample	_px[Order];
 		Sample	_py[Order];
 	};
+
+
+template<unsigned int O, int R>
+	inline
+	Filter<O, R>::Filter():
+		_impulse_response (0),
+		_last_serial (0)
+	{ }
+
+
+template<unsigned int O, int R>
+	inline
+	Filter<O, R>::Filter (ImpulseResponseType* impulse_response):
+		_impulse_response (0),
+		_last_serial (0)
+	{
+		assign_impulse_response (impulse_response);
+	}
+
+
+template<unsigned int O, int R>
+	inline void
+	Filter<O, R>::reset()
+	{
+		std::fill (_px, _px + Order, 0.0f);
+		std::fill (_py, _py + Order, 0.0f);
+	}
+
+
+template<unsigned int O, int R>
+	inline void
+	Filter<O, R>::assign_impulse_response (ImpulseResponseType* impulse_response)
+	{
+		_impulse_response = impulse_response;
+
+		std::fill (_px, _px + Order, 0.0f);
+		std::fill (_py, _py + Order, 0.0f);
+	}
+
+
+template<unsigned int O, int R>
+	template<class InputIterator, class OutputIterator>
+		inline void
+		Filter<O, R>::transform (InputIterator begin, InputIterator end, OutputIterator output)
+		{
+			if (std::distance (begin, end) < Order)
+			{
+				for (InputIterator k = begin; k != end; ++k)
+					*output++ = 0.0f;
+				return;
+			}
+
+			// Protect from denormals by adding a constant.
+			// This will propagate to further stages:
+			for (InputIterator c = begin; c != end; ++c)
+				*c += 1e-30;
+
+			std::copy (begin, end, output);
+
+			if (_impulse_response)
+			{
+				InputIterator current = begin;
+
+				// If this is IIR filter:
+				if (ResponseType == static_cast<int> (IIR))
+				{
+					// Filter first part using previous-buffers:
+					for (int i = 0; i < static_cast<int> (Order) - 1; ++i, ++current, ++output)
+						*output = mixed_advance_iir (current, output, i);
+
+					// Filter the rest:
+					for (; current != end; ++current, ++output)
+						*output = advance_iir (current, output);
+
+					// Store last samples as previous-buffer for next round
+					// (current and output are now after the end of sequences):
+					for (int i = 0; i < static_cast<int> (Order) - 1; ++i)
+					{
+						_px[i] = current[-i-1];
+						_py[i] = output[-i-1];
+					}
+				}
+				// If this is FIR filter:
+				else
+				{
+					// Filter first part using previous-buffers:
+					for (int i = 0; i < static_cast<int> (Order) - 1; ++i, ++current, ++output)
+						*output = mixed_advance_fir (current, i);
+
+					// Filter the rest:
+					for (; current != end; ++current, ++output)
+						*output = advance_fir (current);
+
+					// Store last samples as previous-buffer for next round
+					// (current and output are now after the end of sequences):
+					for (int i = 0; i < static_cast<int> (Order) - 1; ++i)
+						_px[i] = current[-i-1];
+				}
+			}
+		}
+
+
+template<unsigned int O, int R>
+	inline Sample
+	Filter<O, R>::advance_fir (Sample* x)
+	{
+		Sample (&b)[Order] = _impulse_response->b;
+		Sample register sum = 0.0;
+		for (int i = 0; i < static_cast<int> (Order); ++i)
+			sum += b[i] * x[-i];
+		return sum;
+	}
+
+
+template<unsigned int O, int R>
+	inline Sample
+	Filter<O, R>::advance_iir (Sample* x, Sample* y)
+	{
+		Sample (&a)[Order] = _impulse_response->a;
+		Sample (&b)[Order] = _impulse_response->b;
+		Sample register sum = 0.0;
+		for (int i = 0; i < static_cast<int> (Order); ++i)
+			sum += b[i] * x[-i] - a[i] * y[-i];
+		return sum;
+	}
+
+
+template<unsigned int O, int R>
+	inline Sample
+	Filter<O, R>::mixed_advance_fir (Sample* x, int position)
+	{
+		Sample (&b)[Order] = _impulse_response->b;
+		Sample register sum = 0.0;
+		for (int i = 0; i < static_cast<int> (Order); ++i)
+			sum += b[i] * (i > position ? _px[i-1-position] : x[-i]);
+		return sum;
+	}
+
+
+template<unsigned int O, int R>
+	inline Sample
+	Filter<O, R>::mixed_advance_iir (Sample* x, Sample* y, int position)
+	{
+		Sample (&a)[Order] = _impulse_response->a;
+		Sample (&b)[Order] = _impulse_response->b;
+		Sample register sum = 0.0;
+		for (int i = 0; i < static_cast<int> (Order); ++i)
+			sum += b[i] * (i > position ? _px[i-1-position] : x[-i]) - a[i] * (i > position ? _py[i-1-position] : y[-i]);
+		return sum;
+	}
 
 } // namespace DSP
 
