@@ -26,6 +26,7 @@
 // Local:
 #include "params.h"
 #include "voice_oscillator.h"
+#include "dual_filter.h"
 
 
 namespace Yuki {
@@ -50,7 +51,7 @@ class Voice
 
 		Haruhi::AudioBuffer	amplitude_buf;
 		Haruhi::AudioBuffer	frequency_buf;
-		Haruhi::AudioBuffer	tmp_buf;
+		Haruhi::AudioBuffer	tmp_buf[4];
 	};
 
   public:
@@ -173,6 +174,7 @@ class Voice
 	unsigned int		_sample_rate;
 	std::size_t			_buffer_size;
 	VoiceOscillator		_vosc;
+	DualFilter			_dual_filter;
 	Haruhi::AudioBuffer	_output_1;
 	Haruhi::AudioBuffer	_output_2;
 
