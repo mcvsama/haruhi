@@ -53,16 +53,10 @@ class Wavetable
 	class WaveAdapter: public Wave
 	{
 	  public:
-		WaveAdapter (Wavetable* wavetable):
-			Wave (true),
-			_wavetable (wavetable)
-		{ }
+		WaveAdapter (Wavetable* wavetable);
 
 		Sample
-		operator() (Sample register phase, Sample frequency) const
-		{
-			return _wavetable->operator() (phase, frequency);
-		}
+		operator() (Sample register phase, Sample frequency) const;
 
 	  private:
 		Wavetable* _wavetable;
@@ -92,29 +86,14 @@ class Wavetable
 	 * Must be called by filler.
 	 */
 	void
-	set_wavetables_size (std::size_t size) { _size = size; }
+	set_wavetables_size (std::size_t size);
 
 	/**
 	 * There must be at least one table added. Otherwise behavior of this
 	 * method is undefined.
 	 */
 	Sample
-	operator() (Sample register phase, Sample frequency) const
-	{
-		Sample const* table = table_for_frequency (frequency);
-		const float p = mod1 (phase) * _size;
-		const int k = static_cast<int> (p);
-		const Sample v1 = table[k];
-		const Sample v2 = table[(k + 1) % _size];
-		// Linear approximation:
-		return v1 + (p - k) * (v2 - v1);
-	}
-
-	Sample
-	base (Sample register phase, Sample frequency) const
-	{
-		return this->operator() (phase, frequency);
-	}
+	operator() (Sample register phase, Sample frequency) const;
 
   private:
 	/**
@@ -122,19 +101,57 @@ class Wavetable
 	 * There must be at least one table in set.
 	 */
 	Sample const*
-	table_for_frequency (float frequency) const
-	{
-		Tables::const_iterator t = _tables.lower_bound (frequency);
-		if (t == _tables.end())
-			return _tables.rbegin()->second;
-		return t->second;
-	}
+	table_for_frequency (float frequency) const;
 
   private:
 	Tables			_tables;
 	// Number of samples in each table:
 	std::size_t		_size;
 };
+
+
+inline
+Wavetable::WaveAdapter::WaveAdapter (Wavetable* wavetable):
+	Wave (true),
+	_wavetable (wavetable)
+{ }
+
+
+inline Sample
+Wavetable::WaveAdapter::operator() (Sample phase, Sample frequency) const
+{
+	return _wavetable->operator() (phase, frequency);
+}
+
+
+inline void
+Wavetable::set_wavetables_size (std::size_t size)
+{
+	_size = size;
+}
+
+
+inline Sample
+Wavetable::operator() (Sample phase, Sample frequency) const
+{
+	Sample const* table = table_for_frequency (frequency);
+	const float p = mod1 (phase) * _size;
+	const int k = static_cast<int> (p);
+	const Sample v1 = table[k];
+	const Sample v2 = table[(k + 1) % _size];
+	// Linear approximation:
+	return v1 + (p - k) * (v2 - v1);
+}
+
+
+inline Sample const*
+Wavetable::table_for_frequency (float frequency) const
+{
+	Tables::const_iterator t = _tables.lower_bound (frequency);
+	if (t == _tables.end())
+		return _tables.rbegin()->second;
+	return t->second;
+}
 
 } // namespace DSP
 
