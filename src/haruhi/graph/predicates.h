@@ -43,7 +43,7 @@ template<class Port>
 
 
 template<class Port>
-	ConnectedTo<Port>
+	inline ConnectedTo<Port>
 	connected_to (Port* port)
 	{
 		return ConnectedTo<Port> (port);
@@ -68,7 +68,7 @@ template<class Port>
 
 
 template<class Port>
-	ConnectedFrom<Port>
+	inline ConnectedFrom<Port>
 	connected_from (Port* port)
 	{
 		return ConnectedFrom<Port> (port);
