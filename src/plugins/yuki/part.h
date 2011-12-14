@@ -172,7 +172,7 @@ class Part:
 	class PartControllerProxies
 	{
 	  public:
-		PartControllerProxies (PartPorts*, Params::Part*, Params::Voice*);
+		PartControllerProxies (PartPorts*, Params::Part*);
 
 	  public:
 		// Part:
@@ -237,12 +237,6 @@ class Part:
 	 */
 	Params::Part*
 	part_params();
-
-	/**
-	 * Return voice params template.
-	 */
-	Params::Voice*
-	voice_params();
 
 	/**
 	 * Return proxies list created by the part.
@@ -362,7 +356,6 @@ class Part:
 	PartManager*				_part_manager;
 	VoiceManager*				_voice_manager;
 	Params::Part				_part_params;
-	Params::Voice				_voice_params;
 	DSP::ParametricWave*		_base_waves[9];
 	DSP::ParametricWave*		_modulator_waves[4];
 	DSP::Wavetable*				_wavetables[2];
@@ -433,13 +426,6 @@ inline Params::Part*
 Part::part_params()
 {
 	return &_part_params;
-}
-
-
-inline Params::Voice*
-Part::voice_params()
-{
-	return &_voice_params;
 }
 
 

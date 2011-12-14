@@ -136,7 +136,7 @@ Part::PartPorts::~PartPorts()
 }
 
 
-Part::PartControllerProxies::PartControllerProxies (PartPorts* part_ports, Params::Part* part_params, Params::Voice* voice_params):
+Part::PartControllerProxies::PartControllerProxies (PartPorts* part_ports, Params::Part* part_params):
 #define CONSTRUCT_CONTROLLER_PROXY(name) name (part_ports->name, &part_params->name)
 	CONSTRUCT_CONTROLLER_PROXY (volume),
 	CONSTRUCT_CONTROLLER_PROXY (portamento_time),
@@ -147,7 +147,7 @@ Part::PartControllerProxies::PartControllerProxies (PartPorts* part_ports, Param
 	CONSTRUCT_CONTROLLER_PROXY (modulator_index),
 	CONSTRUCT_CONTROLLER_PROXY (modulator_shape),
 #undef CONSTRUCT_CONTROLLER_PROXY
-#define CONSTRUCT_CONTROLLER_PROXY(name) name (part_ports->name, &voice_params->name)
+#define CONSTRUCT_CONTROLLER_PROXY(name) name (part_ports->name, &part_params->voice.name)
 	CONSTRUCT_CONTROLLER_PROXY (amplitude),
 	CONSTRUCT_CONTROLLER_PROXY (frequency),
 	CONSTRUCT_CONTROLLER_PROXY (panorama),
@@ -181,14 +181,14 @@ Part::VoiceParamProxies::VoiceParamProxies (VoiceManager* voice_manager):
 Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Main* main_params, unsigned int id):
 	HasID (id),
 	_part_manager (part_manager),
-	_voice_manager (new VoiceManager (main_params, &_part_params, &_voice_params, work_performer)),
+	_voice_manager (new VoiceManager (main_params, &_part_params, work_performer)),
 	_switch_wavetables (false),
 	_wt_update_request (0),
 	_wt_serial (0),
 	_wt_wu (0),
 	_wt_wu_ever_started (false),
 	_ports (_part_manager->plugin(), this->id()),
-	_proxies (&_ports, &_part_params, &_voice_params),
+	_proxies (&_ports, &_part_params),
 	_voice_param_proxies (_voice_manager)
 {
 	_voice_manager->set_max_polyphony (64);
@@ -239,7 +239,7 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 
 #define UPDATE_VOICES_ON_VCE(name) \
 	_proxies.name.on_voice_controller_event.connect (&_voice_param_proxies.name, &VoiceParamUpdater::handle_event); \
-	_voice_params.name.on_change_with_value.connect (&_voice_param_proxies.name, &VoiceParamUpdater::handle_change)
+	_part_params.voice.name.on_change_with_value.connect (&_voice_param_proxies.name, &VoiceParamUpdater::handle_change)
 	// Listen for polyphonic events:
 	UPDATE_VOICES_ON_VCE (amplitude);
 	UPDATE_VOICES_ON_VCE (frequency);

@@ -69,8 +69,7 @@ Params::Main::Main():
 	HARUHI_YUKI_CONSTRUCT (stereo_width, StereoWidth, 2),
 	enabled (0, 1, 1, "enabled"),
 	polyphony (0, 512, 32, "polyphony")
-{
-}
+{ }
 
 
 HARUHI_YUKI_DEFINE_PARAMS (Main)
@@ -92,8 +91,7 @@ Params::Filter::Filter():
 	type (0, 7, 0, "type"),
 	stages (1, 5, 1, "stages"),
 	limiter_enabled (0, 1, 1, "limiter_enabled")
-{
-}
+{ }
 
 
 HARUHI_YUKI_DEFINE_PARAMS (Filter)
@@ -105,6 +103,34 @@ HARUHI_YUKI_DEFINE_PARAMS (Filter)
 	HARUHI_YUKI_DEFINE_PARAM (type)
 	HARUHI_YUKI_DEFINE_PARAM (stages)
 	HARUHI_YUKI_DEFINE_PARAM (limiter_enabled)
+HARUHI_YUKI_FINISH_DEFINITION()
+
+
+Params::Voice::Voice():
+	HARUHI_YUKI_CONSTRUCT (amplitude, Amplitude, 2),
+	HARUHI_YUKI_CONSTRUCT (frequency, Frequency, 2),
+	HARUHI_YUKI_CONSTRUCT (panorama, Panorama, 2),
+	HARUHI_YUKI_CONSTRUCT (detune, Detune, 2),
+	HARUHI_YUKI_CONSTRUCT (pitchbend, Pitchbend, 2),
+	HARUHI_YUKI_CONSTRUCT (velocity_sens, VelocitySens, 2),
+	HARUHI_YUKI_CONSTRUCT_EXPLICIT (unison_index, UnisonIndex, UnisonIndexMin, UnisonIndexMax, 0, 1),
+	HARUHI_YUKI_CONSTRUCT (unison_spread, UnisonSpread, 2),
+	HARUHI_YUKI_CONSTRUCT (unison_init, UnisonInit, 2),
+	HARUHI_YUKI_CONSTRUCT (unison_noise, UnisonNoise, 2)
+{ }
+
+
+HARUHI_YUKI_DEFINE_PARAMS (Voice)
+	HARUHI_YUKI_DEFINE_PARAM (panorama)
+	HARUHI_YUKI_DEFINE_PARAM (detune)
+	HARUHI_YUKI_DEFINE_PARAM (pitchbend)
+	HARUHI_YUKI_DEFINE_PARAM (velocity_sens)
+	HARUHI_YUKI_DEFINE_PARAM (unison_index)
+	HARUHI_YUKI_DEFINE_PARAM (unison_spread)
+	HARUHI_YUKI_DEFINE_PARAM (unison_init)
+	HARUHI_YUKI_DEFINE_PARAM (unison_noise)
+	HARUHI_YUKI_DEFINE_PARAM (amplitude)
+	HARUHI_YUKI_DEFINE_PARAM (frequency)
 HARUHI_YUKI_FINISH_DEFINITION()
 
 
@@ -170,35 +196,6 @@ HARUHI_YUKI_DEFINE_PARAMS (Part)
 	HARUHI_YUKI_DEFINE_PARAM (modulator_type)
 	HARUHI_YUKI_DEFINE_PARAM (modulator_wave_type)
 	HARUHI_YUKI_DEFINE_PARAM (auto_center)
-HARUHI_YUKI_FINISH_DEFINITION()
-
-
-Params::Voice::Voice():
-	HARUHI_YUKI_CONSTRUCT (amplitude, Amplitude, 2),
-	HARUHI_YUKI_CONSTRUCT (frequency, Frequency, 2),
-	HARUHI_YUKI_CONSTRUCT (panorama, Panorama, 2),
-	HARUHI_YUKI_CONSTRUCT (detune, Detune, 2),
-	HARUHI_YUKI_CONSTRUCT (pitchbend, Pitchbend, 2),
-	HARUHI_YUKI_CONSTRUCT (velocity_sens, VelocitySens, 2),
-	HARUHI_YUKI_CONSTRUCT_EXPLICIT (unison_index, UnisonIndex, UnisonIndexMin, UnisonIndexMax, 0, 1),
-	HARUHI_YUKI_CONSTRUCT (unison_spread, UnisonSpread, 2),
-	HARUHI_YUKI_CONSTRUCT (unison_init, UnisonInit, 2),
-	HARUHI_YUKI_CONSTRUCT (unison_noise, UnisonNoise, 2)
-{
-}
-
-
-HARUHI_YUKI_DEFINE_PARAMS (Voice)
-	HARUHI_YUKI_DEFINE_PARAM (panorama)
-	HARUHI_YUKI_DEFINE_PARAM (detune)
-	HARUHI_YUKI_DEFINE_PARAM (pitchbend)
-	HARUHI_YUKI_DEFINE_PARAM (velocity_sens)
-	HARUHI_YUKI_DEFINE_PARAM (unison_index)
-	HARUHI_YUKI_DEFINE_PARAM (unison_spread)
-	HARUHI_YUKI_DEFINE_PARAM (unison_init)
-	HARUHI_YUKI_DEFINE_PARAM (unison_noise)
-	HARUHI_YUKI_DEFINE_PARAM (amplitude)
-	HARUHI_YUKI_DEFINE_PARAM (frequency)
 HARUHI_YUKI_FINISH_DEFINITION()
 
 } // namespace Yuki

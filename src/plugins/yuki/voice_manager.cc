@@ -49,11 +49,10 @@ VoiceManager::RenderWorkUnit::mix_result (Haruhi::AudioBuffer* output_1, Haruhi:
 }
 
 
-VoiceManager::VoiceManager (Params::Main* main_params, Params::Part* part_params, Params::Voice* voice_params, WorkPerformer* work_performer):
+VoiceManager::VoiceManager (Params::Main* main_params, Params::Part* part_params, WorkPerformer* work_performer):
 	_work_performer (work_performer),
 	_main_params (main_params),
 	_part_params (part_params),
-	_voice_params (voice_params),
 	_sample_rate (0),
 	_buffer_size (0),
 	_wavetable (0),
@@ -90,7 +89,7 @@ VoiceManager::handle_voice_event (Haruhi::VoiceEvent const* event)
 		}
 		else
 		{
-			Voice* v = new Voice (id, event->timestamp(), _main_params, _part_params, _voice_params, event->value(), event->frequency() / _sample_rate, _sample_rate, _buffer_size);
+			Voice* v = new Voice (id, event->timestamp(), _main_params, _part_params, event->value(), event->frequency() / _sample_rate, _sample_rate, _buffer_size);
 			v->set_wavetable (_wavetable);
 
 			_voices_by_id[id] = _voices.insert (v).first;

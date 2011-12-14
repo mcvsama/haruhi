@@ -36,12 +36,12 @@ Voice::SharedResources::graph_updated (unsigned int, std::size_t buffer_size)
 }
 
 
-Voice::Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp, Params::Main* main_params, Params::Part* part_params, Params::Voice* voice_params,
+Voice::Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp, Params::Main* main_params, Params::Part* part_params,
 			  Sample amplitude, Sample frequency, unsigned int sample_rate, std::size_t buffer_size):
 	_id (id),
 	_timestamp (timestamp),
 	_state (Voicing),
-	_params (*voice_params),
+	_params (part_params->voice),
 	_part_params (part_params),
 	_main_params (main_params),
 	_amplitude (amplitude),

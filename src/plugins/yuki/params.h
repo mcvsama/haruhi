@@ -152,6 +152,40 @@ struct Params
 	};
 
 	/**
+	 * Voice-specific params.
+	 */
+	struct Voice: public SaveableParams<Voice>
+	{
+		typedef Haruhi::ControllerParam Voice::* PointerToControllerParam;
+
+		HARUHI_YUKI_PARAMS_STANDARD_METHODS (Voice)
+
+		HARUHI_YUKI_PARAM (Amplitude,				       0,	+1000000,	+1000000,	+1000000)
+		HARUHI_YUKI_PARAM (Frequency,				-1000000,	+1000000,	+1000000,	       0)
+		HARUHI_YUKI_PARAM (Panorama,				-1000000,	+1000000,	+1000000,	       0)
+		HARUHI_YUKI_PARAM (Detune,					-1000000,	+1000000,	+1000000,	       0)
+		HARUHI_YUKI_PARAM (Pitchbend,				-1000000,	+1000000,	+1000000,	       0)
+		HARUHI_YUKI_PARAM (VelocitySens,			-1000000,	+1000000,	+1000000,	       0)
+		HARUHI_YUKI_PARAM (UnisonIndex,				      +1,	     +10,	      +1,	      +1)
+		HARUHI_YUKI_PARAM (UnisonSpread,			       0,	+1000000,	+1000000,	       0)
+		HARUHI_YUKI_PARAM (UnisonInit,				-1000000,	+1000000,	+1000000,	       0)
+		HARUHI_YUKI_PARAM (UnisonNoise,				       0,	+1000000,	+1000000,	       0)
+
+		Haruhi::ControllerParam amplitude;
+		Haruhi::ControllerParam frequency;
+		Haruhi::ControllerParam panorama;
+		Haruhi::ControllerParam detune;
+		Haruhi::ControllerParam pitchbend;
+		Haruhi::ControllerParam velocity_sens;
+		Haruhi::ControllerParam unison_index;
+		Haruhi::ControllerParam unison_spread;
+		Haruhi::ControllerParam unison_init;
+		Haruhi::ControllerParam unison_noise;
+
+		static const int NUM_PARAMS = 22;
+	};
+
+	/**
 	 * General Part-specific params.
 	 */
 	struct Part: public SaveableParams<Part>
@@ -201,42 +235,9 @@ struct Params
 
 		static const int NUM_PARAMS = 22 + HarmonicsNumber + HarmonicsNumber;
 
-		// Filter params embedded into this params:
-		Filter filter[2];
-	};
-
-	/**
-	 * Voice-specific params.
-	 */
-	struct Voice: public SaveableParams<Voice>
-	{
-		typedef Haruhi::ControllerParam Voice::* PointerToControllerParam;
-
-		HARUHI_YUKI_PARAMS_STANDARD_METHODS (Voice)
-
-		HARUHI_YUKI_PARAM (Amplitude,				       0,	+1000000,	+1000000,	+1000000)
-		HARUHI_YUKI_PARAM (Frequency,				-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (Panorama,				-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (Detune,					-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (Pitchbend,				-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (VelocitySens,			-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (UnisonIndex,				      +1,	     +10,	      +1,	      +1)
-		HARUHI_YUKI_PARAM (UnisonSpread,			       0,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (UnisonInit,				-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (UnisonNoise,				       0,	+1000000,	+1000000,	       0)
-
-		Haruhi::ControllerParam amplitude;
-		Haruhi::ControllerParam frequency;
-		Haruhi::ControllerParam panorama;
-		Haruhi::ControllerParam detune;
-		Haruhi::ControllerParam pitchbend;
-		Haruhi::ControllerParam velocity_sens;
-		Haruhi::ControllerParam unison_index;
-		Haruhi::ControllerParam unison_spread;
-		Haruhi::ControllerParam unison_init;
-		Haruhi::ControllerParam unison_noise;
-
-		static const int NUM_PARAMS = 22;
+		// Embedded params:
+		Voice	voice;
+		Filter	filter[2];
 	};
 };
 
