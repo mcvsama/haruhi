@@ -45,17 +45,38 @@ class ParametricWave: public Wave
 	 * \threadsafe
 	 */
 	void
-	set_param (float param) { _param.store (param); }
+	set_param (float param);
 
 	/**
 	 * \threadsafe
 	 */
 	float
-	param() const { return _param.load(); }
+	param() const;
 
   private:
 	Atomic<float> _param;
 };
+
+
+inline
+ParametricWave::ParametricWave (bool immutable):
+	Wave (immutable),
+	_param (0.0)
+{ }
+
+
+inline void
+ParametricWave::set_param (float param)
+{
+	_param.store (param);
+}
+
+
+inline float
+ParametricWave::param() const
+{
+	return _param.load();
+}
 
 } // namespace DSP
 

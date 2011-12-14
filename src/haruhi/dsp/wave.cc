@@ -13,6 +13,7 @@
 
 // Standard:
 #include <cstddef>
+#include <limits>
 
 // Local:
 #include "wave.h"
@@ -22,9 +23,32 @@ namespace Haruhi {
 
 namespace DSP {
 
-Wave::Wave (bool immutable):
-	_immutable (immutable)
+Sample
+Wave::compute_average_energy (unsigned int samples) const
 {
+	Sample delta = 1.0f / samples;
+	Sample energy = +0.0f;
+	for (Sample phase = 0.0f; phase <= 1.0f; phase += delta)
+		energy += delta * (*this)(phase, 0.0f);
+	return energy;
+}
+
+
+std::pair<Sample, Sample>
+Wave::compute_min_max (unsigned int samples) const
+{
+	Sample delta = 1.0f / samples;
+	Sample min = std::numeric_limits<Sample>::infinity();
+	Sample max = -min;
+	for (Sample phase = 0.0f; phase <= 1.0f; phase += delta)
+	{
+		Sample v = (*this)(phase, 0.0f);
+		if (v < min)
+			min = v;
+		if (v > max)
+			max = v;
+	}
+	return std::make_pair (min, max);
 }
 
 } // namespace DSP

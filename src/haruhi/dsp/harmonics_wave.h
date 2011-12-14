@@ -40,10 +40,7 @@ class HarmonicsWave: public Wave
 
 	struct Harmonic
 	{
-		Harmonic():
-			value (0),
-			phase (0)
-		{ }
+		Harmonic();
 
 		Sample	value;
 		Sample	phase;
@@ -52,9 +49,10 @@ class HarmonicsWave: public Wave
 	typedef std::vector<Harmonic> Harmonics;
 
   public:
-	HarmonicsWave (Wave* wave = 0, bool auto_delete = false);
-
-	~HarmonicsWave();
+	/**
+	 * Create wave that adds harmonics to inner wave.
+	 */
+	HarmonicsWave (Wave* inner_wave = 0, bool auto_delete = false);
 
 	/**
 	 * Returns sample from base function with added harmonics.
@@ -63,32 +61,14 @@ class HarmonicsWave: public Wave
 	 * 			be used in (this is for limiting bandwidth).
 	 */
 	Sample
-	operator() (Sample register phase, Sample frequency) const
-	{
-		Sample sum = 0;
-		for (Harmonics::size_type h = 0, n = _harmonics.size(); h < n; ++h)
-			sum += _harmonics[h].value * _wave->operator() (mod1 (0.5f * _harmonics[h].phase + phase * (h + 1)), frequency);
-		return sum;
-	}
+	operator() (Sample register phase, Sample frequency) const;
 
 	/**
-	 * Returns wave object.
+	 * Gets given harmonic.
+	 * \param	index is harmonic number, must be less that HarmonicNumber.
 	 */
-	Wave*
-	wave() const { return _wave; }
-
-	/**
-	 * Sets new wave to be decorated. Drops old wave if auto_delete has been set.
-	 */
-	void
-	set_wave (Wave* wave);
-
-	/**
-	 * Tells whether to delete decorated wave upon destruction.
-	 * (If wave is 0, it's not deleted.)
-	 */
-	void
-	set_auto_delete (bool set) { _auto_delete = set; }
+	Harmonic const&
+	harmonic (int index) const;
 
 	/**
 	 * Sets given harmonic.
@@ -101,26 +81,85 @@ class HarmonicsWave: public Wave
 	set_harmonic (unsigned int index, Sample value, Sample phase);
 
 	/**
-	 * Gets given harmonic.
-	 * \param	index is harmonic number, must be less that HarmonicNumber.
+	 * Returns harmonics vector.
 	 */
-	Harmonic const&
-	harmonic (int index) const { return _harmonics[index]; }
+	Harmonics&
+	harmonics();
 
 	/**
 	 * Returns harmonics vector.
 	 */
-	Harmonics&
-	harmonics() { return _harmonics; }
-
 	Harmonics const&
-	harmonics() const { return _harmonics; }
+	harmonics() const;
 
   private:
-	Wave*		_wave;
-	Harmonics	_harmonics;
-	bool		_auto_delete;
+	Harmonics _harmonics;
 };
+
+
+inline
+HarmonicsWave::Harmonic::Harmonic():
+	value (0.0f),
+	phase (0.0f)
+{ }
+
+
+inline
+HarmonicsWave::HarmonicsWave (Wave* wave, bool auto_delete):
+	Wave (wave, auto_delete)
+{
+	_harmonics.resize (HarmonicsNumber);
+}
+
+
+inline Sample
+HarmonicsWave::operator() (Sample phase, Sample frequency) const
+{
+	Sample sum = 0;
+	for (Harmonics::size_type h = 0, n = _harmonics.size(); h < n; ++h)
+		sum += _harmonics[h].value * (*inner_wave())(mod1 (0.5f * _harmonics[h].phase + phase * (h + 1)), frequency);
+	return sum;
+}
+
+
+inline HarmonicsWave::Harmonic const&
+HarmonicsWave::harmonic (int index) const
+{
+	return _harmonics[index];
+}
+
+
+inline void
+HarmonicsWave::set_harmonic (unsigned int index, Harmonic const& harmonic)
+{
+	assert (index < HarmonicsNumber);
+
+	_harmonics[index] = harmonic;
+}
+
+
+inline void
+HarmonicsWave::set_harmonic (unsigned int index, Sample value, Sample phase)
+{
+	assert (index < HarmonicsNumber);
+
+	_harmonics[index].value = value;
+	_harmonics[index].phase = phase;
+}
+
+
+inline HarmonicsWave::Harmonics&
+HarmonicsWave::harmonics()
+{
+	return _harmonics;
+}
+
+
+inline HarmonicsWave::Harmonics const&
+HarmonicsWave::harmonics() const
+{
+	return _harmonics;
+}
 
 } // namespace DSP
 

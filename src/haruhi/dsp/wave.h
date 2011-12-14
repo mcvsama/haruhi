@@ -17,6 +17,7 @@
 // Standard:
 #include <cstddef>
 #include <vector>
+#include <utility>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -37,16 +38,41 @@ class Wave: private Noncopyable
 	 */
 	Wave (bool immutable);
 
-	virtual ~Wave() { }
+	/**
+	 * \param	wave Inner wave. This constructs decorator wave.
+	 * \param	auto_delete Whether decorated wave should be deleted along with this one.
+	 */
+	Wave (Wave* inner_wave, bool auto_delete = false);
 
 	/**
-	 * Returns true if function is immutable.
+	 * Dtor
 	 */
-	bool
-	immutable() const { return _immutable; }
+	virtual ~Wave();
 
+	/**
+	 * Returns true if this wave or decorated wave is immutable.
+	 */
+	virtual bool
+	immutable() const;
+
+	/**
+	 * Set immutable attribute for this wave or or decorated wave.
+	 */
+	virtual void
+	set_immutable (bool immutable);
+
+	/**
+	 * Return inner wave object.
+	 * Returns 0 if this wave is not a decorator.
+	 */
+	Wave*
+	inner_wave() const;
+
+	/**
+	 * Set new inner wave.
+	 */
 	void
-	set_immutable (bool immutable) { _immutable = immutable; }
+	set_inner_wave (Wave* wave, bool auto_delete = false);
 
 	/**
 	 * Returns function's sample.
@@ -59,9 +85,86 @@ class Wave: private Noncopyable
 	virtual Sample
 	operator() (Sample register phase, Sample frequency) const = 0;
 
+	/**
+	 * Compute average wave energy.
+	 * \param	samples Use this many samples for computation. Lesser = faster.
+	 */
+	virtual Sample
+	compute_average_energy (unsigned int samples = 1024) const;
+
+	/**
+	 * Compute min/max values of the wave.
+	 * \param	samples User this many samples for computation. Lesser = faster.
+	 */
+	virtual std::pair<Sample, Sample>
+	compute_min_max (unsigned int samples = 1024) const;
+
   private:
-	bool _immutable;
+	bool	_immutable;
+	Wave*	_inner_wave;
+	bool	_auto_delete;
 };
+
+
+inline
+Wave::Wave (bool immutable):
+	_immutable (immutable),
+	_inner_wave (0),
+	_auto_delete (false)
+{ }
+
+
+inline
+Wave::Wave (Wave* inner_wave, bool auto_delete):
+	_immutable (true),
+	_inner_wave (inner_wave),
+	_auto_delete (auto_delete)
+{ }
+
+
+inline
+Wave::~Wave()
+{
+	if (_auto_delete)
+		delete _inner_wave;
+}
+
+
+inline bool
+Wave::immutable() const
+{
+	if (_inner_wave)
+		return _inner_wave->immutable();
+	else
+		return _immutable;
+}
+
+
+inline void
+Wave::set_immutable (bool immutable)
+{
+	if (_inner_wave)
+		_inner_wave->set_immutable (immutable);
+	else
+		_immutable = immutable;
+}
+
+
+inline Wave*
+Wave::inner_wave() const
+{
+	return _inner_wave;
+}
+
+
+inline void
+Wave::set_inner_wave (Wave* wave, bool auto_delete)
+{
+	if (_auto_delete)
+		delete _inner_wave;
+	_auto_delete = auto_delete;
+	_inner_wave = wave;
+}
 
 } // namespace DSP
 

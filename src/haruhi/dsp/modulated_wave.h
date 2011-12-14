@@ -45,9 +45,24 @@ class ModulatedWave: public Wave
 	/**
 	 * \param	mod_index indicates number of times modulator frequency is greater than wave's.
 	 */
-	ModulatedWave (Wave* wave = 0, Wave* modulator = 0, Type mod_type = Ring, float mod_amplitude = 0.0f, unsigned int mod_index = 1, bool auto_delete_wave = false, bool auto_delete_modulator = false);
+	ModulatedWave (Wave* inner_wave = 0, Wave* modulator = 0, Type mod_type = Ring, float mod_amplitude = 0.0f, unsigned int mod_index = 1, bool auto_delete_wave = false, bool auto_delete_modulator = false);
 
+	/**
+	 * Dtor
+	 */
 	~ModulatedWave();
+
+	/**
+	 * Returns modulator wave object.
+	 */
+	Wave*
+	modulator() const;
+
+	/**
+	 * Sets new modulator wave. Drops old modulator if auto_delete has been set.
+	 */
+	void
+	set_modulator (Wave* modulator, bool auto_delete);
 
 	/**
 	 * Returns sample from base function modulated with modulator.
@@ -58,44 +73,6 @@ class ModulatedWave: public Wave
 	Sample
 	operator() (Sample register phase, Sample frequency) const;
 
-	/**
-	 * Returns wave object.
-	 */
-	Wave*
-	wave() const;
-
-	/**
-	 * Returns modulator wave object.
-	 */
-	Wave*
-	modulator() const;
-
-	/**
-	 * Sets new wave to be decorated. Drops old wave if auto_delete has been set.
-	 */
-	void
-	set_wave (Wave* wave);
-
-	/**
-	 * Sets new modulator wave. Drops old modulator if auto_delete has been set.
-	 */
-	void
-	set_modulator (Wave* modulator);
-
-	/**
-	 * Tells whether to delete decorated wave upon destruction.
-	 * (If wave is 0, it's not deleted.)
-	 */
-	void
-	set_auto_delete_wave (bool set);
-
-	/**
-	 * Tells whether to delete used modulating wave upon destruction.
-	 * (If modulator is 0, it's not deleted.)
-	 */
-	void
-	set_auto_delete_modulator (bool set);
-
   private:
 	Sample
 	value_for_ring (Sample phase, Sample frequency) const;
@@ -104,21 +81,39 @@ class ModulatedWave: public Wave
 	value_for_frequency (Sample phase, Sample frequency) const;
 
   private:
-	Wave*			_wave;
 	Wave*			_modulator;
 	Type			_mod_type;
 	Sample			_mod_amplitude;
 	unsigned int	_mod_index;
-	bool			_auto_delete_wave;
 	bool			_auto_delete_modulator;
 	ValueFunction	_value_function;
 };
 
 
-inline Wave*
-ModulatedWave::wave() const
+inline
+ModulatedWave::ModulatedWave (Wave* inner_wave, Wave* modulator, Type mod_type, Sample mod_amplitude, unsigned int mod_index, bool auto_delete_wave, bool auto_delete_modulator):
+	Wave (inner_wave, auto_delete_wave),
+	_modulator (modulator),
+	_mod_type (mod_type),
+	_mod_amplitude (mod_amplitude),
+	_mod_index (mod_index),
+	_auto_delete_modulator (auto_delete_modulator)
 {
-	return _wave;
+	assert (mod_index >= 1);
+
+	switch (_mod_type)
+	{
+		case Ring:		_value_function = &ModulatedWave::value_for_ring;		break;
+		case Frequency:	_value_function = &ModulatedWave::value_for_frequency;	break;
+	}
+}
+
+
+inline
+ModulatedWave::~ModulatedWave()
+{
+	if (_auto_delete_modulator)
+		delete _modulator;
 }
 
 
@@ -130,16 +125,33 @@ ModulatedWave::modulator() const
 
 
 inline void
-ModulatedWave::set_auto_delete_wave (bool set)
+ModulatedWave::set_modulator (Wave* modulator, bool auto_delete)
 {
-	_auto_delete_wave = set;
+	if (_auto_delete_modulator)
+		delete _modulator;
+	_auto_delete_modulator = auto_delete;
+	_modulator = modulator;
 }
 
 
-inline void
-ModulatedWave::set_auto_delete_modulator (bool set)
+inline Sample
+ModulatedWave::value_for_ring (Sample phase, Sample frequency) const
 {
-	_auto_delete_modulator = set;
+	return (*inner_wave())(phase, frequency) * (1.0f - _mod_amplitude * (*_modulator)(mod1 (phase * _mod_index), frequency * _mod_index));
+}
+
+
+inline Sample
+ModulatedWave::value_for_frequency (Sample phase, Sample frequency) const
+{
+	return (*inner_wave())(mod1 (phase + phase * _mod_amplitude * (*_modulator)(mod1 (phase * _mod_index), frequency * _mod_index)), frequency);
+}
+
+
+inline Sample
+ModulatedWave::operator() (Sample phase, Sample frequency) const
+{
+	return (this->*_value_function) (phase, frequency);
 }
 
 } // namespace DSP
