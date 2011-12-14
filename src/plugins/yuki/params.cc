@@ -105,7 +105,8 @@ Params::Part::Part():
 	pseudo_stereo (0, 1, 0, "pseudo_stereo"),
 	wave_type (0, 8, 0, "wave_type"),
 	modulator_type (0, 1, Haruhi::DSP::ModulatedWave::Ring, "modulator_type"),
-	modulator_wave_type (0, 3, 0, "modulator_wave_type")
+	modulator_wave_type (0, 3, 0, "modulator_wave_type"),
+	auto_center (0, 1, 1, "auto_center")
 {
 	for (int i = 0; i < HarmonicsNumber; ++i)
 		harmonics[i] = Haruhi::ControllerParam (HarmonicMin, HarmonicMax, HarmonicDefault, HarmonicDenominator, QString ("harmonic[%1]").arg (i).utf8());
@@ -143,6 +144,7 @@ HARUHI_YUKI_DEFINE_PARAMS (Part)
 	HARUHI_YUKI_DEFINE_PARAM (wave_type)
 	HARUHI_YUKI_DEFINE_PARAM (modulator_type)
 	HARUHI_YUKI_DEFINE_PARAM (modulator_wave_type)
+	HARUHI_YUKI_DEFINE_PARAM (auto_center)
 HARUHI_YUKI_FINISH_DEFINITION()
 
 

@@ -173,6 +173,7 @@ struct Params
 		Haruhi::Param<unsigned int> wave_type;
 		Haruhi::Param<unsigned int> modulator_type;
 		Haruhi::Param<unsigned int> modulator_wave_type;
+		Haruhi::Param<unsigned int> auto_center;
 
 		static const int NUM_PARAMS = 22 + HarmonicsNumber + HarmonicsNumber;
 	};

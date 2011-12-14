@@ -166,6 +166,7 @@ class PartWidget:
 	QSpinBox*			_frequency_modulation_range;
 
 	// Other:
+	QCheckBox*			_auto_center;
 	QCheckBox*			_unison_stereo;
 	QCheckBox*			_pseudo_stereo;
 	QPushButton*		_wave_enabled;

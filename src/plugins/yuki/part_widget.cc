@@ -23,6 +23,8 @@
 #include <haruhi/config/all.h>
 #include <haruhi/widgets/knob.h>
 #include <haruhi/dsp/modulated_wave.h>
+#include <haruhi/dsp/translated_wave.h>
+#include <haruhi/dsp/scaled_wave.h>
 
 // Local:
 #include "part_widget.h"
@@ -88,9 +90,6 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QToolTip::add (_knob_unison_noise, "Unison noise");
 	QToolTip::add (_knob_velocity_sens, "Velocity sensitivity (-1 for reverse, 0 for none)");
 
-	// EventDispatchers for polyphonic controls:
-	// TODO
-
 	// Wave plots:
 
 	QFrame* base_plot_frame = new QFrame (this);
@@ -109,7 +108,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	harmonics_plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_final_wave_plot = new Haruhi::WavePlot (harmonics_plot_frame);
 	_final_wave_plot->set_phase_marker_enabled (true);
-	QToolTip::add (_final_wave_plot, "Wave with harmonics and modulation");
+	QToolTip::add (_final_wave_plot, "Output wave (with harmonics, modulation, auto-scaled, etc.)");
 	QVBoxLayout* harmonics_plot_frame_layout = new QVBoxLayout (harmonics_plot_frame);
 	harmonics_plot_frame_layout->setMargin (0);
 	harmonics_plot_frame_layout->setSpacing (Config::Spacing);
@@ -256,6 +255,12 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_transposition_semitones->setValue (pp->transposition_semitones);
 	QObject::connect (_transposition_semitones, SIGNAL (valueChanged (int)), this, SLOT (oscillator_params_updated()));
 
+	// Auto-center wave:
+	_auto_center = new QCheckBox ("Auto center", this);
+	_auto_center->setChecked (pp->auto_center);
+	QObject::connect (_auto_center, SIGNAL (toggled (bool)), this, SLOT (wave_params_updated()));
+	QToolTip::add (_auto_center, "Auto center wave around 0 level");
+
 	// Const. glide:
 	_const_portamento_time = new QCheckBox ("Const. glide", this);
 	_const_portamento_time->setChecked (pp->const_portamento_time);
@@ -325,6 +330,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QVBoxLayout* group2_layout = new QVBoxLayout (group2);
 	group2_layout->setMargin (2 * Config::Margin);
 	group2_layout->setSpacing (Config::Spacing);
+	group2_layout->addWidget (_auto_center);
 	group2_layout->addItem (new QSpacerItem (0, 10, QSizePolicy::Fixed, QSizePolicy::Fixed));
 	group2_layout->addWidget (_const_portamento_time);
 	group2_layout->addWidget (_unison_stereo);
@@ -425,6 +431,7 @@ PartWidget::wave_params_updated()
 	pp->wave_type = _wave_type->currentItem();
 	pp->modulator_type = _modulator_type->currentItem();
 	pp->modulator_wave_type = _modulator_wave_type->currentItem();
+	pp->auto_center = _auto_center->isChecked();
 	for (std::size_t i = 0; i < ARRAY_SIZE (pp->harmonics); ++i)
 		pp->harmonics[i].set (_harmonics_sliders[i]->value());
 	for (std::size_t i = 0; i < ARRAY_SIZE (pp->harmonic_phases); ++i)
@@ -502,19 +509,16 @@ PartWidget::update_wave_plots()
 	DSP::Wave* previous_final_wave = _cached_final_wave;
 
 	_cached_final_wave = _part->final_wave();
-	if (DSP::ModulatedWave* modulated_wave = dynamic_cast<DSP::ModulatedWave*> (_cached_final_wave))
-	{
-		if (DSP::HarmonicsWave* harmonics_wave = dynamic_cast<DSP::HarmonicsWave*> (modulated_wave->wave()))
-		{
-			if (DSP::ParametricWave* parametric_wave = dynamic_cast<DSP::ParametricWave*> (harmonics_wave->wave()))
-			{
-				_base_wave_plot->assign_wave (parametric_wave, false, true, false);
-				_final_wave_plot->assign_wave (modulated_wave, false, true, false);
-				// This will also call plot_shape() on plots:
-				update_phase_marker();
-			}
-		}
-	}
+
+	DSP::Wave* base_wave = _cached_final_wave;
+	while (base_wave->inner_wave())
+		base_wave = base_wave->inner_wave();
+
+	_base_wave_plot->assign_wave (base_wave, false, true, false);
+	_final_wave_plot->assign_wave (_cached_final_wave, false, true, false);
+
+	// This will also call plot_shape() on plots:
+	update_phase_marker();
 
 	delete previous_final_wave;
 }

@@ -25,6 +25,8 @@
 #include <haruhi/dsp/fft_filler.h>
 #include <haruhi/dsp/functions.h>
 #include <haruhi/dsp/modulated_wave.h>
+#include <haruhi/dsp/translated_wave.h>
+#include <haruhi/dsp/scaled_wave.h>
 #include <haruhi/utility/fast_pow.h>
 #include <haruhi/utility/signal.h>
 
@@ -228,6 +230,7 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 	UPDATE_WAVETABLE_ON_CHANGE (_part_params.modulator_amplitude);
 	UPDATE_WAVETABLE_ON_CHANGE (_part_params.modulator_index);
 	UPDATE_WAVETABLE_ON_CHANGE (_part_params.modulator_shape);
+	UPDATE_WAVETABLE_ON_CHANGE (_part_params.auto_center);
 	for (std::size_t i = 0; i < ARRAY_SIZE (_part_params.harmonics); ++i)
 		UPDATE_WAVETABLE_ON_CHANGE (_part_params.harmonics[i]);
 	for (std::size_t i = 0; i < ARRAY_SIZE (_part_params.harmonic_phases); ++i)
@@ -414,9 +417,17 @@ Part::final_wave() const
 		hw->set_harmonic (i, h, p);
 	}
 
-	// Add modulation:
-	return new DSP::ModulatedWave (hw, mw, static_cast<DSP::ModulatedWave::Type> (_part_params.modulator_type.get()),
-								   _part_params.modulator_amplitude.to_f(), _part_params.modulator_index.get(), true, true);
+	DSP::Wave* final = new DSP::ModulatedWave (hw, mw, static_cast<DSP::ModulatedWave::Type> (_part_params.modulator_type.get()),
+											   _part_params.modulator_amplitude.to_f(), _part_params.modulator_index.get(), true, true);
+
+	if (_part_params.auto_center)
+	{
+		std::pair<Sample, Sample> min_max = final->compute_min_max();
+		Sample translation = -0.5f * (min_max.second + min_max.first);
+		final = new DSP::TranslatedWave (translation, final, true);
+	}
+
+	return final;
 }
 
 
