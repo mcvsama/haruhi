@@ -157,7 +157,8 @@ Params::Part::Part():
 	wave_type (0, 8, 0, "wave_type"),
 	modulator_type (0, 1, Haruhi::DSP::ModulatedWave::Ring, "modulator_type"),
 	modulator_wave_type (0, 3, 0, "modulator_wave_type"),
-	auto_center (0, 1, 1, "auto_center")
+	auto_center (0, 1, 1, "auto_center"),
+	filter_configuration (0, 1, 0, "filter_configuration")
 {
 	for (unsigned int i = 0; i < HarmonicsNumber; ++i)
 		harmonics[i] = Haruhi::ControllerParam (HarmonicMin, HarmonicMax, HarmonicDefault, HarmonicDenominator, QString ("harmonic[%1]").arg (i).utf8());

@@ -178,6 +178,7 @@ class PartWidget:
 	QColor				_std_button_fg;
 	FilterWidget*		_filter_1;
 	FilterWidget*		_filter_2;
+	QComboBox*			_filter_configuration;
 };
 
 

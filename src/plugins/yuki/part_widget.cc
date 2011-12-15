@@ -308,9 +308,15 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QObject::connect (show_harmonics, SIGNAL (clicked()), this, SLOT (show_harmonics()));
 
 	// Filters:
-
 	_filter_1 = new FilterWidget (this, 0, &_part->part_params()->voice.filter[0], _part);
 	_filter_2 = new FilterWidget (this, 1, &_part->part_params()->voice.filter[1], _part);
+
+	// Filters configuration:
+	_filter_configuration = new QComboBox (this);
+	_filter_configuration->insertItem ("Filters: Serial", DualFilter::Serial);
+	_filter_configuration->insertItem ("Filters: Parallel", DualFilter::Parallel);
+	_filter_configuration->setCurrentItem (pp->filter_configuration);
+	QObject::connect (_filter_configuration, SIGNAL (activated (int)), this, SLOT (oscillator_params_updated()));
 
 	// Layouts:
 
@@ -324,12 +330,14 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QGridLayout* group1_layout = new QGridLayout (group1);
 	group1_layout->setMargin (2 * Config::Margin);
 	group1_layout->setSpacing (Config::Spacing);
-	group1_layout->addWidget (new QLabel ("Pitchbend range:", this), 0, 0);
-	group1_layout->addLayout (pitchbend_range_layout, 0, 1);
-	group1_layout->addWidget (new QLabel ("Freq. mod. range:", this), 1, 0);
-	group1_layout->addWidget (_frequency_modulation_range, 1, 1);
-	group1_layout->addWidget (new QLabel ("Transposition:", this), 2, 0);
-	group1_layout->addWidget (_transposition_semitones, 2, 1);
+	group1_layout->addWidget (new QLabel ("Filters:", this), 0, 0);
+	group1_layout->addWidget (_filter_configuration, 0, 1);
+	group1_layout->addWidget (new QLabel ("Pitchbend range:", this), 1, 0);
+	group1_layout->addLayout (pitchbend_range_layout, 1, 1);
+	group1_layout->addWidget (new QLabel ("Freq. mod. range:", this), 2, 0);
+	group1_layout->addWidget (_frequency_modulation_range, 2, 1);
+	group1_layout->addWidget (new QLabel ("Transposition:", this), 3, 0);
+	group1_layout->addWidget (_transposition_semitones, 3, 1);
 
 	QGroupBox* group2 = new QGroupBox (this);
 	QVBoxLayout* group2_layout = new QVBoxLayout (group2);
@@ -470,6 +478,7 @@ PartWidget::oscillator_params_updated()
 	pp->const_portamento_time = _const_portamento_time->isChecked();
 	pp->unison_stereo = _unison_stereo->isChecked();
 	pp->pseudo_stereo = _pseudo_stereo->isChecked();
+	pp->filter_configuration = _filter_configuration->currentItem();
 }
 
 
