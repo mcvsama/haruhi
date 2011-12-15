@@ -51,7 +51,7 @@ class FilterImpulseResponse: public DSP::ImpulseResponse<3, DSP::IIR>
 	};
 
   public:
-	FilterImpulseResponse (Type type, Sample frequency, Sample resonance, Sample gain, Sample attenuation);
+	FilterImpulseResponse (Type type = LowPass, Sample frequency = 0.0f, Sample resonance = 0.0f, Sample gain = 0.0f, Sample attenuation = 0.0f);
 
 	/**
 	 * Return filter type.

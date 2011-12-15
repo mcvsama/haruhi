@@ -494,6 +494,7 @@ SRC_MOCHDRS += haruhi/widgets/level_meter.h
 
 SRC_HEADERS += plugins/yuki/dual_filter.h
 SRC_HEADERS += plugins/yuki/filter_ir.h
+SRC_HEADERS += plugins/yuki/filter_widget.h
 SRC_HEADERS += plugins/yuki/has_id.h
 SRC_HEADERS += plugins/yuki/has_widget.h
 SRC_HEADERS += plugins/yuki/params.h
@@ -505,10 +506,12 @@ SRC_HEADERS += plugins/yuki/plugin.h
 SRC_HEADERS += plugins/yuki/voice.h
 SRC_HEADERS += plugins/yuki/voice_manager.h
 SRC_HEADERS += plugins/yuki/voice_oscillator.h
+SRC_HEADERS += plugins/yuki/widgets.h
 SRC_HEADERS += plugins/yuki/yuki.h
 
 SRC_SOURCES += plugins/yuki/dual_filter.cc
 SRC_SOURCES += plugins/yuki/filter_ir.cc
+SRC_SOURCES += plugins/yuki/filter_widget.cc
 SRC_SOURCES += plugins/yuki/params.cc
 SRC_SOURCES += plugins/yuki/part.cc
 SRC_SOURCES += plugins/yuki/part_manager.cc
@@ -518,8 +521,10 @@ SRC_SOURCES += plugins/yuki/plugin.cc
 SRC_SOURCES += plugins/yuki/voice.cc
 SRC_SOURCES += plugins/yuki/voice_manager.cc
 SRC_SOURCES += plugins/yuki/voice_oscillator.cc
+SRC_SOURCES += plugins/yuki/widgets.cc
 SRC_SOURCES += plugins/yuki/yuki.cc
 
+SRC_MOCHDRS += plugins/yuki/filter_widget.h
 SRC_MOCHDRS += plugins/yuki/plugin.h
 SRC_MOCHDRS += plugins/yuki/part_widget.h
 SRC_MOCHDRS += plugins/yuki/part_manager_widget.h

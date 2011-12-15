@@ -331,12 +331,6 @@ class Part:
 	graph_updated();
 
 	/**
-	 * Params has been changed and update is needed.
-	 */
-	void
-	params_updated();
-
-	/**
 	 * Update wavetable according to new parameters.
 	 * Switch double-buffered wavetables.
 	 * Do not propagate new wavetable to VoiceManager

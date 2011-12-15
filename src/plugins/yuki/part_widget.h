@@ -35,6 +35,7 @@
 
 // Local:
 #include "part.h"
+#include "filter_widget.h"
 
 
 namespace Yuki {
@@ -166,13 +167,17 @@ class PartWidget:
 	QSpinBox*			_frequency_modulation_range;
 
 	// Other:
+	QWidget*			_panel;
 	QCheckBox*			_auto_center;
 	QCheckBox*			_unison_stereo;
 	QCheckBox*			_pseudo_stereo;
+	QCheckBox*			_part_enabled;
 	QPushButton*		_wave_enabled;
 	QPushButton*		_noise_enabled;
 	QColor				_std_button_bg;
 	QColor				_std_button_fg;
+	FilterWidget*		_filter_1;
+	FilterWidget*		_filter_2;
 };
 
 

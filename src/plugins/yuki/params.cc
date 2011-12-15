@@ -86,7 +86,7 @@ Params::Filter::Filter():
 	HARUHI_YUKI_CONSTRUCT (frequency, Frequency, 2),
 	HARUHI_YUKI_CONSTRUCT (resonance, Resonance, 2),
 	HARUHI_YUKI_CONSTRUCT (gain, Gain, 2),
-	HARUHI_YUKI_CONSTRUCT (attenuation, Attenuation, 2),
+	HARUHI_YUKI_CONSTRUCT_EXPLICIT (attenuation, Attenuation, -std::numeric_limits<float>::infinity(), 0.0f, 2, (AttenuationMax - AttenuationMin) / 500),
 	enabled (0, 1, 0, "enabled"),
 	type (0, 7, 0, "type"),
 	stages (1, 5, 1, "stages"),

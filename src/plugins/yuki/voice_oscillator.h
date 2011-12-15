@@ -457,7 +457,7 @@ VoiceOscillator::fill_with_noised_unison (Haruhi::AudioBuffer* output1, Haruhi::
 	}
 }
 
-} // namespace MikuruPrivate
+} // namespace Yuki
 
 #endif
 

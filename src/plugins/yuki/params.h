@@ -240,10 +240,8 @@ struct Params
 
 		static const int NUM_PARAMS = 22 + HarmonicsNumber + HarmonicsNumber;
 
-		// Embedded Voice params template:
+		// Embedded Voice params template (also includes Filter params):
 		Voice voice;
-		// Embedded Filter params templates:
-		Filter filter[2];
 	};
 };
 

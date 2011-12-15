@@ -31,6 +31,8 @@
 #include "part_manager_widget.h"
 #include "part_manager.h"
 #include "part.h"
+#include "filter_widget.h"
+#include "widgets.h"
 
 
 namespace Yuki {
@@ -64,6 +66,8 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	QObject::connect (_knob_phase, SIGNAL (changed (int)), this, SLOT (update_phase_marker()));
 
+	_knob_volume->set_volume_scale (true, M_E);
+
 	// Set unit bay on all knobs:
 
 	Haruhi::Knob* all_knobs[] = {
@@ -71,16 +75,8 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 		_knob_volume, _knob_panorama, _knob_detune, _knob_pitchbend, _knob_unison_index, _knob_unison_spread,
 		_knob_unison_init, _knob_unison_noise, _knob_velocity_sens, _knob_portamento_time, _knob_phase, _knob_noise_level
 	};
-	for (Haruhi::Knob** k = all_knobs; k != all_knobs+ sizeof (all_knobs) / sizeof (*all_knobs); ++k)
+	for (Haruhi::Knob** k = all_knobs; k != all_knobs + ARRAY_SIZE (all_knobs); ++k)
 		(*k)->set_unit_bay (_part->part_manager()->plugin()->unit_bay());
-
-	// Configure knobs:
-
-	_knob_portamento_time->controller_proxy()->config().curve = 1.0;
-	_knob_portamento_time->controller_proxy()->config().user_limit_max = 0.5f * Params::Part::PortamentoTimeDenominator;
-	_knob_portamento_time->controller_proxy()->apply_config();
-
-	_knob_volume->set_volume_scale (true, M_E);
 
 	// Help tooltips:
 
@@ -117,8 +113,17 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	// Shorthand link to part params:
 	Params::Part* pp = _part->part_params();
 
-	// Wave type:
+	// Part enabled:
+	_part_enabled = new QCheckBox ("Enabled", this);
+	_part_enabled->setChecked (pp->part_enabled);
+	QObject::connect (_part_enabled, SIGNAL (toggled (bool)), this, SLOT (oscillator_params_updated()));
+	QObject::connect (_part_enabled, SIGNAL (toggled (bool)), this, SLOT (update_widgets()));
 
+	// Top widget, can be disabled with all child widgets:
+	_panel = new QWidget (this);
+	_panel->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+	// Wave type:
 	_wave_type = new QComboBox (this);
 	_wave_type->insertItem (Resources::Icons16::wave_sine(),		"Sine",		0);
 	_wave_type->insertItem (Resources::Icons16::wave_triangle(),	"Triangle",	1);
@@ -134,7 +139,6 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QToolTip::add (_wave_type, "Oscillator wave");
 
 	// Modulator wave type:
-
 	_modulator_wave_type = new QComboBox (this);
 	_modulator_wave_type->insertItem (Resources::Icons16::wave_sine(),		"Sine",		0);
 	_modulator_wave_type->insertItem (Resources::Icons16::wave_triangle(),	"Triangle",	1);
@@ -145,7 +149,6 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QToolTip::add (_modulator_wave_type, "Modulator wave");
 
 	// Modulator type:
-
 	_modulator_type = new QComboBox (this);
 	_modulator_type->insertItem (Resources::Icons16::modulator_ring(), "Ring mod.", DSP::ModulatedWave::Ring);
 	_modulator_type->insertItem (Resources::Icons16::modulator_fm(), "FM mod.", DSP::ModulatedWave::Frequency);
@@ -153,14 +156,12 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QObject::connect (_modulator_type, SIGNAL (activated (int)), this, SLOT (wave_params_updated()));
 	QToolTip::add (_modulator_type, "Modulator type");
 
-	// Harmonics+phases tabs:
-
+	// Harmonics+phases window:
 	_harmonics_window = new QDialog (this);
 	_harmonics_window->hide();
 	_harmonics_window->setWindowTitle ("Harmonics & Phases");
 
 	// Harmonics:
-
 	_harmonics_widget = new QWidget (_harmonics_window);
 	_harmonics_widget->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	QWidget* harmonics_grid = new QWidget (_harmonics_widget);
@@ -199,7 +200,6 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	harmonics_tab_layout->addWidget (harmonics_grid);
 
 	// Phases:
-
 	_harmonic_phases_widget = new QWidget (_harmonics_window);
 	_harmonic_phases_widget->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	QWidget* phases_grid = new QWidget (_harmonic_phases_widget);
@@ -307,6 +307,11 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	show_harmonics->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Fixed);
 	QObject::connect (show_harmonics, SIGNAL (clicked()), this, SLOT (show_harmonics()));
 
+	// Filters:
+
+	_filter_1 = new FilterWidget (this, 0, &_part->part_params()->voice.filter[0], _part);
+	_filter_2 = new FilterWidget (this, 1, &_part->part_params()->voice.filter[1], _part);
+
 	// Layouts:
 
 	QHBoxLayout* pitchbend_range_layout = new QHBoxLayout();
@@ -338,50 +343,58 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	group2_layout->addItem (new QSpacerItem (0, 10, QSizePolicy::Fixed, QSizePolicy::Fixed));
 	group2_layout->addWidget (_pitchbend_enabled);
 	group2_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
-	group2_layout->addWidget (show_harmonics);
 
-	QGridLayout* layout = new QGridLayout();
+	QGridLayout* panel_layout = new QGridLayout();
+	panel_layout->setMargin (0);
+	panel_layout->setSpacing (Config::Spacing);
+	panel_layout->addWidget (_wave_type, 0, 0, 1, 2);
+	panel_layout->addWidget (_modulator_wave_type, 0, 2, 1, 2);
+	panel_layout->addWidget (_modulator_type, 0, 4, 1, 2);
+	panel_layout->addWidget (_wave_enabled, 0, 6);
+	panel_layout->addWidget (_noise_enabled, 0, 7);
+	panel_layout->addWidget (show_harmonics, 0, 8, 1, 2);
+	panel_layout->addWidget (group2, 0, 10, 3, 1);
+	panel_layout->addWidget (base_plot_frame, 1, 0, 1, 2);
+	panel_layout->addWidget (harmonics_plot_frame, 1, 2, 1, 2);
+	panel_layout->addWidget (_knob_volume, 1, 4);
+	panel_layout->addWidget (_knob_panorama, 1, 5);
+	panel_layout->addWidget (_knob_velocity_sens, 1, 6);
+	panel_layout->addWidget (_knob_noise_level, 1, 7);
+	panel_layout->addWidget (_knob_detune, 1, 8);
+	panel_layout->addWidget (_knob_pitchbend, 1, 9);
+	panel_layout->addWidget (_knob_portamento_time, 2, 8);
+	panel_layout->addWidget (_knob_phase, 2, 9);
+	panel_layout->addWidget (_knob_wave_shape, 2, 0);
+	panel_layout->addWidget (_knob_modulator_amplitude, 2, 1);
+	panel_layout->addWidget (_knob_modulator_index, 2, 2);
+	panel_layout->addWidget (_knob_modulator_shape, 2, 3);
+	panel_layout->addWidget (_knob_unison_index, 2, 4);
+	panel_layout->addWidget (_knob_unison_spread, 2, 5);
+	panel_layout->addWidget (_knob_unison_init, 2, 6);
+	panel_layout->addWidget (_knob_unison_noise, 2, 7);
+	panel_layout->addWidget (_filter_1, 3, 0, 1, 4);
+	panel_layout->addWidget (_filter_2, 3, 4, 1, 4);
+	panel_layout->addWidget (group1, 3, 8, 1, 3);
+
+	QGridLayout* resizeable_layout = new QGridLayout (_panel);
+	resizeable_layout->setMargin (0);
+	resizeable_layout->setSpacing (0);
+	resizeable_layout->addLayout (panel_layout, 0, 0);
+	resizeable_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed), 0, 1);
+	resizeable_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 1, 0);
+
+	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (Config::Margin);
 	layout->setSpacing (Config::Spacing);
-	layout->addWidget (_wave_type, 0, 0, 1, 2);
-	layout->addWidget (_modulator_wave_type, 0, 2, 1, 2);
-	layout->addWidget (_modulator_type, 0, 4, 1, 2);
-	layout->addWidget (_wave_enabled, 0, 6);
-	layout->addWidget (_noise_enabled, 0, 7);
-	layout->addWidget (base_plot_frame, 1, 0, 1, 2);
-	layout->addWidget (harmonics_plot_frame, 1, 2, 1, 2);
-	layout->addWidget (_knob_volume, 1, 4);
-	layout->addWidget (_knob_panorama, 1, 5);
-	layout->addWidget (_knob_velocity_sens, 1, 6);
-	layout->addWidget (_knob_noise_level, 1, 7);
-	layout->addWidget (_knob_wave_shape, 2, 0);
-	layout->addWidget (_knob_modulator_amplitude, 2, 1);
-	layout->addWidget (_knob_modulator_index, 2, 2);
-	layout->addWidget (_knob_modulator_shape, 2, 3);
-	layout->addWidget (_knob_detune, 2, 4);
-	layout->addWidget (_knob_pitchbend, 2, 5);
-	layout->addWidget (_knob_portamento_time, 2, 6);
-	layout->addWidget (_knob_phase, 2, 7);
-	layout->addWidget (_knob_unison_index, 3, 0);
-	layout->addWidget (_knob_unison_spread, 3, 1);
-	layout->addWidget (_knob_unison_init, 3, 2);
-	layout->addWidget (_knob_unison_noise, 3, 3);
-	layout->addWidget (group1, 3, 4, 1, 4);
-	layout->addWidget (group2, 0, 8, 4, 1);
-
-	QGridLayout* top_layout = new QGridLayout (this);
-	top_layout->setMargin (0);
-	top_layout->setSpacing (0);
-	top_layout->addLayout (layout, 0, 0);
-	top_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed), 0, 1);
-	top_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 1, 0);
+	layout->addWidget (new StyledBackground (_part_enabled, this));
+	layout->addWidget (_panel);
 
 	QVBoxLayout* harmonics_window_layout = new QVBoxLayout (_harmonics_window);
 	harmonics_window_layout->setMargin (Config::DialogMargin);
 	harmonics_window_layout->setSpacing (Config::Spacing);
-	harmonics_window_layout->addWidget (new QLabel ("Harmonics:", _harmonics_window));
+	harmonics_window_layout->addWidget (new StyledBackground (new QLabel ("Harmonics", _harmonics_window), _harmonics_window, 2));
 	harmonics_window_layout->addWidget (_harmonics_widget);
-	harmonics_window_layout->addWidget (new QLabel ("Phases:", _harmonics_window));
+	harmonics_window_layout->addWidget (new StyledBackground (new QLabel ("Phases", _harmonics_window), _harmonics_window, 2));
 	harmonics_window_layout->addWidget (_harmonic_phases_widget);
 
 	// Save standard button colors:
@@ -446,6 +459,7 @@ PartWidget::oscillator_params_updated()
 {
 	Params::Part* pp = _part->part_params();
 
+	pp->part_enabled = _part_enabled->isChecked();
 	pp->wave_enabled = _wave_enabled->isChecked();
 	pp->noise_enabled = _noise_enabled->isChecked();
 	pp->frequency_mod_range = _frequency_modulation_range->value();
@@ -481,6 +495,8 @@ PartWidget::update_phase_marker()
 void
 PartWidget::update_widgets()
 {
+	_panel->setEnabled (_part->part_params()->part_enabled.get());
+
 	const bool wave_enabled = _wave_enabled->isChecked();
 	_base_wave_plot->setEnabled (wave_enabled);
 	_final_wave_plot->setEnabled (wave_enabled);

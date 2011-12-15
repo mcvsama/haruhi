@@ -177,20 +177,46 @@ Part::PartControllerProxies::PartControllerProxies (PartPorts* part_ports, Param
 	CONSTRUCT_CONTROLLER_PROXY (unison_noise),
 #undef CONSTRUCT_CONTROLLER_PROXY
 
-#define CONSTRUCT_CONTROLLER_PROXY(name) filter_1_##name (part_ports->filter_1_##name, &part_params->filter[0].name)
+#define CONSTRUCT_CONTROLLER_PROXY(name) filter_1_##name (part_ports->filter_1_##name, &part_params->voice.filter[0].name)
 	CONSTRUCT_CONTROLLER_PROXY (frequency),
 	CONSTRUCT_CONTROLLER_PROXY (resonance),
 	CONSTRUCT_CONTROLLER_PROXY (gain),
 	CONSTRUCT_CONTROLLER_PROXY (attenuation),
 #undef CONSTRUCT_CONTROLLER_PROXY
 
-#define CONSTRUCT_CONTROLLER_PROXY(name) filter_2_##name (part_ports->filter_2_##name, &part_params->filter[1].name)
+#define CONSTRUCT_CONTROLLER_PROXY(name) filter_2_##name (part_ports->filter_2_##name, &part_params->voice.filter[1].name)
 	CONSTRUCT_CONTROLLER_PROXY (frequency),
 	CONSTRUCT_CONTROLLER_PROXY (resonance),
 	CONSTRUCT_CONTROLLER_PROXY (gain),
 	CONSTRUCT_CONTROLLER_PROXY (attenuation)
 #undef CONSTRUCT_CONTROLLER_PROXY
-{ }
+{
+	portamento_time.config().curve = 1.0;
+	portamento_time.config().user_limit_max = 0.5f * Params::Part::PortamentoTimeDenominator;
+	portamento_time.apply_config();
+
+	filter_1_frequency.config().curve = 1.0;
+	filter_1_frequency.config().user_limit_min = 0.04 * Params::Filter::FrequencyDenominator;
+	filter_1_frequency.config().user_limit_max = 22.0 * Params::Filter::FrequencyDenominator;
+	filter_1_frequency.apply_config();
+
+	filter_1_resonance.config().curve = 1.0;
+	filter_1_resonance.apply_config();
+
+	filter_1_attenuation.config().curve = 1.0;
+	filter_1_attenuation.apply_config();
+
+	filter_2_frequency.config().curve = 1.0;
+	filter_2_frequency.config().user_limit_min = 0.04 * Params::Filter::FrequencyDenominator;
+	filter_2_frequency.config().user_limit_max = 22.0 * Params::Filter::FrequencyDenominator;
+	filter_2_frequency.apply_config();
+
+	filter_2_resonance.config().curve = 1.0;
+	filter_2_resonance.apply_config();
+
+	filter_2_attenuation.config().curve = 1.0;
+	filter_2_attenuation.apply_config();
+}
 
 
 void
@@ -334,7 +360,7 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 
 #define UPDATE_FILTERS_ON_VCE(name) \
 	_proxies.filter_1_##name.on_voice_controller_event.connect (&_updaters.filter_1_##name, &FilterParamUpdater::handle_event); \
-	_part_params.filter[0].name.on_change_with_value.connect (&_updaters.filter_1_##name, &FilterParamUpdater::handle_change);
+	_part_params.voice.filter[0].name.on_change_with_value.connect (&_updaters.filter_1_##name, &FilterParamUpdater::handle_change);
 	// Updaters for Filter 1 params:
 	UPDATE_FILTERS_ON_VCE (frequency);
 	UPDATE_FILTERS_ON_VCE (resonance);
@@ -344,7 +370,7 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 
 #define UPDATE_FILTERS_ON_VCE(name) \
 	_proxies.filter_2_##name.on_voice_controller_event.connect (&_updaters.filter_2_##name, &FilterParamUpdater::handle_event); \
-	_part_params.filter[1].name.on_change_with_value.connect (&_updaters.filter_2_##name, &FilterParamUpdater::handle_change);
+	_part_params.voice.filter[1].name.on_change_with_value.connect (&_updaters.filter_2_##name, &FilterParamUpdater::handle_change);
 	// Updaters for Filter 2 params:
 	UPDATE_FILTERS_ON_VCE (frequency);
 	UPDATE_FILTERS_ON_VCE (resonance);
@@ -401,12 +427,6 @@ Part::graph_updated()
 {
 	Haruhi::Graph* graph = _part_manager->graph();
 	_voice_manager->graph_updated (graph->sample_rate(), graph->buffer_size());
-}
-
-
-void
-Part::params_updated()
-{
 }
 
 
