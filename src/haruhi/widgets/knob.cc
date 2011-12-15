@@ -158,7 +158,7 @@ Knob::SpinBox::SpinBox (QWidget* parent, Knob* knob, int user_limit_min, int use
 	QSpinBox::setMinimum (user_limit_min);
 	QSpinBox::setMaximum (user_limit_max);
 	QSpinBox::setSingleStep (step);
-	setFixedWidth (55);
+	setFixedWidth (font().pointSize() * 5);
 }
 
 
@@ -359,7 +359,7 @@ Knob::initialize (QString const& label, float shown_min, float shown_max, int sh
 	layout->setSpacing (Config::Spacing + 2);
 	layout->addLayout (label_layout);
 	layout->addLayout (dial_layout);
-	layout->addWidget (_spin_box);
+	layout->addWidget (_spin_box, 0, Qt::AlignCenter);
 }
 
 
