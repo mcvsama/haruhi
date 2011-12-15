@@ -162,6 +162,16 @@ class Part:
 		Haruhi::EventPort* unison_noise;
 		Haruhi::EventPort* noise_level;
 
+		// Filter ports:
+		Haruhi::EventPort* filter_frequency_1;
+		Haruhi::EventPort* filter_resonance_1;
+		Haruhi::EventPort* filter_gain_1;
+		Haruhi::EventPort* filter_attenuation_1;
+		Haruhi::EventPort* filter_frequency_2;
+		Haruhi::EventPort* filter_resonance_2;
+		Haruhi::EventPort* filter_gain_2;
+		Haruhi::EventPort* filter_attenuation_2;
+
 	  private:
 		Haruhi::PortGroup* _port_group;
 	};
@@ -173,6 +183,12 @@ class Part:
 	{
 	  public:
 		PartControllerProxies (PartPorts*, Params::Part*);
+
+		/**
+		 * Call process_events() on each proxy.
+		 */
+		void
+		process_events();
 
 	  public:
 		// Part:
@@ -196,6 +212,16 @@ class Part:
 		Haruhi::ControllerProxy unison_spread;
 		Haruhi::ControllerProxy unison_init;
 		Haruhi::ControllerProxy unison_noise;
+
+		// Filters:
+		Haruhi::ControllerProxy filter_frequency_1;
+		Haruhi::ControllerProxy filter_resonance_1;
+		Haruhi::ControllerProxy filter_gain_1;
+		Haruhi::ControllerProxy filter_attenuation_1;
+		Haruhi::ControllerProxy filter_frequency_2;
+		Haruhi::ControllerProxy filter_resonance_2;
+		Haruhi::ControllerProxy filter_gain_2;
+		Haruhi::ControllerProxy filter_attenuation_2;
 	};
 
 	/**
@@ -203,12 +229,13 @@ class Part:
 	 * that voice parameters have changed.
 	 * There receivers update all existing voices' params.
 	 */
-	class VoiceParamProxies
+	class VoiceParamUpdaters
 	{
 	  public:
-		VoiceParamProxies (VoiceManager*);
+		VoiceParamUpdaters (VoiceManager*);
 
 	  public:
+		// Voice params updaters:
 		VoiceParamUpdater amplitude;
 		VoiceParamUpdater frequency;
 		VoiceParamUpdater panorama;
@@ -219,6 +246,9 @@ class Part:
 		VoiceParamUpdater unison_spread;
 		VoiceParamUpdater unison_init;
 		VoiceParamUpdater unison_noise;
+
+		// Filter params updaters:
+		// TODO
 	};
 
   public:
@@ -366,7 +396,7 @@ class Part:
 	bool						_wt_wu_ever_started;
 	PartPorts					_ports;
 	PartControllerProxies		_proxies;
-	VoiceParamProxies			_voice_param_proxies;
+	VoiceParamUpdaters			_updaters;
 };
 
 
