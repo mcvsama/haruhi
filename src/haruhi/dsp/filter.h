@@ -136,7 +136,7 @@ template<unsigned int O, int R>
 		inline void
 		Filter<O, R>::transform (InputIterator begin, InputIterator end, OutputIterator output)
 		{
-			if (std::distance (begin, end) < Order)
+			if (std::distance (begin, end) < static_cast<int> (Order))
 			{
 				for (InputIterator k = begin; k != end; ++k)
 					*output++ = 0.0f;

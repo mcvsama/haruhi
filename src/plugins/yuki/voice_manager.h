@@ -153,6 +153,20 @@ class VoiceManager
 	void
 	update_voice_parameter (Haruhi::VoiceID, Params::Voice::PointerToControllerParam, int value);
 
+	/**
+	 * Update particular parameter of all voices.
+	 * \param	filter_no Filter ID, 0 or 1.
+	 */
+	void
+	update_filter_parameter (unsigned int filter_no, Params::Filter::PointerToControllerParam, int value);
+
+	/**
+	 * Update particular parameter of a particular voice.
+	 * \param	filter_no Filter ID, 0 or 1.
+	 */
+	void
+	update_filter_parameter (Haruhi::VoiceID, unsigned int filter_no, Params::Filter::PointerToControllerParam, int value);
+
   private:
 	/**
 	 * Check polyphony limit and drop excess voices.

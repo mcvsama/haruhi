@@ -131,6 +131,8 @@ struct Params
 	 */
 	struct Filter: public SaveableParams<Filter>
 	{
+		typedef Haruhi::ControllerParam Filter::* PointerToControllerParam;
+
 		HARUHI_YUKI_PARAMS_STANDARD_METHODS (Filter)
 
 		HARUHI_YUKI_PARAM (Frequency,				       0,	+2400000,	 +100000,	 +100000)

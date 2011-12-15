@@ -101,14 +101,14 @@ Part::PartPorts::PartPorts (Plugin* plugin, unsigned int part_id):
 	portamento_time			= new Haruhi::EventPort (plugin, "Osc - Portamento time", Haruhi::Port::Input, _port_group);
 	phase					= new Haruhi::EventPort (plugin, "Osc - Phase", Haruhi::Port::Input, _port_group);
 	noise_level				= new Haruhi::EventPort (plugin, "Osc - Noise level", Haruhi::Port::Input, _port_group);
-	filter_frequency_1		= new Haruhi::EventPort (plugin, "Filter 1 - Frequency", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_resonance_1		= new Haruhi::EventPort (plugin, "Filter 1 - Resonance (Q)", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_gain_1			= new Haruhi::EventPort (plugin, "Filter 1 - Gain", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_attenuation_1	= new Haruhi::EventPort (plugin, "Filter 1 - Attenuation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_frequency_2		= new Haruhi::EventPort (plugin, "Filter 2 - Frequency", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_resonance_2		= new Haruhi::EventPort (plugin, "Filter 2 - Resonance (Q)", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_gain_2			= new Haruhi::EventPort (plugin, "Filter 2 - Gain", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_attenuation_2	= new Haruhi::EventPort (plugin, "Filter 2 - Attenuation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	filter_1_frequency		= new Haruhi::EventPort (plugin, "Filter 1 - Frequency", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	filter_1_resonance		= new Haruhi::EventPort (plugin, "Filter 1 - Resonance (Q)", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	filter_1_gain			= new Haruhi::EventPort (plugin, "Filter 1 - Gain", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	filter_1_attenuation	= new Haruhi::EventPort (plugin, "Filter 1 - Attenuation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	filter_2_frequency		= new Haruhi::EventPort (plugin, "Filter 2 - Frequency", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	filter_2_resonance		= new Haruhi::EventPort (plugin, "Filter 2 - Resonance (Q)", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	filter_2_gain			= new Haruhi::EventPort (plugin, "Filter 2 - Gain", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	filter_2_attenuation	= new Haruhi::EventPort (plugin, "Filter 2 - Attenuation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
 	if (graph())
 		graph()->unlock();
 }
@@ -137,14 +137,14 @@ Part::PartPorts::~PartPorts()
 	delete portamento_time;
 	delete phase;
 	delete noise_level;
-	delete filter_frequency_1;
-	delete filter_resonance_1;
-	delete filter_gain_1;
-	delete filter_attenuation_1;
-	delete filter_frequency_2;
-	delete filter_resonance_2;
-	delete filter_gain_2;
-	delete filter_attenuation_2;
+	delete filter_1_frequency;
+	delete filter_1_resonance;
+	delete filter_1_gain;
+	delete filter_1_attenuation;
+	delete filter_2_frequency;
+	delete filter_2_resonance;
+	delete filter_2_gain;
+	delete filter_2_attenuation;
 	if (graph())
 		graph()->unlock();
 
@@ -177,14 +177,14 @@ Part::PartControllerProxies::PartControllerProxies (PartPorts* part_ports, Param
 	CONSTRUCT_CONTROLLER_PROXY (unison_noise),
 #undef CONSTRUCT_CONTROLLER_PROXY
 
-#define CONSTRUCT_CONTROLLER_PROXY(name) filter_##name##_1 (part_ports->filter_##name##_1, &part_params->filter[0].name)
+#define CONSTRUCT_CONTROLLER_PROXY(name) filter_1_##name (part_ports->filter_1_##name, &part_params->filter[0].name)
 	CONSTRUCT_CONTROLLER_PROXY (frequency),
 	CONSTRUCT_CONTROLLER_PROXY (resonance),
 	CONSTRUCT_CONTROLLER_PROXY (gain),
 	CONSTRUCT_CONTROLLER_PROXY (attenuation),
 #undef CONSTRUCT_CONTROLLER_PROXY
 
-#define CONSTRUCT_CONTROLLER_PROXY(name) filter_##name##_2 (part_ports->filter_##name##_2, &part_params->filter[1].name)
+#define CONSTRUCT_CONTROLLER_PROXY(name) filter_2_##name (part_ports->filter_2_##name, &part_params->filter[1].name)
 	CONSTRUCT_CONTROLLER_PROXY (frequency),
 	CONSTRUCT_CONTROLLER_PROXY (resonance),
 	CONSTRUCT_CONTROLLER_PROXY (gain),
@@ -215,31 +215,45 @@ Part::PartControllerProxies::process_events()
 	PROXY_PROCESS_EVENTS (unison_spread);
 	PROXY_PROCESS_EVENTS (unison_init);
 	PROXY_PROCESS_EVENTS (unison_noise);
-	PROXY_PROCESS_EVENTS (filter_frequency_1);
-	PROXY_PROCESS_EVENTS (filter_resonance_1);
-	PROXY_PROCESS_EVENTS (filter_gain_1);
-	PROXY_PROCESS_EVENTS (filter_attenuation_1);
-	PROXY_PROCESS_EVENTS (filter_frequency_2);
-	PROXY_PROCESS_EVENTS (filter_resonance_2);
-	PROXY_PROCESS_EVENTS (filter_gain_2);
-	PROXY_PROCESS_EVENTS (filter_attenuation_2);
+	PROXY_PROCESS_EVENTS (filter_1_frequency);
+	PROXY_PROCESS_EVENTS (filter_1_resonance);
+	PROXY_PROCESS_EVENTS (filter_1_gain);
+	PROXY_PROCESS_EVENTS (filter_1_attenuation);
+	PROXY_PROCESS_EVENTS (filter_2_frequency);
+	PROXY_PROCESS_EVENTS (filter_2_resonance);
+	PROXY_PROCESS_EVENTS (filter_2_gain);
+	PROXY_PROCESS_EVENTS (filter_2_attenuation);
 #undef PROXY_PROCESS_EVENTS
 }
 
 
-Part::VoiceParamUpdaters::VoiceParamUpdaters (VoiceManager* voice_manager):
-#define CONSTRUCT_VOICE_PARAM_PROXY(name) name (voice_manager, &Params::Voice::name)
-	CONSTRUCT_VOICE_PARAM_PROXY (amplitude),
-	CONSTRUCT_VOICE_PARAM_PROXY (frequency),
-	CONSTRUCT_VOICE_PARAM_PROXY (panorama),
-	CONSTRUCT_VOICE_PARAM_PROXY (detune),
-	CONSTRUCT_VOICE_PARAM_PROXY (pitchbend),
-	CONSTRUCT_VOICE_PARAM_PROXY (velocity_sens),
-	CONSTRUCT_VOICE_PARAM_PROXY (unison_index),
-	CONSTRUCT_VOICE_PARAM_PROXY (unison_spread),
-	CONSTRUCT_VOICE_PARAM_PROXY (unison_init),
-	CONSTRUCT_VOICE_PARAM_PROXY (unison_noise)
-#undef CONSTRUCT_VOICE_PARAM_PROXY
+Part::ParamUpdaters::ParamUpdaters (VoiceManager* voice_manager):
+#define CONSTRUCT_PARAM_UPDATER(name) name (voice_manager, &Params::Voice::name)
+	CONSTRUCT_PARAM_UPDATER (amplitude),
+	CONSTRUCT_PARAM_UPDATER (frequency),
+	CONSTRUCT_PARAM_UPDATER (panorama),
+	CONSTRUCT_PARAM_UPDATER (detune),
+	CONSTRUCT_PARAM_UPDATER (pitchbend),
+	CONSTRUCT_PARAM_UPDATER (velocity_sens),
+	CONSTRUCT_PARAM_UPDATER (unison_index),
+	CONSTRUCT_PARAM_UPDATER (unison_spread),
+	CONSTRUCT_PARAM_UPDATER (unison_init),
+	CONSTRUCT_PARAM_UPDATER (unison_noise),
+#undef CONSTRUCT_PARAM_UPDATER
+
+#define CONSTRUCT_PARAM_UPDATER(name) filter_1_##name (voice_manager, 0, &Params::Filter::name)
+	CONSTRUCT_PARAM_UPDATER (frequency),
+	CONSTRUCT_PARAM_UPDATER (resonance),
+	CONSTRUCT_PARAM_UPDATER (gain),
+	CONSTRUCT_PARAM_UPDATER (attenuation),
+#undef CONSTRUCT_PARAM_UPDATER
+
+#define CONSTRUCT_PARAM_UPDATER(name) filter_2_##name (voice_manager, 1, &Params::Filter::name)
+	CONSTRUCT_PARAM_UPDATER (frequency),
+	CONSTRUCT_PARAM_UPDATER (resonance),
+	CONSTRUCT_PARAM_UPDATER (gain),
+	CONSTRUCT_PARAM_UPDATER (attenuation)
+#undef CONSTRUCT_PARAM_UPDATER
 { }
 
 
@@ -305,7 +319,7 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 #define UPDATE_VOICES_ON_VCE(name) \
 	_proxies.name.on_voice_controller_event.connect (&_updaters.name, &VoiceParamUpdater::handle_event); \
 	_part_params.voice.name.on_change_with_value.connect (&_updaters.name, &VoiceParamUpdater::handle_change)
-	// Listen for polyphonic events:
+	// Updaters for Voice params:
 	UPDATE_VOICES_ON_VCE (amplitude);
 	UPDATE_VOICES_ON_VCE (frequency);
 	UPDATE_VOICES_ON_VCE (panorama);
@@ -316,8 +330,27 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 	UPDATE_VOICES_ON_VCE (unison_spread);
 	UPDATE_VOICES_ON_VCE (unison_init);
 	UPDATE_VOICES_ON_VCE (unison_noise);
-	// TODO Filter param updaters
 #undef UPDATE_VOICES_ON_VCE
+
+#define UPDATE_FILTERS_ON_VCE(name) \
+	_proxies.filter_1_##name.on_voice_controller_event.connect (&_updaters.filter_1_##name, &FilterParamUpdater::handle_event); \
+	_part_params.filter[0].name.on_change_with_value.connect (&_updaters.filter_1_##name, &FilterParamUpdater::handle_change);
+	// Updaters for Filter 1 params:
+	UPDATE_FILTERS_ON_VCE (frequency);
+	UPDATE_FILTERS_ON_VCE (resonance);
+	UPDATE_FILTERS_ON_VCE (gain);
+	UPDATE_FILTERS_ON_VCE (attenuation);
+#undef UPDATE_FILTERS_ON_VCE
+
+#define UPDATE_FILTERS_ON_VCE(name) \
+	_proxies.filter_2_##name.on_voice_controller_event.connect (&_updaters.filter_2_##name, &FilterParamUpdater::handle_event); \
+	_part_params.filter[1].name.on_change_with_value.connect (&_updaters.filter_2_##name, &FilterParamUpdater::handle_change);
+	// Updaters for Filter 2 params:
+	UPDATE_FILTERS_ON_VCE (frequency);
+	UPDATE_FILTERS_ON_VCE (resonance);
+	UPDATE_FILTERS_ON_VCE (gain);
+	UPDATE_FILTERS_ON_VCE (attenuation);
+#undef UPDATE_FILTERS_ON_VCE
 }
 
 

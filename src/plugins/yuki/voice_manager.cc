@@ -222,6 +222,28 @@ VoiceManager::update_voice_parameter (Haruhi::VoiceID voice_id, Params::Voice::P
 
 
 void
+VoiceManager::update_filter_parameter (unsigned int filter_no, Params::Filter::PointerToControllerParam param_ptr, int value)
+{
+	for (Voices::iterator v = _voices.begin(); v != _voices.end(); ++v)
+		((*v)->params()->filter[filter_no].*param_ptr).set (value);
+}
+
+
+void
+VoiceManager::update_filter_parameter (Haruhi::VoiceID voice_id, unsigned int filter_no, Params::Filter::PointerToControllerParam param_ptr, int value)
+{
+	if (voice_id == Haruhi::OmniVoice)
+		update_filter_parameter (filter_no, param_ptr, value);
+	else
+	{
+		Voice* v = find_voice_by_id (voice_id);
+		if (v)
+			(v->params()->filter[filter_no].*param_ptr).set (value);
+	}
+}
+
+
+void
 VoiceManager::check_polyphony_limit()
 {
 	while (_active_voices_number > _max_polyphony)
