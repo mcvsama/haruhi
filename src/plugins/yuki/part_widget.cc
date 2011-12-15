@@ -238,13 +238,15 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	phases_tab_layout->addWidget (phases_grid);
 
 	// Unison stereo:
-	_unison_stereo = new QCheckBox ("Unison stereo", this);
+	_unison_stereo = new QPushButton ("Unison stereo", this);
+	_unison_stereo->setCheckable (true);
 	_unison_stereo->setChecked (pp->unison_stereo);
 	QObject::connect (_unison_stereo, SIGNAL (toggled (bool)), this, SLOT (oscillator_params_updated()));
 	QToolTip::add (_unison_stereo, "Spreads unison voices across stereo channels.");
 
 	// Pseudo stereo:
-	_pseudo_stereo = new QCheckBox ("Pseudo stereo", this);
+	_pseudo_stereo = new QPushButton ("Pseudo stereo", this);
+	_pseudo_stereo->setCheckable (true);
 	_pseudo_stereo->setChecked (pp->pseudo_stereo);
 	QObject::connect (_pseudo_stereo, SIGNAL (toggled (bool)), this, SLOT (oscillator_params_updated()));
 	QToolTip::add (_pseudo_stereo, "Inverts right channel to give pseudo-stereo effect for monophonic voices.");
@@ -256,13 +258,15 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QObject::connect (_transposition_semitones, SIGNAL (valueChanged (int)), this, SLOT (oscillator_params_updated()));
 
 	// Auto-center wave:
-	_auto_center = new QCheckBox ("Auto center", this);
+	_auto_center = new QPushButton ("Auto center", this);
+	_auto_center->setCheckable (true);
 	_auto_center->setChecked (pp->auto_center);
 	QObject::connect (_auto_center, SIGNAL (toggled (bool)), this, SLOT (wave_params_updated()));
 	QToolTip::add (_auto_center, "Auto center wave around 0 level");
 
 	// Const. glide:
-	_const_portamento_time = new QCheckBox ("Const. glide", this);
+	_const_portamento_time = new QPushButton ("Const. glide", this);
+	_const_portamento_time->setCheckable (true);
 	_const_portamento_time->setChecked (pp->const_portamento_time);
 	QObject::connect (_const_portamento_time, SIGNAL (toggled (bool)), this, SLOT (oscillator_params_updated()));
 
@@ -277,7 +281,8 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QObject::connect (_pitchbend_up_semitones, SIGNAL (valueChanged (int)), this, SLOT (oscillator_params_updated()));
 
 	// Pitchbend enabled:
-	_pitchbend_enabled = new QCheckBox ("Pitchbend", this);
+	_pitchbend_enabled = new QPushButton ("Pitchbend", this);
+	_pitchbend_enabled->setCheckable (true);
 	_pitchbend_enabled->setChecked (pp->pitchbend_enabled);
 	QObject::connect (_pitchbend_enabled, SIGNAL (toggled (bool)), this, SLOT (oscillator_params_updated()));
 
@@ -339,9 +344,9 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	group1_layout->addWidget (new QLabel ("Transposition:", this), 3, 0);
 	group1_layout->addWidget (_transposition_semitones, 3, 1);
 
-	QGroupBox* group2 = new QGroupBox (this);
+	QWidget* group2 = new QWidget (this);
 	QVBoxLayout* group2_layout = new QVBoxLayout (group2);
-	group2_layout->setMargin (2 * Config::Margin);
+	group2_layout->setMargin (0);
 	group2_layout->setSpacing (Config::Spacing);
 	group2_layout->addWidget (_auto_center);
 	group2_layout->addItem (new QSpacerItem (0, 10, QSizePolicy::Fixed, QSizePolicy::Fixed));
@@ -361,7 +366,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	panel_layout->addWidget (_wave_enabled, 0, 6);
 	panel_layout->addWidget (_noise_enabled, 0, 7);
 	panel_layout->addWidget (show_harmonics, 0, 8, 1, 2);
-	panel_layout->addWidget (group2, 0, 10, 3, 1);
+	panel_layout->addWidget (group2, 1, 10, 3, 1);
 	panel_layout->addWidget (base_plot_frame, 1, 0, 1, 2);
 	panel_layout->addWidget (harmonics_plot_frame, 1, 2, 1, 2);
 	panel_layout->addWidget (_knob_volume, 1, 4);

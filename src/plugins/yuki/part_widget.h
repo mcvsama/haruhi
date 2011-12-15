@@ -159,8 +159,8 @@ class PartWidget:
 	QDialog*			_harmonics_window;
 
 	// Pitchbend/transposition:
-	QCheckBox*			_const_portamento_time;
-	QCheckBox*			_pitchbend_enabled;
+	QPushButton*		_const_portamento_time;
+	QPushButton*		_pitchbend_enabled;
 	QSpinBox*			_pitchbend_up_semitones;
 	QSpinBox*			_pitchbend_down_semitones;
 	QSpinBox*			_transposition_semitones;
@@ -168,9 +168,9 @@ class PartWidget:
 
 	// Other:
 	QWidget*			_panel;
-	QCheckBox*			_auto_center;
-	QCheckBox*			_unison_stereo;
-	QCheckBox*			_pseudo_stereo;
+	QPushButton*		_auto_center;
+	QPushButton*		_unison_stereo;
+	QPushButton*		_pseudo_stereo;
 	QCheckBox*			_part_enabled;
 	QPushButton*		_wave_enabled;
 	QPushButton*		_noise_enabled;
