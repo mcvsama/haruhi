@@ -272,13 +272,21 @@ Part::ParamUpdaters::ParamUpdaters (VoiceManager* voice_manager):
 	CONSTRUCT_PARAM_UPDATER (resonance),
 	CONSTRUCT_PARAM_UPDATER (gain),
 	CONSTRUCT_PARAM_UPDATER (attenuation),
+	CONSTRUCT_PARAM_UPDATER (enabled),
+	CONSTRUCT_PARAM_UPDATER (type),
+	CONSTRUCT_PARAM_UPDATER (stages),
+	CONSTRUCT_PARAM_UPDATER (limiter_enabled),
 #undef CONSTRUCT_PARAM_UPDATER
 
 #define CONSTRUCT_PARAM_UPDATER(name) filter_2_##name (voice_manager, 1, &Params::Filter::name)
 	CONSTRUCT_PARAM_UPDATER (frequency),
 	CONSTRUCT_PARAM_UPDATER (resonance),
 	CONSTRUCT_PARAM_UPDATER (gain),
-	CONSTRUCT_PARAM_UPDATER (attenuation)
+	CONSTRUCT_PARAM_UPDATER (attenuation),
+	CONSTRUCT_PARAM_UPDATER (enabled),
+	CONSTRUCT_PARAM_UPDATER (type),
+	CONSTRUCT_PARAM_UPDATER (stages),
+	CONSTRUCT_PARAM_UPDATER (limiter_enabled)
 #undef CONSTRUCT_PARAM_UPDATER
 { }
 
@@ -325,26 +333,26 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 	// on work unit in the destructor:
 	update_wavetable();
 
-#define UPDATE_WAVETABLE_ON_CHANGE(x) x.on_change.connect (this, &Part::update_wavetable)
+#define UPDATE_WAVETABLE_ON_CHANGE(name) _part_params.name.on_change.connect (this, &Part::update_wavetable)
 	// Listen on params change. Only on params that need additional
 	// action when they change (eg. updating wavetable).
-	UPDATE_WAVETABLE_ON_CHANGE (_part_params.wave_type);
-	UPDATE_WAVETABLE_ON_CHANGE (_part_params.modulator_wave_type);
-	UPDATE_WAVETABLE_ON_CHANGE (_part_params.modulator_type);
-	UPDATE_WAVETABLE_ON_CHANGE (_part_params.wave_shape);
-	UPDATE_WAVETABLE_ON_CHANGE (_part_params.modulator_amplitude);
-	UPDATE_WAVETABLE_ON_CHANGE (_part_params.modulator_index);
-	UPDATE_WAVETABLE_ON_CHANGE (_part_params.modulator_shape);
-	UPDATE_WAVETABLE_ON_CHANGE (_part_params.auto_center);
+	UPDATE_WAVETABLE_ON_CHANGE (wave_type);
+	UPDATE_WAVETABLE_ON_CHANGE (modulator_wave_type);
+	UPDATE_WAVETABLE_ON_CHANGE (modulator_type);
+	UPDATE_WAVETABLE_ON_CHANGE (wave_shape);
+	UPDATE_WAVETABLE_ON_CHANGE (modulator_amplitude);
+	UPDATE_WAVETABLE_ON_CHANGE (modulator_index);
+	UPDATE_WAVETABLE_ON_CHANGE (modulator_shape);
+	UPDATE_WAVETABLE_ON_CHANGE (auto_center);
 	for (std::size_t i = 0; i < ARRAY_SIZE (_part_params.harmonics); ++i)
-		UPDATE_WAVETABLE_ON_CHANGE (_part_params.harmonics[i]);
+		UPDATE_WAVETABLE_ON_CHANGE (harmonics[i]);
 	for (std::size_t i = 0; i < ARRAY_SIZE (_part_params.harmonic_phases); ++i)
-		UPDATE_WAVETABLE_ON_CHANGE (_part_params.harmonic_phases[i]);
+		UPDATE_WAVETABLE_ON_CHANGE (harmonic_phases[i]);
 #undef UPDATE_WAVETABLE_ON_CHANGE
 
 #define UPDATE_VOICES_ON_VCE(name) \
-	_proxies.name.on_voice_controller_event.connect (&_updaters.name, &VoiceParamUpdater::handle_event); \
-	_part_params.voice.name.on_change_with_value.connect (&_updaters.name, &VoiceParamUpdater::handle_change)
+	_proxies.name.on_voice_controller_event.connect (&_updaters.name, &VoiceParamUpdater<Params::Voice::ControllerParamPtr>::handle_event); \
+	_part_params.voice.name.on_change_with_value.connect (&_updaters.name, &VoiceParamUpdater<Params::Voice::ControllerParamPtr>::handle_change)
 	// Updaters for Voice params:
 	UPDATE_VOICES_ON_VCE (amplitude);
 	UPDATE_VOICES_ON_VCE (frequency);
@@ -359,8 +367,8 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 #undef UPDATE_VOICES_ON_VCE
 
 #define UPDATE_FILTERS_ON_VCE(name) \
-	_proxies.filter_1_##name.on_voice_controller_event.connect (&_updaters.filter_1_##name, &FilterParamUpdater::handle_event); \
-	_part_params.voice.filter[0].name.on_change_with_value.connect (&_updaters.filter_1_##name, &FilterParamUpdater::handle_change);
+	_proxies.filter_1_##name.on_voice_controller_event.connect (&_updaters.filter_1_##name, &FilterParamUpdater<Params::Filter::ControllerParamPtr>::handle_event); \
+	_part_params.voice.filter[0].name.on_change_with_value.connect (&_updaters.filter_1_##name, &FilterParamUpdater<Params::Filter::ControllerParamPtr>::handle_change);
 	// Updaters for Filter 1 params:
 	UPDATE_FILTERS_ON_VCE (frequency);
 	UPDATE_FILTERS_ON_VCE (resonance);
@@ -369,14 +377,32 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 #undef UPDATE_FILTERS_ON_VCE
 
 #define UPDATE_FILTERS_ON_VCE(name) \
-	_proxies.filter_2_##name.on_voice_controller_event.connect (&_updaters.filter_2_##name, &FilterParamUpdater::handle_event); \
-	_part_params.voice.filter[1].name.on_change_with_value.connect (&_updaters.filter_2_##name, &FilterParamUpdater::handle_change);
+	_proxies.filter_2_##name.on_voice_controller_event.connect (&_updaters.filter_2_##name, &FilterParamUpdater<Params::Filter::ControllerParamPtr>::handle_event); \
+	_part_params.voice.filter[1].name.on_change_with_value.connect (&_updaters.filter_2_##name, &FilterParamUpdater<Params::Filter::ControllerParamPtr>::handle_change);
 	// Updaters for Filter 2 params:
 	UPDATE_FILTERS_ON_VCE (frequency);
 	UPDATE_FILTERS_ON_VCE (resonance);
 	UPDATE_FILTERS_ON_VCE (gain);
 	UPDATE_FILTERS_ON_VCE (attenuation);
 #undef UPDATE_FILTERS_ON_VCE
+
+#define UPDATE_FILTERS_ON_CHANGE(name) \
+	_part_params.voice.filter[0].name.on_change_with_value.connect (&_updaters.filter_1_##name, &FilterParamUpdater<Params::Filter::IntParamPtr>::handle_change);
+	// Updaters for Filter 1 params:
+	UPDATE_FILTERS_ON_CHANGE (enabled);
+	UPDATE_FILTERS_ON_CHANGE (type);
+	UPDATE_FILTERS_ON_CHANGE (stages);
+	UPDATE_FILTERS_ON_CHANGE (limiter_enabled);
+#undef UPDATE_FILTERS_ON_CHANGE
+
+#define UPDATE_FILTERS_ON_CHANGE(name) \
+	_part_params.voice.filter[1].name.on_change_with_value.connect (&_updaters.filter_2_##name, &FilterParamUpdater<Params::Filter::IntParamPtr>::handle_change);
+	// Updaters for Filter 2 params:
+	UPDATE_FILTERS_ON_CHANGE (enabled);
+	UPDATE_FILTERS_ON_CHANGE (type);
+	UPDATE_FILTERS_ON_CHANGE (stages);
+	UPDATE_FILTERS_ON_CHANGE (limiter_enabled);
+#undef UPDATE_FILTERS_ON_CHANGE
 }
 
 

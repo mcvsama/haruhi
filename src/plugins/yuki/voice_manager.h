@@ -142,30 +142,21 @@ class VoiceManager
 	mix_rendering_result (Haruhi::AudioBuffer*, Haruhi::AudioBuffer*);
 
 	/**
-	 * Update particular parameter of all voices.
+	 * Update particular parameter of a particular voice.
+	 * \param	voice_id ID of the voice to be updated. Use Haruhi::OmniVoice to update all voices.
 	 */
 	void
-	update_voice_parameter (Params::Voice::PointerToControllerParam, int value);
+	update_voice_parameter (Haruhi::VoiceID, Params::Voice::ControllerParamPtr, int value);
 
 	/**
 	 * Update particular parameter of a particular voice.
-	 */
-	void
-	update_voice_parameter (Haruhi::VoiceID, Params::Voice::PointerToControllerParam, int value);
-
-	/**
-	 * Update particular parameter of all voices.
+	 * Handles both ControllerParams and Params<T>.
+	 * \param	voice_id ID of the voice to be updated. Use Haruhi::OmniVoice to update all voices.
 	 * \param	filter_no Filter ID, 0 or 1.
 	 */
-	void
-	update_filter_parameter (unsigned int filter_no, Params::Filter::PointerToControllerParam, int value);
-
-	/**
-	 * Update particular parameter of a particular voice.
-	 * \param	filter_no Filter ID, 0 or 1.
-	 */
-	void
-	update_filter_parameter (Haruhi::VoiceID, unsigned int filter_no, Params::Filter::PointerToControllerParam, int value);
+	template<class PointerToParam>
+		void
+		update_filter_parameter (Haruhi::VoiceID, unsigned int filter_no, PointerToParam, int value);
 
   private:
 	/**
@@ -223,6 +214,24 @@ VoiceManager::current_voices_number()
 {
 	return _active_voices_number;
 }
+
+
+template<class PointerToParam>
+	inline void
+	VoiceManager::update_filter_parameter (Haruhi::VoiceID voice_id, unsigned int filter_no, PointerToParam param_ptr, int value)
+	{
+		if (voice_id == Haruhi::OmniVoice)
+		{
+			for (Voices::iterator v = _voices.begin(); v != _voices.end(); ++v)
+				((*v)->params()->filter[filter_no].*param_ptr).set (value);
+		}
+		else
+		{
+			Voice* v = find_voice_by_id (voice_id);
+			if (v)
+				(v->params()->filter[filter_no].*param_ptr).set (value);
+		}
+	}
 
 } // namespace Yuki
 

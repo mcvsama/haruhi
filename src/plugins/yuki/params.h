@@ -131,7 +131,8 @@ struct Params
 	 */
 	struct Filter: public SaveableParams<Filter>
 	{
-		typedef Haruhi::ControllerParam Filter::* PointerToControllerParam;
+		typedef Haruhi::ControllerParam Filter::* ControllerParamPtr;
+		typedef Haruhi::Param<int> Filter::* IntParamPtr;
 
 		HARUHI_YUKI_PARAMS_STANDARD_METHODS (Filter)
 
@@ -158,7 +159,7 @@ struct Params
 	 */
 	struct Voice: public SaveableParams<Voice>
 	{
-		typedef Haruhi::ControllerParam Voice::* PointerToControllerParam;
+		typedef Haruhi::ControllerParam Voice::* ControllerParamPtr;
 
 		HARUHI_YUKI_PARAMS_STANDARD_METHODS (Voice)
 

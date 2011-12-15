@@ -110,44 +110,46 @@ class Part:
 	 * Helper class that forwards Voice parameter (given by pointer to member) update notification
 	 * to the voice manager (which updates voice(s)).
 	 */
-	class VoiceParamUpdater: public Signal::Receiver
-	{
-	  public:
-		VoiceParamUpdater (VoiceManager* voice_manager, Params::Voice::PointerToControllerParam param_ptr);
+	template<class ParamPtr>
+		class VoiceParamUpdater: public Signal::Receiver
+		{
+		  public:
+			VoiceParamUpdater (VoiceManager* voice_manager, ParamPtr param_ptr);
 
-		void
-		handle_change (int value);
+			void
+			handle_change (int value);
 
-		void
-		handle_event (Haruhi::VoiceControllerEvent const* event, int value);
+			void
+			handle_event (Haruhi::VoiceControllerEvent const* event, int value);
 
-	  private:
-		VoiceManager*								_voice_manager;
-		Params::Voice::PointerToControllerParam		_param_ptr;
-	};
+		  private:
+			VoiceManager*	_voice_manager;
+			ParamPtr		_param_ptr;
+		};
 
 	/**
 	 * Same as VoiceParamUpdater, but for filter parameters.
 	 */
-	class FilterParamUpdater: public Signal::Receiver
-	{
-	  public:
-		/**
-		 * \param	filter_no Filter identifier: 0 or 1.
-		 */
-		FilterParamUpdater (VoiceManager* voice_manager, unsigned int filter_no, Params::Filter::PointerToControllerParam param_ptr);
+	template<class ParamPtr>
+		class FilterParamUpdater: public Signal::Receiver
+		{
+		  public:
+			/**
+			 * \param	filter_no Filter identifier: 0 or 1.
+			 */
+			FilterParamUpdater (VoiceManager* voice_manager, unsigned int filter_no, ParamPtr param_ptr);
 
-		void
-		handle_change (int value);
+			void
+			handle_change (int value);
 
-		void
-		handle_event (Haruhi::VoiceControllerEvent const* event, int value);
+			void
+			handle_event (Haruhi::VoiceControllerEvent const* event, int value);
 
-	  private:
-		VoiceManager*								_voice_manager;
-		unsigned int								_filter_no;
-		Params::Filter::PointerToControllerParam	_param_ptr;
-	};
+		  private:
+			VoiceManager*	_voice_manager;
+			unsigned int	_filter_no;
+			ParamPtr		_param_ptr;
+		};
 
   public:
 	/**
@@ -259,26 +261,34 @@ class Part:
 
 	  public:
 		// Voice params updaters:
-		VoiceParamUpdater amplitude;
-		VoiceParamUpdater frequency;
-		VoiceParamUpdater panorama;
-		VoiceParamUpdater detune;
-		VoiceParamUpdater pitchbend;
-		VoiceParamUpdater velocity_sens;
-		VoiceParamUpdater unison_index;
-		VoiceParamUpdater unison_spread;
-		VoiceParamUpdater unison_init;
-		VoiceParamUpdater unison_noise;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	amplitude;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	frequency;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	panorama;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	detune;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	pitchbend;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	velocity_sens;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	unison_index;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	unison_spread;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	unison_init;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	unison_noise;
 
 		// Filter params updaters:
-		FilterParamUpdater filter_1_frequency;
-		FilterParamUpdater filter_1_resonance;
-		FilterParamUpdater filter_1_gain;
-		FilterParamUpdater filter_1_attenuation;
-		FilterParamUpdater filter_2_frequency;
-		FilterParamUpdater filter_2_resonance;
-		FilterParamUpdater filter_2_gain;
-		FilterParamUpdater filter_2_attenuation;
+		FilterParamUpdater<Params::Filter::ControllerParamPtr>	filter_1_frequency;
+		FilterParamUpdater<Params::Filter::ControllerParamPtr>	filter_1_resonance;
+		FilterParamUpdater<Params::Filter::ControllerParamPtr>	filter_1_gain;
+		FilterParamUpdater<Params::Filter::ControllerParamPtr>	filter_1_attenuation;
+		FilterParamUpdater<Params::Filter::IntParamPtr>			filter_1_enabled;
+		FilterParamUpdater<Params::Filter::IntParamPtr>			filter_1_type;
+		FilterParamUpdater<Params::Filter::IntParamPtr>			filter_1_stages;
+		FilterParamUpdater<Params::Filter::IntParamPtr>			filter_1_limiter_enabled;
+		FilterParamUpdater<Params::Filter::ControllerParamPtr>	filter_2_frequency;
+		FilterParamUpdater<Params::Filter::ControllerParamPtr>	filter_2_resonance;
+		FilterParamUpdater<Params::Filter::ControllerParamPtr>	filter_2_gain;
+		FilterParamUpdater<Params::Filter::ControllerParamPtr>	filter_2_attenuation;
+		FilterParamUpdater<Params::Filter::IntParamPtr>			filter_2_enabled;
+		FilterParamUpdater<Params::Filter::IntParamPtr>			filter_2_type;
+		FilterParamUpdater<Params::Filter::IntParamPtr>			filter_2_stages;
+		FilterParamUpdater<Params::Filter::IntParamPtr>			filter_2_limiter_enabled;
 	};
 
   public:
@@ -441,47 +451,53 @@ Part::UpdateWavetableWorkUnit::serial() const
 }
 
 
-inline
-Part::VoiceParamUpdater::VoiceParamUpdater (VoiceManager* voice_manager, Params::Voice::PointerToControllerParam param_ptr):
-	_voice_manager (voice_manager),
-	_param_ptr (param_ptr)
-{ }
+template<class ParamPtr>
+	inline
+	Part::VoiceParamUpdater<ParamPtr>::VoiceParamUpdater (VoiceManager* voice_manager, ParamPtr param_ptr):
+		_voice_manager (voice_manager),
+		_param_ptr (param_ptr)
+	{ }
 
 
-inline void
-Part::VoiceParamUpdater::handle_change (int value)
-{
-	_voice_manager->update_voice_parameter (_param_ptr, value);
-}
+template<class ParamPtr>
+	inline void
+	Part::VoiceParamUpdater<ParamPtr>::handle_change (int value)
+	{
+		_voice_manager->update_voice_parameter (Haruhi::OmniVoice, _param_ptr, value);
+	}
 
 
-inline void
-Part::VoiceParamUpdater::handle_event (Haruhi::VoiceControllerEvent const* event, int value)
-{
-	_voice_manager->update_voice_parameter (event->voice_id(), _param_ptr, value);
-}
+template<class ParamPtr>
+	inline void
+	Part::VoiceParamUpdater<ParamPtr>::handle_event (Haruhi::VoiceControllerEvent const* event, int value)
+	{
+		_voice_manager->update_voice_parameter (event->voice_id(), _param_ptr, value);
+	}
 
 
-inline
-Part::FilterParamUpdater::FilterParamUpdater (VoiceManager* voice_manager, unsigned int filter_no, Params::Filter::PointerToControllerParam param_ptr):
-	_voice_manager (voice_manager),
-	_filter_no (filter_no),
-	_param_ptr (param_ptr)
-{ }
+template<class ParamPtr>
+	inline
+	Part::FilterParamUpdater<ParamPtr>::FilterParamUpdater (VoiceManager* voice_manager, unsigned int filter_no, ParamPtr param_ptr):
+		_voice_manager (voice_manager),
+		_filter_no (filter_no),
+		_param_ptr (param_ptr)
+	{ }
 
 
-inline void
-Part::FilterParamUpdater::handle_change (int value)
-{
-	_voice_manager->update_filter_parameter (_filter_no, _param_ptr, value);
-}
+template<class ParamPtr>
+	inline void
+	Part::FilterParamUpdater<ParamPtr>::handle_change (int value)
+	{
+		_voice_manager->update_filter_parameter (Haruhi::OmniVoice, _filter_no, _param_ptr, value);
+	}
 
 
-inline void
-Part::FilterParamUpdater::handle_event (Haruhi::VoiceControllerEvent const* event, int value)
-{
-	_voice_manager->update_filter_parameter (event->voice_id(), _filter_no, _param_ptr, value);
-}
+template<class ParamPtr>
+	inline void
+	Part::FilterParamUpdater<ParamPtr>::handle_event (Haruhi::VoiceControllerEvent const* event, int value)
+	{
+		_voice_manager->update_filter_parameter (event->voice_id(), _filter_no, _param_ptr, value);
+	}
 
 
 inline bool
