@@ -38,9 +38,16 @@ class PortGroup
   public:
 	PortGroup (Graph* graph, std::string const& name);
 
+	/**
+	 * Return port group name.
+	 */
 	std::string
 	name() const;
 
+	/**
+	 * Rename port group.
+	 * Needs Graph lock.
+	 */
 	void
 	set_name (std::string const&);
 

@@ -58,7 +58,7 @@ class PresetsTree: public QTreeWidget
 	current_preset_item() const;
 
 	PresetsManager*
-	presets_manager() const { return _presets_manager; }
+	presets_manager() const;
 
   private slots:
 	void
@@ -103,6 +103,13 @@ class PresetsTree: public QTreeWidget
 	QTreeWidgetItem*	_dropped_on_item;
 	QTimer*				_auto_open_timer;
 };
+
+
+inline PresetsManager*
+PresetsTree::presets_manager() const
+{
+	return _presets_manager;
+}
 
 } // namespace PresetsManagerPrivate
 

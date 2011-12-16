@@ -55,10 +55,7 @@ class Tree:
 	class LearnedParams: public QEvent
 	{
 	  public:
-		LearnedParams (QTreeWidgetItem* item):
-			QEvent (QEvent::User),
-			item (item)
-		{ }
+		LearnedParams (QTreeWidgetItem* item);
 
 	  public:
 		QTreeWidgetItem* item;
@@ -113,7 +110,7 @@ class Tree:
 	 * Returns pointer to external Model.
 	 */
 	Model*
-	model() const { return _model; }
+	model() const;
 
 	/**
 	 * Allocates DeviceItem that will be used as child for this PortsList.
@@ -140,6 +137,20 @@ class Tree:
   private:
 	Model*	_model;
 };
+
+
+inline
+Tree::LearnedParams::LearnedParams (QTreeWidgetItem* item):
+	QEvent (QEvent::User),
+	item (item)
+{ }
+
+
+inline Model*
+Tree::model() const
+{
+	return _model;
+}
 
 } // namespace DevicesManager
 
