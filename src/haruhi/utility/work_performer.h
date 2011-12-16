@@ -57,6 +57,7 @@ class WorkPerformer: private Noncopyable
 	class Unit: private Noncopyable
 	{
 		friend class Performer;
+		friend class WorkPerformer;
 
 	  public:
 		/**
@@ -86,9 +87,19 @@ class WorkPerformer: private Noncopyable
 		/**
 		 * Return thread ID, which is a number between 0 and threads_num-1.
 		 * Tells to which executing thread this work unit has been assigned.
+		 *
+		 * Can be called only after WorkUnit has been started by the Performer
+		 * (in and after exit from execute() method).
 		 */
 		unsigned int
 		thread_id() const { return _thread_id; }
+
+	  private:
+		/**
+		 * Called by the WorkPerformer when unit is added to the queue.
+		 */
+		void
+		added_to_queue();
 
 	  private:
 		Atomic<bool>	_is_ready;
@@ -169,6 +180,13 @@ class WorkPerformer: private Noncopyable
 	Semaphore				_queue_semaphore;
 	std::vector<Performer*>	_performers;
 };
+
+
+inline void
+WorkPerformer::Unit::added_to_queue()
+{
+	_is_ready.store (false);
+}
 
 #endif
 

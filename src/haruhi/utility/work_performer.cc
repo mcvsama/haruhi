@@ -72,6 +72,7 @@ void
 WorkPerformer::add (Unit* unit)
 {
 	_queue_mutex.lock();
+	unit->added_to_queue();
 	_queue.push (unit);
 	_queue_mutex.unlock();
 	_queue_semaphore.post();
