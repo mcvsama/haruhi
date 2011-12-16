@@ -34,10 +34,8 @@ PortGroup::name() const
 void
 PortGroup::set_name (std::string const& name)
 {
-	graph()->lock();
 	_name = name;
 	_graph->port_group_renamed (this);
-	graph()->unlock();
 }
 
 
