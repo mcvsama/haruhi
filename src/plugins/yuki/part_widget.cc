@@ -19,8 +19,12 @@
 #include <QtGui/QLayout>
 #include <QtGui/QGroupBox>
 
+// Lib:
+#include <boost/bind.hpp>
+
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/application/services.h>
 #include <haruhi/widgets/knob.h>
 #include <haruhi/dsp/modulated_wave.h>
 #include <haruhi/dsp/translated_wave.h>
@@ -418,10 +422,10 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	update_widgets();
 
 	// Listen on certain params changes:
-	pp->wave_shape.on_change.connect (this, &PartWidget::update_wave_plots);
-	pp->modulator_amplitude.on_change.connect (this, &PartWidget::update_wave_plots);
-	pp->modulator_index.on_change.connect (this, &PartWidget::update_wave_plots);
-	pp->modulator_shape.on_change.connect (this, &PartWidget::update_wave_plots);
+	pp->wave_shape.on_change.connect (this, &PartWidget::post_update_wave_plots);
+	pp->modulator_amplitude.on_change.connect (this, &PartWidget::post_update_wave_plots);
+	pp->modulator_index.on_change.connect (this, &PartWidget::post_update_wave_plots);
+	pp->modulator_shape.on_change.connect (this, &PartWidget::post_update_wave_plots);
 }
 
 
@@ -551,6 +555,13 @@ PartWidget::update_wave_plots()
 	update_phase_marker();
 
 	delete previous_final_wave;
+}
+
+
+void
+PartWidget::post_update_wave_plots()
+{
+	Haruhi::Services::call_out (boost::bind (&PartWidget::update_wave_plots, this));
 }
 
 } // namespace Yuki

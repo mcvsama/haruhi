@@ -115,6 +115,12 @@ class PartWidget:
 	void
 	update_wave_plots();
 
+	/**
+	 * Call update_wave_plots() from UI thread later.
+	 */
+	void
+	post_update_wave_plots();
+
   private:
 	PartManagerWidget*	_part_manager_widget;
 	Part*				_part;
