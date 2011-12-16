@@ -330,6 +330,8 @@ multiply_buffers_and_by_scalar (float* target, float* source, size_t size, float
 		++xs;
 		++xt;
 	}
+	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
+		target[i] *= source[i] * scalar;
 #else
 	for (size_t i = 0; i < size; ++i)
 		target[i] *= source[i] * scalar;
@@ -360,6 +362,12 @@ multiply_buffers_and_by_scalar (float* target1, float* target2, float* source, s
 		++xs;
 		++xt1;
 		++xt2;
+	}
+	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
+	{
+		float k = source[i] * scalar;
+		target1[i] *= k;
+		target2[i] *= k;
 	}
 #else
 	for (size_t i = 0; i < size; ++i)
