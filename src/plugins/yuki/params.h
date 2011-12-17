@@ -113,11 +113,11 @@ struct Params
 		HARUHI_YUKI_PARAM (Volume,					       0,	+1000000,	+1000000,	 +938445) // -1.5dB/20*log_10/exp
 		HARUHI_YUKI_PARAM (Panorama,				-1000000,	+1000000,	+1000000,	       0)
 		HARUHI_YUKI_PARAM (Detune,					-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (StereoWidth,				       0,	+1000000,	+1000000,	+1000000)
+		HARUHI_YUKI_PARAM (StereoWidth,				-1000000,	+1000000,	+1000000,	+1000000)
 
 		Haruhi::ControllerParam volume;
-		Haruhi::ControllerParam detune;
 		Haruhi::ControllerParam panorama;
+		Haruhi::ControllerParam detune;
 		Haruhi::ControllerParam stereo_width;
 
 		Haruhi::Param<int> enabled;

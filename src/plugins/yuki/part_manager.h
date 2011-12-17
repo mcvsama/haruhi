@@ -22,11 +22,14 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/graph/event_buffer.h>
-#include <haruhi/utility/mutex.h>
-#include <haruhi/utility/id_allocator.h>
+#include <haruhi/dsp/one_pole_smoother.h>
 #include <haruhi/graph/audio_port.h>
 #include <haruhi/graph/event_port.h>
+#include <haruhi/graph/event_buffer.h>
+#include <haruhi/lib/controller_proxy.h>
+#include <haruhi/utility/noncopyable.h>
+#include <haruhi/utility/mutex.h>
+#include <haruhi/utility/id_allocator.h>
 
 // Local:
 #include "has_widget.h"
@@ -42,8 +45,63 @@ class Plugin;
 
 class PartManager:
 	public HasWidget<PartManagerWidget>,
-	public HasPlugin
+	public HasPlugin,
+	private Noncopyable
 {
+  public:
+	/**
+	 * Main controls' ports.
+	 */
+	class MainPorts:
+		public HasPlugin,
+		private Noncopyable
+	{
+	  public:
+		MainPorts (Plugin*);
+
+		~MainPorts();
+
+	  public:
+		// Ports (0 = L, 1 = R):
+		Haruhi::AudioPort* audio_out[2];
+
+		// Voice port:
+		Haruhi::EventPort* voice_in;
+
+		// Main controls:
+		Haruhi::EventPort* volume;
+		Haruhi::EventPort* panorama;
+		Haruhi::EventPort* detune;
+		Haruhi::EventPort* stereo_width;
+
+		// Common ports that forward messages to all parts:
+		Haruhi::EventPort* amplitude;
+		Haruhi::EventPort* frequency;
+		Haruhi::EventPort* pitchbend;
+	};
+
+	/**
+	 * Main ports' ControllerProxies.
+	 */
+	class MainProxies: private Noncopyable
+	{
+	  public:
+		MainProxies (MainPorts*, Params::Main* main_params);
+
+		/**
+		 * Call process_events() on each proxy.
+		 */
+		void
+		process_events();
+
+	  public:
+		// Part:
+		Haruhi::ControllerProxy volume;
+		Haruhi::ControllerProxy panorama;
+		Haruhi::ControllerProxy detune;
+		Haruhi::ControllerProxy stereo_width;
+	};
+
   public:
 	PartManager (Plugin*);
 
@@ -55,8 +113,11 @@ class PartManager:
 	Parts&
 	parts();
 
-	Parts const&
-	parts() const;
+	/**
+	 * Return MainProxies object.
+	 */
+	MainProxies*
+	proxies();
 
 	/**
 	 * Add new Part.
@@ -112,14 +173,17 @@ class PartManager:
 	Signal::Emiter1<Part*>	part_removed;
 
   private:
-	Params::Main		_main_params;
-	Parts				_parts;
-	Mutex				_parts_mutex;
-	IDAllocator			_id_alloc;
+	Params::Main			_main_params;
+	Parts					_parts;
+	Mutex					_parts_mutex;
+	IDAllocator				_id_alloc;
 
-	// Ports (0 = L, 1 = R):
-	Haruhi::AudioPort*	_audio_out[2];
-	Haruhi::EventPort*	_voice_in;
+	MainPorts				_ports;
+	MainProxies				_proxies;
+
+	DSP::OnePoleSmoother	_volume_smoother[2];
+	DSP::OnePoleSmoother	_panorama_smoother[2];
+	DSP::OnePoleSmoother	_stereo_width_smoother;
 };
 
 
@@ -130,10 +194,10 @@ PartManager::parts()
 }
 
 
-inline Parts const&
-PartManager::parts() const
+inline PartManager::MainProxies*
+PartManager::proxies()
 {
-	return _parts;
+	return &_proxies;
 }
 
 } // namespace Yuki

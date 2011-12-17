@@ -98,5 +98,13 @@ Plugin::voices_number() const
 	return sum;
 }
 
+
+void
+Plugin::set_unit_bay (Haruhi::UnitBay* unit_bay)
+{
+	UnitBayAware::set_unit_bay (unit_bay);
+	_part_manager_widget->unit_bay_assigned();
+}
+
 } // namespace Yuki
 

@@ -61,6 +61,9 @@ class Plugin:
 	int
 	voices_number() const;
 
+	void
+	set_unit_bay (Haruhi::UnitBay*);
+
   private:
 	PartManager*		_part_manager;
 	PartManagerWidget*	_part_manager_widget;

@@ -26,6 +26,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/signal.h>
+#include <haruhi/widgets/knob.h>
 
 
 namespace Yuki {
@@ -45,6 +46,12 @@ class PartManagerWidget:
 
 	Plugin*
 	plugin() const;
+
+	/**
+	 * Set UnitBay object from the Plugin.
+	 */
+	void
+	unit_bay_assigned();
 
 	/**
 	 * Create UI widget for given Part object and add it to tabs.
@@ -102,6 +109,11 @@ class PartManagerWidget:
 	QPushButton*	_add_part_button;
 	QPushButton*	_remove_part_button;
 	bool			_prevent_recursion;
+
+	Haruhi::Knob*	_knob_volume;
+	Haruhi::Knob*	_knob_panorama;
+	Haruhi::Knob*	_knob_detune;
+	Haruhi::Knob*	_knob_stereo_width;
 };
 
 } // namespace Yuki

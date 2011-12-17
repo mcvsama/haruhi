@@ -21,6 +21,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/widgets/knob.h>
 
 // Local:
 #include "part_manager_widget.h"
@@ -36,12 +37,26 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 {
 	_main = new QWidget (this);
 
-	_tabs = new QTabWidget (this);
-	_tabs->setMovable (true);
+	// Knobs:
 
-	_stack = new QStackedWidget (this);
-	_stack->addWidget (_main);
-	_stack->addWidget (_tabs);
+	PartManager::MainProxies* proxies = _part_manager->proxies();
+
+	_knob_volume		= new Haruhi::Knob (this, &proxies->volume, "Volume dB");
+	_knob_panorama		= new Haruhi::Knob (this, &proxies->panorama, "Panorama");
+	_knob_detune		= new Haruhi::Knob (this, &proxies->detune, "Detune");
+	_knob_stereo_width	= new Haruhi::Knob (this, &proxies->stereo_width, "Stereo");
+
+	_knob_volume->set_volume_scale (true, M_E);
+
+	QHBoxLayout* main_layout = new QHBoxLayout (_main);
+	main_layout->setMargin (0);
+	main_layout->setSpacing (Config::Spacing);
+	main_layout->addWidget (_knob_volume);
+	main_layout->addWidget (_knob_panorama);
+	main_layout->addWidget (_knob_detune);
+	main_layout->addWidget (_knob_stereo_width);
+
+	// Top buttons:
 
 	_show_main_button = new QPushButton (Resources::Icons16::main(), "Main controls", this);
 	_show_main_button->setCheckable (true);
@@ -57,6 +72,17 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 	_remove_part_button = new QPushButton (Resources::Icons16::remove(), "", this);
 	QObject::connect (_remove_part_button, SIGNAL (clicked()), this, SLOT (remove_current_part()));
 	QToolTip::add (_remove_part_button, "Remove current part");
+
+	// Part tabs:
+
+	_tabs = new QTabWidget (this);
+	_tabs->setMovable (true);
+
+	_stack = new QStackedWidget (this);
+	_stack->addWidget (_main);
+	_stack->addWidget (_tabs);
+
+	// Layouts:
 
 	QHBoxLayout* buttons_layout = new QHBoxLayout();
 	buttons_layout->setMargin (0);
@@ -85,6 +111,15 @@ Plugin*
 PartManagerWidget::plugin() const
 {
 	return _part_manager->plugin();
+}
+
+
+void
+PartManagerWidget::unit_bay_assigned()
+{
+	Haruhi::Knob* all_knobs[] = { _knob_volume, _knob_panorama, _knob_detune, _knob_stereo_width };
+	for (Haruhi::Knob** k = all_knobs; k != all_knobs + ARRAY_SIZE (all_knobs); ++k)
+		(*k)->set_unit_bay (plugin()->unit_bay());
 }
 
 
