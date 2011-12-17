@@ -61,6 +61,14 @@ class ControllerDialog: public QDialog
 	void
 	item_configured (ControllerItem*) const;
 
+  protected:
+	/**
+	 * Filterout Esc events to prevent closing
+	 * the dialog widget.
+	 */
+	void
+	keyPressEvent (QKeyEvent*);
+
   private slots:
 	void
 	update_widgets();

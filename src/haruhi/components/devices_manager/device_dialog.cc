@@ -108,6 +108,16 @@ DeviceDialog::apply (DeviceItem* item) const
 
 
 void
+DeviceDialog::keyPressEvent (QKeyEvent* event)
+{
+	if (event->key() == Qt::Key_Escape)
+		return event->ignore();
+
+	return QDialog::keyPressEvent (event);
+}
+
+
+void
 DeviceDialog::update_widgets()
 {
 	_save_button->setEnabled (!_name->text().isEmpty());

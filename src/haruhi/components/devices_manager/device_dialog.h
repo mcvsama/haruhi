@@ -23,6 +23,7 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QLineEdit>
 #include <QtGui/QCheckBox>
+#include <QtGui/QKeyEvent>
 
 // Local:
 #include "device_item.h"
@@ -64,6 +65,14 @@ class DeviceDialog: public QDialog
 	 */
 	void
 	item_configured (DeviceItem*) const;
+
+  protected:
+	/**
+	 * Filterout Esc events to prevent closing
+	 * the dialog widget.
+	 */
+	void
+	keyPressEvent (QKeyEvent*);
 
   private slots:
 	void

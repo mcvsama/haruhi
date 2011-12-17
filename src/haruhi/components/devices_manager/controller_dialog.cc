@@ -23,6 +23,7 @@
 #include <QtGui/QGridLayout>
 #include <QtGui/QGroupBox>
 #include <QtGui/QToolTip>
+#include <QtGui/QKeyEvent>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -218,6 +219,16 @@ ControllerDialog::apply (ControllerItem* item) const
 	controller->smoothing = _smoothing->value();
 	item->set_name (_name->text());
 	emit item_configured (item);
+}
+
+
+void
+ControllerDialog::keyPressEvent (QKeyEvent* event)
+{
+	if (event->key() == Qt::Key_Escape)
+		return event->ignore();
+
+	return QDialog::keyPressEvent (event);
 }
 
 
