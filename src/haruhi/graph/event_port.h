@@ -33,8 +33,18 @@ namespace Haruhi {
 class EventPort: public Port
 {
   public:
+	/**
+	 * Locks Graph for operation - it is safe to create new EventPort
+	 * without need to explicitly locking Graph before.
+	 * \entry	Any thread.
+	 */
 	EventPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group = 0, Flags flags = 0);
 
+	/**
+	 * Locks Graph for operation - it is safe to delete AudioPort
+	 * without need to explicitly locking Graph before.
+	 * \entry	Any thread
+	 */
 	~EventPort();
 
 	/**

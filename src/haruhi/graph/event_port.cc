@@ -24,13 +24,23 @@ namespace Haruhi {
 EventPort::EventPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group, Flags flags):
 	Port (unit, name, direction, new EventBuffer(), group, flags)
 {
+	Graph* g = graph();
+	if (g)
+		g->lock();
 	register_me();
+	if (g)
+		g->unlock();
 }
 
 
 EventPort::~EventPort()
 {
+	Graph* g = graph();
+	if (g)
+		g->lock();
 	unregister_me();
+	if (g)
+		g->unlock();
 }
 
 } // namespace Haruhi

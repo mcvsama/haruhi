@@ -81,8 +81,6 @@ Part::PartPorts::PartPorts (Plugin* plugin, unsigned int part_id):
 {
 	_port_group = new Haruhi::PortGroup (graph(), QString ("Part %1").arg (part_id).toStdString());
 
-	if (graph())
-		graph()->lock();
 	wave_shape				= new Haruhi::EventPort (plugin, "Osc - Wave shape", Haruhi::Port::Input, _port_group);
 	modulator_amplitude		= new Haruhi::EventPort (plugin, "Osc - Wave modulator amplitude", Haruhi::Port::Input, _port_group);
 	modulator_index			= new Haruhi::EventPort (plugin, "Osc - Wave modulator index", Haruhi::Port::Input, _port_group);
@@ -109,16 +107,11 @@ Part::PartPorts::PartPorts (Plugin* plugin, unsigned int part_id):
 	filter_2_resonance		= new Haruhi::EventPort (plugin, "Filter 2 - Resonance (Q)", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
 	filter_2_gain			= new Haruhi::EventPort (plugin, "Filter 2 - Gain", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
 	filter_2_attenuation	= new Haruhi::EventPort (plugin, "Filter 2 - Attenuation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	if (graph())
-		graph()->unlock();
 }
 
 
 Part::PartPorts::~PartPorts()
 {
-// TODO check if 'if's are needed:
-	if (graph())
-		graph()->lock();
 	delete wave_shape;
 	delete modulator_amplitude;
 	delete modulator_index;
@@ -145,8 +138,6 @@ Part::PartPorts::~PartPorts()
 	delete filter_2_resonance;
 	delete filter_2_gain;
 	delete filter_2_attenuation;
-	if (graph())
-		graph()->unlock();
 
 	delete _port_group;
 }

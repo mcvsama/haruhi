@@ -30,9 +30,6 @@ namespace Yuki {
 PartManager::MainPorts::MainPorts (Plugin* plugin):
 	HasPlugin (plugin)
 {
-	if (graph())
-		graph()->lock();
-
 	audio_out[0]	= new Haruhi::AudioPort (plugin, "Output 1", Haruhi::Port::Output, 0, Haruhi::Port::StandardAudio);
 	audio_out[1]	= new Haruhi::AudioPort (plugin, "Output 2", Haruhi::Port::Output, 0, Haruhi::Port::StandardAudio);
 
@@ -46,17 +43,11 @@ PartManager::MainPorts::MainPorts (Plugin* plugin):
 	amplitude		= new Haruhi::EventPort (plugin, "Amplitude", Haruhi::Port::Input, 0, Haruhi::Port::Polyphonic);
 	frequency		= new Haruhi::EventPort (plugin, "Frequency", Haruhi::Port::Input, 0, Haruhi::Port::Polyphonic);
 	pitchbend		= new Haruhi::EventPort (plugin, "Pitchbend", Haruhi::Port::Input, 0, Haruhi::Port::Polyphonic | Haruhi::Port::ControlPitchbend);
-
-	if (graph())
-		graph()->unlock();
 }
 
 
 PartManager::MainPorts::~MainPorts()
 {
-	// TODO is checking for graph() needed?
-	if (graph())
-		graph()->unlock();
 	delete audio_out[0];
 	delete audio_out[1];
 	delete voice_in;
@@ -67,8 +58,6 @@ PartManager::MainPorts::~MainPorts()
 	delete amplitude;
 	delete frequency;
 	delete pitchbend;
-	if (graph())
-		graph()->unlock();
 }
 
 

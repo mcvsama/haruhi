@@ -25,16 +25,26 @@ namespace Haruhi {
 AudioPort::AudioPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group, Flags flags):
 	Port (unit, name, direction, new AudioBuffer(), group, flags)
 {
+	Graph* g = graph();
+	if (g)
+		g->lock();
 	register_me();
 	// Resize buffers:
 	if (graph())
 		graph_updated();
+	if (g)
+		g->unlock();
 }
 
 
 AudioPort::~AudioPort()
 {
+	Graph* g = graph();
+	if (g)
+		g->lock();
 	unregister_me();
+	if (g)
+		g->unlock();
 }
 
 
