@@ -258,5 +258,17 @@ PartManager::graph_updated()
 	_parts_mutex.unlock();
 }
 
+
+unsigned int
+PartManager::voices_number() const
+{
+	unsigned int sum = 0;
+	_parts_mutex.lock();
+	for (Parts::const_iterator p = _parts.begin(); p != _parts.end(); ++p)
+		sum += (*p)->voices_number();
+	_parts_mutex.unlock();
+	return sum;
+}
+
 } // namespace Yuki
 
