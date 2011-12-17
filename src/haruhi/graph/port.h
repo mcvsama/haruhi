@@ -60,7 +60,7 @@ class Port:
 	 * Flags describing port.
 	 */
 	enum {
-		ControlKeyboard			= 1 << 0,	// Port is a keyboard output port or expects keyboard input events.
+		ControlVoice			= 1 << 0,	// Port is a voice/keyboard output port or expects keyboard input events.
 		ControlSustain			= 1 << 1,	// Similarly.
 		ControlPitchbend		= 1 << 2,	// Similarly.
 		ControlModulation		= 1 << 3,	// Similarly.

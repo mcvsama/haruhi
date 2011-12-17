@@ -31,6 +31,7 @@
 #include <haruhi/utility/signal.h>
 #include <haruhi/utility/work_performer.h>
 #include <haruhi/utility/numeric.h>
+#include <haruhi/utility/noncopyable.h>
 
 // Local:
 #include "has_widget.h"
@@ -51,7 +52,8 @@ class VoiceManager;
 class Part:
 	public HasWidget<PartWidget>,
 	public HasID,
-	public Signal::Receiver
+	public Signal::Receiver,
+	private Noncopyable
 {
 	friend class PartWidget;
 
@@ -111,7 +113,9 @@ class Part:
 	 * to the voice manager (which updates voice(s)).
 	 */
 	template<class ParamPtr>
-		class VoiceParamUpdater: public Signal::Receiver
+		class VoiceParamUpdater:
+			public Signal::Receiver,
+			private Noncopyable
 		{
 		  public:
 			VoiceParamUpdater (VoiceManager* voice_manager, ParamPtr param_ptr);
@@ -131,7 +135,9 @@ class Part:
 	 * Same as VoiceParamUpdater, but for filter parameters.
 	 */
 	template<class ParamPtr>
-		class FilterParamUpdater: public Signal::Receiver
+		class FilterParamUpdater:
+			public Signal::Receiver,
+			private Noncopyable
 		{
 		  public:
 			/**
@@ -155,7 +161,9 @@ class Part:
 	/**
 	 * Contains Haruhi ports created for the part.
 	 */
-	class PartPorts: public HasPlugin
+	class PartPorts:
+		public HasPlugin,
+		private Noncopyable
 	{
 	  public:
 		PartPorts (Plugin*, unsigned int part_id);
@@ -204,7 +212,7 @@ class Part:
 	/**
 	 * Contains ControllerProxies that connect event ports and params.
 	 */
-	class PartControllerProxies
+	class PartControllerProxies: private Noncopyable
 	{
 	  public:
 		PartControllerProxies (PartPorts*, Params::Part*);
@@ -254,7 +262,7 @@ class Part:
 	 * that voice parameters have changed.
 	 * There receivers update all existing voices' params.
 	 */
-	class ParamUpdaters
+	class ParamUpdaters: private Noncopyable
 	{
 	  public:
 		ParamUpdaters (VoiceManager*);

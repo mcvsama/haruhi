@@ -35,52 +35,33 @@ namespace DSP {
 class OnePoleSmoother
 {
   public:
-	OnePoleSmoother (Sample samples = 1.f)
-	{
-		set_samples (samples);
-		reset();
-	}
+	OnePoleSmoother (Sample samples = 1.f);
 
 	/**
 	 * \param	samples is number of samples after which returned value reaches
 	 * 			99.99% of target value.
 	 */
 	void
-	set_samples (Sample samples)
-	{
-		_time = LookupPow::pow (0.01f, 2.0f / samples);
-	}
+	set_samples (Sample samples);
 
 	/**
 	 * Resets smoother to initial state (or given value).
 	 */
 	void
-	reset (float value = 0.0f)
-	{
-		_z = value;
-	}
+	reset (float value = 0.0f);
 
 	/**
 	 * Return smoothed sample from given input sample.
 	 */
 	Sample
-	process (Sample s, unsigned int iterations = 1)
-	{
-		for (unsigned int i = 0; i < iterations; ++i)
-			process_single_sample (s);
-		return _z;
-	}
+	process (Sample s, unsigned int iterations = 1);
 
 	/**
 	 * Smooth (low-pass) given sequence.
 	 */
 	template<class ForwardIterator>
 		void
-		process (ForwardIterator begin, ForwardIterator end)
-		{
-			for (ForwardIterator c = begin; c != end; ++c)
-				*c = process_single_sample (*c);
-		}
+		process (ForwardIterator begin, ForwardIterator end);
 
 	/**
 	 * Fill sequence with smoothed samples, where input sample is @value.
@@ -90,11 +71,8 @@ class OnePoleSmoother
 	 */
 	template<class ForwardIterator>
 		void
-		fill (ForwardIterator begin, ForwardIterator end, Sample value)
-		{
-			for (ForwardIterator c = begin; c != end; ++c)
-				*c = process_single_sample (value);
-		}
+		fill (ForwardIterator begin, ForwardIterator end, Sample value);
+
 
 	/**
 	 * Multiply sequence samples by given value in a smooth-way.
@@ -103,23 +81,81 @@ class OnePoleSmoother
 	 */
 	template<class ForwardIterator>
 		void
-		multiply (ForwardIterator begin, ForwardIterator end, Sample value)
-		{
-			for (ForwardIterator c = begin; c != end; ++c)
-				*c *= process_single_sample (value);
-		}
+		multiply (ForwardIterator begin, ForwardIterator end, Sample value);
 
   private:
 	Sample
-	process_single_sample (Sample s)
-	{
-		return _z = _time * (_z - s) + s;
-	}
+	process_single_sample (Sample s);
 
   private:
 	Sample _time;
 	Sample _z;
 };
+
+
+inline
+OnePoleSmoother::OnePoleSmoother (Sample samples)
+{
+	set_samples (samples);
+	reset();
+}
+
+
+inline void
+OnePoleSmoother::set_samples (Sample samples)
+{
+	_time = LookupPow::pow (0.01f, 2.0f / samples);
+}
+
+
+inline void
+OnePoleSmoother::reset (float value)
+{
+	_z = value;
+}
+
+
+inline Sample
+OnePoleSmoother::process (Sample s, unsigned int iterations)
+{
+	for (unsigned int i = 0; i < iterations; ++i)
+		process_single_sample (s);
+	return _z;
+}
+
+
+template<class ForwardIterator>
+	inline void
+	OnePoleSmoother::process (ForwardIterator begin, ForwardIterator end)
+	{
+		for (ForwardIterator c = begin; c != end; ++c)
+			*c = process_single_sample (*c);
+	}
+
+
+template<class ForwardIterator>
+	inline void
+	OnePoleSmoother::fill (ForwardIterator begin, ForwardIterator end, Sample value)
+	{
+		for (ForwardIterator c = begin; c != end; ++c)
+			*c = process_single_sample (value);
+	}
+
+
+template<class ForwardIterator>
+	inline void
+	OnePoleSmoother::multiply (ForwardIterator begin, ForwardIterator end, Sample value)
+	{
+		for (ForwardIterator c = begin; c != end; ++c)
+			*c *= process_single_sample (value);
+	}
+
+
+inline Sample
+OnePoleSmoother::process_single_sample (Sample s)
+{
+	return _z = _time * (_z - s) + s;
+}
 
 } // namespace DSP
 

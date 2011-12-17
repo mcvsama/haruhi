@@ -266,7 +266,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_auto_center->setCheckable (true);
 	_auto_center->setChecked (pp->auto_center);
 	QObject::connect (_auto_center, SIGNAL (toggled (bool)), this, SLOT (wave_params_updated()));
-	QToolTip::add (_auto_center, "Auto center wave around 0 level");
+	QToolTip::add (_auto_center, "Auto center wave around 0 level. Takes more CPU power to update wavetables.");
 
 	// Const. glide:
 	_const_portamento_time = new QPushButton ("Const. glide", this);
