@@ -64,8 +64,8 @@ namespace Yuki {
 
 Params::Main::Main():
 	HARUHI_YUKI_CONSTRUCT_EXPLICIT (volume, Volume, -std::numeric_limits<float>::infinity(), 0.0f, 2, (VolumeMax - VolumeMin) / 500),
-	HARUHI_YUKI_CONSTRUCT (detune, Detune, 2),
 	HARUHI_YUKI_CONSTRUCT (panorama, Panorama, 2),
+	HARUHI_YUKI_CONSTRUCT (detune, Detune, 2),
 	HARUHI_YUKI_CONSTRUCT (stereo_width, StereoWidth, 2),
 	enabled (0, 1, 1, "enabled"),
 	polyphony (0, 512, 32, "polyphony")
