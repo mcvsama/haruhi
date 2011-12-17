@@ -108,10 +108,10 @@ class PartManager:
 	~PartManager();
 
 	/**
-	 * Return reference to set of Parts used by synth.
+	 * Return number of currently existing parts.
 	 */
-	Parts&
-	parts();
+	unsigned int
+	parts_number() const;
 
 	/**
 	 * Return MainProxies object.
@@ -193,10 +193,13 @@ class PartManager:
 };
 
 
-inline Parts&
-PartManager::parts()
+inline unsigned int
+PartManager::parts_number() const
 {
-	return _parts;
+	_parts_mutex.lock();
+	unsigned int k = _parts.size();
+	_parts_mutex.unlock();
+	return k;
 }
 
 

@@ -41,6 +41,12 @@ class PartManagerWidget:
 {
 	Q_OBJECT
 
+	class Placeholder: public QWidget
+	{
+	  public:
+		Placeholder (QWidget* parent);
+	};
+
   public:
 	PartManagerWidget (QWidget* parent, PartManager*);
 
@@ -67,18 +73,6 @@ class PartManagerWidget:
 
   private slots:
 	/**
-	 * Show main control panel.
-	 */
-	void
-	show_main();
-
-	/**
-	 * Show part tabs.
-	 */
-	void
-	show_parts();
-
-	/**
 	 * Add new part.
 	 * Callback for 'Add part' button.
 	 */
@@ -101,14 +95,10 @@ class PartManagerWidget:
 
   private:
 	PartManager*	_part_manager;
-	QStackedWidget*	_stack;
-	QWidget*		_main;
 	QTabWidget*		_tabs;
-	QPushButton*	_show_main_button;
-	QPushButton*	_show_tabs_button;
 	QPushButton*	_add_part_button;
 	QPushButton*	_remove_part_button;
-	bool			_prevent_recursion;
+	QWidget*		_placeholder;
 
 	Haruhi::Knob*	_knob_volume;
 	Haruhi::Knob*	_knob_panorama;

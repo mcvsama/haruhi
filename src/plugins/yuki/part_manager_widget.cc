@@ -30,13 +30,21 @@
 
 namespace Yuki {
 
+PartManagerWidget::Placeholder::Placeholder (QWidget* parent):
+	QWidget (parent)
+{
+	QHBoxLayout* layout = new QHBoxLayout (this);
+	layout->setMargin (0);
+	layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
+	layout->addWidget (new QLabel ("Add parts with buttons above", this));
+	layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
+}
+
+
 PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager):
 	QWidget (parent),
-	_part_manager (part_manager),
-	_prevent_recursion (false)
+	_part_manager (part_manager)
 {
-	_main = new QWidget (this);
-
 	// Knobs:
 
 	PartManager::MainProxies* proxies = _part_manager->proxies();
@@ -48,25 +56,12 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 
 	_knob_volume->set_volume_scale (true, M_E);
 
-	QHBoxLayout* main_layout = new QHBoxLayout (_main);
-	main_layout->setMargin (0);
-	main_layout->setSpacing (Config::Spacing);
-	main_layout->addWidget (_knob_volume);
-	main_layout->addWidget (_knob_panorama);
-	main_layout->addWidget (_knob_detune);
-	main_layout->addWidget (_knob_stereo_width);
-
 	// Top buttons:
 
-	_show_main_button = new QPushButton (Resources::Icons16::main(), "Main controls", this);
-	_show_main_button->setCheckable (true);
-	QObject::connect (_show_main_button, SIGNAL (toggled (bool)), this, SLOT (show_main()));
-
-	_show_tabs_button = new QPushButton (Resources::Icons16::parts(), "Parts", this);
-	_show_tabs_button->setCheckable (true);
-	QObject::connect (_show_tabs_button, SIGNAL (toggled (bool)), this, SLOT (show_parts()));
+	QWidget* buttons_widget = new QWidget (this);
 
 	_add_part_button = new QPushButton (Resources::Icons16::add(), "Add part", this);
+	_add_part_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
 	QObject::connect (_add_part_button, SIGNAL (clicked()), this, SLOT (add_part()));
 
 	_remove_part_button = new QPushButton (Resources::Icons16::remove(), "", this);
@@ -77,29 +72,35 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 
 	_tabs = new QTabWidget (this);
 	_tabs->setMovable (true);
+	_tabs->setCornerWidget (buttons_widget, Qt::TopRightCorner);
+	_tabs->setIconSize (QSize (32, 22));
 
-	_stack = new QStackedWidget (this);
-	_stack->addWidget (_main);
-	_stack->addWidget (_tabs);
+	_placeholder = new Placeholder (this);
 
 	// Layouts:
 
-	QHBoxLayout* buttons_layout = new QHBoxLayout();
+	QGridLayout* buttons_layout = new QGridLayout (buttons_widget);
 	buttons_layout->setMargin (0);
 	buttons_layout->setSpacing (Config::Spacing);
-	buttons_layout->addWidget (_show_main_button);
-	buttons_layout->addWidget (_show_tabs_button);
-	buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-	buttons_layout->addWidget (_add_part_button);
-	buttons_layout->addWidget (_remove_part_button);
+	buttons_layout->addWidget (_add_part_button, 0, 0);
+	buttons_layout->addWidget (_remove_part_button, 0, 1);
+	buttons_layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed), 1, 0, 1, 2);
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	QVBoxLayout* main_layout = new QVBoxLayout();
+	main_layout->setMargin (0);
+	main_layout->setSpacing (Config::Spacing);
+	main_layout->addWidget (_knob_volume);
+	main_layout->addWidget (_knob_panorama);
+	main_layout->addWidget (_knob_detune);
+	main_layout->addWidget (_knob_stereo_width);
+	main_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
+
+	QHBoxLayout* layout = new QHBoxLayout (this);
 	layout->setMargin (0);
 	layout->setSpacing (Config::Spacing);
-	layout->addLayout (buttons_layout);
-	layout->addWidget (_stack);
+	layout->addLayout (main_layout);
+	layout->addWidget (_tabs);
 
-	show_main();
 	update_widgets();
 
 	_part_manager->part_added.connect (this, &PartManagerWidget::add_part);
@@ -131,7 +132,6 @@ PartManagerWidget::add_part (Part* part)
 	_tabs->addTab (pw, Resources::Icons16::wave_sine(), QString ("Part %1").arg (part->id()));
 	_tabs->setCurrentWidget (pw);
 	update_widgets();
-	show_parts();
 }
 
 
@@ -149,34 +149,6 @@ PartManagerWidget::remove_part (Part* part)
 			break;
 		}
 	}
-	update_widgets();
-}
-
-
-void
-PartManagerWidget::show_main()
-{
-	if (_prevent_recursion)
-		return;
-	_prevent_recursion = true;
-	_stack->setCurrentWidget (_main);
-	_show_main_button->setChecked (true);
-	_show_tabs_button->setChecked (false);
-	_prevent_recursion = false;
-	update_widgets();
-}
-
-
-void
-PartManagerWidget::show_parts()
-{
-	if (_prevent_recursion)
-		return;
-	_prevent_recursion = true;
-	_stack->setCurrentWidget (_tabs);
-	_show_main_button->setChecked (false);
-	_show_tabs_button->setChecked (true);
-	_prevent_recursion = false;
 	update_widgets();
 }
 
@@ -204,7 +176,21 @@ PartManagerWidget::remove_current_part()
 void
 PartManagerWidget::update_widgets()
 {
-	_remove_part_button->setEnabled (_show_tabs_button->isChecked() && _tabs->count() > 0);
+	unsigned int parts_number = _tabs->count() > 0;
+
+	_remove_part_button->setEnabled (parts_number > 0);
+
+	if (_part_manager->parts_number() == 0)
+		_tabs->addTab (_placeholder, Resources::Icons16::add(), "→");
+	else
+	{
+		for (int i = 0, n = _tabs->count(); i < n; ++i)
+		{
+			Placeholder* ph = dynamic_cast<Placeholder*> (_tabs->widget (i));
+			if (ph)
+				_tabs->removeTab (i--);
+		}
+	}
 }
 
 } // namespace Yuki
