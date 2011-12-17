@@ -406,12 +406,19 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	layout->addWidget (new StyledBackground (_part_enabled, this));
 	layout->addWidget (_panel);
 
+	QLabel* harmonics_label = new QLabel ("Harmonics", _harmonics_window);
+	// Force normal text color. For some reason Qt uses white color on light-gray background.
+	harmonics_label->setForegroundRole (QPalette::Text);
+	QLabel* harmonic_phases_label = new QLabel ("Phases", _harmonics_window);
+	// Force normal text color. For some reason Qt uses white color on light-gray background.
+	harmonic_phases_label->setForegroundRole (QPalette::Text);
+
 	QVBoxLayout* harmonics_window_layout = new QVBoxLayout (_harmonics_window);
 	harmonics_window_layout->setMargin (Config::DialogMargin);
 	harmonics_window_layout->setSpacing (Config::Spacing);
-	harmonics_window_layout->addWidget (new StyledBackground (new QLabel ("Harmonics", _harmonics_window), _harmonics_window, 2));
+	harmonics_window_layout->addWidget (new StyledBackground (harmonics_label, _harmonics_window, 2));
 	harmonics_window_layout->addWidget (_harmonics_widget);
-	harmonics_window_layout->addWidget (new StyledBackground (new QLabel ("Phases", _harmonics_window), _harmonics_window, 2));
+	harmonics_window_layout->addWidget (new StyledBackground (harmonic_phases_label, _harmonics_window, 2));
 	harmonics_window_layout->addWidget (_harmonic_phases_widget);
 
 	// Save standard button colors:
