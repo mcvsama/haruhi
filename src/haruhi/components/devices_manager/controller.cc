@@ -135,6 +135,15 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 		case MIDI::Event::NoteOn:
 			if (note_filter && (note_channel == 0 || note_channel == midi_event.note_on.channel + 1))
 			{
+				// If there was previously note-on on that key, send voice-off:
+				if (_voice_ids[midi_event.note_on.note] != OmniVoice)
+				{
+					float velocity = midi_event.note_on.velocity / 127.0f;
+					buffer.push (new VoiceControllerEvent (t, midi_event.note_on.note, midi_event.note_on.velocity / 127.0f));
+					buffer.push (new VoiceEvent (t, midi_event.note_on.note, _voice_ids[midi_event.note_on.note], VoiceEvent::Release,
+												 VoiceEvent::frequency_from_key_id (midi_event.note_on.note, graph->master_tune()), velocity));
+				}
+
 				float velocity = midi_event.note_on.velocity / 127.0f;
 				VoiceEvent* ve = new VoiceEvent (t, midi_event.note_on.note, VoiceAuto,
 												 (midi_event.note_on.velocity == 0)? VoiceEvent::Release : VoiceEvent::Create,
@@ -153,6 +162,7 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 				buffer.push (new VoiceControllerEvent (t, midi_event.note_off.note, midi_event.note_off.velocity / 127.0f));
 				buffer.push (new VoiceEvent (t, midi_event.note_off.note, _voice_ids[midi_event.note_off.note], VoiceEvent::Release,
 											 VoiceEvent::frequency_from_key_id (midi_event.note_off.note, graph->master_tune()), velocity));
+				_voice_ids[midi_event.note_off.note] = OmniVoice;
 				handled = true;
 			}
 			break;
