@@ -275,8 +275,8 @@ Patch::Patch (Session* session, std::string const& title, QWidget* parent):
 	QVBoxLayout* add_plugin_layout = new QVBoxLayout (add_plugin_frame);
 	add_plugin_layout->setMargin (0);
 	add_plugin_layout->setSpacing (0);
-	add_plugin_layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Expanding));
 	add_plugin_layout->addWidget (add_plugin_button);
+	add_plugin_layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (0);
