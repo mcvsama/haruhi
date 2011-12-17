@@ -317,6 +317,12 @@ class Part:
 	part_params();
 
 	/**
+	 * Return ports list object.
+	 */
+	PartPorts*
+	ports();
+
+	/**
 	 * Return proxies list created by the part.
 	 * Needed for the widget to link Knobs to proxies.
 	 */
@@ -526,6 +532,13 @@ inline Params::Part*
 Part::part_params()
 {
 	return &_part_params;
+}
+
+
+inline Part::PartPorts*
+Part::ports()
+{
+	return &_ports;
 }
 
 

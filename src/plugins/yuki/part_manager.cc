@@ -160,7 +160,13 @@ PartManager::process()
 	_parts_mutex.lock();
 
 	// Forward all messages from common ports to parts' ports:
-	// TODO
+
+	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
+	{
+		(*p)->ports()->amplitude->event_buffer()->mixin (_ports.amplitude->event_buffer());
+		(*p)->ports()->frequency->event_buffer()->mixin (_ports.frequency->event_buffer());
+		(*p)->ports()->pitchbend->event_buffer()->mixin (_ports.pitchbend->event_buffer());
+	}
 
 	// Send voice events:
 
