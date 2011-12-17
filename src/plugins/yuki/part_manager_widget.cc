@@ -59,7 +59,6 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 	// Polyphony:
 
 	_polyphony = new QSpinBox (1, 256, 1, this);
-//	_polyphony->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	_polyphony->setValue (_part_manager->main_params()->polyphony.get());
 	QObject::connect (_polyphony, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_params()));
 
