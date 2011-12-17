@@ -40,9 +40,9 @@ PartManager::MainPorts::MainPorts (Plugin* plugin):
 	detune			= new Haruhi::EventPort (plugin, "Detune", Haruhi::Port::Input);
 	stereo_width	= new Haruhi::EventPort (plugin, "Stereo width", Haruhi::Port::Input);
 
-	amplitude		= new Haruhi::EventPort (plugin, "Amplitude", Haruhi::Port::Input, 0, Haruhi::Port::Polyphonic);
-	frequency		= new Haruhi::EventPort (plugin, "Frequency", Haruhi::Port::Input, 0, Haruhi::Port::Polyphonic);
-	pitchbend		= new Haruhi::EventPort (plugin, "Pitchbend", Haruhi::Port::Input, 0, Haruhi::Port::Polyphonic | Haruhi::Port::ControlPitchbend);
+	amplitude		= new Haruhi::EventPort (plugin, "Mod. amplitude", Haruhi::Port::Input, 0, Haruhi::Port::Polyphonic);
+	frequency		= new Haruhi::EventPort (plugin, "Mod. frequency", Haruhi::Port::Input, 0, Haruhi::Port::Polyphonic);
+	pitchbend		= new Haruhi::EventPort (plugin, "Mod. pitchbend", Haruhi::Port::Input, 0, Haruhi::Port::Polyphonic | Haruhi::Port::ControlPitchbend);
 }
 
 
