@@ -17,9 +17,6 @@
 // Standard:
 #include <cstddef>
 
-// Qt:
-#include <QtGui/QTabWidget>
-
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/dsp/one_pole_smoother.h>
@@ -120,19 +117,28 @@ class PartManager:
 	proxies();
 
 	/**
+	 * Return params object.
+	 */
+	Params::Main*
+	main_params();
+
+	/**
 	 * Add new Part.
+	 * Send part_added signal.
 	 */
 	void
 	add_part();
 
 	/**
 	 * Remove given Part.
+	 * Send part_removed signal.
 	 */
 	void
 	remove_part (Part*);
 
 	/**
 	 * Remove all Parts.
+	 * Send part_removed signals.
 	 */
 	void
 	remove_all_parts();
@@ -207,6 +213,13 @@ inline PartManager::MainProxies*
 PartManager::proxies()
 {
 	return &_proxies;
+}
+
+
+inline Params::Main*
+PartManager::main_params()
+{
+	return &_main_params;
 }
 
 } // namespace Yuki

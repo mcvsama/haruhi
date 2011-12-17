@@ -295,8 +295,6 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 	_proxies (&_ports, &_part_params),
 	_updaters (_voice_manager)
 {
-	_voice_manager->set_max_polyphony (64);
-
 	_base_waves[0] = new DSP::ParametricWaves::Sine();
 	_base_waves[1] = new DSP::ParametricWaves::Triangle();
 	_base_waves[2] = new DSP::ParametricWaves::Square();

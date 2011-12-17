@@ -56,6 +56,13 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 
 	_knob_volume->set_volume_scale (true, M_E);
 
+	// Polyphony:
+
+	_polyphony = new QSpinBox (1, 256, 1, this);
+//	_polyphony->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+	_polyphony->setValue (_part_manager->main_params()->polyphony.get());
+	QObject::connect (_polyphony, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_params()));
+
 	// Top buttons:
 
 	QWidget* buttons_widget = new QWidget (this);
@@ -93,6 +100,9 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 	main_layout->addWidget (_knob_panorama);
 	main_layout->addWidget (_knob_detune);
 	main_layout->addWidget (_knob_stereo_width);
+	main_layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
+	main_layout->addWidget (new QLabel ("Max voices:", this));
+	main_layout->addWidget (_polyphony);
 	main_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
 	QHBoxLayout* layout = new QHBoxLayout (this);
@@ -170,6 +180,13 @@ PartManagerWidget::remove_current_part()
 		if (pw)
 			_part_manager->remove_part (pw->part());
 	}
+}
+
+
+void
+PartManagerWidget::widgets_to_params()
+{
+	_part_manager->main_params()->polyphony = _polyphony->value();
 }
 
 

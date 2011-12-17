@@ -68,18 +68,6 @@ class VoiceManager
 	~VoiceManager();
 
 	/**
-	 * Gets maximum polyphony.
-	 */
-	unsigned int
-	max_polyphony() const;
-
-	/**
-	 * Sets maximum polyphony.
-	 */
-	void
-	set_max_polyphony (unsigned int num);
-
-	/**
 	 * Processes new VoiceEvent.
 	 */
 	void
@@ -191,22 +179,7 @@ class VoiceManager
 	Haruhi::AudioBuffer	_output_1;
 	Haruhi::AudioBuffer	_output_2;
 	unsigned int		_active_voices_number;
-	unsigned int		_max_polyphony;
 };
-
-
-inline unsigned int
-VoiceManager::max_polyphony() const
-{
-	return _max_polyphony;
-}
-
-
-inline void
-VoiceManager::set_max_polyphony (unsigned int num)
-{
-	_max_polyphony = num;
-}
 
 
 inline unsigned int

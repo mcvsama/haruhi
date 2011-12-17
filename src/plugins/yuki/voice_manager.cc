@@ -56,8 +56,7 @@ VoiceManager::VoiceManager (Params::Main* main_params, Params::Part* part_params
 	_sample_rate (0),
 	_buffer_size (0),
 	_wavetable (0),
-	_active_voices_number (0),
-	_max_polyphony (0)
+	_active_voices_number (0)
 {
 	for (unsigned int i = 0; i < _work_performer->threads_number(); ++i)
 		_shared_resources_vec.push_back (new Voice::SharedResources());
@@ -219,7 +218,9 @@ VoiceManager::update_voice_parameter (Haruhi::VoiceID voice_id, Params::Voice::C
 void
 VoiceManager::check_polyphony_limit()
 {
-	while (_active_voices_number > _max_polyphony)
+	unsigned int max_polyphony = _main_params->polyphony.get();
+
+	while (_active_voices_number > max_polyphony)
 	{
 		// Select oldest Voice and drop it:
 		Voice* oldest = 0;

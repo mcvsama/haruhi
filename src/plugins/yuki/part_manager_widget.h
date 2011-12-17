@@ -22,6 +22,7 @@
 #include <QtGui/QStackedWidget>
 #include <QtGui/QPushButton>
 #include <QtGui/QTabWidget>
+#include <QtGui/QSpinBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -86,6 +87,12 @@ class PartManagerWidget:
 	void
 	remove_current_part();
 
+	/**
+	 * Update params from widget states.
+	 */
+	void
+	widgets_to_params();
+
   private:
 	/**
 	 * Update dependent widgets.
@@ -99,6 +106,7 @@ class PartManagerWidget:
 	QPushButton*	_add_part_button;
 	QPushButton*	_remove_part_button;
 	QWidget*		_placeholder;
+	QSpinBox*		_polyphony;
 
 	Haruhi::Knob*	_knob_volume;
 	Haruhi::Knob*	_knob_panorama;
