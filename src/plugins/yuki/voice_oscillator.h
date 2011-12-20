@@ -24,6 +24,7 @@
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/wavetable.h>
 #include <haruhi/dsp/noise.h>
+#include <haruhi/dsp/functions.h>
 #include <haruhi/utility/numeric.h>
 
 
@@ -124,6 +125,20 @@ class VoiceOscillator
 	set_unison_stereo (bool stereo);
 
 	/**
+	 * Set unison voices vibrato level.
+	 * \param	level Input param [0.0..1.0].
+	 */
+	void
+	set_unison_vibrato_level (Sample level);
+
+	/**
+	 * Set unison voices vibrato frequency.
+	 * \param	frequency Absolute frequency [0.0..0.5].
+	 */
+	void
+	set_unison_vibrato_frequency (Sample frequency);
+
+	/**
 	 * Fill output buffer.
 	 */
 	void
@@ -136,27 +151,36 @@ class VoiceOscillator
 	Sample
 	noise_sample();
 
-	Sample
-	unison_delta (Sample const& f);
-
 	void
 	update_unison_coefficients();
-
-	void
-	initialize_stereo_unison_lookup();
 
 	template<bool with_noise, bool unison_stereo>
 		void
 		fill_impl (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2);
 
   private:
+	/**
+	 * One unison voice params.
+	 */
+	struct UnisonVoice
+	{
+		Sample relative_frequency;
+		Sample phase;
+		Sample noise_level;
+		Sample stereo_level_1; // Level in channel 1 (left)
+		Sample stereo_level_2; // Level in channel 1 (right)
+		Sample vibrato_level;
+		Sample vibrato_frequency;
+		Sample vibrato_phase;
+	};
+
+  private:
 	bool					_wavetable_enabled;
 	DSP::Wavetable*			_wavetable;
 	Haruhi::AudioBuffer*	_frequency_source;
 	Haruhi::AudioBuffer*	_amplitude_source;
-	Sample					_distribution_lookup[MaxUnison];
-	Sample					_stereo_unison_lookup[MaxUnison];
-	Sample					_phases[MaxUnison];
+	Sample					_vibrato[MaxUnison];
+	UnisonVoice				_unison[MaxUnison];
 
 	// Unison:
 	Sample					_initial_phase_spread;
@@ -164,6 +188,8 @@ class VoiceOscillator
 	Sample					_unison_spread;
 	Sample					_unison_noise;
 	bool					_unison_stereo;
+	Sample					_unison_vibrato_level;
+	Sample					_unison_vibrato_frequency;
 	Sample					_1_div_unison_number;		// Cached 1.0f / _unison_number.
 	Sample					_unison_relative_spread;	// Cached _unison_spread / _unson_number.
 	Sample					_half_unison_number;		// Cached (_unison_number - 1) / 2.0f.
@@ -235,9 +261,11 @@ VoiceOscillator::set_initial_phases_spread (Sample spread)
 inline void
 VoiceOscillator::set_unison_spread (Sample spread)
 {
-	if (_unison_spread != spread)
+	float const k = 1.0f / 20.0f;
+
+	if (_unison_spread != k * spread)
 	{
-		_unison_spread = (1.0f / 20.0f) * spread;
+		_unison_spread = k * spread;
 		update_unison_coefficients();
 	}
 }
@@ -254,6 +282,28 @@ inline void
 VoiceOscillator::set_unison_stereo (bool stereo)
 {
 	_unison_stereo = stereo;
+}
+
+
+inline void
+VoiceOscillator::set_unison_vibrato_level (Sample level)
+{
+	if (_unison_vibrato_level != level)
+	{
+		_unison_vibrato_level = level;
+		update_unison_coefficients();
+	}
+}
+
+
+inline void
+VoiceOscillator::set_unison_vibrato_frequency (Sample frequency)
+{
+	if (_unison_vibrato_frequency != frequency)
+	{
+		_unison_vibrato_frequency = frequency;
+		update_unison_coefficients();
+	}
 }
 
 
@@ -322,42 +372,39 @@ VoiceOscillator::noise_sample()
 }
 
 
-inline Sample
-VoiceOscillator::unison_delta (Sample const& f)
-{
-	return f * _unison_relative_spread;
-}
-
-
 inline void
 VoiceOscillator::update_unison_coefficients()
 {
 	_unison_relative_spread = _unison_spread / _unison_number;
 	_half_unison_number = (_unison_number - 1) / 2.0f;
 	_1_div_unison_number = 1.0f / _unison_number;
-	// Distribution lookup table:
+	// Noise levels for each unison voice:
 	if (_unison_number == 1)
-		_distribution_lookup[0] = 1.0f;
+		_unison[0].noise_level = 1.0f;
 	else if (_unison_number == 2)
-		_distribution_lookup[0] = _distribution_lookup[1] = 1.0f;
+		_unison[0].noise_level = _unison[1].noise_level = 1.0f;
 	else
 	{
-		for (int i = 0; i <= _unison_number / 2; ++i)
-			_distribution_lookup[i] = 1.0f * (i + 1) / (_unison_number / 2 + 1);
-		for (int i = 0; i <= _unison_number / 2; ++i)
-			_distribution_lookup[_unison_number - i - 1] = _distribution_lookup[i];
+		for (int u = 0; u <= _unison_number / 2; ++u)
+			_unison[u].noise_level = 1.0f * (u + 1) / (_unison_number / 2 + 1);
+		for (int u = 0; u <= _unison_number / 2; ++u)
+			_unison[_unison_number - u - 1].noise_level = _unison[u].noise_level;
 	}
-	// Stereo spread:
-	initialize_stereo_unison_lookup();
-}
-
-
-inline void
-VoiceOscillator::initialize_stereo_unison_lookup()
-{
-	// Lookup table for stereo unison:
-	for (int p = 0; p < _unison_number; ++p)
-		_stereo_unison_lookup[p] = pow2 (_1_div_unison_number * (p + 1));
+	// Relative frequencies and stereo spread values:
+	for (int u = 0; u < _unison_number; ++u)
+	{
+		_unison[u].relative_frequency = 1.0f - _unison_relative_spread * (0.5f * (_unison_number - 1) - u);
+		_unison[u].stereo_level_1 = pow2 (_1_div_unison_number * (u + 1));
+	}
+	for (int u = 0; u < _unison_number; ++u)
+		_unison[u].stereo_level_2 = _unison[_unison_number - u - 1].stereo_level_1;
+	// Vibrato coefficients:
+	for (int u = 0; u < _unison_number; ++u)
+	{
+		_unison[u].vibrato_level = 2.0f * _unison_vibrato_level * _unison_spread;
+		_unison[u].vibrato_frequency = _unison_vibrato_frequency * renormalize (_noise.get (_noise_state), -1.0f, 1.0f, 0.5f, 2.0f);
+		limit_value (_unison[u].vibrato_frequency, 0.0f, 0.5f);
+	}
 }
 
 
@@ -365,7 +412,7 @@ template<bool with_noise, bool unison_stereo>
 	inline void
 	VoiceOscillator::fill_impl (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
 	{
-		Sample e, f, d, l, z, sum1, sum2, tmpsum;
+		Sample f, v, e, sum1, sum2, tmpsum;
 		Sample* const o1 = output1->begin();
 		Sample* const o2 = output2->begin();
 		Sample* const fs = _frequency_source->begin();
@@ -374,38 +421,36 @@ template<bool with_noise, bool unison_stereo>
 		for (std::size_t i = 0, n = output1->size(); i < n; ++i)
 		{
 			sum1 = sum2 = 0.0f;
-			f = fs[i];
-			e = std::sqrt (f) * _unison_noise;
-			d = unison_delta (f);
-			l = f - d * _half_unison_number;
-			f = l;
-			limit_value (f, 0.0f, 0.5f);
+			if (with_noise)
+				e = std::sqrt (fs[i]) * _unison_noise;
 			// Add unisons:
-			for (int p = 0; p < _unison_number; ++p)
+			for (int u = 0; u < _unison_number; ++u)
 			{
+				f = fs[i] * _unison[u].relative_frequency;
+				limit_value (f, 0.0f, 0.5f);
+				// Unison vibrato:
+				_unison[u].vibrato_phase = mod1 (_unison[u].vibrato_phase + _unison[u].vibrato_frequency);
+				v = fs[i] * _unison[u].vibrato_level * DSP::base_sin<5, Sample> (_unison[u].vibrato_phase * 2.0f - 1.0f);
+				// Update phases:
 				if (with_noise)
-				{
-					z = f + e * noise_sample() * _distribution_lookup[p];
-					_phases[p] = mod1 (_phases[p] + z);
-				}
+					_unison[u].phase = mod1 (_unison[u].phase + v + f + e * noise_sample() * _unison[u].noise_level);
 				else
-					_phases[p] = mod1 (_phases[p] + f);
-				// Don't take z as wave's frequency, because this might result in frequent jumping
+					_unison[u].phase = mod1 (_unison[u].phase + v + f);
+				// Don't take "noised f" as wave's frequency, because this might result in frequent jumping
 				// between two wavetables and unwanted audible noise on some notes. It's better to get
 				// some (inaudible) aliasing than that:
-				tmpsum = (*_wavetable)(_phases[p], f);
+				tmpsum = (*_wavetable)(_unison[u].phase, f);
 				// Stereo:
 				if (unison_stereo)
 				{
-					sum1 += _stereo_unison_lookup[p] * tmpsum;
-					sum2 += _stereo_unison_lookup[_unison_number - p - 1] * tmpsum;
+					sum1 += _unison[u].stereo_level_1 * tmpsum;
+					sum2 += _unison[u].stereo_level_2 * tmpsum;
 				}
 				else
 				{
 					sum1 += tmpsum;
 					sum2 += tmpsum;
 				}
-				f += d;
 			}
 			o1[i] = sum1;
 			o2[i] = sum2;

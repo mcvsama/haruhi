@@ -193,6 +193,8 @@ class Part:
 		Haruhi::EventPort* unison_spread;
 		Haruhi::EventPort* unison_init;
 		Haruhi::EventPort* unison_noise;
+		Haruhi::EventPort* unison_vibrato_level;
+		Haruhi::EventPort* unison_vibrato_frequency;
 		Haruhi::EventPort* noise_level;
 
 		// Filter ports:
@@ -245,6 +247,8 @@ class Part:
 		Haruhi::ControllerProxy unison_spread;
 		Haruhi::ControllerProxy unison_init;
 		Haruhi::ControllerProxy unison_noise;
+		Haruhi::ControllerProxy unison_vibrato_level;
+		Haruhi::ControllerProxy unison_vibrato_frequency;
 
 		// Filters:
 		Haruhi::ControllerProxy filter_1_frequency;
@@ -279,6 +283,8 @@ class Part:
 		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	unison_spread;
 		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	unison_init;
 		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	unison_noise;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	unison_vibrato_level;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	unison_vibrato_frequency;
 
 		// Filter params updaters:
 		FilterParamUpdater<Params::Filter::ControllerParamPtr>	filter_1_frequency;

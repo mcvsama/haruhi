@@ -81,32 +81,34 @@ Part::PartPorts::PartPorts (Plugin* plugin, unsigned int part_id):
 {
 	_port_group = new Haruhi::PortGroup (graph(), QString ("Part %1").arg (part_id).toStdString());
 
-	wave_shape				= new Haruhi::EventPort (plugin, "Osc - Wave shape", Haruhi::Port::Input, _port_group);
-	modulator_amplitude		= new Haruhi::EventPort (plugin, "Osc - Wave modulator amplitude", Haruhi::Port::Input, _port_group);
-	modulator_index			= new Haruhi::EventPort (plugin, "Osc - Wave modulator index", Haruhi::Port::Input, _port_group);
-	modulator_shape			= new Haruhi::EventPort (plugin, "Osc - Wave modulator shape", Haruhi::Port::Input, _port_group);
-	volume					= new Haruhi::EventPort (plugin, "Osc - Volume", Haruhi::Port::Input, _port_group);
-	amplitude				= new Haruhi::EventPort (plugin, "Osc - Amplitude modulation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	frequency				= new Haruhi::EventPort (plugin, "Osc - Frequency modulation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	panorama				= new Haruhi::EventPort (plugin, "Osc - Panorama", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	detune					= new Haruhi::EventPort (plugin, "Osc - Detune", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	pitchbend				= new Haruhi::EventPort (plugin, "Osc - Pitchbend", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	velocity_sens			= new Haruhi::EventPort (plugin, "Osc - Velocity sensitivity", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	unison_index			= new Haruhi::EventPort (plugin, "Osc - Unison index", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	unison_spread			= new Haruhi::EventPort (plugin, "Osc - Unison spread", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	unison_init				= new Haruhi::EventPort (plugin, "Osc - Unison init. φ", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	unison_noise			= new Haruhi::EventPort (plugin, "Osc - Unison noise", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	portamento_time			= new Haruhi::EventPort (plugin, "Osc - Portamento time", Haruhi::Port::Input, _port_group);
-	phase					= new Haruhi::EventPort (plugin, "Osc - Phase", Haruhi::Port::Input, _port_group);
-	noise_level				= new Haruhi::EventPort (plugin, "Osc - Noise level", Haruhi::Port::Input, _port_group);
-	filter_1_frequency		= new Haruhi::EventPort (plugin, "Filter 1 - Frequency", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_1_resonance		= new Haruhi::EventPort (plugin, "Filter 1 - Resonance (Q)", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_1_gain			= new Haruhi::EventPort (plugin, "Filter 1 - Gain", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_1_attenuation	= new Haruhi::EventPort (plugin, "Filter 1 - Attenuation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_2_frequency		= new Haruhi::EventPort (plugin, "Filter 2 - Frequency", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_2_resonance		= new Haruhi::EventPort (plugin, "Filter 2 - Resonance (Q)", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_2_gain			= new Haruhi::EventPort (plugin, "Filter 2 - Gain", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_2_attenuation	= new Haruhi::EventPort (plugin, "Filter 2 - Attenuation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	wave_shape					= new Haruhi::EventPort (plugin, "Osc - Wave shape", Haruhi::Port::Input, _port_group);
+	modulator_amplitude			= new Haruhi::EventPort (plugin, "Osc - Wave modulator amplitude", Haruhi::Port::Input, _port_group);
+	modulator_index				= new Haruhi::EventPort (plugin, "Osc - Wave modulator index", Haruhi::Port::Input, _port_group);
+	modulator_shape				= new Haruhi::EventPort (plugin, "Osc - Wave modulator shape", Haruhi::Port::Input, _port_group);
+	volume						= new Haruhi::EventPort (plugin, "Osc - Volume", Haruhi::Port::Input, _port_group);
+	amplitude					= new Haruhi::EventPort (plugin, "Osc - Amplitude modulation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	frequency					= new Haruhi::EventPort (plugin, "Osc - Frequency modulation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	panorama					= new Haruhi::EventPort (plugin, "Osc - Panorama", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	detune						= new Haruhi::EventPort (plugin, "Osc - Detune", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	pitchbend					= new Haruhi::EventPort (plugin, "Osc - Pitchbend", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	velocity_sens				= new Haruhi::EventPort (plugin, "Osc - Velocity sensitivity", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	unison_index				= new Haruhi::EventPort (plugin, "Osc - Unison index", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	unison_spread				= new Haruhi::EventPort (plugin, "Osc - Unison spread", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	unison_init					= new Haruhi::EventPort (plugin, "Osc - Unison init. φ", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	unison_noise				= new Haruhi::EventPort (plugin, "Osc - Unison noise", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	unison_vibrato_level		= new Haruhi::EventPort (plugin, "Osc - Unison vibrato level", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	unison_vibrato_frequency	= new Haruhi::EventPort (plugin, "Osc - Unison vibrato frequency", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	portamento_time				= new Haruhi::EventPort (plugin, "Osc - Portamento time", Haruhi::Port::Input, _port_group);
+	phase						= new Haruhi::EventPort (plugin, "Osc - Phase", Haruhi::Port::Input, _port_group);
+	noise_level					= new Haruhi::EventPort (plugin, "Osc - Noise level", Haruhi::Port::Input, _port_group);
+	filter_1_frequency			= new Haruhi::EventPort (plugin, "Filter 1 - Frequency", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	filter_1_resonance			= new Haruhi::EventPort (plugin, "Filter 1 - Resonance (Q)", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	filter_1_gain				= new Haruhi::EventPort (plugin, "Filter 1 - Gain", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	filter_1_attenuation		= new Haruhi::EventPort (plugin, "Filter 1 - Attenuation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	filter_2_frequency			= new Haruhi::EventPort (plugin, "Filter 2 - Frequency", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	filter_2_resonance			= new Haruhi::EventPort (plugin, "Filter 2 - Resonance (Q)", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	filter_2_gain				= new Haruhi::EventPort (plugin, "Filter 2 - Gain", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	filter_2_attenuation		= new Haruhi::EventPort (plugin, "Filter 2 - Attenuation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
 }
 
 
@@ -127,6 +129,8 @@ Part::PartPorts::~PartPorts()
 	delete unison_spread;
 	delete unison_init;
 	delete unison_noise;
+	delete unison_vibrato_level;
+	delete unison_vibrato_frequency;
 	delete portamento_time;
 	delete phase;
 	delete noise_level;
@@ -166,6 +170,8 @@ Part::PartControllerProxies::PartControllerProxies (PartPorts* part_ports, Param
 	CONSTRUCT_CONTROLLER_PROXY (unison_spread),
 	CONSTRUCT_CONTROLLER_PROXY (unison_init),
 	CONSTRUCT_CONTROLLER_PROXY (unison_noise),
+	CONSTRUCT_CONTROLLER_PROXY (unison_vibrato_level),
+	CONSTRUCT_CONTROLLER_PROXY (unison_vibrato_frequency),
 #undef CONSTRUCT_CONTROLLER_PROXY
 
 #define CONSTRUCT_CONTROLLER_PROXY(name) filter_1_##name (part_ports->filter_1_##name, &part_params->voice.filter[0].name)
@@ -232,6 +238,8 @@ Part::PartControllerProxies::process_events()
 	PROXY_PROCESS_EVENTS (unison_spread);
 	PROXY_PROCESS_EVENTS (unison_init);
 	PROXY_PROCESS_EVENTS (unison_noise);
+	PROXY_PROCESS_EVENTS (unison_vibrato_level);
+	PROXY_PROCESS_EVENTS (unison_vibrato_frequency);
 	PROXY_PROCESS_EVENTS (filter_1_frequency);
 	PROXY_PROCESS_EVENTS (filter_1_resonance);
 	PROXY_PROCESS_EVENTS (filter_1_gain);
@@ -256,6 +264,8 @@ Part::ParamUpdaters::ParamUpdaters (VoiceManager* voice_manager):
 	CONSTRUCT_PARAM_UPDATER (unison_spread),
 	CONSTRUCT_PARAM_UPDATER (unison_init),
 	CONSTRUCT_PARAM_UPDATER (unison_noise),
+	CONSTRUCT_PARAM_UPDATER (unison_vibrato_level),
+	CONSTRUCT_PARAM_UPDATER (unison_vibrato_frequency),
 #undef CONSTRUCT_PARAM_UPDATER
 
 #define CONSTRUCT_PARAM_UPDATER(name) filter_1_##name (voice_manager, 0, &Params::Filter::name)
@@ -353,6 +363,8 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 	UPDATE_VOICES_ON_VCE (unison_spread);
 	UPDATE_VOICES_ON_VCE (unison_init);
 	UPDATE_VOICES_ON_VCE (unison_noise);
+	UPDATE_VOICES_ON_VCE (unison_vibrato_level);
+	UPDATE_VOICES_ON_VCE (unison_vibrato_frequency);
 #undef UPDATE_VOICES_ON_VCE
 
 #define UPDATE_FILTERS_ON_VCE(name) \

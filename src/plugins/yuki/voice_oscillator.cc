@@ -32,8 +32,10 @@ VoiceOscillator::VoiceOscillator (DSP::Wavetable* wavetable):
 	// -1 to force update unison coefficients:
 	_unison_number (-1),
 	_unison_spread (0),
-	_unison_noise (0.0),
+	_unison_noise (0.0f),
 	_unison_stereo (false),
+	_unison_vibrato_level (0.0f),
+	_unison_vibrato_frequency (0.0f),
 	_noise(),
 	_noise_state (_noise.state()),
 	_noise_enabled (false),
@@ -47,9 +49,10 @@ VoiceOscillator::VoiceOscillator (DSP::Wavetable* wavetable):
 void
 VoiceOscillator::set_phase (Sample phase)
 {
-	for (int i = 0; i < _unison_number; ++i)
+	for (int u = 0; u < _unison_number; ++u)
 	{
-		_phases[i] = 0.5f * (1.0f + phase);
+		_unison[u].phase = 0.5f * (1.0f + phase);
+		_unison[u].vibrato_phase = 0.5f * (_noise.get (_noise_state) + 1.0f);
 		phase += _initial_phase_spread;
 	}
 }
@@ -67,9 +70,9 @@ VoiceOscillator::set_unison_number (int number)
 
 		if (number > _unison_number && _unison_number > 0)
 		{
-			Sample p = _phases[_unison_number-1];
-			for (int i = _unison_number; i < number; ++i)
-				_phases[i] = p += _initial_phase_spread;
+			Sample p = _unison[_unison_number-1].phase;
+			for (int u = _unison_number; u < number; ++u)
+				_unison[u].phase = p += _initial_phase_spread;
 		}
 
 		_unison_number = number;

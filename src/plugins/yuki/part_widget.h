@@ -144,6 +144,8 @@ class PartWidget:
 	Haruhi::Knob*		_knob_unison_spread;
 	Haruhi::Knob*		_knob_unison_init;
 	Haruhi::Knob*		_knob_unison_noise;
+	Haruhi::Knob*		_knob_unison_vibrato_level;
+	Haruhi::Knob*		_knob_unison_vibrato_frequency;
 
 	// Other knobs:
 	Haruhi::Knob*		_knob_portamento_time;

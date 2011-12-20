@@ -116,7 +116,9 @@ Params::Voice::Voice():
 	HARUHI_YUKI_CONSTRUCT_EXPLICIT (unison_index, UnisonIndex, UnisonIndexMin, UnisonIndexMax, 0, 1),
 	HARUHI_YUKI_CONSTRUCT (unison_spread, UnisonSpread, 2),
 	HARUHI_YUKI_CONSTRUCT (unison_init, UnisonInit, 2),
-	HARUHI_YUKI_CONSTRUCT (unison_noise, UnisonNoise, 2)
+	HARUHI_YUKI_CONSTRUCT (unison_noise, UnisonNoise, 2),
+	HARUHI_YUKI_CONSTRUCT (unison_vibrato_level, UnisonVibratoLevel, 2),
+	HARUHI_YUKI_CONSTRUCT (unison_vibrato_frequency, UnisonVibratoFrequency, 2)
 { }
 
 
@@ -129,6 +131,8 @@ HARUHI_YUKI_DEFINE_PARAMS (Voice)
 	HARUHI_YUKI_DEFINE_PARAM (unison_spread)
 	HARUHI_YUKI_DEFINE_PARAM (unison_init)
 	HARUHI_YUKI_DEFINE_PARAM (unison_noise)
+	HARUHI_YUKI_DEFINE_PARAM (unison_vibrato_level)
+	HARUHI_YUKI_DEFINE_PARAM (unison_vibrato_frequency)
 	HARUHI_YUKI_DEFINE_PARAM (amplitude)
 	HARUHI_YUKI_DEFINE_PARAM (frequency)
 HARUHI_YUKI_FINISH_DEFINITION()

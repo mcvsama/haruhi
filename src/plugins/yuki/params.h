@@ -173,6 +173,8 @@ struct Params
 		HARUHI_YUKI_PARAM (UnisonSpread,			       0,	+1000000,	+1000000,	       0)
 		HARUHI_YUKI_PARAM (UnisonInit,				-1000000,	+1000000,	+1000000,	       0)
 		HARUHI_YUKI_PARAM (UnisonNoise,				       0,	+1000000,	+1000000,	       0)
+		HARUHI_YUKI_PARAM (UnisonVibratoLevel,		       0,	+1000000,	+1000000,	       0)
+		HARUHI_YUKI_PARAM (UnisonVibratoFrequency,	       0,	+1000000,	+1000000,	       0)
 
 		Haruhi::ControllerParam amplitude;
 		Haruhi::ControllerParam frequency;
@@ -184,8 +186,10 @@ struct Params
 		Haruhi::ControllerParam unison_spread;
 		Haruhi::ControllerParam unison_init;
 		Haruhi::ControllerParam unison_noise;
+		Haruhi::ControllerParam unison_vibrato_level;
+		Haruhi::ControllerParam unison_vibrato_frequency;
 
-		static const int NUM_PARAMS = 22;
+		static const int NUM_PARAMS = 12;
 
 		// Embedded dual Filter params:
 		Filter filter[2];

@@ -51,22 +51,24 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	Part::PartControllerProxies* proxies = _part->proxies();
 
-	_knob_wave_shape			= new Haruhi::Knob (this, &proxies->wave_shape, "Shape");
-	_knob_modulator_amplitude	= new Haruhi::Knob (this, &proxies->modulator_amplitude, "Mod.amp.");
-	_knob_modulator_index		= new Haruhi::Knob (this, &proxies->modulator_index, "Mod.index");
-	_knob_modulator_shape		= new Haruhi::Knob (this, &proxies->modulator_shape, "Mod.shape");
-	_knob_volume				= new Haruhi::Knob (this, &proxies->volume, "Volume dB");
-	_knob_panorama				= new Haruhi::Knob (this, &proxies->panorama, "Panorama");
-	_knob_detune				= new Haruhi::Knob (this, &proxies->detune, "Detune");
-	_knob_pitchbend				= new Haruhi::Knob (this, &proxies->pitchbend, "Pitch");
-	_knob_unison_index			= new Haruhi::Knob (this, &proxies->unison_index, "Unison");
-	_knob_unison_spread			= new Haruhi::Knob (this, &proxies->unison_spread, "U.spread");
-	_knob_unison_init			= new Haruhi::Knob (this, &proxies->unison_init, "U.init.φ");
-	_knob_unison_noise			= new Haruhi::Knob (this, &proxies->unison_noise, "U.noise");
-	_knob_velocity_sens			= new Haruhi::Knob (this, &proxies->velocity_sens, "Vel.sens.");
-	_knob_portamento_time		= new Haruhi::Knob (this, &proxies->portamento_time, "Glide");
-	_knob_phase					= new Haruhi::Knob (this, &proxies->phase, "Phase");
-	_knob_noise_level			= new Haruhi::Knob (this, &proxies->noise_level, "Noise lvl");
+	_knob_wave_shape				= new Haruhi::Knob (this, &proxies->wave_shape, "Shape");
+	_knob_modulator_amplitude		= new Haruhi::Knob (this, &proxies->modulator_amplitude, "Mod.amp.");
+	_knob_modulator_index			= new Haruhi::Knob (this, &proxies->modulator_index, "Mod.index");
+	_knob_modulator_shape			= new Haruhi::Knob (this, &proxies->modulator_shape, "Mod.shape");
+	_knob_volume					= new Haruhi::Knob (this, &proxies->volume, "Volume dB");
+	_knob_panorama					= new Haruhi::Knob (this, &proxies->panorama, "Panorama");
+	_knob_detune					= new Haruhi::Knob (this, &proxies->detune, "Detune");
+	_knob_pitchbend					= new Haruhi::Knob (this, &proxies->pitchbend, "Pitch");
+	_knob_unison_index				= new Haruhi::Knob (this, &proxies->unison_index, "Unison");
+	_knob_unison_spread				= new Haruhi::Knob (this, &proxies->unison_spread, "U.spread");
+	_knob_unison_init				= new Haruhi::Knob (this, &proxies->unison_init, "U.init.φ");
+	_knob_unison_noise				= new Haruhi::Knob (this, &proxies->unison_noise, "U.noise");
+	_knob_unison_vibrato_level		= new Haruhi::Knob (this, &proxies->unison_vibrato_level, "U.V.lev");
+	_knob_unison_vibrato_frequency	= new Haruhi::Knob (this, &proxies->unison_vibrato_frequency, "U.V.freq");
+	_knob_velocity_sens				= new Haruhi::Knob (this, &proxies->velocity_sens, "Vel.sens.");
+	_knob_portamento_time			= new Haruhi::Knob (this, &proxies->portamento_time, "Glide");
+	_knob_phase						= new Haruhi::Knob (this, &proxies->phase, "Phase");
+	_knob_noise_level				= new Haruhi::Knob (this, &proxies->noise_level, "Noise lvl");
 
 	QObject::connect (_knob_phase, SIGNAL (changed (int)), this, SLOT (update_phase_marker()));
 
@@ -77,7 +79,8 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	Haruhi::Knob* all_knobs[] = {
 		_knob_wave_shape, _knob_modulator_amplitude, _knob_modulator_index, _knob_modulator_shape,
 		_knob_volume, _knob_panorama, _knob_detune, _knob_pitchbend, _knob_unison_index, _knob_unison_spread,
-		_knob_unison_init, _knob_unison_noise, _knob_velocity_sens, _knob_portamento_time, _knob_phase, _knob_noise_level
+		_knob_unison_init, _knob_unison_noise, _knob_unison_vibrato_level, _knob_unison_vibrato_frequency,
+		_knob_velocity_sens, _knob_portamento_time, _knob_phase, _knob_noise_level
 	};
 	for (Haruhi::Knob** k = all_knobs; k != all_knobs + ARRAY_SIZE (all_knobs); ++k)
 		(*k)->set_unit_bay (_part->part_manager()->plugin()->unit_bay());
@@ -88,6 +91,8 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QToolTip::add (_knob_unison_spread, "Unison frequencies spread");
 	QToolTip::add (_knob_unison_init, "Unison initial phases spread");
 	QToolTip::add (_knob_unison_noise, "Unison noise");
+	QToolTip::add (_knob_unison_vibrato_level, "Unison vibrato level");
+	QToolTip::add (_knob_unison_vibrato_frequency, "Unison vibrato frequency");
 	QToolTip::add (_knob_velocity_sens, "Velocity sensitivity (-1 for reverse, 0 for none)");
 
 	// Wave plots:
@@ -389,9 +394,11 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	panel_layout->addWidget (_knob_unison_spread, 2, 5);
 	panel_layout->addWidget (_knob_unison_init, 2, 6);
 	panel_layout->addWidget (_knob_unison_noise, 2, 7);
-	panel_layout->addWidget (_filter_1, 3, 0, 1, 4);
-	panel_layout->addWidget (_filter_2, 3, 4, 1, 4);
-	panel_layout->addWidget (group1, 3, 8, 1, 3);
+	panel_layout->addWidget (_filter_1, 3, 0, 2, 4);
+	panel_layout->addWidget (_filter_2, 3, 4, 2, 4);
+	panel_layout->addWidget (_knob_unison_vibrato_level, 3, 8, 1, 1);
+	panel_layout->addWidget (_knob_unison_vibrato_frequency, 3, 9, 1, 1);
+	panel_layout->addWidget (group1, 4, 8, 1, 3);
 
 	QGridLayout* resizeable_layout = new QGridLayout (_panel);
 	resizeable_layout->setMargin (0);
@@ -451,6 +458,8 @@ PartWidget::~PartWidget()
 	delete _knob_unison_spread;
 	delete _knob_unison_init;
 	delete _knob_unison_noise;
+	delete _knob_unison_vibrato_level;
+	delete _knob_unison_vibrato_frequency;
 	delete _knob_portamento_time;
 	delete _knob_phase;
 	delete _knob_noise_level;
