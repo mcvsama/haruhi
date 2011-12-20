@@ -37,39 +37,22 @@ namespace DSP {
  * Defined in [-1.0, 1.0].
  */
 
-template<class Sample>
+template<unsigned int series, class Sample>
 	inline Sample
-	base_sin5 (Sample register x)
+	base_sin (Sample register x)
 	{
+		static_assert (series == 5 || series == 6 || series == 7, InvalidArgument_series);
+
 		if (x > 0.5)		x = +1.0 - x;
 		else if (x < -0.5)	x = -1.0 - x;
 		x *= M_PI;
 		Sample const register xx = x * x;
-		return x * (xx * (xx * (xx * (xx * (1.0f/362880.0f) - (1.0f/5040.0f)) + (1.0f/120.0f)) - (1.0f/6.0f)) + 1.0f);
-	}
-
-
-template<class Sample>
-	inline Sample
-	base_sin6 (Sample register x)
-	{
-		if (x > 0.5f)		x = +1.0f - x;
-		else if (x < -0.5f)	x = -1.0f - x;
-		x *= M_PI;
-		Sample const register xx = x * x;
-		return x * (xx * (xx * (xx * (xx * (xx * (1.0f/39916800.0f) + (1.0f/362880.0f)) - (1.0f/5040.0f)) + (1.0f/120.0f)) - (1.0f/6.0f)) + 1.0f);
-	}
-
-
-template<class Sample>
-	inline Sample
-	base_sin7 (Sample register x)
-	{
-		if (x > 0.5)		x = +1.0 - x;
-		else if (x < -0.5)	x = -1.0 - x;
-		x *= M_PI;
-		Sample const register xx = x * x;
-		return x * (xx * (xx * (xx * (xx * (xx * (xx * (1.0f/6227020800.0f) - (1.0f/39916800.0f)) + (1.0f/362880.0f)) - (1.0f/5040.0f)) + (1.0f/120.0f)) - (1.0f/6.0f)) + 1.0f);
+		if (series == 5)
+			return x * (xx * (xx * (xx * (xx * (1.0f/362880.0f) - (1.0f/5040.0f)) + (1.0f/120.0f)) - (1.0f/6.0f)) + 1.0f);
+		else if (series == 6)
+			return x * (xx * (xx * (xx * (xx * (xx * (1.0f/39916800.0f) + (1.0f/362880.0f)) - (1.0f/5040.0f)) + (1.0f/120.0f)) - (1.0f/6.0f)) + 1.0f);
+		else if (series == 7)
+			return x * (xx * (xx * (xx * (xx * (xx * (xx * (1.0f/6227020800.0f) - (1.0f/39916800.0f)) + (1.0f/362880.0f)) - (1.0f/5040.0f)) + (1.0f/120.0f)) - (1.0f/6.0f)) + 1.0f);
 	}
 
 
@@ -98,7 +81,7 @@ namespace ParametricWaves {
 			x = x * 2.0f - 1.0f;
 			float a = pow2 (pow2 (1.0f + param())); // x^4
 			float sgn = x >= 0.0f ? 1.0f : -1.0f;
-			return sgn * (DSP::base_sin7 (std::pow (sgn * x, a)));
+			return sgn * (DSP::base_sin<7> (std::pow (sgn * x, a)));
 		}
 	};
 
@@ -327,38 +310,12 @@ namespace SeriesFunctions {
 /**
  * Argument: [-1.0, 1.0].
  */
-template<class Sample>
+template<unsigned int series, class Sample>
 	inline Sample
-	base_sin5 (Sample register x, Sample base_frequency, Sample fmin, Sample fmax)
+	base_sin (Sample register x, Sample base_frequency, Sample fmin, Sample fmax)
 	{
 		if (base_frequency >= fmin)
-			return DSP::base_sin5 (x);
-		return 0.0;
-	}
-
-
-/**
- * Argument: [-1.0, 1.0].
- */
-template<class Sample>
-	inline Sample
-	base_sin6 (Sample register x, Sample base_frequency, Sample fmin, Sample fmax)
-	{
-		if (base_frequency >= fmin)
-			return DSP::base_sin6 (x);
-		return 0.0;
-	}
-
-
-/**
- * Argument: [-1.0, 1.0].
- */
-template<class Sample>
-	inline Sample
-	base_sin7 (Sample register x, Sample base_frequency, Sample fmin, Sample fmax)
-	{
-		if (base_frequency >= fmin)
-			return DSP::base_sin7 (x);
+			return DSP::base_sin<series> (x);
 		return 0.0;
 	}
 
@@ -389,7 +346,7 @@ template<class Sample>
 		for (int register k = std::max (1, a); k <= n; ++k)
 		{
 			float z = std::fmod ((2 * k - 1) * (x + 1.f), 2.f) - 1.f;
-			y += sgn * DSP::base_sin5 (z) / pow2<Sample> (2 * k - 1);
+			y += sgn * DSP::base_sin<5> (z) / pow2<Sample> (2 * k - 1);
 			sgn = -sgn;
 		}
 
@@ -420,7 +377,7 @@ template<class Sample>
 		const int a = static_cast<int> (std::ceil (0.5f * fmin / base_frequency));
 
 		for (int register k = std::max (1, a); k <= n; ++k)
-			y += DSP::base_sin5 (std::fmod ((2 * k - 1) * (x + 1.0f), 2.0f) - 1.0f) / static_cast<Sample> (2 * k - 1);
+			y += DSP::base_sin<5> (std::fmod ((2 * k - 1) * (x + 1.0f), 2.0f) - 1.0f) / static_cast<Sample> (2 * k - 1);
 
 		return y * 4.0f / M_PI;
 	}
@@ -449,7 +406,7 @@ template<class Sample>
 		const int a = static_cast<int> (std::ceil (fmin / base_frequency));
 
 		for (int register k = std::max (1, a); k <= n; ++k)
-			y += DSP::base_sin5 (std::fmod (k * (x + 1.0f), 2.0f) - 1.0f) / static_cast<Sample> (k);
+			y += DSP::base_sin<5> (std::fmod (k * (x + 1.0f), 2.0f) - 1.0f) / static_cast<Sample> (k);
 
 		return y * M_2_PI;
 	}
