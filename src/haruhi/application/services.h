@@ -24,6 +24,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QEvent>
 #include <QtGui/QApplication>
+#include <QtGui/QX11Info>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -133,12 +134,40 @@ class Services
 	static CallOutEvent*
 	call_out (boost::function<void()> callback);
 
+	/**
+	 * Return number of pixels per point on the screen. Takes into account
+	 * screen DPI reported by the Qt.
+	 */
+	static float
+	x_pixels_per_point();
+
+	/**
+	 * Return number of pixels per point on the screen. Takes into account
+	 * screen DPI reported by the Qt.
+	 */
+	static float
+	y_pixels_per_point();
+
   private:
 	static WorkPerformer*			_hi_priority_work_performer;
 	static WorkPerformer*			_lo_priority_work_performer;
 	static signed int				_detected_cores;
 	static P::CallOutDispatcher*	_call_out_dispatcher;
 };
+
+
+inline float
+Services::x_pixels_per_point()
+{
+	return QX11Info::appDpiX() / 72.0f;
+}
+
+
+inline float
+Services::y_pixels_per_point()
+{
+	return QX11Info::appDpiY() / 72.0f;
+}
 
 } // namespace Haruhi
 
