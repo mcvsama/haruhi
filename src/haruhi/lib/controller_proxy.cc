@@ -25,52 +25,19 @@
 
 namespace Haruhi {
 
-ControllerProxy::Config::Config (int limit_min, int limit_max):
-	curve (0.0f),
-	hard_limit_min (limit_min),
-	hard_limit_max (limit_max),
-	user_limit_min (limit_min),
-	user_limit_max (limit_max)
-{
-}
-
-
-int
-ControllerProxy::Config::encurve (int in) const
-{
-	float power = curve < 0
-		? renormalize (curve, -1.0f, 0.0f, 0.4f, 1.0f)
-		: renormalize (curve, 0.0f, +1.0f, 1.0f, 2.5f);
-	return roundf (renormalize (std::pow (std::max (+0.0f, renormalize (in, 1.0f * hard_limit_min, 1.0f * hard_limit_max, 0.0f, 1.0f)), power),
-								0.0f, 1.0f, 1.0f * hard_limit_min, 1.0f * hard_limit_max));
-}
-
-
-int
-ControllerProxy::Config::decurve (int in) const
-{
-	float power = curve < 0
-		? renormalize (curve, -1.0f, 0.0f, 0.4f, 1.0f)
-		: renormalize (curve, 0.0f, +1.0f, 1.0f, 2.5f);
-	return roundf (renormalize (std::pow (renormalize (in, 1.0f * hard_limit_min, 1.0f * hard_limit_max, 0.0f, 1.0f), 1.0f / power),
-								0.0f, 1.0f, 1.0f * hard_limit_min, 1.0f * hard_limit_max));
-}
-
-
 ControllerProxy::ControllerProxy (EventPort* event_port, ControllerParam* param):
-	_config (param->minimum(), param->maximum()),
 	_param (param),
 	_event_port (event_port),
 	_widget (0)
 {
+	// Follow parameter changes to update widget:
+	_param->on_change.connect (this, &ControllerProxy::param_changed);
 }
 
 
-void
-ControllerProxy::apply_config()
+ControllerProxy::~ControllerProxy()
 {
-	if (_widget)
-		_widget->schedule_for_update();
+	_param->on_change.disconnect (this, &ControllerProxy::param_changed);
 }
 
 
@@ -102,7 +69,7 @@ ControllerProxy::process_events()
 					if (!found_vce)
 					{
 						VoiceControllerEvent const* vce = static_cast<VoiceControllerEvent const*> (e->get());
-						on_voice_controller_event (vce, _config.forward_normalized (vce->value()));
+						on_voice_controller_event (vce, param()->adapter()->forward_normalized (vce->value()));
 						found_vce = true;
 					}
 					break;
@@ -112,33 +79,6 @@ ControllerProxy::process_events()
 			}
 		}
 	}
-}
-
-
-void
-ControllerProxy::save_state (QDomElement& element) const
-{
-	element.setAttribute ("curve", QString ("%1").arg (_config.curve, 0, 'f', 1));
-	element.setAttribute ("user-limit-min", QString ("%1").arg (_config.user_limit_min));
-	element.setAttribute ("user-limit-max", QString ("%1").arg (_config.user_limit_max));
-	param()->save_state (element);
-}
-
-
-void
-ControllerProxy::load_state (QDomElement const& element)
-{
-	_config.curve = 0.0;
-	_config.user_limit_min = 0;
-	_config.user_limit_max = 1;
-	if (element.hasAttribute ("curve"))
-		_config.curve = bound (element.attribute ("curve").toFloat(), -1.0f, 1.0f);
-	if (element.hasAttribute ("user-limit-min"))
-		_config.user_limit_min = bound (element.attribute ("user-limit-min").toInt(), _config.hard_limit_min, _config.hard_limit_max);
-	if (element.hasAttribute ("user-limit-max"))
-		_config.user_limit_max = bound (element.attribute ("user-limit-max").toInt(), _config.hard_limit_min, _config.hard_limit_max);
-	param()->load_state (element);
-	apply_config();
 }
 
 } // namespace Haruhi

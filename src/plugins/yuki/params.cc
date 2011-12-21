@@ -91,7 +91,13 @@ Params::Filter::Filter():
 	type (0, 7, 0, "type"),
 	stages (1, 5, 1, "stages"),
 	limiter_enabled (0, 1, 1, "limiter_enabled")
-{ }
+{
+	frequency.adapter()->curve = 1.0;
+	frequency.adapter()->user_limit_min = 0.04 * Params::Filter::FrequencyDenominator;
+	frequency.adapter()->user_limit_max = 22.0 * Params::Filter::FrequencyDenominator;
+	resonance.adapter()->curve = 1.0;
+	attenuation.adapter()->curve = 1.0;
+}
 
 
 HARUHI_YUKI_DEFINE_PARAMS (Filter)
@@ -119,7 +125,9 @@ Params::Voice::Voice():
 	HARUHI_YUKI_CONSTRUCT (unison_noise, UnisonNoise, 2),
 	HARUHI_YUKI_CONSTRUCT (unison_vibrato_level, UnisonVibratoLevel, 2),
 	HARUHI_YUKI_CONSTRUCT (unison_vibrato_frequency, UnisonVibratoFrequency, 2)
-{ }
+{
+	unison_spread.adapter()->curve = 1.0;
+}
 
 
 HARUHI_YUKI_DEFINE_PARAMS (Voice)
@@ -170,6 +178,9 @@ Params::Part::Part():
 		harmonic_phases[i] = Haruhi::ControllerParam (HarmonicPhaseMin, HarmonicPhaseMax, HarmonicPhaseDefault, HarmonicPhaseDenominator, QString ("harmonic-phase[%1]").arg (i).utf8());
 	// First/base harmonic should be fully max:
 	harmonics[0].set (HarmonicMax);
+
+	portamento_time.adapter()->curve = 1.0;
+	portamento_time.adapter()->user_limit_max = 0.5f * Params::Part::PortamentoTimeDenominator;
 }
 
 

@@ -187,33 +187,7 @@ Part::PartControllerProxies::PartControllerProxies (PartPorts* part_ports, Param
 	CONSTRUCT_CONTROLLER_PROXY (gain),
 	CONSTRUCT_CONTROLLER_PROXY (attenuation)
 #undef CONSTRUCT_CONTROLLER_PROXY
-{
-	portamento_time.config().curve = 1.0;
-	portamento_time.config().user_limit_max = 0.5f * Params::Part::PortamentoTimeDenominator;
-	portamento_time.apply_config();
-
-	filter_1_frequency.config().curve = 1.0;
-	filter_1_frequency.config().user_limit_min = 0.04 * Params::Filter::FrequencyDenominator;
-	filter_1_frequency.config().user_limit_max = 22.0 * Params::Filter::FrequencyDenominator;
-	filter_1_frequency.apply_config();
-
-	filter_1_resonance.config().curve = 1.0;
-	filter_1_resonance.apply_config();
-
-	filter_1_attenuation.config().curve = 1.0;
-	filter_1_attenuation.apply_config();
-
-	filter_2_frequency.config().curve = 1.0;
-	filter_2_frequency.config().user_limit_min = 0.04 * Params::Filter::FrequencyDenominator;
-	filter_2_frequency.config().user_limit_max = 22.0 * Params::Filter::FrequencyDenominator;
-	filter_2_frequency.apply_config();
-
-	filter_2_resonance.config().curve = 1.0;
-	filter_2_resonance.apply_config();
-
-	filter_2_attenuation.config().curve = 1.0;
-	filter_2_attenuation.apply_config();
-}
+{ }
 
 
 void

@@ -22,7 +22,6 @@
 #include <haruhi/graph/event_port.h>
 #include <haruhi/lib/controller_param.h>
 #include <haruhi/session/periodic_updater.h>
-#include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/signal.h>
 
 
@@ -36,7 +35,7 @@ namespace Haruhi {
  * (that means it will be updated on next PeriodicUpdater round).
  * When UI widget sends change events, controlled parameter is updated right away.
  */
-class ControllerProxy: public SaveableState
+class ControllerProxy: public Signal::Receiver
 {
   public:
 	/**
@@ -62,57 +61,6 @@ class ControllerProxy: public SaveableState
 		user_override();
 	};
 
-	/**
-	 * Proxy configuration.
-	 * Applies curve and limits to input data.
-	 */
-	class Config
-	{
-	  public:
-		Config (int limit_min, int limit_max);
-
-		/**
-		 * Applies forward transform. Takes input value,
-		 * returns curved and limited value.
-		 */
-		int
-		forward (int in) const;
-
-		/**
-		 * Applies reverse transform (inverse of what forward() does).
-		 */
-		int
-		reverse (int in) const;
-
-		/**
-		 * Denormalize input value from range [0.0, 1.0] to
-		 * range specified by the limits.
-		 */
-		int
-		denormalize (float in) const;
-
-		/**
-		 * The same as forward(), but takes input value normalized
-		 * into range [0.0, 1.0].
-		 */
-		int
-		forward_normalized (float in) const;
-
-	  private:
-		int
-		encurve (int in) const;
-
-		int
-		decurve (int in) const;
-
-	  public:
-		float	curve;
-		int		hard_limit_min;
-		int		hard_limit_max;
-		int		user_limit_min;
-		int		user_limit_max;
-	};
-
   public:
 	/**
 	 * \param	event_port is event port connected to this proxy.
@@ -122,17 +70,13 @@ class ControllerProxy: public SaveableState
 	 */
 	ControllerProxy (EventPort* event_port, ControllerParam* param);
 
+	~ControllerProxy();
+
 	EventPort*
 	event_port() const;
 
 	ControllerParam*
 	param() const;
-
-	Config&
-	config();
-
-	Config const&
-	config() const;
 
 	/**
 	 * Assigns Widget to be notified of parameter updates.
@@ -140,14 +84,6 @@ class ControllerProxy: public SaveableState
 	 */
 	void
 	set_widget (Widget* widget);
-
-	/**
-	 * Tells proxy that config has been updated
-	 * and widget needs to be updated too.
-	 * \entry	Qt thread only.
-	 */
-	void
-	apply_config();
 
 	/**
 	 * Processes events from assigned EventPort.
@@ -164,11 +100,11 @@ class ControllerProxy: public SaveableState
 	process_event (ControllerEvent const*);
 
 	/**
-	 * Set normal value.
+	 * Set value coming from the widget.
 	 * Apply curves and limits.
 	 */
 	void
-	set_value (int value);
+	set_value_from_widget (int value);
 
 	/**
 	 * Set absolute value.
@@ -183,17 +119,6 @@ class ControllerProxy: public SaveableState
 	void
 	reset_value();
 
-	/*
-	 * SaveableState API
-	 * Saves ControllerProxy configuration (curves, etc.)
-	 */
-
-	void
-	save_state (QDomElement&) const;
-
-	void
-	load_state (QDomElement const&);
-
   public:
 	/**
 	 * Emited when VoiceControllerEvent is encountered
@@ -202,7 +127,14 @@ class ControllerProxy: public SaveableState
 	Signal::Emiter2<VoiceControllerEvent const*, int> on_voice_controller_event;
 
   private:
-	Config				_config;
+	/**
+	 * Called back when param value or adapter config
+	 * changes. Calls widget to update itself.
+	 */
+	void
+	param_changed();
+
+  private:
 	ControllerParam*	_param;
 	EventPort*			_event_port;
 	Widget*				_widget;
@@ -213,34 +145,6 @@ inline bool
 ControllerProxy::Widget::user_override()
 {
 	return false;
-}
-
-
-inline int
-ControllerProxy::Config::forward (int in) const
-{
-	return renormalize (encurve (in), hard_limit_min, hard_limit_max, user_limit_min, user_limit_max);
-}
-
-
-inline int
-ControllerProxy::Config::reverse (int in) const
-{
-	return decurve (renormalize (in, user_limit_min, user_limit_max, hard_limit_min, hard_limit_max));
-}
-
-
-inline int
-ControllerProxy::Config::denormalize (float in) const
-{
-	return renormalize (in, 0.0f, 1.0f, 1.0f * hard_limit_min, 1.0f * hard_limit_max);
-}
-
-
-inline int
-ControllerProxy::Config::forward_normalized (float in) const
-{
-	return forward (denormalize (in));
 }
 
 
@@ -258,20 +162,6 @@ ControllerProxy::param() const
 }
 
 
-inline ControllerProxy::Config&
-ControllerProxy::config()
-{
-	return _config;
-}
-
-
-inline ControllerProxy::Config const&
-ControllerProxy::config() const
-{
-	return _config;
-}
-
-
 inline void
 ControllerProxy::set_widget (Widget* widget)
 {
@@ -284,14 +174,14 @@ ControllerProxy::process_event (ControllerEvent const* event)
 {
 	if (_widget && _widget->user_override())
 		return;
-	set_value (_config.denormalize (event->value()));
+	param()->set_from_event (event->value());
 }
 
 
 inline void
-ControllerProxy::set_value (int value)
+ControllerProxy::set_value_from_widget (int value)
 {
-	set_absolute_value (_config.forward (value));
+	param()->set_from_widget (value);
 }
 
 
@@ -299,8 +189,6 @@ inline void
 ControllerProxy::set_absolute_value (int value)
 {
 	param()->set (value);
-	if (_widget)
-		_widget->schedule_for_update();
 }
 
 
@@ -308,6 +196,12 @@ inline void
 ControllerProxy::reset_value()
 {
 	param()->reset();
+}
+
+
+inline void
+ControllerProxy::param_changed()
+{
 	if (_widget)
 		_widget->schedule_for_update();
 }

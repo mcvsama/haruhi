@@ -270,6 +270,7 @@ SRC_HEADERS += haruhi/lib/midi.h
 SRC_HEADERS += haruhi/lib/param.h
 
 SRC_SOURCES += haruhi/lib/controller.cc
+SRC_SOURCES += haruhi/lib/controller_param.cc
 SRC_SOURCES += haruhi/lib/controller_proxy.cc
 SRC_SOURCES += haruhi/lib/midi.cc
 

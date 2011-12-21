@@ -32,6 +32,58 @@ namespace Haruhi {
 class ControllerParam: public Param<int>
 {
   public:
+	/**
+	 * Proxy configuration.
+	 * Applies curve and limits to input data.
+	 */
+	class Adapter
+	{
+	  public:
+		Adapter (int limit_min, int limit_max);
+
+		/**
+		 * Applies forward transform. Takes input value,
+		 * returns curved and limited value.
+		 */
+		int
+		forward (int in) const;
+
+		/**
+		 * Applies reverse transform (inverse of what forward() does).
+		 */
+		int
+		reverse (int in) const;
+
+		/**
+		 * Denormalize input value from range [0.0, 1.0] to
+		 * range specified by the limits.
+		 */
+		int
+		denormalize (float in) const;
+
+		/**
+		 * The same as forward(), but takes input value normalized
+		 * into range [0.0, 1.0].
+		 */
+		int
+		forward_normalized (float in) const;
+
+	  private:
+		int
+		encurve (int in) const;
+
+		int
+		decurve (int in) const;
+
+	  public:
+		float	curve;
+		int		hard_limit_min;
+		int		hard_limit_max;
+		int		user_limit_min;
+		int		user_limit_max;
+	};
+
+  public:
 	explicit ControllerParam (const char* name = "");
 
 	ControllerParam (int minimum, int maximum, int default_value, int denominator, const char* name,
@@ -41,6 +93,12 @@ class ControllerParam: public Param<int>
 
 	ControllerParam&
 	operator= (ControllerParam const& other);
+
+	Adapter*
+	adapter();
+
+	Adapter const*
+	adapter() const;
 
 	int
 	denominator() const;
@@ -63,7 +121,32 @@ class ControllerParam: public Param<int>
 	int
 	step() const;
 
+	/**
+	 * Set from incoming value that is normalized to [0.0..1.0].
+	 * Curve settings are applied by this function.
+	 */
+	void
+	set_from_event (float value);
+
+	/**
+	 * Set value incoming from controller widget.
+	 * Curve settings are applied by this function.
+	 */
+	void
+	set_from_widget (int value);
+
+	/*
+	 * SaveableState reimplementation
+	 */
+
+	void
+	save_state (QDomElement& parent) const;
+
+	void
+	load_state (QDomElement const& parent);
+
   private:
+	Adapter	_adapter;
 	int		_denominator;
 	float	_1_div_denominator;
 	float	_shown_min;
@@ -76,6 +159,7 @@ class ControllerParam: public Param<int>
 inline
 ControllerParam::ControllerParam (const char* name):
 	Param (name),
+	_adapter (0, 0),
 	_denominator (1),
 	_1_div_denominator (1.0f / _denominator)
 { }
@@ -85,6 +169,7 @@ inline
 ControllerParam::ControllerParam (int minimum, int maximum, int default_value, int denominator, const char* name,
 								  float shown_min, float shown_max, int shown_decimals, int step):
 	Param (minimum, maximum, default_value, name),
+	_adapter (minimum, maximum),
 	_denominator (denominator),
 	_1_div_denominator (1.0f / _denominator),
 	_shown_min (shown_min),
@@ -97,6 +182,7 @@ ControllerParam::ControllerParam (int minimum, int maximum, int default_value, i
 inline
 ControllerParam::ControllerParam (ControllerParam const& other):
 	Param (other),
+	_adapter (other._adapter),
 	_denominator (other._denominator),
 	_1_div_denominator (other._1_div_denominator),
 	_shown_min (other._shown_min),
@@ -110,6 +196,7 @@ inline ControllerParam&
 ControllerParam::operator= (ControllerParam const& other)
 {
 	Param<int>::operator= (other);
+	_adapter = other._adapter;
 	_denominator = other._denominator;
 	_1_div_denominator = other._1_div_denominator;
 	_shown_min = other._shown_min;
@@ -117,6 +204,48 @@ ControllerParam::operator= (ControllerParam const& other)
 	_shown_decimals = other._shown_decimals;
 	_step = other._step;
 	return *this;
+}
+
+
+inline int
+ControllerParam::Adapter::forward (int in) const
+{
+	return renormalize (encurve (in), hard_limit_min, hard_limit_max, user_limit_min, user_limit_max);
+}
+
+
+inline int
+ControllerParam::Adapter::reverse (int in) const
+{
+	return decurve (renormalize (in, user_limit_min, user_limit_max, hard_limit_min, hard_limit_max));
+}
+
+
+inline int
+ControllerParam::Adapter::denormalize (float in) const
+{
+	return renormalize (in, 0.0f, 1.0f, 1.0f * hard_limit_min, 1.0f * hard_limit_max);
+}
+
+
+inline int
+ControllerParam::Adapter::forward_normalized (float in) const
+{
+	return forward (denormalize (in));
+}
+
+
+inline ControllerParam::Adapter*
+ControllerParam::adapter()
+{
+	return &_adapter;
+}
+
+
+inline ControllerParam::Adapter const*
+ControllerParam::adapter() const
+{
+	return &_adapter;
 }
 
 
@@ -159,6 +288,20 @@ inline int
 ControllerParam::step() const
 {
 	return _step;
+}
+
+
+inline void
+ControllerParam::set_from_event (float value)
+{
+	set (_adapter.denormalize (value));
+}
+
+
+inline void
+ControllerParam::set_from_widget (int value)
+{
+	set (_adapter.forward (value));
 }
 
 } // namespace Haruhi
