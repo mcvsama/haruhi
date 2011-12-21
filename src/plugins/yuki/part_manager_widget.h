@@ -48,6 +48,15 @@ class PartManagerWidget:
 		Placeholder (QWidget* parent);
 	};
 
+	class TabWidget: public QTabWidget
+	{
+	  public:
+		TabWidget (QWidget* parent);
+
+		QTabBar*
+		tabBar() const;
+	};
+
   public:
 	PartManagerWidget (QWidget* parent, PartManager*);
 
@@ -72,6 +81,12 @@ class PartManagerWidget:
 	void
 	remove_part (Part*);
 
+	/**
+	 * Update tab ID for given Part.
+	 */
+	void
+	update_part (Part*);
+
   private slots:
 	/**
 	 * Add new part.
@@ -88,6 +103,12 @@ class PartManagerWidget:
 	remove_current_part();
 
 	/**
+	 * Called when tab is moved in tabs.
+	 */
+	void
+	tab_moved (int old_position, int new_position);
+
+	/**
 	 * Update params from widget states.
 	 */
 	void
@@ -102,7 +123,7 @@ class PartManagerWidget:
 
   private:
 	PartManager*	_part_manager;
-	QTabWidget*		_tabs;
+	TabWidget*		_tabs;
 	QPushButton*	_add_part_button;
 	QPushButton*	_remove_part_button;
 	QWidget*		_placeholder;
@@ -113,6 +134,18 @@ class PartManagerWidget:
 	Haruhi::Knob*	_knob_detune;
 	Haruhi::Knob*	_knob_stereo_width;
 };
+
+
+inline PartManagerWidget::TabWidget::TabWidget (QWidget* parent):
+	QTabWidget (parent)
+{ }
+
+
+inline QTabBar*
+PartManagerWidget::TabWidget::tabBar() const
+{
+	return QTabWidget::tabBar();
+}
 
 } // namespace Yuki
 

@@ -32,6 +32,7 @@
 #include <haruhi/utility/work_performer.h>
 #include <haruhi/utility/numeric.h>
 #include <haruhi/utility/noncopyable.h>
+#include <haruhi/utility/saveable_state.h>
 
 // Local:
 #include "has_widget.h"
@@ -53,6 +54,7 @@ class Part:
 	public HasWidget<PartWidget>,
 	public HasID,
 	public Signal::Receiver,
+	public SaveableState,
 	private Noncopyable
 {
 	friend class PartWidget;
@@ -412,6 +414,16 @@ class Part:
 	 */
 	DSP::Wave*
 	final_wave() const;
+
+	/*
+	 * SaveableState implementation
+	 */
+
+	void
+	save_state (QDomElement&) const;
+
+	void
+	load_state (QDomElement const&);
 
   private:
 	/**

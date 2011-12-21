@@ -135,6 +135,12 @@ class ControllerParam: public Param<int>
 	void
 	set_from_widget (int value);
 
+	/**
+	 * Adds sanitization of Adapter parameters.
+	 */
+	void
+	sanitize();
+
 	/*
 	 * SaveableState reimplementation
 	 */

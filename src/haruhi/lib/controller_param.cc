@@ -79,6 +79,19 @@ ControllerParam::load_state (QDomElement const& element)
 	if (element.hasAttribute ("user-limit-max"))
 		_adapter.user_limit_max = bound (element.attribute ("user-limit-max").toInt(), _adapter.hard_limit_min, _adapter.hard_limit_max);
 	Param<int>::load_state (element);
+	sanitize();
+}
+
+
+void
+ControllerParam::sanitize()
+{
+	Param<int>::sanitize();
+	limit_value (_adapter.curve, -1.0f, +1.0f);
+	limit_value (_adapter.hard_limit_min, minimum(), maximum());
+	limit_value (_adapter.hard_limit_max, _adapter.hard_limit_min, maximum());
+	limit_value (_adapter.user_limit_min, minimum(), maximum());
+	limit_value (_adapter.user_limit_max, _adapter.user_limit_min, maximum());
 }
 
 } // namespace Haruhi

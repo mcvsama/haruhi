@@ -19,8 +19,10 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/plugin/plugin.h>
 #include <haruhi/session/unit_bay.h>
+#include <haruhi/plugin/plugin.h>
+#include <haruhi/plugin/has_presets.h>
+#include <haruhi/utility/saveable_state.h>
 
 
 namespace Yuki {
@@ -30,7 +32,9 @@ class PartManagerWidget;
 
 class Plugin:
 	public Haruhi::Plugin,
-	public Haruhi::UnitBayAware
+	public Haruhi::UnitBayAware,
+	public Haruhi::HasPresets,
+	public SaveableState
 {
 	Q_OBJECT
 
@@ -64,10 +68,44 @@ class Plugin:
 	void
 	set_unit_bay (Haruhi::UnitBay*);
 
+	/*
+	 * SaveableState implementation
+	 */
+
+	void
+	save_state (QDomElement&) const;
+
+	void
+	load_state (QDomElement const&);
+
+	/*
+	 * HasPresets implementation.
+	 */
+
+	void
+	save_preset (QDomElement& element) const;
+
+	void
+	load_preset (QDomElement const& element);
+
   private:
 	PartManager*		_part_manager;
 	PartManagerWidget*	_part_manager_widget;
 };
+
+
+inline void
+Plugin::save_preset (QDomElement& element) const
+{
+	save_state (element);
+}
+
+
+inline void
+Plugin::load_preset (QDomElement const& element)
+{
+	load_state (element);
+}
 
 } // namespace Yuki
 

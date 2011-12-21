@@ -96,7 +96,7 @@ PartManager::~PartManager()
 }
 
 
-void
+Part*
 PartManager::add_part()
 {
 	Part* p = new Part (this, Haruhi::Services::hi_priority_work_performer(), &_main_params, _id_alloc.allocate_id());
@@ -104,6 +104,7 @@ PartManager::add_part()
 	_parts.push_back (p);
 	_parts_mutex.unlock();
 	part_added (p);
+	return p;
 }
 
 
@@ -142,12 +143,24 @@ PartManager::set_part_position (Part* part, unsigned int position)
 	_parts_mutex.lock();
 	assert (position < _parts.size());
 	Parts::iterator i = std::find (_parts.begin(), _parts.end(), part);
+	assert (i != _parts.end());
+	_parts.remove (*i);
 	Parts::iterator b = _parts.begin();
 	std::advance (b, position);
-	assert (i != _parts.end());
-	assert (b != _parts.end());
-	_parts.remove (*i);
 	_parts.insert (b, *i);
+	_parts_mutex.unlock();
+}
+
+
+void
+PartManager::set_part_position (unsigned int old_position, unsigned int new_position)
+{
+	_parts_mutex.lock();
+	assert (old_position < _parts.size());
+	assert (new_position < _parts.size());
+	Parts::iterator o = _parts.begin();
+	std::advance (o, old_position);
+	set_part_position (*o, new_position);
 	_parts_mutex.unlock();
 }
 
@@ -261,6 +274,7 @@ PartManager::graph_updated()
 
 	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
 		(*p)->graph_updated();
+
 	_parts_mutex.unlock();
 }
 
@@ -274,6 +288,51 @@ PartManager::voices_number() const
 		sum += (*p)->voices_number();
 	_parts_mutex.unlock();
 	return sum;
+}
+
+
+void
+PartManager::save_state (QDomElement& element) const
+{
+	_parts_mutex.lock();
+
+	for (Parts::const_iterator p = _parts.begin(); p != _parts.end(); ++p)
+	{
+		QDomElement e = element.ownerDocument().createElement ("part");
+		(*p)->save_state (e);
+		e.setAttribute ("id", (*p)->id());
+		element.appendChild (e);
+	}
+
+	_parts_mutex.unlock();
+}
+
+
+void
+PartManager::load_state (QDomElement const& element)
+{
+	_parts_mutex.lock();
+
+	remove_all_parts();
+
+	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
+	{
+		if (e.tagName() == "part")
+		{
+			Part* p = add_part();
+
+			unsigned int loaded_id = e.attribute ("id", "0").toUInt();
+			_id_alloc.free_id (p->id());
+			_id_alloc.reserve_id (loaded_id);
+
+			p->load_state (e);
+			p->set_id (loaded_id);
+
+			part_updated (p);
+		}
+	}
+
+	_parts_mutex.unlock();
 }
 
 } // namespace Yuki

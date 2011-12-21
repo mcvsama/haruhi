@@ -76,10 +76,11 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 
 	// Part tabs:
 
-	_tabs = new QTabWidget (this);
+	_tabs = new TabWidget (this);
 	_tabs->setMovable (true);
 	_tabs->setCornerWidget (buttons_widget, Qt::TopRightCorner);
 	_tabs->setIconSize (QSize (32, 22));
+	QObject::connect (_tabs->tabBar(), SIGNAL (tabMoved (int, int)), this, SLOT (tab_moved (int, int)));
 
 	_placeholder = new Placeholder (this);
 
@@ -114,6 +115,7 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 
 	_part_manager->part_added.connect (this, &PartManagerWidget::add_part);
 	_part_manager->part_removed.connect (this, &PartManagerWidget::remove_part);
+	_part_manager->part_updated.connect (this, &PartManagerWidget::update_part);
 }
 
 
@@ -163,6 +165,19 @@ PartManagerWidget::remove_part (Part* part)
 
 
 void
+PartManagerWidget::update_part (Part* part)
+{
+	for (int i = 0, n = _tabs->count(); i < n; ++i)
+	{
+		PartWidget* pw = dynamic_cast<PartWidget*> (_tabs->widget (i));
+		assert (pw != 0);
+		if (pw && pw->part() == part)
+			_tabs->setTabText (i, QString ("Part %1").arg (part->id()));
+	}
+}
+
+
+void
 PartManagerWidget::add_part()
 {
 	_part_manager->add_part();
@@ -179,6 +194,13 @@ PartManagerWidget::remove_current_part()
 		if (pw)
 			_part_manager->remove_part (pw->part());
 	}
+}
+
+
+void
+PartManagerWidget::tab_moved (int old_position, int new_position)
+{
+	_part_manager->set_part_position (old_position, new_position);
 }
 
 

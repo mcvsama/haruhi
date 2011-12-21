@@ -175,6 +175,7 @@ template<class tType>
 		_maximum = other._maximum;
 		_default_value = other._default_value;
 		_value = other._value;
+		_name = other._name;
 		on_change();
 		on_change_with_value (_value.load());
 		return *this;
@@ -277,6 +278,7 @@ template<class tType>
 	Param<tType>::load_state (QDomElement const& parent)
 	{
 		set (bound<int> (parent.text().toInt(), minimum(), maximum()));
+		sanitize();
 	}
 
 } // namespace Haruhi

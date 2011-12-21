@@ -103,5 +103,30 @@ Plugin::set_unit_bay (Haruhi::UnitBay* unit_bay)
 	_part_manager_widget->unit_bay_assigned();
 }
 
+
+void
+Plugin::save_state (QDomElement& element) const
+{
+	QDomElement state = element.ownerDocument().createElement ("state");
+	_part_manager->save_state (state);
+	element.appendChild (state);
+}
+
+
+void
+Plugin::load_state (QDomElement const& element)
+{
+	disable();
+	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
+	{
+		if (e.tagName() == "state")
+		{
+			_part_manager->load_state (e);
+			break;
+		}
+	}
+	enable();
+}
+
 } // namespace Yuki
 

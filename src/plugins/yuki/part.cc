@@ -535,6 +535,41 @@ Part::final_wave() const
 
 
 void
+Part::save_state (QDomElement& element) const
+{
+	QDomElement e1 = element.ownerDocument().createElement ("part-parameters");
+	_part_params.save_state (e1);
+	element.appendChild (e1);
+	QDomElement e2 = element.ownerDocument().createElement ("voice-parameters");
+	_part_params.voice.save_state (e2);
+	element.appendChild (e2);
+	QDomElement e3 = element.ownerDocument().createElement ("filter-1-parameters");
+	_part_params.voice.filter[0].save_state (e3);
+	element.appendChild (e3);
+	QDomElement e4 = element.ownerDocument().createElement ("filter-2-parameters");
+	_part_params.voice.filter[1].save_state (e4);
+	element.appendChild (e4);
+}
+
+
+void
+Part::load_state (QDomElement const& element)
+{
+	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
+	{
+		if (e.tagName() == "part-parameters")
+			_part_params.load_state (e);
+		else if (e.tagName() == "voice-parameters")
+			_part_params.voice.load_state (e);
+		else if (e.tagName() == "filter-1-parameters")
+			_part_params.voice.filter[0].load_state (e);
+		else if (e.tagName() == "filter-2-parameters")
+			_part_params.voice.filter[1].load_state (e);
+	}
+}
+
+
+void
 Part::wavetable_computed (unsigned int serial)
 {
 	_wt_serial.store (serial);

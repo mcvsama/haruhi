@@ -27,6 +27,7 @@
 #include <haruhi/utility/noncopyable.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/id_allocator.h>
+#include <haruhi/utility/saveable_state.h>
 
 // Local:
 #include "has_widget.h"
@@ -126,7 +127,7 @@ class PartManager:
 	 * Add new Part.
 	 * Send part_added signal.
 	 */
-	void
+	Part*
 	add_part();
 
 	/**
@@ -157,6 +158,12 @@ class PartManager:
 	set_part_position (Part*, unsigned int position);
 
 	/**
+	 * Moves part at position old_position to the new_position.
+	 */
+	void
+	set_part_position (unsigned int old_position, unsigned int new_position);
+
+	/**
 	 * Process events.
 	 */
 	void
@@ -180,14 +187,29 @@ class PartManager:
 	unsigned int
 	voices_number() const;
 
+	/*
+	 * SaveableState implementation
+	 */
+
+	void
+	save_state (QDomElement&) const;
+
+	void
+	load_state (QDomElement const&);
+
   public:
 	Signal::Emiter1<Part*>	part_added;
 	Signal::Emiter1<Part*>	part_removed;
 
+	/**
+	 * Emited when Part ID has changed.
+	 */
+	Signal::Emiter1<Part*>	part_updated;
+
   private:
 	Params::Main			_main_params;
 	Parts					_parts;
-	Mutex					_parts_mutex;
+	RecursiveMutex			_parts_mutex;
 	IDAllocator				_id_alloc;
 
 	MainPorts				_ports;
