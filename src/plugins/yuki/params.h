@@ -16,6 +16,7 @@
 
 // Standard:
 #include <cstddef>
+#include <map>
 
 // Haruhi:
 #include <haruhi/dsp/harmonics_wave.h>
@@ -270,9 +271,6 @@ template<class SubClass>
 		get_params (params, SubClass::NUM_PARAMS);
 		for (int i = 0; i < SubClass::NUM_PARAMS; ++i)
 		{
-			// TODO Save knob settings in UI widget's save_state().
-			// TODO Or make it possible to access curve params from Param<>.
-			// TODO Or just move curve/user-limits to Param<>.
 			QDomElement param_el = parent.ownerDocument().createElement ("parameter");
 			param_el.setAttribute ("name", params[i]->name());
 			params[i]->save_state (param_el);
@@ -283,9 +281,23 @@ template<class SubClass>
 
 template<class SubClass>
 	inline void
-	Params::SaveableParams<SubClass>::load_state (QDomElement const& /*element*/)
+	Params::SaveableParams<SubClass>::load_state (QDomElement const& element)
 	{
-		// TODO
+		typedef std::map<QString, QDomElement> Map;
+
+		Map map;
+		for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
+			if (e.tagName() == "parameter")
+				map[e.attribute ("name", "")] = e;
+
+		Haruhi::BaseParam const** params = reinterpret_cast<Haruhi::BaseParam const**> (alloca (sizeof (Haruhi::BaseParam*) * SubClass::NUM_PARAMS));
+		get_params (params, SubClass::NUM_PARAMS);
+		for (int i = 0; i < SubClass::NUM_PARAMS; ++i)
+		{
+			Map::iterator param_iter = map.find (params[i]->name());
+			if (param_iter != map.end())
+				const_cast<Haruhi::BaseParam*> (params[i])->load_state (param_iter->second);
+		}
 	}
 
 } // namespace Yuki
