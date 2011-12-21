@@ -243,7 +243,7 @@ struct Params
 		Haruhi::Param<unsigned int> auto_center;
 		Haruhi::Param<unsigned int> filter_configuration;
 
-		static const int NUM_PARAMS = 22 + HarmonicsNumber + HarmonicsNumber;
+		static const int NUM_PARAMS = 24 + HarmonicsNumber + HarmonicsNumber;
 
 		// Embedded Voice params template (also includes Filter params):
 		Voice voice;
