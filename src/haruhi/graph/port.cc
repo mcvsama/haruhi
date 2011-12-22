@@ -140,10 +140,15 @@ Port::sync()
 		else if (_direction == Input)
 		{
 			buffer()->clear();
-			for (Ports::iterator i = _back_connections.begin(); i != _back_connections.end(); ++i)
+			if (_back_connections.empty())
+				no_input();
+			else
 			{
-				(*i)->sync();
-				buffer()->mixin ((*i)->buffer());
+				for (Ports::iterator i = _back_connections.begin(); i != _back_connections.end(); ++i)
+				{
+					(*i)->sync();
+					buffer()->mixin ((*i)->buffer());
+				}
 			}
 		}
 	}

@@ -54,11 +54,61 @@ class EventPort: public Port
 	event_buffer() const { return static_cast<EventBuffer*> (buffer()); }
 
 	/**
-	 * Implementation of Port::graph_updated().
+	 * Return default value set for port.
+	 */
+	ControllerEvent::Value
+	default_value() const;
+
+	/**
+	 * Set default ControllerEvent that will be inserted into buffer,
+	 * when nothing is connected to the Input port.
 	 */
 	void
+	set_default_value (ControllerEvent::Value value);
+
+	/**
+	 * Disable default value set with set_default_value().
+	 */
+	void
+	disable_default_value();
+
+	/*
+	 * Port implementation
+	 */
+
+	void
 	graph_updated() { }
+
+  protected:
+	void
+	no_input();
+
+  private:
+	bool					_default_value_set;
+	ControllerEvent::Value	_default_value;
 };
+
+
+inline ControllerEvent::Value
+EventPort::default_value() const
+{
+	return _default_value;
+}
+
+
+inline void
+EventPort::set_default_value (ControllerEvent::Value value)
+{
+	_default_value = value;
+	_default_value_set = true;
+}
+
+
+inline void
+EventPort::disable_default_value()
+{
+	_default_value_set = false;
+}
 
 } // namespace Haruhi
 

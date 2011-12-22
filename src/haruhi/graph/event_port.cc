@@ -22,7 +22,9 @@
 namespace Haruhi {
 
 EventPort::EventPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group, Flags flags):
-	Port (unit, name, direction, new EventBuffer(), group, flags)
+	Port (unit, name, direction, new EventBuffer(), group, flags),
+	_default_value_set (false),
+	_default_value()
 {
 	Graph* g = graph();
 	if (g)
@@ -41,6 +43,14 @@ EventPort::~EventPort()
 	unregister_me();
 	if (g)
 		g->unlock();
+}
+
+
+void
+EventPort::no_input()
+{
+	if (_default_value_set)
+		event_buffer()->push (new ControllerEvent (Graph::now(), _default_value));
 }
 
 } // namespace Haruhi

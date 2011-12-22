@@ -273,6 +273,13 @@ class Port:
 	void
 	unregister_me();
 
+	/**
+	 * Called when sync() is requested, but nothing is connected
+	 * to the port. Default implementation does nothing.
+	 */
+	virtual void
+	no_input() { }
+
   private:
 	/**
 	 * Callback of EventTeacher API.
