@@ -72,7 +72,10 @@ VoiceOscillator::set_unison_number (int number)
 		{
 			Sample p = _unison[_unison_number-1].phase;
 			for (int u = _unison_number; u < number; ++u)
+			{
 				_unison[u].phase = p += _initial_phase_spread;
+				_unison[u].vibrato_phase = 0.5f * (_noise.get (_noise_state) + 1.0f);
+			}
 		}
 
 		_unison_number = number;
