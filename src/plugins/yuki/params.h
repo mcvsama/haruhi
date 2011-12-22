@@ -175,7 +175,7 @@ struct Params
 		HARUHI_YUKI_PARAM (UnisonInit,				-1000000,	+1000000,	+1000000,	       0)
 		HARUHI_YUKI_PARAM (UnisonNoise,				       0,	+1000000,	+1000000,	       0)
 		HARUHI_YUKI_PARAM (UnisonVibratoLevel,		       0,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (UnisonVibratoFrequency,	       0,	+1000000,	+1000000,	       0)
+		HARUHI_YUKI_PARAM (UnisonVibratoFrequency,	       0,	+1000000,	+1000000,	 +200000)
 
 		Haruhi::ControllerParam amplitude;
 		Haruhi::ControllerParam frequency;
