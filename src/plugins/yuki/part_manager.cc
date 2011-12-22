@@ -43,6 +43,10 @@ PartManager::MainPorts::MainPorts (Plugin* plugin):
 	amplitude		= new Haruhi::EventPort (plugin, "Mod. amplitude", Haruhi::Port::Input, 0, Haruhi::Port::Polyphonic);
 	frequency		= new Haruhi::EventPort (plugin, "Mod. frequency", Haruhi::Port::Input, 0, Haruhi::Port::Polyphonic);
 	pitchbend		= new Haruhi::EventPort (plugin, "Mod. pitchbend", Haruhi::Port::Input, 0, Haruhi::Port::Polyphonic | Haruhi::Port::ControlPitchbend);
+
+	amplitude->set_default_value (1.0);
+	frequency->set_default_value (1.0);
+	pitchbend->set_default_value (0.5);
 }
 
 
@@ -171,15 +175,6 @@ PartManager::process()
 	_proxies.process_events();
 
 	_parts_mutex.lock();
-
-	// Forward all messages from common ports to parts' ports:
-
-	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
-	{
-		(*p)->ports()->amplitude->event_buffer()->mixin (_ports.amplitude->event_buffer());
-		(*p)->ports()->frequency->event_buffer()->mixin (_ports.frequency->event_buffer());
-		(*p)->ports()->pitchbend->event_buffer()->mixin (_ports.pitchbend->event_buffer());
-	}
 
 	// Send voice events:
 

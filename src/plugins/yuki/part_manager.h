@@ -112,6 +112,12 @@ class PartManager:
 	parts_number() const;
 
 	/**
+	 * Return object containing event ports.
+	 */
+	MainPorts*
+	ports();
+
+	/**
 	 * Return MainProxies object.
 	 */
 	MainProxies*
@@ -228,6 +234,13 @@ PartManager::parts_number() const
 	unsigned int k = _parts.size();
 	_parts_mutex.unlock();
 	return k;
+}
+
+
+inline PartManager::MainPorts*
+PartManager::ports()
+{
+	return &_ports;
 }
 
 

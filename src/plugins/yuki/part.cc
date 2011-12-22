@@ -147,7 +147,7 @@ Part::PartPorts::~PartPorts()
 }
 
 
-Part::PartControllerProxies::PartControllerProxies (PartPorts* part_ports, Params::Part* part_params):
+Part::PartControllerProxies::PartControllerProxies (PartManager* part_manager, PartPorts* part_ports, Params::Part* part_params):
 #define CONSTRUCT_CONTROLLER_PROXY(name) name (part_ports->name, &part_params->name)
 	CONSTRUCT_CONTROLLER_PROXY (volume),
 	CONSTRUCT_CONTROLLER_PROXY (portamento_time),
@@ -185,14 +185,21 @@ Part::PartControllerProxies::PartControllerProxies (PartPorts* part_ports, Param
 	CONSTRUCT_CONTROLLER_PROXY (frequency),
 	CONSTRUCT_CONTROLLER_PROXY (resonance),
 	CONSTRUCT_CONTROLLER_PROXY (gain),
-	CONSTRUCT_CONTROLLER_PROXY (attenuation)
+	CONSTRUCT_CONTROLLER_PROXY (attenuation),
 #undef CONSTRUCT_CONTROLLER_PROXY
+
+	_part_manager (part_manager)
 { }
 
 
 void
 Part::PartControllerProxies::process_events()
 {
+	// Forward all messages from common ports to parts' ports:
+	forward_messages (_part_manager->ports()->amplitude, amplitude.event_port());
+	forward_messages (_part_manager->ports()->frequency, frequency.event_port());
+	forward_messages (_part_manager->ports()->pitchbend, pitchbend.event_port());
+
 #define PROXY_PROCESS_EVENTS(name) name.process_events();
 	PROXY_PROCESS_EVENTS (volume);
 	PROXY_PROCESS_EVENTS (portamento_time);
@@ -223,6 +230,19 @@ Part::PartControllerProxies::process_events()
 	PROXY_PROCESS_EVENTS (filter_2_gain);
 	PROXY_PROCESS_EVENTS (filter_2_attenuation);
 #undef PROXY_PROCESS_EVENTS
+}
+
+
+void
+Part::PartControllerProxies::forward_messages (Haruhi::EventPort* source, Haruhi::EventPort* target)
+{
+	if (target->back_connections().empty())
+	{
+		if (source->back_connections().empty())
+			target->event_buffer()->push (new Haruhi::ControllerEvent (Haruhi::Graph::now(), source->default_value()));
+		else
+			target->event_buffer()->mixin (source->event_buffer());
+	}
 }
 
 
@@ -276,7 +296,7 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 	_wt_wu (0),
 	_wt_wu_ever_started (false),
 	_ports (_part_manager->plugin(), this->id()),
-	_proxies (&_ports, &_part_params),
+	_proxies (_part_manager, &_ports, &_part_params),
 	_updaters (_voice_manager)
 {
 	_base_waves[0] = new DSP::ParametricWaves::Sine();

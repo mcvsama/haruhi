@@ -219,13 +219,23 @@ class Part:
 	class PartControllerProxies: private Noncopyable
 	{
 	  public:
-		PartControllerProxies (PartPorts*, Params::Part*);
+		PartControllerProxies (PartManager*, PartPorts*, Params::Part*);
 
 		/**
 		 * Call process_events() on each proxy.
 		 */
 		void
 		process_events();
+
+	  private:
+		/**
+		 * Forward messages from the first EventPort to the second one,
+		 * unless first has any back connections. Also, if neither EventPort
+		 * is connected on back, make the second EventPort yield ControllerEvent
+		 * with source port's default value.
+		 */
+		void
+		forward_messages (Haruhi::EventPort* source, Haruhi::EventPort* target);
 
 	  public:
 		// Part:
@@ -261,6 +271,9 @@ class Part:
 		Haruhi::ControllerProxy filter_2_resonance;
 		Haruhi::ControllerProxy filter_2_gain;
 		Haruhi::ControllerProxy filter_2_attenuation;
+
+	  private:
+		PartManager* _part_manager;
 	};
 
 	/**
