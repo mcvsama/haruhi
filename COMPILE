@@ -21,11 +21,6 @@ You will probably need GNU make to compile.
 
 Edit Makefile.conf, configure your CXXFLAGS and other features. You may need to also alter
 Makefile.conf, depending on your distibuton (LDFLAGS and maybe LIBS and PKGCONFIG_* variables).
-You may need to set QT_PREFIX according to where Qt3 stores its files in your distribution.
-On Archlinux it is /opt/qt, on Ubuntu /usr/share/qt3.
-
-On newer Ubuntu versions you'll have to modify Makefile.conf so that QT_PREFIX is /usr and
-PKG_CONFIG_FLAGS is concantenated with -I$(QT_PREFIX)/include/qt3 $(QT_FLAGS).
 
 There are several targets in Makefile.conf. Use DIST variable to select target and something like:
 
