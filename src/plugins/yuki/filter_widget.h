@@ -56,7 +56,7 @@ class FilterWidget:
 	 * Call it when widgets are changed.
 	 */
 	void
-	params_updated();
+	widgets_to_params();
 
 	/**
 	 * Update widget states, replot transmittance, etc.
@@ -71,9 +71,26 @@ class FilterWidget:
 	update_impulse_response();
 
   private:
+	/**
+	 * Updates widgets' states from params.
+	 * \entry	UI thread only
+	 */
+	void
+	params_to_widgets();
+
+	/**
+	 * Call params_to_widgets from UI thread later.
+	 * \entry	any thread
+	 */
+	void
+	post_params_to_widgets();
+
+  private:
 	Params::Filter*					_params;
 	FilterImpulseResponse			_impulse_response;
 	Part*							_part;
+	bool							_stop_widgets_to_params;
+	bool							_stop_params_to_widgets;
 
 	// Knobs:
 	Haruhi::Knob*					_knob_frequency;

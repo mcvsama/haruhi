@@ -116,6 +116,20 @@ class PartManagerWidget:
 
   private:
 	/**
+	 * Updates widgets' states from params.
+	 * \entry	UI thread only
+	 */
+	void
+	params_to_widgets();
+
+	/**
+	 * Call params_to_widgets from UI thread later.
+	 * \entry	any thread
+	 */
+	void
+	post_params_to_widgets();
+
+	/**
 	 * Update dependent widgets.
 	 */
 	void
@@ -123,6 +137,9 @@ class PartManagerWidget:
 
   private:
 	PartManager*	_part_manager;
+	bool			_stop_widgets_to_params;
+	bool			_stop_params_to_widgets;
+
 	TabWidget*		_tabs;
 	QPushButton*	_add_part_button;
 	QPushButton*	_remove_part_button;

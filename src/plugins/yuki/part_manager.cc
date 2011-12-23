@@ -291,6 +291,10 @@ PartManager::save_state (QDomElement& element) const
 {
 	_parts_mutex.lock();
 
+	QDomElement e = element.ownerDocument().createElement ("main");
+	_main_params.save_state (e);
+	element.appendChild (e);
+
 	for (Parts::const_iterator p = _parts.begin(); p != _parts.end(); ++p)
 	{
 		QDomElement e = element.ownerDocument().createElement ("part");
@@ -325,6 +329,8 @@ PartManager::load_state (QDomElement const& element)
 
 			part_updated (p);
 		}
+		else if (e.tagName() == "main")
+			_main_params.load_state (e);
 	}
 
 	_parts_mutex.unlock();

@@ -68,17 +68,17 @@ class PartWidget:
 
   private slots:
 	/**
-	 * Called when wave params change.
+	 * Called when wave-related widgets are manipulated.
 	 * \entry	UI thread
 	 */
 	void
-	wave_params_updated();
+	widgets_to_wave_params();
 
 	/**
-	 * Called when oscillator params change.
+	 * Called when oscillator-related widgets are manipulated.
 	 */
 	void
-	oscillator_params_updated();
+	widgets_to_oscillator_params();
 
 	/**
 	 * Called when 'Harmonics' button is clicked.
@@ -103,6 +103,13 @@ class PartWidget:
 
   private:
 	/**
+	 * Updates widgets' states from params.
+	 * \entry	UI thread only
+	 */
+	void
+	params_to_widgets();
+
+	/**
 	 * Highlights selected button.
 	 */
 	void
@@ -117,14 +124,24 @@ class PartWidget:
 
 	/**
 	 * Call update_wave_plots() from UI thread later.
+	 * \entry	any thread
 	 */
 	void
 	post_update_wave_plots();
+
+	/**
+	 * Call params_to_widgets from UI thread later.
+	 * \entry	any thread
+	 */
+	void
+	post_params_to_widgets();
 
   private:
 	PartManagerWidget*	_part_manager_widget;
 	Part*				_part;
 	DSP::Wave*			_cached_final_wave;
+	bool				_stop_widgets_to_params;
+	bool				_stop_params_to_widgets;
 
 	// Waveform knobs:
 	Haruhi::Knob*		_knob_wave_shape;

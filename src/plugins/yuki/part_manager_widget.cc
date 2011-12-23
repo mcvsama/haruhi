@@ -19,8 +19,12 @@
 #include <QtGui/QToolTip>
 #include <QtGui/QLayout>
 
+// Lib:
+#include <boost/bind.hpp>
+
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/application/services.h>
 #include <haruhi/widgets/knob.h>
 
 // Local:
@@ -43,7 +47,9 @@ PartManagerWidget::Placeholder::Placeholder (QWidget* parent):
 
 PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager):
 	QWidget (parent),
-	_part_manager (part_manager)
+	_part_manager (part_manager),
+	_stop_widgets_to_params (false),
+	_stop_params_to_widgets (false)
 {
 	// Knobs:
 
@@ -116,6 +122,8 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 	_part_manager->part_added.connect (this, &PartManagerWidget::add_part);
 	_part_manager->part_removed.connect (this, &PartManagerWidget::remove_part);
 	_part_manager->part_updated.connect (this, &PartManagerWidget::update_part);
+
+	_part_manager->main_params()->polyphony.on_change.connect (this, &PartManagerWidget::post_params_to_widgets);
 }
 
 
@@ -207,7 +215,13 @@ PartManagerWidget::tab_moved (int old_position, int new_position)
 void
 PartManagerWidget::widgets_to_params()
 {
+	if (_stop_widgets_to_params)
+		return;
+	_stop_params_to_widgets = true;
+
 	_part_manager->main_params()->polyphony = _polyphony->value();
+
+	_stop_params_to_widgets = false;
 }
 
 
@@ -229,6 +243,28 @@ PartManagerWidget::update_widgets()
 				_tabs->removeTab (i--);
 		}
 	}
+}
+
+
+void
+PartManagerWidget::params_to_widgets()
+{
+	if (_stop_params_to_widgets)
+		return;
+	_stop_widgets_to_params = true;
+
+	_polyphony->setValue (_part_manager->main_params()->polyphony);
+
+	_stop_widgets_to_params = false;
+
+	update_widgets();
+}
+
+
+void
+PartManagerWidget::post_params_to_widgets()
+{
+	Haruhi::Services::call_out (boost::bind (&PartManagerWidget::params_to_widgets, this));
 }
 
 } // namespace Yuki
