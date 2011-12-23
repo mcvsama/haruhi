@@ -33,7 +33,7 @@ small_font()
 	if (!sf_initialized)
 	{
 		sf = QApplication::font();
-		sf.setPointSize (8);
+		sf.setPixelSize (8);
 	}
 
 	return sf;

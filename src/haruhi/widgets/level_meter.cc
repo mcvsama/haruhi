@@ -253,7 +253,7 @@ LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper
 {
 	_peak_button = new QPushButton ("-inf dB", this);
 	_peak_button->setFont (Resources::small_font());
-	_peak_button->setFixedHeight (2 * Resources::small_font().pointSize());
+	_peak_button->setFixedHeight (2 * Resources::small_font().pixelSize());
 	_peak_button->setFixedWidth (35);
 	_peak_button_bg = _peak_button->paletteBackgroundColor();
 	_peak_button_fg = _peak_button->paletteForegroundColor();
