@@ -47,7 +47,8 @@ Sample
 FilterImpulseResponse::response (Sample frequency) const
 {
 	// Normally one would substitute: z = e^(i2πf) = e^(iω)
-	float phi = std::pow (std::sin (M_PI * frequency), 2.0f);
+	float phi = std::sin (M_PI * frequency);
+	phi *= phi;
 	return (std::pow (b[0] + b[1] + b[2], 2.0f) - 4.0f * (b[0] * b[1] + 4.f * b[0] * b[2] + b[1] * b[2]) * phi + 16.0f * b[0] * b[2] * std::pow (phi, 2.0f)) /
 		   (std::pow (1.0f + a[1] + a[2], 2.0f) - 4.0f * (1.0f * a[1] + 4.f * 1.0f * a[2] + a[1] * a[2]) * phi + 16.0f * 1.0f * a[2] * std::pow (phi, 2.0f));
 }
@@ -65,6 +66,7 @@ FilterImpulseResponse::update()
 	float cos_w0 = 0.0f;
 	float sin_w0 = 0.0f;
 	float sqrt_A = 0.0f;
+	float sqrt_A_2_alpha = 0.0f;
 	float auto_attenuation = 1.0f;
 
 	switch (_type)
@@ -153,38 +155,42 @@ FilterImpulseResponse::update()
 
 			a[1] = -2.0f * cos_w0 / a[0];
 			a[2] = (1.0f - alpha / A) / a[0];
+
+			auto_attenuation = std::min (1.0f, 1.0f / std::pow (10.0f, _gain / 20.0f));
 			break;
 
 		case LowShelf:
 			cos_w0 = std::cos (w0);
 			sqrt_A = std::sqrt (A);
+			sqrt_A_2_alpha = 2.0f * sqrt_A * alpha;
 
-			a[0] =              (A + 1.0f) + (A - 1.0f) * cos_w0 + 2.0f * sqrt_A * alpha;
+			a[0] =              (A + 1.0f) + (A - 1.0f) * cos_w0 + sqrt_A_2_alpha;
 
-			b[0] =        (A * ((A + 1.0f) - (A - 1.0f) * cos_w0) + 2.0f * sqrt_A * alpha) / a[0];
+			b[0] =        (A * ((A + 1.0f) - (A - 1.0f) * cos_w0) + sqrt_A_2_alpha) / a[0];
 			b[1] =  2.0f * A * ((A - 1.0f) - (A + 1.0f) * cos_w0) / a[0];
-			b[2] =        (A * ((A + 1.0f) - (A - 1.0f) * cos_w0) - 2.0f * sqrt_A * alpha) / a[0];
+			b[2] =        (A * ((A + 1.0f) - (A - 1.0f) * cos_w0) - sqrt_A_2_alpha) / a[0];
 
 			a[1] =     -2.0f * ((A - 1.0f) + (A + 1.0f) * cos_w0) / a[0];
-			a[2] =             ((A + 1.0f) + (A - 1.0f) * cos_w0 - 2.0f * sqrt_A * alpha) / a[0];
+			a[2] =             ((A + 1.0f) + (A - 1.0f) * cos_w0 - sqrt_A_2_alpha) / a[0];
 
-			auto_attenuation = std::min (1.0f, 1.0f / _resonance);
+			auto_attenuation = std::min (1.0f, 1.0f / _resonance / std::pow (10.0f, _gain / 20.0f));
 			break;
 
 		case HighShelf:
 			cos_w0 = std::cos (w0);
 			sqrt_A = std::sqrt (A);
+			sqrt_A_2_alpha = 2.0f * sqrt_A * alpha;
 
-			a[0] =              (A + 1.0f) - (A - 1.0f) * cos_w0 + 2.0f * sqrt_A * alpha;
+			a[0] =              (A + 1.0f) - (A - 1.0f) * cos_w0 + sqrt_A_2_alpha;
 
-			b[0] =         A * ((A + 1.0f) + (A - 1.0f) * cos_w0 + 2.0f * sqrt_A * alpha) / a[0];
+			b[0] =         A * ((A + 1.0f) + (A - 1.0f) * cos_w0 + sqrt_A_2_alpha) / a[0];
 			b[1] = -2.0f * A * ((A - 1.0f) + (A + 1.0f) * cos_w0) / a[0];
-			b[2] =         A * ((A + 1.0f) + (A - 1.0f) * cos_w0 - 2.0f * sqrt_A * alpha) / a[0];
+			b[2] =         A * ((A + 1.0f) + (A - 1.0f) * cos_w0 - sqrt_A_2_alpha) / a[0];
 
 			a[1] =      2.0f * ((A - 1.0f) - (A + 1.0f) * cos_w0) / a[0];
-			a[2] =             ((A + 1.0f) - (A - 1.0f) * cos_w0 - 2.0f * sqrt_A * alpha) / a[0];
+			a[2] =             ((A + 1.0f) - (A - 1.0f) * cos_w0 - sqrt_A_2_alpha) / a[0];
 
-			auto_attenuation = std::min (1.0f, 1.0f / _resonance);
+			auto_attenuation = std::min (1.0f, 1.0f / _resonance / std::pow (10.0f, _gain / 20.0f));
 			break;
 	}
 

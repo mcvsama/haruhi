@@ -208,7 +208,7 @@ FilterWidget::update_widgets()
 	_panel->setEnabled (_params->enabled.get());
 	_knob_gain->setEnabled (ft == FilterImpulseResponse::Peaking || ft == FilterImpulseResponse::LowShelf || ft == FilterImpulseResponse::HighShelf);
 	_limiter_enabled->setEnabled (ft == FilterImpulseResponse::LowPass || ft == FilterImpulseResponse::HighPass || ft == FilterImpulseResponse::BandPass ||
-								  ft == FilterImpulseResponse::LowShelf || ft == FilterImpulseResponse::HighShelf);
+								  ft == FilterImpulseResponse::Peaking || ft == FilterImpulseResponse::LowShelf || ft == FilterImpulseResponse::HighShelf);
 	// Plot and attenuation should reflect Number of filter stages:
 	_response_plot->set_num_stages (_params->stages);
 	_response_plot->replot();
