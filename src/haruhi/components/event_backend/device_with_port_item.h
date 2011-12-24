@@ -52,13 +52,13 @@ class DeviceWithPortItem:
 	virtual ~DeviceWithPortItem();
 
 	Controllers*
-	controllers() { return &_controllers; }
+	controllers();
 
 	Transport::Port*
-	transport_port() const { return _transport_port; }
+	transport_port() const;
 
 	PortGroup*
-	port_group() const { return _port_group; }
+	port_group() const;
 
 	/**
 	 * Sets externally visible transport port name to what
@@ -82,6 +82,27 @@ class DeviceWithPortItem:
 	PortGroup*			_port_group;
 	Transport::Port*	_transport_port;
 };
+
+
+inline DeviceWithPortItem::Controllers*
+DeviceWithPortItem::controllers()
+{
+	return &_controllers;
+}
+
+
+inline Transport::Port*
+DeviceWithPortItem::transport_port() const
+{
+	return _transport_port;
+}
+
+
+inline PortGroup*
+DeviceWithPortItem::port_group() const
+{
+	return _port_group;
+}
 
 } // namespace EventBackendImpl
 

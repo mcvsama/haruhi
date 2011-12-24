@@ -47,7 +47,7 @@ class DelayLine
 	 * Returns current delay in samples.
 	 */
 	std::size_t
-	delay() const { return _delay; }
+	delay() const;
 
 	/**
 	 * Should be called only after read and before next write.
@@ -60,7 +60,7 @@ class DelayLine
 	 * Returns max possible delay (buffer size) in samples.
 	 */
 	std::size_t
-	max_delay() const { return _max_delay; }
+	max_delay() const;
 
 	/**
 	 * Sets maximum delay in samples.
@@ -73,7 +73,7 @@ class DelayLine
 	 * Returns number of samples read/written by read() and write() functions.
 	 */
 	std::size_t
-	size() const { return _size; }
+	size() const;
 
 	/**
 	 * Should be called only after read and before next write.
@@ -112,6 +112,27 @@ class DelayLine
 	std::size_t	_delay;
 	std::size_t	_wpos;
 };
+
+
+inline std::size_t
+DelayLine::delay() const
+{
+	return _delay;
+}
+
+
+inline std::size_t
+DelayLine::max_delay() const
+{
+	return _max_delay;
+}
+
+
+inline std::size_t
+DelayLine::size() const
+{
+	return _size;
+}
 
 } // namespace DSP
 

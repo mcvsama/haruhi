@@ -33,8 +33,10 @@
 
 namespace Haruhi {
 
-namespace P {
-
+/**
+ * Private API, but can't put it inside of Services class,
+ * because MOC won't be able to handle it.
+ */
 class CallOutDispatcher: public QObject
 {
 	Q_OBJECT
@@ -47,9 +49,10 @@ class CallOutDispatcher: public QObject
 	customEvent (QEvent*);
 };
 
-} // namespace P
 
-
+/**
+ * Common public services.
+ */
 class Services
 {
   public:
@@ -60,28 +63,20 @@ class Services
 	class CallOutEvent: public QEvent
 	{
 	  public:
-		CallOutEvent (boost::function<void()> callback):
-			QEvent (QEvent::User),
-			_cancelled (false),
-			_callback (callback)
-		{ }
+		CallOutEvent (boost::function<void()> callback);
 
 		/**
 		 * Cancel CallOut. Prevent calling callback from call_out() method.
 		 * It's safe to call this method from the callback.
 		 */
 		void
-		cancel() { _cancelled = true; }
+		cancel();
 
 		/**
 		 * Call the callback, unless CallOut has been cancelled.
 		 */
 		void
-		call_out()
-		{
-			if (!_cancelled)
-				_callback();
-		}
+		call_out();
 
 	  private:
 		bool					_cancelled;
@@ -107,13 +102,13 @@ class Services
 	 * Return RT-prioritized work performer.
 	 */
 	static WorkPerformer*
-	hi_priority_work_performer() { return _hi_priority_work_performer; }
+	hi_priority_work_performer();
 
 	/**
 	 * Return normal work performer.
 	 */
 	static WorkPerformer*
-	lo_priority_work_performer() { return _lo_priority_work_performer; }
+	lo_priority_work_performer();
 
 	/**
 	 * Return number of detected processor cores.
@@ -149,11 +144,48 @@ class Services
 	y_pixels_per_point();
 
   private:
-	static WorkPerformer*			_hi_priority_work_performer;
-	static WorkPerformer*			_lo_priority_work_performer;
-	static signed int				_detected_cores;
-	static P::CallOutDispatcher*	_call_out_dispatcher;
+	static WorkPerformer*		_hi_priority_work_performer;
+	static WorkPerformer*		_lo_priority_work_performer;
+	static signed int			_detected_cores;
+	static CallOutDispatcher*	_call_out_dispatcher;
 };
+
+
+inline
+Services::CallOutEvent::CallOutEvent (boost::function<void()> callback):
+	QEvent (QEvent::User),
+	_cancelled (false),
+	_callback (callback)
+{ }
+
+
+inline void
+Services::CallOutEvent::cancel()
+{
+	_cancelled = true;
+}
+
+
+inline void
+Services::CallOutEvent::call_out()
+{
+	if (!_cancelled)
+		_callback();
+}
+
+
+inline WorkPerformer*
+Services::hi_priority_work_performer()
+{
+	return _hi_priority_work_performer;
+}
+
+
+inline WorkPerformer*
+Services::lo_priority_work_performer()
+{
+	return _lo_priority_work_performer;
+}
 
 
 inline float

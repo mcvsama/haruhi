@@ -50,7 +50,7 @@ class ControllerWithPortItem:
 	virtual ~ControllerWithPortItem();
 
 	EventPort*
-	port() const { return _port; }
+	port() const;
 
 	/**
 	 * Sets Core port's name to what was set by user in the UI.
@@ -77,6 +77,13 @@ class ControllerWithPortItem:
 	// Link to DeviceItem:
 	DeviceWithPortItem*	_device_item;
 };
+
+
+inline EventPort*
+ControllerWithPortItem::port() const
+{
+	return _port;
+}
 
 } // namespace EventBackendImpl
 

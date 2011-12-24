@@ -41,9 +41,7 @@ class Transport
 	class Port
 	{
 	  public:
-		Port (Transport* transport):
-			_transport (transport)
-		{ }
+		Port (Transport* transport);
 
 		virtual ~Port() { }
 
@@ -51,17 +49,17 @@ class Transport
 		rename (std::string const&) = 0;
 
 		Transport*
-		transport() const { return _transport; }
+		transport() const;
 
 		/**
 		 * Returns event buffer to use
 		 * for transporting events.
 		 */
 		MidiBuffer&
-		buffer() { return _buffer; }
+		buffer();
 
 		MidiBuffer const&
-		buffer() const { return _buffer; }
+		buffer() const;
 
 	  private:
 		Transport*	_transport;
@@ -69,14 +67,12 @@ class Transport
 	};
 
   public:
-	Transport (Backend* backend):
-		_backend (backend)
-	{ }
+	Transport (Backend* backend);
 
 	virtual ~Transport() { }
 
 	Backend*
-	backend() const { return _backend; }
+	backend() const;
 
 	/**
 	 * Connects to transport.
@@ -138,6 +134,46 @@ class Transport
   private:
 	Backend* _backend;
 };
+
+
+inline
+Transport::Port::Port (Transport* transport):
+	_transport (transport)
+{ }
+
+
+inline Transport*
+Transport::Port::transport() const
+{
+	return _transport;
+}
+
+
+inline Transport::MidiBuffer&
+Transport::Port::buffer()
+{
+	return _buffer;
+}
+
+
+inline Transport::MidiBuffer const&
+Transport::Port::buffer() const
+{
+	return _buffer;
+}
+
+
+inline
+Transport::Transport (Backend* backend):
+	_backend (backend)
+{ }
+
+
+inline Backend*
+Transport::backend() const
+{
+	return _backend;
+}
 
 } // namespace EventBackendImpl
 

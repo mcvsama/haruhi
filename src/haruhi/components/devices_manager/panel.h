@@ -61,19 +61,19 @@ class Panel:
 	 * Returns coupled EventBackend.
 	 */
 	EventBackendImpl::Backend*
-	event_backend() const { return _event_backend; }
+	event_backend() const;
 
 	/**
 	 * Sets EventBackend.
 	 */
 	void
-	set_event_backend (EventBackendImpl::Backend* event_backend) { _event_backend = event_backend; }
+	set_event_backend (EventBackendImpl::Backend* event_backend);
 
 	/**
 	 * Returns Settings object used by this panel.
 	 */
 	Settings*
-	settings() const { return _settings; }
+	settings() const;
 
 	/**
 	 * Callback for EventBackend's on_event.
@@ -119,6 +119,27 @@ class Panel:
 	LearningItems				_learning_items;
 	EventBackendImpl::Backend*	_event_backend;
 };
+
+
+inline EventBackendImpl::Backend*
+Panel::event_backend() const
+{
+	return _event_backend;
+}
+
+
+inline void
+Panel::set_event_backend (EventBackendImpl::Backend* event_backend)
+{
+	_event_backend = event_backend;
+}
+
+
+inline Settings*
+Panel::settings() const
+{
+	return _settings;
+}
 
 } // namespace DevicesManager
 

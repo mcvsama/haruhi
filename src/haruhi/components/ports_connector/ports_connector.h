@@ -95,10 +95,10 @@ class PortsConnector:
 	virtual ~PortsConnector();
 
 	UnitBay*
-	unit_bay() const { return _unit_bay; }
+	unit_bay() const;
 
 	PortsConnectorPrivate::Connector*
-	connector() const { return _connector; }
+	connector() const;
 
 	/**
 	 * This should be called by deleted item in its destructor so
@@ -256,6 +256,20 @@ class PortsConnector:
 	bool								_highlight_connected;	// Perform highlighting?
 	CallOutEvents						_call_outs;
 };
+
+
+inline UnitBay*
+PortsConnector::unit_bay() const
+{
+	return _unit_bay;
+}
+
+
+inline PortsConnectorPrivate::Connector*
+PortsConnector::connector() const
+{
+	return _connector;
+}
 
 } // namespace Haruhi
 

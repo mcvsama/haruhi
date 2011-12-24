@@ -72,7 +72,7 @@ class Settings: public RecursiveMutex
 		 * Returns name that identifies module.
 		 */
 		QString
-		name() const { return _name; }
+		name() const;
 
 		/**
 		 * Saves settings. Calls save on host Settings.
@@ -84,7 +84,7 @@ class Settings: public RecursiveMutex
 		 * Returns pointer to Settings object.
 		 */
 		Settings*
-		host() const { return _host; }
+		host() const;
 
 	  private:
 		Settings*	_host;
@@ -152,22 +152,22 @@ class Settings: public RecursiveMutex
 	 * Returns directory prefix for configuration files.
 	 */
 	static QString
-	config_home() { return xdg_config_home() + "/" + HARUHI_XDG_SETTINGS_HOME; }
+	config_home();
 
 	/**
 	 * Returns directory prefix for shared data files.
 	 */
 	static QString
-	data_home() { return xdg_data_home() + "/" + HARUHI_XDG_DATA_HOME; }
+	data_home();
 
 	/**
 	 * Returns QDomDocument that stores XML settings.
 	 */
 	QDomDocument&
-	document() { return _document; }
+	document();
 
 	QDomDocument const&
-	document() const { return _document; }
+	document() const;
 
   private:
 	/**
@@ -214,6 +214,48 @@ class Settings: public RecursiveMutex
 	Modules			_modules;
 	ModuleElements	_module_elements;
 };
+
+
+inline QString
+Settings::Module::name() const
+{
+	return _name;
+}
+
+
+inline Settings*
+Settings::Module::host() const
+{
+	return _host;
+}
+
+
+inline QString
+Settings::config_home()
+{
+	return xdg_config_home() + "/" + HARUHI_XDG_SETTINGS_HOME;
+}
+
+
+inline QString
+Settings::data_home()
+{
+	return xdg_data_home() + "/" + HARUHI_XDG_DATA_HOME;
+}
+
+
+inline QDomDocument&
+Settings::document()
+{
+	return _document;
+}
+
+
+inline QDomDocument const&
+Settings::document() const
+{
+	return _document;
+}
 
 } // namespace Haruhi
 

@@ -50,13 +50,13 @@ class Settings:
 	 * Model accessor.
 	 */
 	Model&
-	model() { return _model; }
+	model();
 
 	/**
 	 * Model accessor.
 	 */
 	Model const&
-	model() const { return _model; }
+	model() const;
 
 	/**
 	 * Adds given device to model. Signals change with model().changed().
@@ -77,11 +77,32 @@ class Settings:
 
   private:
 	void
-	save_after_change() { save(); }
+	save_after_change();
 
   private:
-	Model	_model;
+	Model _model;
 };
+
+
+inline Model&
+Settings::model()
+{
+	return _model;
+}
+
+
+inline Model const&
+Settings::model() const
+{
+	return _model;
+}
+
+
+inline void
+Settings::save_after_change()
+{
+	save();
+}
 
 } // namespace DevicesManager
 

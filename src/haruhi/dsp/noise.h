@@ -50,51 +50,71 @@ class Noise: public Wave
 	typedef std::map<Thread::ID, State> States;
 
   public:
-	Noise():
-		Wave (false)
-	{ }
+	Noise();
 
 	/**
 	 * Returns noise sample.
 	 */
 	virtual Sample
-	operator() (Sample, Sample) const
-	{
-		return get();
-	}
+	operator() (Sample, Sample) const;
 
 	/**
 	 * Faster getter of noise value (not polymorphic).
 	 */
 	Sample
-	get() const
-	{
-		return get (_states[Thread::id()]);
-	}
+	get() const;
 
 	/**
 	 * Faster equivalent of get().
 	 */
 	Sample
-	get (State& s) const
-	{
-		s.w *= 16807;
-		return s.w * 4.6566129e-010f;
-	}
+	get (State& s) const;
 
 	/**
 	 * Returns reference to State object for calling thread.
 	 */
 	State&
-	state()
-	{
-		// Find or create state for current thread:
-		return _states[Thread::id()];
-	}
+	state();
 
   private:
 	States mutable _states;
 };
+
+
+inline
+Noise::Noise():
+	Wave (false)
+{ }
+
+
+inline Sample
+Noise::operator() (Sample, Sample) const
+{
+	return get();
+}
+
+
+inline Sample
+Noise::get() const
+{
+	return get (_states[Thread::id()]);
+}
+
+
+inline Sample
+Noise::get (State& s) const
+{
+	s.w *= 16807;
+	return s.w * 4.6566129e-010f;
+}
+
+
+inline Noise::State&
+Noise::state()
+{
+	// Find or create state for current thread:
+	return _states[Thread::id()];
+}
 
 } // namespace DSP
 

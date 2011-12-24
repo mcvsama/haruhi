@@ -60,13 +60,20 @@ class UnitsCombobox: public QComboBox
 	 * or 0 to indicate "no filtering".
 	 */
 	Unit*
-	unit() const { return _units[currentItem()]; }
+	unit() const;
 
   private:
 	PortsConnector*	_ports_connector;
 	Units			_units;
 	Port::Direction	_type;
 };
+
+
+inline Unit*
+UnitsCombobox::unit() const
+{
+	return _units[currentItem()];
+}
 
 } // namespace PortsConnectorPrivate
 

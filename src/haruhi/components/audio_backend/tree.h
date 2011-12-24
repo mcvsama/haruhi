@@ -39,7 +39,7 @@ class Tree:
 	Tree (QWidget* parent, Backend*, const char* header_title);
 
 	Backend*
-	backend() const { return _backend; }
+	backend() const;
 
 	QTreeWidgetItem*
 	selected_item() const;
@@ -53,6 +53,13 @@ class Tree:
   private:
 	Backend* _backend;
 };
+
+
+inline Backend*
+Tree::backend() const
+{
+	return _backend;
+}
 
 } // namespace AudioBackendImpl
 

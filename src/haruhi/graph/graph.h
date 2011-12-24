@@ -83,13 +83,13 @@ class Graph: public RecursiveMutex
 	 * Returns currently registered audio backend (or 0 if there's none).
 	 */
 	AudioBackend*
-	audio_backend() const { return _audio_backend; }
+	audio_backend() const;
 
 	/**
 	 * Returns currently registered event backend (or 0 if there's none).
 	 */
 	EventBackend*
-	event_backend() const { return _event_backend; }
+	event_backend() const;
 
 	/**
 	 * Registers unit in this graph.
@@ -129,7 +129,7 @@ class Graph: public RecursiveMutex
 	 * Returns buffer size for audio buffers.
 	 */
 	std::size_t
-	buffer_size() const { return _buffer_size; }
+	buffer_size() const;
 
 	/**
 	 * Sets buffer size and updates all connected port buffers.
@@ -141,7 +141,7 @@ class Graph: public RecursiveMutex
 	 * Returns current sample rate.
 	 */
 	unsigned int
-	sample_rate() const { return _sample_rate; }
+	sample_rate() const;
 
 	/**
 	 * Sets sample rate and updates all connected port buffers.
@@ -154,7 +154,7 @@ class Graph: public RecursiveMutex
 	 * in quarter notes per minute (BPM).
 	 */
 	float
-	tempo() const { return _tempo; }
+	tempo() const;
 
 	/**
 	 * Sets new tempo.
@@ -166,7 +166,7 @@ class Graph: public RecursiveMutex
 	 * Returns current master tune in Hz. Default value is 440.0.
 	 */
 	float
-	master_tune() const { return _master_tune; }
+	master_tune() const;
 
 	/**
 	 * Sets new master tune in Hz.
@@ -185,7 +185,7 @@ class Graph: public RecursiveMutex
 	 * Returns timestamp of last entering into processing round.
 	 */
 	Timestamp
-	timestamp() const { return _timestamp; }
+	timestamp() const;
 
 	/**
 	 * Gives access to set containing all registered Synces (in this graph):
@@ -203,14 +203,14 @@ class Graph: public RecursiveMutex
 	 * Returns true if syncing is dummy.
 	 */
 	bool
-	dummy() const { return _dummy_syncing; }
+	dummy() const;
 
 	/**
 	 * Returns number of samples from the beginning of current processing round
 	 * to the next tempo tick.
 	 */
 	uint64_t
-	next_tempo_tick() const { return _next_tempo_tick; }
+	next_tempo_tick() const;
 
   private:
 	void
@@ -252,6 +252,69 @@ class Graph: public RecursiveMutex
 	AudioBackend*	_audio_backend;
 	EventBackend*	_event_backend;
 };
+
+
+inline AudioBackend*
+Graph::audio_backend() const
+{
+	return _audio_backend;
+}
+
+
+inline EventBackend*
+Graph::event_backend() const
+{
+	return _event_backend;
+}
+
+
+inline std::size_t
+Graph::buffer_size() const
+{
+	return _buffer_size;
+}
+
+
+inline unsigned int
+Graph::sample_rate() const
+{
+	return _sample_rate;
+}
+
+
+inline float
+Graph::tempo() const
+{
+	return _tempo;
+}
+
+
+inline float
+Graph::master_tune() const
+{
+	return _master_tune;
+}
+
+
+inline Timestamp
+Graph::timestamp() const
+{
+	return _timestamp;
+}
+
+
+inline bool
+Graph::dummy() const
+{
+	return _dummy_syncing;
+}
+
+
+inline uint64_t
+Graph::next_tempo_tick() const
+{
+	return _next_tempo_tick;
+}
 
 } // namespace Haruhi
 

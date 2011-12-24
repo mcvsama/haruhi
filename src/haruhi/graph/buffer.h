@@ -37,9 +37,7 @@ class Buffer: public Noncopyable
 	typedef const char* TypeID;
 
   public:
-	Buffer (TypeID type):
-		_type (type)
-	{ }
+	Buffer (TypeID type);
 
 	virtual ~Buffer() { }
 
@@ -48,7 +46,7 @@ class Buffer: public Noncopyable
 	 * type. Comparison is done using pointers, not string contents.
 	 */
 	TypeID
-	type() const { return _type; }
+	type() const;
 
 	/**
 	 * Clears buffer.
@@ -65,6 +63,19 @@ class Buffer: public Noncopyable
   private:
 	TypeID _type;
 };
+
+
+inline
+Buffer::Buffer (TypeID type):
+	_type (type)
+{ }
+
+
+inline Buffer::TypeID
+Buffer::type() const
+{
+	return _type;
+}
 
 } // namespace Haruhi
 

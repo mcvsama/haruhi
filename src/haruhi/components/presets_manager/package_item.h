@@ -38,10 +38,10 @@ class PackageItem: public QTreeWidgetItem
 	PackageItem (PresetsTree* parent, Package* package);
 
 	Package*
-	package() const { return _package; }
+	package() const;
 
 	PresetsManager*
-	presets_manager() const { return _presets_manager; }
+	presets_manager() const;
 
 	void
 	reload();
@@ -63,6 +63,20 @@ class PackageItem: public QTreeWidgetItem
 	PresetsManager*	_presets_manager;
 	Package*		_package;
 };
+
+
+inline Package*
+PackageItem::package() const
+{
+	return _package;
+}
+
+
+inline PresetsManager*
+PackageItem::presets_manager() const
+{
+	return _presets_manager;
+}
 
 } // namespace PresetsManagerPrivate
 

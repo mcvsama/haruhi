@@ -44,16 +44,6 @@ class PortItem:
 	public SaveableState
 {
   public:
-	struct CompareByPortName
-	{
-		bool
-		operator() (PortItem* a, PortItem* b) const
-		{
-			return a->port()->name() < b->port()->name();
-		}
-	};
-
-  public:
 	PortItem (Tree* parent, QString const& name);
 
 	~PortItem();
@@ -62,17 +52,17 @@ class PortItem:
 	name() const;
 
 	Transport::Port*
-	transport_port() const { return _transport_port; }
+	transport_port() const;
 
 	AudioPort*
-	port() const { return _port; }
+	port() const;
 
 	/**
 	 * Tells whether port has been fully constructed and
 	 * may be normally used by backend.
 	 */
 	bool
-	ready() const { return _ready; }
+	ready() const;
 
 	/**
 	 * Updates name of backend ports basing on GUI port name.
@@ -87,8 +77,12 @@ class PortItem:
 	configure() = 0;
 
   protected:
+	/**
+	 * Tell that port is ready to use.
+	 * Call from derived class constructor.
+	 */
 	void
-	set_ready (bool r) { _ready = r; }
+	set_ready (bool r);
 
   protected:
 	Backend*			_backend;
@@ -99,6 +93,34 @@ class PortItem:
 	// Set when port is fully constructed:
 	bool				_ready;
 };
+
+
+inline Transport::Port*
+PortItem::transport_port() const
+{
+	return _transport_port;
+}
+
+
+inline AudioPort*
+PortItem::port() const
+{
+	return _port;
+}
+
+
+inline bool
+PortItem::ready() const
+{
+	return _ready;
+}
+
+
+inline void
+PortItem::set_ready (bool r)
+{
+	_ready = r;
+}
 
 } // namespace AudioBackendImpl
 

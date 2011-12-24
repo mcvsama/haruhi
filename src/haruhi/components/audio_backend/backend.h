@@ -64,11 +64,7 @@ class Backend:
 	class StateChange: public QEvent
 	{
 	  public:
-		StateChange (bool online, bool from_backend):
-			QEvent (QEvent::User),
-			online (online),
-			from_backend (from_backend)
-		{ }
+		StateChange (bool online, bool from_backend);
 
 		// True if just connected, false if disconnected:
 		bool online;
@@ -90,13 +86,13 @@ class Backend:
 	~Backend();
 
 	Transport*
-	transport() const { return _transport; }
+	transport() const;
 
 	EventPort*
-	master_volume_port() const { return _master_volume_port; }
+	master_volume_port() const;
 
 	EventPort*
-	panic_port() const { return _panic_port; }
+	panic_port() const;
 
 	/**
 	 * Starts processing, that is: enables ticks from audio subsystem.
@@ -310,6 +306,35 @@ class PortException: public Exception
 		Exception (what, details)
 	{ }
 };
+
+
+inline
+Backend::StateChange::StateChange (bool online, bool from_backend):
+	QEvent (QEvent::User),
+	online (online),
+	from_backend (from_backend)
+{ }
+
+
+inline Transport*
+Backend::transport() const
+{
+	return _transport;
+}
+
+
+inline EventPort*
+Backend::master_volume_port() const
+{
+	return _master_volume_port;
+}
+
+
+inline EventPort*
+Backend::panic_port() const
+{
+	return _panic_port;
+}
 
 } // namespace AudioBackendImpl
 

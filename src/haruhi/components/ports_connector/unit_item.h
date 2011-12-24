@@ -74,18 +74,12 @@ class UnitItem:
 	set_filtered_out (bool set);
 
 	template<class Predicate>
-		inline int
-		count_outputs_if (Predicate predicate) const
-		{
-			return std::count_if (unit()->outputs().begin(), unit()->outputs().end(), predicate);
-		}
+		int
+		count_outputs_if (Predicate predicate) const;
 
 	template<class Predicate>
-		inline int
-		count_inputs_if (Predicate predicate) const
-		{
-			return std::count_if (unit()->inputs().begin(), unit()->inputs().end(), predicate);
-		}
+		int
+		count_inputs_if (Predicate predicate) const;
 
   private:
 	/**
@@ -130,6 +124,22 @@ class UnitItem:
 	Port::Direction	_type;
 	Unit*			_unit;
 };
+
+
+template<class Predicate>
+	inline int
+	UnitItem::count_outputs_if (Predicate predicate) const
+	{
+		return std::count_if (unit()->outputs().begin(), unit()->outputs().end(), predicate);
+	}
+
+
+template<class Predicate>
+	inline int
+	UnitItem::count_inputs_if (Predicate predicate) const
+	{
+		return std::count_if (unit()->inputs().begin(), unit()->inputs().end(), predicate);
+	}
 
 } // namespace PortsConnectorPrivate
 

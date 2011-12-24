@@ -50,7 +50,7 @@ class AudioPort: public Port
 	 * Helper that casts Buffer to AudioBuffer.
 	 */
 	AudioBuffer*
-	audio_buffer() const { return static_cast<AudioBuffer*> (buffer()); }
+	audio_buffer() const;
 
 	/**
 	 * Implementation of Port::graph_updated().
@@ -58,6 +58,13 @@ class AudioPort: public Port
 	void
 	graph_updated();
 };
+
+
+inline AudioBuffer*
+AudioPort::audio_buffer() const
+{
+	return static_cast<AudioBuffer*> (buffer());
+}
 
 } // namespace Haruhi
 

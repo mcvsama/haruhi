@@ -45,25 +45,25 @@ class Category: public SaveableState
 	 * Category name.
 	 */
 	QString
-	name() const { return _name; }
+	name() const;
 
 	/**
 	 * Sets category name.
 	 */
 	void
-	set_name (QString const& name) { _name = name; }
+	set_name (QString const& name);
 
 	/**
 	 * Presets accessor.
 	 */
 	Presets&
-	presets() { return _presets; }
+	presets();
 
 	/**
 	 * Presets accessor.
 	 */
 	Presets const&
-	presets() const { return _presets; }
+	presets() const;
 
 	/**
 	 * Creates new child preset.
@@ -91,6 +91,34 @@ class Category: public SaveableState
 	QString	_name;
 	Presets	_presets;
 };
+
+
+inline QString
+Category::name() const
+{
+	return _name;
+}
+
+
+inline void
+Category::set_name (QString const& name)
+{
+	_name = name;
+}
+
+
+inline Category::Presets&
+Category::presets()
+{
+	return _presets;
+}
+
+
+inline Category::Presets const&
+Category::presets() const
+{
+	return _presets;
+}
 
 } // namespace PresetsManagerPrivate
 

@@ -76,7 +76,7 @@ class PeriodicUpdater: public QObject
 	~PeriodicUpdater();
 
 	static PeriodicUpdater*
-	singleton() { return _singleton; }
+	singleton();
 
 	/**
 	 * Adds widget to set. After update object is removed.
@@ -102,6 +102,13 @@ class PeriodicUpdater: public QObject
 	Mutex					_set_mutex;
 	QTimer*					_timer;
 };
+
+
+inline PeriodicUpdater*
+PeriodicUpdater::singleton()
+{
+	return _singleton;
+}
 
 } // namespace Haruhi
 

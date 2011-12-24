@@ -35,16 +35,16 @@ class HaruhiSettings: public Settings::Module
 	HaruhiSettings();
 
 	int
-	engine_thread_priority() const { return _engine_thread_priority; }
+	engine_thread_priority() const;
 
 	void
-	set_engine_thread_priority (int value) { _engine_thread_priority = value; }
+	set_engine_thread_priority (int value);
 
 	int
-	level_meter_fps() const { return _level_meter_fps; }
+	level_meter_fps() const;
 
 	void
-	set_level_meter_fps (int value) { _level_meter_fps = value; }
+	set_level_meter_fps (int value);
 
 	/*
 	 * Settings::Module API
@@ -60,6 +60,34 @@ class HaruhiSettings: public Settings::Module
 	int	_engine_thread_priority;
 	int	_level_meter_fps;
 };
+
+
+inline int
+HaruhiSettings::engine_thread_priority() const
+{
+	return _engine_thread_priority;
+}
+
+
+inline void
+HaruhiSettings::set_engine_thread_priority (int value)
+{
+	_engine_thread_priority = value;
+}
+
+
+inline int
+HaruhiSettings::level_meter_fps() const
+{
+	return _level_meter_fps;
+}
+
+
+inline void
+HaruhiSettings::set_level_meter_fps (int value)
+{
+	_level_meter_fps = value;
+}
 
 } // namespace Haruhi
 

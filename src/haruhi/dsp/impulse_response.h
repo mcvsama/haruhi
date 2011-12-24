@@ -30,7 +30,8 @@ enum ImpulseResponseType { FIR, IIR };
 
 
 /**
- * Base class for impulse responses.
+ * Base class for impulse responses
+ * that can be asked for… the response (magnitude).
  */
 class PlotableImpulseResponse
 {
@@ -55,9 +56,7 @@ template<unsigned int tOrder, int tResponseType>
 		};
 
 	  public:
-		ImpulseResponse():
-			_serial (0)
-		{ }
+		ImpulseResponse();
 
 		virtual ~ImpulseResponse() { }
 
@@ -67,7 +66,7 @@ template<unsigned int tOrder, int tResponseType>
 		 * coefficients change.
 		 */
 		Serial
-		serial() const { return _serial; }
+		serial() const;
 
 	  protected:
 		/**
@@ -75,7 +74,7 @@ template<unsigned int tOrder, int tResponseType>
 		 * know to reset recursive coefficients.
 		 */
 		void
-		bump() { ++_serial; }
+		bump();
 
 	  public:
 		// Array of H(z)'s denominator coefficients. Unused in FIR filters.
@@ -86,6 +85,30 @@ template<unsigned int tOrder, int tResponseType>
 	  private:
 		Serial	_serial;
 	};
+
+
+template<unsigned int O, int T>
+	inline
+	ImpulseResponse<O, T>::ImpulseResponse():
+		_serial (0)
+	{ }
+
+
+template<unsigned int O, int T>
+	inline
+	typename ImpulseResponse<O, T>::Serial
+	ImpulseResponse<O, T>::serial() const
+	{
+		return _serial;
+	}
+
+
+template<unsigned int O, int T>
+	inline void
+	ImpulseResponse<O, T>::bump()
+	{
+		++_serial;
+	}
 
 } // namespace DSP
 

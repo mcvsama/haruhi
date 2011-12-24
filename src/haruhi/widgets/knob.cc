@@ -481,7 +481,7 @@ Knob::create_connect_menu (QMenu* unit_menu, Unit* unit, QPixmap const& pixmap_f
 	for (GroupsMap::iterator g = groups.begin(); g != groups.end(); ++g)
 	{
 		QMenu* group_menu = unit_menu->addMenu (pixmap_for_port_group, QString::fromStdString (g->first->name()));
-		std::sort (g->second.begin(), g->second.end(), Port::CompareByName());
+		std::sort (g->second.begin(), g->second.end(), Port::compare_by_name);
 		for (PortsVector::iterator p = g->second.begin(); p != g->second.end(); ++p)
 		{
 			_action_id += 1;
@@ -493,7 +493,7 @@ Knob::create_connect_menu (QMenu* unit_menu, Unit* unit, QPixmap const& pixmap_f
 	}
 
 	// Add port items:
-	std::sort (ports.begin(), ports.end(), Port::CompareByName());
+	std::sort (ports.begin(), ports.end(), Port::compare_by_name);
 	for (PortsVector::iterator p = ports.begin(); p != ports.end(); ++p)
 	{
 		_action_id += 1;

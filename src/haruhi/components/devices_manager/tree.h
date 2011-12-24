@@ -135,7 +135,7 @@ class Tree:
 	customEvent (QEvent*);
 
   private:
-	Model*	_model;
+	Model* _model;
 };
 
 

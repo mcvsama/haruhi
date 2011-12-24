@@ -51,7 +51,7 @@ class EventPort: public Port
 	 * Helper that casts Buffer to EventBuffer.
 	 */
 	EventBuffer*
-	event_buffer() const { return static_cast<EventBuffer*> (buffer()); }
+	event_buffer() const;
 
 	/**
 	 * Return default value set for port.
@@ -87,6 +87,13 @@ class EventPort: public Port
 	bool					_default_value_set;
 	ControllerEvent::Value	_default_value;
 };
+
+
+inline EventBuffer*
+EventPort::event_buffer() const
+{
+	return static_cast<EventBuffer*> (buffer());
+}
 
 
 inline ControllerEvent::Value

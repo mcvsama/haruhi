@@ -43,16 +43,16 @@ class FFT
 		~Vector();
 
 		Complex&
-		operator[] (int i) { return _data[i]; }
+		operator[] (int i);
 
 		Complex const&
-		operator[] (int i) const { return _data[i]; }
+		operator[] (int i) const;
 
 		Complex*
-		data() const { return _data; }
+		data() const;
 
 		std::size_t
-		size() const { return _size; }
+		size() const;
 
 		void
 		normalize();
@@ -106,6 +106,34 @@ class FFT
 	// Creating/destroying plans is not thread safe in FFTW, mutex is needed:
 	static Mutex _plan_mutex;
 };
+
+
+inline FFT::Complex&
+FFT::Vector::operator[] (int i)
+{
+	return _data[i];
+}
+
+
+inline FFT::Complex const&
+FFT::Vector::operator[] (int i) const
+{
+	return _data[i];
+}
+
+
+inline FFT::Complex*
+FFT::Vector::data() const
+{
+	return _data;
+}
+
+
+inline std::size_t
+FFT::Vector::size() const
+{
+	return _size;
+}
 
 } // namespace DSP
 

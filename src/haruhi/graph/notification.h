@@ -45,20 +45,34 @@ class Notification
 	 * \returns	true if Notification is broadcast-type.
 	 */
 	bool
-	broadcast() const { return _broadcast; }
+	broadcast() const;
 
 	/**
 	 * \returns	target URN if applies.
 	 * 			Invalid call if notification is broadcast.
 	 */
 	std::string
-	target_urn() const { return _target_urn; }
+	target_urn() const;
 
   private:
 	Unit*		_sender;
 	bool		_broadcast;
 	std::string	_target_urn;
 };
+
+
+inline bool
+Notification::broadcast() const
+{
+	return _broadcast;
+}
+
+
+inline std::string
+Notification::target_urn() const
+{
+	return _target_urn;
+}
 
 } // namespace Haruhi
 

@@ -100,18 +100,6 @@ class Port:
 
 	typedef int Flags;
 
-	/**
-	 * Helper for sorting.
-	 */
-	struct CompareByName
-	{
-		bool
-		operator() (Port* a, Port* b) const
-		{
-			return a->name() < b->name();
-		}
-	};
-
   public:
 	Port (Unit* unit, std::string const& name, Direction, Buffer* buffer, PortGroup* group = 0, Flags flags = 0);
 
@@ -125,19 +113,19 @@ class Port:
 	 * \returns	owner of this port.
 	 */
 	Unit*
-	unit() const { return _unit; }
+	unit() const;
 
 	/**
 	 * \returns	name of this port.
 	 */
 	std::string
-	name() const { return _name; }
+	name() const;
 
 	/**
 	 * \returns	comment for this port.
 	 */
 	std::string
-	comment() const { return _comment; }
+	comment() const;
 
 	/**
 	 * \returns	fully qualified name (ie. group-name:port-name)
@@ -149,19 +137,19 @@ class Port:
 	 * \returns	port direction.
 	 */
 	Direction
-	direction() const { return _direction; }
+	direction() const;
 
 	/**
 	 * \returns	port's flags.
 	 */
 	Flags
-	flags() const { return _flags; }
+	flags() const;
 
 	/**
 	 * \returns	true if port has all given flags.
 	 */
 	bool
-	has_flags (Flags flags) { return (_flags & flags) == flags; }
+	has_flags (Flags flags);
 
 	/**
 	 * Sets new name for port.
@@ -181,25 +169,25 @@ class Port:
 	 * \returns	buffer for port, either port's own or by cascade to nearest buffer.
 	 */
 	Buffer*
-	buffer() const { return _buffer; }
+	buffer() const;
 
 	/**
 	 * \returns	group for this port.
 	 */
 	PortGroup*
-	group() const { return _group; }
+	group() const;
 
 	/**
 	 * \returns	set of back connections.
 	 */
 	Ports const&
-	back_connections() const { return _back_connections; }
+	back_connections() const;
 
 	/**
 	 * \returns	set of forward connections.
 	 */
 	Ports const&
-	forward_connections() const { return _forward_connections; }
+	forward_connections() const;
 
 	/**
 	 * \returns	true if given ports are connected.
@@ -266,6 +254,12 @@ class Port:
 	virtual void
 	graph_updated() = 0;
 
+	/**
+	 * Helper for sorting.
+	 */
+	static bool
+	compare_by_name (Port const* first, Port const* second);
+
   protected:
 	void
 	register_me();
@@ -318,6 +312,83 @@ class Port:
 	Ports			_back_connections;
 	Ports			_forward_connections;
 };
+
+
+inline Unit*
+Port::unit() const
+{
+	return _unit;
+}
+
+
+inline std::string
+Port::name() const
+{
+	return _name;
+}
+
+
+inline std::string
+Port::comment() const
+{
+	return _comment;
+}
+
+
+inline Port::Direction
+Port::direction() const
+{
+	return _direction;
+}
+
+
+inline Port::Flags
+Port::flags() const
+{
+	return _flags;
+}
+
+
+inline bool
+Port::has_flags (Flags flags)
+{
+	return (_flags & flags) == flags;
+}
+
+
+inline Buffer*
+Port::buffer() const
+{
+	return _buffer;
+}
+
+
+inline PortGroup*
+Port::group() const
+{
+	return _group;
+}
+
+
+inline Ports const&
+Port::back_connections() const
+{
+	return _back_connections;
+}
+
+
+inline Ports const&
+Port::forward_connections() const
+{
+	return _forward_connections;
+}
+
+
+inline bool
+Port::compare_by_name (Port const* first, Port const* second)
+{
+	return first->name() < second->name();
+}
 
 } // namespace Haruhi
 

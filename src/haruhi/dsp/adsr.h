@@ -55,10 +55,10 @@ class ADSR
 	release();
 
 	bool
-	released() const { return _phase == Release || _phase == Finished; }
+	released() const;
 
 	bool
-	finished() const { return _phase == Finished; }
+	finished() const;
 
 	void
 	fill (Sample* begin, Sample* end);
@@ -81,6 +81,20 @@ class ADSR
 	// Phase sample number:
 	unsigned int	_p;
 };
+
+
+inline bool
+ADSR::released() const
+{
+	return _phase == Release || _phase == Finished;
+}
+
+
+inline bool
+ADSR::finished() const
+{
+	return _phase == Finished;
+}
 
 } // namespace DSP
 

@@ -51,7 +51,7 @@ class AlsaTransport: public Transport
 		~AlsaPort();
 
 		int
-		alsa_port() const { return _alsa_port; }
+		alsa_port() const;
 
 		void
 		rename (std::string const&);
@@ -83,7 +83,7 @@ class AlsaTransport: public Transport
 		destroy();
 
 		AlsaTransport*
-		alsa_transport() const { return static_cast<AlsaTransport*> (transport()); }
+		alsa_transport() const;
 
 	  private:
 		Direction				_direction;
@@ -106,7 +106,7 @@ class AlsaTransport: public Transport
 	 * Low-level access to ALSA sequencer.
 	 */
 	snd_seq_t*
-	seq() const { return _seq; }
+	seq() const;
 
 	/*
 	 * Transport API
@@ -149,6 +149,27 @@ class AlsaTransport: public Transport
 	snd_seq_t*	_seq;
 	Ports		_ports;
 };
+
+
+inline int
+AlsaTransport::AlsaPort::alsa_port() const
+{
+	return _alsa_port;
+}
+
+
+inline AlsaTransport*
+AlsaTransport::AlsaPort::alsa_transport() const
+{
+	return static_cast<AlsaTransport*> (transport());
+}
+
+
+inline snd_seq_t*
+AlsaTransport::seq() const
+{
+	return _seq;
+}
 
 } // namespace EventBackendImpl
 

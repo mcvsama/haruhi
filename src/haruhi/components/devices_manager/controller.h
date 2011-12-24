@@ -42,9 +42,7 @@ class Controller: public SaveableState
 {
 	struct SmoothingParams
 	{
-		SmoothingParams():
-			current (0.f), target (0.f)
-		{ }
+		SmoothingParams();
 
 		ControllerEvent::Value	current;
 		ControllerEvent::Value	target;
@@ -62,13 +60,13 @@ class Controller: public SaveableState
 	 * Name for controller. Name is for UI.
 	 */
 	QString
-	name() const { return _name; }
+	name() const;
 
 	/**
 	 * Sets new name for controller.
 	 */
 	void
-	set_name (QString const& name) { _name = name; }
+	set_name (QString const& name);
 
 	/**
 	 * Sets filters from MIDI event and stops learning.
@@ -141,6 +139,26 @@ class Controller: public SaveableState
 	SmoothingParams	_key_pressure_smoother[128];
 	VoiceID			_voice_ids[128];
 };
+
+
+inline
+Controller::SmoothingParams::SmoothingParams():
+	current (0.f), target (0.f)
+{ }
+
+
+inline QString
+Controller::name() const
+{
+	return _name;
+}
+
+
+inline void
+Controller::set_name (QString const& name)
+{
+	_name = name;
+}
 
 } // namespace DevicesManager
 

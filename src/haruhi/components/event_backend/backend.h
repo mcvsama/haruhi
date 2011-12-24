@@ -110,7 +110,7 @@ class Backend:
 	 * Returns event transport used by backend.
 	 */
 	Transport*
-	transport() const { return _transport; }
+	transport() const;
 
 	/**
 	 * Should be called whenever DevicesManager's model change.
@@ -162,11 +162,13 @@ class Backend:
 	 * Emited after user saves Device as template. Can be used to inform DevicesManager to save new device template.
 	 * If nothing is connected to this signal, 'save as template' menu item will be hidden in device popup menu.
 	 * \param	device Device to be saved as template.
+	 * \thread	UI thread
 	 */
 	Signal::Emiter1<DevicesManager::Device const&> device_saved_as_template;
 
 	/**
 	 * Emited on each event from transport.
+	 * \thread	Engine thread
 	 */
 	Signal::Emiter1<MIDI::Event const&> on_event;
 
@@ -297,6 +299,13 @@ class PortException: public Exception
 		Exception (what, details)
 	{ }
 };
+
+
+inline Transport*
+Backend::transport() const
+{
+	return _transport;
+}
 
 } // namespace EventBackendImpl
 

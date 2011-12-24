@@ -64,7 +64,7 @@ class PresetsManager:
 	 * Model accessor.
 	 */
 	PresetsManagerPrivate::Model*
-	model() { return _model; }
+	model();
 
 	/**
 	 * Returns true if preset with given UUID is favorited.
@@ -153,6 +153,13 @@ class PresetsManager:
 	QAction*								_create_category_action;
 	QAction*								_create_preset_action;
 };
+
+
+inline PresetsManagerPrivate::Model*
+PresetsManager::model()
+{
+	return _model;
+}
 
 } // namespace Haruhi
 

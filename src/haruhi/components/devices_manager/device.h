@@ -54,13 +54,13 @@ class Device: public SaveableState
 	 * Name for device. Name is for UI.
 	 */
 	QString
-	name() const { return _name; }
+	name() const;
 
 	/**
 	 * Sets new name for device.
 	 */
 	void
-	set_name (QString const& name) { _name = name; }
+	set_name (QString const& name);
 
 	/**
 	 * Returns true if auto-add is set on this device.
@@ -68,25 +68,25 @@ class Device: public SaveableState
 	 * in SessionLoader UI.
 	 */
 	bool
-	auto_add() const { return _auto_add; }
+	auto_add() const;
 
 	/**
 	 * Sets auto-add property.
 	 */
 	void
-	set_auto_add (bool enabled) { _auto_add = enabled; }
+	set_auto_add (bool enabled);
 
 	/**
 	 * Accessor to controllers list.
 	 */
 	Controllers&
-	controllers() { return _controllers; }
+	controllers();
 
 	/**
 	 * Accessor to controllers list.
 	 */
 	Controllers const&
-	controllers() const { return _controllers; }
+	controllers() const;
 
 	/**
 	 * Returns true if given Controller points to one of elements in the controllers list.
@@ -116,6 +116,48 @@ class Device: public SaveableState
 	Controllers	_controllers;
 	bool		_auto_add;
 };
+
+
+inline QString
+Device::name() const
+{
+	return _name;
+}
+
+
+inline void
+Device::set_name (QString const& name)
+{
+	_name = name;
+}
+
+
+inline bool
+Device::auto_add() const
+{
+	return _auto_add;
+}
+
+
+inline void
+Device::set_auto_add (bool enabled)
+{
+	_auto_add = enabled;
+}
+
+
+inline Device::Controllers&
+Device::controllers()
+{
+	return _controllers;
+}
+
+
+inline Device::Controllers const&
+Device::controllers() const
+{
+	return _controllers;
+}
 
 } // namespace DevicesManager
 

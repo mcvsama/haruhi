@@ -41,10 +41,10 @@ class Panel: public QWidget
 	Panel (Port::Direction type, PortsConnector* ports_connector, QWidget* parent);
 
 	PortsList*
-	list() const { return _list; }
+	list() const;
 
 	UnitsCombobox*
-	filter() const { return _filter; }
+	filter() const;
 
   public slots:
 	void
@@ -55,6 +55,20 @@ class Panel: public QWidget
 	PortsList*		_list;
 	UnitsCombobox*	_filter;
 };
+
+
+inline PortsList*
+Panel::list() const
+{
+	return _list;
+}
+
+
+inline UnitsCombobox*
+Panel::filter() const
+{
+	return _filter;
+}
 
 } // namespace PortsConnectorPrivate
 

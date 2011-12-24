@@ -46,7 +46,7 @@ class ControllerItem: public Item
 	 * Returns controller name used in Haruhi.
 	 */
 	QString
-	name() const { return _controller->name(); }
+	name() const;
 
 	/**
 	 * Sets new name for item and controller.
@@ -58,7 +58,7 @@ class ControllerItem: public Item
 	 * Returns Device object associated with this UI item.
 	 */
 	Controller*
-	controller() const { return _controller; }
+	controller() const;
 
 	/**
 	 * Puts controller into learning mode.
@@ -77,7 +77,7 @@ class ControllerItem: public Item
 	 * Returns true if item is in 'learning' mode.
 	 */
 	bool
-	learning() { return _learning; }
+	learning();
 
 	/**
 	 * If in learning mode, sets filters from MIDI event and stops learning.
@@ -93,6 +93,27 @@ class ControllerItem: public Item
 	// Learning-from-MIDI mode:
 	bool		_learning;
 };
+
+
+inline QString
+ControllerItem::name() const
+{
+	return _controller->name();
+}
+
+
+inline Controller*
+ControllerItem::controller() const
+{
+	return _controller;
+}
+
+
+inline bool
+ControllerItem::learning()
+{
+	return _learning;
+}
 
 } // namespace DevicesManager
 

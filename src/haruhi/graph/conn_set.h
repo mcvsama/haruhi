@@ -35,12 +35,7 @@ class ConnSet: public SaveableState
 	class Connection
 	{
 	  public:
-		Connection (QString const& source_unit, QString const& source_port, QString const& target_unit, QString const& target_port):
-			source_unit (source_unit),
-			source_port (source_port),
-			target_unit (target_unit),
-			target_port (target_port)
-		{ }
+		Connection (QString const& source_unit, QString const& source_port, QString const& target_unit, QString const& target_port);
 
 	  public:
 		QString	source_unit;
@@ -50,7 +45,7 @@ class ConnSet: public SaveableState
 	};
 
   public:
-	typedef std::set<Unit*>	Units;
+	typedef std::set<Unit*>			Units;
 	typedef std::list<Connection>	Connections;
 
   public:
@@ -65,11 +60,7 @@ class ConnSet: public SaveableState
 
 	template<class UnitPointerIterator>
 		void
-		insert_units (UnitPointerIterator begin, UnitPointerIterator end)
-		{
-			for (UnitPointerIterator u = begin; u != end; ++u)
-				insert_unit (*u);
-		}
+		insert_units (UnitPointerIterator begin, UnitPointerIterator end);
 
 	void
 	remove_unit (Unit*);
@@ -91,6 +82,24 @@ class ConnSet: public SaveableState
 	Connections	_connections;
 	bool		_only_internal;
 };
+
+
+inline
+ConnSet::Connection::Connection (QString const& source_unit, QString const& source_port, QString const& target_unit, QString const& target_port):
+	source_unit (source_unit),
+	source_port (source_port),
+	target_unit (target_unit),
+	target_port (target_port)
+{ }
+
+
+template<class UnitPointerIterator>
+	inline void
+	ConnSet::insert_units (UnitPointerIterator begin, UnitPointerIterator end)
+	{
+		for (UnitPointerIterator u = begin; u != end; ++u)
+			insert_unit (*u);
+	}
 
 } // namespace Haruhi
 

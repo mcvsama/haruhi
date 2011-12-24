@@ -97,11 +97,18 @@ class SessionLoaderSettings: public Settings::Module
 	cleanup() const;
 
 	RecentSessions&
-	recent_sessions() { return _recent_sessions; }
+	recent_sessions();
 
   private:
 	RecentSessions mutable _recent_sessions;
 };
+
+
+inline SessionLoaderSettings::RecentSessions&
+SessionLoaderSettings::recent_sessions()
+{
+	return _recent_sessions;
+}
 
 } // namespace Haruhi
 

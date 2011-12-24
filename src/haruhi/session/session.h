@@ -182,10 +182,10 @@ class Session:
 		MeterPanel (Session*, QWidget* parent);
 
 		LevelMetersGroup*
-		level_meters_group() const { return _level_meters_group; }
+		level_meters_group() const;
 
 		DialControl*
-		master_volume() const { return _master_volume; }
+		master_volume() const;
 
 		void
 		set_fps (int fps);
@@ -199,10 +199,7 @@ class Session:
 	class UpdateMasterVolume: public QEvent
 	{
 	  public:
-		UpdateMasterVolume (Sample value):
-			QEvent (QEvent::User),
-			value (value)
-		{ }
+		UpdateMasterVolume (Sample value);
 
 		Sample value;
 	};
@@ -220,38 +217,35 @@ class Session:
 	virtual ~Session();
 
 	Engine*
-	engine() const { return _engine; }
+	engine() const;
 
 	QString const&
-	name() const { return _name; }
+	name() const;
 
 	void
-	set_name (QString const& name)
-	{
-		_name = name;
-		_session_name->setText (name);
-	}
+	set_name (QString const& name);
+
 
 	QString const&
-	file_name() const { return _file_name; }
+	file_name() const;
 
 	void
-	set_file_name (QString const& file_name) { _file_name = file_name; }
+	set_file_name (QString const& file_name);
 
 	Graph*
-	graph() const { return _graph; }
+	graph() const;
 
 	PluginLoader*
-	plugin_loader() const { return _plugin_loader; }
+	plugin_loader() const;
 
 	MeterPanel*
-	meter_panel() const { return _meter_panel; }
+	meter_panel() const;
 
 	Parameters&
-	parameters() { return _parameters; }
+	parameters();
 
 	DevicesManager::Panel*
-	devices_manager() { return _devices_manager; }
+	devices_manager();
 
 	/**
 	 * Applies _parameters to system.
@@ -322,16 +316,16 @@ class Session:
 	audio_backend_state_change (bool);
 
 	void
-	show_program() { _stack->setCurrentWidget (_program); }
+	show_program();
 
 	void
-	show_session_settings() { _stack->setCurrentWidget (_session_settings); }
+	show_session_settings();
 
 	void
-	show_haruhi_settings() { _stack->setCurrentWidget (_haruhi_settings); }
+	show_haruhi_settings();
 
 	void
-	reconnect_to_jack() { _audio_backend->connect(); }
+	reconnect_to_jack();
 
 	void
 	master_volume_changed (int);
@@ -381,6 +375,126 @@ class Session:
 	QDoubleSpinBox*					_tempo_spinbox;
 	QMenu*							_main_menu;
 };
+
+
+inline LevelMetersGroup*
+Session::MeterPanel::level_meters_group() const
+{
+	return _level_meters_group;
+}
+
+
+inline DialControl*
+Session::MeterPanel::master_volume() const
+{
+	return _master_volume;
+}
+
+
+inline
+Session::UpdateMasterVolume::UpdateMasterVolume (Sample value):
+	QEvent (QEvent::User),
+	value (value)
+{ }
+
+
+inline Engine*
+Session::engine() const
+{
+	return _engine;
+}
+
+
+inline QString const&
+Session::name() const
+{
+	return _name;
+}
+
+
+inline void
+Session::set_name (QString const& name)
+{
+	_name = name;
+	_session_name->setText (name);
+}
+
+
+inline QString const&
+Session::file_name() const
+{
+	return _file_name;
+}
+
+
+inline void
+Session::set_file_name (QString const& file_name)
+{
+	_file_name = file_name;
+}
+
+
+inline Graph*
+Session::graph() const
+{
+	return _graph;
+}
+
+
+inline PluginLoader*
+Session::plugin_loader() const
+{
+	return _plugin_loader;
+}
+
+
+inline Session::MeterPanel*
+Session::meter_panel() const
+{
+	return _meter_panel;
+}
+
+
+inline Session::Parameters&
+Session::parameters()
+{
+	return _parameters;
+}
+
+
+inline DevicesManager::Panel*
+Session::devices_manager()
+{
+	return _devices_manager;
+}
+
+
+inline void
+Session::show_program()
+{
+	_stack->setCurrentWidget (_program);
+}
+
+
+inline void
+Session::show_session_settings()
+{
+	_stack->setCurrentWidget (_session_settings);
+}
+
+
+inline void
+Session::show_haruhi_settings()
+{
+	_stack->setCurrentWidget (_haruhi_settings);
+}
+
+
+inline void
+Session::reconnect_to_jack()
+{
+	_audio_backend->connect();
+}
 
 } // namespace Haruhi
 

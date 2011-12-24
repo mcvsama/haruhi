@@ -33,15 +33,9 @@ class Envelope
 	class Point
 	{
 	  public:
-		Point():
-			value (0.0),
-			samples (0)
-		{ }
+		Point();
 
-		Point (float value, unsigned int samples):
-			value (value),
-			samples (samples)
-		{ }
+		Point (float value, unsigned int samples);
 
 	  public:
 		float			value;
@@ -54,23 +48,23 @@ class Envelope
 	Envelope();
 
 	Points::size_type
-	sustain_point() const { return _sustain_point; }
+	sustain_point() const;
 
 	void
-	set_sustain_point (Points::size_type i) { _sustain_point = i; }
+	set_sustain_point (Points::size_type i);
 
 	/**
 	 * If forced release is enabled, envelope will jump directly to
 	 * release point on release.
 	 */
 	void
-	set_forced_release (bool enabled) { _forced_release = enabled; }
+	set_forced_release (bool enabled);
 
 	Points&
-	points() { return _points; }
+	points();
 
 	Points const&
-	points() const { return _points; }
+	points() const;
 
 	void
 	prepare();
@@ -95,6 +89,55 @@ class Envelope
 	bool				_sustain;
 	bool				_forced_release;
 };
+
+
+inline
+Envelope::Point::Point():
+	value (0.0),
+	samples (0)
+{ }
+
+
+inline
+Envelope::Point::Point (float value, unsigned int samples):
+	value (value),
+	samples (samples)
+{ }
+
+
+inline Envelope::Points::size_type
+Envelope::sustain_point() const
+{
+	return _sustain_point;
+}
+
+
+inline void
+Envelope::set_sustain_point (Points::size_type i)
+{
+	_sustain_point = i;
+}
+
+
+inline void
+Envelope::set_forced_release (bool enabled)
+{
+	_forced_release = enabled;
+}
+
+
+inline Envelope::Points&
+Envelope::points()
+{
+	return _points;
+}
+
+
+inline Envelope::Points const&
+Envelope::points() const
+{
+	return _points;
+}
 
 } // namespace DSP
 

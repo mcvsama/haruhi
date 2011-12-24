@@ -37,7 +37,7 @@ class PresetItem: public QTreeWidgetItem
 	PresetItem (CategoryItem* parent, Preset* preset);
 
 	Preset*
-	preset() const { return _preset; }
+	preset() const;
 
 	CategoryItem*
 	category_item() const;
@@ -55,6 +55,13 @@ class PresetItem: public QTreeWidgetItem
   private:
 	Preset*	_preset;
 };
+
+
+inline Preset*
+PresetItem::preset() const
+{
+	return _preset;
+}
 
 } // namespace PresetsManagerPrivate
 

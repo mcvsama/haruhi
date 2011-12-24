@@ -16,6 +16,10 @@
 
 namespace Haruhi {
 
+/**
+ * Called as a UNIX signal handler.
+ * Prints stacktrace and other useful information on std::clog.
+ */
 extern void
 fail (int signum);
 

@@ -75,9 +75,8 @@ class EventBuffer: public Buffer
 	ensure_sorted() const;
 
   private:
-	mutable bool					_sorted;
-	mutable Events					_events;
-	Event::SharedStrictWeakOrdering	_less_function;
+	mutable bool	_sorted;
+	mutable Events	_events;
 };
 
 
@@ -123,7 +122,7 @@ EventBuffer::ensure_sorted() const
 {
 	if (!_sorted)
 	{
-		std::sort (_events.begin(), _events.end(), _less_function);
+		std::sort (_events.begin(), _events.end(), Event::shared_strict_weak_ordering);
 		_sorted = true;
 	}
 }

@@ -45,13 +45,13 @@ class Model: public SaveableState
 	 * Devices accessor.
 	 */
 	Devices&
-	devices() { return _devices; }
+	devices();
 
 	/**
 	 * Devices accessor.
 	 */
 	Devices const&
-	devices() const { return _devices; }
+	devices() const;
 
 	/**
 	 * Should be called when model changes, ie. devices/controllers are added or removed,
@@ -94,8 +94,22 @@ class Model: public SaveableState
 	Signal::Emiter0	on_change;
 
   private:
-	Devices	_devices;
+	Devices _devices;
 };
+
+
+inline Model::Devices&
+Model::devices()
+{
+	return _devices;
+}
+
+
+inline Model::Devices const&
+Model::devices() const
+{
+	return _devices;
+}
 
 } // namespace DevicesManager
 

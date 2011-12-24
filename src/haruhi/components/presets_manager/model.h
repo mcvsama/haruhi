@@ -46,9 +46,7 @@ class Model
 	class Locked: public Exception
 	{
 	  public:
-		Locked (const char* details):
-			Exception ("can't create presets model", details)
-		{ }
+		Locked (const char* details);
 	};
 
 	typedef std::list<Package> Packages;
@@ -84,19 +82,19 @@ class Model
 	 * to directory where package files (containing presets) are stored.
 	 */
 	QString const&
-	directory() const { return _directory; }
+	directory() const;
 
 	/**
 	 * Packages accessor.
 	 */
 	Packages&
-	packages() { return _packages; }
+	packages();
 
 	/**
 	 * Packages accessor.
 	 */
 	Packages const&
-	packages() const { return _packages; }
+	packages() const;
 
 	/**
 	 * Creates new child package. Does not save it.
@@ -158,6 +156,33 @@ class Model
 	static ModelsByDir	_models_by_dir;
 	static Mutex		_models_by_dir_mutex;
 };
+
+
+inline
+Model::Locked::Locked (const char* details):
+	Exception ("can't create presets model", details)
+{ }
+
+
+inline QString const&
+Model::directory() const
+{
+	return _directory;
+}
+
+
+inline Model::Packages&
+Model::packages()
+{
+	return _packages;
+}
+
+
+inline Model::Packages const&
+Model::packages() const
+{
+	return _packages;
+}
 
 } // namespace PresetsManagerPrivate
 

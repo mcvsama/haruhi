@@ -51,7 +51,7 @@ class UnitBayAware
 	set_unit_bay (UnitBay* unit_bay);
 
 	UnitBay*
-	unit_bay() const { return _unit_bay; }
+	unit_bay() const;
 
   private:
 	UnitBay* _unit_bay;
@@ -99,6 +99,13 @@ class UnitBay:
   private:
 	Units _units;
 };
+
+
+inline UnitBay*
+UnitBayAware::unit_bay() const
+{
+	return _unit_bay;
+}
 
 } // namespace Haruhi
 

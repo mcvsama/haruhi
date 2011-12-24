@@ -98,18 +98,22 @@ class JackTransport: public Transport
 
 	  private:
 		/**
-		 * Creates actual JACK port.
-		 * Done in constructor.
+		 * Create actual JACK port.
+		 * Called from constructor.
 		 */
 		void
 		reinit();
 
 		/**
-		 * Destroys JACK port.
+		 * Destroy JACK port.
 		 */
 		void
 		destroy();
 
+		/**
+		 * Return pointer to sample buffer
+		 * provided by JACK.
+		 */
 		Sample*
 		jack_buffer();
 
@@ -128,6 +132,9 @@ class JackTransport: public Transport
 	JackTransport (Backend* backend);
 
 	~JackTransport();
+
+	jack_client_t*
+	jack_client() const;
 
 	/*
 	 * Transport API
@@ -149,16 +156,16 @@ class JackTransport: public Transport
 	deactivate();
 
 	void
-	lock_ports() { _ports_mutex.lock(); }
+	lock_ports();
 
 	void
-	unlock_ports() { _ports_mutex.unlock(); }
+	unlock_ports();
 
 	void
 	data_ready();
 
 	bool
-	active() const { return _active; }
+	active() const;
 
 	Port*
 	create_input (std::string const& port_name);
@@ -169,18 +176,15 @@ class JackTransport: public Transport
 	void
 	destroy_port (Port*);
 
-	jack_client_t*
-	jack_client() const { return _jack_client; }
-
   private:
 	/**
-	 * Calls post on semaphores to avoid death locks.
+	 * Call post on semaphores (to avoid death locks).
 	 */
 	void
 	deactivated();
 
 	/**
-	 * Blocks SIGPIPE to avoid terminating program due to failure on JACK read.
+	 * Block SIGPIPE to avoid terminating program due to failure on JACK read.
 	 */
 	void
 	ignore_sigpipe();
@@ -214,20 +218,16 @@ class JackTransport: public Transport
 	 */
 
 	static int
-	s_process (jack_nframes_t samples, void* klass)
-		{ return reinterpret_cast<JackTransport*> (klass)->c_process (samples); }
+	s_process (jack_nframes_t samples, void* klass);
 
 	static int
-	s_sample_rate_change (jack_nframes_t sample_rate, void* klass)
-		{ return reinterpret_cast<JackTransport*> (klass)->c_sample_rate_change (sample_rate); }
+	s_sample_rate_change (jack_nframes_t sample_rate, void* klass);
 
 	static int
-	s_buffer_size_change (jack_nframes_t buffer_size, void* klass)
-		{ return reinterpret_cast<JackTransport*> (klass)->c_buffer_size_change (buffer_size); }
+	s_buffer_size_change (jack_nframes_t buffer_size, void* klass);
 
 	static void
-	s_shutdown (void* klass)
-	 	{ reinterpret_cast<JackTransport*> (klass)->c_shutdown(); }
+	s_shutdown (void* klass);
 
 	static void
 	s_log_error (const char*);
@@ -242,6 +242,62 @@ class JackTransport: public Transport
 	Mutex			_ports_mutex;
 	Semaphore		_data_ready;
 };
+
+
+inline jack_client_t*
+JackTransport::jack_client() const
+{
+	return _jack_client;
+}
+
+
+inline void
+JackTransport::lock_ports()
+{
+	_ports_mutex.lock();
+}
+
+
+inline void
+JackTransport::unlock_ports()
+{
+	_ports_mutex.unlock();
+}
+
+
+inline bool
+JackTransport::active() const
+{
+	return _active;
+}
+
+
+inline int
+JackTransport::s_process (jack_nframes_t samples, void* klass)
+{
+	return reinterpret_cast<JackTransport*> (klass)->c_process (samples);
+}
+
+
+inline int
+JackTransport::s_sample_rate_change (jack_nframes_t sample_rate, void* klass)
+{
+	return reinterpret_cast<JackTransport*> (klass)->c_sample_rate_change (sample_rate);
+}
+
+
+inline int
+JackTransport::s_buffer_size_change (jack_nframes_t buffer_size, void* klass)
+{
+	return reinterpret_cast<JackTransport*> (klass)->c_buffer_size_change (buffer_size);
+}
+
+
+inline void
+JackTransport::s_shutdown (void* klass)
+{
+	reinterpret_cast<JackTransport*> (klass)->c_shutdown();
+}
 
 } // namespace AudioBackendImpl
 

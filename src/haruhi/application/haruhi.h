@@ -43,7 +43,9 @@ class Session;
 class PeriodicUpdater;
 
 /**
- * Haruhi/system - stores shared data.
+ * Haruhi/system - stores shared data,
+ * contains main Session object, Settings
+ * objects, etc. Created by main().
  */
 class Haruhi:
 	public QObject,
@@ -59,40 +61,60 @@ class Haruhi:
 	void
 	run_ui();
 
+	/**
+	 * Return Qt Application object.
+	 */
 	QApplication*
-	application() const { return _app; }
+	application();
 
 	/**
-	 * \returns	reference to main system.
+	 * Return global Haruhi singleton.
 	 */
 	static Haruhi*
-	haruhi() { return _haruhi; }
+	haruhi();
 
+	/**
+	 * Return global Session object.
+	 */
 	Session*
-	session() const { return _session; }
+	session();
 
+	/**
+	 * Return global Settings object.
+	 */
 	Settings*
-	settings() const { return _settings; }
+	settings() const;
 
 	HaruhiSettings*
-	haruhi_settings() const { return _haruhi_settings; }
+	haruhi_settings() const;
 
 	DevicesManager::Settings*
-	devices_manager_settings() const { return _devices_manager_settings; }
+	devices_manager_settings() const;
 
 	HasPresetsSettings*
-	has_presets_settings() const { return _has_presets_settings; }
+	has_presets_settings() const;
 
 	SessionLoaderSettings*
-	session_loader_settings() const { return _session_loader_settings; }
+	session_loader_settings() const;
 
   public slots:
+	/**
+	 * Show modal session loader dialog.
+	 */
 	void
 	session_loader();
 
+	/**
+	 * Tell that when last window is closed
+	 * application should quit.
+	 */
 	void
 	ok_to_quit();
 
+	/**
+	 * Called when last window is closed.
+	 * Calls QApplication::quit().
+	 */
 	void
 	quit_if_ok();
 
@@ -122,6 +144,62 @@ static inline Haruhi*
 g_haruhi()
 {
 	return Haruhi::haruhi();
+}
+
+
+inline QApplication*
+Haruhi::application()
+{
+	return _app;
+}
+
+
+inline Haruhi*
+Haruhi::haruhi()
+{
+	return _haruhi;
+}
+
+
+inline Session*
+Haruhi::session()
+{
+	return _session;
+}
+
+
+inline Settings*
+Haruhi::settings() const
+{
+	return _settings;
+}
+
+
+inline HaruhiSettings*
+Haruhi::haruhi_settings() const
+{
+	return _haruhi_settings;
+}
+
+
+inline DevicesManager::Settings*
+Haruhi::devices_manager_settings() const
+{
+	return _devices_manager_settings;
+}
+
+
+inline HasPresetsSettings*
+Haruhi::has_presets_settings() const
+{
+	return _has_presets_settings;
+}
+
+
+inline SessionLoaderSettings*
+Haruhi::session_loader_settings() const
+{
+	return _session_loader_settings;
 }
 
 } // namespace Haruhi

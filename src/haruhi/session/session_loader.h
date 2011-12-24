@@ -46,23 +46,10 @@ class SessionLoader: public QDialog
 	class RecentSessionItem: public QTreeWidgetItem
 	{
 	  public:
-		RecentSessionItem (QTreeWidget* parent, SessionLoaderSettings::RecentSession const& recent_session):
-			QTreeWidgetItem (parent, QStringList() << recent_session.name << QString ("%1").arg (::basename (recent_session.file_name.toUtf8()))),
-			recent_session (recent_session)
-		{
-			setup();
-		}
+		RecentSessionItem (QTreeWidget* parent, SessionLoaderSettings::RecentSession const& recent_session);
 
 		void
-		setup()
-		{
-			QSize s = sizeHint (0);
-			if (s.height() < 18)
-			{
-				s.setHeight (18);
-				setSizeHint (0, s);
-			}
-		}
+		setup();
 
 	  public:
 		SessionLoaderSettings::RecentSession recent_session;
@@ -71,22 +58,9 @@ class SessionLoader: public QDialog
 	class DeviceItem: public QListWidgetItem
 	{
 	  public:
-		DeviceItem (QListWidget* parent, DevicesManager::Device device):
-			QListWidgetItem (Resources::Icons16::keyboard(), device.name(), parent),
-			device (device)
-		{
-			setup();
-		}
+		DeviceItem (QListWidget* parent, DevicesManager::Device device);
 
-		void setup()
-		{
-			QSize s = sizeHint();
-			if (s.height() < 18)
-			{
-				s.setHeight (18);
-				setSizeHint (s);
-			}
-		}
+		void setup();
 
 	  public:
 		DevicesManager::Device device;
@@ -178,6 +152,48 @@ class SessionLoader: public QDialog
 	Result			_result;
 	QString			_file_name;
 };
+
+
+inline
+SessionLoader::RecentSessionItem::RecentSessionItem (QTreeWidget* parent, SessionLoaderSettings::RecentSession const& recent_session):
+	QTreeWidgetItem (parent, QStringList() << recent_session.name << QString ("%1").arg (::basename (recent_session.file_name.toUtf8()))),
+	recent_session (recent_session)
+{
+	setup();
+}
+
+
+inline void
+SessionLoader::RecentSessionItem::setup()
+{
+	QSize s = sizeHint (0);
+	if (s.height() < 18)
+	{
+		s.setHeight (18);
+		setSizeHint (0, s);
+	}
+}
+
+
+inline
+SessionLoader::DeviceItem::DeviceItem (QListWidget* parent, DevicesManager::Device device):
+	QListWidgetItem (Resources::Icons16::keyboard(), device.name(), parent),
+	device (device)
+{
+	setup();
+}
+
+
+inline void
+SessionLoader::DeviceItem::setup()
+{
+	QSize s = sizeHint();
+	if (s.height() < 18)
+	{
+		s.setHeight (18);
+		setSizeHint (s);
+	}
+}
 
 } // namespace Haruhi
 

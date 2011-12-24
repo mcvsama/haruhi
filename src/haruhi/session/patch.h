@@ -54,7 +54,7 @@ namespace PatchPrivate {
 		~ConnectionsTab();
 
 		PortsConnector*
-		ports_connector() const { return _ports_connector; }
+		ports_connector() const;
 
 	  private:
 		Patch*			_patch;
@@ -72,10 +72,10 @@ namespace PatchPrivate {
 		~PluginTab();
 
 		QString
-		preset_uuid() const { return _preset_uuid; }
+		preset_uuid() const;
 
 		QString
-		preset_name() const { return _preset_name->text(); }
+		preset_name() const;
 
 	  public slots:
 		void
@@ -137,7 +137,7 @@ class Patch:
 	virtual ~Patch();
 
 	Session*
-	session() const { return _session; }
+	session() const;
 
 	Plugin*
 	load_plugin (QString const&);
@@ -184,6 +184,34 @@ class Patch:
 	QSignalMapper*					_plugins_mapper;
 	std::map<int, QString>			_urns;
 };
+
+
+inline PortsConnector*
+PatchPrivate::ConnectionsTab::ports_connector() const
+{
+	return _ports_connector;
+}
+
+
+inline QString
+PatchPrivate::PluginTab::preset_uuid() const
+{
+	return _preset_uuid;
+}
+
+
+inline QString
+PatchPrivate::PluginTab::preset_name() const
+{
+	return _preset_name->text();
+}
+
+
+inline Session*
+Patch::session() const
+{
+	return _session;
+}
 
 } // namespace Haruhi
 

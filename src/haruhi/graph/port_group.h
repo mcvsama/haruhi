@@ -26,16 +26,6 @@ class Graph;
 class PortGroup
 {
   public:
-	struct CompareByName
-	{
-		bool
-		operator() (PortGroup* a, PortGroup* b)
-		{
-			return a->name() < b->name();
-		}
-	};
-
-  public:
 	PortGroup (Graph* graph, std::string const& name);
 
 	/**
@@ -54,10 +44,23 @@ class PortGroup
 	Graph*
 	graph() const;
 
+	/**
+	 * Helper for ordering.
+	 */
+	static bool
+	compare_by_name (PortGroup const* first, PortGroup const* second);
+
   private:
 	Graph*		_graph;
 	std::string	_name;
 };
+
+
+inline bool
+PortGroup::compare_by_name (PortGroup const* first, PortGroup const* second)
+{
+	return first->name() < second->name();
+}
 
 } // namespace Haruhi
 

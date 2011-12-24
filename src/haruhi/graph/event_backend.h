@@ -99,7 +99,7 @@ class EventTeacher
 	 * state, wanting to be notified about learned connections.
 	 */
 	Learnables&
-	learnables() { return _learnables; }
+	learnables();
 
   private:
 	Learnables _learnables;
@@ -113,6 +113,13 @@ class EventBackend:
   public:
 	EventBackend (std::string const& title);
 };
+
+
+inline EventTeacher::Learnables&
+EventTeacher::learnables()
+{
+	return _learnables;
+}
 
 } // namespace Haruhi
 

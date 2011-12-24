@@ -35,14 +35,22 @@ namespace DevicesManager {
 class Item: public QTreeWidgetItem
 {
   public:
+	/**
+	 * Template allows handling both QTreeWidget and QTreeWidgetItem passed as a parent.
+	 */
 	template<class Parent>
-		Item (Parent* parent, QString const& name):
-			QTreeWidgetItem (parent, QStringList (name))
-		{ }
+		Item (Parent* parent, QString const& name);
 
 	void
 	update_minimum_size();
 };
+
+
+template<class Parent>
+	inline
+	Item::Item (Parent* parent, QString const& name):
+		QTreeWidgetItem (parent, QStringList (name))
+	{ }
 
 } // namespace DevicesManager
 

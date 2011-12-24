@@ -42,10 +42,7 @@ class Transport
 	class Port
 	{
 	  public:
-		Port (Transport* transport):
-			_transport (transport),
-			_buffer()
-		{ }
+		Port (Transport* transport);
 
 		virtual ~Port() { }
 
@@ -53,13 +50,13 @@ class Transport
 		rename (std::string const&) = 0;
 
 		Transport*
-		transport() { return _transport; }
+		transport();
 
 		/**
 		 * Returns audio buffer to use for transporting audio.
 		 */
 		virtual AudioBuffer*
-		buffer() { return &_buffer; }
+		buffer();
 
 	  private:
 		Transport*	_transport;
@@ -67,14 +64,12 @@ class Transport
 	};
 
   public:
-	Transport (Backend* backend):
-		_backend (backend)
-	{ }
+	Transport (Backend* backend);
 
 	virtual ~Transport() { }
 
 	Backend*
-	backend() const { return _backend; }
+	backend() const;
 
 	/**
 	 * Connects to transport.
@@ -158,6 +153,40 @@ class Transport
   private:
 	Backend* _backend;
 };
+
+
+inline
+Transport::Port::Port (Transport* transport):
+	_transport (transport),
+	_buffer()
+{ }
+
+
+inline Transport*
+Transport::Port::transport()
+{
+	return _transport;
+}
+
+
+inline AudioBuffer*
+Transport::Port::buffer()
+{
+	return &_buffer;
+}
+
+
+inline
+Transport::Transport (Backend* backend):
+	_backend (backend)
+{ }
+
+
+inline Backend*
+Transport::backend() const
+{
+	return _backend;
+}
 
 } // namespace AudioBackendImpl
 

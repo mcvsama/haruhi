@@ -48,7 +48,7 @@ class DeviceItem: public Item
 	 * Returns device name used in Haruhi.
 	 */
 	QString
-	name() const { return _device->name(); }
+	name() const;
 
 	/**
 	 * Sets new name for item and device.
@@ -68,12 +68,26 @@ class DeviceItem: public Item
 	 * Returns Device object associated with this UI item.
 	 */
 	Device*
-	device() const { return _device; }
+	device() const;
 
   private:
 	// Device associated with this UI item; not owned:
 	Device*	_device;
 };
+
+
+inline QString
+DeviceItem::name() const
+{
+	return _device->name();
+}
+
+
+inline Device*
+DeviceItem::device() const
+{
+	return _device;
+}
 
 } // namespace DevicesManager
 

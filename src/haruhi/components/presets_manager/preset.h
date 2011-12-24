@@ -38,43 +38,43 @@ class Preset: public SaveableState
 	 * Preset name.
 	 */
 	QString
-	name() const { return _name; }
+	name() const;
 
 	/**
 	 * Sets preset name.
 	 */
 	void
-	set_name (QString const& name) { _name = name; }
+	set_name (QString const& name);
 
 	/**
 	 * Preset version.
 	 */
 	QString
-	version() const { return _version; }
+	version() const;
 
 	/**
 	 * Sets preset version.
 	 */
 	void
-	set_version (QString const& version) { _version = version; }
+	set_version (QString const& version);
 
 	/**
 	 * Preset created_at.
 	 */
 	QString
-	created_at() const { return _created_at; }
+	created_at() const;
 
 	/**
 	 * Sets preset created_at.
 	 */
 	void
-	set_created_at (QString const& created_at) { _created_at = created_at; }
+	set_created_at (QString const& created_at);
 
 	/**
 	 * Returns preset UUID.
 	 */
 	QString
-	uuid() const { return _uuid; }
+	uuid() const;
 
 	/**
 	 * Calls save_state on given object and uses
@@ -88,14 +88,14 @@ class Preset: public SaveableState
 	 * Created in context of local document, use QDomDocument::importNode().
 	 */
 	QDomElement&
-	patch() { return _patch; }
+	patch();
 
 	/**
 	 * Patch XML element accessor.
 	 * Created in context of local document, use QDomDocument::importNode().
 	 */
 	QDomElement const&
-	patch() const { return _patch; }
+	patch() const;
 
 	/*
 	 * SaveableState API
@@ -119,6 +119,69 @@ class Preset: public SaveableState
 	QDomDocument	_document;
 	QDomElement		_patch;
 };
+
+
+inline QString
+Preset::name() const
+{
+	return _name;
+}
+
+
+inline void
+Preset::set_name (QString const& name)
+{
+	_name = name;
+}
+
+
+inline QString
+Preset::version() const
+{
+	return _version;
+}
+
+
+inline void
+Preset::set_version (QString const& version)
+{
+	_version = version;
+}
+
+
+inline QString
+Preset::created_at() const
+{
+	return _created_at;
+}
+
+
+inline void
+Preset::set_created_at (QString const& created_at)
+{
+	_created_at = created_at;
+}
+
+
+inline QString
+Preset::uuid() const
+{
+	return _uuid;
+}
+
+
+inline QDomElement&
+Preset::patch()
+{
+	return _patch;
+}
+
+
+inline QDomElement const&
+Preset::patch() const
+{
+	return _patch;
+}
 
 } // namespace PresetsManagerPrivate
 

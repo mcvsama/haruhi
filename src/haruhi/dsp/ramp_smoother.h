@@ -33,7 +33,7 @@ class RampSmoother
 	RampSmoother (unsigned int max_samples = 0);
 
 	void
-	set_samples (unsigned int samples) { _samples_max = samples; }
+	set_samples (unsigned int samples);
 
 	void
 	set_value (float value);
@@ -42,42 +42,22 @@ class RampSmoother
 	reset (float value);
 
 	float
-	current() const { return _current; }
+	current() const;
 
 	float
-	advance (unsigned int samples = 1)
-	{
-		_current += samples * _vector;
-		_samples_from_last_setup += samples;
-		if ((_vector > 0.0f && _current > _target) || (_vector < 0.0f && _current < _target))
-		{
-			_current = _target;
-			_vector = +0.0;
-		}
-		return _current;
-	}
+	advance (unsigned int samples = 1);
 
 	template<class ForwardIterator>
 		void
-		fill (ForwardIterator begin, ForwardIterator end, Sample value)
-		{
-			set_value (value);
-			for (ForwardIterator current = begin; current != end; ++current)
-				*current = advance (1);
-		}
+		fill (ForwardIterator begin, ForwardIterator end, Sample value);
 
 	template<class ForwardIterator>
 		void
-		multiply (ForwardIterator begin, ForwardIterator end, Sample value)
-		{
-			set_value (value);
-			for (ForwardIterator current = begin; current != end; ++current)
-				*current *= advance (1);
-		}
+		multiply (ForwardIterator begin, ForwardIterator end, Sample value);
 
   private:
 	void
-	set_actual_samples (unsigned int samples) { _samples = std::max (samples, 1u); }
+	set_actual_samples (unsigned int samples);
 
   private:
 	float			_current;
@@ -88,6 +68,61 @@ class RampSmoother
 	unsigned int	_samples_max;
 	bool			_first_value_initialized;
 };
+
+
+inline void
+RampSmoother::set_samples (unsigned int samples)
+{
+	_samples_max = samples;
+}
+
+
+inline float
+RampSmoother::current() const
+{
+	return _current;
+}
+
+
+inline float
+RampSmoother::advance (unsigned int samples)
+{
+	_current += samples * _vector;
+	_samples_from_last_setup += samples;
+	if ((_vector > 0.0f && _current > _target) || (_vector < 0.0f && _current < _target))
+	{
+		_current = _target;
+		_vector = +0.0;
+	}
+	return _current;
+}
+
+
+template<class ForwardIterator>
+	inline void
+	RampSmoother::fill (ForwardIterator begin, ForwardIterator end, Sample value)
+	{
+		set_value (value);
+		for (ForwardIterator current = begin; current != end; ++current)
+			*current = advance (1);
+	}
+
+
+template<class ForwardIterator>
+	inline void
+	RampSmoother::multiply (ForwardIterator begin, ForwardIterator end, Sample value)
+	{
+		set_value (value);
+		for (ForwardIterator current = begin; current != end; ++current)
+			*current *= advance (1);
+	}
+
+
+inline void
+RampSmoother::set_actual_samples (unsigned int samples)
+{
+	_samples = std::max (samples, 1u);
+}
 
 } // namespace DSP
 

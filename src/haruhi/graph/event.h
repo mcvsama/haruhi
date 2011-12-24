@@ -42,29 +42,6 @@ class Event: public FastShared
 	USES_POOL_ALLOCATOR (Event)
 
   public:
-	// Used for comparison two pointer to events
-	// by their timestamp. It is Strict Weak Ordering function object.
-	class StrictWeakOrdering
-	{
-	  public:
-		bool
-		operator() (Event const* first, Event const* second) const
-		{
-			return first->timestamp() < second->timestamp();
-		}
-	};
-
-	// Same as StrictWeakOrdering but for Shared containers.
-	class SharedStrictWeakOrdering
-	{
-	  public:
-		bool
-		operator() (Shared<Event> const& first, Shared<Event> const& second) const
-		{
-			return first->timestamp() < second->timestamp();
-		}
-	};
-
 	// Enum for descendant classes. For performance reasons
 	// no dynamic_casting is done, instead use `type() const`
 	// method to identify descendant class.
@@ -76,29 +53,23 @@ class Event: public FastShared
 	};
 
   public:
-	Event (EventType type, Timestamp timestamp):
-		_timestamp (timestamp),
-		_event_type (type)
-	{ }
+	Event (EventType type, Timestamp timestamp);
 
   protected:
 	// Hide copy constructor from public:
-	Event (Event const& other):
-		_timestamp (other._timestamp),
-		_event_type (other._event_type)
-	{ }
+	Event (Event const& other);
 
 	void
-	set_event_type (EventType type) { _event_type = type; }
+	set_event_type (EventType type);
 
   public:
 	virtual ~Event() { }
 
 	Timestamp
-	timestamp() const { return _timestamp; }
+	timestamp() const;
 
 	bool
-	operator< (Event const& other) const { return timestamp() < other.timestamp(); }
+	operator< (Event const& other) const;
 
 	virtual Event*
 	clone() const = 0;
@@ -107,7 +78,21 @@ class Event: public FastShared
 	 * Identifies descendant class.
 	 */
 	EventType
-	event_type() const { return _event_type; }
+	event_type() const;
+
+  public:
+	/**
+	 * Used for comparison two pointer to events
+	 * by their timestamp. It is Strict Weak Ordering function object.
+	 */
+	static bool
+	strict_weak_ordering (Event const* first, Event const* second);
+
+	/**
+	 * Same as strict_weak_ordering() but for Shared containers.
+	 */
+	static bool
+	shared_strict_weak_ordering (Shared<Event> const& first, Shared<Event> const& second);
 
   private:
 	Timestamp	_timestamp;
@@ -123,23 +108,17 @@ class ControllerEvent: public Event
 	typedef float Value;
 
   public:
-	ControllerEvent (Timestamp timestamp, Value value):
-		Event (ControllerEventType, timestamp),
-		_value (value)
-	{ }
+	ControllerEvent (Timestamp timestamp, Value value);
 
   protected:
-	ControllerEvent (ControllerEvent const& other):
-		Event (other),
-		_value (other._value)
-	{ }
+	ControllerEvent (ControllerEvent const& other);
 
   public:
 	Value
-	value() const { return _value; }
+	value() const;
 
 	ControllerEvent*
-	clone() const { return new ControllerEvent (*this); }
+	clone() const;
 
   private:
 	Value _value;
@@ -161,57 +140,40 @@ class VoiceEvent: public Event
 	typedef ControllerEvent::Value Value;
 
   public:
-	VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Type type, Frequency frequency, Value value):
-		Event (VoiceEventType, timestamp),
-		_key_id (key_id),
-		_voice_id (voice_id),
-		_type (type),
-		_frequency (frequency),
-		_value (value)
-	{
-		if (_voice_id == VoiceAuto)
-			_voice_id = ++_last_voice_id;
-	}
+	VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Type type, Frequency frequency, Value value);
 
   protected:
-	VoiceEvent (VoiceEvent const& other):
-		Event (other),
-		_key_id (other._key_id),
-		_voice_id (other._voice_id),
-		_type (other._type),
-		_frequency (other._frequency),
-		_value (other._value)
-	{ }
+	VoiceEvent (VoiceEvent const& other);
 
   public:
 	KeyID
-	key_id() const { return _key_id; }
+	key_id() const;
 
 	VoiceID
-	voice_id() const { return _voice_id; }
+	voice_id() const;
 
 	Type
-	type() const { return _type; }
+	type() const;
 
 	Frequency
-	frequency() const { return _frequency; }
+	frequency() const;
 
 	Value
-	value() const { return _value; }
+	value() const;
 
 	VoiceEvent*
-	clone() const { return new VoiceEvent (*this); }
+	clone() const;
 
 	static Frequency
 	frequency_from_key_id (KeyID, float master_tune);
 
   private:
-	KeyID _key_id;
-	VoiceID	_voice_id;
-	Type _type;
-	Frequency _frequency;
-	Value _value;
-	static VoiceID _last_voice_id;
+	KeyID			_key_id;
+	VoiceID			_voice_id;
+	Type			_type;
+	Frequency		_frequency;
+	Value			_value;
+	static VoiceID	_last_voice_id;
 };
 
 
@@ -220,29 +182,202 @@ class VoiceControllerEvent: public ControllerEvent
 	USES_POOL_ALLOCATOR (VoiceControllerEvent)
 
   public:
-	VoiceControllerEvent (Timestamp timestamp, VoiceID voice_id, Value value):
-		ControllerEvent (timestamp, value),
-		_voice_id (voice_id)
-	{
-		set_event_type (VoiceControllerEventType);
-	}
+	VoiceControllerEvent (Timestamp timestamp, VoiceID voice_id, Value value);
 
   protected:
-	VoiceControllerEvent (VoiceControllerEvent const& other):
-		ControllerEvent (other),
-		_voice_id (other._voice_id)
-	{ }
+	VoiceControllerEvent (VoiceControllerEvent const& other);
 
   public:
 	VoiceID
-	voice_id() const { return _voice_id; }
+	voice_id() const;
 
 	VoiceControllerEvent*
-	clone() const { return new VoiceControllerEvent (*this); }
+	clone() const;
 
   private:
 	VoiceID _voice_id;
 };
+
+
+inline
+Event::Event (EventType type, Timestamp timestamp):
+	_timestamp (timestamp),
+	_event_type (type)
+{ }
+
+
+inline
+Event::Event (Event const& other):
+	_timestamp (other._timestamp),
+	_event_type (other._event_type)
+{ }
+
+
+inline void
+Event::set_event_type (EventType type)
+{
+	_event_type = type;
+}
+
+
+inline Timestamp
+Event::timestamp() const
+{
+	return _timestamp;
+}
+
+
+inline bool
+Event::operator< (Event const& other) const
+{
+	return timestamp() < other.timestamp();
+}
+
+
+inline Event::EventType
+Event::event_type() const
+{
+	return _event_type;
+}
+
+
+inline bool
+Event::strict_weak_ordering (Event const* first, Event const* second)
+{
+	return first->timestamp() < second->timestamp();
+}
+
+
+inline bool
+Event::shared_strict_weak_ordering (Shared<Event> const& first, Shared<Event> const& second)
+{
+	return first->timestamp() < second->timestamp();
+}
+
+
+inline
+ControllerEvent::ControllerEvent (Timestamp timestamp, Value value):
+	Event (ControllerEventType, timestamp),
+	_value (value)
+{ }
+
+
+inline
+ControllerEvent::ControllerEvent (ControllerEvent const& other):
+	Event (other),
+	_value (other._value)
+{ }
+
+
+inline ControllerEvent::Value
+ControllerEvent::value() const
+{
+	return _value;
+}
+
+
+inline ControllerEvent*
+ControllerEvent::clone() const
+{
+	return new ControllerEvent (*this);
+}
+
+
+inline
+VoiceEvent::VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Type type, Frequency frequency, Value value):
+	Event (VoiceEventType, timestamp),
+	_key_id (key_id),
+	_voice_id (voice_id),
+	_type (type),
+	_frequency (frequency),
+	_value (value)
+{
+	if (_voice_id == VoiceAuto)
+		_voice_id = ++_last_voice_id;
+}
+
+
+inline
+VoiceEvent::VoiceEvent (VoiceEvent const& other):
+	Event (other),
+	_key_id (other._key_id),
+	_voice_id (other._voice_id),
+	_type (other._type),
+	_frequency (other._frequency),
+	_value (other._value)
+{ }
+
+
+inline KeyID
+VoiceEvent::key_id() const
+{
+	return _key_id;
+}
+
+
+inline VoiceID
+VoiceEvent::voice_id() const
+{
+	return _voice_id;
+}
+
+
+inline VoiceEvent::Type
+VoiceEvent::type() const
+{
+	return _type;
+}
+
+
+inline VoiceEvent::Frequency
+VoiceEvent::frequency() const
+{
+	return _frequency;
+}
+
+
+inline VoiceEvent::Value
+VoiceEvent::value() const
+{
+	return _value;
+}
+
+
+inline VoiceEvent*
+VoiceEvent::clone() const
+{
+	return new VoiceEvent (*this);
+}
+
+
+inline
+VoiceControllerEvent::VoiceControllerEvent (Timestamp timestamp, VoiceID voice_id, Value value):
+	ControllerEvent (timestamp, value),
+	_voice_id (voice_id)
+{
+	set_event_type (VoiceControllerEventType);
+}
+
+
+inline
+VoiceControllerEvent::VoiceControllerEvent (VoiceControllerEvent const& other):
+	ControllerEvent (other),
+	_voice_id (other._voice_id)
+{ }
+
+
+inline VoiceID
+VoiceControllerEvent::voice_id() const
+{
+	return _voice_id;
+}
+
+
+inline VoiceControllerEvent*
+VoiceControllerEvent::clone() const
+{
+	return new VoiceControllerEvent (*this);
+}
 
 } // namespace Haruhi
 

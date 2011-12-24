@@ -45,58 +45,58 @@ class Package: public SaveableState
 	 * Package meta-information: name.
 	 */
 	QString
-	name() const { return _name; }
+	name() const;
 
 	void
-	set_name (QString const& name) { _name = name; }
+	set_name (QString const& name);
 
 	/**
 	 * Package meta-information: version.
 	 */
 	QString
-	version() const { return _version; }
+	version() const;
 
 	void
-	set_version (QString const& version) { _version = version; }
+	set_version (QString const& version);
 
 	/**
 	 * Package meta-information: created_at.
 	 */
 	QString
-	created_at() const { return _created_at; }
+	created_at() const;
 
 	void
-	set_created_at (QString const& created_at) { _created_at = created_at; }
+	set_created_at (QString const& created_at);
 
 	/**
 	 * Package meta-information: created_at.
 	 */
 	QString
-	credits() const { return _credits; }
+	credits() const;
 
 	void
-	set_credits (QString const& credits) { _credits = credits; }
+	set_credits (QString const& credits);
 
 	/**
 	 * Package meta-information: created_at.
 	 */
 	QString
-	license() const { return _license; }
+	license() const;
 
 	void
-	set_license (QString const& license) { _license = license; }
+	set_license (QString const& license);
 
 	/**
 	 * Categories accessor.
 	 */
 	Categories&
-	categories() { return _categories; }
+	categories();
 
 	/**
 	 * Categories accessor.
 	 */
 	Categories const&
-	categories() const { return _categories; }
+	categories() const;
 
 	/**
 	 * Creates new child category.
@@ -114,10 +114,10 @@ class Package: public SaveableState
 	 * File name from which this package has been loaded.
 	 */
 	QString
-	file_name() const { return _file_name; }
+	file_name() const;
 
 	void
-	set_file_name (QString const& file_name) { _file_name = file_name; }
+	set_file_name (QString const& file_name);
 
 	/*
 	 * SaveableState API
@@ -142,6 +142,104 @@ class Package: public SaveableState
 	QString			_file_name;
 	Categories		_categories;
 };
+
+
+inline QString
+Package::name() const
+{
+	return _name;
+}
+
+
+inline void
+Package::set_name (QString const& name)
+{
+	_name = name;
+}
+
+
+inline QString
+Package::version() const
+{
+	return _version;
+}
+
+
+inline void
+Package::set_version (QString const& version)
+{
+	_version = version;
+}
+
+
+inline QString
+Package::created_at() const
+{
+	return _created_at;
+}
+
+
+inline void
+Package::set_created_at (QString const& created_at)
+{
+	_created_at = created_at;
+}
+
+
+inline QString
+Package::credits() const
+{
+	return _credits;
+}
+
+
+inline void
+Package::set_credits (QString const& credits)
+{
+	_credits = credits;
+}
+
+
+inline QString
+Package::license() const
+{
+	return _license;
+}
+
+
+inline void
+Package::set_license (QString const& license)
+{
+	_license = license;
+}
+
+
+inline Package::Categories&
+Package::categories()
+{
+	return _categories;
+}
+
+
+inline Package::Categories const&
+Package::categories() const
+{
+	return _categories;
+}
+
+
+inline QString
+Package::file_name() const
+{
+	return _file_name;
+}
+
+
+inline void
+Package::set_file_name (QString const& file_name)
+{
+	_file_name = file_name;
+}
 
 } // namespace PresetsManagerPrivate
 

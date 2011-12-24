@@ -29,13 +29,11 @@
 
 namespace Haruhi {
 
-WorkPerformer*			Services::_hi_priority_work_performer;
-WorkPerformer*			Services::_lo_priority_work_performer;
-signed int				Services::_detected_cores = -1;
-P::CallOutDispatcher*	Services::_call_out_dispatcher;
+WorkPerformer*		Services::_hi_priority_work_performer;
+WorkPerformer*		Services::_lo_priority_work_performer;
+signed int			Services::_detected_cores = -1;
+CallOutDispatcher*	Services::_call_out_dispatcher;
 
-
-namespace P {
 
 void
 CallOutDispatcher::customEvent (QEvent* event)
@@ -48,15 +46,13 @@ CallOutDispatcher::customEvent (QEvent* event)
 	}
 }
 
-} // namespace P
-
 
 void
 Services::initialize()
 {
 	_hi_priority_work_performer = new WorkPerformer (detected_cores());
 	_lo_priority_work_performer = new WorkPerformer (detected_cores());
-	_call_out_dispatcher = new P::CallOutDispatcher();
+	_call_out_dispatcher = new CallOutDispatcher();
 }
 
 

@@ -50,10 +50,10 @@ class PortsList: public QTreeWidget
 	~PortsList();
 
 	UnitsToItemsMap const*
-	units() const { return &_units; }
+	units() const;
 
 	PortsConnector*
-	ports_connector() { return _ports_connector; }
+	ports_connector();
 
 	QTreeWidgetItem*
 	selected_item() const;
@@ -115,7 +115,7 @@ class PortsList: public QTreeWidget
 	update_filter();
 
 	void
-	sort() { sortByColumn (0, Qt::AscendingOrder); }
+	sort();
 
   private slots:
 	void
@@ -136,6 +136,27 @@ class PortsList: public QTreeWidget
 	QPoint							_drag_pos;			// Drag init point.
 	QTreeWidgetItem*				_dragged_item;
 };
+
+
+inline PortsList::UnitsToItemsMap const*
+PortsList::units() const
+{
+	return &_units;
+}
+
+
+inline PortsConnector*
+PortsList::ports_connector()
+{
+	return _ports_connector;
+}
+
+
+inline void
+PortsList::sort()
+{
+	sortByColumn (0, Qt::AscendingOrder);
+}
 
 } // namespace PortsConnectorPrivate
 

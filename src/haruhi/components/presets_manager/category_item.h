@@ -39,7 +39,7 @@ class CategoryItem: public QTreeWidgetItem
 	CategoryItem (QTreeWidgetItem* parent, Category* category);
 
 	Category*
-	category() const { return _category; }
+	category() const;
 
 	PackageItem*
 	package_item() const;
@@ -63,6 +63,13 @@ class CategoryItem: public QTreeWidgetItem
   private:
 	Category*	_category;
 };
+
+
+inline Category*
+CategoryItem::category() const
+{
+	return _category;
+}
 
 } // namespace PresetsManagerPrivate
 

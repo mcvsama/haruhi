@@ -50,14 +50,18 @@ class PortItem
 	 * may be normally used by backend.
 	 */
 	bool
-	ready() const { return _ready; }
+	ready() const;
 
 	Backend*
-	backend() { return _backend; }
+	backend();
 
   protected:
+	/**
+	 * Tell that port is ready to use.
+	 * Call from derived class constructor.
+	 */
 	void
-	set_ready (bool r) { _ready = r; }
+	set_ready (bool r);
 
   private:
 	void
@@ -68,6 +72,27 @@ class PortItem
 	// Set when port is fully constructed:
 	bool		_ready;
 };
+
+
+inline bool
+PortItem::ready() const
+{
+	return _ready;
+}
+
+
+inline Backend*
+PortItem::backend()
+{
+	return _backend;
+}
+
+
+inline void
+PortItem::set_ready (bool r)
+{
+	_ready = r;
+}
 
 } // namespace EventBackendImpl
 

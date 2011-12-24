@@ -48,7 +48,7 @@ class Tree: public DevicesManager::Tree
 	 * Returns pointer to external Backend object.
 	 */
 	Backend*
-	backend() const { return _backend; }
+	backend() const;
 
 	/**
 	 * Overridden from DevicesManager::Tree.
@@ -59,6 +59,13 @@ class Tree: public DevicesManager::Tree
   private:
 	Backend* _backend;
 };
+
+
+inline Backend*
+Tree::backend() const
+{
+	return _backend;
+}
 
 } // namespace EventBackendImpl
 

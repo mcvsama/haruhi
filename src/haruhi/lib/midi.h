@@ -118,36 +118,6 @@ struct Event
 			uint8_t value;
 		} key_pressure;
 	};
-
-	/**
-	 * Creates human-readable string representation
-	 * of the event. Use for events lists, etc.
-	 */
-	std::string
-	human_readable()
-	{
-		// TODO
-		switch (type)
-		{
-			case NoteOn:
-			case NoteOff:
-				break;
-
-			case Controller:
-				break;
-
-			case Pitchbend:
-				break;
-
-			case ChannelPressure:
-				break;
-
-			case KeyPressure:
-				break;
-		}
-
-		return "";
-	}
 };
 
 
