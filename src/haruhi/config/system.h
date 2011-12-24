@@ -54,9 +54,32 @@ assert (bool expression)
 
 
 /**
- * Returns size (number of elements) of an array.
+ * Return size (number of elements) of an array.
  */
-#define ARRAY_SIZE(x) (sizeof (x) / sizeof (*x))
+template<class T, size_t N>
+	inline size_t
+	countof (T(&)[N])
+	{
+		return N;
+	}
+
+
+/**
+ * Return size of an array. Can be used in const expressions.
+ */
+template<class T, size_t N>
+	inline const char (&sizer (T (&)[N]))[N];
+
+
+/**
+ * Return after-the-end iterator of an array.
+ */
+template<class T, size_t N>
+	inline T*
+	endof (T(&a)[N])
+	{
+		return a + N;
+	}
 
 
 /**

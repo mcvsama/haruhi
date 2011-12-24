@@ -84,7 +84,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 		_knob_unison_init, _knob_unison_noise, _knob_unison_vibrato_level, _knob_unison_vibrato_frequency,
 		_knob_velocity_sens, _knob_portamento_time, _knob_phase, _knob_noise_level
 	};
-	for (Haruhi::Knob** k = all_knobs; k != all_knobs + ARRAY_SIZE (all_knobs); ++k)
+	for (Haruhi::Knob** k = all_knobs; k != endof (all_knobs); ++k)
 		(*k)->set_unit_bay (_part->part_manager()->plugin()->unit_bay());
 
 	// Help tooltips:
@@ -502,9 +502,9 @@ PartWidget::widgets_to_wave_params()
 	pp->modulator_type = _modulator_type->currentItem();
 	pp->modulator_wave_type = _modulator_wave_type->currentItem();
 	pp->auto_center = _auto_center->isChecked();
-	for (std::size_t i = 0; i < ARRAY_SIZE (pp->harmonics); ++i)
+	for (std::size_t i = 0; i < countof (pp->harmonics); ++i)
 		pp->harmonics[i].set (_harmonics_sliders[i]->value());
-	for (std::size_t i = 0; i < ARRAY_SIZE (pp->harmonic_phases); ++i)
+	for (std::size_t i = 0; i < countof (pp->harmonic_phases); ++i)
 		pp->harmonic_phases[i].set (_harmonic_phases_sliders[i]->value());
 
 	update_wave_plots();
@@ -598,9 +598,9 @@ PartWidget::params_to_widgets()
 	_modulator_type->setCurrentItem (pp->modulator_type);
 	_modulator_wave_type->setCurrentItem (pp->modulator_wave_type);
 	_auto_center->setChecked (pp->auto_center);
-	for (std::size_t i = 0; i < ARRAY_SIZE (pp->harmonics); ++i)
+	for (std::size_t i = 0; i < countof (pp->harmonics); ++i)
 		_harmonics_sliders[i]->setValue (pp->harmonics[i]);
-	for (std::size_t i = 0; i < ARRAY_SIZE (pp->harmonic_phases); ++i)
+	for (std::size_t i = 0; i < countof (pp->harmonic_phases); ++i)
 		_harmonic_phases_sliders[i]->setValue (pp->harmonic_phases[i]);
 
 	_part_enabled->setChecked (pp->part_enabled);

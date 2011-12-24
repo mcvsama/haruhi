@@ -583,14 +583,14 @@ Part::proxies()
 inline DSP::ParametricWave*
 Part::base_wave() const
 {
-	return _base_waves[bound (_part_params.wave_type.get(), 0u, static_cast<unsigned int> (ARRAY_SIZE (_base_waves) - 1))];
+	return _base_waves[bound (_part_params.wave_type.get(), 0u, static_cast<unsigned int> (countof (_base_waves) - 1))];
 }
 
 
 inline DSP::ParametricWave*
 Part::modulator_wave() const
 {
-	return _modulator_waves[bound (_part_params.modulator_wave_type.get(), 0u, static_cast<unsigned int> (ARRAY_SIZE (_modulator_waves) - 1))];
+	return _modulator_waves[bound (_part_params.modulator_wave_type.get(), 0u, static_cast<unsigned int> (countof (_modulator_waves) - 1))];
 }
 
 } // namespace Yuki

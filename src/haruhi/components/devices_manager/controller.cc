@@ -50,7 +50,7 @@ Controller::Controller (QString const& name):
 	smoothing (0),
 	_name (name)
 {
-	for (size_t i = 0; i < ARRAY_SIZE(_voice_ids); ++i)
+	for (size_t i = 0; i < countof (_voice_ids); ++i)
 		_voice_ids[i] = 0;
 }
 
@@ -241,7 +241,7 @@ Controller::generate_smoothing_events (EventBuffer& buffer, Graph* graph)
 	Timestamp const t = graph->timestamp();
 
 	SmoothingParams* sp_tab[] = { &_controller_smoother, &_channel_pressure_smoother };
-	for (SmoothingParams** sp = sp_tab; sp != sp_tab + ARRAY_SIZE (sp_tab); ++sp)
+	for (SmoothingParams** sp = sp_tab; sp != endof (sp_tab); ++sp)
 	{
 		if ((*sp)->current != (*sp)->target)
 		{
@@ -254,7 +254,7 @@ Controller::generate_smoothing_events (EventBuffer& buffer, Graph* graph)
 		}
 	}
 
-	for (unsigned int key = 0; key < ARRAY_SIZE (_key_pressure_smoother); ++key)
+	for (unsigned int key = 0; key < countof (_key_pressure_smoother); ++key)
 	{
 		SmoothingParams& ks = _key_pressure_smoother[key];
 		if (ks.current != ks.target)

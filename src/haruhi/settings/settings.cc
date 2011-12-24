@@ -171,7 +171,7 @@ Settings::save()
 	if (::rename ((_settings_file + "~").toUtf8(), _settings_file.toUtf8()) == -1)
 	{
 		char buf[256];
-		strerror_r (errno, buf, ARRAY_SIZE (buf));
+		strerror_r (errno, buf, countof (buf));
 		throw Exception (QString ("could not save settings file: %1").arg (buf));
 	}
 }

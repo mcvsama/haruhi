@@ -337,9 +337,9 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 	UPDATE_WAVETABLE_ON_CHANGE (modulator_index);
 	UPDATE_WAVETABLE_ON_CHANGE (modulator_shape);
 	UPDATE_WAVETABLE_ON_CHANGE (auto_center);
-	for (std::size_t i = 0; i < ARRAY_SIZE (_part_params.harmonics); ++i)
+	for (std::size_t i = 0; i < countof (_part_params.harmonics); ++i)
 		UPDATE_WAVETABLE_ON_CHANGE (harmonics[i]);
-	for (std::size_t i = 0; i < ARRAY_SIZE (_part_params.harmonic_phases); ++i)
+	for (std::size_t i = 0; i < countof (_part_params.harmonic_phases); ++i)
 		UPDATE_WAVETABLE_ON_CHANGE (harmonic_phases[i]);
 #undef UPDATE_WAVETABLE_ON_CHANGE
 
@@ -410,10 +410,10 @@ Part::~Part()
 	// Must wait since it can still use Waves. It also needs to be deleted.
 	_wt_wu->wait();
 
-	for (size_t i = 0; i < ARRAY_SIZE (_base_waves); ++i)
+	for (size_t i = 0; i < countof (_base_waves); ++i)
 		delete _base_waves[i];
 
-	for (size_t i = 0; i < ARRAY_SIZE (_modulator_waves); ++i)
+	for (size_t i = 0; i < countof (_modulator_waves); ++i)
 		delete _modulator_waves[i];
 
 	delete _wt_wu;
