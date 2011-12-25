@@ -48,9 +48,9 @@
 
 #define HARUHI_YUKI_DEFINE_PARAMS(klass)														\
 	void																						\
-	Params::klass::get_params (Haruhi::BaseParam const** tab, size_t max_entries) const			\
+	Params::klass::get_params (Haruhi::BaseParam const** tab, std::size_t max_entries) const	\
 	{																							\
-		size_t pos = 0;
+		std::size_t pos = 0;
 
 #define HARUHI_YUKI_DEFINE_PARAM(param)															\
 		tab[pos++] = &param;

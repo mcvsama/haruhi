@@ -79,12 +79,12 @@ BugFuzzer::connect_ports()
 	{
 		_event_ports[i]->disconnect();
 		// Find a unit with event ports:
-		for (size_t j = 0; j < graph()->units().size(); ++j)
+		for (std::size_t j = 0; j < graph()->units().size(); ++j)
 		{
 			Haruhi::Graph::Units::const_iterator u = graph()->units().begin();
 			std::advance (u, rand() % graph()->units().size());
 
-			for (size_t k = 0; k < (*u)->inputs().size(); ++k)
+			for (std::size_t k = 0; k < (*u)->inputs().size(); ++k)
 			{
 				Haruhi::Ports::iterator p = (*u)->inputs().begin();
 				std::advance (p, rand() % (*u)->inputs().size());

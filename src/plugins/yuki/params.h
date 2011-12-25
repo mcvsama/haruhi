@@ -53,7 +53,7 @@
 	klass();																	\
 	virtual ~klass() { }														\
 	protected:																	\
-	void get_params (Haruhi::BaseParam const**, size_t max_entries) const;		\
+	void get_params (Haruhi::BaseParam const**, std::size_t max_entries) const;	\
 	public:
 
 #define HARUHI_YUKI_PARAM(name, min, max, denominator, deflt)					\
@@ -101,7 +101,7 @@ struct Params
 			 * \param	max_entries Max number of entries to be stored (length of the tab array).
 			 */
 			virtual void
-			get_params (Haruhi::BaseParam const** tab, size_t max_entries) const = 0;
+			get_params (Haruhi::BaseParam const** tab, std::size_t max_entries) const = 0;
 		};
 
 	/**

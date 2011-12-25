@@ -56,8 +56,8 @@ assert (bool expression)
 /**
  * Return size (number of elements) of an array.
  */
-template<class T, size_t N>
-	inline size_t
+template<class T, std::size_t N>
+	inline std::size_t
 	countof (T(&)[N])
 	{
 		return N;
@@ -67,14 +67,14 @@ template<class T, size_t N>
 /**
  * Return size of an array. Can be used in const expressions.
  */
-template<class T, size_t N>
+template<class T, std::size_t N>
 	inline const char (&sizer (T (&)[N]))[N];
 
 
 /**
  * Return after-the-end iterator of an array.
  */
-template<class T, size_t N>
+template<class T, std::size_t N>
 	inline T*
 	endof (T(&a)[N])
 	{

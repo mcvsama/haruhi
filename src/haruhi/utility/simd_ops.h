@@ -45,16 +45,16 @@ namespace SIMD {
  * \param	size Number of floats in arrays.
  */
 static inline void
-clear_buffer (float* target, size_t size)
+clear_buffer (float* target, std::size_t size)
 {
 #ifdef HARUHI_SSE1
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / VECSIZE; ++i)
+	for (std::size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_xor_ps (*xt, *xt);
 		++xt;
 	}
-	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
+	for (std::size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] = 0.0f;
 #elif defined(HARUHI_IEEE754)
 	bzero (target, sizeof (float) * size);
@@ -71,30 +71,30 @@ clear_buffer (float* target, size_t size)
  * \param	size Number of floats in arrays.
  */
 static inline void
-negate_buffer (float* target, size_t size)
+negate_buffer (float* target, std::size_t size)
 {
 #ifdef HARUHI_SSE1
 # ifdef HARUHI_IEEE754
 	union { int i; float f; } u = { i: 1 << 31 };
 	__m128 st = _mm_set_ps1 (u.f);
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / VECSIZE; ++i)
+	for (std::size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_xor_ps (*xt, st);
 		++xt;
 	}
 # else
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / VECSIZE; ++i)
+	for (std::size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_sub_ps (_mm_setzero_ps(), *xt);
 		++xt;
 	}
 # endif
-	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
+	for (std::size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] = -target[i];
 #else
-	for (size_t i = 0; i < size; ++i)
+	for (std::size_t i = 0; i < size; ++i)
 		target[i] = -target[i];
 #endif
 }
@@ -107,16 +107,16 @@ negate_buffer (float* target, size_t size)
  * \param	size Number of floats in arrays.
  */
 static inline void
-fill_buffer (float* target, size_t size, float scalar)
+fill_buffer (float* target, std::size_t size, float scalar)
 {
 #ifdef HARUHI_SSE1
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / VECSIZE; ++i)
+	for (std::size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_set_ps1 (scalar);
 		++xt;
 	}
-	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
+	for (std::size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] = scalar;
 #else
 	std::fill (target, target + size, scalar);
@@ -131,18 +131,18 @@ fill_buffer (float* target, size_t size, float scalar)
  * \param	size Number of floats in arrays.
  */
 static inline void
-copy_buffer (float* target, float* source, size_t size)
+copy_buffer (float* target, float* source, std::size_t size)
 {
 #ifdef HARUHI_SSE1
 	__m128* xs = CAST_TO_MM128 (source);
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / VECSIZE; ++i)
+	for (std::size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = *xs;
 		++xs;
 		++xt;
 	}
-	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
+	for (std::size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] = source[i];
 #else
 	memcpy (target, source, sizeof (float) * size);
@@ -157,21 +157,21 @@ copy_buffer (float* target, float* source, size_t size)
  * \param	size Number of floats in arrays.
  */
 static inline void
-add_buffers (float* target, float* source, size_t size)
+add_buffers (float* target, float* source, std::size_t size)
 {
 #ifdef HARUHI_SSE1
 	__m128* xs = CAST_TO_MM128 (source);
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / VECSIZE; ++i)
+	for (std::size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_add_ps (*xt, *xs);
 		++xs;
 		++xt;
 	}
-	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
+	for (std::size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] += source[i];
 #else
-	for (size_t i = 0; i < size; ++i)
+	for (std::size_t i = 0; i < size; ++i)
 		target[i] += source[i];
 #endif
 }
@@ -184,22 +184,22 @@ add_buffers (float* target, float* source, size_t size)
  * \param	size Number of floats in arrays.
  */
 static inline void
-add_buffers (float* target, float* source, float attenuate_source, size_t size)
+add_buffers (float* target, float* source, float attenuate_source, std::size_t size)
 {
 #ifdef HARUHI_SSE1
 	__m128* xs = CAST_TO_MM128 (source);
 	__m128* xt = CAST_TO_MM128 (target);
 	__m128 att = _mm_set_ps1 (attenuate_source);
-	for (size_t i = 0; i < size / VECSIZE; ++i)
+	for (std::size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_add_ps (*xt, _mm_mul_ps (att, *xs));
 		++xs;
 		++xt;
 	}
-	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
+	for (std::size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] += attenuate_source * source[i];
 #else
-	for (size_t i = 0; i < size; ++i)
+	for (std::size_t i = 0; i < size; ++i)
 		target[i] += attenuate_source * source[i];
 #endif
 }
@@ -212,20 +212,20 @@ add_buffers (float* target, float* source, float attenuate_source, size_t size)
  * \param	size Number of floats in arrays.
  */
 static inline void
-add_scalar_to_buffer (float* target, size_t size, float scalar)
+add_scalar_to_buffer (float* target, std::size_t size, float scalar)
 {
 #ifdef HARUHI_SSE1
 	__m128 xs = _mm_set_ps1 (scalar);
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / VECSIZE; ++i)
+	for (std::size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_add_ps (*xt, xs);
 		++xt;
 	}
-	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
+	for (std::size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] += scalar;
 #else
-	for (size_t i = 0; i < size; ++i)
+	for (std::size_t i = 0; i < size; ++i)
 		target[i] += scalar;
 #endif
 }
@@ -238,21 +238,21 @@ add_scalar_to_buffer (float* target, size_t size, float scalar)
  * \param	size Number of floats in arrays.
  */
 static inline void
-sub_buffers (float* target, float* source, size_t size)
+sub_buffers (float* target, float* source, std::size_t size)
 {
 #ifdef HARUHI_SSE1
 	__m128* xs = CAST_TO_MM128 (source);
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / VECSIZE; ++i)
+	for (std::size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_sub_ps (*xt, *xs);
 		++xs;
 		++xt;
 	}
-	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
+	for (std::size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] += source[i];
 #else
-	for (size_t i = 0; i < size; ++i)
+	for (std::size_t i = 0; i < size; ++i)
 		target[i] -= source[i];
 #endif
 }
@@ -265,21 +265,21 @@ sub_buffers (float* target, float* source, size_t size)
  * \param	size Number of floats in arrays.
  */
 static inline void
-multiply_buffers (float* target, float* source, size_t size)
+multiply_buffers (float* target, float* source, std::size_t size)
 {
 #ifdef HARUHI_SSE1
 	__m128* xs = CAST_TO_MM128 (source);
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / VECSIZE; ++i)
+	for (std::size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_mul_ps (*xt, *xs);
 		++xs;
 		++xt;
 	}
-	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
+	for (std::size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] *= source[i];
 #else
-	for (size_t i = 0; i < size; ++i)
+	for (std::size_t i = 0; i < size; ++i)
 		target[i] *= source[i];
 #endif
 }
@@ -292,20 +292,20 @@ multiply_buffers (float* target, float* source, size_t size)
  * \param	size Number of floats in arrays.
  */
 static inline void
-multiply_buffer_by_scalar (float* target, size_t size, float scalar)
+multiply_buffer_by_scalar (float* target, std::size_t size, float scalar)
 {
 #ifdef HARUHI_SSE1
 	__m128 xs = _mm_set_ps1 (scalar);
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / VECSIZE; ++i)
+	for (std::size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_mul_ps (*xt, xs);
 		++xt;
 	}
-	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
+	for (std::size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] *= scalar;
 #else
-	for (size_t i = 0; i < size; ++i)
+	for (std::size_t i = 0; i < size; ++i)
 		target[i] *= scalar;
 #endif
 }
@@ -318,22 +318,22 @@ multiply_buffer_by_scalar (float* target, size_t size, float scalar)
  * \param	size Number of floats in arrays.
  */
 static inline void
-multiply_buffers_and_by_scalar (float* target, float* source, size_t size, float scalar)
+multiply_buffers_and_by_scalar (float* target, float* source, std::size_t size, float scalar)
 {
 #ifdef HARUHI_SSE1
 	__m128 xscalar = _mm_set_ps1 (scalar);
 	__m128* xs = CAST_TO_MM128 (source);
 	__m128* xt = CAST_TO_MM128 (target);
-	for (size_t i = 0; i < size / VECSIZE; ++i)
+	for (std::size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		*xt = _mm_mul_ps (*xt, _mm_mul_ps (*xs, xscalar));
 		++xs;
 		++xt;
 	}
-	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
+	for (std::size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] *= source[i] * scalar;
 #else
-	for (size_t i = 0; i < size; ++i)
+	for (std::size_t i = 0; i < size; ++i)
 		target[i] *= source[i] * scalar;
 #endif
 }
@@ -346,7 +346,7 @@ multiply_buffers_and_by_scalar (float* target, float* source, size_t size, float
  * \param	size Number of floats in arrays.
  */
 static inline void
-multiply_buffers_and_by_scalar (float* target1, float* target2, float* source, size_t size, float scalar)
+multiply_buffers_and_by_scalar (float* target1, float* target2, float* source, std::size_t size, float scalar)
 {
 #ifdef HARUHI_SSE1
 	__m128 xscalar = _mm_set_ps1 (scalar);
@@ -354,7 +354,7 @@ multiply_buffers_and_by_scalar (float* target1, float* target2, float* source, s
 	__m128* xs = CAST_TO_MM128 (source);
 	__m128* xt1 = CAST_TO_MM128 (target1);
 	__m128* xt2 = CAST_TO_MM128 (target2);
-	for (size_t i = 0; i < size / VECSIZE; ++i)
+	for (std::size_t i = 0; i < size / VECSIZE; ++i)
 	{
 		tmp = _mm_mul_ps (*xs, xscalar);
 		*xt1 = _mm_mul_ps (*xt1, tmp);
@@ -363,14 +363,14 @@ multiply_buffers_and_by_scalar (float* target1, float* target2, float* source, s
 		++xt1;
 		++xt2;
 	}
-	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
+	for (std::size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 	{
 		float k = source[i] * scalar;
 		target1[i] *= k;
 		target2[i] *= k;
 	}
 #else
-	for (size_t i = 0; i < size; ++i)
+	for (std::size_t i = 0; i < size; ++i)
 	{
 		float k = source[i] * scalar;
 		target1[i] *= k;
@@ -387,16 +387,16 @@ multiply_buffers_and_by_scalar (float* target1, float* target2, float* source, s
  * \param	size Number of floats in arrays.
  */
 static inline void
-power_buffers (float* target, float* power, size_t size)
+power_buffers (float* target, float* power, std::size_t size)
 {
 #ifdef HARUHI_HAS_SSE_POW
 	const float* target_end = target + size;
 	for (float *x = target, *y = power; x < target_end; x += 4, y += 4)
 		SSEPow::vec4_pow (x, x, y);
-	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
+	for (std::size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] = SSEPow::pow (target[i], power[i]);
 #else
-	for (size_t i = 0; i < size; ++i)
+	for (std::size_t i = 0; i < size; ++i)
 		target[i] = FastPow::pow (target[i], power[i]);
 #endif
 }
@@ -409,16 +409,16 @@ power_buffers (float* target, float* power, size_t size)
  * \param	size Number of floats in arrays.
  */
 static inline void
-power_buffer_to_scalar (float* target, size_t size, float scalar)
+power_buffer_to_scalar (float* target, std::size_t size, float scalar)
 {
 #ifdef HARUHI_HAS_SSE_POW
 	const float* target_end = target + size;
 	for (float* x = target; x < target_end; x += 4)
 		SSEPow::vec4_pow_to_scalar (x, x, scalar);
-	for (size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
+	for (std::size_t i = size / VECSIZE * VECSIZE; i < size; ++i)
 		target[i] = SSEPow::pow (target[i], scalar);
 #else
-	for (size_t i = 0; i < size; ++i)
+	for (std::size_t i = 0; i < size; ++i)
 		target[i] = FastPow::pow (target[i], scalar);
 #endif
 }

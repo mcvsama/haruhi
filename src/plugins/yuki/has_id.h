@@ -1,4 +1,3 @@
-
 /* vim:ts=4
  *
  * Copyleft 2008…2011  Michał Gawron

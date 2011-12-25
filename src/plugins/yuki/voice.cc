@@ -32,7 +32,7 @@ Voice::SharedResources::graph_updated (unsigned int, std::size_t buffer_size)
 {
 	amplitude_buf.resize (buffer_size);
 	frequency_buf.resize (buffer_size);
-	for (size_t i = 0; i < countof (tmp_buf); ++i)
+	for (std::size_t i = 0; i < countof (tmp_buf); ++i)
 		tmp_buf[i].resize (buffer_size);
 }
 

@@ -50,7 +50,7 @@ Controller::Controller (QString const& name):
 	smoothing (0),
 	_name (name)
 {
-	for (size_t i = 0; i < countof (_voice_ids); ++i)
+	for (std::size_t i = 0; i < countof (_voice_ids); ++i)
 		_voice_ids[i] = 0;
 }
 
