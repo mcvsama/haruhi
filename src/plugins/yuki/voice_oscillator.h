@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__PLUGINS__YUKI__OSCILLATAOR_H__INCLUDED
-#define HARUHI__PLUGINS__YUKI__OSCILLATAOR_H__INCLUDED
+#ifndef HARUHI__PLUGINS__YUKI__VOICE_OSCILLATAOR_H__INCLUDED
+#define HARUHI__PLUGINS__YUKI__VOICE_OSCILLATAOR_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -75,6 +75,13 @@ class VoiceOscillator
 	 */
 	void
 	set_amplitude_source (Haruhi::AudioBuffer* source);
+
+	/**
+	 * Set FM modulator source.
+	 * Changing frequency in this buffer doesn't cause wavetable jumping.
+	 */
+	void
+	set_fm_source (Haruhi::AudioBuffer* source);
 
 	/**
 	 * Enable/disable noise generator.
@@ -179,6 +186,7 @@ class VoiceOscillator
 	DSP::Wavetable*			_wavetable;
 	Haruhi::AudioBuffer*	_frequency_source;
 	Haruhi::AudioBuffer*	_amplitude_source;
+	Haruhi::AudioBuffer*	_fm_source;
 	Sample					_vibrato[MaxUnison];
 	UnisonVoice				_unison[MaxUnison];
 
@@ -234,6 +242,13 @@ inline void
 VoiceOscillator::set_amplitude_source (Haruhi::AudioBuffer* source)
 {
 	_amplitude_source = source;
+}
+
+
+inline void
+VoiceOscillator::set_fm_source (Haruhi::AudioBuffer* source)
+{
+	_fm_source = source;
 }
 
 
@@ -412,13 +427,13 @@ template<bool with_noise, bool unison_stereo>
 	inline void
 	VoiceOscillator::fill_impl (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2)
 	{
-		Sample f, v, e, sum1, sum2, tmpsum;
+		Sample f, g, v, e, sum1, sum2, tmpsum;
 		Sample* const o1 = output_1->begin();
 		Sample* const o2 = output_2->begin();
 		Sample* const fs = _frequency_source->begin();
 
 		// Oscillate:
-		for (std::size_t i = 0, n = output_1->size(); i < n; ++i)
+		for (std::size_t i = 0; i < output_1->size(); ++i)
 		{
 			sum1 = sum2 = 0.0f;
 			if (with_noise)
@@ -426,7 +441,8 @@ template<bool with_noise, bool unison_stereo>
 			// Add unisons:
 			for (int u = 0; u < _unison_number; ++u)
 			{
-				f = fs[i] * _unison[u].relative_frequency;
+				g = fs[i] * _unison[u].relative_frequency;
+				f = g * _fm_source->begin()[i];
 				limit_value (f, 0.0f, 0.5f);
 				// Unison vibrato:
 				_unison[u].vibrato_phase = mod1 (_unison[u].vibrato_phase + _unison[u].vibrato_frequency);
@@ -439,7 +455,7 @@ template<bool with_noise, bool unison_stereo>
 				// Don't take "noised f" as wave's frequency, because this might result in frequent jumping
 				// between two wavetables and unwanted audible noise on some notes. It's better to get
 				// some (inaudible) aliasing than that:
-				tmpsum = (*_wavetable)(_unison[u].phase, f);
+				tmpsum = (*_wavetable)(_unison[u].phase, g);
 				// Stereo:
 				if (unison_stereo)
 				{

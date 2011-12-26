@@ -26,6 +26,7 @@
 #include <QtGui/QDialog>
 
 // Haruhi:
+#include <haruhi/application/services.h>
 #include <haruhi/lib/controller.h>
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/dial_control.h>
@@ -107,6 +108,9 @@ class Knob:
 
 		void
 		set_volume_scale (bool setting, float exp = 1.0f);
+
+		void
+		set_narrow (bool narrow);
 
 		/**
 		 * Detached knob works like a simple QDoubleSpinBox,
@@ -191,6 +195,24 @@ class Knob:
 	 */
 	float
 	volume_scale_exp() const;
+
+	/**
+	 * Show/hide label.
+	 */
+	void
+	set_label_visible (bool visible);
+
+	/**
+	 * Show/hide spinbox.
+	 */
+	void
+	set_spinbox_visible (bool visible);
+
+	/**
+	 * Set more narrow size.
+	 */
+	void
+	set_narrow (bool narrow);
 
 	/**
 	 * Enables/disables volume scale (shown in dB).
@@ -382,6 +404,27 @@ inline float
 Knob::volume_scale_exp() const
 {
 	return _spin_box->volume_scale_exp();
+}
+
+
+inline void
+Knob::set_label_visible (bool visible)
+{
+	_label->setVisible (visible);
+}
+
+
+inline void
+Knob::set_spinbox_visible (bool visible)
+{
+	_spin_box->setVisible (visible);
+}
+
+
+inline void
+Knob::set_narrow (bool narrow)
+{
+	_spin_box->set_narrow (narrow);
 }
 
 

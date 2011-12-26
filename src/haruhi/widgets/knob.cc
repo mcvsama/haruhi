@@ -32,7 +32,6 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/application/haruhi.h>
-#include <haruhi/application/services.h>
 #include <haruhi/graph/audio_backend.h>
 #include <haruhi/graph/event_backend.h>
 #include <haruhi/graph/event_buffer.h>
@@ -159,7 +158,7 @@ Knob::SpinBox::SpinBox (QWidget* parent, Knob* knob, int user_limit_min, int use
 	QSpinBox::setMinimum (user_limit_min);
 	QSpinBox::setMaximum (user_limit_max);
 	QSpinBox::setSingleStep (step);
-	setFixedWidth (font().pointSize() * Services::x_pixels_per_point() * 5);
+	set_narrow (false);
 }
 
 

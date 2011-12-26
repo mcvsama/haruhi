@@ -32,6 +32,7 @@ Voice::SharedResources::graph_updated (unsigned int, std::size_t buffer_size)
 {
 	amplitude_buf.resize (buffer_size);
 	frequency_buf.resize (buffer_size);
+	fm_buf.resize (buffer_size);
 	for (std::size_t i = 0; i < countof (tmp_buf); ++i)
 		tmp_buf[i].resize (buffer_size);
 }
@@ -49,7 +50,8 @@ Voice::Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp, Params::Main* mai
 	_frequency (frequency),
 	_sample_rate (sample_rate),
 	_buffer_size (buffer_size),
-	_dual_filter (&_params.filter[0], &_params.filter[1]),
+	_vmod (part_params, sample_rate, buffer_size),
+	_dual_filter (&_params.filters[0], &_params.filters[1]),
 	_target_frequency (frequency),
 	_frequency_change (0.0f),
 	_attack_sample (0),
@@ -85,9 +87,14 @@ Voice::render (SharedResources* res)
 	prepare_amplitude_buffer (&res->amplitude_buf);
 	prepare_frequency_buffer (&res->frequency_buf, res->tmp_buf + 0);
 
+	// Apply modulation:
+	res->fm_buf.fill (1.0f);
+	_vmod.modulate (&res->amplitude_buf, &res->frequency_buf, &res->fm_buf, res->tmp_buf);
+
 	// Generate oscillation:
 	_vosc.set_amplitude_source (&res->amplitude_buf);
 	_vosc.set_frequency_source (&res->frequency_buf);
+	_vosc.set_fm_source (&res->fm_buf);
 	_vosc.set_unison_spread (2.0f * _params.unison_spread.to_f());
 	_vosc.set_unison_number (_params.unison_index.get());
 	_vosc.set_unison_noise (_params.unison_noise.to_f());
@@ -178,6 +185,8 @@ Voice::graph_updated (unsigned int sample_rate, std::size_t buffer_size)
 
 	_output_1.resize (buffer_size);
 	_output_2.resize (buffer_size);
+
+	_vmod.graph_updated (sample_rate, buffer_size);
 }
 
 
@@ -318,7 +327,7 @@ Voice::prepare_frequency_buffer (Haruhi::AudioBuffer* buffer, Haruhi::AudioBuffe
 	}
 
 	// Multiply buffer by frequency value:
-	SIMD::multiply_buffer_by_scalar (buffer->begin(), buffer->size(), frequency);
+	buffer->attenuate (frequency);
 }
 
 } // namespace Yuki

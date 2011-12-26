@@ -17,6 +17,7 @@
 // Standard:
 #include <cstddef>
 #include <list>
+#include <vector>
 
 // Qt:
 #include <QtGui/QWidget>
@@ -25,6 +26,7 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QSpinBox>
 #include <QtGui/QCheckBox>
+#include <QtGui/QStackedWidget>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -52,8 +54,10 @@ class PartWidget:
 {
 	Q_OBJECT
 
-	typedef std::vector<QSlider*>		Sliders;
-	typedef std::vector<QPushButton*>	Buttons;
+	typedef std::vector<QSlider*>						Sliders;
+	typedef std::vector<QPushButton*>					Buttons;
+	// Modulation matrix knobs [0..3][0..2]:
+	typedef std::vector<std::vector<Haruhi::Knob*> >	MatrixKnobs;
 
   public:
 	PartWidget (PartManagerWidget*, Part*);
@@ -169,6 +173,10 @@ class PartWidget:
 	Haruhi::Knob*		_knob_phase;
 	Haruhi::Knob*		_knob_noise_level;
 
+	// Modulation matrix knobs:
+	MatrixKnobs			_fm_matrix_knobs;
+	MatrixKnobs			_am_matrix_knobs;
+
 	// Waveform-related:
 	Haruhi::WavePlot*	_base_wave_plot;
 	Haruhi::WavePlot*	_final_wave_plot;
@@ -192,11 +200,14 @@ class PartWidget:
 	QSpinBox*			_frequency_modulation_range;
 
 	// Other:
-	QWidget*			_panel;
+	QStackedWidget*		_stack;
+	QWidget*			_main_panel;
+	QWidget*			_modulator_panel;
 	QPushButton*		_auto_center;
 	QPushButton*		_unison_stereo;
 	QPushButton*		_pseudo_stereo;
 	QCheckBox*			_part_enabled;
+	QCheckBox*			_show_modulator;
 	QPushButton*		_wave_enabled;
 	QPushButton*		_noise_enabled;
 	QColor				_std_button_bg;

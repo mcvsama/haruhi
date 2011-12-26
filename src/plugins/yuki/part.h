@@ -53,6 +53,7 @@ class VoiceManager;
 class Part:
 	public HasWidget<PartWidget>,
 	public HasID,
+	public HasPlugin,
 	public Signal::Receiver,
 	public SaveableState,
 	private Noncopyable
@@ -163,10 +164,12 @@ class Part:
 	/**
 	 * Contains Haruhi ports created for the part.
 	 */
-	class PartPorts:
-		public HasPlugin,
-		private Noncopyable
+	class PartPorts: private Noncopyable
 	{
+	  public:
+		// [0..3][0..2] -- [controlled][controlling]:
+		typedef std::vector<std::vector<Haruhi::EventPort*> > MatrixPorts;
+
 	  public:
 		PartPorts (Plugin*, unsigned int part_id);
 
@@ -209,8 +212,12 @@ class Part:
 		Haruhi::EventPort* filter_2_gain;
 		Haruhi::EventPort* filter_2_attenuation;
 
-	  private:
-		Haruhi::PortGroup* _port_group;
+		// Modulator ports:
+		MatrixPorts	fm_matrix;
+		MatrixPorts	am_matrix;
+
+		// Port group:
+		Haruhi::PortGroup* port_group;
 	};
 
 	/**
@@ -219,7 +226,12 @@ class Part:
 	class PartControllerProxies: private Noncopyable
 	{
 	  public:
+		typedef std::vector<std::vector<Haruhi::ControllerProxy*> > MatrixControllerProxies;
+
+	  public:
 		PartControllerProxies (PartManager*, PartPorts*, Params::Part*);
+
+		~PartControllerProxies();
 
 		/**
 		 * Call process_events() on each proxy.
@@ -271,6 +283,10 @@ class Part:
 		Haruhi::ControllerProxy filter_2_resonance;
 		Haruhi::ControllerProxy filter_2_gain;
 		Haruhi::ControllerProxy filter_2_attenuation;
+
+		// Modulator:
+		MatrixControllerProxies fm_matrix;
+		MatrixControllerProxies am_matrix;
 
 	  private:
 		PartManager* _part_manager;
@@ -378,7 +394,8 @@ class Part:
 	/**
 	 * Update wavetable according to new parameters.
 	 * Switch double-buffered wavetables.
-	 * Do not propagate new wavetable to VoiceManager
+	 * Do not propagate new wavetable to VoiceManager - this
+	 * will be done in render().
 	 */
 	void
 	update_wavetable();

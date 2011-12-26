@@ -25,6 +25,7 @@
 
 // Local:
 #include "params.h"
+#include "voice_modulator.h"
 #include "voice_oscillator.h"
 #include "dual_filter.h"
 
@@ -51,7 +52,8 @@ class Voice
 
 		Haruhi::AudioBuffer	amplitude_buf;
 		Haruhi::AudioBuffer	frequency_buf;
-		Haruhi::AudioBuffer	tmp_buf[4];
+		Haruhi::AudioBuffer fm_buf;
+		Haruhi::AudioBuffer	tmp_buf[6];
 	};
 
   public:
@@ -173,6 +175,7 @@ class Voice
 	Sample				_frequency;
 	unsigned int		_sample_rate;
 	std::size_t			_buffer_size;
+	VoiceModulator		_vmod;
 	VoiceOscillator		_vosc;
 	DualFilter			_dual_filter;
 	Haruhi::AudioBuffer	_output_1;
@@ -250,6 +253,7 @@ Voice::params()
 inline void
 Voice::set_wavetable (DSP::Wavetable* wavetable)
 {
+	_vmod.set_wavetable (wavetable);
 	_vosc.set_wavetable (wavetable);
 }
 

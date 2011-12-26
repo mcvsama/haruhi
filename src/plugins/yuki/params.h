@@ -214,7 +214,7 @@ struct Params
 		static const int NUM_PARAMS = 12;
 
 		// Embedded dual Filter params:
-		Filter filter[2];
+		Filter filters[2];
 	};
 
 	/**
@@ -238,6 +238,7 @@ struct Params
 		HARUHI_YUKI_PARAM (FrequencyMod,			-1000000,	+1000000,	       0,	       0,	+1000000)
 
 		static const unsigned int HarmonicsNumber = Haruhi::DSP::HarmonicsWave::HarmonicsNumber;
+		static const unsigned int OperatorsNumber = 3;
 
 		Haruhi::ControllerParam volume;
 		Haruhi::ControllerParam portamento_time;
@@ -249,6 +250,8 @@ struct Params
 		Haruhi::ControllerParam modulator_shape;
 		Haruhi::ControllerParam harmonics[HarmonicsNumber];
 		Haruhi::ControllerParam harmonic_phases[HarmonicsNumber];
+		Haruhi::ControllerParam fm_matrix[4][3];
+		Haruhi::ControllerParam am_matrix[4][3];
 
 		Haruhi::Param<int> part_enabled;
 		Haruhi::Param<int> wave_enabled;
@@ -267,7 +270,7 @@ struct Params
 		Haruhi::Param<unsigned int> auto_center;
 		Haruhi::Param<unsigned int> filter_configuration;
 
-		static const int NUM_PARAMS = 24 + HarmonicsNumber + HarmonicsNumber;
+		static const int NUM_PARAMS = 24 + HarmonicsNumber + HarmonicsNumber + 24;
 
 		// Embedded Voice params template (also includes Filter params):
 		Voice voice;

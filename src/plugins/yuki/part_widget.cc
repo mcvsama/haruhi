@@ -72,6 +72,24 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_knob_phase						= new Haruhi::Knob (this, &proxies->phase, "Phase");
 	_knob_noise_level				= new Haruhi::Knob (this, &proxies->noise_level, "Noise lvl");
 
+	// "+ 1" is for output to main oscillator:
+	_fm_matrix_knobs.resize (Params::Part::OperatorsNumber + 1);
+	_am_matrix_knobs.resize (Params::Part::OperatorsNumber + 1);
+	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
+	{
+		_fm_matrix_knobs[o].resize (Params::Part::OperatorsNumber);
+		_am_matrix_knobs[o].resize (Params::Part::OperatorsNumber);
+		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
+		{
+			_fm_matrix_knobs[o][i] = new Haruhi::Knob (this, proxies->fm_matrix[o][i], "");
+			_am_matrix_knobs[o][i] = new Haruhi::Knob (this, proxies->am_matrix[o][i], "");
+			_fm_matrix_knobs[o][i]->set_label_visible (false);
+			_am_matrix_knobs[o][i]->set_label_visible (false);
+			_fm_matrix_knobs[o][i]->set_narrow (true);
+			_am_matrix_knobs[o][i]->set_narrow (true);
+		}
+	}
+
 	QObject::connect (_knob_phase, SIGNAL (changed (int)), this, SLOT (update_phase_marker()));
 
 	_knob_volume->set_volume_scale (true, M_E);
@@ -86,6 +104,14 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	};
 	for (Haruhi::Knob** k = all_knobs; k != endof (all_knobs); ++k)
 		(*k)->set_unit_bay (_part->part_manager()->plugin()->unit_bay());
+	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
+	{
+		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
+		{
+			_fm_matrix_knobs[o][i]->set_unit_bay (_part->part_manager()->plugin()->unit_bay());
+			_am_matrix_knobs[o][i]->set_unit_bay (_part->part_manager()->plugin()->unit_bay());
+		}
+	}
 
 	// Help tooltips:
 
@@ -130,9 +156,32 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QObject::connect (_part_enabled, SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
 	QObject::connect (_part_enabled, SIGNAL (toggled (bool)), this, SLOT (update_widgets()));
 
+	// Show modulator checkbox:
+	_show_modulator = new QCheckBox ("Show modulator", this);
+	_show_modulator->setChecked (false);
+	QObject::connect (_show_modulator, SIGNAL (toggled (bool)), this, SLOT (update_widgets()));
+
 	// Top widget, can be disabled with all child widgets:
-	_panel = new QWidget (this);
-	_panel->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
+	_main_panel = new QWidget (this);
+	_main_panel->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+	// Modulator top widget:
+	_modulator_panel = new QWidget (this);
+	_modulator_panel->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+	// Matrix tabs:
+	QWidget* fm_matrix_widget = new QWidget (this);
+	QWidget* am_matrix_widget = new QWidget (this);
+
+	QTabWidget* modulator_matrix_tabs = new QTabWidget (this);
+	modulator_matrix_tabs->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	modulator_matrix_tabs->addTab (fm_matrix_widget, "FM");
+	modulator_matrix_tabs->addTab (am_matrix_widget, "AM");
+
+	// Stack:
+	_stack = new QStackedWidget (this);
+	_stack->addWidget (_main_panel);
+	_stack->addWidget (_modulator_panel);
 
 	// Wave type:
 	_wave_type = new QComboBox (this);
@@ -324,8 +373,8 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QObject::connect (show_harmonics, SIGNAL (clicked()), this, SLOT (show_harmonics()));
 
 	// Filters:
-	_filter_1 = new FilterWidget (this, 0, &_part->part_params()->voice.filter[0], _part);
-	_filter_2 = new FilterWidget (this, 1, &_part->part_params()->voice.filter[1], _part);
+	_filter_1 = new FilterWidget (this, 0, &_part->part_params()->voice.filters[0], _part);
+	_filter_2 = new FilterWidget (this, 1, &_part->part_params()->voice.filters[1], _part);
 
 	// Filters configuration:
 	_filter_configuration = new QComboBox (this);
@@ -402,18 +451,61 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	panel_layout->addWidget (_knob_unison_vibrato_frequency, 3, 9, 1, 1);
 	panel_layout->addWidget (group1, 4, 8, 1, 3);
 
-	QGridLayout* resizeable_layout = new QGridLayout (_panel);
-	resizeable_layout->setMargin (0);
-	resizeable_layout->setSpacing (0);
-	resizeable_layout->addLayout (panel_layout, 0, 0);
-	resizeable_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed), 0, 1);
-	resizeable_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 1, 0);
+	QGridLayout* resizeable_main_layout = new QGridLayout (_main_panel);
+	resizeable_main_layout->setMargin (0);
+	resizeable_main_layout->setSpacing (0);
+	resizeable_main_layout->addLayout (panel_layout, 0, 0);
+	resizeable_main_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed), 0, 1);
+	resizeable_main_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 1, 0);
+
+	QGridLayout* fm_matrix_layout = new QGridLayout (fm_matrix_widget);
+	fm_matrix_layout->setMargin (Config::Margin);
+	fm_matrix_layout->setSpacing (Config::Spacing);
+	fm_matrix_layout->addWidget (new QLabel ("Op 1", this), 0, 1, 1, 1, Qt::AlignCenter);
+	fm_matrix_layout->addWidget (new QLabel ("Op 2", this), 0, 2, 1, 1, Qt::AlignCenter);
+	fm_matrix_layout->addWidget (new QLabel ("Op 3", this), 0, 3, 1, 1, Qt::AlignCenter);
+	fm_matrix_layout->addWidget (new QLabel ("Op 1 ←", this), 1, 0, 1, 1, Qt::AlignRight);
+	fm_matrix_layout->addWidget (new QLabel ("Op 2 ←", this), 2, 0, 1, 1, Qt::AlignRight);
+	fm_matrix_layout->addWidget (new QLabel ("Op 3 ←", this), 3, 0, 1, 1, Qt::AlignRight);
+	fm_matrix_layout->addWidget (new QLabel ("Main ←", this), 4, 0, 1, 1, Qt::AlignRight);
+	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
+		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
+			fm_matrix_layout->addWidget (_fm_matrix_knobs[o][i], o + 1, i + 1);
+
+	QGridLayout* am_matrix_layout = new QGridLayout (am_matrix_widget);
+	am_matrix_layout->setMargin (Config::Margin);
+	am_matrix_layout->setSpacing (Config::Spacing);
+	am_matrix_layout->addWidget (new QLabel ("Op 1", this), 0, 1, 1, 1, Qt::AlignCenter);
+	am_matrix_layout->addWidget (new QLabel ("Op 2", this), 0, 2, 1, 1, Qt::AlignCenter);
+	am_matrix_layout->addWidget (new QLabel ("Op 3", this), 0, 3, 1, 1, Qt::AlignCenter);
+	am_matrix_layout->addWidget (new QLabel ("Op 1 ←", this), 1, 0);
+	am_matrix_layout->addWidget (new QLabel ("Op 2 ←", this), 2, 0);
+	am_matrix_layout->addWidget (new QLabel ("Op 3 ←", this), 3, 0);
+	am_matrix_layout->addWidget (new QLabel ("Main ←", this), 4, 0);
+	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
+		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
+			am_matrix_layout->addWidget (_am_matrix_knobs[o][i], o + 1, i + 1);
+
+	QGridLayout* modulator_layout = new QGridLayout (_modulator_panel);
+	modulator_layout->setMargin (0);
+	modulator_layout->setSpacing(Config::Spacing);
+	modulator_layout->addWidget (modulator_matrix_tabs, 0, 0);
+	modulator_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 1, 0);
+	modulator_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed), 0, 1);
+
+	QWidget* top_checkboxes = new QWidget (this);
+
+	QHBoxLayout* top_checkboxes_layout = new QHBoxLayout (top_checkboxes);
+	top_checkboxes_layout->setMargin (0);
+	top_checkboxes_layout->setSpacing (2 * Config::Spacing);
+	top_checkboxes_layout->addWidget (_part_enabled);
+	top_checkboxes_layout->addWidget (_show_modulator);
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (Config::Margin);
 	layout->setSpacing (Config::Spacing);
-	layout->addWidget (new StyledBackground (_part_enabled, this));
-	layout->addWidget (_panel);
+	layout->addWidget (new StyledBackground (top_checkboxes, this));
+	layout->addWidget (_stack);
 
 	QLabel* harmonics_label = new QLabel ("Harmonics", _harmonics_window);
 	// Force normal text color. For some reason Qt uses white color on light-gray background.
@@ -561,7 +653,8 @@ PartWidget::update_phase_marker()
 void
 PartWidget::update_widgets()
 {
-	_panel->setEnabled (_part->part_params()->part_enabled.get());
+	_main_panel->setEnabled (_part->part_params()->part_enabled.get());
+	_modulator_panel->setEnabled (_part->part_params()->part_enabled.get());
 
 	const bool wave_enabled = _wave_enabled->isChecked();
 	_base_wave_plot->setEnabled (wave_enabled);
@@ -582,6 +675,11 @@ PartWidget::update_widgets()
 		set_button_highlighted (_harmonics_resets[i], _harmonics_sliders[i]->value() != 0);
 		set_button_highlighted (_harmonic_phases_resets[i], _harmonic_phases_sliders[i]->value() != 0);
 	}
+
+	if (_show_modulator->isChecked())
+		_stack->setCurrentWidget (_modulator_panel);
+	else
+		_stack->setCurrentWidget (_main_panel);
 }
 
 

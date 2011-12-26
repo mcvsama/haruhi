@@ -120,6 +120,22 @@ HARUHI_YUKI_DEFINE_PARAMS (Filter)
 HARUHI_YUKI_FINISH_DEFINITION()
 
 
+Params::Operator::Operator():
+	HARUHI_YUKI_CONSTRUCT (amplitude, Amplitude, 2),
+	HARUHI_YUKI_CONSTRUCT (frequency, Frequency, 2),
+	HARUHI_YUKI_CONSTRUCT (wave_shape, WaveShape, 2),
+	wave_type (0, 3, 0, "wave_type")
+{ }
+
+
+HARUHI_YUKI_DEFINE_PARAMS (Operator)
+	HARUHI_YUKI_DEFINE_PARAM (amplitude)
+	HARUHI_YUKI_DEFINE_PARAM (frequency)
+	HARUHI_YUKI_DEFINE_PARAM (wave_shape)
+	HARUHI_YUKI_DEFINE_PARAM (wave_type)
+HARUHI_YUKI_FINISH_DEFINITION()
+
+
 Params::Voice::Voice():
 	HARUHI_YUKI_CONSTRUCT (amplitude, Amplitude, 2),
 	HARUHI_YUKI_CONSTRUCT (frequency, Frequency, 2),
@@ -139,6 +155,8 @@ Params::Voice::Voice():
 
 
 HARUHI_YUKI_DEFINE_PARAMS (Voice)
+	HARUHI_YUKI_DEFINE_PARAM (amplitude)
+	HARUHI_YUKI_DEFINE_PARAM (frequency)
 	HARUHI_YUKI_DEFINE_PARAM (panorama)
 	HARUHI_YUKI_DEFINE_PARAM (detune)
 	HARUHI_YUKI_DEFINE_PARAM (pitchbend)
@@ -149,8 +167,6 @@ HARUHI_YUKI_DEFINE_PARAMS (Voice)
 	HARUHI_YUKI_DEFINE_PARAM (unison_noise)
 	HARUHI_YUKI_DEFINE_PARAM (unison_vibrato_level)
 	HARUHI_YUKI_DEFINE_PARAM (unison_vibrato_frequency)
-	HARUHI_YUKI_DEFINE_PARAM (amplitude)
-	HARUHI_YUKI_DEFINE_PARAM (frequency)
 HARUHI_YUKI_FINISH_DEFINITION()
 
 
@@ -217,6 +233,14 @@ HARUHI_YUKI_DEFINE_PARAMS (Part)
 		HARUHI_YUKI_DEFINE_PARAM (harmonics[k]);
 	for (unsigned int k = 0; k < HarmonicsNumber; ++k)
 		HARUHI_YUKI_DEFINE_PARAM (harmonic_phases[k]);
+	for (unsigned int o = 0; o < 4; ++o)
+	{
+		for (unsigned int i = 0; i < 3; ++i)
+		{
+			HARUHI_YUKI_DEFINE_PARAM (fm_matrix[o][i]);
+			HARUHI_YUKI_DEFINE_PARAM (am_matrix[o][i]);
+		}
+	}
 	HARUHI_YUKI_DEFINE_PARAM (part_enabled)
 	HARUHI_YUKI_DEFINE_PARAM (wave_enabled)
 	HARUHI_YUKI_DEFINE_PARAM (noise_enabled)

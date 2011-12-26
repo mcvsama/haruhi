@@ -76,39 +76,56 @@ Part::UpdateWavetableWorkUnit::execute()
 }
 
 
-Part::PartPorts::PartPorts (Plugin* plugin, unsigned int part_id):
-	HasPlugin (plugin)
+Part::PartPorts::PartPorts (Plugin* plugin, unsigned int part_id)
 {
-	_port_group = new Haruhi::PortGroup (graph(), QString ("Part %1").arg (part_id).toStdString());
+	port_group = new Haruhi::PortGroup (plugin->graph(), QString ("Part %1").arg (part_id).toStdString());
 
-	wave_shape					= new Haruhi::EventPort (plugin, "Osc - Wave shape", Haruhi::Port::Input, _port_group);
-	modulator_amplitude			= new Haruhi::EventPort (plugin, "Osc - Wave modulator amplitude", Haruhi::Port::Input, _port_group);
-	modulator_index				= new Haruhi::EventPort (plugin, "Osc - Wave modulator index", Haruhi::Port::Input, _port_group);
-	modulator_shape				= new Haruhi::EventPort (plugin, "Osc - Wave modulator shape", Haruhi::Port::Input, _port_group);
-	volume						= new Haruhi::EventPort (plugin, "Osc - Volume", Haruhi::Port::Input, _port_group);
-	amplitude					= new Haruhi::EventPort (plugin, "Osc - Amplitude modulation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	frequency					= new Haruhi::EventPort (plugin, "Osc - Frequency modulation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	panorama					= new Haruhi::EventPort (plugin, "Osc - Panorama", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	detune						= new Haruhi::EventPort (plugin, "Osc - Detune", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	pitchbend					= new Haruhi::EventPort (plugin, "Osc - Pitchbend", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	velocity_sens				= new Haruhi::EventPort (plugin, "Osc - Velocity sensitivity", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	unison_index				= new Haruhi::EventPort (plugin, "Osc - Unison index", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	unison_spread				= new Haruhi::EventPort (plugin, "Osc - Unison spread", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	unison_init					= new Haruhi::EventPort (plugin, "Osc - Unison init. φ", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	unison_noise				= new Haruhi::EventPort (plugin, "Osc - Unison noise", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	unison_vibrato_level		= new Haruhi::EventPort (plugin, "Osc - Unison vibrato level", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	unison_vibrato_frequency	= new Haruhi::EventPort (plugin, "Osc - Unison vibrato frequency", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	portamento_time				= new Haruhi::EventPort (plugin, "Osc - Portamento time", Haruhi::Port::Input, _port_group);
-	phase						= new Haruhi::EventPort (plugin, "Osc - Phase", Haruhi::Port::Input, _port_group);
-	noise_level					= new Haruhi::EventPort (plugin, "Osc - Noise level", Haruhi::Port::Input, _port_group);
-	filter_1_frequency			= new Haruhi::EventPort (plugin, "Filter 1 - Frequency", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_1_resonance			= new Haruhi::EventPort (plugin, "Filter 1 - Resonance (Q)", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_1_gain				= new Haruhi::EventPort (plugin, "Filter 1 - Gain", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_1_attenuation		= new Haruhi::EventPort (plugin, "Filter 1 - Attenuation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_2_frequency			= new Haruhi::EventPort (plugin, "Filter 2 - Frequency", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_2_resonance			= new Haruhi::EventPort (plugin, "Filter 2 - Resonance (Q)", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_2_gain				= new Haruhi::EventPort (plugin, "Filter 2 - Gain", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
-	filter_2_attenuation		= new Haruhi::EventPort (plugin, "Filter 2 - Attenuation", Haruhi::Port::Input, _port_group, Haruhi::Port::Polyphonic);
+	wave_shape					= new Haruhi::EventPort (plugin, "Operator M - Wave shape", Haruhi::Port::Input, port_group);
+	modulator_amplitude			= new Haruhi::EventPort (plugin, "Operator M - Wave modulator amplitude", Haruhi::Port::Input, port_group);
+	modulator_index				= new Haruhi::EventPort (plugin, "Operator M - Wave modulator index", Haruhi::Port::Input, port_group);
+	modulator_shape				= new Haruhi::EventPort (plugin, "Operator M - Wave modulator shape", Haruhi::Port::Input, port_group);
+	volume						= new Haruhi::EventPort (plugin, "Operator M - Volume", Haruhi::Port::Input, port_group);
+	amplitude					= new Haruhi::EventPort (plugin, "Operator M - Amplitude modulation", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	frequency					= new Haruhi::EventPort (plugin, "Operator M - Frequency modulation", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	panorama					= new Haruhi::EventPort (plugin, "Operator M - Panorama", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	detune						= new Haruhi::EventPort (plugin, "Operator M - Detune", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	pitchbend					= new Haruhi::EventPort (plugin, "Operator M - Pitchbend", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	velocity_sens				= new Haruhi::EventPort (plugin, "Operator M - Velocity sensitivity", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	unison_index				= new Haruhi::EventPort (plugin, "Operator M - Unison index", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	unison_spread				= new Haruhi::EventPort (plugin, "Operator M - Unison spread", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	unison_init					= new Haruhi::EventPort (plugin, "Operator M - Unison init. φ", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	unison_noise				= new Haruhi::EventPort (plugin, "Operator M - Unison noise", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	unison_vibrato_level		= new Haruhi::EventPort (plugin, "Operator M - Unison vibrato level", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	unison_vibrato_frequency	= new Haruhi::EventPort (plugin, "Operator M - Unison vibrato frequency", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	portamento_time				= new Haruhi::EventPort (plugin, "Operator M - Portamento time", Haruhi::Port::Input, port_group);
+	phase						= new Haruhi::EventPort (plugin, "Operator M - Phase", Haruhi::Port::Input, port_group);
+	noise_level					= new Haruhi::EventPort (plugin, "Operator M - Noise level", Haruhi::Port::Input, port_group);
+	filter_1_frequency			= new Haruhi::EventPort (plugin, "Filter 1 - Frequency", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	filter_1_resonance			= new Haruhi::EventPort (plugin, "Filter 1 - Resonance (Q)", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	filter_1_gain				= new Haruhi::EventPort (plugin, "Filter 1 - Gain", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	filter_1_attenuation		= new Haruhi::EventPort (plugin, "Filter 1 - Attenuation", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	filter_2_frequency			= new Haruhi::EventPort (plugin, "Filter 2 - Frequency", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	filter_2_resonance			= new Haruhi::EventPort (plugin, "Filter 2 - Resonance (Q)", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	filter_2_gain				= new Haruhi::EventPort (plugin, "Filter 2 - Gain", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	filter_2_attenuation		= new Haruhi::EventPort (plugin, "Filter 2 - Attenuation", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+
+	fm_matrix.resize (Params::Part::OperatorsNumber + 1);
+	am_matrix.resize (Params::Part::OperatorsNumber + 1);
+	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
+	{
+		fm_matrix[o].resize (Params::Part::OperatorsNumber);
+		am_matrix[o].resize (Params::Part::OperatorsNumber);
+		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
+		{
+			QString name = QString ("matrix [%1] → [%2]").arg (i);
+			if (o == 0)
+				name = name.arg ("M");
+			else
+				name = name.arg (o);
+			fm_matrix[o][i] = new Haruhi::EventPort (plugin, QString ("FM %1").arg (name).toStdString(), Haruhi::Port::Input, port_group);
+			am_matrix[o][i] = new Haruhi::EventPort (plugin, QString ("AM %1").arg (name).toStdString(), Haruhi::Port::Input, port_group);
+		}
+	}
 }
 
 
@@ -143,7 +160,16 @@ Part::PartPorts::~PartPorts()
 	delete filter_2_gain;
 	delete filter_2_attenuation;
 
-	delete _port_group;
+	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
+	{
+		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
+		{
+			delete fm_matrix[o][i];
+			delete am_matrix[o][i];
+		}
+	}
+
+	delete port_group;
 }
 
 
@@ -174,14 +200,14 @@ Part::PartControllerProxies::PartControllerProxies (PartManager* part_manager, P
 	CONSTRUCT_CONTROLLER_PROXY (unison_vibrato_frequency),
 #undef CONSTRUCT_CONTROLLER_PROXY
 
-#define CONSTRUCT_CONTROLLER_PROXY(name) filter_1_##name (part_ports->filter_1_##name, &part_params->voice.filter[0].name)
+#define CONSTRUCT_CONTROLLER_PROXY(name) filter_1_##name (part_ports->filter_1_##name, &part_params->voice.filters[0].name)
 	CONSTRUCT_CONTROLLER_PROXY (frequency),
 	CONSTRUCT_CONTROLLER_PROXY (resonance),
 	CONSTRUCT_CONTROLLER_PROXY (gain),
 	CONSTRUCT_CONTROLLER_PROXY (attenuation),
 #undef CONSTRUCT_CONTROLLER_PROXY
 
-#define CONSTRUCT_CONTROLLER_PROXY(name) filter_2_##name (part_ports->filter_2_##name, &part_params->voice.filter[1].name)
+#define CONSTRUCT_CONTROLLER_PROXY(name) filter_2_##name (part_ports->filter_2_##name, &part_params->voice.filters[1].name)
 	CONSTRUCT_CONTROLLER_PROXY (frequency),
 	CONSTRUCT_CONTROLLER_PROXY (resonance),
 	CONSTRUCT_CONTROLLER_PROXY (gain),
@@ -189,7 +215,34 @@ Part::PartControllerProxies::PartControllerProxies (PartManager* part_manager, P
 #undef CONSTRUCT_CONTROLLER_PROXY
 
 	_part_manager (part_manager)
-{ }
+{
+	fm_matrix.resize (Params::Part::OperatorsNumber + 1);
+	am_matrix.resize (Params::Part::OperatorsNumber + 1);
+	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
+	{
+		fm_matrix[o].resize (Params::Part::OperatorsNumber);
+		am_matrix[o].resize (Params::Part::OperatorsNumber);
+		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
+		{
+			fm_matrix[o][i] = new Haruhi::ControllerProxy (part_ports->fm_matrix[o][i], &part_params->fm_matrix[o][i]);
+			am_matrix[o][i] = new Haruhi::ControllerProxy (part_ports->am_matrix[o][i], &part_params->am_matrix[o][i]);
+		}
+	}
+
+}
+
+
+Part::PartControllerProxies::~PartControllerProxies()
+{
+	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
+	{
+		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
+		{
+			delete fm_matrix[o][i];
+			delete am_matrix[o][i];
+		}
+	}
+}
 
 
 void
@@ -230,6 +283,15 @@ Part::PartControllerProxies::process_events()
 	PROXY_PROCESS_EVENTS (filter_2_gain);
 	PROXY_PROCESS_EVENTS (filter_2_attenuation);
 #undef PROXY_PROCESS_EVENTS
+
+	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
+	{
+		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
+		{
+			fm_matrix[o][i]->process_events();
+			am_matrix[o][i]->process_events();
+		}
+	}
 }
 
 
@@ -288,6 +350,7 @@ Part::ParamUpdaters::ParamUpdaters (VoiceManager* voice_manager):
 
 Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Main* main_params, unsigned int id):
 	HasID (id),
+	HasPlugin (part_manager->plugin()),
 	_part_manager (part_manager),
 	_voice_manager (new VoiceManager (main_params, &_part_params, work_performer)),
 	_switch_wavetables (false),
@@ -363,7 +426,7 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 
 #define UPDATE_FILTERS_ON_VCE(name) \
 	_proxies.filter_1_##name.on_voice_controller_event.connect (&_updaters.filter_1_##name, &FilterParamUpdater<Params::Filter::ControllerParamPtr>::handle_event); \
-	_part_params.voice.filter[0].name.on_change_with_value.connect (&_updaters.filter_1_##name, &FilterParamUpdater<Params::Filter::ControllerParamPtr>::handle_change);
+	_part_params.voice.filters[0].name.on_change_with_value.connect (&_updaters.filter_1_##name, &FilterParamUpdater<Params::Filter::ControllerParamPtr>::handle_change);
 	// Updaters for Filter 1 params:
 	UPDATE_FILTERS_ON_VCE (frequency);
 	UPDATE_FILTERS_ON_VCE (resonance);
@@ -373,7 +436,7 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 
 #define UPDATE_FILTERS_ON_VCE(name) \
 	_proxies.filter_2_##name.on_voice_controller_event.connect (&_updaters.filter_2_##name, &FilterParamUpdater<Params::Filter::ControllerParamPtr>::handle_event); \
-	_part_params.voice.filter[1].name.on_change_with_value.connect (&_updaters.filter_2_##name, &FilterParamUpdater<Params::Filter::ControllerParamPtr>::handle_change);
+	_part_params.voice.filters[1].name.on_change_with_value.connect (&_updaters.filter_2_##name, &FilterParamUpdater<Params::Filter::ControllerParamPtr>::handle_change);
 	// Updaters for Filter 2 params:
 	UPDATE_FILTERS_ON_VCE (frequency);
 	UPDATE_FILTERS_ON_VCE (resonance);
@@ -382,7 +445,7 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 #undef UPDATE_FILTERS_ON_VCE
 
 #define UPDATE_FILTERS_ON_CHANGE(name) \
-	_part_params.voice.filter[0].name.on_change_with_value.connect (&_updaters.filter_1_##name, &FilterParamUpdater<Params::Filter::IntParamPtr>::handle_change);
+	_part_params.voice.filters[0].name.on_change_with_value.connect (&_updaters.filter_1_##name, &FilterParamUpdater<Params::Filter::IntParamPtr>::handle_change);
 	// Updaters for Filter 1 params:
 	UPDATE_FILTERS_ON_CHANGE (enabled);
 	UPDATE_FILTERS_ON_CHANGE (type);
@@ -391,7 +454,7 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 #undef UPDATE_FILTERS_ON_CHANGE
 
 #define UPDATE_FILTERS_ON_CHANGE(name) \
-	_part_params.voice.filter[1].name.on_change_with_value.connect (&_updaters.filter_2_##name, &FilterParamUpdater<Params::Filter::IntParamPtr>::handle_change);
+	_part_params.voice.filters[1].name.on_change_with_value.connect (&_updaters.filter_2_##name, &FilterParamUpdater<Params::Filter::IntParamPtr>::handle_change);
 	// Updaters for Filter 2 params:
 	UPDATE_FILTERS_ON_CHANGE (enabled);
 	UPDATE_FILTERS_ON_CHANGE (type);
@@ -564,10 +627,10 @@ Part::save_state (QDomElement& element) const
 	_part_params.voice.save_state (e2);
 	element.appendChild (e2);
 	QDomElement e3 = element.ownerDocument().createElement ("filter-1-parameters");
-	_part_params.voice.filter[0].save_state (e3);
+	_part_params.voice.filters[0].save_state (e3);
 	element.appendChild (e3);
 	QDomElement e4 = element.ownerDocument().createElement ("filter-2-parameters");
-	_part_params.voice.filter[1].save_state (e4);
+	_part_params.voice.filters[1].save_state (e4);
 	element.appendChild (e4);
 }
 
@@ -582,9 +645,9 @@ Part::load_state (QDomElement const& element)
 		else if (e.tagName() == "voice-parameters")
 			_part_params.voice.load_state (e);
 		else if (e.tagName() == "filter-1-parameters")
-			_part_params.voice.filter[0].load_state (e);
+			_part_params.voice.filters[0].load_state (e);
 		else if (e.tagName() == "filter-2-parameters")
-			_part_params.voice.filter[1].load_state (e);
+			_part_params.voice.filters[1].load_state (e);
 	}
 }
 
