@@ -142,7 +142,7 @@ class VoiceOscillator
 	 * Fill output buffer.
 	 */
 	void
-	fill (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2);
+	fill (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2);
 
   private:
 	/**
@@ -156,7 +156,7 @@ class VoiceOscillator
 
 	template<bool with_noise, bool unison_stereo>
 		void
-		fill_impl (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2);
+		fill_impl (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2);
 
   private:
 	/**
@@ -308,37 +308,37 @@ VoiceOscillator::set_unison_vibrato_frequency (Sample frequency)
 
 
 inline void
-VoiceOscillator::fill (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
+VoiceOscillator::fill (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2)
 {
-	assert (output1 != 0);
-	assert (output2 != 0);
-	assert (output1->size() == output2->size());
+	assert (output_1 != 0);
+	assert (output_2 != 0);
+	assert (output_1->size() == output_2->size());
 
-	Sample* const o1 = output1->begin();
-	Sample* const o2 = output2->begin();
+	Sample* const o1 = output_1->begin();
+	Sample* const o2 = output_2->begin();
 	bool mul = false;
 
 	// Synthesize wave:
 	if (_wavetable == 0 || !_wavetable_enabled)
 	{
-		output1->clear();
-		output2->clear();
+		output_1->clear();
+		output_2->clear();
 	}
 	else
 	{
 		if (_unison_noise > 0.0f)
 		{
 			if (_unison_stereo)
-				fill_impl<true, true> (output1, output2);
+				fill_impl<true, true> (output_1, output_2);
 			else
-				fill_impl<true, false> (output1, output2);
+				fill_impl<true, false> (output_1, output_2);
 		}
 		else
 		{
 			if (_unison_stereo)
-				fill_impl<false, true> (output1, output2);
+				fill_impl<false, true> (output_1, output_2);
 			else
-				fill_impl<false, false> (output1, output2);
+				fill_impl<false, false> (output_1, output_2);
 		}
 		mul = true;
 	}
@@ -346,7 +346,7 @@ VoiceOscillator::fill (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output
 	// Add noise:
 	if (_noise_enabled && _noise_amplitude > 0.0f)
 	{
-		for (std::size_t i = 0, n = output1->size(); i < n; ++i)
+		for (std::size_t i = 0, n = output_1->size(); i < n; ++i)
 		{
 			float const x = _noise_amplitude * _noise.get (_noise_state);
 			o1[i] += x;
@@ -360,7 +360,7 @@ VoiceOscillator::fill (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output
 		// Multiply samples by _volume and divide samples by _unison_number:
 		// (these coefficients have been obtained by listening tests):
 		float amp = FastPow::pow (_1_div_unison_number, _unison_stereo ? 0.4f : 0.75f);
-		SIMD::multiply_buffers_and_by_scalar (o1, o2, _amplitude_source->begin(), output1->size(), amp);
+		SIMD::multiply_buffers_and_by_scalar (o1, o2, _amplitude_source->begin(), output_1->size(), amp);
 	}
 }
 
@@ -410,15 +410,15 @@ VoiceOscillator::update_unison_coefficients()
 
 template<bool with_noise, bool unison_stereo>
 	inline void
-	VoiceOscillator::fill_impl (Haruhi::AudioBuffer* output1, Haruhi::AudioBuffer* output2)
+	VoiceOscillator::fill_impl (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2)
 	{
 		Sample f, v, e, sum1, sum2, tmpsum;
-		Sample* const o1 = output1->begin();
-		Sample* const o2 = output2->begin();
+		Sample* const o1 = output_1->begin();
+		Sample* const o2 = output_2->begin();
 		Sample* const fs = _frequency_source->begin();
 
 		// Oscillate:
-		for (std::size_t i = 0, n = output1->size(); i < n; ++i)
+		for (std::size_t i = 0, n = output_1->size(); i < n; ++i)
 		{
 			sum1 = sum2 = 0.0f;
 			if (with_noise)
