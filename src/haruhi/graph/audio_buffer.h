@@ -108,6 +108,13 @@ class AudioBuffer: public Buffer
 	attenuate (Sample value);
 
 	/**
+	 * Attenuates this buffer by other buffer and by scalar.
+	 * Other buffer must be static_castable to AudioBuffer.
+	 */
+	void
+	attenuate (Buffer const* other, Sample value);
+
+	/**
 	 * Negates this buffer.
 	 */
 	void
@@ -254,6 +261,18 @@ inline void
 AudioBuffer::attenuate (Sample value)
 {
 	SIMD::multiply_buffer_by_scalar (begin(), size(), value);
+}
+
+
+inline void
+AudioBuffer::attenuate (Buffer const* other, Sample value)
+{
+	assert (other->type() == AudioBuffer::TYPE);
+	AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
+	assert (begin() != 0);
+	assert (buf->begin() != 0);
+	assert (buf->size() == size());
+	SIMD::multiply_buffers_and_by_scalar (begin(), buf->begin(), size(), value);
 }
 
 
