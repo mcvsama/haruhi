@@ -50,7 +50,7 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 
 	_transport = new JackTransport (this);
 
-	_disconnect_button = new QPushButton (Resources::Icons16::connect(), "Disconnect from JACK", this);
+	_disconnect_button = new QPushButton (Resources::Icons16::disconnect(), "Disconnect from JACK", this);
 	_disconnect_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QObject::connect (_disconnect_button, SIGNAL (clicked()), this, SLOT (disconnect()));
 
