@@ -37,11 +37,13 @@ DialControl::DialControl (QWidget* parent, int value_min, int value_max, int val
 	_mouse_press_value (0),
 	_to_update (false),
 	_last_enabled_state (isEnabled()),
-	_mouse_pressed (false)
+	_mouse_pressed (false),
+	_ring_visible (false),
+	_zero_value (0)
 {
 	setWindowFlags (Qt::WRepaintNoErase);
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	setFixedSize (33, 33);
+	setFixedSize (37, 37);
 
 	setMinimum (value_min);
 	setMaximum (value_max);
@@ -51,23 +53,37 @@ DialControl::DialControl (QWidget* parent, int value_min, int value_max, int val
 }
 
 
-DialControl::~DialControl()
-{
-}
-
-
 void
 DialControl::paintEvent (QPaintEvent* paint_event)
 {
 	if (_to_update || _last_enabled_state != isEnabled())
 	{
 		_double_buffer.resize (width(), height());
+		QColor indicator_color = isEnabled() ? QColor (0x5c, 0x64, 0x72) : QColor (0xd4, 0xd6, 0xda);
+		QColor path1_color = isEnabled() ? QColor (0x2a, 0x41, 0x5b) : QColor (0xd4, 0xd6, 0xda);
+		QColor path2_color = isEnabled() ? QColor (0xd1, 0xd3, 0xd6) : QColor (0xea, 0xec, 0xf0);
 
 		QPainter b (&_double_buffer);
 		b.setRenderHint (QPainter::Antialiasing, true);
 		b.fillRect (rect(), backgroundColor());
-		b.drawPixmap (0, 0, isEnabled() ? _dial_pixmap : _disabled_dial_pixmap);
-		b.setPen (QPen (isEnabled() ? QColor (0x5c, 0x64, 0x72) : QColor (0xd4, 0xd6, 0xda), 2));
+
+		float pos_x = (width() - _dial_pixmap.width()) / 2.0f;
+		float pos_y = (height() - _dial_pixmap.height()) / 2.0f;
+		b.drawPixmap (pos_x, pos_y, isEnabled() ? _dial_pixmap : _disabled_dial_pixmap);
+
+		float curr_angle = renormalize (value(), minValue(), maxValue(), -152, +152);
+		if (_ring_visible)
+		{
+			float zero_angle = renormalize (_zero_value, minValue(), maxValue(), -152, +152);
+			float span_angle = zero_angle - curr_angle;
+			QRect r = rect().adjusted (1, 1, -1, -1);
+			b.setPen (QPen (path2_color, 2));
+			b.drawArc (r, (152 + 90) * 16, -2 * 152 * 16);
+			b.setPen (QPen (path1_color, 2));
+			b.drawArc (r, (-zero_angle + 90) * 16, span_angle * 16);
+		}
+
+		b.setPen (QPen (indicator_color, 2));
 		b.translate (width() / 2, height() / 2);
 		b.rotate (renormalize (value(), minValue(), maxValue(), -152, +152));
 		b.drawLine (0, -4, 0, -11);

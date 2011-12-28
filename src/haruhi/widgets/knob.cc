@@ -331,6 +331,8 @@ Knob::initialize (QString const& label, float shown_min, float shown_max, int sh
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 	_dial_control = new DialControl (this, hard_limit_min, hard_limit_max, controller_proxy()->param()->adapter()->reverse (controller_proxy()->param()->get()));
+	_dial_control->set_ring_visible (true);
+	_dial_control->set_zero_value (controller_proxy()->param()->zero_value());
 	_spin_box = new SpinBox (this, this, user_limit_min, user_limit_max, shown_min, shown_max, shown_decimals, step);
 	_label = new QLabel (label, this);
 	_label->setBuddy (_spin_box);
@@ -357,7 +359,7 @@ Knob::initialize (QString const& label, float shown_min, float shown_max, int sh
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (Config::Margin);
-	layout->setSpacing (Config::Spacing + 2);
+	layout->setSpacing (Config::Spacing + 1);
 	layout->addLayout (label_layout);
 	layout->addLayout (dial_layout);
 	layout->addWidget (_spin_box, 0, Qt::AlignCenter);

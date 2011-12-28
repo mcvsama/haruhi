@@ -358,6 +358,13 @@ Knob::SpinBox::volume_scale_exp() const
 
 
 inline void
+Knob::SpinBox::set_narrow (bool narrow)
+{
+	setFixedWidth (font().pointSize() * Services::x_pixels_per_point() * (narrow ? 4.5f : 5.0f));
+}
+
+
+inline void
 Knob::SpinBox::set_detached (bool setting)
 {
 	_detached = setting;

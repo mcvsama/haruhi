@@ -34,8 +34,8 @@ VanHalen::VanHalen (std::string const& urn, std::string const& title, int id, QW
 	_buf2 (64),
 	_delay1 (16, 100000, 64),
 	_delay2 (16, 100000, 64),
-	_comb_index (0, 1000, 0, 1000),
-	_comb_alpha (-1000, 1000, 0, 1000)
+	_comb_index (0, 1000, 0, 0, 1000),
+	_comb_alpha (-1000, 1000, 0, 0, 1000)
 {
 	_input = new Haruhi::EventPort (this, "Input", Haruhi::Port::Input);
 	_output = new Haruhi::EventPort (this, "Output", Haruhi::Port::Output);

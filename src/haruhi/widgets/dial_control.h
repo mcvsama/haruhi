@@ -34,7 +34,18 @@ class DialControl: public QAbstractSlider
   public:
 	DialControl (QWidget* parent, int value_min, int value_max, int value);
 
-	~DialControl();
+	/**
+	 * Enables additional value indicator - a ring drawn around
+	 * the dial.
+	 */
+	void
+	set_ring_visible (bool visible);
+
+	/**
+	 * Sets zero-value for ring drawn around the dial.
+	 */
+	void
+	set_zero_value (int value);
 
 	/**
 	 * Returns true if mouse button is pressed over a dial,
@@ -81,7 +92,23 @@ class DialControl: public QAbstractSlider
 	bool		_to_update;
 	bool		_last_enabled_state;
 	bool		_mouse_pressed;
+	bool		_ring_visible;
+	int			_zero_value;
 };
+
+
+inline void
+DialControl::set_ring_visible (bool visible)
+{
+	_ring_visible = visible;
+}
+
+
+inline void
+DialControl::set_zero_value (int value)
+{
+	_zero_value = value;
+}
 
 } // namespace Haruhi
 

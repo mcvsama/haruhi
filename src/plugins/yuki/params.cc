@@ -31,6 +31,7 @@
 	var (name##Min,																				\
 		 name##Max,																				\
 		 name##Default,																			\
+		 name##ZeroValue,																		\
 		 name##Denominator,																		\
 		 #name,																					\
 		 1.0f * name##Min / name##Denominator,													\
@@ -42,9 +43,16 @@
 	var (name##Min,																				\
 		 name##Max,																				\
 		 name##Default,																			\
+		 name##ZeroValue,																		\
 		 name##Denominator,																		\
 		 #name,																					\
 		 shown_min, shown_max, shown_decimals, step)
+
+#define HARUHI_YUKI_ADDITIONAL_ARGS(name, shown_decimals)										\
+		 1.0f * name##Min / name##Denominator,													\
+		 1.0f * name##Max / name##Denominator,													\
+		 shown_decimals,																		\
+		 (name##Max - name##Min) / 400
 
 #define HARUHI_YUKI_DEFINE_PARAMS(klass)														\
 	void																						\
@@ -173,11 +181,23 @@ Params::Part::Part():
 	filter_configuration (0, 1, 0, "filter_configuration")
 {
 	for (unsigned int i = 0; i < HarmonicsNumber; ++i)
-		harmonics[i] = Haruhi::ControllerParam (HarmonicMin, HarmonicMax, HarmonicDefault, HarmonicDenominator, QString ("harmonic[%1]").arg (i).utf8());
+		harmonics[i] = Haruhi::ControllerParam (HarmonicMin, HarmonicMax, HarmonicZeroValue, HarmonicDefault, HarmonicDenominator, QString ("harmonic[%1]").arg (i).utf8());
 	for (unsigned int i = 0; i < HarmonicsNumber; ++i)
-		harmonic_phases[i] = Haruhi::ControllerParam (HarmonicPhaseMin, HarmonicPhaseMax, HarmonicPhaseDefault, HarmonicPhaseDenominator, QString ("harmonic-phase[%1]").arg (i).utf8());
+		harmonic_phases[i] = Haruhi::ControllerParam (HarmonicPhaseMin, HarmonicPhaseMax, HarmonicPhaseZeroValue, HarmonicPhaseDefault, HarmonicPhaseDenominator, QString ("harmonic-phase[%1]").arg (i).utf8());
 	// First/base harmonic should be fully max:
 	harmonics[0].set (HarmonicMax);
+
+	// Modulator matrix:
+	for (unsigned int o = 0; o < 4; ++o)
+	{
+		for (unsigned int i = 0; i < 3; ++i)
+		{
+			fm_matrix[o][i] = Haruhi::ControllerParam (FrequencyModMin, FrequencyModMax, FrequencyModZeroValue, FrequencyModDefault, FrequencyModDenominator,
+													   QString ("fm-matrix[%1][%2]").arg (o).arg (i).utf8(), HARUHI_YUKI_ADDITIONAL_ARGS (FrequencyMod, 2));
+			am_matrix[o][i] = Haruhi::ControllerParam (AmplitudeModMin, AmplitudeModMax, AmplitudeModZeroValue, AmplitudeModDefault, AmplitudeModDenominator,
+													   QString ("am-matrix[%1][%2]").arg (o).arg (i).utf8(), HARUHI_YUKI_ADDITIONAL_ARGS (AmplitudeMod, 2));
+		}
+	}
 
 	portamento_time.adapter()->curve = 1.0;
 	portamento_time.adapter()->user_limit_max = 0.5f * Params::Part::PortamentoTimeDenominator;

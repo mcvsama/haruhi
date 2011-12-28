@@ -86,7 +86,7 @@ class ControllerParam: public Param<int>
   public:
 	explicit ControllerParam (const char* name = "");
 
-	ControllerParam (int minimum, int maximum, int default_value, int denominator, const char* name,
+	ControllerParam (int minimum, int maximum, int default_value, int zero_value, int denominator, const char* name,
 					 float shown_min = 0.0f, float shown_max = 1.0f, int shown_decimals = 1, int step = 1);
 
 	ControllerParam (ControllerParam const& other);
@@ -99,6 +99,9 @@ class ControllerParam: public Param<int>
 
 	Adapter const*
 	adapter() const;
+
+	int
+	zero_value() const;
 
 	int
 	denominator() const;
@@ -153,6 +156,7 @@ class ControllerParam: public Param<int>
 
   private:
 	Adapter	_adapter;
+	int		_zero_value;
 	int		_denominator;
 	float	_1_div_denominator;
 	float	_shown_min;
@@ -172,10 +176,11 @@ ControllerParam::ControllerParam (const char* name):
 
 
 inline
-ControllerParam::ControllerParam (int minimum, int maximum, int default_value, int denominator, const char* name,
+ControllerParam::ControllerParam (int minimum, int maximum, int default_value, int zero_value, int denominator, const char* name,
 								  float shown_min, float shown_max, int shown_decimals, int step):
 	Param (minimum, maximum, default_value, name),
 	_adapter (minimum, maximum),
+	_zero_value (zero_value),
 	_denominator (denominator),
 	_1_div_denominator (1.0f / _denominator),
 	_shown_min (shown_min),
@@ -189,6 +194,7 @@ inline
 ControllerParam::ControllerParam (ControllerParam const& other):
 	Param (other),
 	_adapter (other._adapter),
+	_zero_value (other._zero_value),
 	_denominator (other._denominator),
 	_1_div_denominator (other._1_div_denominator),
 	_shown_min (other._shown_min),
@@ -203,6 +209,7 @@ ControllerParam::operator= (ControllerParam const& other)
 {
 	Param<int>::operator= (other);
 	_adapter = other._adapter;
+	_zero_value = other._zero_value;
 	_denominator = other._denominator;
 	_1_div_denominator = other._1_div_denominator;
 	_shown_min = other._shown_min;
@@ -252,6 +259,13 @@ inline ControllerParam::Adapter const*
 ControllerParam::adapter() const
 {
 	return &_adapter;
+}
+
+
+inline int
+ControllerParam::zero_value() const
+{
+	return _zero_value;
 }
 
 

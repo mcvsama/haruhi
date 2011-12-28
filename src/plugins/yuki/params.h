@@ -56,12 +56,13 @@
 	void get_params (Haruhi::BaseParam const**, std::size_t max_entries) const;	\
 	public:
 
-#define HARUHI_YUKI_PARAM(name, min, max, denominator, deflt)					\
+#define HARUHI_YUKI_PARAM(name, min, max, deflt, zeroval, denominator)			\
 	enum {																		\
 		name##Min = min,														\
 		name##Max = max,														\
-		name##Denominator = denominator,										\
+		name##ZeroValue = zeroval,												\
 		name##Default = deflt,													\
+		name##Denominator = denominator,										\
 	};
 
 
@@ -111,10 +112,10 @@ struct Params
 	{
 		HARUHI_YUKI_PARAMS_STANDARD_METHODS (Main)
 
-		HARUHI_YUKI_PARAM (Volume,					       0,	+1000000,	+1000000,	 +938445) // -1.5dB/20*log_10/exp
-		HARUHI_YUKI_PARAM (Panorama,				-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (Detune,					-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (StereoWidth,				-1000000,	+1000000,	+1000000,	+1000000)
+		HARUHI_YUKI_PARAM (Volume,					       0,	+1000000,	 +938445,	       0,	+1000000) // Default: -1.5dB/20*log_10/exp
+		HARUHI_YUKI_PARAM (Panorama,				-1000000,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (Detune,					-1000000,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (StereoWidth,				-1000000,	+1000000,	+1000000,	       0,	+1000000)
 
 		Haruhi::ControllerParam volume;
 		Haruhi::ControllerParam panorama;
@@ -137,10 +138,10 @@ struct Params
 
 		HARUHI_YUKI_PARAMS_STANDARD_METHODS (Filter)
 
-		HARUHI_YUKI_PARAM (Frequency,				       0,	+2400000,	 +100000,	 +100000)
-		HARUHI_YUKI_PARAM (Resonance,				       0,	+1000000,	 +100000,	 +100000)
-		HARUHI_YUKI_PARAM (Gain,					       0,	+2000000,	 +100000,	       0)
-		HARUHI_YUKI_PARAM (Attenuation,				       0,	+1000000,	+1000000,	+1000000)
+		HARUHI_YUKI_PARAM (Frequency,				       0,	+2400000,	 +100000,	       0,	 +100000)
+		HARUHI_YUKI_PARAM (Resonance,				       0,	+1000000,	 +100000,	       0,	 +100000)
+		HARUHI_YUKI_PARAM (Gain,					       0,	+2000000,	       0,	       0,	 +100000)
+		HARUHI_YUKI_PARAM (Attenuation,				       0,	+1000000,	+1000000,	       0,	+1000000)
 
 		Haruhi::ControllerParam frequency;
 		Haruhi::ControllerParam resonance;
@@ -156,6 +157,26 @@ struct Params
 	};
 
 	/**
+	 * Operator parameters.
+	 */
+	struct Operator: public SaveableParams<Operator>
+	{
+		HARUHI_YUKI_PARAMS_STANDARD_METHODS (Operator)
+
+		HARUHI_YUKI_PARAM (Amplitude,				       0,	+1000000,	+1000000,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (Frequency,				-1000000,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (WaveShape,				       0,	+1000000,	       0,	       0,	+1000000)
+
+		Haruhi::ControllerParam amplitude;
+		Haruhi::ControllerParam frequency;
+		Haruhi::ControllerParam wave_shape;
+
+		Haruhi::Param<unsigned int> wave_type;
+
+		static const int NUM_PARAMS = 4;
+	};
+
+	/**
 	 * Voice-specific params.
 	 */
 	struct Voice: public SaveableParams<Voice>
@@ -164,18 +185,18 @@ struct Params
 
 		HARUHI_YUKI_PARAMS_STANDARD_METHODS (Voice)
 
-		HARUHI_YUKI_PARAM (Amplitude,				       0,	+1000000,	+1000000,	+1000000)
-		HARUHI_YUKI_PARAM (Frequency,				-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (Panorama,				-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (Detune,					-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (Pitchbend,				-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (VelocitySens,			-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (UnisonIndex,				      +1,	     +10,	      +1,	      +1)
-		HARUHI_YUKI_PARAM (UnisonSpread,			       0,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (UnisonInit,				-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (UnisonNoise,				       0,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (UnisonVibratoLevel,		       0,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (UnisonVibratoFrequency,	       0,	+1000000,	+1000000,	 +200000)
+		HARUHI_YUKI_PARAM (Amplitude,				       0,	+1000000,	+1000000,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (Frequency,				-1000000,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (Panorama,				-1000000,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (Detune,					-1000000,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (Pitchbend,				-1000000,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (VelocitySens,			-1000000,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (UnisonIndex,				      +1,	     +10,	      +1,	      +1,	      +1)
+		HARUHI_YUKI_PARAM (UnisonSpread,			       0,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (UnisonInit,				-1000000,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (UnisonNoise,				       0,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (UnisonVibratoLevel,		       0,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (UnisonVibratoFrequency,	       0,	+1000000,	 +200000,	       0,	 +100000)
 
 		Haruhi::ControllerParam amplitude;
 		Haruhi::ControllerParam frequency;
@@ -203,16 +224,18 @@ struct Params
 	{
 		HARUHI_YUKI_PARAMS_STANDARD_METHODS (Part)
 
-		HARUHI_YUKI_PARAM (Volume,					       0,	+1000000,	+1000000,	 +938445) // -1.5dB/20*log_10/exp
-		HARUHI_YUKI_PARAM (PortamentoTime,			       0,	+1000000,	 +100000,	       0)
-		HARUHI_YUKI_PARAM (Phase,					-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (NoiseLevel,				       0,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (WaveShape,				       0,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (ModulatorAmplitude,		       0,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (ModulatorIndex,			      +1,	     +32,	      +1,	      +1)
-		HARUHI_YUKI_PARAM (ModulatorShape,			       0,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (Harmonic,				-1000000,	+1000000,	+1000000,	       0)
-		HARUHI_YUKI_PARAM (HarmonicPhase,			-1000000,	+1000000,	+1000000,	       0)
+		HARUHI_YUKI_PARAM (Volume,					       0,	+1000000,	 +938445,	       0,	+1000000) // Default: -1.5dB/20*log_10/exp
+		HARUHI_YUKI_PARAM (PortamentoTime,			       0,	+1000000,	       0,	       0,	 +100000)
+		HARUHI_YUKI_PARAM (Phase,					-1000000,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (NoiseLevel,				       0,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (WaveShape,				       0,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (ModulatorAmplitude,		       0,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (ModulatorIndex,			      +1,	     +32,	      +1,	      +1,	      +1)
+		HARUHI_YUKI_PARAM (ModulatorShape,			       0,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (Harmonic,				-1000000,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (HarmonicPhase,			-1000000,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (AmplitudeMod,			-1000000,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (FrequencyMod,			-1000000,	+1000000,	       0,	       0,	+1000000)
 
 		static const unsigned int HarmonicsNumber = Haruhi::DSP::HarmonicsWave::HarmonicsNumber;
 
