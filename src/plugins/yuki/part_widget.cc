@@ -81,10 +81,11 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 		_am_matrix_knobs[o].resize (Params::Part::OperatorsNumber);
 		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
 		{
-			_fm_matrix_knobs[o][i] = new Haruhi::Knob (this, proxies->fm_matrix[o][i], "");
-			_am_matrix_knobs[o][i] = new Haruhi::Knob (this, proxies->am_matrix[o][i], "");
-			_fm_matrix_knobs[o][i]->set_label_visible (false);
-			_am_matrix_knobs[o][i]->set_label_visible (false);
+			QString t = QString ("%1").arg (o + 1);
+			if (o == 3)
+				t = "M";
+			_fm_matrix_knobs[o][i] = new Haruhi::Knob (this, proxies->fm_matrix[o][i], QString ("%1 → %2").arg (i + 1).arg (t));
+			_am_matrix_knobs[o][i] = new Haruhi::Knob (this, proxies->am_matrix[o][i], QString ("%1 → %2").arg (i + 1).arg (t));
 			_fm_matrix_knobs[o][i]->set_narrow (true);
 			_am_matrix_knobs[o][i]->set_narrow (true);
 		}
@@ -156,6 +157,12 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QObject::connect (_part_enabled, SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
 	QObject::connect (_part_enabled, SIGNAL (toggled (bool)), this, SLOT (update_widgets()));
 
+	// Modulator enabled:
+	_modulator_enabled = new QCheckBox ("Modulator enabled", this);
+	_modulator_enabled->setChecked (pp->modulator_enabled);
+	QObject::connect (_modulator_enabled, SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_modulator_enabled, SIGNAL (toggled (bool)), this, SLOT (update_widgets()));
+
 	// Show modulator checkbox:
 	_show_modulator = new QCheckBox ("Show modulator", this);
 	_show_modulator->setChecked (false);
@@ -164,24 +171,6 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	// Top widget, can be disabled with all child widgets:
 	_main_panel = new QWidget (this);
 	_main_panel->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
-
-	// Modulator top widget:
-	_modulator_panel = new QWidget (this);
-	_modulator_panel->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
-
-	// Matrix tabs:
-	QWidget* fm_matrix_widget = new QWidget (this);
-	QWidget* am_matrix_widget = new QWidget (this);
-
-	QTabWidget* modulator_matrix_tabs = new QTabWidget (this);
-	modulator_matrix_tabs->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	modulator_matrix_tabs->addTab (fm_matrix_widget, "FM");
-	modulator_matrix_tabs->addTab (am_matrix_widget, "AM");
-
-	// Stack:
-	_stack = new QStackedWidget (this);
-	_stack->addWidget (_main_panel);
-	_stack->addWidget (_modulator_panel);
 
 	// Wave type:
 	_wave_type = new QComboBox (this);
@@ -196,7 +185,6 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_wave_type->insertItem (Resources::Icons16::wave_chirp(),		"Chirp",	8);
 	_wave_type->setCurrentItem (pp->wave_type);
 	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (widgets_to_wave_params()));
-	QToolTip::add (_wave_type, "Oscillator wave");
 
 	// Modulator wave type:
 	_modulator_wave_type = new QComboBox (this);
@@ -383,6 +371,19 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_filter_configuration->setCurrentItem (pp->filter_configuration);
 	QObject::connect (_filter_configuration, SIGNAL (activated (int)), this, SLOT (widgets_to_oscillator_params()));
 
+	// Modulator top widget:
+	_modulator_panel = new QWidget (this);
+	_modulator_panel->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+	_operator_1 = new OperatorWidget (this, 0, &_part->part_params()->operators[0], _part);
+	_operator_2 = new OperatorWidget (this, 1, &_part->part_params()->operators[1], _part);
+	_operator_3 = new OperatorWidget (this, 2, &_part->part_params()->operators[2], _part);
+
+	// Stack:
+	_stack = new QStackedWidget (this);
+	_stack->addWidget (_main_panel);
+	_stack->addWidget (_modulator_panel);
+
 	// Layouts:
 
 	QHBoxLayout* pitchbend_range_layout = new QHBoxLayout();
@@ -458,40 +459,42 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	resizeable_main_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed), 0, 1);
 	resizeable_main_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 1, 0);
 
-	QGridLayout* fm_matrix_layout = new QGridLayout (fm_matrix_widget);
-	fm_matrix_layout->setMargin (Config::Margin);
-	fm_matrix_layout->setSpacing (Config::Spacing);
-	fm_matrix_layout->addWidget (new QLabel ("Op 1", this), 0, 1, 1, 1, Qt::AlignCenter);
-	fm_matrix_layout->addWidget (new QLabel ("Op 2", this), 0, 2, 1, 1, Qt::AlignCenter);
-	fm_matrix_layout->addWidget (new QLabel ("Op 3", this), 0, 3, 1, 1, Qt::AlignCenter);
-	fm_matrix_layout->addWidget (new QLabel ("Op 1 ←", this), 1, 0, 1, 1, Qt::AlignRight);
-	fm_matrix_layout->addWidget (new QLabel ("Op 2 ←", this), 2, 0, 1, 1, Qt::AlignRight);
-	fm_matrix_layout->addWidget (new QLabel ("Op 3 ←", this), 3, 0, 1, 1, Qt::AlignRight);
-	fm_matrix_layout->addWidget (new QLabel ("Main ←", this), 4, 0, 1, 1, Qt::AlignRight);
-	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
-		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
-			fm_matrix_layout->addWidget (_fm_matrix_knobs[o][i], o + 1, i + 1);
-
-	QGridLayout* am_matrix_layout = new QGridLayout (am_matrix_widget);
-	am_matrix_layout->setMargin (Config::Margin);
-	am_matrix_layout->setSpacing (Config::Spacing);
-	am_matrix_layout->addWidget (new QLabel ("Op 1", this), 0, 1, 1, 1, Qt::AlignCenter);
-	am_matrix_layout->addWidget (new QLabel ("Op 2", this), 0, 2, 1, 1, Qt::AlignCenter);
-	am_matrix_layout->addWidget (new QLabel ("Op 3", this), 0, 3, 1, 1, Qt::AlignCenter);
-	am_matrix_layout->addWidget (new QLabel ("Op 1 ←", this), 1, 0);
-	am_matrix_layout->addWidget (new QLabel ("Op 2 ←", this), 2, 0);
-	am_matrix_layout->addWidget (new QLabel ("Op 3 ←", this), 3, 0);
-	am_matrix_layout->addWidget (new QLabel ("Main ←", this), 4, 0);
-	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
-		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
-			am_matrix_layout->addWidget (_am_matrix_knobs[o][i], o + 1, i + 1);
+	QLabel* fm_modulation_matrix_label = create_modulator_label ("FM modulation matrix:");
+	QLabel* am_modulation_matrix_label = create_modulator_label ("AM modulation matrix:");
+	fm_modulation_matrix_label->setFixedHeight (2.2f * Haruhi::Services::y_pixels_per_point() * fm_modulation_matrix_label->font().pointSize());
+	am_modulation_matrix_label->setFixedHeight (2.2f * Haruhi::Services::y_pixels_per_point() * fm_modulation_matrix_label->font().pointSize());
 
 	QGridLayout* modulator_layout = new QGridLayout (_modulator_panel);
 	modulator_layout->setMargin (0);
-	modulator_layout->setSpacing(Config::Spacing);
-	modulator_layout->addWidget (modulator_matrix_tabs, 0, 0);
-	modulator_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 1, 0);
-	modulator_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed), 0, 1);
+	modulator_layout->setSpacing (Config::Spacing);
+	modulator_layout->addWidget (_modulator_enabled, 0, 0);
+	modulator_layout->addWidget (_operator_1, 1, 0);
+	modulator_layout->addWidget (_operator_2, 2, 0);
+	modulator_layout->addWidget (_operator_3, 3, 0);
+	modulator_layout->addWidget (create_modulator_label ("→"), 1, 1, 1, 1, Qt::AlignCenter);
+	modulator_layout->addWidget (create_modulator_label ("→"), 2, 1, 1, 1, Qt::AlignCenter);
+	modulator_layout->addWidget (create_modulator_label ("→"), 3, 1, 1, 1, Qt::AlignCenter);
+	modulator_layout->addItem (new QSpacerItem (Config::Spacing * 4, 0, QSizePolicy::Fixed, QSizePolicy::Fixed), 0, 1);
+	modulator_layout->addWidget (fm_modulation_matrix_label, 0, 2, 1, 4, Qt::AlignLeft);
+	modulator_layout->addItem (new QSpacerItem (Config::Spacing * 4, 0, QSizePolicy::Fixed, QSizePolicy::Fixed), 0, 6);
+	modulator_layout->addWidget (am_modulation_matrix_label, 0, 7, 1, 4, Qt::AlignLeft);
+	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
+		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
+			modulator_layout->addWidget (_fm_matrix_knobs[o][i], i + 1, o + 2);
+	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
+		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
+			modulator_layout->addWidget (_am_matrix_knobs[o][i], i + 1, o + 7);
+	modulator_layout->addWidget (create_modulator_label ("↳ Op 1"), 4, 2, 1, 1, Qt::AlignCenter);
+	modulator_layout->addWidget (create_modulator_label ("↳ Op 2"), 4, 3, 1, 1, Qt::AlignCenter);
+	modulator_layout->addWidget (create_modulator_label ("↳ Op 3"), 4, 4, 1, 1, Qt::AlignCenter);
+	modulator_layout->addWidget (create_modulator_label ("↳ Op M"), 4, 5, 1, 1, Qt::AlignCenter);
+	modulator_layout->addWidget (create_modulator_label ("↳ Op 1"), 4, 7, 1, 1, Qt::AlignCenter);
+	modulator_layout->addWidget (create_modulator_label ("↳ Op 2"), 4, 8, 1, 1, Qt::AlignCenter);
+	modulator_layout->addWidget (create_modulator_label ("↳ Op 3"), 4, 9, 1, 1, Qt::AlignCenter);
+	modulator_layout->addWidget (create_modulator_label ("↳ Op M"), 4, 10, 1, 1, Qt::AlignCenter);
+
+	modulator_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 5, 0);
+	modulator_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed), 0, 11);
 
 	QWidget* top_checkboxes = new QWidget (this);
 
@@ -615,6 +618,7 @@ PartWidget::widgets_to_oscillator_params()
 	Params::Part* pp = _part->part_params();
 
 	pp->part_enabled = _part_enabled->isChecked();
+	pp->modulator_enabled = _modulator_enabled->isChecked();
 	pp->wave_enabled = _wave_enabled->isChecked();
 	pp->noise_enabled = _noise_enabled->isChecked();
 	pp->frequency_mod_range = _frequency_modulation_range->value();
@@ -680,6 +684,23 @@ PartWidget::update_widgets()
 		_stack->setCurrentWidget (_modulator_panel);
 	else
 		_stack->setCurrentWidget (_main_panel);
+
+	const bool mod_enabled = _modulator_enabled->isChecked();
+	_operator_1->setEnabled (mod_enabled);
+	_operator_2->setEnabled (mod_enabled);
+	_operator_3->setEnabled (mod_enabled);
+
+	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
+	{
+		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
+		{
+			_fm_matrix_knobs[o][i]->setEnabled (mod_enabled);
+			_am_matrix_knobs[o][i]->setEnabled (mod_enabled);
+		}
+	}
+
+	for (std::list<QWidget*>::iterator w = _modulator_labels.begin(); w != _modulator_labels.end(); ++w)
+		(*w)->setEnabled (mod_enabled);
 }
 
 
@@ -702,6 +723,7 @@ PartWidget::params_to_widgets()
 		_harmonic_phases_sliders[i]->setValue (pp->harmonic_phases[i]);
 
 	_part_enabled->setChecked (pp->part_enabled);
+	_modulator_enabled->setChecked (pp->modulator_enabled);
 	_wave_enabled->setChecked (pp->wave_enabled);
 	_noise_enabled->setChecked (pp->noise_enabled);
 	_frequency_modulation_range->setValue (pp->frequency_mod_range);
@@ -752,6 +774,15 @@ void
 PartWidget::post_params_to_widgets()
 {
 	Haruhi::Services::call_out (boost::bind (&PartWidget::params_to_widgets, this));
+}
+
+
+QLabel*
+PartWidget::create_modulator_label (QString const& text)
+{
+	QLabel* label = new QLabel (text, this);
+	_modulator_labels.push_back (label);
+	return label;
 }
 
 } // namespace Yuki

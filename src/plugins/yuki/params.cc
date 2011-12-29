@@ -121,18 +121,18 @@ HARUHI_YUKI_FINISH_DEFINITION()
 
 
 Params::Operator::Operator():
-	HARUHI_YUKI_CONSTRUCT (amplitude, Amplitude, 2),
-	HARUHI_YUKI_CONSTRUCT (frequency, Frequency, 2),
-	HARUHI_YUKI_CONSTRUCT (wave_shape, WaveShape, 2),
-	wave_type (0, 3, 0, "wave_type")
+	HARUHI_YUKI_CONSTRUCT (detune, Detune, 2),
+	frequency_numerator (1, 32, 1, "frequency_numerator"),
+	frequency_denominator (1, 32, 1, "frequency_denominator"),
+	octave (-8, +8, 0, "octave")
 { }
 
 
 HARUHI_YUKI_DEFINE_PARAMS (Operator)
-	HARUHI_YUKI_DEFINE_PARAM (amplitude)
-	HARUHI_YUKI_DEFINE_PARAM (frequency)
-	HARUHI_YUKI_DEFINE_PARAM (wave_shape)
-	HARUHI_YUKI_DEFINE_PARAM (wave_type)
+	HARUHI_YUKI_DEFINE_PARAM (detune)
+	HARUHI_YUKI_DEFINE_PARAM (frequency_numerator)
+	HARUHI_YUKI_DEFINE_PARAM (frequency_denominator)
+	HARUHI_YUKI_DEFINE_PARAM (octave)
 HARUHI_YUKI_FINISH_DEFINITION()
 
 
@@ -180,6 +180,7 @@ Params::Part::Part():
 	HARUHI_YUKI_CONSTRUCT_EXPLICIT (modulator_index, ModulatorIndex, ModulatorIndexMin, ModulatorIndexMax, 0, 1),
 	HARUHI_YUKI_CONSTRUCT (modulator_shape, ModulatorShape, 2),
 	part_enabled (0, 1, 1, "part_enabled"),
+	modulator_enabled (0, 1, 0, "modulator_enabled"),
 	wave_enabled (0, 1, 1, "wave_enabled"),
 	noise_enabled (0, 1, 0, "noise_enabled"),
 	frequency_mod_range (0, 60, 12, "frequency_mod_range"),
@@ -242,6 +243,7 @@ HARUHI_YUKI_DEFINE_PARAMS (Part)
 		}
 	}
 	HARUHI_YUKI_DEFINE_PARAM (part_enabled)
+	HARUHI_YUKI_DEFINE_PARAM (modulator_enabled)
 	HARUHI_YUKI_DEFINE_PARAM (wave_enabled)
 	HARUHI_YUKI_DEFINE_PARAM (noise_enabled)
 	HARUHI_YUKI_DEFINE_PARAM (frequency_mod_range)

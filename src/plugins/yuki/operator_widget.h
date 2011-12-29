@@ -19,17 +19,65 @@
 
 // Qt:
 #include <QtGui/QWidget>
+#include <QtGui/QSpinBox>
+#include <QtGui/QLabel>
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/widgets/knob.h>
+#include <haruhi/utility/signal.h>
+
+// Local:
+#include "params.h"
+#include "part.h"
 
 
 namespace Yuki {
 
-class OperatorWidget: public QWidget
+class OperatorWidget:
+	public QWidget,
+	public Signal::Receiver
 {
+	Q_OBJECT
+
   public:
-	OperatorWidget (QWidget* parent);
+	OperatorWidget (QWidget* parent, unsigned int operator_no, Params::Operator*, Part*);
+
+	~OperatorWidget();
+
+  private slots:
+	/**
+	 * Update params from widgets.
+	 * Call it when widgets are changed.
+	 */
+	void
+	widgets_to_params();
+
+  private:
+	/**
+	 * Updates widgets' states from params.
+	 * \entry	UI thread only
+	 */
+	void
+	params_to_widgets();
+
+	/**
+	 * Call params_to_widgets from UI thread later.
+	 * \entry	any thread
+	 */
+	void
+	post_params_to_widgets();
+
+  private:
+	Part*				_part;
+	Params::Operator*	_params;
+	bool				_stop_widgets_to_params;
+	bool				_stop_params_to_widgets;
+
+	QSpinBox*			_frequency_numerator;
+	QSpinBox*			_frequency_denominator;
+	Haruhi::Knob*		_knob_detune;
+	QSpinBox*			_octave;
 };
 
 } // namespace Yuki

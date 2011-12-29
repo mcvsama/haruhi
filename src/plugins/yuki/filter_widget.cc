@@ -220,6 +220,7 @@ FilterWidget::update_impulse_response()
 	_response_plot->post_replot();
 }
 
+
 void
 FilterWidget::params_to_widgets()
 {

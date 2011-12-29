@@ -125,7 +125,7 @@ struct Params
 		Haruhi::Param<int> enabled;
 		Haruhi::Param<unsigned int> polyphony;
 
-		static const int NUM_PARAMS = 6;
+		static const std::size_t NUM_PARAMS = 6;
 	};
 
 	/**
@@ -153,7 +153,7 @@ struct Params
 		Haruhi::Param<int> stages;
 		Haruhi::Param<int> limiter_enabled;
 
-		static const int NUM_PARAMS = 8;
+		static const std::size_t NUM_PARAMS = 8;
 	};
 
 	/**
@@ -163,17 +163,16 @@ struct Params
 	{
 		HARUHI_YUKI_PARAMS_STANDARD_METHODS (Operator)
 
-		HARUHI_YUKI_PARAM (Amplitude,				       0,	+1000000,	+1000000,	       0,	+1000000)
-		HARUHI_YUKI_PARAM (Frequency,				-1000000,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_YUKI_PARAM (WaveShape,				       0,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (Detune,					-1200000,	+1200000,	       0,	       0,	 +100000)
+		HARUHI_YUKI_PARAM (Phase,					-1000000,	+1000000,	       0,	       0,	+1000000)
 
-		Haruhi::ControllerParam amplitude;
-		Haruhi::ControllerParam frequency;
-		Haruhi::ControllerParam wave_shape;
+		Haruhi::ControllerParam detune;
 
-		Haruhi::Param<unsigned int> wave_type;
+		Haruhi::Param<unsigned int> frequency_numerator;
+		Haruhi::Param<unsigned int> frequency_denominator;
+		Haruhi::Param<int> octave;
 
-		static const int NUM_PARAMS = 4;
+		static const std::size_t NUM_PARAMS = 4;
 	};
 
 	/**
@@ -198,6 +197,8 @@ struct Params
 		HARUHI_YUKI_PARAM (UnisonVibratoLevel,		       0,	+1000000,	       0,	       0,	+1000000)
 		HARUHI_YUKI_PARAM (UnisonVibratoFrequency,	       0,	+1000000,	 +200000,	       0,	 +100000)
 
+		static const std::size_t FiltersNumber = 2;
+
 		Haruhi::ControllerParam amplitude;
 		Haruhi::ControllerParam frequency;
 		Haruhi::ControllerParam panorama;
@@ -211,10 +212,10 @@ struct Params
 		Haruhi::ControllerParam unison_vibrato_level;
 		Haruhi::ControllerParam unison_vibrato_frequency;
 
-		static const int NUM_PARAMS = 12;
+		static const std::size_t NUM_PARAMS = 12;
 
 		// Embedded dual Filter params:
-		Filter filters[2];
+		Filter filters[FiltersNumber];
 	};
 
 	/**
@@ -235,10 +236,10 @@ struct Params
 		HARUHI_YUKI_PARAM (Harmonic,				-1000000,	+1000000,	       0,	       0,	+1000000)
 		HARUHI_YUKI_PARAM (HarmonicPhase,			-1000000,	+1000000,	       0,	       0,	+1000000)
 		HARUHI_YUKI_PARAM (AmplitudeMod,			-1000000,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_YUKI_PARAM (FrequencyMod,			-1000000,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_YUKI_PARAM (FrequencyMod,			-1000000,	+1000000,	       0,	       0,	 +100000)
 
-		static const unsigned int HarmonicsNumber = Haruhi::DSP::HarmonicsWave::HarmonicsNumber;
-		static const unsigned int OperatorsNumber = 3;
+		static const std::size_t HarmonicsNumber = Haruhi::DSP::HarmonicsWave::HarmonicsNumber;
+		static const std::size_t OperatorsNumber = 3;
 
 		Haruhi::ControllerParam volume;
 		Haruhi::ControllerParam portamento_time;
@@ -254,6 +255,7 @@ struct Params
 		Haruhi::ControllerParam am_matrix[4][3];
 
 		Haruhi::Param<int> part_enabled;
+		Haruhi::Param<int> modulator_enabled;
 		Haruhi::Param<int> wave_enabled;
 		Haruhi::Param<int> noise_enabled;
 		Haruhi::Param<int> frequency_mod_range;
@@ -270,7 +272,7 @@ struct Params
 		Haruhi::Param<unsigned int> auto_center;
 		Haruhi::Param<unsigned int> filter_configuration;
 
-		static const int NUM_PARAMS = 24 + HarmonicsNumber + HarmonicsNumber + 24;
+		static const std::size_t NUM_PARAMS = 25 + HarmonicsNumber + HarmonicsNumber + 24;
 
 		// Embedded Voice params template (also includes Filter params):
 		Voice voice;
@@ -285,7 +287,7 @@ template<class SubClass>
 	{
 		Haruhi::BaseParam const** params = reinterpret_cast<Haruhi::BaseParam const**> (alloca (sizeof (Haruhi::BaseParam*) * SubClass::NUM_PARAMS));
 		get_params (params, SubClass::NUM_PARAMS);
-		for (int i = 0; i < SubClass::NUM_PARAMS; ++i)
+		for (std::size_t i = 0; i < SubClass::NUM_PARAMS; ++i)
 			params[i]->sanitize();
 	}
 
@@ -296,7 +298,7 @@ template<class SubClass>
 	{
 		Haruhi::BaseParam const** params = reinterpret_cast<Haruhi::BaseParam const**> (alloca (sizeof (Haruhi::BaseParam*) * SubClass::NUM_PARAMS));
 		get_params (params, SubClass::NUM_PARAMS);
-		for (int i = 0; i < SubClass::NUM_PARAMS; ++i)
+		for (std::size_t i = 0; i < SubClass::NUM_PARAMS; ++i)
 		{
 			QDomElement param_el = parent.ownerDocument().createElement ("parameter");
 			param_el.setAttribute ("name", params[i]->name());
@@ -319,7 +321,7 @@ template<class SubClass>
 
 		Haruhi::BaseParam const** params = reinterpret_cast<Haruhi::BaseParam const**> (alloca (sizeof (Haruhi::BaseParam*) * SubClass::NUM_PARAMS));
 		get_params (params, SubClass::NUM_PARAMS);
-		for (int i = 0; i < SubClass::NUM_PARAMS; ++i)
+		for (std::size_t i = 0; i < SubClass::NUM_PARAMS; ++i)
 		{
 			Map::iterator param_iter = map.find (params[i]->name());
 			if (param_iter != map.end())

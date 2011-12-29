@@ -39,12 +39,6 @@ class VoiceModulator
 	VoiceModulator (Params::Part* part_params, unsigned int sample_rate, std::size_t buffer_size);
 
 	/**
-	 * Set wavetable to use by operators.
-	 */
-	void
-	set_wavetable (Haruhi::DSP::Wavetable* wavetable);
-
-	/**
 	 * Modulate given amplitude and frequency buffers.
 	 * Modifies buffers in-place.
 	 *
@@ -62,7 +56,7 @@ class VoiceModulator
 
   private:
 	/**
-	 * \param	source Buffer with values in range [0.5, 2.0].
+	 * \param	source Buffer with values in range [-1.0, 1.0].
 	 */
 	void
 	modulate_frequency (Haruhi::AudioBuffer* target, Haruhi::AudioBuffer* source, Haruhi::Sample factor);

@@ -29,17 +29,9 @@ namespace Yuki {
 VoiceModulator::VoiceModulator (Params::Part* part_params, unsigned int sample_rate, std::size_t buffer_size):
 	_part_params (part_params)
 {
-	assert (countof (_operator_output) == 3);
+	assert (countof (_operator_output) == Params::Part::OperatorsNumber);
 
 	graph_updated (sample_rate, buffer_size);
-}
-
-
-void
-VoiceModulator::set_wavetable (Haruhi::DSP::Wavetable* wavetable)
-{
-	for (std::size_t o = 0; o < Params::Part::OperatorsNumber; ++o)
-		_operator[o].set_wavetable (wavetable);
 }
 
 
@@ -70,8 +62,12 @@ VoiceModulator::modulate (Haruhi::AudioBuffer* amplitude_buf_source, Haruhi::Aud
 	// Process operators:
 	for (std::size_t o = 0; o < Params::Part::OperatorsNumber; ++o)
 	{
+		Params::Operator* p = &_part_params->operators[o];
+		Haruhi::Sample detune = static_cast<Haruhi::Sample> (p->frequency_numerator) / p->frequency_denominator
+			* FastPow::pow_radix_2 (p->octave.get() + (1.0f / 12.0f * p->detune.to_f()));
 		_operator[o].set_frequency_source (&tmp_buf[o + 0]);
 		_operator[o].set_amplitude_source (&tmp_buf[o + 3]);
+		_operator[o].set_detune (detune);
 		_operator[o].fill (&_operator_output[o]);
 	}
 
@@ -104,7 +100,7 @@ VoiceModulator::modulate_frequency (Haruhi::AudioBuffer* target, Haruhi::AudioBu
 	assert (target->size() == source->size());
 
 	for (std::size_t i = 0; i < target->size(); ++i)
-		(*target)[i] *= FastPow::pow (0.5f, -(*source)[i] * factor);
+		(*target)[i] *= 1.0f + factor * (*source)[i];
 }
 
 

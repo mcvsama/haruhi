@@ -253,7 +253,6 @@ Voice::params()
 inline void
 Voice::set_wavetable (DSP::Wavetable* wavetable)
 {
-	_vmod.set_wavetable (wavetable);
 	_vosc.set_wavetable (wavetable);
 }
 

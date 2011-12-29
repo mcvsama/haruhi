@@ -89,7 +89,8 @@ Voice::render (SharedResources* res)
 
 	// Apply modulation:
 	res->fm_buf.fill (1.0f);
-	_vmod.modulate (&res->amplitude_buf, &res->frequency_buf, &res->fm_buf, res->tmp_buf);
+	if (_part_params->modulator_enabled)
+		_vmod.modulate (&res->amplitude_buf, &res->frequency_buf, &res->fm_buf, res->tmp_buf);
 
 	// Generate oscillation:
 	_vosc.set_amplitude_source (&res->amplitude_buf);

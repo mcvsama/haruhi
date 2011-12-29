@@ -24,10 +24,9 @@
 namespace Yuki {
 
 VoiceOperator::VoiceOperator():
-	_wavetable (0),
 	_frequency_source (0),
 	_amplitude_source (0),
-	_phase (0)
+	_phase (0.0f)
 { }
 
 } // namespace Yuki

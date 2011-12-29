@@ -37,12 +37,6 @@ class VoiceOperator
 	VoiceOperator();
 
 	/**
-	 * Set wavetable to use by the oscillator.
-	 */
-	void
-	set_wavetable (Haruhi::DSP::Wavetable* wavetable);
-
-	/**
 	 * Set frequency source buffer.
 	 */
 	void
@@ -55,24 +49,23 @@ class VoiceOperator
 	set_amplitude_source (Haruhi::AudioBuffer* source);
 
 	/**
+	 * Set operator detune.
+	 */
+	void
+	set_detune (Sample detune);
+
+	/**
 	 * Fill output buffer.
 	 */
 	void
 	fill (Haruhi::AudioBuffer* output);
 
   private:
-	Haruhi::DSP::Wavetable*	_wavetable;
 	Haruhi::AudioBuffer*	_frequency_source;
 	Haruhi::AudioBuffer*	_amplitude_source;
+	Sample					_detune;
 	Sample					_phase;
 };
-
-
-inline void
-VoiceOperator::set_wavetable (Haruhi::DSP::Wavetable* wavetable)
-{
-	_wavetable = wavetable;
-}
 
 
 inline void
@@ -90,12 +83,16 @@ VoiceOperator::set_amplitude_source (Haruhi::AudioBuffer* source)
 
 
 inline void
+VoiceOperator::set_detune (Sample detune)
+{
+	_detune = detune;
+}
+
+
+inline void
 VoiceOperator::fill (Haruhi::AudioBuffer* output)
 {
 	assert (output != 0);
-
-	if (!_wavetable)
-		return;
 
 	Sample* const fs = _frequency_source->begin();
 	Sample f;
@@ -103,14 +100,14 @@ VoiceOperator::fill (Haruhi::AudioBuffer* output)
 	// Oscillate:
 	for (std::size_t i = 0; i < output->size(); ++i)
 	{
-		f = bound (fs[i], 0.0f, 0.5f);
+		f = bound (fs[i] * _detune, 0.0f, 0.5f);
 		_phase = mod1 (_phase + f);
-		// TODO not using wavetable now
-		(*output)[i] = Haruhi::DSP::base_sin<5, Haruhi::Sample> (_phase * 2.0f - 1.0f);
+		// To keep β constant the output amplitude must be scaled depending on frequency:
+		(*output)[i] = f * Haruhi::DSP::base_sin<5, Haruhi::Sample> (_phase * 2.0f - 1.0f);
 	}
 
 	// Amplitude modulation:
-	// TODO output->attenuate (_amplitude_source);
+	output->attenuate (_amplitude_source);
 }
 
 } // namespace Yuki

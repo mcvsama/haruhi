@@ -38,6 +38,7 @@
 // Local:
 #include "part.h"
 #include "filter_widget.h"
+#include "operator_widget.h"
 
 
 namespace Yuki {
@@ -140,6 +141,12 @@ class PartWidget:
 	void
 	post_params_to_widgets();
 
+	/**
+	 * Create new label and add it to _modulator_labels.
+	 */
+	QLabel*
+	create_modulator_label (QString const& text);
+
   private:
 	PartManagerWidget*	_part_manager_widget;
 	Part*				_part;
@@ -207,6 +214,7 @@ class PartWidget:
 	QPushButton*		_unison_stereo;
 	QPushButton*		_pseudo_stereo;
 	QCheckBox*			_part_enabled;
+	QCheckBox*			_modulator_enabled;
 	QCheckBox*			_show_modulator;
 	QPushButton*		_wave_enabled;
 	QPushButton*		_noise_enabled;
@@ -215,6 +223,10 @@ class PartWidget:
 	FilterWidget*		_filter_1;
 	FilterWidget*		_filter_2;
 	QComboBox*			_filter_configuration;
+	OperatorWidget*		_operator_1;
+	OperatorWidget*		_operator_2;
+	OperatorWidget*		_operator_3;
+	std::list<QWidget*>	_modulator_labels;
 };
 
 

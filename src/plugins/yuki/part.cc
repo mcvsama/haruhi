@@ -647,18 +647,31 @@ Part::final_wave() const
 void
 Part::save_state (QDomElement& element) const
 {
-	QDomElement e1 = element.ownerDocument().createElement ("part-parameters");
-	_part_params.save_state (e1);
-	element.appendChild (e1);
-	QDomElement e2 = element.ownerDocument().createElement ("voice-parameters");
-	_part_params.voice.save_state (e2);
-	element.appendChild (e2);
-	QDomElement e3 = element.ownerDocument().createElement ("filter-1-parameters");
-	_part_params.voice.filters[0].save_state (e3);
-	element.appendChild (e3);
-	QDomElement e4 = element.ownerDocument().createElement ("filter-2-parameters");
-	_part_params.voice.filters[1].save_state (e4);
-	element.appendChild (e4);
+	{
+		QDomElement e = element.ownerDocument().createElement ("part-parameters");
+		_part_params.save_state (e);
+		element.appendChild (e);
+	}
+
+	for (std::size_t i = 0; i < Params::Part::OperatorsNumber; ++i)
+	{
+		QDomElement e = element.ownerDocument().createElement (QString ("operator-%1-parameters").arg (i + 1));
+		_part_params.operators[i].save_state (e);
+		element.appendChild (e);
+	}
+
+	{
+		QDomElement e = element.ownerDocument().createElement ("voice-parameters");
+		_part_params.voice.save_state (e);
+		element.appendChild (e);
+	}
+
+	for (std::size_t i = 0; i < Params::Voice::FiltersNumber; ++i)
+	{
+		QDomElement e = element.ownerDocument().createElement (QString ("filter-%1-parameters").arg (i + 1));
+		_part_params.voice.filters[0].save_state (e);
+		element.appendChild (e);
+	}
 }
 
 
@@ -669,6 +682,12 @@ Part::load_state (QDomElement const& element)
 	{
 		if (e.tagName() == "part-parameters")
 			_part_params.load_state (e);
+		else if (e.tagName() == "operator-1-parameters")
+			_part_params.operators[0].load_state (e);
+		else if (e.tagName() == "operator-2-parameters")
+			_part_params.operators[1].load_state (e);
+		else if (e.tagName() == "operator-3-parameters")
+			_part_params.operators[2].load_state (e);
 		else if (e.tagName() == "voice-parameters")
 			_part_params.voice.load_state (e);
 		else if (e.tagName() == "filter-1-parameters")

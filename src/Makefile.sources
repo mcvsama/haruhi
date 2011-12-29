@@ -517,6 +517,7 @@ SRC_SOURCES += plugins/yuki/widgets.cc
 SRC_SOURCES += plugins/yuki/yuki.cc
 
 SRC_MOCHDRS += plugins/yuki/filter_widget.h
+SRC_MOCHDRS += plugins/yuki/operator_widget.h
 SRC_MOCHDRS += plugins/yuki/plugin.h
 SRC_MOCHDRS += plugins/yuki/part_widget.h
 SRC_MOCHDRS += plugins/yuki/part_manager_widget.h
