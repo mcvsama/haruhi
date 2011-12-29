@@ -274,6 +274,7 @@ struct Params
 
 		// Embedded Voice params template (also includes Filter params):
 		Voice voice;
+		Operator operators[OperatorsNumber];
 	};
 };
 

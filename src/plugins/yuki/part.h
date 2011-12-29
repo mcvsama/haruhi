@@ -203,16 +203,15 @@ class Part:
 		Haruhi::EventPort* noise_level;
 
 		// Filter ports:
-		Haruhi::EventPort* filter_1_frequency;
-		Haruhi::EventPort* filter_1_resonance;
-		Haruhi::EventPort* filter_1_gain;
-		Haruhi::EventPort* filter_1_attenuation;
-		Haruhi::EventPort* filter_2_frequency;
-		Haruhi::EventPort* filter_2_resonance;
-		Haruhi::EventPort* filter_2_gain;
-		Haruhi::EventPort* filter_2_attenuation;
+		Haruhi::EventPort* filter_frequency[2];
+		Haruhi::EventPort* filter_resonance[2];
+		Haruhi::EventPort* filter_gain[2];
+		Haruhi::EventPort* filter_attenuation[2];
 
-		// Modulator ports:
+		// Operator ports:
+		Haruhi::EventPort* operator_detune[3];
+
+		// Modulator matrix:
 		MatrixPorts	fm_matrix;
 		MatrixPorts	am_matrix;
 
@@ -275,16 +274,15 @@ class Part:
 		Haruhi::ControllerProxy unison_vibrato_frequency;
 
 		// Filters:
-		Haruhi::ControllerProxy filter_1_frequency;
-		Haruhi::ControllerProxy filter_1_resonance;
-		Haruhi::ControllerProxy filter_1_gain;
-		Haruhi::ControllerProxy filter_1_attenuation;
-		Haruhi::ControllerProxy filter_2_frequency;
-		Haruhi::ControllerProxy filter_2_resonance;
-		Haruhi::ControllerProxy filter_2_gain;
-		Haruhi::ControllerProxy filter_2_attenuation;
+		Haruhi::ControllerProxy* filter_frequency[2];
+		Haruhi::ControllerProxy* filter_resonance[2];
+		Haruhi::ControllerProxy* filter_gain[2];
+		Haruhi::ControllerProxy* filter_attenuation[2];
 
-		// Modulator:
+		// Operators:
+		Haruhi::ControllerProxy* operator_detune[3];
+
+		// Modulator matrix:
 		MatrixControllerProxies fm_matrix;
 		MatrixControllerProxies am_matrix;
 
@@ -302,6 +300,8 @@ class Part:
 	  public:
 		ParamUpdaters (VoiceManager*);
 
+		~ParamUpdaters();
+
 	  public:
 		// Voice params updaters:
 		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	amplitude;
@@ -318,22 +318,14 @@ class Part:
 		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	unison_vibrato_frequency;
 
 		// Filter params updaters:
-		FilterParamUpdater<Params::Filter::ControllerParamPtr>	filter_1_frequency;
-		FilterParamUpdater<Params::Filter::ControllerParamPtr>	filter_1_resonance;
-		FilterParamUpdater<Params::Filter::ControllerParamPtr>	filter_1_gain;
-		FilterParamUpdater<Params::Filter::ControllerParamPtr>	filter_1_attenuation;
-		FilterParamUpdater<Params::Filter::IntParamPtr>			filter_1_enabled;
-		FilterParamUpdater<Params::Filter::IntParamPtr>			filter_1_type;
-		FilterParamUpdater<Params::Filter::IntParamPtr>			filter_1_stages;
-		FilterParamUpdater<Params::Filter::IntParamPtr>			filter_1_limiter_enabled;
-		FilterParamUpdater<Params::Filter::ControllerParamPtr>	filter_2_frequency;
-		FilterParamUpdater<Params::Filter::ControllerParamPtr>	filter_2_resonance;
-		FilterParamUpdater<Params::Filter::ControllerParamPtr>	filter_2_gain;
-		FilterParamUpdater<Params::Filter::ControllerParamPtr>	filter_2_attenuation;
-		FilterParamUpdater<Params::Filter::IntParamPtr>			filter_2_enabled;
-		FilterParamUpdater<Params::Filter::IntParamPtr>			filter_2_type;
-		FilterParamUpdater<Params::Filter::IntParamPtr>			filter_2_stages;
-		FilterParamUpdater<Params::Filter::IntParamPtr>			filter_2_limiter_enabled;
+		FilterParamUpdater<Params::Filter::ControllerParamPtr>*	filter_frequency[2];
+		FilterParamUpdater<Params::Filter::ControllerParamPtr>*	filter_resonance[2];
+		FilterParamUpdater<Params::Filter::ControllerParamPtr>*	filter_gain[2];
+		FilterParamUpdater<Params::Filter::ControllerParamPtr>*	filter_attenuation[2];
+		FilterParamUpdater<Params::Filter::IntParamPtr>*		filter_enabled[2];
+		FilterParamUpdater<Params::Filter::IntParamPtr>*		filter_type[2];
+		FilterParamUpdater<Params::Filter::IntParamPtr>*		filter_stages[2];
+		FilterParamUpdater<Params::Filter::IntParamPtr>*		filter_limiter_enabled[2];
 	};
 
   public:

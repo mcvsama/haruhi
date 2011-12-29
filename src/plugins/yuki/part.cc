@@ -100,14 +100,17 @@ Part::PartPorts::PartPorts (Plugin* plugin, unsigned int part_id)
 	portamento_time				= new Haruhi::EventPort (plugin, "Operator M - Portamento time", Haruhi::Port::Input, port_group);
 	phase						= new Haruhi::EventPort (plugin, "Operator M - Phase", Haruhi::Port::Input, port_group);
 	noise_level					= new Haruhi::EventPort (plugin, "Operator M - Noise level", Haruhi::Port::Input, port_group);
-	filter_1_frequency			= new Haruhi::EventPort (plugin, "Filter 1 - Frequency", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
-	filter_1_resonance			= new Haruhi::EventPort (plugin, "Filter 1 - Resonance (Q)", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
-	filter_1_gain				= new Haruhi::EventPort (plugin, "Filter 1 - Gain", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
-	filter_1_attenuation		= new Haruhi::EventPort (plugin, "Filter 1 - Attenuation", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
-	filter_2_frequency			= new Haruhi::EventPort (plugin, "Filter 2 - Frequency", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
-	filter_2_resonance			= new Haruhi::EventPort (plugin, "Filter 2 - Resonance (Q)", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
-	filter_2_gain				= new Haruhi::EventPort (plugin, "Filter 2 - Gain", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
-	filter_2_attenuation		= new Haruhi::EventPort (plugin, "Filter 2 - Attenuation", Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+
+	for (unsigned int i = 0; i < 2; ++i)
+	{
+		filter_frequency[i]		= new Haruhi::EventPort (plugin, QString ("Filter %1 - Frequency").arg (i + 1).toStdString(), Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+		filter_resonance[i]		= new Haruhi::EventPort (plugin, QString ("Filter %1 - Resonance (Q)").arg (i + 1).toStdString(), Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+		filter_gain[i]			= new Haruhi::EventPort (plugin, QString ("Filter %1 - Gain").arg (i + 1).toStdString(), Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+		filter_attenuation[i]	= new Haruhi::EventPort (plugin, QString ("Filter %1 - Attenuation").arg (i + 1).toStdString(), Haruhi::Port::Input, port_group, Haruhi::Port::Polyphonic);
+	}
+
+	for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
+		operator_detune[i]		= new Haruhi::EventPort (plugin, QString ("Operator %1 - Detune").arg (i + 1).toStdString(), Haruhi::Port::Input, port_group);
 
 	fm_matrix.resize (Params::Part::OperatorsNumber + 1);
 	am_matrix.resize (Params::Part::OperatorsNumber + 1);
@@ -151,14 +154,17 @@ Part::PartPorts::~PartPorts()
 	delete portamento_time;
 	delete phase;
 	delete noise_level;
-	delete filter_1_frequency;
-	delete filter_1_resonance;
-	delete filter_1_gain;
-	delete filter_1_attenuation;
-	delete filter_2_frequency;
-	delete filter_2_resonance;
-	delete filter_2_gain;
-	delete filter_2_attenuation;
+
+	for (unsigned int i = 0; i < 2; ++i)
+	{
+		delete filter_frequency[i];
+		delete filter_resonance[i];
+		delete filter_gain[i];
+		delete filter_attenuation[i];
+	}
+
+	for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
+		delete operator_detune[i];
 
 	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
 	{
@@ -200,22 +206,22 @@ Part::PartControllerProxies::PartControllerProxies (PartManager* part_manager, P
 	CONSTRUCT_CONTROLLER_PROXY (unison_vibrato_frequency),
 #undef CONSTRUCT_CONTROLLER_PROXY
 
-#define CONSTRUCT_CONTROLLER_PROXY(name) filter_1_##name (part_ports->filter_1_##name, &part_params->voice.filters[0].name)
-	CONSTRUCT_CONTROLLER_PROXY (frequency),
-	CONSTRUCT_CONTROLLER_PROXY (resonance),
-	CONSTRUCT_CONTROLLER_PROXY (gain),
-	CONSTRUCT_CONTROLLER_PROXY (attenuation),
-#undef CONSTRUCT_CONTROLLER_PROXY
-
-#define CONSTRUCT_CONTROLLER_PROXY(name) filter_2_##name (part_ports->filter_2_##name, &part_params->voice.filters[1].name)
-	CONSTRUCT_CONTROLLER_PROXY (frequency),
-	CONSTRUCT_CONTROLLER_PROXY (resonance),
-	CONSTRUCT_CONTROLLER_PROXY (gain),
-	CONSTRUCT_CONTROLLER_PROXY (attenuation),
-#undef CONSTRUCT_CONTROLLER_PROXY
-
 	_part_manager (part_manager)
 {
+	// Filters:
+	for (unsigned int i = 0; i < 2; ++i)
+	{
+		filter_frequency[i] = new Haruhi::ControllerProxy (part_ports->filter_frequency[i], &part_params->voice.filters[i].frequency);
+		filter_resonance[i] = new Haruhi::ControllerProxy (part_ports->filter_resonance[i], &part_params->voice.filters[i].resonance);
+		filter_gain[i] = new Haruhi::ControllerProxy (part_ports->filter_gain[i], &part_params->voice.filters[i].gain);
+		filter_attenuation[i] = new Haruhi::ControllerProxy (part_ports->filter_attenuation[i], &part_params->voice.filters[i].attenuation);
+	}
+
+	// Operators:
+	for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
+		operator_detune[i] = new Haruhi::ControllerProxy (part_ports->operator_detune[i], &part_params->operators[i].detune);
+
+	// Operator matrix:
 	fm_matrix.resize (Params::Part::OperatorsNumber + 1);
 	am_matrix.resize (Params::Part::OperatorsNumber + 1);
 	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
@@ -228,12 +234,22 @@ Part::PartControllerProxies::PartControllerProxies (PartManager* part_manager, P
 			am_matrix[o][i] = new Haruhi::ControllerProxy (part_ports->am_matrix[o][i], &part_params->am_matrix[o][i]);
 		}
 	}
-
 }
 
 
 Part::PartControllerProxies::~PartControllerProxies()
 {
+	for (unsigned int i = 0; i < 2; ++i)
+	{
+		delete filter_frequency[i];
+		delete filter_resonance[i];
+		delete filter_gain[i];
+		delete filter_attenuation[i];
+	}
+
+	for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
+		delete operator_detune[i];
+
 	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
 	{
 		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
@@ -253,7 +269,7 @@ Part::PartControllerProxies::process_events()
 	forward_messages (_part_manager->ports()->frequency, frequency.event_port());
 	forward_messages (_part_manager->ports()->pitchbend, pitchbend.event_port());
 
-#define PROXY_PROCESS_EVENTS(name) name.process_events();
+#define PROXY_PROCESS_EVENTS(name) (name).process_events();
 	PROXY_PROCESS_EVENTS (volume);
 	PROXY_PROCESS_EVENTS (portamento_time);
 	PROXY_PROCESS_EVENTS (phase);
@@ -274,14 +290,14 @@ Part::PartControllerProxies::process_events()
 	PROXY_PROCESS_EVENTS (unison_noise);
 	PROXY_PROCESS_EVENTS (unison_vibrato_level);
 	PROXY_PROCESS_EVENTS (unison_vibrato_frequency);
-	PROXY_PROCESS_EVENTS (filter_1_frequency);
-	PROXY_PROCESS_EVENTS (filter_1_resonance);
-	PROXY_PROCESS_EVENTS (filter_1_gain);
-	PROXY_PROCESS_EVENTS (filter_1_attenuation);
-	PROXY_PROCESS_EVENTS (filter_2_frequency);
-	PROXY_PROCESS_EVENTS (filter_2_resonance);
-	PROXY_PROCESS_EVENTS (filter_2_gain);
-	PROXY_PROCESS_EVENTS (filter_2_attenuation);
+	PROXY_PROCESS_EVENTS (*filter_frequency[0]);
+	PROXY_PROCESS_EVENTS (*filter_resonance[0]);
+	PROXY_PROCESS_EVENTS (*filter_gain[0]);
+	PROXY_PROCESS_EVENTS (*filter_attenuation[0]);
+	PROXY_PROCESS_EVENTS (*filter_frequency[1]);
+	PROXY_PROCESS_EVENTS (*filter_resonance[1]);
+	PROXY_PROCESS_EVENTS (*filter_gain[1]);
+	PROXY_PROCESS_EVENTS (*filter_attenuation[1]);
 #undef PROXY_PROCESS_EVENTS
 
 	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
@@ -321,31 +337,42 @@ Part::ParamUpdaters::ParamUpdaters (VoiceManager* voice_manager):
 	CONSTRUCT_PARAM_UPDATER (unison_init),
 	CONSTRUCT_PARAM_UPDATER (unison_noise),
 	CONSTRUCT_PARAM_UPDATER (unison_vibrato_level),
-	CONSTRUCT_PARAM_UPDATER (unison_vibrato_frequency),
+	CONSTRUCT_PARAM_UPDATER (unison_vibrato_frequency)
 #undef CONSTRUCT_PARAM_UPDATER
+{
+	for (unsigned int i = 0; i < 2; ++i)
+	{
+#define NEW_PARAM_UPDATER(name) filter_##name[i] = new FilterParamUpdater<Params::Filter::ControllerParamPtr> (voice_manager, i, &Params::Filter::name)
+		NEW_PARAM_UPDATER (frequency);
+		NEW_PARAM_UPDATER (resonance);
+		NEW_PARAM_UPDATER (gain);
+		NEW_PARAM_UPDATER (attenuation);
+#undef NEW_PARAM_UPDATER
 
-#define CONSTRUCT_PARAM_UPDATER(name) filter_1_##name (voice_manager, 0, &Params::Filter::name)
-	CONSTRUCT_PARAM_UPDATER (frequency),
-	CONSTRUCT_PARAM_UPDATER (resonance),
-	CONSTRUCT_PARAM_UPDATER (gain),
-	CONSTRUCT_PARAM_UPDATER (attenuation),
-	CONSTRUCT_PARAM_UPDATER (enabled),
-	CONSTRUCT_PARAM_UPDATER (type),
-	CONSTRUCT_PARAM_UPDATER (stages),
-	CONSTRUCT_PARAM_UPDATER (limiter_enabled),
-#undef CONSTRUCT_PARAM_UPDATER
+#define NEW_PARAM_UPDATER(name) filter_##name[i] = new FilterParamUpdater<Params::Filter::IntParamPtr> (voice_manager, i, &Params::Filter::name)
+		NEW_PARAM_UPDATER (enabled);
+		NEW_PARAM_UPDATER (type);
+		NEW_PARAM_UPDATER (stages);
+		NEW_PARAM_UPDATER (limiter_enabled);
+#undef NEW_PARAM_UPDATER
+	}
+}
 
-#define CONSTRUCT_PARAM_UPDATER(name) filter_2_##name (voice_manager, 1, &Params::Filter::name)
-	CONSTRUCT_PARAM_UPDATER (frequency),
-	CONSTRUCT_PARAM_UPDATER (resonance),
-	CONSTRUCT_PARAM_UPDATER (gain),
-	CONSTRUCT_PARAM_UPDATER (attenuation),
-	CONSTRUCT_PARAM_UPDATER (enabled),
-	CONSTRUCT_PARAM_UPDATER (type),
-	CONSTRUCT_PARAM_UPDATER (stages),
-	CONSTRUCT_PARAM_UPDATER (limiter_enabled)
-#undef CONSTRUCT_PARAM_UPDATER
-{ }
+
+Part::ParamUpdaters::~ParamUpdaters()
+{
+	for (unsigned int i = 0; i < 2; ++i)
+	{
+		delete filter_frequency[i];
+		delete filter_resonance[i];
+		delete filter_gain[i];
+		delete filter_attenuation[i];
+		delete filter_enabled[i];
+		delete filter_type[i];
+		delete filter_stages[i];
+		delete filter_limiter_enabled[i];
+	}
+}
 
 
 Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Main* main_params, unsigned int id):
@@ -425,8 +452,8 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 #undef UPDATE_VOICES_ON_VCE
 
 #define UPDATE_FILTERS_ON_VCE(name) \
-	_proxies.filter_1_##name.on_voice_controller_event.connect (&_updaters.filter_1_##name, &FilterParamUpdater<Params::Filter::ControllerParamPtr>::handle_event); \
-	_part_params.voice.filters[0].name.on_change_with_value.connect (&_updaters.filter_1_##name, &FilterParamUpdater<Params::Filter::ControllerParamPtr>::handle_change);
+	_proxies.filter_##name[0]->on_voice_controller_event.connect (_updaters.filter_##name[0], &FilterParamUpdater<Params::Filter::ControllerParamPtr>::handle_event); \
+	_part_params.voice.filters[0].name.on_change_with_value.connect (_updaters.filter_##name[0], &FilterParamUpdater<Params::Filter::ControllerParamPtr>::handle_change);
 	// Updaters for Filter 1 params:
 	UPDATE_FILTERS_ON_VCE (frequency);
 	UPDATE_FILTERS_ON_VCE (resonance);
@@ -435,8 +462,8 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 #undef UPDATE_FILTERS_ON_VCE
 
 #define UPDATE_FILTERS_ON_VCE(name) \
-	_proxies.filter_2_##name.on_voice_controller_event.connect (&_updaters.filter_2_##name, &FilterParamUpdater<Params::Filter::ControllerParamPtr>::handle_event); \
-	_part_params.voice.filters[1].name.on_change_with_value.connect (&_updaters.filter_2_##name, &FilterParamUpdater<Params::Filter::ControllerParamPtr>::handle_change);
+	_proxies.filter_##name[1]->on_voice_controller_event.connect (_updaters.filter_##name[1], &FilterParamUpdater<Params::Filter::ControllerParamPtr>::handle_event); \
+	_part_params.voice.filters[1].name.on_change_with_value.connect (_updaters.filter_##name[1], &FilterParamUpdater<Params::Filter::ControllerParamPtr>::handle_change);
 	// Updaters for Filter 2 params:
 	UPDATE_FILTERS_ON_VCE (frequency);
 	UPDATE_FILTERS_ON_VCE (resonance);
@@ -445,7 +472,7 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 #undef UPDATE_FILTERS_ON_VCE
 
 #define UPDATE_FILTERS_ON_CHANGE(name) \
-	_part_params.voice.filters[0].name.on_change_with_value.connect (&_updaters.filter_1_##name, &FilterParamUpdater<Params::Filter::IntParamPtr>::handle_change);
+	_part_params.voice.filters[0].name.on_change_with_value.connect (_updaters.filter_##name[0], &FilterParamUpdater<Params::Filter::IntParamPtr>::handle_change);
 	// Updaters for Filter 1 params:
 	UPDATE_FILTERS_ON_CHANGE (enabled);
 	UPDATE_FILTERS_ON_CHANGE (type);
@@ -454,7 +481,7 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 #undef UPDATE_FILTERS_ON_CHANGE
 
 #define UPDATE_FILTERS_ON_CHANGE(name) \
-	_part_params.voice.filters[1].name.on_change_with_value.connect (&_updaters.filter_2_##name, &FilterParamUpdater<Params::Filter::IntParamPtr>::handle_change);
+	_part_params.voice.filters[1].name.on_change_with_value.connect (_updaters.filter_##name[1], &FilterParamUpdater<Params::Filter::IntParamPtr>::handle_change);
 	// Updaters for Filter 2 params:
 	UPDATE_FILTERS_ON_CHANGE (enabled);
 	UPDATE_FILTERS_ON_CHANGE (type);
