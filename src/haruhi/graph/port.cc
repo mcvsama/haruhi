@@ -213,8 +213,6 @@ Port::unregister_me()
 		case Port::Input:	_unit->_inputs.erase (this);	break;
 		case Port::Output:	_unit->_outputs.erase (this);	break;
 	}
-	// Delete buffer:
-	delete _buffer;
 	// Send notification:
 	if (graph())
 		graph()->port_unregistered (this, _unit);

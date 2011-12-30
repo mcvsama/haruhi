@@ -506,6 +506,9 @@ Part::~Part()
 	for (std::size_t i = 0; i < countof (_modulator_waves); ++i)
 		delete _modulator_waves[i];
 
+	for (std::size_t i = 0; i < countof (_wavetables); ++i)
+		delete _wavetables[i];
+
 	delete _wt_wu;
 	delete _voice_manager;
 }

@@ -42,7 +42,9 @@ namespace Yuki {
 OperatorWidget::OperatorWidget (QWidget* parent, unsigned int operator_no, Params::Operator* params, Part* part):
 	QWidget (parent),
 	_part (part),
-	_params (params)
+	_params (params),
+	_stop_widgets_to_params (false),
+	_stop_params_to_widgets (false)
 {
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
