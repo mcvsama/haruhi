@@ -436,8 +436,8 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	panel_layout->addWidget (_knob_noise_level, 1, 7);
 	panel_layout->addWidget (_knob_detune, 1, 8);
 	panel_layout->addWidget (_knob_pitchbend, 1, 9);
-	panel_layout->addWidget (_knob_portamento_time, 2, 8);
-	panel_layout->addWidget (_knob_phase, 2, 9);
+	panel_layout->addWidget (_knob_unison_vibrato_level, 2, 8);
+	panel_layout->addWidget (_knob_unison_vibrato_frequency, 2, 9);
 	panel_layout->addWidget (_knob_wave_shape, 2, 0);
 	panel_layout->addWidget (_knob_modulator_amplitude, 2, 1);
 	panel_layout->addWidget (_knob_modulator_index, 2, 2);
@@ -448,8 +448,8 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	panel_layout->addWidget (_knob_unison_noise, 2, 7);
 	panel_layout->addWidget (_filter_1, 3, 0, 2, 4);
 	panel_layout->addWidget (_filter_2, 3, 4, 2, 4);
-	panel_layout->addWidget (_knob_unison_vibrato_level, 3, 8, 1, 1);
-	panel_layout->addWidget (_knob_unison_vibrato_frequency, 3, 9, 1, 1);
+	panel_layout->addWidget (_knob_portamento_time, 3, 8);
+	panel_layout->addWidget (_knob_phase, 3, 9);
 	panel_layout->addWidget (group1, 4, 8, 1, 3);
 
 	QGridLayout* resizeable_main_layout = new QGridLayout (_main_panel);
