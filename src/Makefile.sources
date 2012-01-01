@@ -278,6 +278,7 @@ SRC_HEADERS += haruhi/plugin/has_presets.h
 SRC_HEADERS += haruhi/plugin/plugin.h
 SRC_HEADERS += haruhi/plugin/plugin_factory.h
 SRC_HEADERS += haruhi/plugin/plugin_loader.h
+SRC_HEADERS += haruhi/plugin/saveable_params.h
 
 SRC_SOURCES += haruhi/plugin/plugin.cc
 SRC_SOURCES += haruhi/plugin/plugin_factory.cc
