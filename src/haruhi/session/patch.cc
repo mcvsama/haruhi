@@ -383,9 +383,9 @@ Patch::save_state (QDomElement& element) const
 
 	// Tabs sorted by their tab-position:
 	std::multimap<int, QDomElement> sorted_plugins;
-	for (Units::const_iterator u = this->units().begin(); u != this->units().end(); ++u)
+	for (Unit* u: units())
 	{
-		Plugin* p = dynamic_cast<Plugin*> (*u);
+		Plugin* p = dynamic_cast<Plugin*> (u);
 		if (p)
 		{
 			QDomElement plugin = element.ownerDocument().createElement ("plugin");
@@ -408,8 +408,8 @@ Patch::save_state (QDomElement& element) const
 			sorted_plugins.insert (std::make_pair (plugin_tab_position (p), plugin));
 		}
 	}
-	for (std::multimap<int, QDomElement>::iterator u = sorted_plugins.begin(); u != sorted_plugins.end(); ++u)
-		plugins.appendChild (u->second);
+	for (auto u: sorted_plugins)
+		plugins.appendChild (u.second);
 
 	QDomElement connections = element.ownerDocument().createElement ("connections");
 	ConnSet conn_set;
@@ -487,12 +487,12 @@ Patch::create_plugins_menu()
 	_urns.clear();
 
 	PluginLoader::PluginFactories const& list = session()->plugin_loader()->plugin_factories();
-	for (PluginLoader::PluginFactories::const_iterator u = list.begin(); u != list.end(); ++u)
+	for (PluginFactory* pf: list)
 	{
 		action_id += 1;
-		action = _plugins_menu->addAction (QString::fromStdString ((*u)->title()), _plugins_mapper, SLOT (map()));
+		action = _plugins_menu->addAction (QString::fromStdString (pf->title()), _plugins_mapper, SLOT (map()));
 		_plugins_mapper->setMapping (action, action_id);
-		_urns[action_id] = QString::fromStdString ((*u)->urn());
+		_urns[action_id] = QString::fromStdString (pf->urn());
 	}
 
 	QObject::connect (_plugins_mapper, SIGNAL (mapped (int)), this, SLOT (load_plugin_request (int)));

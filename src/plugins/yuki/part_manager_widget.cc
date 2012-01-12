@@ -137,9 +137,8 @@ PartManagerWidget::plugin() const
 void
 PartManagerWidget::unit_bay_assigned()
 {
-	Haruhi::Knob* all_knobs[] = { _knob_volume, _knob_panorama, _knob_detune, _knob_stereo_width };
-	for (Haruhi::Knob** k = all_knobs; k != endof (all_knobs); ++k)
-		(*k)->set_unit_bay (plugin()->unit_bay());
+	for (auto* k: { _knob_volume, _knob_panorama, _knob_detune, _knob_stereo_width })
+		k->set_unit_bay (plugin()->unit_bay());
 }
 
 

@@ -72,17 +72,6 @@ template<class T, std::size_t N>
 
 
 /**
- * Return after-the-end iterator of an array.
- */
-template<class T, std::size_t N>
-	inline T*
-	endof (T(&a)[N])
-	{
-		return a + N;
-	}
-
-
-/**
  * Prints debug output.
  */
 #define debug(x...) fprintf (stderr, x)

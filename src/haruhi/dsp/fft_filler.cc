@@ -62,10 +62,10 @@ FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 		tables[0.5f - 0.5f * (std::pow (expand_coeff, i) - 1) / std::pow (expand_coeff, i)] = new Sample[samples];
 
 	// Create wavetables:
-	for (Tables::iterator t = tables.begin(); t != tables.end(); ++t)
+	for (auto& t: tables)
 	{
 		CHECK_INTERRUPT;
-		wavetable->add_table (t->second, t->first);
+		wavetable->add_table (t.second, t.first);
 	}
 
 	FFT::Vector source (samples);
@@ -90,13 +90,13 @@ FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 
 	// Create wavetables by bandlimiting obtained spectrum.
 	// 0 frequency is at index 0, max freq is at index samples/2.
-	for (Tables::iterator t = tables.begin(); t != tables.end(); ++t)
+	for (auto& t: tables)
 	{
 		CHECK_INTERRUPT;
 
-		int range = (int)samples * t->first; // t->first is max_frequency
+		int range = (int)samples * t.first; // t->first is max_frequency
 
-		int samples_left = 1.0f / (2.0f * t->first);
+		int samples_left = 1.0f / (2.0f * t.first);
 		range = bound (range, 0, static_cast<int> (samples));
 
 		// Clear some frequencies:
@@ -110,7 +110,7 @@ FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 
 		// Copy result into wavetable:
 		for (unsigned int i = 0; i < samples; ++i)
-			t->second[i] = target[i].real();
+			t.second[i] = target[i].real();
 	}
 
 #undef CHECK_INTERRUPT

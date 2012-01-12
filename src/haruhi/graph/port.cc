@@ -119,14 +119,14 @@ Port::disconnect_from (Port* port)
 void
 Port::disconnect()
 {
-	// Disconnect back connections; copy set, because its iterators will be invalidated when disconnecting:
-	Ports _b = _back_connections;
-	for (Ports::iterator p = _b.begin();  p != _b.end();  ++p)
-		(*p)->disconnect_from (this);
-	// Disconnect forward connections...
-	Ports _f = _forward_connections;
-	for (Ports::iterator p = _f.begin();  p != _f.end();  ++p)
-		this->disconnect_from (*p);
+	// Disconnect back connections; copy set, because its iterators will be invalidated when disconnecting.
+	// Operate on copy.
+	for (Port* p: Ports (_back_connections))
+		p->disconnect_from (this);
+	// Disconnect forward connections.
+	// Operate on copy.
+	for (Port* p: Ports (_forward_connections))
+		this->disconnect_from (p);
 }
 
 
@@ -144,10 +144,10 @@ Port::sync()
 				no_input();
 			else
 			{
-				for (Ports::iterator i = _back_connections.begin(); i != _back_connections.end(); ++i)
+				for (Port* p: _back_connections)
 				{
-					(*i)->sync();
-					buffer()->mixin ((*i)->buffer());
+					p->sync();
+					buffer()->mixin (p->buffer());
 				}
 			}
 		}

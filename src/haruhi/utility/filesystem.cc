@@ -50,9 +50,9 @@ mkpath (std::string const& path, mode_t mode)
 	while (std::getline (stream, x, '/'))
 		dirs.push_back (x);
 	x.clear();
-	for (std::vector<std::string>::iterator d = dirs.begin(); d != dirs.end(); ++d)
+	for (std::string& d: dirs)
 	{
-		x += "/" + *d;
+		x += "/" + d;
 		if (::mkdir (x.c_str(), mode) == -1)
 		{
 			if (errno == EEXIST)

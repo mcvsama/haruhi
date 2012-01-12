@@ -70,30 +70,27 @@ Connector::draw_connections()
 	int h1 = _ports_connector->_opanel->list()->header()->height();
 	int h2 = _ports_connector->_ipanel->list()->header()->height();
 
-	QTreeWidgetItemsList oitems = Connector::get_all_items_from (_ports_connector->_opanel->list());
-	QTreeWidgetItemsList iitems = Connector::get_all_items_from (_ports_connector->_ipanel->list());
-
 	painter.fillRect (rect(), backgroundColor());
 
-	for (QTreeWidgetItemsList::iterator oitem = oitems.begin();  oitem != oitems.end();  ++oitem)
+	for (QTreeWidgetItem* oitem: Connector::get_all_items_from (_ports_connector->_opanel->list()))
 	{
-		if (!item_visible (*oitem))
+		if (!item_visible (oitem))
 			continue;
 
-		PortItem* oaudio_item = dynamic_cast<PortItem*> (*oitem);
-		PortItem* oevent_item = dynamic_cast<PortItem*> (*oitem);
+		PortItem* oaudio_item = dynamic_cast<PortItem*> (oitem);
+		PortItem* oevent_item = dynamic_cast<PortItem*> (oitem);
 
 		// Rotate color:
 		color += 1;
 		painter.setPen (QPen (QColor (rgb[color % 3], rgb[(color / 3) % 3], rgb[(color / 9) % 3]), 0.5));
 
-		for (QTreeWidgetItemsList::iterator iitem = iitems.begin();  iitem != iitems.end();  ++iitem)
+		for (QTreeWidgetItem* iitem: Connector::get_all_items_from (_ports_connector->_ipanel->list()))
 		{
-			if (!item_visible (*iitem))
+			if (!item_visible (iitem))
 				continue;
 
-			PortItem* iaudio_item = dynamic_cast<PortItem*> (*iitem);
-			PortItem* ievent_item = dynamic_cast<PortItem*> (*iitem);
+			PortItem* iaudio_item = dynamic_cast<PortItem*> (iitem);
+			PortItem* ievent_item = dynamic_cast<PortItem*> (iitem);
 
 			if (oaudio_item && iaudio_item && oaudio_item->port()->connected_to (iaudio_item->port()))
 			{

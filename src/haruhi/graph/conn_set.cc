@@ -46,17 +46,17 @@ void
 ConnSet::save()
 {
 	_connections.clear();
-	for (Units::iterator u = _units.begin(); u != _units.end(); ++u)
+	for (Unit* u: _units)
 	{
-		for (Ports::const_iterator f = (*u)->outputs().begin(); f != (*u)->outputs().end(); ++f)
+		for (Port const* f: u->outputs())
 		{
 			// Collect only forward connections:
-			for (Ports::const_iterator t = (*f)->forward_connections().begin(); t != (*f)->forward_connections().end(); ++t)
+			for (Port const* t: f->forward_connections())
 			{
-				if (_only_internal && _units.find ((*t)->unit()) == _units.end())
+				if (_only_internal && _units.find (t->unit()) == _units.end())
 					continue;
-				_connections.push_back (Connection (QString ("%1").arg ((*f)->unit()->id()), QString::fromStdString ((*f)->full_name()),
-													QString ("%1").arg ((*t)->unit()->id()), QString::fromStdString ((*t)->full_name())));
+				_connections.push_back (Connection (QString ("%1").arg (f->unit()->id()), QString::fromStdString (f->full_name()),
+													QString ("%1").arg (t->unit()->id()), QString::fromStdString (t->full_name())));
 			}
 		}
 	}
@@ -70,26 +70,26 @@ ConnSet::load() const
 	Map map;
 
 	// Build map for fast access to Units:
-	for (Units::const_iterator u = _units.begin(); u != _units.end(); ++u)
-		map[QString ("%1").arg ((*u)->id())] = *u;
+	for (Unit* u: _units)
+		map[QString ("%1").arg (u->id())] = u;
 
 	Map::const_iterator m1, m2;
-	for (Connections::const_iterator c = _connections.begin(); c != _connections.end(); ++c)
+	for (Connection const& c: _connections)
 	{
-		m1 = map.find (c->source_unit);
-		m2 = map.find (c->target_unit);
+		m1 = map.find (c.source_unit);
+		m2 = map.find (c.target_unit);
 		if (m1 != map.end() && m2 != map.end())
 		{
 			// Find ports by full-name:
 			Ports::const_iterator e1 = m1->second->outputs().end(), e2 = m2->second->inputs().end();
 			Ports::const_iterator p1 = e1, p2 = e2;
 			for (p1 = m1->second->outputs().begin(); p1 != e1; ++p1)
-				if ((*p1)->full_name() == c->source_port.toStdString())
+				if ((*p1)->full_name() == c.source_port.toStdString())
 					break;
 			if (p1 != e1)
 			{
 				for (p2 = m2->second->inputs().begin(); p2 != e2; ++p2)
-					if ((*p2)->full_name() == c->target_port.toStdString())
+					if ((*p2)->full_name() == c.target_port.toStdString())
 						break;
 				if (p2 != e2)
 					(*p1)->connect_to (*p2);
@@ -102,13 +102,13 @@ ConnSet::load() const
 void
 ConnSet::save_state (QDomElement& element) const
 {
-	for (Connections::const_iterator c = _connections.begin(); c != _connections.end(); ++c)
+	for (Connection const& c: _connections)
 	{
 		QDomElement connection = element.ownerDocument().createElement ("connection");
-		connection.setAttribute ("source-unit", c->source_unit);
-		connection.setAttribute ("source-port", c->source_port);
-		connection.setAttribute ("target-unit", c->target_unit);
-		connection.setAttribute ("target-port", c->target_port);
+		connection.setAttribute ("source-unit", c.source_unit);
+		connection.setAttribute ("source-port", c.source_port);
+		connection.setAttribute ("target-unit", c.target_unit);
+		connection.setAttribute ("target-port", c.target_port);
 		element.appendChild (connection);
 	}
 }

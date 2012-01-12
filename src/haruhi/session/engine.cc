@@ -65,11 +65,11 @@ Engine::adjust_master_volume()
 {
 	EventBuffer* buffer = _session->graph()->audio_backend()->master_volume_port()->event_buffer();
 	EventBuffer::Events const& events = buffer->events();
-	for (EventBuffer::Events::const_iterator e = events.begin(); e != events.end(); ++e)
+	for (auto& e: events)
 	{
-		if ((*e)->event_type() == Event::ControllerEventType)
+		if (e->event_type() == Event::ControllerEventType)
 		{
-			ControllerEvent const* controller_event = static_cast<ControllerEvent const*> (e->get());
+			ControllerEvent const* controller_event = static_cast<ControllerEvent const*> (e.get());
 			_session->set_master_volume (controller_event->value());
 		}
 	}
@@ -81,11 +81,11 @@ Engine::check_panic_button()
 {
 	EventBuffer* buffer = _session->graph()->audio_backend()->panic_port()->event_buffer();
 	EventBuffer::Events const& events = buffer->events();
-	for (EventBuffer::Events::const_iterator e = events.begin(); e != events.end(); ++e)
+	for (auto e: events)
 	{
-		if ((*e)->event_type() == Event::ControllerEventType)
+		if (e->event_type() == Event::ControllerEventType)
 		{
-			ControllerEvent const* controller_event = static_cast<ControllerEvent const*> (e->get());
+			ControllerEvent const* controller_event = static_cast<ControllerEvent const*> (e.get());
 			if (controller_event->value() >= 0.5 && _panic_pressed == false)
 			{
 				_panic_pressed = true;

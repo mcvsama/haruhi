@@ -155,9 +155,9 @@ Model::load_state()
 	QDir dir (directory(), "*.haruhi-presets");
 	QStringList list = dir.entryList();
 	// Each entry in list represents one presets package:
-	for (QStringList::Iterator p = list.begin(); p != list.end(); ++p)
+	for (QString& p: list)
 	{
-		QString path = directory() + "/" + *p;
+		QString path = directory() + "/" + p;
 		QFile file (path);
 		if (!file.open (IO_ReadOnly))
 			continue;
@@ -179,13 +179,13 @@ Model::load_state()
 void
 Model::save_state()
 {
-	for (Packages::iterator p = _packages.begin(); p != _packages.end(); ++p)
+	for (Package& p: _packages)
 	{
-		QString file_name = directory() + "/" + p->name().replace ('/', "_") + ".haruhi-presets";
-		QString to_delete = p->file_name() != file_name ? p->file_name() : QString::null;
+		QString file_name = directory() + "/" + p.name().replace ('/', "_") + ".haruhi-presets";
+		QString to_delete = p.file_name() != file_name ? p.file_name() : QString::null;
 
-		if (p->file_name() == QString::null)
-			p->set_file_name (file_name);
+		if (p.file_name() == QString::null)
+			p.set_file_name (file_name);
 
 		char* copy = strdup (file_name.utf8());
 		char* dir = dirname (copy);
@@ -196,7 +196,7 @@ Model::save_state()
 		QDomDocument doc;
 		QDomElement root_element = doc.createElement ("haruhi-presets");
 		root_element.setAttribute ("unit", _unit_urn);
-		p->save_state (root_element);
+		p.save_state (root_element);
 		doc.appendChild (root_element);
 
 		// Save file:
@@ -208,7 +208,7 @@ Model::save_state()
 		file.flush();
 		file.close();
 		::rename (file_name + "~", file_name);
-		p->set_file_name (file_name);
+		p.set_file_name (file_name);
 
 		if (to_delete != QString::null)
 			QFile::remove (to_delete);

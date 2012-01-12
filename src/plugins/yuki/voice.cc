@@ -247,22 +247,22 @@ Voice::prepare_frequency_buffer (Haruhi::AudioBuffer* buffer, Haruhi::AudioBuffe
 	{
 		if (_frequency_change > 1.0f)
 		{
-			for (Sample *s = buffer->begin(), *e = buffer->end(); s != e; ++s)
+			for (Sample& s: *buffer)
 			{
 				if (_frequency >= _target_frequency)
 					_frequency_change = 1.0f;
 				_frequency *= _frequency_change;
-				*s *= _frequency;
+				s *= _frequency;
 			}
 		}
 		else if (_frequency_change < 1.0f)
 		{
-			for (Sample *s = buffer->begin(), *e = buffer->end(); s != e; ++s)
+			for (Sample& s: *buffer)
 			{
 				if (_frequency <= _target_frequency)
 					_frequency_change = 1.0f;
 				_frequency *= _frequency_change;
-				*s *= _frequency;
+				s *= _frequency;
 			}
 		}
 	}

@@ -92,21 +92,17 @@ Tree::save_state (QDomElement& element) const
 void
 Tree::load_state (QDomElement const& element)
 {
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
 	{
-		QDomElement e = n.toElement();
-		if (!e.isNull())
+		if (e.tagName() == "input")
 		{
-			if (e.tagName() == "input")
-			{
-				InputItem* port = new InputItem (this, e.attribute ("name"));
-				port->load_state (e);
-			}
-			else if (e.tagName() == "output")
-			{
-				OutputItem* port = new OutputItem (this, e.attribute ("name"));
-				port->load_state (e);
-			}
+			InputItem* port = new InputItem (this, e.attribute ("name"));
+			port->load_state (e);
+		}
+		else if (e.tagName() == "output")
+		{
+			OutputItem* port = new OutputItem (this, e.attribute ("name"));
+			port->load_state (e);
 		}
 	}
 }

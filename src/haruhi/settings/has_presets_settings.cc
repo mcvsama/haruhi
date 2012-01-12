@@ -57,16 +57,16 @@ HasPresetsSettings::favorite_presets_for_unit (std::string const& unit_urn)
 void
 HasPresetsSettings::save_state (QDomElement& element) const
 {
-	for (Units::const_iterator u = _units.begin(); u != _units.end(); ++u)
+	for (auto u: _units)
 	{
-		if (u->second.empty())
+		if (u.second.empty())
 			continue;
 		QDomElement unit_el = element.ownerDocument().createElement ("unit");
-		unit_el.setAttribute ("urn", u->first.c_str());
-		for (FavoritePresets::const_iterator fp = u->second.begin(); fp != u->second.end(); ++fp)
+		unit_el.setAttribute ("urn", u.first.c_str());
+		for (auto& fp: u.second)
 		{
 			QDomElement fp_el = element.ownerDocument().createElement ("favorite-preset");
-			fp_el.setAttribute ("uuid", fp->c_str());
+			fp_el.setAttribute ("uuid", fp.c_str());
 			unit_el.appendChild (fp_el);
 		}
 		element.appendChild (unit_el);

@@ -590,8 +590,8 @@ Session::update_level_meters()
 		_audio_backend->peak_levels (levels_map);
 
 		// Sort ports by name:
-		for (AudioBackend::LevelsMap::iterator p = levels_map.begin(); p != levels_map.end(); ++p)
-			ports.push_back (p->first);
+		for (auto& p: levels_map)
+			ports.push_back (p.first);
 		std::sort (ports.begin(), ports.end(), AudioPort::compare_by_name);
 
 		graph()->unlock();

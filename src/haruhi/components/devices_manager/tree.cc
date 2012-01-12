@@ -64,8 +64,8 @@ Tree::read_model()
 
 	// Create set of Device pointers:
 	DevicePtrs device_ptrs;
-	for (Model::Devices::iterator d = _model->devices().begin(); d != _model->devices().end(); ++d)
-		device_ptrs.insert (&*d);
+	for (Device& d: _model->devices())
+		device_ptrs.insert (&d);
 
 	// Check devices:
 	int dn = invisibleRootItem()->childCount();
@@ -86,8 +86,8 @@ Tree::read_model()
 		{
 			// Create set of Controller pointers:
 			ControllerPtrs controller_ptrs;
-			for (Device::Controllers::iterator c = device->controllers().begin(); c != device->controllers().end(); ++c)
-				controller_ptrs.insert (&*c);
+			for (Controller& c: device->controllers())
+				controller_ptrs.insert (&c);
 
 			// Check controllers:
 			int cn = device_item->childCount();
@@ -107,15 +107,15 @@ Tree::read_model()
 			}
 
 			// Controllers left in controller_ptrs are new controllers, need to be added:
-			for (ControllerPtrs::iterator c = controller_ptrs.begin(); c != controller_ptrs.end(); ++c)
-				last_added_item = device_item->create_controller_item (*c);
+			for (Controller* cptr: controller_ptrs)
+				last_added_item = device_item->create_controller_item (cptr);
 		}
 	}
 
 	// Devices left in device_ptrs are new devices, need to be added:
-	for (DevicePtrs::iterator d = device_ptrs.begin(); d != device_ptrs.end(); ++d)
+	for (Device* dptr: device_ptrs)
 	{
-		DeviceItem* device_item = create_device_item (*d);
+		DeviceItem* device_item = create_device_item (dptr);
 		create_controller_items (device_item);
 		last_added_item = device_item;
 	}
@@ -208,8 +208,8 @@ void
 Tree::create_controller_items (DeviceItem* device_item)
 {
 	Device::Controllers& controllers = device_item->device()->controllers();
-	for (Device::Controllers::iterator c = controllers.begin(); c != controllers.end(); ++c)
-		device_item->create_controller_item (&*c);
+	for (Controller& c: controllers)
+		device_item->create_controller_item (&c);
 }
 
 

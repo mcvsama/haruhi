@@ -120,10 +120,10 @@ Graph::unregister_unit (Unit* unit)
 	unit->unregistered();
 	lock();
 	// Notify ports about Unit unregistration:
-	for (Ports::iterator p = unit->inputs().begin(); p != unit->inputs().end(); ++p)
-		(*p)->unit_unregistered();
-	for (Ports::iterator p = unit->outputs().begin(); p != unit->outputs().end(); ++p)
-		(*p)->unit_unregistered();
+	for (Port* p: unit->inputs())
+		p->unit_unregistered();
+	for (Port* p: unit->outputs())
+		p->unit_unregistered();
 	_units.erase (f);
 	unit->_graph = 0;
 	// Signal:
@@ -140,8 +140,8 @@ Graph::enter_processing_round()
 	_inside_processing_round = true;
 	_dummy_syncing = false;
 	// Wakeup all Units:
-	for (Units::iterator k = _units.begin();  k != _units.end();  ++k)
-		(*k)->_synced = false;
+	for (Unit* u: _units)
+		u->_synced = false;
 }
 
 
@@ -150,9 +150,9 @@ Graph::leave_processing_round()
 {
 	_dummy_syncing = true;
 	// Bump only unsynced Units:
-	for (Units::iterator k = _units.begin();  k != _units.end();  ++k)
-		if (!(*k)->_synced && (*k)->_enabled)
-			(*k)->sync();
+	for (Unit* u: _units)
+		if (!u->_synced && u->_enabled)
+			u->sync();
 	_inside_processing_round = false;
 	compute_next_tempo_tick();
 	unlock();
@@ -162,8 +162,8 @@ Graph::leave_processing_round()
 void
 Graph::panic()
 {
-	for (Units::iterator k = _units.begin();  k != _units.end();  ++k)
-		(*k)->panic();
+	for (Unit* u: _units)
+		u->panic();
 }
 
 
@@ -171,8 +171,8 @@ void
 Graph::set_buffer_size (std::size_t buffer_size)
 {
 	_buffer_size = buffer_size;
-	for (Units::iterator k = _units.begin();  k != _units.end();  ++k)
-		(*k)->graph_updated();
+	for (Unit* u: _units)
+		u->graph_updated();
 }
 
 
@@ -180,8 +180,8 @@ void
 Graph::set_sample_rate (unsigned int sample_rate)
 {
 	_sample_rate = sample_rate;
-	for (Units::iterator k = _units.begin();  k != _units.end();  ++k)
-		(*k)->graph_updated();
+	for (Unit* u: _units)
+		u->graph_updated();
 }
 
 
@@ -189,8 +189,8 @@ void
 Graph::set_tempo (float tempo)
 {
 	_tempo = tempo;
-	for (Units::iterator k = _units.begin();  k != _units.end();  ++k)
-		(*k)->graph_updated();
+	for (Unit* u: _units)
+		u->graph_updated();
 }
 
 
@@ -198,16 +198,16 @@ void
 Graph::set_master_tune (float master_tune)
 {
 	_master_tune = master_tune;
-	for (Units::iterator k = _units.begin();  k != _units.end();  ++k)
-		(*k)->graph_updated();
+	for (Unit* u: _units)
+		u->graph_updated();
 }
 
 
 void
 Graph::notify (Notification* notification)
 {
-	for (Units::iterator k = _units.begin();  k != _units.end();  ++k)
-		(*k)->notify (notification);
+	for (Unit* u: _units)
+		u->notify (notification);
 	delete notification;
 }
 

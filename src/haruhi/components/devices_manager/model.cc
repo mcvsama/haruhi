@@ -44,8 +44,8 @@ Model::changed()
 bool
 Model::has_device (Device* device) const
 {
-	for (Devices::const_iterator d = _devices.begin(); d != _devices.end(); ++d)
-		if (device == &*d)
+	for (Device const& d: _devices)
+		if (device == &d)
 			return true;
 	return false;
 }
@@ -54,8 +54,8 @@ Model::has_device (Device* device) const
 bool
 Model::has_device_named (QString const& name) const
 {
-	for (Devices::const_iterator d = _devices.begin(); d != _devices.end(); ++d)
-		if (d->name() == name)
+	for (Device const& d: _devices)
+		if (d.name() == name)
 			return true;
 	return false;
 }
@@ -64,7 +64,7 @@ Model::has_device_named (QString const& name) const
 Model::Devices::iterator
 Model::find_device (Device* device)
 {
-	for (Devices::iterator d = _devices.begin(); d != _devices.end(); ++d)
+	for (auto d = _devices.begin(); d != _devices.end(); ++d)
 		if (device == &*d)
 			return d;
 	return _devices.end();
@@ -74,10 +74,10 @@ Model::find_device (Device* device)
 void
 Model::save_state (QDomElement& element) const
 {
-	for (Devices::const_iterator d = _devices.begin(); d != _devices.end(); ++d)
+	for (Device const& d: _devices)
 	{
 		QDomElement e = element.ownerDocument().createElement ("device");
-		d->save_state (e);
+		d.save_state (e);
 		element.appendChild (e);
 	}
 }
@@ -87,11 +87,8 @@ void
 Model::load_state (QDomElement const& element)
 {
 	_devices.clear();
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
 	{
-		QDomElement e = n.toElement();
-		if (e.isNull())
-			continue;
 		if (e.tagName() == "device")
 		{
 			_devices.push_back (Device());

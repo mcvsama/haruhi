@@ -137,8 +137,8 @@ Unit::panic()
 void
 Unit::sync_inputs()
 {
-	for (Ports::const_iterator i = _inputs.begin();  i != _inputs.end();  ++i)
-		(*i)->sync();
+	for (Port* p: _inputs)
+		p->sync();
 }
 
 /**
@@ -147,8 +147,8 @@ Unit::sync_inputs()
 void
 Unit::clear_outputs()
 {
-	for (Ports::const_iterator o = _outputs.begin();  o != _outputs.end();  ++o)
-		(*o)->buffer()->clear();
+	for (Port* p: _outputs)
+		p->buffer()->clear();
 }
 
 
@@ -156,10 +156,10 @@ void
 Unit::graph_updated()
 {
 	graph()->lock();
-	for (Ports::const_iterator i = _inputs.begin();  i != _inputs.end();  ++i)
-		(*i)->graph_updated();
-	for (Ports::const_iterator o = _outputs.begin();  o != _outputs.end();  ++o)
-		(*o)->graph_updated();
+	for (Port* p: _inputs)
+		p->graph_updated();
+	for (Port*p: _outputs)
+		p->graph_updated();
 	graph()->unlock();
 }
 

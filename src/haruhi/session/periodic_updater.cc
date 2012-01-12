@@ -92,8 +92,8 @@ PeriodicUpdater::timeout()
 	_set.clear();
 	_set_mutex.unlock();
 
-	for (Set::iterator i = copy.begin(); i != copy.end(); ++i)
-		(*i)->periodic_update();
+	for (auto w: copy)
+		w->periodic_update();
 }
 
 } // namespace Haruhi

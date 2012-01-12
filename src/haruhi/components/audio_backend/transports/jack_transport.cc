@@ -176,8 +176,8 @@ JackTransport::connect (std::string const& client_name)
 
 		// Switch all ports online:
 		lock_ports();
-		for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
-			(*p)->reinit();
+		for (JackPort* p: _ports)
+			p->reinit();
 		unlock_ports();
 	}
 	catch (Exception const& e)
@@ -195,8 +195,8 @@ JackTransport::disconnect()
 	{
 		deactivate();
 		lock_ports();
-		for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
-			(*p)->destroy();
+		for (JackPort* p: _ports)
+			p->destroy();
 		unlock_ports();
 		jack_client_t* c = _jack_client;
 		_jack_client = 0;
@@ -299,8 +299,8 @@ int
 JackTransport::c_process (jack_nframes_t)
 {
 	lock_ports();
-	for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
-		(*p)->transfer_data();
+	for (JackPort* p: _ports)
+		p->transfer_data();
 	unlock_ports();
 	_data_ready.post();
 	return 0;
@@ -322,8 +322,8 @@ JackTransport::c_buffer_size_change (jack_nframes_t buffer_size)
 {
 	// Update ports buffers:
 	lock_ports();
-	for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
-		(*p)->buffer()->resize (buffer_size);
+	for (JackPort* p: _ports)
+		p->buffer()->resize (buffer_size);
 	unlock_ports();
 	backend()->graph()->lock();
 	backend()->graph()->set_buffer_size (buffer_size);

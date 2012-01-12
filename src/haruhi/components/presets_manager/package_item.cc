@@ -60,8 +60,8 @@ PackageItem::read()
 	CategoriesSet t_categories; // TreeWidget items
 	std::map<Category*, CategoryItem*> ci_by_c;
 
-	for (Package::Categories::iterator p = _package->categories().begin(); p != _package->categories().end(); ++p)
-		m_categories.insert (&*p);
+	for (Category& c: _package->categories())
+		m_categories.insert (&c);
 
 	for (int i = 0; i < childCount(); ++i)
 	{
@@ -80,12 +80,12 @@ PackageItem::read()
 	std::set_intersection (m_categories.begin(), m_categories.end(), t_categories.begin(), t_categories.end(), std::inserter (rest, rest.end()));
 
 	// Most safe is to remove items with removed packages first:
-	for (CategoriesSet::iterator c = removed.begin(); c != removed.end(); ++c)
-		remove_category_item (ci_by_c[*c]);
-	for (CategoriesSet::iterator c = added.begin(); c != added.end(); ++c)
-		create_category_item (*c);
-	for (CategoriesSet::iterator c = rest.begin(); c != rest.end(); ++c)
-		ci_by_c[*c]->read();
+	for (Category* c: removed)
+		remove_category_item (ci_by_c[c]);
+	for (Category* c: added)
+		create_category_item (c);
+	for (Category* c: rest)
+		ci_by_c[c]->read();
 }
 
 

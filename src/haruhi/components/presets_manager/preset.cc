@@ -68,24 +68,18 @@ Preset::load_state (QDomElement const& element)
 	_uuid = element.attribute ("uuid");
 	if (_uuid.isEmpty() || _uuid.isNull())
 		generate_uuid();
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
 	{
-		QDomElement e = n.toElement();
-		if (e.isNull())
-			continue;
-		else if (e.tagName() == "meta")
+		if (e.tagName() == "meta")
 		{
-			for (QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling())
+			for (QDomElement e2 = e.firstChildElement(); !e2.isNull(); e2 = e2.nextSiblingElement())
 			{
-				QDomElement e = n.toElement();
-				if (e.isNull())
-					continue;
-				else if (e.tagName() == "name")
-					_name = e.text();
-				else if (e.tagName() == "version")
-					_version = e.text();
-				else if (e.tagName() == "created-at")
-					_created_at = e.text();
+				if (e2.tagName() == "name")
+					_name = e2.text();
+				else if (e2.tagName() == "version")
+					_version = e2.text();
+				else if (e2.tagName() == "created-at")
+					_created_at = e2.text();
 			}
 		}
 		else if (e.tagName() == "patch")

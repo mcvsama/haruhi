@@ -47,8 +47,8 @@ Device::operator== (Device const& other) const
 bool
 Device::has_controller (Controller* controller) const
 {
-	for (Controllers::const_iterator c = _controllers.begin(); c != _controllers.end(); ++c)
-		if (controller == &*c)
+	for (Controller const& c: _controllers)
+		if (controller == &c)
 			return true;
 	return false;
 }
@@ -57,7 +57,7 @@ Device::has_controller (Controller* controller) const
 Device::Controllers::iterator
 Device::find_controller (Controller* controller)
 {
-	for (Controllers::iterator c = _controllers.begin(); c != _controllers.end(); ++c)
+	for (auto c = _controllers.begin(); c != _controllers.end(); ++c)
 		if (controller == &*c)
 			return c;
 	return _controllers.end();
@@ -69,10 +69,10 @@ Device::save_state (QDomElement& element) const
 {
 	element.setAttribute ("name", _name);
 	element.setAttribute ("auto-add", _auto_add ? "true" : "false");
-	for (Controllers::const_iterator c = _controllers.begin(); c != _controllers.end(); ++c)
+	for (Controller const& c: _controllers)
 	{
 		QDomElement e = element.ownerDocument().createElement ("controller");
-		c->save_state (e);
+		c.save_state (e);
 		element.appendChild (e);
 	}
 }
@@ -85,11 +85,8 @@ Device::load_state (QDomElement const& element)
 	_auto_add = element.attribute ("auto-add") == "true";
 	_controllers.clear();
 
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
 	{
-		QDomElement e = n.toElement();
-		if (e.isNull())
-			continue;
 		if (e.tagName() == "controller")
 		{
 			_controllers.push_back (Controller());

@@ -50,8 +50,8 @@ Controller::Controller (QString const& name):
 	smoothing (0),
 	_name (name)
 {
-	for (std::size_t i = 0; i < countof (_voice_ids); ++i)
-		_voice_ids[i] = 0;
+	for (auto& voice_id: _voice_ids)
+		voice_id = 0;
 }
 
 
@@ -241,16 +241,16 @@ Controller::generate_smoothing_events (EventBuffer& buffer, Graph* graph)
 	Timestamp const t = graph->timestamp();
 
 	SmoothingParams* sp_tab[] = { &_controller_smoother, &_channel_pressure_smoother };
-	for (SmoothingParams** sp = sp_tab; sp != endof (sp_tab); ++sp)
+	for (SmoothingParams* sp: sp_tab)
 	{
-		if ((*sp)->current != (*sp)->target)
+		if (sp->current != sp->target)
 		{
 			// If difference is small enough, treat is as no difference:
-			if (std::abs ((*sp)->target - (*sp)->current) < 0.001f)
-				(*sp)->current = (*sp)->target;
+			if (std::abs (sp->target - sp->current) < 0.001f)
+				sp->current = sp->target;
 			else
-				(*sp)->current = (*sp)->smoother.process ((*sp)->target, graph->buffer_size());
-			buffer.push (new ControllerEvent (t, (*sp)->current));
+				sp->current = sp->smoother.process (sp->target, graph->buffer_size());
+			buffer.push (new ControllerEvent (t, sp->current));
 		}
 	}
 
@@ -313,12 +313,8 @@ Controller::load_state (QDomElement const& element)
 	_name = element.attribute ("name", "<unnamed>");
 	smoothing = element.attribute ("smoothing", "0").toInt();
 
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
 	{
-		QDomElement e = n.toElement();
-		if (e.isNull())
-			continue;
-
 		if (e.tagName() == "note-filter")
 		{
 			note_filter = e.attribute ("enabled") == "true";

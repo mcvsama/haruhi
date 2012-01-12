@@ -86,10 +86,10 @@ VoiceModulator::graph_updated (unsigned int sample_rate, std::size_t buffer_size
 	_sample_rate = sample_rate;
 	_buffer_size = buffer_size;
 
-	for (std::size_t i = 0; i < countof (_operator_output); ++i)
+	for (Haruhi::AudioBuffer& op: _operator_output)
 	{
-		_operator_output[i].resize (buffer_size);
-		_operator_output[i].clear();
+		op.resize (buffer_size);
+		op.clear();
 	}
 }
 

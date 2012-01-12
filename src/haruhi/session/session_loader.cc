@@ -78,8 +78,8 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 
 	// Populate recent_listview:
 	SessionLoaderSettings* settings = Haruhi::haruhi()->session_loader_settings();
-	for (SessionLoaderSettings::RecentSessions::iterator rs = settings->recent_sessions().begin(); rs != settings->recent_sessions().end(); ++rs)
-		new RecentSessionItem (_recent_listview, *rs);
+	for (auto& rs: settings->recent_sessions())
+		new RecentSessionItem (_recent_listview, rs);
 
 	if (_recent_listview->invisibleRootItem()->childCount() > 0)
 		_recent_listview->setCurrentItem (_recent_listview->invisibleRootItem()->child (0));
@@ -307,7 +307,7 @@ SessionLoader::populate_devices_combo()
 	assert (dm_settings);
 	DevicesManager::Model::Devices& devices = dm_settings->model().devices();
 
-	for (DevicesManager::Model::Devices::iterator d = devices.begin(); d != devices.end(); ++d)
+	for (DevicesManager::Device& d: devices)
 	{
 		bool already_added = false;
 		for (int i = 0; i < _devices_list->count(); ++i)
@@ -315,7 +315,7 @@ SessionLoader::populate_devices_combo()
 			DeviceItem* ld = dynamic_cast<DeviceItem*> (_devices_list->item (i));
 			if (!ld)
 				continue;
-			if (*d == ld->device)
+			if (d == ld->device)
 			{
 				already_added = true;
 				break;
@@ -323,7 +323,7 @@ SessionLoader::populate_devices_combo()
 		}
 		if (already_added)
 			continue;
-		_devices_combobox->addItem (Resources::Icons16::keyboard(), d->name(), qVariantFromValue (reinterpret_cast<void*> (&*d)));
+		_devices_combobox->addItem (Resources::Icons16::keyboard(), d.name(), qVariantFromValue (reinterpret_cast<void*> (&d)));
 	}
 
 	_devices_combobox->setEnabled (_devices_combobox->count() > 0);
@@ -339,9 +339,9 @@ SessionLoader::auto_add_devices()
 	assert (dm_settings);
 	DevicesManager::Model::Devices& devices = dm_settings->model().devices();
 
-	for (DevicesManager::Model::Devices::iterator d = devices.begin(); d != devices.end(); ++d)
-		if (d->auto_add())
-			add_device (*d);
+	for (DevicesManager::Device& d: devices)
+		if (d.auto_add())
+			add_device (d);
 }
 
 

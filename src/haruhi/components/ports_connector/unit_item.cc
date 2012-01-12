@@ -95,8 +95,8 @@ UnitItem::read_ports()
 {
 	Ports u_ports = (_type == Port::Input) ? _unit->inputs() : _unit->outputs(); // Unit ports
 	Ports l_ports; // UnitItem ports
-	for (PortsToItemsMap::iterator p = _ports.begin(); p != _ports.end(); ++p)
-		l_ports.insert (p->first);
+	for (auto p: _ports)
+		l_ports.insert (p.first);
 
 	Ports added;
 	Ports removed;
@@ -107,12 +107,12 @@ UnitItem::read_ports()
 
 	// Since some operations (setHidden) may call sort() and thus operator< which operatoes on Port,
 	// remove deleted items first to avoid segmentation faults.
-	for (Ports::iterator p = removed.begin(); p != removed.end(); ++p)
-		remove_port (*p);
-	for (Ports::iterator p = added.begin(); p != added.end(); ++p)
-		insert_port (*p);
-	for (Ports::iterator p = rest.begin(); p != rest.end(); ++p)
-		update_port (*p);
+	for (Port* p: removed)
+		remove_port (p);
+	for (Port* p: added)
+		insert_port (p);
+	for (Port* p: rest)
+		update_port (p);
 }
 
 

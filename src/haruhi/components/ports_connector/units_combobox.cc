@@ -62,23 +62,23 @@ UnitsCombobox::read_units()
 	// PortsConnector's external units:
 	list = Units (_ports_connector->_external_units.begin(), _ports_connector->_external_units.end());
 	std::sort (list.begin(), list.end(), Unit::compare_by_title);
-	for (Units::iterator u = list.begin(); u != list.end(); ++u)
+	for (Unit* u: list)
 	{
-		if (((_type == Port::Input) ? (*u)->inputs() : (*u)->outputs()).empty())
+		if (((_type == Port::Input) ? u->inputs() : u->outputs()).empty())
 			continue;
-		insertItem (unit_icon, QString::fromStdString ((*u)->title()));
-		_units.push_back (*u);
+		insertItem (unit_icon, QString::fromStdString (u->title()));
+		_units.push_back (u);
 	}
 
 	// UnitBay's units:
 	list = Units (_ports_connector->_unit_bay->units().begin(), _ports_connector->_unit_bay->units().end());
 	std::sort (list.begin(), list.end(), Unit::compare_by_title);
-	for (Units::iterator u = list.begin(); u != list.end(); ++u)
+	for (Unit* u: list)
 	{
-		if (((_type == Port::Input) ? (*u)->inputs() : (*u)->outputs()).empty())
+		if (((_type == Port::Input) ? u->inputs() : u->outputs()).empty())
 			continue;
-		insertItem (unit_icon, QString::fromStdString ((*u)->title()), _units.size());
-		_units.push_back (*u);
+		insertItem (unit_icon, QString::fromStdString (u->title()), _units.size());
+		_units.push_back (u);
 	}
 }
 

@@ -233,13 +233,11 @@ LevelMetersGroup::Scale::paintEvent (QPaintEvent*)
 	int h = height();
 
 	// Scale markers [dB]:
-	float dbs[] = { 4, 0, -3, -10, -20, -30, -40, -50 };
-
-	for (float* db = dbs;  db != dbs + sizeof dbs / sizeof *dbs;  ++db)
+	for (float db: { 4, 0, -3, -10, -20, -30, -40, -50 })
 	{
-		float pos = log_meter (*db, _lower_db, _upper_db) * h;
+		float pos = log_meter (db, _lower_db, _upper_db) * h;
 		painter.drawLine (0, h - pos, 4, h - pos);
-		painter.drawText (7, h - pos + 2, QString::number (std::abs (*db)));
+		painter.drawText (7, h - pos + 2, QString::number (std::abs (db)));
 	}
 }
 
@@ -275,8 +273,8 @@ LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper
 	QHBoxLayout* meters_layout = new QHBoxLayout();
 	meters_layout->setSpacing (1);
 	meters_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
-	for (Vector::iterator m = _vector.begin();  m != _vector.end();  ++m)
-		meters_layout->addWidget (*m);
+	for (LevelMeter* m: _vector)
+		meters_layout->addWidget (m);
 	meters_layout->addWidget (_scale);
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
@@ -326,8 +324,8 @@ LevelMetersGroup::update_peak (Sample sample)
 void
 LevelMetersGroup::set_fps (int fps)
 {
-	for (Vector::iterator m = _vector.begin();  m != _vector.end();  ++m)
-		(*m)->set_fps (fps);
+	for (LevelMeter* m: _vector)
+		m->set_fps (fps);
 	_timer->setInterval (1000.0 / fps);
 }
 
@@ -335,16 +333,16 @@ LevelMetersGroup::set_fps (int fps)
 void
 LevelMetersGroup::set_decay_speed (float speed)
 {
-	for (Vector::iterator m = _vector.begin(); m != _vector.end(); ++m)
-		(*m)->set_decay_speed (speed);
+	for (LevelMeter* m: _vector)
+		m->set_decay_speed (speed);
 }
 
 
 void
 LevelMetersGroup::reset_peak()
 {
-	for (Vector::iterator m = _vector.begin(); m != _vector.end(); ++m)
-		(*m)->reset_peak();
+	for (LevelMeter* m: _vector)
+		m->reset_peak();
 	_peak_sample = 0;
 	_peak_button->setText ("-inf dB");
 	_peak_button->setPaletteBackgroundColor (_peak_button_bg);
@@ -355,10 +353,10 @@ LevelMetersGroup::reset_peak()
 void
 LevelMetersGroup::update_meters()
 {
-	for (Vector::iterator m = _vector.begin(); m != _vector.end(); ++m)
+	for (LevelMeter* m: _vector)
 	{
-		(*m)->decay();
-		(*m)->update();
+		m->decay();
+		m->update();
 	}
 }
 

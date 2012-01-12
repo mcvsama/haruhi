@@ -58,9 +58,8 @@ FilterWidget::FilterWidget (QWidget* parent, unsigned int filter_no, Params::Fil
 
 	// Set unit bay on all knobs:
 
-	Haruhi::Knob* all_knobs[] = { _knob_frequency, _knob_resonance, _knob_gain, _knob_attenuation };
-	for (Haruhi::Knob** k = all_knobs; k != endof (all_knobs); ++k)
-		(*k)->set_unit_bay (_part->part_manager()->plugin()->unit_bay());
+	for (auto* k: { _knob_frequency, _knob_resonance, _knob_gain, _knob_attenuation })
+		k->set_unit_bay (_part->part_manager()->plugin()->unit_bay());
 
 	// Top widget, can be disabled with all child widgets:
 	_panel = new QWidget (this);

@@ -137,8 +137,8 @@ AlsaTransport::connect (std::string const& client_name)
 	snd_config_update_free_global();
 	snd_seq_set_client_name (_seq, client_name.c_str());
 	// Switch all ports online:
-	for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
-		p->second->reinit();
+	for (auto& p: _ports)
+		p.second->reinit();
 }
 
 
@@ -147,8 +147,8 @@ AlsaTransport::disconnect()
 {
 	if (_seq)
 	{
-		for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
-			p->second->destroy();
+		for (auto& p: _ports)
+			p.second->destroy();
 		snd_seq_t* c = _seq;
 		_seq = 0;
 		snd_seq_close (c);
@@ -199,8 +199,8 @@ AlsaTransport::sync()
 	Timestamp t = backend()->graph()->timestamp();
 
 	// Clear all buffers:
-	for (Ports::iterator p = _ports.begin(); p != _ports.end(); ++p)
-		p->second->buffer().clear();
+	for (auto& p: _ports)
+		p.second->buffer().clear();
 
 	while (::snd_seq_event_input (_seq, &e) >= 0)
 	{
@@ -225,8 +225,8 @@ AlsaTransport::sync()
 bool
 AlsaTransport::learning_possible() const
 {
-	for (Ports::const_iterator p = _ports.begin(); p != _ports.end(); ++p)
-		if (p->second->writers() > 0)
+	for (auto& p: _ports)
+		if (p.second->writers() > 0)
 			return true;
 	return false;
 }
@@ -276,9 +276,6 @@ AlsaTransport::map_alsa_to_internal (MIDI::Event& midi, ::snd_seq_event_t* event
 			midi.key_pressure.note = event->data.note.note;
 			midi.key_pressure.value = event->data.note.velocity;
 			break;
-
-		//case SND_SEQ_EVENT_PGMCHANGE:
-		//	break;
 
 		default:
 			return false;

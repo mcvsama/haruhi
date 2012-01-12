@@ -56,10 +56,10 @@ Category::save_state (QDomElement& element) const
 {
 	element.setAttribute ("name", _name);
 
-	for (Presets::const_iterator p = _presets.begin(); p != _presets.end(); ++p)
+	for (Preset const& p: _presets)
 	{
 		QDomElement preset_el = element.ownerDocument().createElement ("preset");
-		p->save_state (preset_el);
+		p.save_state (preset_el);
 		element.appendChild (preset_el);
 	}
 }
@@ -72,12 +72,9 @@ Category::load_state (QDomElement const& element)
 
 	set_name (element.attribute ("name", "<unnamed category>"));
 
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
 	{
-		QDomElement e = n.toElement();
-		if (e.isNull())
-			continue;
-		else if (e.tagName() == "preset")
+		if (e.tagName() == "preset")
 		{
 			_presets.push_back (Preset());
 			_presets.back().load_state (e);

@@ -149,14 +149,15 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 			int sustain_sample = 0;
 			float sustain_value = 0.0f;
 			unsigned int i = 0;
-			for (DSP::Envelope::Points::iterator p = points.begin(); p != points.end(); ++p, ++i)
+			for (DSP::Envelope::Point& p: points)
 			{
 				if (_envelope->sustain_point() == i)
 				{
 					sustain_sample = sum_samples;
-					sustain_value = p->value;
+					sustain_value = p.value;
 				}
-				sum_samples += p->samples;
+				sum_samples += p.samples;
+				++i;
 			}
 
 			// Compute shape:
@@ -165,13 +166,13 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 			int s = 0;
 			if (sum_samples > 0)
 			{
-				for (DSP::Envelope::Points::iterator p = points.begin(); p != points.end(); ++p)
+				for (DSP::Envelope::Point& p: points)
 				{
-					point = QPointF (1.0f * s * w / sum_samples, h - 1 - p->value * (h - 1));
+					point = QPointF (1.0f * s * w / sum_samples, h - 1 - p.value * (h - 1));
 					envelope_points.push_back (point);
 					shape_line << point;
 					shape_polygon << point;
-					s += p->samples;
+					s += p.samples;
 				}
 			}
 			else
@@ -239,7 +240,8 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 				QRect hovered_rect;
 
 				// Go backwards so if two rects are overlapping, the latter has priority to become hovered:
-				for (std::vector<QPointF>::difference_type i = envelope_points.size() - 1; i >= 0; --i)
+				typedef std::vector<QPointF>::difference_type DT;
+				for (auto i = static_cast<DT> (envelope_points.size()) - 1; i >= 0; --i)
 				{
 					QRect rect = QRect (envelope_points[i].x() - 4, envelope_points[i].y() - 4, 8, 8);
 					QLineF line;
@@ -283,8 +285,8 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 				{
 					painter.setRenderHint (QPainter::Antialiasing, false);
 					painter.setPen (QPen (QColor (0x00, 0x00, 0x00), 1, Qt::SolidLine));
-					for (std::vector<QRect>::iterator rect = normal_rects.begin(); rect != normal_rects.end(); ++rect)
-						painter.drawRect (*rect);
+					for (QRect& rect: normal_rects)
+						painter.drawRect (rect);
 					// Active point:
 					painter.setRenderHint (QPainter::Antialiasing, false);
 					if (_active_point_index != -1 && _active_point_index != _hovered_point_index)
@@ -299,8 +301,8 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 					painter.setRenderHint (QPainter::Antialiasing, true);
 					painter.setPen (QPen (QColor (0x00, 0x00, 0x00), 1, Qt::SolidLine));
 					painter.setBrush (QBrush (QColor (0xca, 0xca, 0xca)));
-					for (std::vector<QRect>::iterator rect = normal_rects.begin(); rect != normal_rects.end(); ++rect)
-						painter.drawEllipse (rect->adjusted (2, 2, -1, -1));
+					for (QRect& rect: normal_rects)
+						painter.drawEllipse (rect.adjusted (2, 2, -1, -1));
 					// Active point:
 					if (_active_point_index != -1 && _active_point_index != _hovered_point_index)
 					{

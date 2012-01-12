@@ -210,14 +210,13 @@ FrequencyResponsePlot::repaint_grid()
 
 	// Scale markers [dB]:
 	painter.setPen (QPen (grid_color, 1, Qt::DotLine));
-	float dbs[] = { -60, -50, -40, -30, -20, -10, 0, +10, +20 };
-	for (float* db = dbs;  db != dbs + sizeof dbs / sizeof *dbs;  ++db)
+	for (float db: { -60, -50, -40, -30, -20, -10, 0, +10, +20 })
 	{
-		float pos = log_meter (*db, lower_db, upper_db) * h;
+		float pos = log_meter (db, lower_db, upper_db) * h;
 		painter.drawLine (0, h - pos, w, h - pos);
 		float const scale = 1.0f;
-		if (*db >= -40)
-			painter.drawText (3, h - pos - 2, QString::number (std::abs (scale * *db)) + ((*db == 0) ? " dB" : ""));
+		if (db >= -40)
+			painter.drawText (3, h - pos - 2, QString::number (std::abs (scale * db)) + ((db == 0) ? " dB" : ""));
 	}
 
 	// 0dB line:
@@ -229,24 +228,23 @@ FrequencyResponsePlot::repaint_grid()
 
 	// Frequency markers:
 	painter.setPen (QPen (grid_color, 1, Qt::SolidLine));
-	float freqs[] = { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 20000 };
 	bool drawn_first = false;
-	for (float* f = freqs;  f != freqs + sizeof freqs / sizeof *freqs;  ++f)
+	for (float f: { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 20000 })
 	{
-		if (*f >= MinFreq && *f <= MaxFreq)
+		if (f >= MinFreq && f <= MaxFreq)
 		{
-			float pos = w * log (*f - MinFreq) / log (MaxFreq);
+			float pos = w * log (f - MinFreq) / log (MaxFreq);
 			painter.drawLine (pos, 0, pos, h);
 			// Draw first frequency, 100Hz, 1k and 10k:
 			if (!drawn_first)
 			{
-				painter.drawText (pos + 2, 8, QString::number (*f));
+				painter.drawText (pos + 2, 8, QString::number (f));
 				drawn_first = true;
 			}
-			else if (*f == 100)
-				painter.drawText (pos + 2, 8, QString::number (*f));
-			else if (*f == 1000 || *f == 10000)
-				painter.drawText (pos + 2, 8, QString::number (*f / 1000) + "k");
+			else if (f == 100)
+				painter.drawText (pos + 2, 8, QString::number (f));
+			else if (f == 1000 || f == 10000)
+				painter.drawText (pos + 2, 8, QString::number (f / 1000) + "k");
 		}
 	}
 }

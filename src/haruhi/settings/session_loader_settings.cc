@@ -104,10 +104,10 @@ SessionLoaderSettings::save_state (QDomElement& element) const
 	QDomElement recent_sessions_el = element.ownerDocument().createElement ("recent-sessions");
 	element.appendChild (recent_sessions_el);
 
-	for (RecentSessions::iterator rs = _recent_sessions.begin(); rs != _recent_sessions.end(); ++rs)
+	for (auto& rs: _recent_sessions)
 	{
 		QDomElement rs_el = element.ownerDocument().createElement ("recent-session");
-		rs->save_state (rs_el);
+		rs.save_state (rs_el);
 		recent_sessions_el.appendChild (rs_el);
 	}
 }

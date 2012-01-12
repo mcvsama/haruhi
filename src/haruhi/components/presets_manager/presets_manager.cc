@@ -430,8 +430,8 @@ PresetsManager::read()
 	PackagesSet t_packages; // TreeWidget items
 	std::map<Private::Package*, Private::PackageItem*> pi_by_p;
 
-	for (Private::Model::Packages::iterator p = _model->packages().begin(); p != _model->packages().end(); ++p)
-		m_packages.insert (&*p);
+	for (Private::Package& p: _model->packages())
+		m_packages.insert (&p);
 
 	for (int i = 0; i < _tree->invisibleRootItem()->childCount(); ++i)
 	{
@@ -450,12 +450,12 @@ PresetsManager::read()
 	std::set_intersection (m_packages.begin(), m_packages.end(), t_packages.begin(), t_packages.end(), std::inserter (rest, rest.end()));
 
 	// Most safe is to remove items with removed packages first:
-	for (PackagesSet::iterator p = removed.begin(); p != removed.end(); ++p)
-		remove_package_item (pi_by_p[*p]);
-	for (PackagesSet::iterator p = added.begin(); p != added.end(); ++p)
-		create_package_item (*p);
-	for (PackagesSet::iterator p = rest.begin(); p != rest.end(); ++p)
-		pi_by_p[*p]->read();
+	for (Private::Package* p: removed)
+		remove_package_item (pi_by_p[p]);
+	for (Private::Package* p: added)
+		create_package_item (p);
+	for (Private::Package* p: rest)
+		pi_by_p[p]->read();
 
 	// Reselect selected item to update presets editor in case the selected item has been changed
 	// in another PresetsManager instance:
@@ -503,13 +503,12 @@ PresetsManager::remove_package_item (Private::PackageItem* package_item)
 
 
 std::string
-PresetsManager::sanitize_urn (std::string const& urn) const
+PresetsManager::sanitize_urn (std::string urn) const
 {
-	std::string r = urn;
-	for (std::string::size_type i = 0; i < r.size(); ++i)
-		if (r[i] == '/')
-			r[i] = '_';
-	return r;
+	for (auto c: urn)
+		if (c == '/')
+			c = '_';
+	return urn;
 }
 
 } // namespace Haruhi

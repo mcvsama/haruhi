@@ -95,10 +95,10 @@ PortsList::read_units()
 
 	Units g_units; // Graph units
 	Units l_units; // List units
-	for (Units::iterator u = graph->units().begin(); u != graph->units().end(); ++u)
-		g_units.insert (*u);
-	for (UnitsToItemsMap::iterator u = _units.begin(); u != _units.end(); ++u)
-		l_units.insert (u->first);
+	for (Unit* u: graph->units())
+		g_units.insert (u);
+	for (auto u: _units)
+		l_units.insert (u.first);
 
 	Units added;
 	Units removed;
@@ -108,12 +108,12 @@ PortsList::read_units()
 	std::set_intersection (g_units.begin(), g_units.end(), l_units.begin(), l_units.end(), std::inserter (rest, rest.end()));
 
 	// Removing items for deleted units first is safest.
-	for (Units::iterator u = removed.begin(); u != removed.end(); ++u)
-		remove_unit (*u);
-	for (Units::iterator u = added.begin(); u != added.end(); ++u)
-		insert_unit (*u);
-	for (Units::iterator u = rest.begin(); u != rest.end(); ++u)
-		update_unit (*u);
+	for (Unit* u: removed)
+		remove_unit (u);
+	for (Unit* u: added)
+		insert_unit (u);
+	for (Unit* u: rest)
+		update_unit (u);
 
 	sort();
 }

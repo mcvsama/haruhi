@@ -73,8 +73,8 @@ CategoryItem::read()
 	PresetsSet t_presets; // TreeWidget items
 	std::map<Preset*, PresetItem*> pi_by_p;
 
-	for (Category::Presets::iterator p = _category->presets().begin(); p != _category->presets().end(); ++p)
-		m_presets.insert (&*p);
+	for (Preset& p: _category->presets())
+		m_presets.insert (&p);
 
 	for (int i = 0; i < childCount(); ++i)
 	{
@@ -93,12 +93,12 @@ CategoryItem::read()
 	std::set_intersection (m_presets.begin(), m_presets.end(), t_presets.begin(), t_presets.end(), std::inserter (rest, rest.end()));
 
 	// Most safe is to remove items with removed packages first:
-	for (PresetsSet::iterator p = removed.begin(); p != removed.end(); ++p)
-		remove_preset_item (pi_by_p[*p]);
-	for (PresetsSet::iterator p = added.begin(); p != added.end(); ++p)
-		create_preset_item (*p);
-	for (PresetsSet::iterator p = rest.begin(); p != rest.end(); ++p)
-		pi_by_p[*p]->read();
+	for (Preset* p: removed)
+		remove_preset_item (pi_by_p[p]);
+	for (Preset* p: added)
+		create_preset_item (p);
+	for (Preset* p: rest)
+		pi_by_p[p]->read();
 }
 
 

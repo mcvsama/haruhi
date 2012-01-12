@@ -22,10 +22,9 @@ namespace Haruhi {
 
 EventTeacher::~EventTeacher()
 {
-	// Stop learning all learnables:
-	Learnables lcopy = _learnables;
-	for (Learnables::iterator l = lcopy.begin(); l != lcopy.end(); ++l)
-		stop_learning (l->first);
+	// Stop learning all learnables; operate on copy:
+	for (auto& l: Learnables (_learnables))
+		stop_learning (l.first);
 }
 
 

@@ -371,10 +371,10 @@ EMITER_TEMPLATE_SIGNATURE
 	  public:
 		virtual ~EMITER_CLASS()
 		{
-			for (EMITER_TYPENAME Connections::iterator i = _connections.begin(); i != _connections.end(); ++i)
+			for (ConnectionBase* c: _connections)
 			{
-				(*i)->receiver()->_connections.remove (*i);
-				delete *i;
+				c->receiver()->_connections.remove (c);
+				delete c;
 			}
 			_connections.clear();
 		}
@@ -401,9 +401,9 @@ EMITER_TEMPLATE_SIGNATURE
 			disconnect (Receiver* receiver, void (Receiver::*method)(EMITER_PARAMETER_TYPES_LIST))
 			{
 				Connection<Receiver>* connection;
-				for (EMITER_TYPENAME Connections::iterator i = _connections.begin(); i != _connections.end(); ++i)
+				for (ConnectionBase* c: _connections)
 				{
-					if ((connection = dynamic_cast<Connection<Receiver>*> (*i)))
+					if ((connection = dynamic_cast<Connection<Receiver>*> (c)))
 					{
 						if (connection->is (receiver, method))
 						{
@@ -417,8 +417,8 @@ EMITER_TEMPLATE_SIGNATURE
 		void
 		operator() (EMITER_PARAMETERS_LIST)
 		{
-			for (EMITER_TYPENAME Connections::iterator i = _connections.begin(); i != _connections.end(); ++i)
-				(*i)->call (EMITER_ARGUMENTS_LIST);
+			for (ConnectionBase* c: _connections)
+				c->call (EMITER_ARGUMENTS_LIST);
 		}
 
 		EMITER_TYPENAME Connections::size_type

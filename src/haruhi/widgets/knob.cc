@@ -422,10 +422,10 @@ Knob::create_context_menu()
 		create_connect_menu (event_backend_menu, graph->event_backend(), pixmap_for_port_group, pixmap_for_port);
 
 		// Iterate over all Units from UnitBay and create PopupMenus for their EventPorts:
-		for (UnitBay::Units::iterator u = unit_bay()->units().begin(); u != unit_bay()->units().end(); ++u)
+		for (Unit* u: unit_bay()->units())
 		{
-			QMenu* unit_menu = _connect_menu->addMenu (pixmap_for_unit, QString::fromStdString ((*u)->title()));
-			create_connect_menu (unit_menu, *u, pixmap_for_port_group, pixmap_for_port);
+			QMenu* unit_menu = _connect_menu->addMenu (pixmap_for_unit, QString::fromStdString (u->title()));
+			create_connect_menu (unit_menu, u, pixmap_for_port_group, pixmap_for_port);
 		}
 
 		// Iterate over all connected ports and create Disconnect menu:
@@ -435,14 +435,14 @@ Knob::create_context_menu()
 			_context_menu->addSeparator();
 			_context_menu->addAction ("Disconnect from all", this, SLOT (disconnect_from_all()));
 		}
-		for (Ports::iterator p = back_connections.begin(); p != back_connections.end(); ++p)
+		for (Port* p: back_connections)
 		{
 			_action_id += 1;
 			QAction* action = _disconnect_menu->addAction (pixmap_for_port,
-														   QString::fromStdString ((*p)->unit()->title() + " • " + ((*p)->group() ? (*p)->group()->name() + " • " : "") + (*p)->name()),
+														   QString::fromStdString (p->unit()->title() + " • " + (p->group() ? p->group()->name() + " • " : "") + p->name()),
 														   _disconnect_signal_mapper, SLOT (map()));
 			_disconnect_signal_mapper->setMapping (action, _action_id);
-			_context_menu_port_map[_action_id] = *p;
+			_context_menu_port_map[_action_id] = p;
 		}
 
 		_connect_menu->setEnabled (!_connect_menu->isEmpty());
@@ -466,9 +466,9 @@ Knob::create_connect_menu (QMenu* unit_menu, Unit* unit, QPixmap const& pixmap_f
 	PortsVector ports;
 
 	// Collect ports and groups:
-	for (Ports::iterator p = unit->outputs().begin(); p != unit->outputs().end(); ++p)
+	for (Port* p: unit->outputs())
 	{
-		EventPort* ep = dynamic_cast<EventPort*> (*p);
+		EventPort* ep = dynamic_cast<EventPort*> (p);
 		if (ep)
 		{
 			if (ep->group())
@@ -479,29 +479,29 @@ Knob::create_connect_menu (QMenu* unit_menu, Unit* unit, QPixmap const& pixmap_f
 	}
 
 	// Add group items and submenus:
-	for (GroupsMap::iterator g = groups.begin(); g != groups.end(); ++g)
+	for (auto& g: groups)
 	{
-		QMenu* group_menu = unit_menu->addMenu (pixmap_for_port_group, QString::fromStdString (g->first->name()));
-		std::sort (g->second.begin(), g->second.end(), Port::compare_by_name);
-		for (PortsVector::iterator p = g->second.begin(); p != g->second.end(); ++p)
+		QMenu* group_menu = unit_menu->addMenu (pixmap_for_port_group, QString::fromStdString (g.first->name()));
+		std::sort (g.second.begin(), g.second.end(), Port::compare_by_name);
+		for (Port* p: g.second)
 		{
 			_action_id += 1;
-			QAction* action = group_menu->addAction (pixmap_for_port, QString::fromStdString ((*p)->name()), _connect_signal_mapper, SLOT (map()));
-			action->setEnabled (!(*p)->connected_to (event_port()));
+			QAction* action = group_menu->addAction (pixmap_for_port, QString::fromStdString (p->name()), _connect_signal_mapper, SLOT (map()));
+			action->setEnabled (!p->connected_to (event_port()));
 			_connect_signal_mapper->setMapping (action, _action_id);
-			_context_menu_port_map[_action_id] = *p;
+			_context_menu_port_map[_action_id] = p;
 		}
 	}
 
 	// Add port items:
 	std::sort (ports.begin(), ports.end(), Port::compare_by_name);
-	for (PortsVector::iterator p = ports.begin(); p != ports.end(); ++p)
+	for (Port* p: ports)
 	{
 		_action_id += 1;
-		QAction* action = unit_menu->addAction (pixmap_for_port, QString::fromStdString ((*p)->name()), _connect_signal_mapper, SLOT (map()));
-		action->setEnabled (!(*p)->connected_to (event_port()));
+		QAction* action = unit_menu->addAction (pixmap_for_port, QString::fromStdString (p->name()), _connect_signal_mapper, SLOT (map()));
+		action->setEnabled (!p->connected_to (event_port()));
 		_connect_signal_mapper->setMapping (action, _action_id);
-		_context_menu_port_map[_action_id] = *p;
+		_context_menu_port_map[_action_id] = p;
 	}
 
 	unit_menu->menuAction()->setVisible (!unit_menu->isEmpty());

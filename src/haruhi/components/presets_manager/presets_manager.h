@@ -134,7 +134,7 @@ class PresetsManager:
 	remove_package_item (PresetsManagerPrivate::PackageItem* package_item);
 
 	std::string
-	sanitize_urn (std::string const& urn) const;
+	sanitize_urn (std::string urn) const;
 
   private:
 	PresetsManagerPrivate::Model*			_model;

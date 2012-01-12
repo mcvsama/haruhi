@@ -180,23 +180,23 @@ Backend::process()
 	_transport->sync();
 
 	// For each Device:
-	for (InputsMap::iterator h = _inputs.begin(); h != _inputs.end(); ++h)
+	for (auto& h: _inputs)
 	{
-		Transport::Port* transport_port = h->first;
-		DeviceWithPortItem* device_item = h->second;
+		Transport::Port* transport_port = h.first;
+		DeviceWithPortItem* device_item = h.second;
 		// For each Controller:
-		for (DeviceWithPortItem::Controllers::iterator c = device_item->controllers()->begin(); c != device_item->controllers()->end(); ++c)
+		for (ControllerWithPortItem* c: *device_item->controllers())
 		{
-			if ((*c)->ready())
+			if (c->ready())
 			{
 				// For each event that comes from transport:
-				for (Transport::MidiBuffer::iterator m = transport_port->buffer().begin(); m != transport_port->buffer().end(); ++m)
+				for (MIDI::Event& m: transport_port->buffer())
 				{
-					if ((*c)->handle_event (*m))
-						handle_event_for_learnables (*m, (*c)->port());
-					on_event (*m);
+					if (c->handle_event (m))
+						handle_event_for_learnables (m, c->port());
+					on_event (m);
 				}
-				(*c)->generate_smoothing_events();
+				c->generate_smoothing_events();
 			}
 		}
 	}
@@ -218,14 +218,10 @@ Backend::load_state (QDomElement const& element)
 	bool e = enabled();
 	if (e)
 		disable();
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
 	{
-		QDomElement e = n.toElement();
-		if (!e.isNull())
-		{
-			if (e.tagName() == "inputs")
-				_model.load_state (e);
-		}
+		if (e.tagName() == "inputs")
+			_model.load_state (e);
 	}
 	if (e)
 		enable();
@@ -347,12 +343,12 @@ Backend::update_templates_menu()
 	int action_id = 0;
 	_templates.clear();
 	DevicesManager::Model& dm_model = Haruhi::haruhi()->devices_manager_settings()->model();
-	for (DevicesManager::Model::Devices::iterator d = dm_model.devices().begin(); d != dm_model.devices().end(); ++d)
+	for (DevicesManager::Device& d: dm_model.devices())
 	{
 		action_id += 1;
-		QAction* a = _templates_menu->addAction (Resources::Icons16::template_(), d->name(), _insert_template_signal_mapper, SLOT (map()));
+		QAction* a = _templates_menu->addAction (Resources::Icons16::template_(), d.name(), _insert_template_signal_mapper, SLOT (map()));
 		_insert_template_signal_mapper->setMapping (a, action_id);
-		_templates.insert (std::make_pair (action_id, *d));
+		_templates.insert (std::make_pair (action_id, d));
 	}
 
 	_templates_menu->setTitle ("&Insert template");
@@ -368,7 +364,7 @@ void
 Backend::handle_event_for_learnables (MIDI::Event const& event, EventPort* port)
 {
 	Learnables::iterator lnext;
-	for (Learnables::iterator l = learnables().begin(); l != learnables().end(); l = lnext)
+	for (auto l = learnables().begin(); l != learnables().end(); l = lnext)
 	{
 		lnext = l;
 		++lnext;

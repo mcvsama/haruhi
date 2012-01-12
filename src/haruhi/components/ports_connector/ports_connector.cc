@@ -283,10 +283,10 @@ PortsConnector::insert_unit (Unit* unit)
 {
 	_unit_bay->graph()->lock();
 	unit_registered (unit);
-	for (Ports::iterator p = unit->inputs().begin(); p != unit->inputs().end(); ++p)
-		port_registered (*p, unit);
-	for (Ports::iterator p = unit->outputs().begin(); p != unit->outputs().end(); ++p)
-		port_registered (*p, unit);
+	for (Port* p: unit->inputs())
+		port_registered (p, unit);
+	for (Port* p: unit->outputs())
+		port_registered (p, unit);
 	_unit_bay->graph()->unlock();
 }
 
@@ -295,10 +295,10 @@ void
 PortsConnector::remove_unit (Unit* unit)
 {
 	_unit_bay->graph()->lock();
-	for (Ports::iterator p = unit->inputs().begin(); p != unit->inputs().end(); ++p)
-		port_unregistered (*p, unit);
-	for (Ports::iterator p = unit->outputs().begin(); p != unit->outputs().end(); ++p)
-		port_unregistered (*p, unit);
+	for (Port* p: unit->inputs())
+		port_unregistered (p, unit);
+	for (Port* p: unit->outputs())
+		port_unregistered (p, unit);
 	unit_unregistered (unit);
 	_unit_bay->graph()->unlock();
 }
@@ -389,8 +389,8 @@ PortsConnector::graph_changed()
 void
 PortsConnector::remove_call_outs()
 {
-	for (CallOutEvents::size_type i = 0; i < _call_outs.size(); ++i)
-		_call_outs[i]->cancel();
+	for (Services::CallOutEvent* ce: _call_outs)
+		ce->cancel();
 	_call_outs.clear();
 }
 
@@ -437,16 +437,14 @@ PortsConnector::operate_on_selected (Operation operation)
 		// Port -> Unit?
 		else if (po && ui)
 		{
-			Ports const& ports = ui->unit()->inputs();
-			for (Ports::const_iterator port = ports.begin();  port != ports.end();  ++port)
-				operate_on_ports (operation, po->port(), *port);
+			for (Port* p: ui->unit()->inputs())
+				operate_on_ports (operation, po->port(), p);
 		}
 		// Unit -> Port?
 		else if (uo && pi)
 		{
-			Ports const& ports = uo->unit()->outputs();
-			for (Ports::const_iterator port = ports.begin();  port != ports.end();  ++port)
-				operate_on_ports (operation, *port, pi->port());
+			for (Port* p: uo->unit()->outputs())
+				operate_on_ports (operation, p, pi->port());
 		}
 		// Unit -> Unit?
 		else if (uo && ui)
@@ -454,19 +452,19 @@ PortsConnector::operate_on_selected (Operation operation)
 			// Filter audio/event ports:
 			std::list<Port*> audio_oports, audio_iports;
 			std::list<Port*> event_oports, event_iports;
-			for (Ports::const_iterator p = uo->unit()->outputs().begin();  p != uo->unit()->outputs().end();  ++p)
+			for (Port* p: uo->unit()->outputs())
 			{
-				if (dynamic_cast<AudioPort*> (*p))
-					audio_oports.push_back (*p);
-				else if (dynamic_cast<EventPort*> (*p))
-					event_oports.push_back (*p);
+				if (dynamic_cast<AudioPort*> (p))
+					audio_oports.push_back (p);
+				else if (dynamic_cast<EventPort*> (p))
+					event_oports.push_back (p);
 			}
-			for (Ports::const_iterator p = ui->unit()->inputs().begin();  p != ui->unit()->inputs().end();  ++p)
+			for (Port* p: ui->unit()->inputs())
 			{
-				if (dynamic_cast<AudioPort*> (*p))
-					audio_iports.push_back (*p);
-				else if (dynamic_cast<EventPort*> (*p))
-					event_iports.push_back (*p);
+				if (dynamic_cast<AudioPort*> (p))
+					audio_iports.push_back (p);
+				else if (dynamic_cast<EventPort*> (p))
+					event_iports.push_back (p);
 			}
 			// Audio:
 			{
@@ -558,8 +556,8 @@ PortsConnector::highlight_connected()
 		return;
 
 	// Unhighlight all previous items:
-	for (PortItems::iterator pi = _highlighted_items.begin(); pi != _highlighted_items.end(); ++pi)
-		(*pi)->set_highlighted (false);
+	for (PortItem* pi: _highlighted_items)
+		pi->set_highlighted (false);
 	_highlighted_items.clear();
 
 	QTreeWidgetItem* oitem = _opanel->list()->selected_item();
@@ -571,11 +569,10 @@ PortsConnector::highlight_connected()
 		PortItem* oportitem = dynamic_cast<PortItem*> (oitem);
 		if (oportitem)
 		{
-			Ports const& iports = oportitem->port()->forward_connections();
 			_unit_bay->graph()->lock();
-			for (Ports::iterator p = iports.begin(); p != iports.end(); ++p)
+			for (Port* p: oportitem->port()->forward_connections())
 			{
-				PortItem* pi = find_port_item (*p);
+				PortItem* pi = find_port_item (p);
 				if (pi)
 				{
 					pi->set_highlighted (true);
@@ -593,10 +590,9 @@ PortsConnector::highlight_connected()
 		if (iportitem)
 		{
 			_unit_bay->graph()->lock();
-			Ports const& oports = iportitem->port()->back_connections();
-			for (Ports::iterator p = oports.begin(); p != oports.end(); ++p)
+			for (Port* p: iportitem->port()->back_connections())
 			{
-				PortItem* pi = find_port_item (*p);
+				PortItem* pi = find_port_item (p);
 				if (pi)
 				{
 					pi->set_highlighted (true);

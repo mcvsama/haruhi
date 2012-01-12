@@ -152,11 +152,11 @@ Settings::save()
 	_document.appendChild (root);
 
 	// Collect settings from modules:
-	for (Modules::iterator m = _modules.begin(); m != _modules.end(); ++m)
+	for (auto& m: _modules)
 	{
 		QDomElement e = _document.createElement ("module");
-		m->second->save_state (e);
-		e.setAttribute ("name", m->first);
+		m.second->save_state (e);
+		e.setAttribute ("name", m.first);
 		root.appendChild (e);
 	}
 

@@ -58,12 +58,12 @@ WorkPerformer::WorkPerformer (unsigned int threads_number)
 
 WorkPerformer::~WorkPerformer()
 {
-	for (std::vector<Performer*>::size_type i = 0; i < _performers.size(); ++i)
+	for (decltype (_performers.size()) i = 0; i < _performers.size(); ++i)
 		_queue_semaphore.post();
-	for (std::vector<Performer*>::iterator p = _performers.begin(); p != _performers.end(); ++p)
+	for (Performer* p: _performers)
 	{
-		(*p)->wait();
-		delete *p;
+		p->wait();
+		delete p;
 	}
 }
 
@@ -82,8 +82,8 @@ WorkPerformer::add (Unit* unit)
 void
 WorkPerformer::set_sched (Thread::SchedType sched_type, int priority)
 {
-	for (std::vector<Performer*>::iterator p = _performers.begin(); p != _performers.end(); ++p)
-		(*p)->set_sched (sched_type, priority);
+	for (Performer* p: _performers)
+		p->set_sched (sched_type, priority);
 }
 
 

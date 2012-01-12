@@ -82,9 +82,9 @@ PluginLoader::plugin_factories() const
 PluginFactory*
 PluginLoader::find_factory (std::string const& urn) const
 {
-	for (PluginFactories::const_iterator f = _plugin_factories.begin();  f != _plugin_factories.end();  ++f)
-		if ((*f)->urn() == urn)
-			return *f;
+	for (PluginFactory* pf: _plugin_factories)
+		if (pf->urn() == urn)
+			return pf;
 	return 0;
 }
 

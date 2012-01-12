@@ -205,20 +205,20 @@ Backend::data_ready()
 	_master_volume_smoother.fill (_master_volume_smoother_buffer.begin(),
 								  _master_volume_smoother_buffer.end(),
 								  master_volume());
-	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
-		if (p->second->ready())
-			p->second->port()->audio_buffer()->attenuate (&_master_volume_smoother_buffer);
+	for (auto& p: _outputs)
+		if (p.second->ready())
+			p.second->port()->audio_buffer()->attenuate (&_master_volume_smoother_buffer);
 
 	// Copy data from graph to transport (output):
 	_transport->lock_ports();
-	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
+	for (auto& p: _outputs)
 	{
-		if (!p->second->ready())
+		if (!p.second->ready())
 			continue;
-		if (p->second->port()->back_connections().empty())
-			p->first->buffer()->clear();
+		if (p.second->port()->back_connections().empty())
+			p.first->buffer()->clear();
 		else
-			p->first->buffer()->fill (p->second->port()->audio_buffer());
+			p.first->buffer()->fill (p.second->port()->audio_buffer());
 	}
 	_transport->unlock_ports();
 	_ports_lock.unlock();
@@ -228,9 +228,9 @@ Backend::data_ready()
 	// Copy data from transport to graph (input):
 	_ports_lock.lock();
 	_transport->lock_ports();
-	for (InputsMap::iterator p = _inputs.begin(); p != _inputs.end(); ++p)
-		if (p->second->ready())
-			p->first->buffer()->fill (p->second->port()->buffer());
+	for (auto& p: _inputs)
+		if (p.second->ready())
+			p.first->buffer()->fill (p.second->port()->buffer());
 	_transport->unlock_ports();
 	_ports_lock.unlock();
 }
@@ -242,15 +242,15 @@ Backend::peak_levels (LevelsMap& levels)
 	levels.clear();
 
 	_ports_lock.lock();
-	for (OutputsMap::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
+	for (auto& p: _outputs)
 	{
-		Sample register max = 0;
-		AudioPort* port = p->second->port();
+		Sample register max = 0.0f;
+		AudioPort* port = p.second->port();
 		AudioBuffer* buf = port->audio_buffer();
 
-		for (Sample* s = buf->begin(); s != buf->end(); ++s)
-			if (std::abs (*s) > max)
-				max = std::abs (*s);
+		for (Sample s: *buf)
+			if (std::abs (s) > max)
+				max = std::abs (s);
 
 		levels[port] = master_volume() * max;
 	}
@@ -279,16 +279,12 @@ Backend::load_state (QDomElement const& element)
 	if (active)
 		_transport->deactivate();
 
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
 	{
-		QDomElement e = n.toElement();
-		if (!e.isNull())
-		{
-			if (e.tagName() == "inputs")
-				_inputs_list->load_state (e);
-			else if (e.tagName() == "outputs")
-				_outputs_list->load_state (e);
-		}
+		if (e.tagName() == "inputs")
+			_inputs_list->load_state (e);
+		else if (e.tagName() == "outputs")
+			_outputs_list->load_state (e);
 	}
 
 	if (active)

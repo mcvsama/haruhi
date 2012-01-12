@@ -97,14 +97,15 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	// Set unit bay on all knobs:
 
-	Haruhi::Knob* all_knobs[] = {
+	for (auto* k: {
 		_knob_wave_shape, _knob_modulator_amplitude, _knob_modulator_index, _knob_modulator_shape,
 		_knob_volume, _knob_panorama, _knob_detune, _knob_pitchbend, _knob_unison_index, _knob_unison_spread,
 		_knob_unison_init, _knob_unison_noise, _knob_unison_vibrato_level, _knob_unison_vibrato_frequency,
-		_knob_velocity_sens, _knob_portamento_time, _knob_phase, _knob_noise_level
-	};
-	for (Haruhi::Knob** k = all_knobs; k != endof (all_knobs); ++k)
-		(*k)->set_unit_bay (_part->part_manager()->plugin()->unit_bay());
+		_knob_velocity_sens, _knob_portamento_time, _knob_phase, _knob_noise_level })
+	{
+		k->set_unit_bay (_part->part_manager()->plugin()->unit_bay());
+	}
+
 	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
 	{
 		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
