@@ -96,18 +96,20 @@ VoiceOperator::fill (Haruhi::AudioBuffer* output)
 
 	Sample* const fs = _frequency_source->begin();
 	Sample f;
+	Sample p = _phase;
 
 	// Oscillate:
 	for (std::size_t i = 0; i < output->size(); ++i)
 	{
 		f = bound (fs[i] * _detune, 0.0f, 0.5f);
-		_phase = mod1 (_phase + f);
-		// To keep β constant the output amplitude must be scaled depending on frequency:
-		(*output)[i] = f * Haruhi::DSP::base_sin<5, Haruhi::Sample> (_phase * 2.0f - 1.0f);
+		p = mod1 (p + f);
+		(*output)[i] = Haruhi::DSP::base_sin<5, Haruhi::Sample> (p * 2.0f - 1.0f);
 	}
 
+	_phase = p;
+
 	// Amplitude modulation:
-	output->attenuate (_amplitude_source);
+//	output->attenuate (_amplitude_source);
 }
 
 } // namespace Yuki

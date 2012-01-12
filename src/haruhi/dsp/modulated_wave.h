@@ -137,14 +137,18 @@ ModulatedWave::set_modulator (Wave* modulator, bool auto_delete)
 inline Sample
 ModulatedWave::value_for_ring (Sample phase, Sample frequency) const
 {
-	return (*inner_wave())(phase, frequency) * (1.0f - _mod_amplitude * (*_modulator)(mod1 (phase * _mod_index), frequency * _mod_index));
+	Sample const x = (*inner_wave()) (phase, frequency);
+	Sample const m = (*_modulator) (mod1 (phase * _mod_index), frequency * _mod_index);
+	Sample const& a = _mod_amplitude;
+	return x * (1.0f - a + a * m); // Simplified: (1-a)x + a(xm)
 }
 
 
 inline Sample
 ModulatedWave::value_for_frequency (Sample phase, Sample frequency) const
 {
-	return (*inner_wave())(mod1 (phase + phase * _mod_amplitude * (*_modulator)(mod1 (phase * _mod_index), frequency * _mod_index)), frequency);
+	Sample const m = (*_modulator)(mod1 (phase * _mod_index), frequency * _mod_index);
+	return (*inner_wave())(mod1 (phase + phase * _mod_amplitude * m), frequency);
 }
 
 
