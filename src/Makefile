@@ -3,7 +3,7 @@
 LIBS			=
 PKGCONFIG_LIBS	=
 PKGCONFIG_FLAGS	=
-CXX				= g++ -c
+CXX				= g++ -c -std=c++0x -Wall
 DEPCC			= g++
 CXXFLAGS		= -Wall -Wextra -Wunused  -Wunused-function -Wunused-label -fstrict-aliasing -Wstrict-aliasing=3 $(PKGCONFIG_FLAGS)
 SO				= g++ -shared

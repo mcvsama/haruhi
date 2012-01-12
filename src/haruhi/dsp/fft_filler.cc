@@ -78,14 +78,14 @@ FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 	Sample max = 0.0f, new_max;
 	for (unsigned int i = 0; i < samples; ++i)
 	{
-		source[i].real() = (*_wave)(1.0f * i / (samples), 0);
-		source[i].imag() = 0.0f;
+		source[i].real ((*_wave)(1.0f * i / (samples), 0));
+		source[i].imag (0.0f);
 		if ((new_max = std::abs (source[i].real())) > max)
 			max = new_max;
 	}
 	if (_autoscale && max > _scale_epsilon)
 		for (unsigned int i = 0; i < samples; ++i)
-			source[i].real() /= max;
+			source[i].real (source[i].real() / max);
 	forward.transform();
 
 	// Create wavetables by bandlimiting obtained spectrum.
@@ -101,7 +101,10 @@ FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 
 		// Clear some frequencies:
 		for (unsigned int i = samples_left + 1; i <= samples - samples_left; ++i)
-			source[i].real() = source[i].imag() = 0.0f;
+		{
+			source[i].real (0.0f);
+			source[i].imag (0.0f);
+		}
 		// Transform spectrum and put it into @target:
 		inverse.transform();
 

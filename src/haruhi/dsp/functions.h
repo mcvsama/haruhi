@@ -41,7 +41,7 @@ template<unsigned int series, class Sample>
 	inline Sample
 	base_sin (Sample register x)
 	{
-		static_assert (series == 5 || series == 6 || series == 7, InvalidArgument_series);
+		static_assert (series == 5 || series == 6 || series == 7, "invalid argument 'series' - should be 5, 6 or 7");
 
 		if (x > 0.5)		x = +1.0 - x;
 		else if (x < -0.5)	x = -1.0 - x;

@@ -215,7 +215,7 @@ template<>
 			_reference (reference)
 		{
 			// To support AtomicOperation<float> sizeof float must be equal to sizeof int.
-			static_assert (sizeof (float) == sizeof (int), bool_has_different_size_than_int);
+			static_assert (sizeof (float) == sizeof (int), "bool has different size than int");
 		}
 
 		void
