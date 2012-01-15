@@ -31,6 +31,7 @@
 #include <haruhi/plugin/has_presets.h>
 #include <haruhi/session/session.h>
 #include <haruhi/components/presets_manager/presets_manager.h>
+#include <haruhi/utility/qdom_sequence.h>
 
 // Local:
 #include "patch.h"
@@ -430,35 +431,30 @@ void
 Patch::load_state (QDomElement const& element)
 {
 	QDomElement connections;
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	for (QDomElement& e: QDomChildElementsSequence (element))
 	{
-		QDomElement e = n.toElement();
-		if (!e.isNull())
+		if (e.tagName() == "plugins")
 		{
-			if (e.tagName() == "plugins")
+			for (QDomElement& e2: QDomChildElementsSequence (e))
 			{
-				for (QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling())
+				if (e2.tagName() == "plugin")
 				{
-					QDomElement e = n.toElement();
-					if (!e.isNull() && e.tagName() == "plugin")
+					Plugin* plugin = load_plugin (e2.attribute ("urn"));
+					if (plugin)
 					{
-						Plugin* plugin = load_plugin (e.attribute ("urn"));
-						if (plugin)
-						{
-							plugin->set_id (e.attribute ("id").toInt());
-							HasPresets* has_presets = dynamic_cast<HasPresets*> (plugin);
-							if (has_presets)
-								_plugins_to_frames_map[plugin]->set_preset (e.attribute ("preset-uuid"), e.attribute ("preset-name"));
-							SaveableState* saveable_state = dynamic_cast<SaveableState*> (plugin);
-							if (saveable_state)
-								saveable_state->load_state (e);
-						}
+						plugin->set_id (e2.attribute ("id").toInt());
+						HasPresets* has_presets = dynamic_cast<HasPresets*> (plugin);
+						if (has_presets)
+							_plugins_to_frames_map[plugin]->set_preset (e2.attribute ("preset-uuid"), e2.attribute ("preset-name"));
+						SaveableState* saveable_state = dynamic_cast<SaveableState*> (plugin);
+						if (saveable_state)
+							saveable_state->load_state (e2);
 					}
 				}
 			}
-			else if (e.tagName() == "connections")
-				connections = e.toElement();
 		}
+		else if (e.tagName() == "connections")
+			connections = e.toElement();
 	}
 	// Setup connections between plugins:
 	if (!connections.isNull())

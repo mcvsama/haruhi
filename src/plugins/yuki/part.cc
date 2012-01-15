@@ -28,6 +28,7 @@
 #include <haruhi/dsp/translated_wave.h>
 #include <haruhi/dsp/scaled_wave.h>
 #include <haruhi/utility/fast_pow.h>
+#include <haruhi/utility/qdom_sequence.h>
 #include <haruhi/utility/signal.h>
 
 // Local:
@@ -681,7 +682,7 @@ Part::save_state (QDomElement& element) const
 void
 Part::load_state (QDomElement const& element)
 {
-	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
+	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
 	{
 		if (e.tagName() == "part-parameters")
 			_part_params.load_state (e);

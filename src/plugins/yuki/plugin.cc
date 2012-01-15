@@ -19,6 +19,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/utility/qdom_sequence.h>
 
 // Local:
 #include "plugin.h"
@@ -117,7 +118,7 @@ void
 Plugin::load_state (QDomElement const& element)
 {
 	disable();
-	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
+	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
 	{
 		if (e.tagName() == "state")
 		{

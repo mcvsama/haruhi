@@ -28,6 +28,7 @@
 #include <haruhi/components/devices_manager/controller_dialog.h>
 #include <haruhi/lib/midi.h>
 #include <haruhi/graph/event_buffer.h>
+#include <haruhi/utility/qdom_sequence.h>
 
 // Local:
 #include "transports/alsa_transport.h"
@@ -218,7 +219,7 @@ Backend::load_state (QDomElement const& element)
 	bool e = enabled();
 	if (e)
 		disable();
-	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
+	for (QDomElement& e: QDomChildElementsSequence (element))
 	{
 		if (e.tagName() == "inputs")
 			_model.load_state (e);

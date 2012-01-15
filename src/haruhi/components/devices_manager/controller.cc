@@ -23,6 +23,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/lib/midi.h>
 #include <haruhi/utility/numeric.h>
+#include <haruhi/utility/qdom_sequence.h>
 
 // Local:
 #include "controller.h"
@@ -313,7 +314,7 @@ Controller::load_state (QDomElement const& element)
 	_name = element.attribute ("name", "<unnamed>");
 	smoothing = element.attribute ("smoothing", "0").toInt();
 
-	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
+	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
 	{
 		if (e.tagName() == "note-filter")
 		{

@@ -16,6 +16,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/utility/qdom_sequence.h>
 
 // Qt:
 #include <QtGui/QLayout>
@@ -58,12 +59,10 @@ Program::save_state (QDomElement& element) const
 void
 Program::load_state (QDomElement const& element)
 {
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	for (QDomElement& e: QDomChildElementsSequence (element))
 	{
-		QDomElement e = n.toElement();
-		if (!e.isNull())
-			if (e.tagName() == "patch")
-				_patch->load_state (e);
+		if (e.tagName() == "patch")
+			_patch->load_state (e);
 	}
 }
 

@@ -20,6 +20,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/utility/qdom_sequence.h>
 
 // Local:
 #include "model.h"
@@ -87,7 +88,7 @@ void
 Model::load_state (QDomElement const& element)
 {
 	_devices.clear();
-	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
+	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
 	{
 		if (e.tagName() == "device")
 		{

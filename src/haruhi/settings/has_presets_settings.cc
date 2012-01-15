@@ -17,6 +17,9 @@
 // Local:
 #include "has_presets_settings.h"
 
+// Haruhi:
+#include <haruhi/utility/qdom_sequence.h>
+
 
 namespace Haruhi {
 
@@ -79,23 +82,17 @@ HasPresetsSettings::load_state (QDomElement const& element)
 {
 	_units.clear();
 
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
 	{
-		QDomElement e = n.toElement();
-		if (e.isNull())
-			continue;
 		if (e.tagName() == "unit")
 		{
 			QString unit_urn = e.attribute ("urn");
 			if (!unit_urn.isEmpty())
 			{
 				FavoritePresets& favorite_presets = _units[unit_urn.toStdString()];
-				for (QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling())
+				for (QDomElement& e2: Haruhi::QDomChildElementsSequence (e))
 				{
-					QDomElement e = n.toElement();
-					if (e.isNull())
-						continue;
-					QString fp_uuid = e.attribute ("uuid");
+					QString fp_uuid = e2.attribute ("uuid");
 					if (!fp_uuid.isEmpty())
 						favorite_presets.insert (fp_uuid.toStdString());
 				}

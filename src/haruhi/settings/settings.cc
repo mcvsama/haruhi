@@ -35,6 +35,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/utility/exception.h>
 #include <haruhi/utility/filesystem.h>
+#include <haruhi/utility/qdom_sequence.h>
 
 // Local:
 #include "settings.h"
@@ -197,11 +198,8 @@ Settings::parse()
 		return;
 	}
 
-	for (QDomNode n = _document.documentElement().firstChild(); !n.isNull(); n = n.nextSibling())
+	for (QDomElement& e: Haruhi::QDomChildElementsSequence (_document.documentElement()))
 	{
-		QDomElement e = n.toElement();
-		if (e.isNull())
-			continue;
 		// Load module settings:
 		if (e.tagName() == "module" && !e.attribute ("name").isEmpty())
 		{

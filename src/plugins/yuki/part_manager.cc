@@ -19,6 +19,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/graph/event_buffer.h>
 #include <haruhi/application/services.h>
+#include <haruhi/utility/qdom_sequence.h>
 
 // Local:
 #include "part_manager.h"
@@ -314,7 +315,7 @@ PartManager::load_state (QDomElement const& element)
 
 	remove_all_parts();
 
-	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
+	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
 	{
 		if (e.tagName() == "part")
 		{

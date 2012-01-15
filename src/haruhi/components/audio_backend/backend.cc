@@ -30,6 +30,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/application/haruhi.h>
 #include <haruhi/utility/numeric.h>
+#include <haruhi/utility/qdom_sequence.h>
 
 // Local:
 #include "transports/jack_transport.h"
@@ -279,7 +280,7 @@ Backend::load_state (QDomElement const& element)
 	if (active)
 		_transport->deactivate();
 
-	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
+	for (QDomElement& e: QDomChildElementsSequence (element))
 	{
 		if (e.tagName() == "inputs")
 			_inputs_list->load_state (e);

@@ -43,6 +43,7 @@
 #include <haruhi/settings/session_loader_settings.h>
 #include <haruhi/widgets/clickable_label.h>
 #include <haruhi/utility/numeric.h>
+#include <haruhi/utility/qdom_sequence.h>
 
 // Local:
 #include "session.h"
@@ -275,12 +276,9 @@ Session::Parameters::Parameters():
 void
 Session::Parameters::load_state (QDomElement const& element)
 {
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	for (QDomElement& e: QDomChildElementsSequence (element))
 	{
-		QDomElement e = n.toElement();
-		if (e.isNull())
-			continue;
-		else if (e.tagName() == "tuning")
+		if (e.tagName() == "tuning")
 			tuning = e.text().toInt();
 		else if (e.tagName() == "transpose")
 			transpose = e.text().toInt();
@@ -628,20 +626,16 @@ Session::load_state (QDomElement const& element)
 	QDomElement event_backend_element;
 	QDomElement program_element;
 
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	for (QDomElement& e: QDomChildElementsSequence (element))
 	{
-		QDomElement e = n.toElement();
-		if (!e.isNull())
-		{
-			if (e.tagName() == "parameters")
-				parameters_element = e;
-			else if (e.tagName() == "audio-backend")
-				audio_backend_element = e;
-			else if (e.tagName() == "event-backend")
-				event_backend_element = e;
-			else if (e.tagName() == "program")
-				program_element = e;
-		}
+		if (e.tagName() == "parameters")
+			parameters_element = e;
+		else if (e.tagName() == "audio-backend")
+			audio_backend_element = e;
+		else if (e.tagName() == "event-backend")
+			event_backend_element = e;
+		else if (e.tagName() == "program")
+			program_element = e;
 	}
 
 	if (!audio_backend_element.isNull() && !event_backend_element.isNull() && !program_element.isNull())

@@ -18,6 +18,9 @@
 // Local:
 #include "session_loader_settings.h"
 
+// Haruhi:
+#include <haruhi/utility/qdom_sequence.h>
+
 
 namespace Haruhi {
 
@@ -118,22 +121,16 @@ SessionLoaderSettings::load_state (QDomElement const& element)
 {
 	_recent_sessions.clear();
 
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
 	{
-		QDomElement e = n.toElement();
-		if (e.isNull())
-			continue;
-		else if (e.tagName() == "recent-sessions")
+		if (e.tagName() == "recent-sessions")
 		{
-			for (QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling())
+			for (QDomElement& e2: Haruhi::QDomChildElementsSequence (e))
 			{
-				QDomElement e = n.toElement();
-				if (e.isNull())
-					continue;
-				else if (e.tagName() == "recent-session")
+				if (e2.tagName() == "recent-session")
 				{
 					RecentSession rs;
-					rs.load_state (e);
+					rs.load_state (e2);
 					_recent_sessions.push_back (rs);
 				}
 			}

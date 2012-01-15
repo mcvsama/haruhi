@@ -19,6 +19,9 @@
 #include "conn_set.h"
 #include "port.h"
 
+// Haruhi:
+#include <haruhi/utility/qdom_sequence.h>
+
 
 namespace Haruhi {
 
@@ -118,16 +121,12 @@ void
 ConnSet::load_state (QDomElement const& element)
 {
 	_connections.clear();
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
 	{
-		QDomElement e = n.toElement();
-		if (!e.isNull())
+		if (e.tagName() == "connection")
 		{
-			if (e.tagName() == "connection")
-			{
-				_connections.push_back (Connection (e.attribute ("source-unit"), e.attribute ("source-port"),
-													e.attribute ("target-unit"), e.attribute ("target-port")));
-			}
+			_connections.push_back (Connection (e.attribute ("source-unit"), e.attribute ("source-port"),
+												e.attribute ("target-unit"), e.attribute ("target-port")));
 		}
 	}
 }

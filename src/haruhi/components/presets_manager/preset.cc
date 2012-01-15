@@ -23,6 +23,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/saveable_state.h>
+#include <haruhi/utility/qdom_sequence.h>
 
 // Local:
 #include "helpers.h"
@@ -68,11 +69,11 @@ Preset::load_state (QDomElement const& element)
 	_uuid = element.attribute ("uuid");
 	if (_uuid.isEmpty() || _uuid.isNull())
 		generate_uuid();
-	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
+	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
 	{
 		if (e.tagName() == "meta")
 		{
-			for (QDomElement e2 = e.firstChildElement(); !e2.isNull(); e2 = e2.nextSiblingElement())
+			for (QDomElement& e2: Haruhi::QDomChildElementsSequence (e))
 			{
 				if (e2.tagName() == "name")
 					_name = e2.text();

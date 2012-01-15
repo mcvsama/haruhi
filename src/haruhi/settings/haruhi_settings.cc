@@ -17,6 +17,7 @@
 
 // Haruhi:
 #include <haruhi/utility/numeric.h>
+#include <haruhi/utility/qdom_sequence.h>
 
 // Local:
 #include "haruhi_settings.h"
@@ -35,12 +36,9 @@ HaruhiSettings::HaruhiSettings():
 void
 HaruhiSettings::load_state (QDomElement const& element)
 {
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
 	{
-		QDomElement e = n.toElement();
-		if (e.isNull())
-			continue;
-		else if (e.tagName() == "engine-thread-priority")
+		if (e.tagName() == "engine-thread-priority")
 			_engine_thread_priority = e.text().toInt();
 		else if (e.tagName() == "level-meter-fps")
 			_level_meter_fps = e.text().toInt();

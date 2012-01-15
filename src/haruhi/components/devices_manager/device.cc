@@ -21,6 +21,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/lib/midi.h>
+#include <haruhi/utility/qdom_sequence.h>
 
 // Local:
 #include "device.h"
@@ -85,7 +86,7 @@ Device::load_state (QDomElement const& element)
 	_auto_add = element.attribute ("auto-add") == "true";
 	_controllers.clear();
 
-	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
+	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
 	{
 		if (e.tagName() == "controller")
 		{

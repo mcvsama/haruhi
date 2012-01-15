@@ -24,6 +24,7 @@
 #include <haruhi/utility/filesystem.h>
 #include <haruhi/utility/exception.h>
 #include <haruhi/utility/predicates.h>
+#include <haruhi/utility/qdom_sequence.h>
 
 // Local:
 #include "helpers.h"
@@ -82,28 +83,22 @@ Package::load_state (QDomElement const& element)
 {
 	_categories.clear();
 
-	for (QDomNode n = element.firstChild(); !n.isNull(); n = n.nextSibling())
+	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
 	{
-		QDomElement e = n.toElement();
-		if (e.isNull())
-			continue;
-		else if (e.tagName() == "meta")
+		if (e.tagName() == "meta")
 		{
-			for (QDomNode n = e.firstChild(); !n.isNull(); n = n.nextSibling())
+			for (QDomElement& e2: Haruhi::QDomChildElementsSequence (e))
 			{
-				QDomElement e = n.toElement();
-				if (e.isNull())
-					continue;
-				else if (e.tagName() == "name")
-					_name = e.text();
-				else if (e.tagName() == "version")
-					_version = e.text();
-				else if (e.tagName() == "created-at")
-					_created_at = e.text();
-				else if (e.tagName() == "credits")
-					_credits = e.text();
-				else if (e.tagName() == "license")
-					_license = e.text();
+				if (e2.tagName() == "name")
+					_name = e2.text();
+				else if (e2.tagName() == "version")
+					_version = e2.text();
+				else if (e2.tagName() == "created-at")
+					_created_at = e2.text();
+				else if (e2.tagName() == "credits")
+					_credits = e2.text();
+				else if (e2.tagName() == "license")
+					_license = e2.text();
 			}
 		}
 		else if (e.tagName() == "category")

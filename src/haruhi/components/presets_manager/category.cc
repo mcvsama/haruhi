@@ -20,6 +20,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/predicates.h>
+#include <haruhi/utility/qdom_sequence.h>
 
 // Local:
 #include "preset.h"
@@ -72,7 +73,7 @@ Category::load_state (QDomElement const& element)
 
 	set_name (element.attribute ("name", "<unnamed category>"));
 
-	for (QDomElement e = element.firstChildElement(); !e.isNull(); e = e.nextSiblingElement())
+	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
 	{
 		if (e.tagName() == "preset")
 		{
