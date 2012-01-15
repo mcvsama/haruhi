@@ -71,10 +71,10 @@ WorkPerformer::~WorkPerformer()
 void
 WorkPerformer::add (Unit* unit)
 {
-	_queue_mutex.lock();
-	unit->added_to_queue();
-	_queue.push (unit);
-	_queue_mutex.unlock();
+	_queue_mutex.synchronize ([&]() {
+		unit->added_to_queue();
+		_queue.push (unit);
+	});
 	_queue_semaphore.post();
 }
 

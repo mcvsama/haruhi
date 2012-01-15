@@ -104,9 +104,9 @@ void
 Unit::disable()
 {
 	// Wait for processing end:
-	_processing_mutex.lock();
-	_enabled = false;
-	_processing_mutex.unlock();
+	_processing_mutex.synchronize ([&]() {
+		_enabled = false;
+	});
 }
 
 
@@ -155,12 +155,12 @@ Unit::clear_outputs()
 void
 Unit::graph_updated()
 {
-	graph()->lock();
-	for (Port* p: _inputs)
-		p->graph_updated();
-	for (Port*p: _outputs)
-		p->graph_updated();
-	graph()->unlock();
+	graph()->synchronize ([&]() {
+		for (Port* p: _inputs)
+			p->graph_updated();
+		for (Port*p: _outputs)
+			p->graph_updated();
+	});
 }
 
 

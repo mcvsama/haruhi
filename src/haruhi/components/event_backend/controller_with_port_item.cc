@@ -36,10 +36,10 @@ ControllerWithPortItem::ControllerWithPortItem (DeviceWithPortItem* parent, Devi
 	_device_item (parent)
 {
 	// Allocate new port:
-	backend()->graph()->lock();
-	_port = new EventPort (backend(), controller->name().toStdString(), Port::Output, parent->port_group());
-	_device_item->controllers()->insert (this);
-	backend()->graph()->unlock();
+	backend()->graph()->synchronize ([&]() {
+		_port = new EventPort (backend(), controller->name().toStdString(), Port::Output, parent->port_group());
+		_device_item->controllers()->insert (this);
+	});
 	// Fully constructed:
 	set_ready (true);
 }
@@ -47,10 +47,10 @@ ControllerWithPortItem::ControllerWithPortItem (DeviceWithPortItem* parent, Devi
 
 ControllerWithPortItem::~ControllerWithPortItem()
 {
-	backend()->graph()->lock();
-	_device_item->controllers()->erase (this);
-	delete _port;
-	backend()->graph()->unlock();
+	backend()->graph()->synchronize ([&]() {
+		_device_item->controllers()->erase (this);
+		delete _port;
+	});
 }
 
 

@@ -53,9 +53,9 @@ Settings::Module::Module (QString const& name):
 void
 Settings::Module::save()
 {
-	_host->lock();
-	_host->save();
-	_host->unlock();
+	_host->synchronize ([&]() {
+		_host->save();
+	});
 }
 
 

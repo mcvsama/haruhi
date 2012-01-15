@@ -114,6 +114,25 @@ class Mutex: private Noncopyable
 	}
 
 	/**
+	 * Lock, execute function, and unlock.
+	 */
+	template<class Callback>
+		void
+		synchronize (Callback function) const
+		{
+			lock();
+			try {
+				function();
+				unlock();
+			}
+			catch (...)
+			{
+				unlock();
+				throw;
+			}
+		}
+
+	/**
 	 * Helper for lock-safe copying some value (eg. for returning):
 	 * Like: return graph()->safe_copy (_some_value);
 	 */

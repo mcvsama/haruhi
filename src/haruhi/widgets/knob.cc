@@ -566,12 +566,12 @@ Knob::connect_port (int action_id)
 {
 	if (unit_bay())
 	{
-		unit_bay()->graph()->lock();
-		ContextMenuPortMap::iterator a = _context_menu_port_map.find (action_id);
-		// FIXME If port is deleted between menu popup and action exec, connect_to() will be executed on singular object.
-		if (a != _context_menu_port_map.end())
-			a->second->connect_to (event_port());
-		unit_bay()->graph()->unlock();
+		unit_bay()->graph()->synchronize ([&]() {
+			ContextMenuPortMap::iterator a = _context_menu_port_map.find (action_id);
+			// FIXME If port is deleted between menu popup and action exec, connect_to() will be executed on singular object.
+			if (a != _context_menu_port_map.end())
+				a->second->connect_to (event_port());
+		});
 	}
 }
 
@@ -581,12 +581,12 @@ Knob::disconnect_port (int action_id)
 {
 	if (unit_bay())
 	{
-		unit_bay()->graph()->lock();
-		ContextMenuPortMap::iterator a = _context_menu_port_map.find (action_id);
-		// FIXME If port is deleted between menu popup and action exec, connect_to() will be executed on singular object.
-		if (a != _context_menu_port_map.end())
-			a->second->disconnect_from (event_port());
-		unit_bay()->graph()->unlock();
+		unit_bay()->graph()->synchronize ([&]() {
+			ContextMenuPortMap::iterator a = _context_menu_port_map.find (action_id);
+			// FIXME If port is deleted between menu popup and action exec, connect_to() will be executed on singular object.
+			if (a != _context_menu_port_map.end())
+				a->second->disconnect_from (event_port());
+		});
 	}
 }
 
@@ -596,9 +596,9 @@ Knob::disconnect_from_all()
 {
 	if (unit_bay())
 	{
-		unit_bay()->graph()->lock();
-		event_port()->disconnect();
-		unit_bay()->graph()->unlock();
+		unit_bay()->graph()->synchronize ([&]() {
+			event_port()->disconnect();
+		});
 	}
 }
 

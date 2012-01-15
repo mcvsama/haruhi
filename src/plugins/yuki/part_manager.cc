@@ -105,9 +105,9 @@ Part*
 PartManager::add_part()
 {
 	Part* p = new Part (this, Haruhi::Services::hi_priority_work_performer(), &_main_params, _id_alloc.allocate_id());
-	_parts_mutex.lock();
-	_parts.push_back (p);
-	_parts_mutex.unlock();
+	_parts_mutex.synchronize ([&]() {
+		_parts.push_back (p);
+	});
 	part_added (p);
 	return p;
 }
@@ -116,9 +116,9 @@ PartManager::add_part()
 void
 PartManager::remove_part (Part* part)
 {
-	_parts_mutex.lock();
-	_parts.remove (part);
-	_parts_mutex.unlock();
+	_parts_mutex.synchronize ([&]() {
+		_parts.remove (part);
+	});
 	part_removed (part);
 	_id_alloc.free_id (part->id());
 	delete part;
@@ -145,28 +145,28 @@ PartManager::ensure_there_is_at_least_one_part()
 void
 PartManager::set_part_position (Part* part, unsigned int position)
 {
-	_parts_mutex.lock();
-	assert (position < _parts.size());
-	Parts::iterator i = std::find (_parts.begin(), _parts.end(), part);
-	assert (i != _parts.end());
-	_parts.remove (*i);
-	Parts::iterator b = _parts.begin();
-	std::advance (b, position);
-	_parts.insert (b, *i);
-	_parts_mutex.unlock();
+	_parts_mutex.synchronize ([&]() {
+		assert (position < _parts.size());
+		Parts::iterator i = std::find (_parts.begin(), _parts.end(), part);
+		assert (i != _parts.end());
+		_parts.remove (*i);
+		Parts::iterator b = _parts.begin();
+		std::advance (b, position);
+		_parts.insert (b, *i);
+	});
 }
 
 
 void
 PartManager::set_part_position (unsigned int old_position, unsigned int new_position)
 {
-	_parts_mutex.lock();
-	assert (old_position < _parts.size());
-	assert (new_position < _parts.size());
-	Parts::iterator o = _parts.begin();
-	std::advance (o, old_position);
-	set_part_position (*o, new_position);
-	_parts_mutex.unlock();
+	_parts_mutex.synchronize ([&]() {
+		assert (old_position < _parts.size());
+		assert (new_position < _parts.size());
+		Parts::iterator o = _parts.begin();
+		std::advance (o, old_position);
+		set_part_position (*o, new_position);
+	});
 }
 
 
@@ -249,29 +249,27 @@ PartManager::process()
 void
 PartManager::panic()
 {
-	_parts_mutex.lock();
-	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
-		(*p)->panic();
-	_parts_mutex.unlock();
+	_parts_mutex.synchronize ([&]() {
+		for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
+			(*p)->panic();
+	});
 }
 
 
 void
 PartManager::graph_updated()
 {
-	_parts_mutex.lock();
+	_parts_mutex.synchronize ([&]() {
+		float const samples = 0.005f * graph()->sample_rate();
+		_volume_smoother[0].set_samples (samples);
+		_volume_smoother[1].set_samples (samples);
+		_panorama_smoother[0].set_samples (samples);
+		_panorama_smoother[1].set_samples (samples);
+		_stereo_width_smoother.set_samples (samples);
 
-	float const samples = 0.005f * graph()->sample_rate();
-	_volume_smoother[0].set_samples (samples);
-	_volume_smoother[1].set_samples (samples);
-	_panorama_smoother[0].set_samples (samples);
-	_panorama_smoother[1].set_samples (samples);
-	_stereo_width_smoother.set_samples (samples);
-
-	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
-		(*p)->graph_updated();
-
-	_parts_mutex.unlock();
+		for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
+			(*p)->graph_updated();
+	});
 }
 
 
@@ -279,10 +277,10 @@ unsigned int
 PartManager::voices_number() const
 {
 	unsigned int sum = 0;
-	_parts_mutex.lock();
-	for (Parts::const_iterator p = _parts.begin(); p != _parts.end(); ++p)
-		sum += (*p)->voices_number();
-	_parts_mutex.unlock();
+	_parts_mutex.synchronize ([&]() {
+		for (Parts::const_iterator p = _parts.begin(); p != _parts.end(); ++p)
+			sum += (*p)->voices_number();
+	});
 	return sum;
 }
 
@@ -290,51 +288,47 @@ PartManager::voices_number() const
 void
 PartManager::save_state (QDomElement& element) const
 {
-	_parts_mutex.lock();
-
-	QDomElement e = element.ownerDocument().createElement ("main");
-	_main_params.save_state (e);
-	element.appendChild (e);
-
-	for (Parts::const_iterator p = _parts.begin(); p != _parts.end(); ++p)
-	{
-		QDomElement e = element.ownerDocument().createElement ("part");
-		(*p)->save_state (e);
-		e.setAttribute ("id", (*p)->id());
+	_parts_mutex.synchronize ([&]() {
+		QDomElement e = element.ownerDocument().createElement ("main");
+		_main_params.save_state (e);
 		element.appendChild (e);
-	}
 
-	_parts_mutex.unlock();
+		for (Parts::const_iterator p = _parts.begin(); p != _parts.end(); ++p)
+		{
+			QDomElement e = element.ownerDocument().createElement ("part");
+			(*p)->save_state (e);
+			e.setAttribute ("id", (*p)->id());
+			element.appendChild (e);
+		}
+	});
 }
 
 
 void
 PartManager::load_state (QDomElement const& element)
 {
-	_parts_mutex.lock();
+	_parts_mutex.synchronize ([&]() {
+		remove_all_parts();
 
-	remove_all_parts();
-
-	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
-	{
-		if (e.tagName() == "part")
+		for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
 		{
-			Part* p = add_part();
+			if (e.tagName() == "part")
+			{
+				Part* p = add_part();
 
-			unsigned int loaded_id = e.attribute ("id", "0").toUInt();
-			_id_alloc.free_id (p->id());
-			_id_alloc.reserve_id (loaded_id);
+				unsigned int loaded_id = e.attribute ("id", "0").toUInt();
+				_id_alloc.free_id (p->id());
+				_id_alloc.reserve_id (loaded_id);
 
-			p->load_state (e);
-			p->set_id (loaded_id);
+				p->load_state (e);
+				p->set_id (loaded_id);
 
-			part_updated (p);
+				part_updated (p);
+			}
+			else if (e.tagName() == "main")
+				_main_params.load_state (e);
 		}
-		else if (e.tagName() == "main")
-			_main_params.load_state (e);
-	}
-
-	_parts_mutex.unlock();
+	});
 }
 
 } // namespace Yuki

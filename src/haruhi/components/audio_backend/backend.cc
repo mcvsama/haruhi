@@ -201,39 +201,39 @@ Backend::data_ready()
 		return;
 	}
 
-	_ports_lock.lock();
-	// Use Master Volume control to adjust volume of outputs:
-	_master_volume_smoother.fill (_master_volume_smoother_buffer.begin(),
-								  _master_volume_smoother_buffer.end(),
-								  master_volume());
-	for (auto& p: _outputs)
-		if (p.second->ready())
-			p.second->port()->audio_buffer()->attenuate (&_master_volume_smoother_buffer);
+	_ports_lock.synchronize ([&]() {
+		// Use Master Volume control to adjust volume of outputs:
+		_master_volume_smoother.fill (_master_volume_smoother_buffer.begin(),
+									  _master_volume_smoother_buffer.end(),
+									  master_volume());
+		for (auto& p: _outputs)
+			if (p.second->ready())
+				p.second->port()->audio_buffer()->attenuate (&_master_volume_smoother_buffer);
 
-	// Copy data from graph to transport (output):
-	_transport->lock_ports();
-	for (auto& p: _outputs)
-	{
-		if (!p.second->ready())
-			continue;
-		if (p.second->port()->back_connections().empty())
-			p.first->buffer()->clear();
-		else
-			p.first->buffer()->fill (p.second->port()->audio_buffer());
-	}
-	_transport->unlock_ports();
-	_ports_lock.unlock();
+		// Copy data from graph to transport (output):
+		_transport->lock_ports();
+		for (auto& p: _outputs)
+		{
+			if (!p.second->ready())
+				continue;
+			if (p.second->port()->back_connections().empty())
+				p.first->buffer()->clear();
+			else
+				p.first->buffer()->fill (p.second->port()->audio_buffer());
+		}
+		_transport->unlock_ports();
+	});
 
 	_transport->data_ready();
 
 	// Copy data from transport to graph (input):
-	_ports_lock.lock();
-	_transport->lock_ports();
-	for (auto& p: _inputs)
-		if (p.second->ready())
-			p.first->buffer()->fill (p.second->port()->buffer());
-	_transport->unlock_ports();
-	_ports_lock.unlock();
+	_ports_lock.synchronize ([&]() {
+		_transport->lock_ports();
+		for (auto& p: _inputs)
+			if (p.second->ready())
+				p.first->buffer()->fill (p.second->port()->buffer());
+		_transport->unlock_ports();
+	});
 }
 
 
@@ -242,20 +242,20 @@ Backend::peak_levels (LevelsMap& levels)
 {
 	levels.clear();
 
-	_ports_lock.lock();
-	for (auto& p: _outputs)
-	{
-		Sample register max = 0.0f;
-		AudioPort* port = p.second->port();
-		AudioBuffer* buf = port->audio_buffer();
+	_ports_lock.synchronize ([&]() {
+		for (auto& p: _outputs)
+		{
+			Sample register max = 0.0f;
+			AudioPort* port = p.second->port();
+			AudioBuffer* buf = port->audio_buffer();
 
-		for (Sample s: *buf)
-			if (std::abs (s) > max)
-				max = std::abs (s);
+			for (Sample s: *buf)
+				if (std::abs (s) > max)
+					max = std::abs (s);
 
-		levels[port] = master_volume() * max;
-	}
-	_ports_lock.unlock();
+			levels[port] = master_volume() * max;
+		}
+	});
 }
 
 
@@ -567,10 +567,10 @@ Backend::dummy_round()
 	const int DummyPeriodTime = 33; // ms
 	const int DummySampleRate = 48000;
 	const int DummyBufferSize = DummySampleRate / (1000.0 / DummyPeriodTime);
-	graph()->lock();
-	graph()->set_sample_rate (DummySampleRate);
-	graph()->set_buffer_size (DummyBufferSize);
-	graph()->unlock();
+	graph()->synchronize ([&]() {
+		graph()->set_sample_rate (DummySampleRate);
+		graph()->set_buffer_size (DummyBufferSize);
+	});
 	usleep (DummyPeriodTime * 1000); // Sleep for 33ms
 }
 

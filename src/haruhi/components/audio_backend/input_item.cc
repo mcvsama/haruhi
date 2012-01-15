@@ -32,12 +32,12 @@ InputItem::InputItem (Tree* parent, QString const& name):
 {
 	_transport_port = _backend->transport()->create_input (name.toStdString());
 	// Allocate new port:
-	_backend->graph()->lock();
-	_port = new AudioPort (_backend, name.ascii(), Port::Output);
-	_backend->graph()->unlock();
-	_backend->_ports_lock.lock();
-	_backend->_inputs[_transport_port] = this;
-	_backend->_ports_lock.unlock();
+	_backend->graph()->synchronize ([&]() {
+		_port = new AudioPort (_backend, name.ascii(), Port::Output);
+	});
+	_backend->_ports_lock.synchronize ([&]() {
+		_backend->_inputs[_transport_port] = this;
+	});
 	// Configure item:
 	setIcon (0, Resources::Icons16::audio_input_port());
 	// Fully constructed:
@@ -47,13 +47,13 @@ InputItem::InputItem (Tree* parent, QString const& name):
 
 InputItem::~InputItem()
 {
-	_backend->_ports_lock.lock();
-	_backend->_inputs.erase (_transport_port);
-	_backend->_ports_lock.unlock();
+	_backend->_ports_lock.synchronize ([&]() {
+		_backend->_inputs.erase (_transport_port);
+	});
 	_backend->transport()->destroy_port (_transport_port);
-	_backend->graph()->lock();
-	delete _port;
-	_backend->graph()->unlock();
+	_backend->graph()->synchronize ([&]() {
+		delete _port;
+	});
 	// Remove itself from External ports list view:
 	if (treeWidget())
 		treeWidget()->invisibleRootItem()->removeChild (this);

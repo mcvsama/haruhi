@@ -34,9 +34,9 @@ DeviceWithPortItem::DeviceWithPortItem (Backend* p_backend, Tree* parent, Device
 	_transport_port = backend()->transport()->create_input (device->name().toStdString());
 	backend()->_inputs[_transport_port] = this;
 	// Allocate port group:
-	backend()->graph()->lock();
-	_port_group = new PortGroup (backend()->graph(), device->name().toStdString());
-	backend()->graph()->unlock();
+	backend()->graph()->synchronize ([&]() {
+		_port_group = new PortGroup (backend()->graph(), device->name().toStdString());
+	});
 	// Ready for handling events:
 	set_ready (true);
 }
@@ -51,9 +51,9 @@ DeviceWithPortItem::~DeviceWithPortItem()
 	// TODO lock for _inputs map:
 	backend()->_inputs.erase (_transport_port);
 	backend()->transport()->destroy_port (_transport_port);
-	backend()->graph()->lock();
-	delete _port_group;
-	backend()->graph()->unlock();
+	backend()->graph()->synchronize ([&]() {
+		delete _port_group;
+	});
 }
 
 
@@ -69,9 +69,9 @@ DeviceWithPortItem::update_name()
 {
 	_transport_port->rename (name().toStdString());
 	// Update group name:
-	backend()->graph()->lock();
-	_port_group->set_name (name().toStdString());
-	backend()->graph()->unlock();
+	backend()->graph()->synchronize ([&]() {
+		_port_group->set_name (name().toStdString());
+	});
 }
 
 } // namespace EventBackendImpl

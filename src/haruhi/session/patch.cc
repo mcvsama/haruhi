@@ -414,13 +414,13 @@ Patch::save_state (QDomElement& element) const
 
 	QDomElement connections = element.ownerDocument().createElement ("connections");
 	ConnSet conn_set;
-	graph()->lock();
-	conn_set.insert_units (this->units().begin(), this->units().end());
-	conn_set.insert_unit (session()->graph()->audio_backend());
-	conn_set.insert_unit (session()->graph()->event_backend());
-	conn_set.save();
-	conn_set.save_state (connections);
-	graph()->unlock();
+	graph()->synchronize ([&]() {
+		conn_set.insert_units (this->units().begin(), this->units().end());
+		conn_set.insert_unit (session()->graph()->audio_backend());
+		conn_set.insert_unit (session()->graph()->event_backend());
+		conn_set.save();
+		conn_set.save_state (connections);
+	});
 
 	element.appendChild (plugins);
 	element.appendChild (connections);
@@ -460,13 +460,13 @@ Patch::load_state (QDomElement const& element)
 	if (!connections.isNull())
 	{
 		ConnSet conn_set;
-		graph()->lock();
-		conn_set.insert_units (this->units().begin(), this->units().end());
-		conn_set.insert_unit (session()->graph()->audio_backend());
-		conn_set.insert_unit (session()->graph()->event_backend());
-		conn_set.load_state (connections);
-		conn_set.load();
-		graph()->unlock();
+		graph()->synchronize ([&]() {
+			conn_set.insert_units (this->units().begin(), this->units().end());
+			conn_set.insert_unit (session()->graph()->audio_backend());
+			conn_set.insert_unit (session()->graph()->event_backend());
+			conn_set.load_state (connections);
+			conn_set.load();
+		});
 	}
 }
 

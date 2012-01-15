@@ -65,9 +65,9 @@ void
 PortItem::update_name()
 {
 	_transport_port->rename (name().toStdString());
-	_backend->graph()->lock();
-	_port->set_name (name().toStdString());
-	_backend->graph()->unlock();
+	_backend->graph()->synchronize ([&]() {
+		_port->set_name (name().toStdString());
+	});
 }
 
 } // namespace AudioBackendImpl

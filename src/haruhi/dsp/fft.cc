@@ -55,12 +55,12 @@ FFT::Forward::Forward (Vector& vector):
 	_source (vector),
 	_target (vector)
 {
-	FFT::_plan_mutex.lock();
-	_plan = fftw_plan_dft_1d (vector.size(),
-							  reinterpret_cast<fftw_complex*> (vector.data()),
-							  reinterpret_cast<fftw_complex*> (vector.data()),
-							  FFTW_FORWARD, FFTW_ESTIMATE);
-	FFT::_plan_mutex.unlock();
+	FFT::_plan_mutex.synchronize ([&]() {
+		_plan = fftw_plan_dft_1d (vector.size(),
+								  reinterpret_cast<fftw_complex*> (vector.data()),
+								  reinterpret_cast<fftw_complex*> (vector.data()),
+								  FFTW_FORWARD, FFTW_ESTIMATE);
+	});
 }
 
 
@@ -70,20 +70,20 @@ FFT::Forward::Forward (Vector& source, Vector& target):
 {
 	assert (source.size() == target.size());
 
-	FFT::_plan_mutex.lock();
-	_plan = fftw_plan_dft_1d (source.size(),
-							  reinterpret_cast<fftw_complex*> (source.data()),
-							  reinterpret_cast<fftw_complex*> (target.data()),
-							  FFTW_FORWARD, FFTW_ESTIMATE);
-	FFT::_plan_mutex.unlock();
+	FFT::_plan_mutex.synchronize ([&]() {
+		_plan = fftw_plan_dft_1d (source.size(),
+								  reinterpret_cast<fftw_complex*> (source.data()),
+								  reinterpret_cast<fftw_complex*> (target.data()),
+								  FFTW_FORWARD, FFTW_ESTIMATE);
+	});
 }
 
 
 FFT::Forward::~Forward()
 {
-	FFT::_plan_mutex.lock();
-	fftw_destroy_plan (_plan);
-	FFT::_plan_mutex.unlock();
+	FFT::_plan_mutex.synchronize ([&]() {
+		fftw_destroy_plan (_plan);
+	});
 }
 
 
@@ -98,12 +98,12 @@ FFT::Inverse::Inverse (Vector& vector):
 	_source (vector),
 	_target (vector)
 {
-	FFT::_plan_mutex.lock();
-	_plan = fftw_plan_dft_1d (vector.size(),
-							  reinterpret_cast<fftw_complex*> (vector.data()),
-							  reinterpret_cast<fftw_complex*> (vector.data()),
-							  FFTW_BACKWARD, FFTW_ESTIMATE);
-	FFT::_plan_mutex.unlock();
+	FFT::_plan_mutex.synchronize ([&]() {
+		_plan = fftw_plan_dft_1d (vector.size(),
+								  reinterpret_cast<fftw_complex*> (vector.data()),
+								  reinterpret_cast<fftw_complex*> (vector.data()),
+								  FFTW_BACKWARD, FFTW_ESTIMATE);
+	});
 }
 
 
@@ -113,20 +113,20 @@ FFT::Inverse::Inverse (Vector& source, Vector& target):
 {
 	assert (source.size() == target.size());
 
-	FFT::_plan_mutex.lock();
-	_plan = fftw_plan_dft_1d (source.size(),
-							  reinterpret_cast<fftw_complex*> (source.data()),
-							  reinterpret_cast<fftw_complex*> (target.data()),
-							  FFTW_BACKWARD, FFTW_ESTIMATE);
-	FFT::_plan_mutex.unlock();
+	FFT::_plan_mutex.synchronize ([&]() {
+		_plan = fftw_plan_dft_1d (source.size(),
+								  reinterpret_cast<fftw_complex*> (source.data()),
+								  reinterpret_cast<fftw_complex*> (target.data()),
+								  FFTW_BACKWARD, FFTW_ESTIMATE);
+	});
 }
 
 
 FFT::Inverse::~Inverse()
 {
-	FFT::_plan_mutex.lock();
-	fftw_destroy_plan (_plan);
-	FFT::_plan_mutex.unlock();
+	FFT::_plan_mutex.synchronize ([&]() {
+		fftw_destroy_plan (_plan);
+	});
 }
 
 

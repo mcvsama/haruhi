@@ -95,17 +95,17 @@ Graph::register_unit (Unit* unit)
 	Graph* other_graph = unit->graph();
 	if (other_graph)
 	{
-		other_graph->lock();
-		other_graph->unregister_unit (unit);
-		other_graph->unlock();
+		other_graph->synchronize ([&]() {
+			other_graph->unregister_unit (unit);
+		});
 	}
-	lock();
-	unit->_graph = this;
-	_units.insert (unit);
-	unit->graph_updated();
-	// Signal:
-	unit_registered (unit);
-	unlock();
+	synchronize ([&]() {
+		unit->_graph = this;
+		_units.insert (unit);
+		unit->graph_updated();
+		// Signal:
+		unit_registered (unit);
+	});
 	unit->registered();
 }
 
@@ -118,17 +118,17 @@ Graph::unregister_unit (Unit* unit)
 		throw Exception ("unit was not registered in this graph");
 	unit->disable();
 	unit->unregistered();
-	lock();
-	// Notify ports about Unit unregistration:
-	for (Port* p: unit->inputs())
-		p->unit_unregistered();
-	for (Port* p: unit->outputs())
-		p->unit_unregistered();
-	_units.erase (f);
-	unit->_graph = 0;
-	// Signal:
-	unit_unregistered (unit);
-	unlock();
+	synchronize ([&]() {
+		// Notify ports about Unit unregistration:
+		for (Port* p: unit->inputs())
+			p->unit_unregistered();
+		for (Port* p: unit->outputs())
+			p->unit_unregistered();
+		_units.erase (f);
+		unit->_graph = 0;
+		// Signal:
+		unit_unregistered (unit);
+	});
 }
 
 
