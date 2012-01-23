@@ -73,7 +73,7 @@ deinitialize();
  * \param	ilog2 One over log, to required radix, of two
  */
 static inline float
-pow_generic (const float power, const float ilog2)
+pow_generic (const float power, const float ilog2) noexcept
 {
 	extern unsigned int* lookup_table;
 
@@ -97,7 +97,7 @@ pow_generic (const float power, const float ilog2)
  * Prior to use this function initialize() must be called.
  */
 static inline float
-pow (const float radix, const float power)
+pow (const float radix, const float power) noexcept
 {
 	return pow_generic (power, std::log (radix) * 1.44269504088896f);
 }
@@ -107,7 +107,7 @@ pow (const float radix, const float power)
  * Prior to use this function initialize() must be called.
  */
 static inline float
-pow_radix_2 (const float power)
+pow_radix_2 (const float power) noexcept
 {
 	return pow_generic (power, 1.0f);
 }
@@ -117,7 +117,7 @@ pow_radix_2 (const float power)
  * Prior to use this function initialize() must be called.
  */
 static inline float
-exp (const float power)
+exp (const float power) noexcept
 {
 	return pow_generic (power, 1.44269504088896f);
 }
@@ -127,7 +127,7 @@ exp (const float power)
  * Prior to use this function initialize() must be called.
  */
 static inline float
-pow_radix_10 (const float power)
+pow_radix_10 (const float power) noexcept
 {
 	return pow_generic (power, 3.32192809488736f);
 }

@@ -27,19 +27,19 @@ template<class WidgetClass>
 	class HasWidget
 	{
 	  public:
-		HasWidget();
+		HasWidget() noexcept;
 
 		/**
 		 * Return associated UI object.
 		 */
 		WidgetClass*
-		widget() const;
+		widget() const noexcept;
 
 		/**
 		 * Set associated UI object.
 		 */
 		void
-		set_widget (WidgetClass* widget);
+		set_widget (WidgetClass* widget) noexcept;
 
 	  private:
 		WidgetClass* _widget;
@@ -48,14 +48,14 @@ template<class WidgetClass>
 
 template<class WidgetClass>
 	inline
-	HasWidget<WidgetClass>::HasWidget():
+	HasWidget<WidgetClass>::HasWidget() noexcept:
 		_widget (0)
 	{ }
 
 
 template<class WidgetClass>
 	inline WidgetClass*
-	HasWidget<WidgetClass>::widget() const
+	HasWidget<WidgetClass>::widget() const noexcept
 	{
 		return _widget;
 	}
@@ -63,7 +63,7 @@ template<class WidgetClass>
 
 template<class WidgetClass>
 	inline void
-	HasWidget<WidgetClass>::set_widget (WidgetClass* widget)
+	HasWidget<WidgetClass>::set_widget (WidgetClass* widget) noexcept
 	{
 		_widget = widget;
 	}

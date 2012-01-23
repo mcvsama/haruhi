@@ -62,32 +62,32 @@ class Controller:
 	 * Returns associated ControllerParam.
 	 */
 	ControllerParam*
-	param() const;
+	param() const noexcept;
 
 	/**
 	 * Returns associated EventPort.
 	 */
 	EventPort*
-	event_port() const;
+	event_port() const noexcept;
 
 	/**
 	 * Associate this Controller with UnitBay, so widget can
 	 * create a list of ports it can connect to, for example in popup menu.
 	 */
 	void
-	set_unit_bay (UnitBay* unit_bay);
+	set_unit_bay (UnitBay* unit_bay) noexcept;
 
 	/**
 	 * Returns associated UnitBay.
 	 */
 	UnitBay*
-	unit_bay() const;
+	unit_bay() const noexcept;
 
 	/**
 	 * Return ControllerProxy owned by this Controller.
 	 */
 	ControllerProxy*
-	controller_proxy();
+	controller_proxy() noexcept;
 
 	/**
 	 * Puts controller into (MIDI) learning mode.
@@ -117,7 +117,7 @@ class Controller:
 	 * Returns true if Controller is in 'learning' mode.
 	 */
 	bool
-	learning();
+	learning() noexcept;
 
   private:
 	/**
@@ -153,42 +153,42 @@ class Controller:
 
 
 inline ControllerParam*
-Controller::param() const
+Controller::param() const noexcept
 {
 	return _controller_proxy->param();
 }
 
 
 inline EventPort*
-Controller::event_port() const
+Controller::event_port() const noexcept
 {
 	return _controller_proxy->event_port();
 }
 
 
 inline void
-Controller::set_unit_bay (UnitBay* unit_bay)
+Controller::set_unit_bay (UnitBay* unit_bay) noexcept
 {
 	_unit_bay = unit_bay;
 }
 
 
 inline UnitBay*
-Controller::unit_bay() const
+Controller::unit_bay() const noexcept
 {
 	return _unit_bay;
 }
 
 
 inline ControllerProxy*
-Controller::controller_proxy()
+Controller::controller_proxy() noexcept
 {
 	return _controller_proxy;
 }
 
 
 inline bool
-Controller::learning()
+Controller::learning() noexcept
 {
 	return _learning.load();
 }

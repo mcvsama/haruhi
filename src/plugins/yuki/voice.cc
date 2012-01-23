@@ -192,7 +192,7 @@ Voice::graph_updated (unsigned int sample_rate, std::size_t buffer_size)
 
 
 void
-Voice::update_glide_parameters()
+Voice::update_glide_parameters() noexcept
 {
 	float source_frequency = _frequency;
 	int portamento_time = _part_params->portamento_time.get();
@@ -218,7 +218,7 @@ Voice::update_glide_parameters()
 
 
 void
-Voice::prepare_amplitude_buffer (Haruhi::AudioBuffer* buffer)
+Voice::prepare_amplitude_buffer (Haruhi::AudioBuffer* buffer) noexcept
 {
 	// Amplitude velocity sensing:
 	float sens = _params.velocity_sens.to_f();
@@ -235,7 +235,7 @@ Voice::prepare_amplitude_buffer (Haruhi::AudioBuffer* buffer)
 
 
 void
-Voice::prepare_frequency_buffer (Haruhi::AudioBuffer* buffer, Haruhi::AudioBuffer* tmp_buf)
+Voice::prepare_frequency_buffer (Haruhi::AudioBuffer* buffer, Haruhi::AudioBuffer* tmp_buf) noexcept
 {
 	buffer->fill (1.0f);
 

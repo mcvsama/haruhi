@@ -19,17 +19,17 @@
 #include <cmath>
 #include <stdint.h>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 // System:
 #ifdef HARUHI_SSE2
 #include <xmmintrin.h>
 #endif
 
-// Haruhi:
-#include <haruhi/config/all.h>
-
 
 inline float
-renormalize (float value, float a1, float b1, float a2, float b2)
+renormalize (float value, float a1, float b1, float a2, float b2) noexcept
 {
 	if (b1 == a1)
 		return a2;
@@ -40,14 +40,14 @@ renormalize (float value, float a1, float b1, float a2, float b2)
 
 
 inline int
-cut (int value)
+cut (int value) noexcept
 {
 	return (value > 255)? 255 : value;
 }
 
 
 inline void
-undenormalize (float& sample)
+undenormalize (float& sample) noexcept
 {
 	union { float f; unsigned int i; } u = { f: sample };
 	if ((u.i & 0x7f800000) == 0)
@@ -57,7 +57,7 @@ undenormalize (float& sample)
 
 template<class Value>
 	inline Value
-	ifnan (Value const& test, Value val)
+	ifnan (Value const& test, Value val) noexcept
 	{
 		if (std::isnan (test))
 			return val;
@@ -67,7 +67,7 @@ template<class Value>
 
 template<class Value>
 	inline void
-	limit_value (Value& value, Value min, Value max)
+	limit_value (Value& value, Value min, Value max) noexcept
 	{
 		if (value < min)
 			value = min;
@@ -78,7 +78,7 @@ template<class Value>
 
 template<class Value>
 	inline Value
-	bound (Value value, Value min, Value max)
+	bound (Value value, Value min, Value max) noexcept
 	{
 		limit_value (value, min, max);
 		return value;
@@ -87,7 +87,7 @@ template<class Value>
 
 template<class Value>
 	inline Value
-	pow2 (Value v)
+	pow2 (Value v) noexcept
 	{
 		return v * v;
 	}
@@ -98,7 +98,7 @@ template<class Value>
  * For IEEE-754 only.
  */
 inline float
-ieee754_fractional_part (const float& v)
+ieee754_fractional_part (const float& v) noexcept
 {
 	union { float f; uint32_t i; } u = { f: v };
 	// Sign:
@@ -127,7 +127,7 @@ ieee754_fractional_part (const float& v)
  * Fast when compiler uses SSE3's fisttp instruction.
  */
 inline float
-sse3_fractional_part (const float& v)
+sse3_fractional_part (const float& v) noexcept
 {
 	union {
 		float f;
@@ -142,7 +142,7 @@ sse3_fractional_part (const float& v)
 
 
 inline float
-fractional_part (const float& v)
+fractional_part (const float& v) noexcept
 {
 #if defined HARUHI_SSE3
 	return sse3_fractional_part (v);
@@ -159,7 +159,7 @@ fractional_part (const float& v)
  * SIMD version of fractional_part().
  */
 inline __m128
-fractional_part (__m128 x)
+fractional_part (__m128 x) noexcept
 {
     __m128i a = _mm_cvttps_epi32 (x);
     __m128 b = _mm_cvtepi32_ps (a);
@@ -172,7 +172,7 @@ fractional_part (__m128 x)
  * Returns x > 0.0 ? 1.0 : -1.0.
  */
 inline float
-sgn (float const& v)
+sgn (float const& v) noexcept
 {
 	union {
 		float f;
@@ -189,7 +189,7 @@ sgn (float const& v)
  * Fmods value x into [0, 1.0] range.
  */
 inline float
-mod1 (float v)
+mod1 (float v) noexcept
 {
 	return v >= 0.0f ? fractional_part (v) : 1.0f - fractional_part (-v);
 }
@@ -200,7 +200,7 @@ mod1 (float v)
  * \param	db Attenuation value (-inf..0), eg. -3 means -3dB.
  */
 inline float
-attenuate_db (float db)
+attenuate_db (float db) noexcept
 {
 	return powf (10.0f, db / 20.0f);
 }

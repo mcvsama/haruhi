@@ -41,7 +41,7 @@ class WavePlot: public QWidget
 	class UpdateRequest: public QEvent
 	{
 	  public:
-		UpdateRequest():
+		UpdateRequest() noexcept:
 			QEvent (QEvent::User)
 		{ }
 	};

@@ -32,7 +32,7 @@
 class RefCounted: private Noncopyable
 {
   public:
-	RefCounted():
+	RefCounted() noexcept:
 		_ref_count (1)
 	{ }
 
@@ -40,7 +40,7 @@ class RefCounted: private Noncopyable
 	 * Increases references number.
 	 */
 	void
-	ref()
+	ref() noexcept
 	{
 		_ref_count += 1;
 	}
@@ -50,7 +50,7 @@ class RefCounted: private Noncopyable
 	 * using 'delete' operator. So it is not safe to use object after unref() operation.
 	 */
 	void
-	unref()
+	unref() noexcept
 	{
 		if (--_ref_count == 0)
 			delete this;
@@ -60,7 +60,10 @@ class RefCounted: private Noncopyable
 	 * Returns number of references to this object.
 	 */
 	unsigned int
-	ref_num() const { return _ref_count; }
+	ref_num() const noexcept
+	{
+		return _ref_count;
+	}
 
   private:
 	unsigned int _ref_count;

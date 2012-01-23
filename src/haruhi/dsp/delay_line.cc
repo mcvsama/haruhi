@@ -26,7 +26,7 @@ namespace Haruhi {
 
 namespace DSP {
 
-DelayLine::DelayLine():
+DelayLine::DelayLine() noexcept:
 	_data (0),
 	_max_delay (64),
 	_size (1),
@@ -39,7 +39,7 @@ DelayLine::DelayLine():
 }
 
 
-DelayLine::DelayLine (std::size_t delay, std::size_t max_delay, std::size_t size):
+DelayLine::DelayLine (std::size_t delay, std::size_t max_delay, std::size_t size) noexcept:
 	_data (0),
 	_max_delay (max_delay),
 	_size (size),
@@ -56,16 +56,7 @@ DelayLine::DelayLine (std::size_t delay, std::size_t max_delay, std::size_t size
 
 
 void
-DelayLine::set_delay (std::size_t delay)
-{
-	assert (delay < _max_delay);
-
-	_delay = delay;
-}
-
-
-void
-DelayLine::set_max_delay (std::size_t max_delay)
+DelayLine::set_max_delay (std::size_t max_delay) noexcept
 {
 	assert (max_delay > 0);
 
@@ -82,17 +73,7 @@ DelayLine::set_max_delay (std::size_t max_delay)
 
 
 void
-DelayLine::set_size (std::size_t size)
-{
-	assert (size > 0);
-	assert (_max_delay > size);
-
-	_size = size;
-}
-
-
-void
-DelayLine::write (Sample const* data)
+DelayLine::write (Sample const* data) noexcept
 {
 	if (_wpos + _size < _max_delay)
 	{
@@ -110,7 +91,7 @@ DelayLine::write (Sample const* data)
 
 
 void
-DelayLine::read (Sample* data)
+DelayLine::read (Sample* data) noexcept
 {
 	// Delayed pos:
 	const std::size_t pos = _wpos > _delay
@@ -129,7 +110,7 @@ DelayLine::read (Sample* data)
 
 
 void
-DelayLine::clear()
+DelayLine::clear() noexcept
 {
 	std::fill (_data, _data + _max_delay, 0.0f);
 }

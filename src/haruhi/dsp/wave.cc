@@ -24,7 +24,7 @@ namespace Haruhi {
 namespace DSP {
 
 Sample
-Wave::compute_average_energy (unsigned int samples) const
+Wave::compute_average_energy (unsigned int samples) const noexcept
 {
 	Sample delta = 1.0f / samples;
 	Sample energy = +0.0f;
@@ -35,7 +35,7 @@ Wave::compute_average_energy (unsigned int samples) const
 
 
 std::pair<Sample, Sample>
-Wave::compute_min_max (unsigned int samples) const
+Wave::compute_min_max (unsigned int samples) const noexcept
 {
 	Sample delta = 1.0f / samples;
 	Sample min = std::numeric_limits<Sample>::infinity();

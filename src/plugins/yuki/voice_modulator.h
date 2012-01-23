@@ -46,7 +46,7 @@ class VoiceModulator
 	 */
 	void
 	modulate (Haruhi::AudioBuffer* amplitude_buf_source, Haruhi::AudioBuffer* frequency_buf_source,
-			  Haruhi::AudioBuffer* frequency_buf_target, Haruhi::AudioBuffer* tmp_buf);
+			  Haruhi::AudioBuffer* frequency_buf_target, Haruhi::AudioBuffer* tmp_buf) noexcept;
 
 	/**
 	 * Update buffers sizes.
@@ -59,13 +59,13 @@ class VoiceModulator
 	 * \param	source Buffer with values in range [-1.0, 1.0].
 	 */
 	void
-	modulate_frequency (Haruhi::AudioBuffer* target, Haruhi::AudioBuffer* source, Haruhi::Sample factor);
+	modulate_frequency (Haruhi::AudioBuffer* target, Haruhi::AudioBuffer* source, Haruhi::Sample factor) noexcept;
 
 	/**
 	 * \param	source Buffer with values in range [-1.0, 1.0].
 	 */
 	void
-	modulate_amplitude (Haruhi::AudioBuffer* target, Haruhi::AudioBuffer* source, Haruhi::Sample factor);
+	modulate_amplitude (Haruhi::AudioBuffer* target, Haruhi::AudioBuffer* source, Haruhi::Sample factor) noexcept;
 
   private:
 	Params::Part*		_part_params;

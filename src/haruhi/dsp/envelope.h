@@ -45,41 +45,41 @@ class Envelope
 	typedef std::vector<Point>  Points;
 
   public:
-	Envelope();
+	Envelope() noexcept;
 
 	Points::size_type
-	sustain_point() const;
+	sustain_point() const noexcept;
 
 	void
-	set_sustain_point (Points::size_type i);
+	set_sustain_point (Points::size_type i) noexcept;
 
 	/**
 	 * If forced release is enabled, envelope will jump directly to
 	 * release point on release.
 	 */
 	void
-	set_forced_release (bool enabled);
+	set_forced_release (bool enabled) noexcept;
 
 	Points&
-	points();
+	points() noexcept;
 
 	Points const&
-	points() const;
+	points() const noexcept;
 
 	void
-	prepare();
+	prepare() noexcept;
 
 	void
-	release();
+	release() noexcept;
 
 	bool
-	released() const;
+	released() const noexcept;
 
 	bool
-	finished() const;
+	finished() const noexcept;
 
 	void
-	fill (Sample* begin, Sample* end);
+	fill (Sample* begin, Sample* end) noexcept;
 
   private:
 	Points				_points;
@@ -106,37 +106,51 @@ Envelope::Point::Point (float value, unsigned int samples):
 
 
 inline Envelope::Points::size_type
-Envelope::sustain_point() const
+Envelope::sustain_point() const noexcept
 {
 	return _sustain_point;
 }
 
 
 inline void
-Envelope::set_sustain_point (Points::size_type i)
+Envelope::set_sustain_point (Points::size_type i) noexcept
 {
 	_sustain_point = i;
 }
 
 
 inline void
-Envelope::set_forced_release (bool enabled)
+Envelope::set_forced_release (bool enabled) noexcept
 {
 	_forced_release = enabled;
 }
 
 
 inline Envelope::Points&
-Envelope::points()
+Envelope::points() noexcept
 {
 	return _points;
 }
 
 
 inline Envelope::Points const&
-Envelope::points() const
+Envelope::points() const noexcept
 {
 	return _points;
+}
+
+
+inline bool
+Envelope::released() const noexcept
+{
+	return _phase >= _sustain_point && !_sustain;
+}
+
+
+inline bool
+Envelope::finished() const noexcept
+{
+	return !_sustain && _phase >= _points.size() - 1;
 }
 
 } // namespace DSP

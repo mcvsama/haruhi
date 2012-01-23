@@ -33,7 +33,7 @@
 		operator new (std::size_t s)									\
 			{ return _allocator.allocate (s); }							\
 		void															\
-		operator delete (void* p, std::size_t s)						\
+		operator delete (void* p, std::size_t s) noexcept				\
 			{ _allocator.deallocate (reinterpret_cast<T*> (p), s); }	\
 	private:
 

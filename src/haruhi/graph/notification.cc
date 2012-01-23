@@ -25,13 +25,13 @@ namespace Haruhi {
 
 class Unit;
 
-Notification::Notification (Unit* sender):
+Notification::Notification (Unit* sender) noexcept:
 	_sender (sender),
 	_broadcast (true)
 { }
 
 
-Notification::Notification (Unit* sender, std::string const& target_urn):
+Notification::Notification (Unit* sender, std::string const& target_urn) noexcept:
 	_sender (sender),
 	_broadcast (false),
 	_target_urn (target_urn)

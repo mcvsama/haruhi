@@ -46,7 +46,7 @@ class FrequencyResponsePlot: public QWidget
 	class Replot: public QEvent
 	{
 	  public:
-		Replot():
+		Replot() noexcept:
 			QEvent (QEvent::User)
 		{ }
 	};
@@ -77,7 +77,7 @@ class FrequencyResponsePlot: public QWidget
 	 * Returns currently assigned PlotableImpulseResponse (or 0 if none assigned).
 	 */
 	DSP::PlotableImpulseResponse*
-	impulse_response() const { return _impulse_response; }
+	impulse_response() const noexcept;
 
 	/**
 	 * Request replot on nearest paint event.
@@ -127,6 +127,13 @@ class FrequencyResponsePlot: public QWidget
 	std::vector<float>				_values;
 	QSize							_prev_size;
 };
+
+
+inline DSP::PlotableImpulseResponse*
+FrequencyResponsePlot::impulse_response() const noexcept
+{
+	return _impulse_response;
+}
 
 } // namespace Haruhi
 

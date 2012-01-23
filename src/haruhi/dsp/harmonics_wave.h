@@ -40,7 +40,7 @@ class HarmonicsWave: public Wave
 
 	struct Harmonic
 	{
-		Harmonic();
+		Harmonic() noexcept;
 
 		Sample	value;
 		Sample	phase;
@@ -52,7 +52,7 @@ class HarmonicsWave: public Wave
 	/**
 	 * Create wave that adds harmonics to inner wave.
 	 */
-	HarmonicsWave (Wave* inner_wave = 0, bool auto_delete = false);
+	HarmonicsWave (Wave* inner_wave = 0, bool auto_delete = false) noexcept;
 
 	/**
 	 * Returns sample from base function with added harmonics.
@@ -61,36 +61,36 @@ class HarmonicsWave: public Wave
 	 * 			be used in (this is for limiting bandwidth).
 	 */
 	Sample
-	operator() (Sample register phase, Sample frequency) const;
+	operator() (Sample register phase, Sample frequency) const noexcept;
 
 	/**
 	 * Gets given harmonic.
 	 * \param	index is harmonic number, must be less that HarmonicNumber.
 	 */
 	Harmonic const&
-	harmonic (int index) const;
+	harmonic (int index) const noexcept;
 
 	/**
 	 * Sets given harmonic.
 	 * \param	index is harmonic number, must be less that HarmonicNumber.
 	 */
 	void
-	set_harmonic (unsigned int index, Harmonic const& harmonic);
+	set_harmonic (unsigned int index, Harmonic const& harmonic) noexcept;
 
 	void
-	set_harmonic (unsigned int index, Sample value, Sample phase);
+	set_harmonic (unsigned int index, Sample value, Sample phase) noexcept;
 
 	/**
 	 * Returns harmonics vector.
 	 */
 	Harmonics&
-	harmonics();
+	harmonics() noexcept;
 
 	/**
 	 * Returns harmonics vector.
 	 */
 	Harmonics const&
-	harmonics() const;
+	harmonics() const noexcept;
 
   private:
 	Harmonics _harmonics;
@@ -98,14 +98,14 @@ class HarmonicsWave: public Wave
 
 
 inline
-HarmonicsWave::Harmonic::Harmonic():
+HarmonicsWave::Harmonic::Harmonic() noexcept:
 	value (0.0f),
 	phase (0.0f)
 { }
 
 
 inline
-HarmonicsWave::HarmonicsWave (Wave* wave, bool auto_delete):
+HarmonicsWave::HarmonicsWave (Wave* wave, bool auto_delete) noexcept:
 	Wave (wave, auto_delete)
 {
 	_harmonics.resize (HarmonicsNumber);
@@ -113,7 +113,7 @@ HarmonicsWave::HarmonicsWave (Wave* wave, bool auto_delete):
 
 
 inline Sample
-HarmonicsWave::operator() (Sample phase, Sample frequency) const
+HarmonicsWave::operator() (Sample phase, Sample frequency) const noexcept
 {
 	Sample sum = 0;
 	for (Harmonics::size_type h = 0, n = _harmonics.size(); h < n; ++h)
@@ -123,14 +123,14 @@ HarmonicsWave::operator() (Sample phase, Sample frequency) const
 
 
 inline HarmonicsWave::Harmonic const&
-HarmonicsWave::harmonic (int index) const
+HarmonicsWave::harmonic (int index) const noexcept
 {
 	return _harmonics[index];
 }
 
 
 inline void
-HarmonicsWave::set_harmonic (unsigned int index, Harmonic const& harmonic)
+HarmonicsWave::set_harmonic (unsigned int index, Harmonic const& harmonic) noexcept
 {
 	assert (index < HarmonicsNumber);
 
@@ -139,7 +139,7 @@ HarmonicsWave::set_harmonic (unsigned int index, Harmonic const& harmonic)
 
 
 inline void
-HarmonicsWave::set_harmonic (unsigned int index, Sample value, Sample phase)
+HarmonicsWave::set_harmonic (unsigned int index, Sample value, Sample phase) noexcept
 {
 	assert (index < HarmonicsNumber);
 
@@ -149,14 +149,14 @@ HarmonicsWave::set_harmonic (unsigned int index, Sample value, Sample phase)
 
 
 inline HarmonicsWave::Harmonics&
-HarmonicsWave::harmonics()
+HarmonicsWave::harmonics() noexcept
 {
 	return _harmonics;
 }
 
 
 inline HarmonicsWave::Harmonics const&
-HarmonicsWave::harmonics() const
+HarmonicsWave::harmonics() const noexcept
 {
 	return _harmonics;
 }

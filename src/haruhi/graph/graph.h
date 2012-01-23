@@ -24,7 +24,6 @@
 #include <haruhi/utility/signal.h>
 
 // Local:
-#include "exception.h"
 #include "unit.h"
 
 
@@ -83,13 +82,13 @@ class Graph: public RecursiveMutex
 	 * Returns currently registered audio backend (or 0 if there's none).
 	 */
 	AudioBackend*
-	audio_backend() const;
+	audio_backend() const noexcept;
 
 	/**
 	 * Returns currently registered event backend (or 0 if there's none).
 	 */
 	EventBackend*
-	event_backend() const;
+	event_backend() const noexcept;
 
 	/**
 	 * Registers unit in this graph.
@@ -129,7 +128,7 @@ class Graph: public RecursiveMutex
 	 * Returns buffer size for audio buffers.
 	 */
 	std::size_t
-	buffer_size() const;
+	buffer_size() const noexcept;
 
 	/**
 	 * Sets buffer size and updates all connected port buffers.
@@ -141,7 +140,7 @@ class Graph: public RecursiveMutex
 	 * Returns current sample rate.
 	 */
 	unsigned int
-	sample_rate() const;
+	sample_rate() const noexcept;
 
 	/**
 	 * Sets sample rate and updates all connected port buffers.
@@ -154,7 +153,7 @@ class Graph: public RecursiveMutex
 	 * in quarter notes per minute (BPM).
 	 */
 	float
-	tempo() const;
+	tempo() const noexcept;
 
 	/**
 	 * Sets new tempo.
@@ -166,7 +165,7 @@ class Graph: public RecursiveMutex
 	 * Returns current master tune in Hz. Default value is 440.0.
 	 */
 	float
-	master_tune() const;
+	master_tune() const noexcept;
 
 	/**
 	 * Sets new master tune in Hz.
@@ -185,32 +184,32 @@ class Graph: public RecursiveMutex
 	 * Returns timestamp of last entering into processing round.
 	 */
 	Timestamp
-	timestamp() const;
+	timestamp() const noexcept;
 
 	/**
 	 * Gives access to set containing all registered Synces (in this graph):
 	 */
 	Units const&
-	units() const;
+	units() const noexcept;
 
 	/**
 	 * Creates timestamp at the time of call.
 	 */
 	static Timestamp
-	now();
+	now() noexcept;
 
 	/**
 	 * Returns true if syncing is dummy.
 	 */
 	bool
-	dummy() const;
+	dummy() const noexcept;
 
 	/**
 	 * Returns number of samples from the beginning of current processing round
 	 * to the next tempo tick.
 	 */
 	uint64_t
-	next_tempo_tick() const;
+	next_tempo_tick() const noexcept;
 
   private:
 	void
@@ -255,63 +254,70 @@ class Graph: public RecursiveMutex
 
 
 inline AudioBackend*
-Graph::audio_backend() const
+Graph::audio_backend() const noexcept
 {
 	return _audio_backend;
 }
 
 
 inline EventBackend*
-Graph::event_backend() const
+Graph::event_backend() const noexcept
 {
 	return _event_backend;
 }
 
 
 inline std::size_t
-Graph::buffer_size() const
+Graph::buffer_size() const noexcept
 {
 	return _buffer_size;
 }
 
 
 inline unsigned int
-Graph::sample_rate() const
+Graph::sample_rate() const noexcept
 {
 	return _sample_rate;
 }
 
 
 inline float
-Graph::tempo() const
+Graph::tempo() const noexcept
 {
 	return _tempo;
 }
 
 
 inline float
-Graph::master_tune() const
+Graph::master_tune() const noexcept
 {
 	return _master_tune;
 }
 
 
 inline Timestamp
-Graph::timestamp() const
+Graph::timestamp() const noexcept
 {
 	return _timestamp;
 }
 
 
+inline Graph::Units const&
+Graph::units() const noexcept
+{
+	return _units;
+}
+
+
 inline bool
-Graph::dummy() const
+Graph::dummy() const noexcept
 {
 	return _dummy_syncing;
 }
 
 
 inline uint64_t
-Graph::next_tempo_tick() const
+Graph::next_tempo_tick() const noexcept
 {
 	return _next_tempo_tick;
 }

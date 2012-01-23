@@ -71,7 +71,7 @@ class DualFilter
 	 * All buffers must be distinct.
 	 */
 	void
-	filterout (FilterType* filters, int stages, Haruhi::AudioBuffer* input, Haruhi::AudioBuffer* buffer, Haruhi::AudioBuffer* output);
+	filterout (FilterType* filters, int stages, Haruhi::AudioBuffer* input, Haruhi::AudioBuffer* buffer, Haruhi::AudioBuffer* output) noexcept;
 
   public:
 	Configuration			_configuration;

@@ -32,13 +32,13 @@ template<class tType>
 		typedef tType Type;
 
 	  public:
-		PointerEquals (Type* pointer):
+		PointerEquals (Type* pointer) noexcept:
 			_pointer (pointer)
 		{ }
 
 		template<class Element>
 			bool
-			operator() (Element const& x)
+			operator() (Element const& x) noexcept
 			{
 				return &x == _pointer;
 			}

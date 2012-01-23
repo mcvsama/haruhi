@@ -26,7 +26,7 @@ namespace Haruhi {
 
 namespace DSP {
 
-Envelope::Envelope():
+Envelope::Envelope() noexcept:
 	_phase (0),
 	_p (0),
 	_sustain_point (0),
@@ -37,7 +37,7 @@ Envelope::Envelope():
 
 
 void
-Envelope::prepare()
+Envelope::prepare() noexcept
 {
 	_phase = 0;
 	_p = 0;
@@ -46,7 +46,7 @@ Envelope::prepare()
 
 
 void
-Envelope::release()
+Envelope::release() noexcept
 {
 	_points[_sustain_point].value = renormalize (1.0f * _p, 0.0f, 1.0f * _points[_phase].samples, _points[_phase].value, _points[_phase+1].value);
 	_p = 0;
@@ -55,22 +55,8 @@ Envelope::release()
 }
 
 
-bool
-Envelope::released() const
-{
-	return _phase >= _sustain_point && !_sustain;
-}
-
-
-bool
-Envelope::finished() const
-{
-	return !_sustain && _phase >= _points.size() - 1;
-}
-
-
 void
-Envelope::fill (Sample* begin, Sample* end)
+Envelope::fill (Sample* begin, Sample* end) noexcept
 {
 	Sample* cur = begin;
 	while (cur != end)

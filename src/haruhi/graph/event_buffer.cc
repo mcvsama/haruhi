@@ -22,7 +22,6 @@
 
 // Local:
 #include "event_buffer.h"
-#include "exception.h"
 
 
 namespace Haruhi {
@@ -32,7 +31,7 @@ POOL_ALLOCATOR_FOR (EventBuffer)
 Buffer::TypeID EventBuffer::TYPE = "Haruhi::EventBuffer";
 
 
-EventBuffer::EventBuffer():
+EventBuffer::EventBuffer() noexcept:
 	Buffer (EventBuffer::TYPE),
 	_sorted (true)
 {
@@ -42,8 +41,7 @@ EventBuffer::EventBuffer():
 void
 EventBuffer::mixin (Buffer const* other)
 {
-	if (other->type() != EventBuffer::TYPE)
-		throw Exception ("incompatible buffers");
+	assert (other->type() == EventBuffer::TYPE);
 	EventBuffer const* other_buffer = static_cast<EventBuffer const*> (other);
 	_events.insert (_events.end(), other_buffer->_events.begin(), other_buffer->_events.end());
 }

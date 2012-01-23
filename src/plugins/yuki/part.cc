@@ -40,7 +40,7 @@
 
 namespace Yuki {
 
-Part::UpdateWavetableWorkUnit::UpdateWavetableWorkUnit (Part* part):
+Part::UpdateWavetableWorkUnit::UpdateWavetableWorkUnit (Part* part) noexcept:
 	_part (part),
 	_wavetable (0),
 	_serial (0),
@@ -49,7 +49,7 @@ Part::UpdateWavetableWorkUnit::UpdateWavetableWorkUnit (Part* part):
 
 
 void
-Part::UpdateWavetableWorkUnit::reset (DSP::Wavetable* wavetable, unsigned int serial)
+Part::UpdateWavetableWorkUnit::reset (DSP::Wavetable* wavetable, unsigned int serial) noexcept
 {
 	_wavetable = wavetable;
 	_serial = serial;
@@ -595,7 +595,7 @@ Part::wait_for_render()
 
 
 void
-Part::mix_rendering_result (Haruhi::AudioBuffer* b1, Haruhi::AudioBuffer* b2)
+Part::mix_rendering_result (Haruhi::AudioBuffer* b1, Haruhi::AudioBuffer* b2) noexcept
 {
 	assert (b1 != 0);
 	assert (b2 != 0);

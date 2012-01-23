@@ -26,19 +26,19 @@ namespace Yuki {
 class HasID
 {
   public:
-	HasID (unsigned int id = 0);
+	HasID (unsigned int id = 0) noexcept;
 
 	/**
 	 * Return part ID. Used by user to distinguish between different parts.
 	 */
 	unsigned int
-	id() const;
+	id() const noexcept;
 
 	/**
 	 * Set part ID.
 	 */
 	void
-	set_id (unsigned int id);
+	set_id (unsigned int id) noexcept;
 
   private:
 	unsigned int _id;
@@ -46,20 +46,20 @@ class HasID
 
 
 inline
-HasID::HasID (unsigned int id):
+HasID::HasID (unsigned int id) noexcept:
 	_id (id)
 { }
 
 
 inline unsigned int
-HasID::id() const
+HasID::id() const noexcept
 {
 	return _id;
 }
 
 
 inline void
-HasID::set_id (unsigned int id)
+HasID::set_id (unsigned int id) noexcept
 {
 	_id = id;
 }

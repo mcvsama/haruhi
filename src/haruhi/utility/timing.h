@@ -31,14 +31,14 @@ class Timing
 	typedef uint64_t Timestamp;
 
   public:
-	Timing()
+	Timing() noexcept
 	{
 		::gettimeofday (&_timeval, &_timezone);
 		_start_microseconds = _timeval.tv_sec * 1000000 + _timeval.tv_usec;
 	}
 
 	Timestamp
-	microseconds()
+	microseconds() noexcept
 	{
 		::gettimeofday (&_timeval, &_timezone);
 		return _timeval.tv_sec * 1000000 + _timeval.tv_usec - _start_microseconds;

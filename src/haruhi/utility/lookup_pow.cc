@@ -50,7 +50,7 @@ unsigned int* lookup_table;
  * \param	precision Number of mantissa bits used, >= 0 and <= 18
  */
 static void
-generic_initialize (unsigned int* const pTable, const unsigned int precision)
+generic_initialize (unsigned int* const pTable, const unsigned int precision) noexcept
 {
 	// step along table elements and x-axis positions
 	float zeroToOne = 1.0f / (static_cast<float> (1 << precision) * 2.0f);

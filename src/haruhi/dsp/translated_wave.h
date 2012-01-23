@@ -36,10 +36,10 @@ class TranslatedWave: public Wave
 	/**
 	 * \param	auto_delete Should inner wave be deleted when this one is?
 	 */
-	TranslatedWave (Sample delta, Wave* wave, bool auto_delete = false);
+	TranslatedWave (Sample delta, Wave* wave, bool auto_delete = false) noexcept;
 
 	Sample
-	operator() (Sample register phase, Sample frequency) const;
+	operator() (Sample register phase, Sample frequency) const noexcept;
 
   private:
 	Sample _delta;
@@ -47,14 +47,14 @@ class TranslatedWave: public Wave
 
 
 inline
-TranslatedWave::TranslatedWave (Sample delta, Wave* wave, bool auto_delete):
+TranslatedWave::TranslatedWave (Sample delta, Wave* wave, bool auto_delete) noexcept:
 	Wave (wave, auto_delete),
 	_delta (delta)
 { }
 
 
 inline Sample
-TranslatedWave::operator() (Sample phase, Sample frequency) const
+TranslatedWave::operator() (Sample phase, Sample frequency) const noexcept
 {
 	return _delta + (*inner_wave())(phase, frequency);
 }

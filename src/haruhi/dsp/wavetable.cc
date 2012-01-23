@@ -50,7 +50,7 @@ Wavetable::add_table (Sample* samples, float max_frequency)
 
 
 void
-Wavetable::drop_tables()
+Wavetable::drop_tables() noexcept
 {
 	for (auto& t: _tables)
 		delete[] t.second;

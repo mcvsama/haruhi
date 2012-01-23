@@ -45,24 +45,24 @@ class ModulatedWave: public Wave
 	/**
 	 * \param	mod_index indicates number of times modulator frequency is greater than wave's.
 	 */
-	ModulatedWave (Wave* inner_wave = 0, Wave* modulator = 0, Type mod_type = Ring, float mod_amplitude = 0.0f, unsigned int mod_index = 1, bool auto_delete_wave = false, bool auto_delete_modulator = false);
+	ModulatedWave (Wave* inner_wave = 0, Wave* modulator = 0, Type mod_type = Ring, float mod_amplitude = 0.0f, unsigned int mod_index = 1, bool auto_delete_wave = false, bool auto_delete_modulator = false) noexcept;
 
 	/**
 	 * Dtor
 	 */
-	~ModulatedWave();
+	~ModulatedWave() noexcept;
 
 	/**
 	 * Returns modulator wave object.
 	 */
 	Wave*
-	modulator() const;
+	modulator() const noexcept;
 
 	/**
 	 * Sets new modulator wave. Drops old modulator if auto_delete has been set.
 	 */
 	void
-	set_modulator (Wave* modulator, bool auto_delete);
+	set_modulator (Wave* modulator, bool auto_delete) noexcept;
 
 	/**
 	 * Returns sample from base function modulated with modulator.
@@ -71,14 +71,14 @@ class ModulatedWave: public Wave
 	 * 			be used in (this is for limiting bandwidth).
 	 */
 	Sample
-	operator() (Sample register phase, Sample frequency) const;
+	operator() (Sample register phase, Sample frequency) const noexcept;
 
   private:
 	Sample
-	value_for_ring (Sample phase, Sample frequency) const;
+	value_for_ring (Sample phase, Sample frequency) const noexcept;
 
 	Sample
-	value_for_frequency (Sample phase, Sample frequency) const;
+	value_for_frequency (Sample phase, Sample frequency) const noexcept;
 
   private:
 	Wave*			_modulator;
@@ -91,7 +91,7 @@ class ModulatedWave: public Wave
 
 
 inline
-ModulatedWave::ModulatedWave (Wave* inner_wave, Wave* modulator, Type mod_type, Sample mod_amplitude, unsigned int mod_index, bool auto_delete_wave, bool auto_delete_modulator):
+ModulatedWave::ModulatedWave (Wave* inner_wave, Wave* modulator, Type mod_type, Sample mod_amplitude, unsigned int mod_index, bool auto_delete_wave, bool auto_delete_modulator) noexcept:
 	Wave (inner_wave, auto_delete_wave),
 	_modulator (modulator),
 	_mod_type (mod_type),
@@ -110,7 +110,7 @@ ModulatedWave::ModulatedWave (Wave* inner_wave, Wave* modulator, Type mod_type, 
 
 
 inline
-ModulatedWave::~ModulatedWave()
+ModulatedWave::~ModulatedWave() noexcept
 {
 	if (_auto_delete_modulator)
 		delete _modulator;
@@ -118,14 +118,14 @@ ModulatedWave::~ModulatedWave()
 
 
 inline Wave*
-ModulatedWave::modulator() const
+ModulatedWave::modulator() const noexcept
 {
 	return _modulator;
 }
 
 
 inline void
-ModulatedWave::set_modulator (Wave* modulator, bool auto_delete)
+ModulatedWave::set_modulator (Wave* modulator, bool auto_delete) noexcept
 {
 	if (_auto_delete_modulator)
 		delete _modulator;
@@ -135,7 +135,7 @@ ModulatedWave::set_modulator (Wave* modulator, bool auto_delete)
 
 
 inline Sample
-ModulatedWave::value_for_ring (Sample phase, Sample frequency) const
+ModulatedWave::value_for_ring (Sample phase, Sample frequency) const noexcept
 {
 	Sample const x = (*inner_wave()) (phase, frequency);
 	Sample const m = (*_modulator) (mod1 (phase * _mod_index), frequency * _mod_index);
@@ -145,7 +145,7 @@ ModulatedWave::value_for_ring (Sample phase, Sample frequency) const
 
 
 inline Sample
-ModulatedWave::value_for_frequency (Sample phase, Sample frequency) const
+ModulatedWave::value_for_frequency (Sample phase, Sample frequency) const noexcept
 {
 	Sample const m = (*_modulator)(mod1 (phase * _mod_index), frequency * _mod_index);
 	return (*inner_wave())(mod1 (phase + phase * _mod_amplitude * m), frequency);
@@ -153,7 +153,7 @@ ModulatedWave::value_for_frequency (Sample phase, Sample frequency) const
 
 
 inline Sample
-ModulatedWave::operator() (Sample phase, Sample frequency) const
+ModulatedWave::operator() (Sample phase, Sample frequency) const noexcept
 {
 	return (this->*_value_function) (phase, frequency);
 }

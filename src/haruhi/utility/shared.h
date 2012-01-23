@@ -96,12 +96,12 @@ template<class T, class = void>
 			Type*		object;
 			Atomic<int>	references;
 
-			Data (Type* object):
+			Data (Type* object) noexcept:
 				object (object),
 				references (1)
 			{ }
 
-			~Data()
+			~Data() noexcept
 			{
 				delete object;
 			}
@@ -112,18 +112,18 @@ template<class T, class = void>
 			_data (new Data (object))
 		{ }
 
-		Shared (Shared const& other)
+		Shared (Shared const& other) noexcept
 		{
 			acquire_data (other._data);
 		}
 
-		~Shared()
+		~Shared() noexcept
 		{
 			leave_data();
 		}
 
 		Shared&
-		operator= (Shared const& other)
+		operator= (Shared const& other) noexcept
 		{
 			leave_data();
 			acquire_data (other._data);
@@ -136,42 +136,42 @@ template<class T, class = void>
 		 * when their C-pointers are the same.
 		 */
 		bool
-		operator== (Shared const& other) const
+		operator== (Shared const& other) const noexcept
 		{
 			return _data == other._data;
 		}
 
 		bool
-		operator< (Shared const& other) const
+		operator< (Shared const& other) const noexcept
 		{
 			return _data < other._data;
 		}
 
 		Type*
-		operator->() const { return _data->object; }
+		operator->() const noexcept { return _data->object; }
 
 		Type*
-		get() const { return _data->object; }
+		get() const noexcept { return _data->object; }
 
 		Type&
-		operator*() { return *_data->object; }
+		operator*() noexcept { return *_data->object; }
 
 		Type const&
-		operator*() const { return *_data->object; }
+		operator*() const noexcept { return *_data->object; }
 
 		bool
-		operator!() const { return !_data->object; }
+		operator!() const noexcept { return !_data->object; }
 
 	  private:
 		void
-		leave_data()
+		leave_data() noexcept
 		{
 			if (_data->references.dec_and_test())
 				delete _data;
 		}
 
 		void
-		acquire_data (Data* data)
+		acquire_data (Data* data) noexcept
 		{
 			_data = data;
 			_data->references.inc();
@@ -196,7 +196,7 @@ class FastShared
 	Atomic<int>	references;
 
   public:
-	FastShared():
+	FastShared() noexcept:
 		references (1)
 	{ }
 };
@@ -217,22 +217,22 @@ template<class T>
 		typedef T Type;
 
 	  public:
-		Shared (Type* object):
+		Shared (Type* object) noexcept:
 			_object (object)
 		{ }
 
-		Shared (Shared const& other)
+		Shared (Shared const& other) noexcept
 		{
 			acquire_data (other._object);
 		}
 
-		~Shared()
+		~Shared() noexcept
 		{
 			leave_data();
 		}
 
 		Shared&
-		operator= (Shared const& other)
+		operator= (Shared const& other) noexcept
 		{
 			leave_data();
 			acquire_data (other._object);
@@ -245,42 +245,42 @@ template<class T>
 		 * when their C-pointers are the same.
 		 */
 		bool
-		operator== (Shared const& other) const
+		operator== (Shared const& other) const noexcept
 		{
 			return _object == other._object;
 		}
 
 		bool
-		operator< (Shared const& other) const
+		operator< (Shared const& other) const noexcept
 		{
 			return _object < other._object;
 		}
 
 		Type*
-		operator->() const { return _object; }
+		operator->() const noexcept { return _object; }
 
 		Type*
-		get() const { return _object; }
+		get() const noexcept { return _object; }
 
 		Type&
-		operator*() { return *_object; }
+		operator*() noexcept { return *_object; }
 
 		Type const&
-		operator*() const { return *_object; }
+		operator*() const noexcept { return *_object; }
 
 		bool
-		operator!() const { return !_object; }
+		operator!() const noexcept { return !_object; }
 
 	  private:
 		void
-		leave_data()
+		leave_data() noexcept
 		{
 			if (_object->FastShared::references.dec_and_test())
 				delete _object;
 		}
 
 		void
-		acquire_data (Type* object)
+		acquire_data (Type* object) noexcept
 		{
 			_object = object;
 			_object->FastShared::references.inc();
@@ -291,9 +291,13 @@ template<class T>
 	};
 
 
+/**
+ * Capture given pointer and return Shared pointer.
+ * Takes ownership of the parameter.
+ */
 template<class Type>
 	inline Shared<Type>
-	shared (Type const& pointer)
+	shared (Type const& pointer) noexcept
 	{
 		return Shared<Type> (pointer);
 	}

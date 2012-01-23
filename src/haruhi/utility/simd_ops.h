@@ -45,7 +45,7 @@ namespace SIMD {
  * \param	size Number of floats in arrays.
  */
 static inline void
-clear_buffer (float* target, std::size_t size)
+clear_buffer (float* target, std::size_t size) noexcept
 {
 #ifdef HARUHI_SSE1
 	__m128* xt = CAST_TO_MM128 (target);
@@ -71,7 +71,7 @@ clear_buffer (float* target, std::size_t size)
  * \param	size Number of floats in arrays.
  */
 static inline void
-negate_buffer (float* target, std::size_t size)
+negate_buffer (float* target, std::size_t size) noexcept
 {
 #ifdef HARUHI_SSE1
 # ifdef HARUHI_IEEE754
@@ -107,7 +107,7 @@ negate_buffer (float* target, std::size_t size)
  * \param	size Number of floats in arrays.
  */
 static inline void
-fill_buffer (float* target, std::size_t size, float scalar)
+fill_buffer (float* target, std::size_t size, float scalar) noexcept
 {
 #ifdef HARUHI_SSE1
 	__m128* xt = CAST_TO_MM128 (target);
@@ -131,7 +131,7 @@ fill_buffer (float* target, std::size_t size, float scalar)
  * \param	size Number of floats in arrays.
  */
 static inline void
-copy_buffer (float* target, float* source, std::size_t size)
+copy_buffer (float* target, float* source, std::size_t size) noexcept
 {
 #ifdef HARUHI_SSE1
 	__m128* xs = CAST_TO_MM128 (source);
@@ -157,7 +157,7 @@ copy_buffer (float* target, float* source, std::size_t size)
  * \param	size Number of floats in arrays.
  */
 static inline void
-add_buffers (float* target, float* source, std::size_t size)
+add_buffers (float* target, float* source, std::size_t size) noexcept
 {
 #ifdef HARUHI_SSE1
 	__m128* xs = CAST_TO_MM128 (source);
@@ -184,7 +184,7 @@ add_buffers (float* target, float* source, std::size_t size)
  * \param	size Number of floats in arrays.
  */
 static inline void
-add_buffers (float* target, float* source, float attenuate_source, std::size_t size)
+add_buffers (float* target, float* source, float attenuate_source, std::size_t size) noexcept
 {
 #ifdef HARUHI_SSE1
 	__m128* xs = CAST_TO_MM128 (source);
@@ -212,7 +212,7 @@ add_buffers (float* target, float* source, float attenuate_source, std::size_t s
  * \param	size Number of floats in arrays.
  */
 static inline void
-add_scalar_to_buffer (float* target, std::size_t size, float scalar)
+add_scalar_to_buffer (float* target, std::size_t size, float scalar) noexcept
 {
 #ifdef HARUHI_SSE1
 	__m128 xs = _mm_set_ps1 (scalar);
@@ -238,7 +238,7 @@ add_scalar_to_buffer (float* target, std::size_t size, float scalar)
  * \param	size Number of floats in arrays.
  */
 static inline void
-sub_buffers (float* target, float* source, std::size_t size)
+sub_buffers (float* target, float* source, std::size_t size) noexcept
 {
 #ifdef HARUHI_SSE1
 	__m128* xs = CAST_TO_MM128 (source);
@@ -265,7 +265,7 @@ sub_buffers (float* target, float* source, std::size_t size)
  * \param	size Number of floats in arrays.
  */
 static inline void
-multiply_buffers (float* target, float* source, std::size_t size)
+multiply_buffers (float* target, float* source, std::size_t size) noexcept
 {
 #ifdef HARUHI_SSE1
 	__m128* xs = CAST_TO_MM128 (source);
@@ -292,7 +292,7 @@ multiply_buffers (float* target, float* source, std::size_t size)
  * \param	size Number of floats in arrays.
  */
 static inline void
-multiply_buffer_by_scalar (float* target, std::size_t size, float scalar)
+multiply_buffer_by_scalar (float* target, std::size_t size, float scalar) noexcept
 {
 #ifdef HARUHI_SSE1
 	__m128 xs = _mm_set_ps1 (scalar);
@@ -318,7 +318,7 @@ multiply_buffer_by_scalar (float* target, std::size_t size, float scalar)
  * \param	size Number of floats in arrays.
  */
 static inline void
-multiply_buffers_and_by_scalar (float* target, float* source, std::size_t size, float scalar)
+multiply_buffers_and_by_scalar (float* target, float* source, std::size_t size, float scalar) noexcept
 {
 #ifdef HARUHI_SSE1
 	__m128 xscalar = _mm_set_ps1 (scalar);
@@ -346,7 +346,7 @@ multiply_buffers_and_by_scalar (float* target, float* source, std::size_t size, 
  * \param	size Number of floats in arrays.
  */
 static inline void
-multiply_buffers_and_by_scalar (float* target1, float* target2, float* source, std::size_t size, float scalar)
+multiply_buffers_and_by_scalar (float* target1, float* target2, float* source, std::size_t size, float scalar) noexcept
 {
 #ifdef HARUHI_SSE1
 	__m128 xscalar = _mm_set_ps1 (scalar);
@@ -387,7 +387,7 @@ multiply_buffers_and_by_scalar (float* target1, float* target2, float* source, s
  * \param	size Number of floats in arrays.
  */
 static inline void
-power_buffers (float* target, float* power, std::size_t size)
+power_buffers (float* target, float* power, std::size_t size) noexcept
 {
 #ifdef HARUHI_HAS_SSE_POW
 	const float* target_end = target + size;
@@ -409,7 +409,7 @@ power_buffers (float* target, float* power, std::size_t size)
  * \param	size Number of floats in arrays.
  */
 static inline void
-power_buffer_to_scalar (float* target, std::size_t size, float scalar)
+power_buffer_to_scalar (float* target, std::size_t size, float scalar) noexcept
 {
 #ifdef HARUHI_HAS_SSE_POW
 	const float* target_end = target + size;

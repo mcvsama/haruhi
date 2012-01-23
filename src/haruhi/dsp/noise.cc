@@ -22,7 +22,7 @@ namespace Haruhi {
 
 namespace DSP {
 
-Noise::State::State()
+Noise::State::State() noexcept
 {
 	w = ::rand() % (RAND_MAX - 10) + 9;
 }

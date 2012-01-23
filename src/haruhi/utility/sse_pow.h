@@ -79,7 +79,7 @@ union F4 {
  * Compute exp2(fpart) with lookup table.
  */
 static inline __m128
-exp2f4 (__m128 x)
+exp2f4 (__m128 x) noexcept
 {
 	extern float exp2_table[2 * SIMD_POW_EXP2_TABLE_SIZE];
 
@@ -116,7 +116,7 @@ exp2f4 (__m128 x)
  * Prior to use this function initialize() must be called.
  */
 static inline __m128
-log2f4 (__m128 x)
+log2f4 (__m128 x) noexcept
 {
 	extern float log2_table[2 * SIMD_POW_LOG2_TABLE_SIZE];
 
@@ -145,7 +145,7 @@ log2f4 (__m128 x)
  * Prior to use this function initialize() must be called.
  */
 static inline __m128
-vec4_pow (__m128 radix, __m128 power)
+vec4_pow (__m128 radix, __m128 power) noexcept
 {
 	return exp2f4 (_mm_mul_ps (log2f4 (radix), power));
 }
@@ -155,7 +155,7 @@ vec4_pow (__m128 radix, __m128 power)
  * Prior to use this function initialize() must be called.
  */
 static inline __m128
-vec4_pow_radix_2 (__m128 power)
+vec4_pow_radix_2 (__m128 power) noexcept
 {
 	return exp2f4 (power);
 }
@@ -165,7 +165,7 @@ vec4_pow_radix_2 (__m128 power)
  * Prior to use this function initialize() must be called.
  */
 static inline __m128
-vec4_exp (__m128 power)
+vec4_exp (__m128 power) noexcept
 {
 	return exp2f4 (_mm_mul_ps (_mm_set_ps1 (1.44269504088896f), power));
 }
@@ -175,7 +175,7 @@ vec4_exp (__m128 power)
  * Prior to use this function initialize() must be called.
  */
 static inline __m128
-vec4_radix_10 (__m128 power)
+vec4_radix_10 (__m128 power) noexcept
 {
 	return exp2f4 (_mm_mul_ps (_mm_set_ps1 (3.32192809488736f), power));
 }
@@ -185,7 +185,7 @@ vec4_radix_10 (__m128 power)
  * Prior to use this function initialize() must be called.
  */
 static inline float
-pow (float radix, float power)
+pow (float radix, float power) noexcept
 {
 	float result;
 	_mm_store_ss (&result, vec4_pow (_mm_set_ps1 (radix), _mm_set_ps1 (power)));
@@ -197,7 +197,7 @@ pow (float radix, float power)
  * Prior to use this function initialize() must be called.
  */
 static inline float
-pow_radix_2 (float power)
+pow_radix_2 (float power) noexcept
 {
 	float result;
 	_mm_store_ss (&result, exp2f4 (_mm_set_ps1 (power)));
@@ -209,7 +209,7 @@ pow_radix_2 (float power)
  * Prior to use this function initialize() must be called.
  */
 static inline float
-exp (float power)
+exp (float power) noexcept
 {
 	float result;
 	_mm_store_ss (&result, exp2f4 (_mm_mul_ps (_mm_set_ps1 (1.44269504088896f), _mm_set_ps1 (power))));
@@ -221,7 +221,7 @@ exp (float power)
  * Prior to use this function initialize() must be called.
  */
 static inline float
-pow_radix_10 (float power)
+pow_radix_10 (float power) noexcept
 {
 	float result;
 	_mm_store_ss (&result, exp2f4 (_mm_mul_ps (_mm_set_ps1 (3.32192809488736f), _mm_set_ps1 (power))));
@@ -233,7 +233,7 @@ pow_radix_10 (float power)
  * Prior to use this function initialize() must be called.
  */
 static inline void
-vec4_pow (float* result, float* radix, float* power)
+vec4_pow (float* result, float* radix, float* power) noexcept
 {
 	_mm_store_ps (result, vec4_pow (_mm_load_ps (radix), _mm_load_ps (power)));
 }
@@ -243,7 +243,7 @@ vec4_pow (float* result, float* radix, float* power)
  * Prior to use this function initialize() must be called.
  */
 static inline void
-vec4_pow_to_scalar (float* result, float* radix, float power)
+vec4_pow_to_scalar (float* result, float* radix, float power) noexcept
 {
 	_mm_store_ps (result, vec4_pow (_mm_load_ps (radix), _mm_set_ps1 (power)));
 }

@@ -51,7 +51,7 @@ class AudioPort: public Port
 	 * Helper that casts Buffer to AudioBuffer.
 	 */
 	AudioBuffer*
-	audio_buffer() const;
+	audio_buffer() const noexcept;
 
 	/**
 	 * Implementation of Port::graph_updated().
@@ -62,7 +62,7 @@ class AudioPort: public Port
 
 
 inline AudioBuffer*
-AudioPort::audio_buffer() const
+AudioPort::audio_buffer() const noexcept
 {
 	return static_cast<AudioBuffer*> (buffer());
 }

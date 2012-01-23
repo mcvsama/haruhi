@@ -43,7 +43,7 @@ AudioBuffer::AudioBuffer (std::size_t samples):
 }
 
 
-AudioBuffer::~AudioBuffer()
+AudioBuffer::~AudioBuffer() noexcept
 {
 	deallocate (_data);
 }

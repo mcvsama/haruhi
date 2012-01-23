@@ -28,7 +28,7 @@ namespace Haruhi {
 
 namespace DSP {
 
-FFTFiller::FFTFiller (Wave* wave, bool autoscale, Sample scale_epsilon):
+FFTFiller::FFTFiller (Wave* wave, bool autoscale, Sample scale_epsilon) noexcept:
 	_wave (wave),
 	_autoscale (autoscale),
 	_scale_epsilon (scale_epsilon),

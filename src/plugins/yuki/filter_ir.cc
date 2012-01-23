@@ -25,7 +25,7 @@
 
 namespace Yuki {
 
-FilterImpulseResponse::FilterImpulseResponse (Type type, Sample frequency, Sample resonance, Sample gain, Sample attenuation):
+FilterImpulseResponse::FilterImpulseResponse (Type type, Sample frequency, Sample resonance, Sample gain, Sample attenuation) noexcept:
 	_type (type),
 	_frequency (frequency),
 	_resonance (resonance),
@@ -44,7 +44,7 @@ FilterImpulseResponse::FilterImpulseResponse (Type type, Sample frequency, Sampl
 
 
 Sample
-FilterImpulseResponse::response (Sample frequency) const
+FilterImpulseResponse::response (Sample frequency) const noexcept
 {
 	// Normally one would substitute: z = e^(i2πf) = e^(iω)
 	float phi = std::sin (M_PI * frequency);
@@ -55,7 +55,7 @@ FilterImpulseResponse::response (Sample frequency) const
 
 
 void
-FilterImpulseResponse::update()
+FilterImpulseResponse::update() noexcept
 {
 	if (_dont_update)
 		return;

@@ -41,7 +41,7 @@ class Noise: public Wave
 		friend class Noise;
 
 	  public:
-		State();
+		State() noexcept;
 
 	  private:
 		int32_t w;
@@ -50,31 +50,31 @@ class Noise: public Wave
 	typedef std::map<Thread::ID, State> States;
 
   public:
-	Noise();
+	Noise() noexcept;
 
 	/**
 	 * Returns noise sample.
 	 */
 	virtual Sample
-	operator() (Sample, Sample) const;
+	operator() (Sample, Sample) const noexcept;
 
 	/**
 	 * Faster getter of noise value (not polymorphic).
 	 */
 	Sample
-	get() const;
+	get() const noexcept;
 
 	/**
 	 * Faster equivalent of get().
 	 */
 	Sample
-	get (State& s) const;
+	get (State& s) const noexcept;
 
 	/**
 	 * Returns reference to State object for calling thread.
 	 */
 	State&
-	state();
+	state() noexcept;
 
   private:
 	States mutable _states;
@@ -82,27 +82,27 @@ class Noise: public Wave
 
 
 inline
-Noise::Noise():
+Noise::Noise() noexcept:
 	Wave (false)
 { }
 
 
 inline Sample
-Noise::operator() (Sample, Sample) const
+Noise::operator() (Sample, Sample) const noexcept
 {
 	return get();
 }
 
 
 inline Sample
-Noise::get() const
+Noise::get() const noexcept
 {
 	return get (_states[Thread::id()]);
 }
 
 
 inline Sample
-Noise::get (State& s) const
+Noise::get (State& s) const noexcept
 {
 	s.w *= 16807;
 	return s.w * 4.6566129e-010f;
@@ -110,7 +110,7 @@ Noise::get (State& s) const
 
 
 inline Noise::State&
-Noise::state()
+Noise::state() noexcept
 {
 	// Find or create state for current thread:
 	return _states[Thread::id()];

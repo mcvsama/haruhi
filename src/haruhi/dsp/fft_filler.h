@@ -44,7 +44,7 @@ class FFTFiller: public Wavetable::Filler
 	 * \param	autoscale tells whether to force values to be within [-1..1].
 	 * \param	scale_epsilon Don't autoscale if max value is smaller than this.
 	 */
-	FFTFiller (Wave* wave, bool autoscale, Sample scale_epsilon = 0.0f);
+	FFTFiller (Wave* wave, bool autoscale, Sample scale_epsilon = 0.0f) noexcept;
 
 	/**
 	 * Set cancel predicate.
@@ -54,7 +54,7 @@ class FFTFiller: public Wavetable::Filler
 	 * since it will be called many times during the fill.
 	 */
 	void
-	set_cancel_predicate (boost::function<bool()> cancel_predicate);
+	set_cancel_predicate (boost::function<bool()> cancel_predicate) noexcept;
 
 	/**
 	 * Fill the wavetable.
@@ -66,13 +66,13 @@ class FFTFiller: public Wavetable::Filler
 	 * Return the wave used to fill wavetables.
 	 */
 	Wave*
-	wave() const;
+	wave() const noexcept;
 
 	/**
 	 * Return true if last fill operation was interrupted by cancel predicate.
 	 */
 	bool
-	was_interrupted() const;
+	was_interrupted() const noexcept;
 
   private:
 	/**
@@ -80,7 +80,7 @@ class FFTFiller: public Wavetable::Filler
 	 * Also set _was_interrupted flag.
 	 */
 	bool
-	interrupted();
+	interrupted() noexcept;
 
   private:
 	Wave*					_wave;
@@ -92,28 +92,28 @@ class FFTFiller: public Wavetable::Filler
 
 
 inline void
-FFTFiller::set_cancel_predicate (boost::function<bool()> cancel_predicate)
+FFTFiller::set_cancel_predicate (boost::function<bool()> cancel_predicate) noexcept
 {
 	_cancel_predicate = cancel_predicate;
 }
 
 
 inline Wave*
-FFTFiller::wave() const
+FFTFiller::wave() const noexcept
 {
 	return _wave;
 }
 
 
 inline bool
-FFTFiller::was_interrupted() const
+FFTFiller::was_interrupted() const noexcept
 {
 	return _was_interrupted;
 }
 
 
 inline bool
-FFTFiller::interrupted()
+FFTFiller::interrupted() noexcept
 {
 	return _was_interrupted = _cancel_predicate && _cancel_predicate();
 }

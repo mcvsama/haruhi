@@ -47,7 +47,7 @@ class Thread: private Noncopyable
 	typedef pthread_t ID;
 
   public:
-	Thread();
+	Thread() noexcept;
 
 	/**
 	 * Waits for thread to exit.
@@ -66,26 +66,26 @@ class Thread: private Noncopyable
 	 * Cancels thread.
 	 */
 	virtual void
-	cancel();
+	cancel() noexcept;
 
 	/**
 	 * \returns	true if thread has finished.
 	 */
 	virtual bool
-	finished();
+	finished() noexcept;
 
 	/**
 	 * Set scheduling policy/parameter for thread.
 	 */
 	virtual void
-	set_sched (SchedType, int priority);
+	set_sched (SchedType, int priority) noexcept;
 
 	/**
 	 * Sets stack size for new thread.
 	 * If 0, system default will be used.
 	 */
 	virtual void
-	set_stack_size (std::size_t size);
+	set_stack_size (std::size_t size) noexcept;
 
 	/**
 	 * Waits for thread to finish.
@@ -100,10 +100,10 @@ class Thread: private Noncopyable
 	 * and to wait in the run queue.
 	 */
 	static void
-	yield();
+	yield() noexcept;
 
 	static ID
-	id();
+	id() noexcept;
 
   protected:
 	virtual void
@@ -111,7 +111,7 @@ class Thread: private Noncopyable
 
   private:
 	void
-	set_sched();
+	set_sched() noexcept;
 
 	static void*
 	callback (void *arg);

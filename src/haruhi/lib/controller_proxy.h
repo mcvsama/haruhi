@@ -74,17 +74,17 @@ class ControllerProxy: public Signal::Receiver
 	~ControllerProxy();
 
 	EventPort*
-	event_port() const;
+	event_port() const noexcept;
 
 	ControllerParam*
-	param() const;
+	param() const noexcept;
 
 	/**
 	 * Assigns Widget to be notified of parameter updates.
 	 * \entry	any thread
 	 */
 	void
-	set_widget (Widget* widget);
+	set_widget (Widget* widget) noexcept;
 
 	/**
 	 * Processes events from assigned EventPort.
@@ -150,21 +150,21 @@ ControllerProxy::Widget::user_override()
 
 
 inline EventPort*
-ControllerProxy::event_port() const
+ControllerProxy::event_port() const noexcept
 {
 	return _event_port;
 }
 
 
 inline ControllerParam*
-ControllerProxy::param() const
+ControllerProxy::param() const noexcept
 {
 	return _param;
 }
 
 
 inline void
-ControllerProxy::set_widget (Widget* widget)
+ControllerProxy::set_widget (Widget* widget) noexcept
 {
 	_widget = widget;
 }

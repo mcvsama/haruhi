@@ -115,8 +115,7 @@ void
 Graph::unregister_unit (Unit* unit)
 {
 	Units::iterator f = _units.find (unit);
-	if (f == _units.end())
-		throw Exception ("unit was not registered in this graph");
+	assert (f != _units.end());
 	unit->disable();
 	unit->unregistered();
 	synchronize ([&]() {
@@ -213,15 +212,8 @@ Graph::notify (Notification* notification)
 }
 
 
-Graph::Units const&
-Graph::units() const
-{
-	return _units;
-}
-
-
 Timestamp
-Graph::now()
+Graph::now() noexcept
 {
 	struct timeval t;
 	::gettimeofday (&t, 0);

@@ -23,7 +23,7 @@
 #include "mutex.h"
 
 
-Mutex::Mutex (MutexType kind)
+Mutex::Mutex (MutexType kind) noexcept
 {
 	static ::pthread_mutex_t initializer = PTHREAD_MUTEX_INITIALIZER;
 	static ::pthread_mutex_t recursive_initializer = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
@@ -41,13 +41,13 @@ Mutex::Mutex (MutexType kind)
 }
 
 
-Mutex::~Mutex()
+Mutex::~Mutex() noexcept
 {
 	::pthread_mutex_destroy (&_mutex);
 }
 
 
-RecursiveMutex::RecursiveMutex():
+RecursiveMutex::RecursiveMutex() noexcept:
 	Mutex (Mutex::Recursive)
 { }
 

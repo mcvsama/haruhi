@@ -109,25 +109,25 @@ class PartManager:
 	 * Return number of currently existing parts.
 	 */
 	unsigned int
-	parts_number() const;
+	parts_number() const noexcept;
 
 	/**
 	 * Return object containing event ports.
 	 */
 	MainPorts*
-	ports();
+	ports() noexcept;
 
 	/**
 	 * Return MainProxies object.
 	 */
 	MainProxies*
-	proxies();
+	proxies() noexcept;
 
 	/**
 	 * Return params object.
 	 */
 	Params::Main*
-	main_params();
+	main_params() noexcept;
 
 	/**
 	 * Add new Part.
@@ -228,7 +228,7 @@ class PartManager:
 
 
 inline unsigned int
-PartManager::parts_number() const
+PartManager::parts_number() const noexcept
 {
 	_parts_mutex.lock();
 	unsigned int k = _parts.size();
@@ -238,21 +238,21 @@ PartManager::parts_number() const
 
 
 inline PartManager::MainPorts*
-PartManager::ports()
+PartManager::ports() noexcept
 {
 	return &_ports;
 }
 
 
 inline PartManager::MainProxies*
-PartManager::proxies()
+PartManager::proxies() noexcept
 {
 	return &_proxies;
 }
 
 
 inline Params::Main*
-PartManager::main_params()
+PartManager::main_params() noexcept
 {
 	return &_main_params;
 }

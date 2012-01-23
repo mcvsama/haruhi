@@ -36,10 +36,10 @@ class ScaledWave: public Wave
 	/**
 	 * \param	auto_delete Should inner wave be deleted when this one is?
 	 */
-	ScaledWave (Sample scale, Wave* wave, bool auto_delete = false);
+	ScaledWave (Sample scale, Wave* wave, bool auto_delete = false) noexcept;
 
 	Sample
-	operator() (Sample register phase, Sample frequency) const;
+	operator() (Sample register phase, Sample frequency) const noexcept;
 
   private:
 	Sample _scale;
@@ -47,14 +47,14 @@ class ScaledWave: public Wave
 
 
 inline
-ScaledWave::ScaledWave (Sample scale, Wave* wave, bool auto_delete):
+ScaledWave::ScaledWave (Sample scale, Wave* wave, bool auto_delete) noexcept:
 	Wave (wave, auto_delete),
 	_scale (scale)
 { }
 
 
 inline Sample
-ScaledWave::operator() (Sample phase, Sample frequency) const
+ScaledWave::operator() (Sample phase, Sample frequency) const noexcept
 {
 	return _scale * (*inner_wave())(phase, frequency);
 }

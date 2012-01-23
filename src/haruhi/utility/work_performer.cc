@@ -19,7 +19,7 @@
 #include "work_performer.h"
 
 
-WorkPerformer::Performer::Performer (WorkPerformer* work_performer, unsigned int thread_id):
+WorkPerformer::Performer::Performer (WorkPerformer* work_performer, unsigned int thread_id) noexcept:
 	_work_performer (work_performer),
 	_thread_id (thread_id)
 {
@@ -80,7 +80,7 @@ WorkPerformer::add (Unit* unit)
 
 
 void
-WorkPerformer::set_sched (Thread::SchedType sched_type, int priority)
+WorkPerformer::set_sched (Thread::SchedType sched_type, int priority) noexcept
 {
 	for (Performer* p: _performers)
 		p->set_sched (sched_type, priority);

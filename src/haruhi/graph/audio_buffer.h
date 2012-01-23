@@ -25,7 +25,6 @@
 
 // Local:
 #include "buffer.h"
-#include "exception.h"
 
 
 namespace Haruhi {
@@ -40,85 +39,85 @@ class AudioBuffer: public Buffer
   public:
 	AudioBuffer (std::size_t size = 0);
 
-	~AudioBuffer();
+	~AudioBuffer() noexcept;
 
 	/**
 	 * Clears (zeroes) buffer.
 	 */
 	void
-	clear();
+	clear() noexcept;
 
 	/**
 	 * Fills this buffer from other buffer.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	fill (Buffer const* other);
+	fill (Buffer const* other) noexcept;
 
 	/**
 	 * Fills this buffer with given scalar.
 	 */
 	void
-	fill (Sample value);
+	fill (Sample value) noexcept;
 
 	/**
 	 * Calls add().
 	 */
 	void
-	mixin (Buffer const* other);
+	mixin (Buffer const* other) noexcept;
 
 	/**
 	 * Calls add().
 	 */
 	void
-	mixin (Buffer const* other, Sample attenuate_other);
+	mixin (Buffer const* other, Sample attenuate_other) noexcept;
 
 	/**
 	 * Adds (mixes) other buffer to this.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	add (Buffer const* other);
+	add (Buffer const* other) noexcept;
 
 	/**
 	 * Adds (mixes) attenuated other buffer to this.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	add (Buffer const* other, Sample attenuate_other);
+	add (Buffer const* other, Sample attenuate_other) noexcept;
 
 	/**
 	 * Substracts other buffer from this.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	sub (Buffer const* other);
+	sub (Buffer const* other) noexcept;
 
 	/**
 	 * Attenuates this buffer by other buffer.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	attenuate (Buffer const* other);
+	attenuate (Buffer const* other) noexcept;
 
 	/**
 	 * Attenuates this buffer by scalar.
 	 */
 	void
-	attenuate (Sample value);
+	attenuate (Sample value) noexcept;
 
 	/**
 	 * Attenuates this buffer by other buffer and by scalar.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	attenuate (Buffer const* other, Sample value);
+	attenuate (Buffer const* other, Sample value) noexcept;
 
 	/**
 	 * Negates this buffer.
 	 */
 	void
-	negate();
+	negate() noexcept;
 
 	/**
 	 * Resize buffer to given number of samples.
@@ -130,28 +129,28 @@ class AudioBuffer: public Buffer
 	 * Return buffer size (in samples).
 	 */
 	std::size_t
-	size() const;
+	size() const noexcept;
 
 	/**
 	 * Return pointer to the buffer.
 	 */
 	Sample*
-	begin() const;
+	begin() const noexcept;
 
 	/**
 	 * Return pointer to past-the end sample in buffer.
 	 */
 	Sample*
-	end() const;
+	end() const noexcept;
 
 	/**
 	 * Shorthand methods for accessing samples in buffer.
 	 */
 	Sample&
-	operator[] (std::size_t const i);
+	operator[] (std::size_t const i) noexcept;
 
 	Sample const&
-	operator[] (std::size_t const i) const;
+	operator[] (std::size_t const i) const noexcept;
 
   public:
 	/**
@@ -166,7 +165,7 @@ class AudioBuffer: public Buffer
 	 * Deallocates memory allocated with allocate().
 	 */
 	static void
-	deallocate (Sample* buffer);
+	deallocate (Sample* buffer) noexcept;
 
   public:
 	Sample*		_data;
@@ -176,11 +175,14 @@ class AudioBuffer: public Buffer
 
 
 inline void
-AudioBuffer::clear() { SIMD::clear_buffer (begin(), size()); }
+AudioBuffer::clear() noexcept
+{
+	SIMD::clear_buffer (begin(), size());
+}
 
 
 inline void
-AudioBuffer::fill (Buffer const* other)
+AudioBuffer::fill (Buffer const* other) noexcept
 {
 	assert (other->type() == AudioBuffer::TYPE);
 	AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
@@ -192,25 +194,28 @@ AudioBuffer::fill (Buffer const* other)
 
 
 inline void
-AudioBuffer::fill (Sample value) { SIMD::fill_buffer (begin(), size(), value); }
+AudioBuffer::fill (Sample value) noexcept
+{
+	SIMD::fill_buffer (begin(), size(), value);
+}
 
 
 inline void
-AudioBuffer::mixin (Buffer const* other)
+AudioBuffer::mixin (Buffer const* other) noexcept
 {
 	add (other);
 }
 
 
 inline void
-AudioBuffer::mixin (Buffer const* other, Sample attenuate_other)
+AudioBuffer::mixin (Buffer const* other, Sample attenuate_other) noexcept
 {
 	add (other, attenuate_other);
 }
 
 
 inline void
-AudioBuffer::add (Buffer const* other)
+AudioBuffer::add (Buffer const* other) noexcept
 {
 	assert (other->type() == AudioBuffer::TYPE);
 	AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
@@ -222,7 +227,7 @@ AudioBuffer::add (Buffer const* other)
 
 
 inline void
-AudioBuffer::add (Buffer const* other, Sample attenuate_other)
+AudioBuffer::add (Buffer const* other, Sample attenuate_other) noexcept
 {
 	assert (other->type() == AudioBuffer::TYPE);
 	AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
@@ -234,7 +239,7 @@ AudioBuffer::add (Buffer const* other, Sample attenuate_other)
 
 
 inline void
-AudioBuffer::sub (Buffer const* other)
+AudioBuffer::sub (Buffer const* other) noexcept
 {
 	assert (other->type() == AudioBuffer::TYPE);
 	AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
@@ -246,7 +251,7 @@ AudioBuffer::sub (Buffer const* other)
 
 
 inline void
-AudioBuffer::attenuate (Buffer const* other)
+AudioBuffer::attenuate (Buffer const* other) noexcept
 {
 	assert (other->type() == AudioBuffer::TYPE);
 	AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
@@ -258,14 +263,14 @@ AudioBuffer::attenuate (Buffer const* other)
 
 
 inline void
-AudioBuffer::attenuate (Sample value)
+AudioBuffer::attenuate (Sample value) noexcept
 {
 	SIMD::multiply_buffer_by_scalar (begin(), size(), value);
 }
 
 
 inline void
-AudioBuffer::attenuate (Buffer const* other, Sample value)
+AudioBuffer::attenuate (Buffer const* other, Sample value) noexcept
 {
 	assert (other->type() == AudioBuffer::TYPE);
 	AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
@@ -277,42 +282,42 @@ AudioBuffer::attenuate (Buffer const* other, Sample value)
 
 
 inline void
-AudioBuffer::negate()
+AudioBuffer::negate() noexcept
 {
 	SIMD::negate_buffer (begin(), size());
 }
 
 
 inline std::size_t
-AudioBuffer::size() const
+AudioBuffer::size() const noexcept
 {
 	return _size;
 }
 
 
 inline Sample*
-AudioBuffer::begin() const
+AudioBuffer::begin() const noexcept
 {
 	return _data;
 }
 
 
 inline Sample*
-AudioBuffer::end() const
+AudioBuffer::end() const noexcept
 {
 	return _end;
 }
 
 
 inline Sample&
-AudioBuffer::operator[] (std::size_t const i)
+AudioBuffer::operator[] (std::size_t const i) noexcept
 {
 	return _data[i];
 }
 
 
 inline Sample const&
-AudioBuffer::operator[] (std::size_t const i) const
+AudioBuffer::operator[] (std::size_t const i) const noexcept
 {
 	return _data[i];
 }
@@ -331,7 +336,7 @@ AudioBuffer::allocate (std::size_t samples)
 
 
 inline void
-AudioBuffer::deallocate (Sample* buffer)
+AudioBuffer::deallocate (Sample* buffer) noexcept
 {
 	free (buffer);
 }

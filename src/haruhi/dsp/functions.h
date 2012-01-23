@@ -39,7 +39,7 @@ namespace DSP {
 
 template<unsigned int series, class Sample>
 	inline Sample
-	base_sin (Sample register x)
+	base_sin (Sample register x) noexcept
 	{
 		static_assert (series == 5 || series == 6 || series == 7, "invalid argument 'series' - should be 5, 6 or 7");
 
@@ -71,12 +71,12 @@ namespace ParametricWaves {
 	  public:
 		HARUHI_CLONABLE (Sine)
 
-		Sine():
+		Sine() noexcept:
 			ParametricWave (true)
 		{ }
 
 		Sample
-		operator() (Sample x, Sample) const
+		operator() (Sample x, Sample) const noexcept
 		{
 			x = x * 2.0f - 1.0f;
 			float a = pow2 (pow2 (1.0f + param())); // x^4
@@ -94,12 +94,12 @@ namespace ParametricWaves {
 	  public:
 		HARUHI_CLONABLE (Triangle)
 
-		Triangle():
+		Triangle() noexcept:
 			ParametricWave (true)
 		{ }
 
 		Sample
-		operator() (Sample x, Sample) const
+		operator() (Sample x, Sample) const noexcept
 		{
 			x = x * 2.0f - 1.0f;
 			float sgn = 1.0f;
@@ -126,12 +126,12 @@ namespace ParametricWaves {
 	  public:
 		HARUHI_CLONABLE (Square)
 
-		Square():
+		Square() noexcept:
 			ParametricWave (true)
 		{ }
 
 		Sample
-		operator() (Sample x, Sample) const
+		operator() (Sample x, Sample) const noexcept
 		{
 			x = x * 2.0f - 1.0f;
 			float sgn = 1.0f;
@@ -154,12 +154,12 @@ namespace ParametricWaves {
 	  public:
 		HARUHI_CLONABLE (Sawtooth)
 
-		Sawtooth():
+		Sawtooth() noexcept:
 			ParametricWave (true)
 		{ }
 
 		Sample
-		operator() (Sample x, Sample) const
+		operator() (Sample x, Sample) const noexcept
 		{
 			x = mod1 (x);
 			float a = param();
@@ -183,12 +183,12 @@ namespace ParametricWaves {
 	  public:
 		HARUHI_CLONABLE (Pulse)
 
-		Pulse():
+		Pulse() noexcept:
 			ParametricWave (true)
 		{ }
 
 		Sample
-		operator() (Sample x, Sample) const
+		operator() (Sample x, Sample) const noexcept
 		{
 			float a = param();
 			if (a < 0.005f)
@@ -208,12 +208,12 @@ namespace ParametricWaves {
 	  public:
 		HARUHI_CLONABLE (Power)
 
-		Power():
+		Power() noexcept:
 			ParametricWave (true)
 		{ }
 
 		Sample
-		operator() (Sample x, Sample) const
+		operator() (Sample x, Sample) const noexcept
 		{
 			x = x * 2.0f - 1.0f;
 			Sample sgn = x >= 0.0f ? 1.0f : -1.0f;
@@ -230,12 +230,12 @@ namespace ParametricWaves {
 	  public:
 		HARUHI_CLONABLE (Gauss)
 
-		Gauss():
+		Gauss() noexcept:
 			ParametricWave (true)
 		{ }
 
 		Sample
-		operator() (Sample x, Sample) const
+		operator() (Sample x, Sample) const noexcept
 		{
 			float a = param();
 			x = mod1 (x) * 2.0f - 1.0f;
@@ -254,12 +254,12 @@ namespace ParametricWaves {
 	  public:
 		HARUHI_CLONABLE (Diode)
 
-		Diode():
+		Diode() noexcept:
 			ParametricWave (true)
 		{ }
 
 		Sample
-		operator() (Sample x, Sample) const
+		operator() (Sample x, Sample) const noexcept
 		{
 			float a = param();
 			if (a < 0.001f)
@@ -283,12 +283,12 @@ namespace ParametricWaves {
 	  public:
 		HARUHI_CLONABLE (Chirp)
 
-		Chirp():
+		Chirp() noexcept:
 			ParametricWave (true)
 		{ }
 
 		Sample
-		operator() (Sample x, Sample) const
+		operator() (Sample x, Sample) const noexcept
 		{
 			float a = renormalize (param(), 0.0f, 1.0f, 0.25f, 1.0f);
 			x = mod1 (x) * 2.0f * M_PI;
@@ -312,7 +312,7 @@ namespace SeriesFunctions {
  */
 template<unsigned int series, class Sample>
 	inline Sample
-	base_sin (Sample register x, Sample base_frequency, Sample fmin, Sample fmax)
+	base_sin (Sample register x, Sample base_frequency, Sample fmin, Sample fmax) noexcept
 	{
 		if (base_frequency >= fmin)
 			return DSP::base_sin<series> (x);
@@ -335,7 +335,7 @@ template<unsigned int series, class Sample>
  */
 template<class Sample>
 	inline Sample
-	triangle (Sample register x, Sample base_frequency, Sample fmin, Sample fmax)
+	triangle (Sample register x, Sample base_frequency, Sample fmin, Sample fmax) noexcept
 	{
 		Sample register y = 0;
 
@@ -369,7 +369,7 @@ template<class Sample>
  */
 template<class Sample>
 	inline Sample
-	square (Sample register x, Sample base_frequency, Sample fmin, Sample fmax)
+	square (Sample register x, Sample base_frequency, Sample fmin, Sample fmax) noexcept
 	{
 		Sample register y = 0;
 
@@ -398,7 +398,7 @@ template<class Sample>
  */
 template<class Sample>
 	inline Sample
-	sawtooth (Sample register x, Sample base_frequency, Sample fmin, Sample fmax)
+	sawtooth (Sample register x, Sample base_frequency, Sample fmin, Sample fmax) noexcept
 	{
 		Sample register y = 0;
 

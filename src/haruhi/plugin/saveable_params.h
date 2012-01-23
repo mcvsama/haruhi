@@ -79,7 +79,7 @@
 		tab[pos++] = &param;
 
 #define HARUHI_FINISH_SAVEABLE_PARAMS_DEFINITION()												\
-		assert (pos == max_entries);															\
+		assert_function (pos == max_entries);													\
 	}
 
 

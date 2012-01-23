@@ -29,19 +29,19 @@ namespace Yuki {
 class HasPlugin
 {
   public:
-	HasPlugin (Plugin* plugin);
+	HasPlugin (Plugin* plugin) noexcept;
 
 	/**
 	 * Return pointer to the Yuki Plugin.
 	 */
 	Plugin*
-	plugin() const;
+	plugin() const noexcept;
 
 	/**
 	 * Shortcut to plugin()->graph().
 	 */
 	Haruhi::Graph*
-	graph() const;
+	graph() const noexcept;
 
   private:
 	Plugin* _plugin;
@@ -49,20 +49,20 @@ class HasPlugin
 
 
 inline
-HasPlugin::HasPlugin (Plugin* plugin):
+HasPlugin::HasPlugin (Plugin* plugin) noexcept:
 	_plugin (plugin)
 { }
 
 
 inline Plugin*
-HasPlugin::plugin() const
+HasPlugin::plugin() const noexcept
 {
 	return _plugin;
 }
 
 
 inline Haruhi::Graph*
-HasPlugin::graph() const
+HasPlugin::graph() const noexcept
 {
 	return _plugin->graph();
 }

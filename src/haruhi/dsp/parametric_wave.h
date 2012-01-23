@@ -34,7 +34,7 @@ namespace DSP {
 class ParametricWave: public Wave
 {
   public:
-	ParametricWave (bool immutable);
+	ParametricWave (bool immutable) noexcept;
 
 	/**
 	 * Return clone of the wave.
@@ -46,13 +46,13 @@ class ParametricWave: public Wave
 	 * \threadsafe
 	 */
 	void
-	set_param (float param);
+	set_param (float param) noexcept;
 
 	/**
 	 * \threadsafe
 	 */
 	float
-	param() const;
+	param() const noexcept;
 
   private:
 	Atomic<float> _param;
@@ -60,21 +60,21 @@ class ParametricWave: public Wave
 
 
 inline
-ParametricWave::ParametricWave (bool immutable):
+ParametricWave::ParametricWave (bool immutable) noexcept:
 	Wave (immutable),
 	_param (0.0)
 { }
 
 
 inline void
-ParametricWave::set_param (float param)
+ParametricWave::set_param (float param) noexcept
 {
 	_param.store (param);
 }
 
 
 inline float
-ParametricWave::param() const
+ParametricWave::param() const noexcept
 {
 	return _param.load();
 }

@@ -30,10 +30,10 @@ class Exception: public std::runtime_error
 		_details (details)
 	{ }
 
-	virtual ~Exception() throw() { }
+	virtual ~Exception() noexcept { }
 
 	const char*
-	details() const
+	details() const noexcept
 	{
 		return _details.c_str();
 	}

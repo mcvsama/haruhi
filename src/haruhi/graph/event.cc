@@ -34,7 +34,7 @@ VoiceID VoiceEvent::_last_voice_id = 0;
 
 
 VoiceEvent::Frequency
-VoiceEvent::frequency_from_key_id (KeyID key_id, float master_tune)
+VoiceEvent::frequency_from_key_id (KeyID key_id, float master_tune) noexcept
 {
 	return master_tune * std::pow (2.0f, ((static_cast<float> (key_id) - 69.0f) / 12.0f));
 }

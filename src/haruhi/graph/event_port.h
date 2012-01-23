@@ -52,26 +52,26 @@ class EventPort: public Port
 	 * Helper that casts Buffer to EventBuffer.
 	 */
 	EventBuffer*
-	event_buffer() const;
+	event_buffer() const noexcept;
 
 	/**
 	 * Return default value set for port.
 	 */
 	ControllerEvent::Value
-	default_value() const;
+	default_value() const noexcept;
 
 	/**
 	 * Set default ControllerEvent that will be inserted into buffer,
 	 * when nothing is connected to the Input port.
 	 */
 	void
-	set_default_value (ControllerEvent::Value value);
+	set_default_value (ControllerEvent::Value value) noexcept;
 
 	/**
 	 * Disable default value set with set_default_value().
 	 */
 	void
-	disable_default_value();
+	disable_default_value() noexcept;
 
 	/*
 	 * Port implementation
@@ -91,21 +91,21 @@ class EventPort: public Port
 
 
 inline EventBuffer*
-EventPort::event_buffer() const
+EventPort::event_buffer() const noexcept
 {
 	return static_cast<EventBuffer*> (buffer());
 }
 
 
 inline ControllerEvent::Value
-EventPort::default_value() const
+EventPort::default_value() const noexcept
 {
 	return _default_value;
 }
 
 
 inline void
-EventPort::set_default_value (ControllerEvent::Value value)
+EventPort::set_default_value (ControllerEvent::Value value) noexcept
 {
 	_default_value = value;
 	_default_value_set = true;
@@ -113,7 +113,7 @@ EventPort::set_default_value (ControllerEvent::Value value)
 
 
 inline void
-EventPort::disable_default_value()
+EventPort::disable_default_value() noexcept
 {
 	_default_value_set = false;
 }

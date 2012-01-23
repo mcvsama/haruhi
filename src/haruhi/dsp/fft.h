@@ -44,19 +44,19 @@ class FFT
 		~Vector();
 
 		Complex&
-		operator[] (int i);
+		operator[] (int i) noexcept;
 
 		Complex const&
-		operator[] (int i) const;
+		operator[] (int i) const noexcept;
 
 		Complex*
-		data() const;
+		data() const noexcept;
 
 		std::size_t
-		size() const;
+		size() const noexcept;
 
 		void
-		normalize();
+		normalize() noexcept;
 
 	  private:
 		std::size_t	_size;
@@ -66,14 +66,14 @@ class FFT
 	class Forward
 	{
 	  public:
-		Forward (Vector& source);
+		Forward (Vector& source) noexcept;
 
-		Forward (Vector& source, Vector& target);
+		Forward (Vector& source, Vector& target) noexcept;
 
-		~Forward();
+		~Forward() noexcept;
 
 		void
-		transform();
+		transform() noexcept;
 
 	  private:
 		fftw_plan	_plan;
@@ -84,14 +84,14 @@ class FFT
 	class Inverse
 	{
 	  public:
-		Inverse (Vector& source);
+		Inverse (Vector& source) noexcept;
 
-		Inverse (Vector& source, Vector& target);
+		Inverse (Vector& source, Vector& target) noexcept;
 
-		~Inverse();
+		~Inverse() noexcept;
 
 		void
-		transform();
+		transform() noexcept;
 
 	  private:
 		fftw_plan	_plan;
@@ -110,28 +110,28 @@ class FFT
 
 
 inline FFT::Complex&
-FFT::Vector::operator[] (int i)
+FFT::Vector::operator[] (int i) noexcept
 {
 	return _data[i];
 }
 
 
 inline FFT::Complex const&
-FFT::Vector::operator[] (int i) const
+FFT::Vector::operator[] (int i) const noexcept
 {
 	return _data[i];
 }
 
 
 inline FFT::Complex*
-FFT::Vector::data() const
+FFT::Vector::data() const noexcept
 {
 	return _data;
 }
 
 
 inline std::size_t
-FFT::Vector::size() const
+FFT::Vector::size() const noexcept
 {
 	return _size;
 }

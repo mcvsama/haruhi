@@ -59,33 +59,22 @@ class Mutex: private Noncopyable
 	 * \param	mutex_kind
 	 * 			Type of mutex (Normal or Recursive).
 	 */
-	Mutex (MutexType = Normal);
+	Mutex (MutexType = Normal) noexcept;
 
-	~Mutex();
+	~Mutex() noexcept;
 
 	/**
 	 * Locks mutex or waits to be released and locks.
 	 */
 	void
-	lock() const { ::pthread_mutex_lock (&_mutex); }
+	lock() const noexcept;
 
 	/**
 	 * Tries to lock mutex. Returns true if mutex was
 	 * locked successfully, and false if it was not.
 	 */
 	bool
-	try_lock() const
-	{
-		switch (::pthread_mutex_trylock (&_mutex))
-		{
-			case EBUSY:
-				return false;
-
-			case 0:
-				return true;
-		}
-		return false;
-	}
+	try_lock() const noexcept;
 
 	/**
 	 * Unlocks mutex. If calling thread is not the thread
@@ -95,33 +84,108 @@ class Mutex: private Noncopyable
 	 * 			When calling thread does not own the mutex.
 	 */
 	void
-	unlock() const
-	{
-		switch (::pthread_mutex_unlock (&_mutex))
-		{
-			case EPERM:
-				throw MutexPermissionException ("the calling thread does not own the mutex", __func__);
-		}
-	}
+	unlock() const;
 
 	/**
 	 * Unlocks and locks mutex again.
 	 */
 	void
-	yield() const
-	{
-		unlock();
-		lock();
-	}
+	yield() const;
 
 	/**
 	 * Lock, execute function, and unlock.
 	 */
 	template<class Callback>
 		void
-		synchronize (Callback function) const
+		synchronize (Callback function) const noexcept (noexcept (function()));
+
+	/**
+	 * Helper for lock-safe copying some value (eg. for returning):
+	 * Like: return graph()->safe_copy (_some_value);
+	 */
+	template<class Type>
+		Type
+		safe_copy (Type const& value) const noexcept (noexcept (Type::operator= (value)));
+
+	/**
+	 * Helper for unlocking and returning given value.
+	 */
+	template<class Type>
+		Type const&
+		unlock_and_return (Type const& value) const;
+
+	/**
+	 * Helper for unlocking and throwing given object.
+	 */
+	template<class Type>
+		void
+		unlock_and_throw (Type const& value) const;
+
+  private:
+	::pthread_mutex_t mutable _mutex;
+};
+
+
+class RecursiveMutex: public Mutex
+{
+  public:
+	RecursiveMutex() noexcept;
+};
+
+
+inline void
+Mutex::lock() const noexcept
+{
+	::pthread_mutex_lock (&_mutex);
+}
+
+
+inline bool
+Mutex::try_lock() const noexcept
+{
+	switch (::pthread_mutex_trylock (&_mutex))
+	{
+		case EBUSY:
+			return false;
+
+		case 0:
+			return true;
+	}
+	return false;
+}
+
+
+inline void
+Mutex::unlock() const
+{
+	switch (::pthread_mutex_unlock (&_mutex))
+	{
+		case EPERM:
+			throw MutexPermissionException ("the calling thread does not own the mutex", __func__);
+	}
+}
+
+
+inline void
+Mutex::yield() const
+{
+	unlock();
+	lock();
+}
+
+
+template<class Callback>
+	inline void
+	Mutex::synchronize (Callback function) const noexcept (noexcept (function()))
+	{
+		lock();
+		if (noexcept (function()))
 		{
-			lock();
+			function();
+			unlock();
+		}
+		else
+		{
 			try {
 				function();
 				unlock();
@@ -132,53 +196,36 @@ class Mutex: private Noncopyable
 				throw;
 			}
 		}
-
-	/**
-	 * Helper for lock-safe copying some value (eg. for returning):
-	 * Like: return graph()->safe_copy (_some_value);
-	 */
-	template<class Type>
-		Type
-		safe_copy (Type const& value) const
-		{
-			lock();
-			Type copy = value;
-			unlock();
-			return copy;
-		}
-
-	/**
-	 * Helper for unlocking and returning given value.
-	 */
-	template<class Type>
-		Type const&
-		unlock_and_return (Type const& value) const
-		{
-			unlock();
-			return value;
-		}
-
-	/**
-	 * Helper for unlocking and throwing given object.
-	 */
-	template<class Type>
-		void
-		unlock_and_throw (Type const& value) const
-		{
-			unlock();
-			throw value;
-		}
-
-  private:
-	::pthread_mutex_t mutable _mutex;
-};
+	}
 
 
-class RecursiveMutex: public Mutex
-{
-  public:
-	RecursiveMutex();
-};
+template<class Type>
+	inline Type
+	Mutex::safe_copy (Type const& value) const noexcept (noexcept (Type::operator= (value)))
+	{
+		lock();
+		Type copy = value;
+		unlock();
+		return copy;
+	}
+
+
+template<class Type>
+	inline Type const&
+	Mutex::unlock_and_return (Type const& value) const
+	{
+		unlock();
+		return value;
+	}
+
+
+template<class Type>
+	inline void
+	Mutex::unlock_and_throw (Type const& value) const
+	{
+		unlock();
+		throw value;
+	}
 
 #endif
 

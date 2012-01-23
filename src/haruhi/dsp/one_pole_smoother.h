@@ -36,33 +36,33 @@ namespace DSP {
 class OnePoleSmoother
 {
   public:
-	OnePoleSmoother (Sample samples = 1.f);
+	OnePoleSmoother (Sample samples = 1.f) noexcept;
 
 	/**
 	 * \param	samples is number of samples after which returned value reaches
 	 * 			99.99% of target value.
 	 */
 	void
-	set_samples (Sample samples);
+	set_samples (Sample samples) noexcept;
 
 	/**
 	 * Resets smoother to initial state (or given value).
 	 */
 	void
-	reset (float value = 0.0f);
+	reset (float value = 0.0f) noexcept;
 
 	/**
 	 * Return smoothed sample from given input sample.
 	 */
 	Sample
-	process (Sample s, unsigned int iterations = 1);
+	process (Sample s, unsigned int iterations = 1) noexcept;
 
 	/**
 	 * Smooth (low-pass) given sequence.
 	 */
 	template<class ForwardIterator>
 		void
-		process (ForwardIterator begin, ForwardIterator end);
+		process (ForwardIterator begin, ForwardIterator end) noexcept;
 
 	/**
 	 * Fill sequence with smoothed samples, where input sample is @value.
@@ -72,7 +72,7 @@ class OnePoleSmoother
 	 */
 	template<class ForwardIterator>
 		void
-		fill (ForwardIterator begin, ForwardIterator end, Sample value);
+		fill (ForwardIterator begin, ForwardIterator end, Sample value) noexcept;
 
 
 	/**
@@ -82,11 +82,11 @@ class OnePoleSmoother
 	 */
 	template<class ForwardIterator>
 		void
-		multiply (ForwardIterator begin, ForwardIterator end, Sample value);
+		multiply (ForwardIterator begin, ForwardIterator end, Sample value) noexcept;
 
   private:
 	Sample
-	process_single_sample (Sample s);
+	process_single_sample (Sample s) noexcept;
 
   private:
 	Sample _time;
@@ -95,7 +95,7 @@ class OnePoleSmoother
 
 
 inline
-OnePoleSmoother::OnePoleSmoother (Sample samples)
+OnePoleSmoother::OnePoleSmoother (Sample samples) noexcept
 {
 	set_samples (samples);
 	reset();
@@ -103,21 +103,21 @@ OnePoleSmoother::OnePoleSmoother (Sample samples)
 
 
 inline void
-OnePoleSmoother::set_samples (Sample samples)
+OnePoleSmoother::set_samples (Sample samples) noexcept
 {
 	_time = LookupPow::pow (0.01f, 2.0f / samples);
 }
 
 
 inline void
-OnePoleSmoother::reset (float value)
+OnePoleSmoother::reset (float value) noexcept
 {
 	_z = value;
 }
 
 
 inline Sample
-OnePoleSmoother::process (Sample s, unsigned int iterations)
+OnePoleSmoother::process (Sample s, unsigned int iterations) noexcept
 {
 	for (unsigned int i = 0; i < iterations; ++i)
 		process_single_sample (s);
@@ -127,7 +127,7 @@ OnePoleSmoother::process (Sample s, unsigned int iterations)
 
 template<class ForwardIterator>
 	inline void
-	OnePoleSmoother::process (ForwardIterator begin, ForwardIterator end)
+	OnePoleSmoother::process (ForwardIterator begin, ForwardIterator end) noexcept
 	{
 		for (ForwardIterator c = begin; c != end; ++c)
 			*c = process_single_sample (*c);
@@ -136,7 +136,7 @@ template<class ForwardIterator>
 
 template<class ForwardIterator>
 	inline void
-	OnePoleSmoother::fill (ForwardIterator begin, ForwardIterator end, Sample value)
+	OnePoleSmoother::fill (ForwardIterator begin, ForwardIterator end, Sample value) noexcept
 	{
 		for (ForwardIterator c = begin; c != end; ++c)
 			*c = process_single_sample (value);
@@ -145,7 +145,7 @@ template<class ForwardIterator>
 
 template<class ForwardIterator>
 	inline void
-	OnePoleSmoother::multiply (ForwardIterator begin, ForwardIterator end, Sample value)
+	OnePoleSmoother::multiply (ForwardIterator begin, ForwardIterator end, Sample value) noexcept
 	{
 		for (ForwardIterator c = begin; c != end; ++c)
 			*c *= process_single_sample (value);
@@ -153,7 +153,7 @@ template<class ForwardIterator>
 
 
 inline Sample
-OnePoleSmoother::process_single_sample (Sample s)
+OnePoleSmoother::process_single_sample (Sample s) noexcept
 {
 	return _z = _time * (_z - s) + s;
 }

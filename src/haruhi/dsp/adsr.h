@@ -52,16 +52,16 @@ class ADSR
 		  unsigned int release, bool sustain_enabled, bool forced_release);
 
 	void
-	release();
+	release() noexcept;
 
 	bool
-	released() const;
+	released() const noexcept;
 
 	bool
-	finished() const;
+	finished() const noexcept;
 
 	void
-	fill (Sample* begin, Sample* end);
+	fill (Sample* begin, Sample* end) noexcept;
 
   private:
 	// D,A,D,R are sample numbers:
@@ -84,14 +84,14 @@ class ADSR
 
 
 inline bool
-ADSR::released() const
+ADSR::released() const noexcept
 {
 	return _phase == Release || _phase == Finished;
 }
 
 
 inline bool
-ADSR::finished() const
+ADSR::finished() const noexcept
 {
 	return _phase == Finished;
 }

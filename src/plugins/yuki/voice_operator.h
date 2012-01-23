@@ -40,25 +40,25 @@ class VoiceOperator
 	 * Set frequency source buffer.
 	 */
 	void
-	set_frequency_source (Haruhi::AudioBuffer* source);
+	set_frequency_source (Haruhi::AudioBuffer* source) noexcept;
 
 	/**
 	 * Set amplitude source buffer.
 	 */
 	void
-	set_amplitude_source (Haruhi::AudioBuffer* source);
+	set_amplitude_source (Haruhi::AudioBuffer* source) noexcept;
 
 	/**
 	 * Set operator detune.
 	 */
 	void
-	set_detune (Sample detune);
+	set_detune (Sample detune) noexcept;
 
 	/**
 	 * Fill output buffer.
 	 */
 	void
-	fill (Haruhi::AudioBuffer* output);
+	fill (Haruhi::AudioBuffer* output) noexcept;
 
   private:
 	Haruhi::AudioBuffer*	_frequency_source;
@@ -69,28 +69,28 @@ class VoiceOperator
 
 
 inline void
-VoiceOperator::set_frequency_source (Haruhi::AudioBuffer* source)
+VoiceOperator::set_frequency_source (Haruhi::AudioBuffer* source) noexcept
 {
 	_frequency_source = source;
 }
 
 
 inline void
-VoiceOperator::set_amplitude_source (Haruhi::AudioBuffer* source)
+VoiceOperator::set_amplitude_source (Haruhi::AudioBuffer* source) noexcept
 {
 	_amplitude_source = source;
 }
 
 
 inline void
-VoiceOperator::set_detune (Sample detune)
+VoiceOperator::set_detune (Sample detune) noexcept
 {
 	_detune = detune;
 }
 
 
 inline void
-VoiceOperator::fill (Haruhi::AudioBuffer* output)
+VoiceOperator::fill (Haruhi::AudioBuffer* output) noexcept
 {
 	assert (output != 0);
 

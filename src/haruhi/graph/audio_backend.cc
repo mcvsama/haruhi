@@ -31,14 +31,14 @@ AudioBackend::AudioBackend (std::string const& title):
 
 
 Sample
-AudioBackend::master_volume() const
+AudioBackend::master_volume() const noexcept
 {
 	return _master_volume.load();
 }
 
 
 void
-AudioBackend::set_master_volume (Sample volume)
+AudioBackend::set_master_volume (Sample volume) noexcept
 {
 	_master_volume.store (volume);
 }

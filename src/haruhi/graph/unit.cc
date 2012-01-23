@@ -17,10 +17,8 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/utility/exception.h>
 
 // Local:
-#include "exception.h"
 #include "buffer.h"
 #include "graph.h"
 #include "port.h"
@@ -33,7 +31,7 @@ namespace Haruhi {
 Unit::IDs Unit::_ids;
 
 
-Unit::Unit (std::string const& urn, std::string const& title, int id):
+Unit::Unit (std::string const& urn, std::string const& title, int id) noexcept:
 	_graph (0),
 	_synced (true),
 	_enabled (false),
@@ -50,10 +48,8 @@ Unit::~Unit()
 	// Prevent processing:
 	_processing_mutex.lock();
 	// Check if unit is properly disabled when destroyed:
-	if (enabled())
-		throw Exception ("disable unit before deletion");
-	if (graph())
-		throw Exception ("unregister unit before deletion");
+	assert (!enabled(), "disable unit before deletion");
+	assert (!graph(), "unregister unit before deletion");
 	// Check if all ports have been unregistered:
 	if (!_inputs.empty() || !_outputs.empty())
 	{
@@ -72,7 +68,7 @@ Unit::~Unit()
 			for (Ports::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
 				ports += (p == _outputs.begin() ? "" : ", ") + (*p)->name();
 		}
-		throw Exception (("delete all ports before deleting unit (" + ports + ")").c_str());
+		assert (_inputs.empty() && _outputs.empty(), ("delete all ports before deleting unit (" + ports + ")").c_str());
 	}
 	_processing_mutex.unlock();
 }
@@ -82,8 +78,7 @@ void
 Unit::sync()
 {
 	// Prevent syncing when not in processing round:
-	if (!_graph->_inside_processing_round)
-		throw OutsideProcessingRound ("tried to bump Sync outside processing round", __func__);
+	assert (_graph->_inside_processing_round, "tried to bump Sync outside processing round");
 
 	// Check if we can acquire processing lock. If not, unit
 	// is disabled - don't wait for it.
@@ -102,10 +97,10 @@ Unit::sync()
 
 
 void
-Unit::disable()
+Unit::disable() noexcept
 {
 	// Wait for processing end:
-	_processing_mutex.synchronize ([&]() {
+	_processing_mutex.synchronize ([&]() noexcept {
 		_enabled = false;
 	});
 }

@@ -31,34 +31,34 @@ namespace DSP {
 class RampSmoother
 {
   public:
-	RampSmoother (unsigned int max_samples = 0);
+	RampSmoother (unsigned int max_samples = 0) noexcept;
 
 	void
-	set_samples (unsigned int samples);
+	set_samples (unsigned int samples) noexcept;
 
 	void
-	set_value (float value);
+	set_value (float value) noexcept;
 
 	void
-	reset (float value);
+	reset (float value) noexcept;
 
 	float
-	current() const;
+	current() const noexcept;
 
 	float
-	advance (unsigned int samples = 1);
+	advance (unsigned int samples = 1) noexcept;
 
 	template<class ForwardIterator>
 		void
-		fill (ForwardIterator begin, ForwardIterator end, Sample value);
+		fill (ForwardIterator begin, ForwardIterator end, Sample value) noexcept;
 
 	template<class ForwardIterator>
 		void
-		multiply (ForwardIterator begin, ForwardIterator end, Sample value);
+		multiply (ForwardIterator begin, ForwardIterator end, Sample value) noexcept;
 
   private:
 	void
-	set_actual_samples (unsigned int samples);
+	set_actual_samples (unsigned int samples) noexcept;
 
   private:
 	float			_current;
@@ -72,21 +72,21 @@ class RampSmoother
 
 
 inline void
-RampSmoother::set_samples (unsigned int samples)
+RampSmoother::set_samples (unsigned int samples) noexcept
 {
 	_samples_max = samples;
 }
 
 
 inline float
-RampSmoother::current() const
+RampSmoother::current() const noexcept
 {
 	return _current;
 }
 
 
 inline float
-RampSmoother::advance (unsigned int samples)
+RampSmoother::advance (unsigned int samples) noexcept
 {
 	_current += samples * _vector;
 	_samples_from_last_setup += samples;
@@ -101,7 +101,7 @@ RampSmoother::advance (unsigned int samples)
 
 template<class ForwardIterator>
 	inline void
-	RampSmoother::fill (ForwardIterator begin, ForwardIterator end, Sample value)
+	RampSmoother::fill (ForwardIterator begin, ForwardIterator end, Sample value) noexcept
 	{
 		set_value (value);
 		for (ForwardIterator current = begin; current != end; ++current)
@@ -111,7 +111,7 @@ template<class ForwardIterator>
 
 template<class ForwardIterator>
 	inline void
-	RampSmoother::multiply (ForwardIterator begin, ForwardIterator end, Sample value)
+	RampSmoother::multiply (ForwardIterator begin, ForwardIterator end, Sample value) noexcept
 	{
 		set_value (value);
 		for (ForwardIterator current = begin; current != end; ++current)
@@ -120,7 +120,7 @@ template<class ForwardIterator>
 
 
 inline void
-RampSmoother::set_actual_samples (unsigned int samples)
+RampSmoother::set_actual_samples (unsigned int samples) noexcept
 {
 	_samples = std::max (samples, 1u);
 }

@@ -5,7 +5,7 @@ PKGCONFIG_LIBS	=
 PKGCONFIG_FLAGS	=
 CXX				= g++ -c -std=c++0x -Wall
 DEPCC			= g++
-CXXFLAGS		= -Wall -Wextra -Wunused  -Wunused-function -Wunused-label -fstrict-aliasing -Wstrict-aliasing=3 $(PKGCONFIG_FLAGS)
+CXXFLAGS		= -Wall -Wextra -Wunused  -Wunused-function -Wunused-label -fstrict-aliasing -Wstrict-aliasing=3 -Wnoexcept -fnothrow-opt $(PKGCONFIG_FLAGS)
 SO				= g++ -shared
 SOFLAGS			=
 LD				= g++

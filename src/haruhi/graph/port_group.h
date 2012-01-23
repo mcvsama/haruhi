@@ -29,7 +29,7 @@ class Graph;
 class PortGroup
 {
   public:
-	PortGroup (Graph* graph, std::string const& name);
+	PortGroup (Graph* graph, std::string const& name) noexcept;
 
 	/**
 	 * Return port group name.
@@ -45,13 +45,13 @@ class PortGroup
 	set_name (std::string const&);
 
 	Graph*
-	graph() const;
+	graph() const noexcept;
 
 	/**
 	 * Helper for ordering.
 	 */
 	static bool
-	compare_by_name (PortGroup const* first, PortGroup const* second);
+	compare_by_name (PortGroup const* first, PortGroup const* second) noexcept;
 
   private:
 	Graph*		_graph;
@@ -59,8 +59,22 @@ class PortGroup
 };
 
 
+inline std::string
+PortGroup::name() const
+{
+	return _name;
+}
+
+
+inline Graph*
+PortGroup::graph() const noexcept
+{
+	return _graph;
+}
+
+
 inline bool
-PortGroup::compare_by_name (PortGroup const* first, PortGroup const* second)
+PortGroup::compare_by_name (PortGroup const* first, PortGroup const* second) noexcept
 {
 	return first->name() < second->name();
 }

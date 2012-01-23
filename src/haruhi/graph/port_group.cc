@@ -21,17 +21,10 @@
 
 namespace Haruhi {
 
-PortGroup::PortGroup (Graph* graph, std::string const& name):
+PortGroup::PortGroup (Graph* graph, std::string const& name) noexcept:
 	_graph (graph),
 	_name (name)
 { }
-
-
-std::string
-PortGroup::name() const
-{
-	return _name;
-}
 
 
 void
@@ -39,13 +32,6 @@ PortGroup::set_name (std::string const& name)
 {
 	_name = name;
 	_graph->port_group_renamed (this);
-}
-
-
-Graph*
-PortGroup::graph() const
-{
-	return _graph;
 }
 
 } // namespace Haruhi

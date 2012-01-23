@@ -20,14 +20,14 @@ namespace GraphDetail {
 
 template<class Port>
 	inline
-	ConnectedTo<Port>::ConnectedTo (Port* port):
+	ConnectedTo<Port>::ConnectedTo (Port* port) noexcept:
 		_port (port)
 	{ }
 
 
 template<class Port>
 	inline bool
-	ConnectedTo<Port>::operator() (argument_type const& port) const
+	ConnectedTo<Port>::operator() (argument_type const& port) const noexcept
 	{
 		return port->connected_to (_port);
 	}
@@ -35,14 +35,14 @@ template<class Port>
 
 template<class Port>
 	inline
-	ConnectedFrom<Port>::ConnectedFrom (Port* port):
+	ConnectedFrom<Port>::ConnectedFrom (Port* port) noexcept:
 		_port (port)
 	{ }
 
 
 template<class Port>
 	inline bool
-	ConnectedFrom<Port>::operator() (argument_type const& port) const
+	ConnectedFrom<Port>::operator() (argument_type const& port) const noexcept
 	{
 		return _port->connected_to (port);
 	}

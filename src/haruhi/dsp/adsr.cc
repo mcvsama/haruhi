@@ -49,7 +49,7 @@ ADSR::ADSR (unsigned int delay, unsigned int attack, unsigned int attack_hold, u
 
 
 void
-ADSR::release()
+ADSR::release() noexcept
 {
 	_released = true;
 	if (_forced_release)
@@ -61,7 +61,7 @@ ADSR::release()
 
 
 void
-ADSR::fill (Sample* begin, Sample* end)
+ADSR::fill (Sample* begin, Sample* end) noexcept
 {
 	Sample* cur = begin;
 	while (cur != end)

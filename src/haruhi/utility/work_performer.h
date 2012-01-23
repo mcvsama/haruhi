@@ -41,7 +41,7 @@ class WorkPerformer: private Noncopyable
 	class Performer: public Thread
 	{
 	  public:
-		Performer (WorkPerformer*, unsigned int thread_id);
+		Performer (WorkPerformer*, unsigned int thread_id) noexcept;
 
 		void
 		run();
@@ -137,7 +137,7 @@ class WorkPerformer: private Noncopyable
 	 * Set scheduling parameter for all threads.
 	 */
 	void
-	set_sched (Thread::SchedType, int priority);
+	set_sched (Thread::SchedType, int priority) noexcept;
 
 	/**
 	 * Return number of threads created.

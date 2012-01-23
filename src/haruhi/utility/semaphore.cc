@@ -22,21 +22,21 @@
 #include "semaphore.h"
 
 
-Semaphore::Semaphore (int value):
+Semaphore::Semaphore (int value) noexcept:
 	_initial_value (value)
 {
 	::sem_init (&_semaphore, 0, value);
 }
 
 
-Semaphore::~Semaphore()
+Semaphore::~Semaphore() noexcept
 {
 	::sem_destroy (&_semaphore);
 }
 
 
 void
-Semaphore::reset()
+Semaphore::reset() noexcept
 {
 	::sem_destroy (&_semaphore);
 	::sem_init (&_semaphore, 0, _initial_value);
@@ -44,7 +44,7 @@ Semaphore::reset()
 
 
 int
-Semaphore::value() const
+Semaphore::value() const noexcept
 {
 	int result;
 	::sem_getvalue (&_semaphore, &result);
@@ -53,14 +53,14 @@ Semaphore::value() const
 
 
 void
-Semaphore::wait() const
+Semaphore::wait() const noexcept
 {
 	::sem_wait (&_semaphore);
 }
 
 
 bool
-Semaphore::try_wait() const
+Semaphore::try_wait() const noexcept
 {
 	if (::sem_trywait (&_semaphore) == -1)
 		return false;
@@ -69,7 +69,7 @@ Semaphore::try_wait() const
 
 
 void
-Semaphore::post() const
+Semaphore::post() const noexcept
 {
 	::sem_post (&_semaphore);
 }

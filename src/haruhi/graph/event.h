@@ -53,23 +53,23 @@ class Event: public FastShared
 	};
 
   public:
-	Event (EventType type, Timestamp timestamp);
+	Event (EventType type, Timestamp timestamp) noexcept;
 
   protected:
 	// Hide copy constructor from public:
-	Event (Event const& other);
+	Event (Event const& other) noexcept;
 
 	void
-	set_event_type (EventType type);
+	set_event_type (EventType type) noexcept;
 
   public:
 	virtual ~Event() { }
 
 	Timestamp
-	timestamp() const;
+	timestamp() const noexcept;
 
 	bool
-	operator< (Event const& other) const;
+	operator< (Event const& other) const noexcept;
 
 	virtual Event*
 	clone() const = 0;
@@ -78,7 +78,7 @@ class Event: public FastShared
 	 * Identifies descendant class.
 	 */
 	EventType
-	event_type() const;
+	event_type() const noexcept;
 
   public:
 	/**
@@ -86,13 +86,13 @@ class Event: public FastShared
 	 * by their timestamp. It is Strict Weak Ordering function object.
 	 */
 	static bool
-	strict_weak_ordering (Event const* first, Event const* second);
+	strict_weak_ordering (Event const* first, Event const* second) noexcept;
 
 	/**
 	 * Same as strict_weak_ordering() but for Shared containers.
 	 */
 	static bool
-	shared_strict_weak_ordering (Shared<Event> const& first, Shared<Event> const& second);
+	shared_strict_weak_ordering (Shared<Event> const& first, Shared<Event> const& second) noexcept;
 
   private:
 	Timestamp	_timestamp;
@@ -108,14 +108,14 @@ class ControllerEvent: public Event
 	typedef float Value;
 
   public:
-	ControllerEvent (Timestamp timestamp, Value value);
+	ControllerEvent (Timestamp timestamp, Value value) noexcept;
 
   protected:
-	ControllerEvent (ControllerEvent const& other);
+	ControllerEvent (ControllerEvent const& other) noexcept;
 
   public:
 	Value
-	value() const;
+	value() const noexcept;
 
 	ControllerEvent*
 	clone() const;
@@ -140,32 +140,32 @@ class VoiceEvent: public Event
 	typedef ControllerEvent::Value Value;
 
   public:
-	VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Type type, Frequency frequency, Value value);
+	VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Type type, Frequency frequency, Value value) noexcept;
 
   protected:
-	VoiceEvent (VoiceEvent const& other);
+	VoiceEvent (VoiceEvent const& other) noexcept;
 
   public:
 	KeyID
-	key_id() const;
+	key_id() const noexcept;
 
 	VoiceID
-	voice_id() const;
+	voice_id() const noexcept;
 
 	Type
-	type() const;
+	type() const noexcept;
 
 	Frequency
-	frequency() const;
+	frequency() const noexcept;
 
 	Value
-	value() const;
+	value() const noexcept;
 
 	VoiceEvent*
 	clone() const;
 
 	static Frequency
-	frequency_from_key_id (KeyID, float master_tune);
+	frequency_from_key_id (KeyID, float master_tune) noexcept;
 
   private:
 	KeyID			_key_id;
@@ -182,14 +182,14 @@ class VoiceControllerEvent: public ControllerEvent
 	USES_POOL_ALLOCATOR (VoiceControllerEvent)
 
   public:
-	VoiceControllerEvent (Timestamp timestamp, VoiceID voice_id, Value value);
+	VoiceControllerEvent (Timestamp timestamp, VoiceID voice_id, Value value) noexcept;
 
   protected:
-	VoiceControllerEvent (VoiceControllerEvent const& other);
+	VoiceControllerEvent (VoiceControllerEvent const& other) noexcept;
 
   public:
 	VoiceID
-	voice_id() const;
+	voice_id() const noexcept;
 
 	VoiceControllerEvent*
 	clone() const;
@@ -200,77 +200,77 @@ class VoiceControllerEvent: public ControllerEvent
 
 
 inline
-Event::Event (EventType type, Timestamp timestamp):
+Event::Event (EventType type, Timestamp timestamp) noexcept:
 	_timestamp (timestamp),
 	_event_type (type)
 { }
 
 
 inline
-Event::Event (Event const& other):
+Event::Event (Event const& other) noexcept:
 	_timestamp (other._timestamp),
 	_event_type (other._event_type)
 { }
 
 
 inline void
-Event::set_event_type (EventType type)
+Event::set_event_type (EventType type) noexcept
 {
 	_event_type = type;
 }
 
 
 inline Timestamp
-Event::timestamp() const
+Event::timestamp() const noexcept
 {
 	return _timestamp;
 }
 
 
 inline bool
-Event::operator< (Event const& other) const
+Event::operator< (Event const& other) const noexcept
 {
 	return timestamp() < other.timestamp();
 }
 
 
 inline Event::EventType
-Event::event_type() const
+Event::event_type() const noexcept
 {
 	return _event_type;
 }
 
 
 inline bool
-Event::strict_weak_ordering (Event const* first, Event const* second)
+Event::strict_weak_ordering (Event const* first, Event const* second) noexcept
 {
 	return first->timestamp() < second->timestamp();
 }
 
 
 inline bool
-Event::shared_strict_weak_ordering (Shared<Event> const& first, Shared<Event> const& second)
+Event::shared_strict_weak_ordering (Shared<Event> const& first, Shared<Event> const& second) noexcept
 {
 	return first->timestamp() < second->timestamp();
 }
 
 
 inline
-ControllerEvent::ControllerEvent (Timestamp timestamp, Value value):
+ControllerEvent::ControllerEvent (Timestamp timestamp, Value value) noexcept:
 	Event (ControllerEventType, timestamp),
 	_value (value)
 { }
 
 
 inline
-ControllerEvent::ControllerEvent (ControllerEvent const& other):
+ControllerEvent::ControllerEvent (ControllerEvent const& other) noexcept:
 	Event (other),
 	_value (other._value)
 { }
 
 
 inline ControllerEvent::Value
-ControllerEvent::value() const
+ControllerEvent::value() const noexcept
 {
 	return _value;
 }
@@ -284,7 +284,7 @@ ControllerEvent::clone() const
 
 
 inline
-VoiceEvent::VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Type type, Frequency frequency, Value value):
+VoiceEvent::VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Type type, Frequency frequency, Value value) noexcept:
 	Event (VoiceEventType, timestamp),
 	_key_id (key_id),
 	_voice_id (voice_id),
@@ -298,7 +298,7 @@ VoiceEvent::VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Typ
 
 
 inline
-VoiceEvent::VoiceEvent (VoiceEvent const& other):
+VoiceEvent::VoiceEvent (VoiceEvent const& other) noexcept:
 	Event (other),
 	_key_id (other._key_id),
 	_voice_id (other._voice_id),
@@ -309,35 +309,35 @@ VoiceEvent::VoiceEvent (VoiceEvent const& other):
 
 
 inline KeyID
-VoiceEvent::key_id() const
+VoiceEvent::key_id() const noexcept
 {
 	return _key_id;
 }
 
 
 inline VoiceID
-VoiceEvent::voice_id() const
+VoiceEvent::voice_id() const noexcept
 {
 	return _voice_id;
 }
 
 
 inline VoiceEvent::Type
-VoiceEvent::type() const
+VoiceEvent::type() const noexcept
 {
 	return _type;
 }
 
 
 inline VoiceEvent::Frequency
-VoiceEvent::frequency() const
+VoiceEvent::frequency() const noexcept
 {
 	return _frequency;
 }
 
 
 inline VoiceEvent::Value
-VoiceEvent::value() const
+VoiceEvent::value() const noexcept
 {
 	return _value;
 }
@@ -351,7 +351,7 @@ VoiceEvent::clone() const
 
 
 inline
-VoiceControllerEvent::VoiceControllerEvent (Timestamp timestamp, VoiceID voice_id, Value value):
+VoiceControllerEvent::VoiceControllerEvent (Timestamp timestamp, VoiceID voice_id, Value value) noexcept:
 	ControllerEvent (timestamp, value),
 	_voice_id (voice_id)
 {
@@ -360,14 +360,14 @@ VoiceControllerEvent::VoiceControllerEvent (Timestamp timestamp, VoiceID voice_i
 
 
 inline
-VoiceControllerEvent::VoiceControllerEvent (VoiceControllerEvent const& other):
+VoiceControllerEvent::VoiceControllerEvent (VoiceControllerEvent const& other) noexcept:
 	ControllerEvent (other),
 	_voice_id (other._voice_id)
 { }
 
 
 inline VoiceID
-VoiceControllerEvent::voice_id() const
+VoiceControllerEvent::voice_id() const noexcept
 {
 	return _voice_id;
 }

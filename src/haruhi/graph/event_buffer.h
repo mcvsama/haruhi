@@ -41,10 +41,10 @@ class EventBuffer: public Buffer
 	static TypeID TYPE;
 
   public:
-	EventBuffer();
+	EventBuffer() noexcept;
 
 	void
-	clear();
+	clear() noexcept;
 
 	/**
 	 * Mixes in other buffer into this one.
@@ -60,20 +60,20 @@ class EventBuffer: public Buffer
 	 * May resort events.
 	 */
 	Events&
-	events();
+	events() noexcept;
 
 	Events const&
-	events() const;
+	events() const noexcept;
 
 	/**
 	 * \returns	true if and only if buffer has no pending events.
 	 */
 	bool
-	empty() const;
+	empty() const noexcept;
 
   private:
 	void
-	ensure_sorted() const;
+	ensure_sorted() const noexcept;
 
   private:
 	mutable bool	_sorted;
@@ -82,7 +82,7 @@ class EventBuffer: public Buffer
 
 
 inline void
-EventBuffer::clear()
+EventBuffer::clear() noexcept
 {
 	_events.clear();
 }
@@ -91,12 +91,13 @@ EventBuffer::clear()
 inline void
 EventBuffer::push (Shared<Event> const& event)
 {
-	_sorted = false; _events.push_back (event);
+	_sorted = false;
+	_events.push_back (event);
 }
 
 
 inline EventBuffer::Events&
-EventBuffer::events()
+EventBuffer::events() noexcept
 {
 	ensure_sorted();
 	return _events;
@@ -104,7 +105,7 @@ EventBuffer::events()
 
 
 inline EventBuffer::Events const&
-EventBuffer::events() const
+EventBuffer::events() const noexcept
 {
 	ensure_sorted();
 	return _events;
@@ -112,14 +113,14 @@ EventBuffer::events() const
 
 
 inline bool
-EventBuffer::empty() const
+EventBuffer::empty() const noexcept
 {
 	return _events.empty();
 }
 
 
 inline void
-EventBuffer::ensure_sorted() const
+EventBuffer::ensure_sorted() const noexcept
 {
 	if (!_sorted)
 	{

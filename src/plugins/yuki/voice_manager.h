@@ -127,7 +127,7 @@ class VoiceManager
 	 * processing round before mixing result.
 	 */
 	void
-	mix_rendering_result (Haruhi::AudioBuffer*, Haruhi::AudioBuffer*);
+	mix_rendering_result (Haruhi::AudioBuffer*, Haruhi::AudioBuffer*) noexcept;
 
 	/**
 	 * Update particular parameter of a particular voice.

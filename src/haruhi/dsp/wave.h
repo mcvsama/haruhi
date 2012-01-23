@@ -36,13 +36,13 @@ class Wave: private Noncopyable
 	 *			between calls to operator() without changing wave's parameters.
 	 *			Typically true, but noise functions will set this to false.
 	 */
-	Wave (bool immutable);
+	Wave (bool immutable) noexcept;
 
 	/**
 	 * \param	wave Inner wave. This constructs decorator wave.
 	 * \param	auto_delete Whether decorated wave should be deleted along with this one.
 	 */
-	Wave (Wave* inner_wave, bool auto_delete = false);
+	Wave (Wave* inner_wave, bool auto_delete = false) noexcept;
 
 	/**
 	 * Dtor
@@ -53,26 +53,26 @@ class Wave: private Noncopyable
 	 * Returns true if this wave or decorated wave is immutable.
 	 */
 	virtual bool
-	immutable() const;
+	immutable() const noexcept;
 
 	/**
 	 * Set immutable attribute for this wave or or decorated wave.
 	 */
 	virtual void
-	set_immutable (bool immutable);
+	set_immutable (bool immutable) noexcept;
 
 	/**
 	 * Return inner wave object.
 	 * Returns 0 if this wave is not a decorator.
 	 */
 	Wave*
-	inner_wave() const;
+	inner_wave() const noexcept;
 
 	/**
 	 * Set new inner wave.
 	 */
 	void
-	set_inner_wave (Wave* wave, bool auto_delete = false);
+	set_inner_wave (Wave* wave, bool auto_delete = false) noexcept;
 
 	/**
 	 * Returns function's sample.
@@ -83,21 +83,21 @@ class Wave: private Noncopyable
 	 *			bandwidth, pass 0.0.
 	 */
 	virtual Sample
-	operator() (Sample register phase, Sample frequency) const = 0;
+	operator() (Sample register phase, Sample frequency) const noexcept = 0;
 
 	/**
 	 * Compute average wave energy.
 	 * \param	samples Use this many samples for computation. Lesser = faster.
 	 */
 	virtual Sample
-	compute_average_energy (unsigned int samples = 1024) const;
+	compute_average_energy (unsigned int samples = 1024) const noexcept;
 
 	/**
 	 * Compute min/max values of the wave.
 	 * \param	samples User this many samples for computation. Lesser = faster.
 	 */
 	virtual std::pair<Sample, Sample>
-	compute_min_max (unsigned int samples = 1024) const;
+	compute_min_max (unsigned int samples = 1024) const noexcept;
 
   private:
 	bool	_immutable;
@@ -107,7 +107,7 @@ class Wave: private Noncopyable
 
 
 inline
-Wave::Wave (bool immutable):
+Wave::Wave (bool immutable) noexcept:
 	_immutable (immutable),
 	_inner_wave (0),
 	_auto_delete (false)
@@ -115,7 +115,7 @@ Wave::Wave (bool immutable):
 
 
 inline
-Wave::Wave (Wave* inner_wave, bool auto_delete):
+Wave::Wave (Wave* inner_wave, bool auto_delete) noexcept:
 	_immutable (true),
 	_inner_wave (inner_wave),
 	_auto_delete (auto_delete)
@@ -131,7 +131,7 @@ Wave::~Wave()
 
 
 inline bool
-Wave::immutable() const
+Wave::immutable() const noexcept
 {
 	if (_inner_wave)
 		return _inner_wave->immutable();
@@ -141,7 +141,7 @@ Wave::immutable() const
 
 
 inline void
-Wave::set_immutable (bool immutable)
+Wave::set_immutable (bool immutable) noexcept
 {
 	if (_inner_wave)
 		_inner_wave->set_immutable (immutable);
@@ -151,14 +151,14 @@ Wave::set_immutable (bool immutable)
 
 
 inline Wave*
-Wave::inner_wave() const
+Wave::inner_wave() const noexcept
 {
 	return _inner_wave;
 }
 
 
 inline void
-Wave::set_inner_wave (Wave* wave, bool auto_delete)
+Wave::set_inner_wave (Wave* wave, bool auto_delete) noexcept
 {
 	if (_auto_delete)
 		delete _inner_wave;

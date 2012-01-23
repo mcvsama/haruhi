@@ -32,7 +32,7 @@ class DelayLine
 	 * Creates delay line with some default (probably non-usable) parameters.
 	 * Call set_* functions to override them.
 	 */
-	DelayLine();
+	DelayLine() noexcept;
 
 	/**
 	 * \param	delay is the delay length measured in samples number.
@@ -41,39 +41,39 @@ class DelayLine
 	 * \param	size is number of samples read/written each time.
 	 * 			MUST be >= than max_delay.
 	 */
-	DelayLine (std::size_t delay, std::size_t max_delay, std::size_t size);
+	DelayLine (std::size_t delay, std::size_t max_delay, std::size_t size) noexcept;
 
 	/**
 	 * Returns current delay in samples.
 	 */
 	std::size_t
-	delay() const;
+	delay() const noexcept;
 
 	/**
 	 * Should be called only after read and before next write.
 	 * \param	delay is number of samples to delay.
 	 */
 	void
-	set_delay (std::size_t delay);
+	set_delay (std::size_t delay) noexcept;
 
 	/**
 	 * Returns max possible delay (buffer size) in samples.
 	 */
 	std::size_t
-	max_delay() const;
+	max_delay() const noexcept;
 
 	/**
 	 * Sets maximum delay in samples.
 	 * Max delay MUST be >= size set with set_size().
 	 */
 	void
-	set_max_delay (std::size_t max_delay);
+	set_max_delay (std::size_t max_delay) noexcept;
 
 	/**
 	 * Returns number of samples read/written by read() and write() functions.
 	 */
 	std::size_t
-	size() const;
+	size() const noexcept;
 
 	/**
 	 * Should be called only after read and before next write.
@@ -81,7 +81,7 @@ class DelayLine
 	 * Max delay MUST be >= size.
 	 */
 	void
-	set_size (std::size_t size);
+	set_size (std::size_t size) noexcept;
 
 	/**
 	 * Writes samples to delay line.
@@ -89,7 +89,7 @@ class DelayLine
 	 * \param	data is pointer to source buffer.
 	 */
 	void
-	write (Sample const* data);
+	write (Sample const* data) noexcept;
 
 	/**
 	 * Reads delayed samples from delay line.
@@ -97,13 +97,13 @@ class DelayLine
 	 * \param	data is pointer to output buffer.
 	 */
 	void
-	read (Sample* data);
+	read (Sample* data) noexcept;
 
 	/**
 	 * Clears data buffer.
 	 */
 	void
-	clear();
+	clear() noexcept;
 
   private:
 	Sample*		_data;
@@ -115,23 +115,41 @@ class DelayLine
 
 
 inline std::size_t
-DelayLine::delay() const
+DelayLine::delay() const noexcept
 {
 	return _delay;
 }
 
 
+inline void
+DelayLine::set_delay (std::size_t delay) noexcept
+{
+	assert (delay < _max_delay);
+	_delay = delay;
+}
+
+
 inline std::size_t
-DelayLine::max_delay() const
+DelayLine::max_delay() const noexcept
 {
 	return _max_delay;
 }
 
 
 inline std::size_t
-DelayLine::size() const
+DelayLine::size() const noexcept
 {
 	return _size;
+}
+
+
+inline void
+DelayLine::set_size (std::size_t size) noexcept
+{
+	assert (size > 0);
+	assert (_max_delay > size);
+
+	_size = size;
 }
 
 } // namespace DSP

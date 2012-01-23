@@ -102,31 +102,31 @@ class Port:
 	typedef int Flags;
 
   public:
-	Port (Unit* unit, std::string const& name, Direction, Buffer* buffer, PortGroup* group = 0, Flags flags = 0);
+	Port (Unit* unit, std::string const& name, Direction, Buffer* buffer, PortGroup* group = 0, Flags flags = 0) noexcept;
 
 	/**
 	 * Disconnects from any connected ports and deletes parameters if not null.
 	 */
-	virtual ~Port();
+	virtual ~Port() { }
 
   public:
 	/**
 	 * \returns	owner of this port.
 	 */
 	Unit*
-	unit() const;
+	unit() const noexcept;
 
 	/**
 	 * \returns	name of this port.
 	 */
 	std::string
-	name() const;
+	name() const noexcept;
 
 	/**
 	 * \returns	comment for this port.
 	 */
 	std::string
-	comment() const;
+	comment() const noexcept;
 
 	/**
 	 * \returns	fully qualified name (ie. group-name:port-name)
@@ -138,19 +138,19 @@ class Port:
 	 * \returns	port direction.
 	 */
 	Direction
-	direction() const;
+	direction() const noexcept;
 
 	/**
 	 * \returns	port's flags.
 	 */
 	Flags
-	flags() const;
+	flags() const noexcept;
 
 	/**
 	 * \returns	true if port has all given flags.
 	 */
 	bool
-	has_flags (Flags flags);
+	has_flags (Flags flags) noexcept;
 
 	/**
 	 * Sets new name for port.
@@ -170,31 +170,31 @@ class Port:
 	 * \returns	buffer for port, either port's own or by cascade to nearest buffer.
 	 */
 	Buffer*
-	buffer() const;
+	buffer() const noexcept;
 
 	/**
 	 * \returns	group for this port.
 	 */
 	PortGroup*
-	group() const;
+	group() const noexcept;
 
 	/**
 	 * \returns	set of back connections.
 	 */
 	Ports const&
-	back_connections() const;
+	back_connections() const noexcept;
 
 	/**
 	 * \returns	set of forward connections.
 	 */
 	Ports const&
-	forward_connections() const;
+	forward_connections() const noexcept;
 
 	/**
 	 * \returns	true if given ports are connected.
 	 */
 	bool
-	connected_to (Port* other) const;
+	connected_to (Port* other) const noexcept;
 
 	/**
 	 * Connects two ports.
@@ -223,9 +223,7 @@ class Port:
 	/**
 	 * Puts port into 'learning' mode (as it is EventBackend::Learnable).
 	 * It is required that port is owned by unit registered in Graph,
-	 * and there is EventBackend registered in that Graph. If these conditions
-	 * are not met, this method will throw GraphNotFound or EventBackendNotFound
-	 * exceptions.
+	 * and there is EventBackend registered in that Graph.
 	 *
 	 * \param	event_types Types of events that trigger 'learned' method.
 	 */
@@ -238,7 +236,6 @@ class Port:
 	 * If EventBackend is not registered in Graph, nothing will happen.
 	 *
 	 * \param	event_types Types of events that no longer will trigger 'learned' method.
-	 * \throws	GraphNotFound if unit is not registered to any graph.
 	 */
 	void
 	stop_learning();
@@ -247,7 +244,7 @@ class Port:
 	 * Shortcut for unit()->graph()
 	 */
 	Graph*
-	graph() const;
+	graph() const noexcept;
 
 	/**
 	 * Called by unit when graph parameters change.
@@ -259,7 +256,7 @@ class Port:
 	 * Helper for sorting.
 	 */
 	static bool
-	compare_by_name (Port const* first, Port const* second);
+	compare_by_name (Port const* first, Port const* second) noexcept;
 
   protected:
 	void
@@ -316,77 +313,84 @@ class Port:
 
 
 inline Unit*
-Port::unit() const
+Port::unit() const noexcept
 {
 	return _unit;
 }
 
 
 inline std::string
-Port::name() const
+Port::name() const noexcept
 {
 	return _name;
 }
 
 
 inline std::string
-Port::comment() const
+Port::comment() const noexcept
 {
 	return _comment;
 }
 
 
 inline Port::Direction
-Port::direction() const
+Port::direction() const noexcept
 {
 	return _direction;
 }
 
 
 inline Port::Flags
-Port::flags() const
+Port::flags() const noexcept
 {
 	return _flags;
 }
 
 
 inline bool
-Port::has_flags (Flags flags)
+Port::has_flags (Flags flags) noexcept
 {
 	return (_flags & flags) == flags;
 }
 
 
 inline Buffer*
-Port::buffer() const
+Port::buffer() const noexcept
 {
 	return _buffer;
 }
 
 
 inline PortGroup*
-Port::group() const
+Port::group() const noexcept
 {
 	return _group;
 }
 
 
 inline Ports const&
-Port::back_connections() const
+Port::back_connections() const noexcept
 {
 	return _back_connections;
 }
 
 
 inline Ports const&
-Port::forward_connections() const
+Port::forward_connections() const noexcept
 {
 	return _forward_connections;
 }
 
 
+inline Graph*
+Port::graph() const noexcept
+{
+	return _unit->graph();
+}
+
+
 inline bool
-Port::compare_by_name (Port const* first, Port const* second)
+Port::compare_by_name (Port const* first, Port const* second) noexcept
 {
 	return first->name() < second->name();
 }

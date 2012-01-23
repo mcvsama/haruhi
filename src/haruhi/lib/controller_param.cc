@@ -24,7 +24,7 @@
 
 namespace Haruhi {
 
-ControllerParam::Adapter::Adapter (int limit_min, int limit_max):
+ControllerParam::Adapter::Adapter (int limit_min, int limit_max) noexcept:
 	curve (0.0f),
 	hard_limit_min (limit_min),
 	hard_limit_max (limit_max),
@@ -35,7 +35,7 @@ ControllerParam::Adapter::Adapter (int limit_min, int limit_max):
 
 
 int
-ControllerParam::Adapter::encurve (int in) const
+ControllerParam::Adapter::encurve (int in) const noexcept
 {
 	float power = curve < 0
 		? renormalize (curve, -1.0f, 0.0f, 0.4f, 1.0f)
@@ -46,7 +46,7 @@ ControllerParam::Adapter::encurve (int in) const
 
 
 int
-ControllerParam::Adapter::decurve (int in) const
+ControllerParam::Adapter::decurve (int in) const noexcept
 {
 	float power = curve < 0
 		? renormalize (curve, -1.0f, 0.0f, 0.4f, 1.0f)

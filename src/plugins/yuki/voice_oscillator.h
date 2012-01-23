@@ -44,126 +44,126 @@ class VoiceOscillator
 	 * If oscillator has no assigned wavetable, it will
 	 * mixin/fill silence.
 	 */
-	VoiceOscillator (DSP::Wavetable* wavetable = 0);
+	VoiceOscillator (DSP::Wavetable* wavetable = 0) noexcept;
 
 	/**
 	 * Enable/disable wavetable generator.
 	 */
 	void
-	set_wavetable_enabled (bool enabled);
+	set_wavetable_enabled (bool enabled) noexcept;
 
 	/**
 	 * Set new wavetable. May be 0.
 	 */
 	void
-	set_wavetable (DSP::Wavetable* wavetable);
+	set_wavetable (DSP::Wavetable* wavetable) noexcept;
 
 	/**
 	 * Return currently used wavetable.
 	 */
 	DSP::Wavetable*
-	wavetable() const;
+	wavetable() const noexcept;
 
 	/**
 	 * Set frequency source buffer.
 	 */
 	void
-	set_frequency_source (Haruhi::AudioBuffer* source);
+	set_frequency_source (Haruhi::AudioBuffer* source) noexcept;
 
 	/**
 	 * Set amplitude source buffer.
 	 */
 	void
-	set_amplitude_source (Haruhi::AudioBuffer* source);
+	set_amplitude_source (Haruhi::AudioBuffer* source) noexcept;
 
 	/**
 	 * Set FM modulator source.
 	 * Changing frequency in this buffer doesn't cause wavetable jumping.
 	 */
 	void
-	set_fm_source (Haruhi::AudioBuffer* source);
+	set_fm_source (Haruhi::AudioBuffer* source) noexcept;
 
 	/**
 	 * Enable/disable noise generator.
 	 */
 	void
-	set_noise_enabled (bool enabled);
+	set_noise_enabled (bool enabled) noexcept;
 
 	/**
 	 * Set noise amplitude.
 	 */
 	void
-	set_noise_amplitude (Sample amplitude);
+	set_noise_amplitude (Sample amplitude) noexcept;
 
 	/**
 	 * Argument: [-1.0…1.0]
 	 */
 	void
-	set_phase (Sample phase);
+	set_phase (Sample phase) noexcept;
 
 	/**
 	 * Argument: [-1.0…1.0]
 	 */
 	void
-	set_initial_phases_spread (Sample spread);
+	set_initial_phases_spread (Sample spread) noexcept;
 
 	/**
 	 * Argument: [1…MaxUnison]
 	 */
 	void
-	set_unison_number (int number);
+	set_unison_number (int number) noexcept;
 
 	/**
 	 * Argument: [0…1.0]
 	 */
 	void
-	set_unison_spread (Sample spread);
+	set_unison_spread (Sample spread) noexcept;
 
 	/**
 	 * Argument: [0…1.0] (0.0 disables noise completely).
 	 */
 	void
-	set_unison_noise (Sample noise);
+	set_unison_noise (Sample noise) noexcept;
 
 	/**
 	 * Enable/disable stereo spread of unison voices.
 	 */
 	void
-	set_unison_stereo (bool stereo);
+	set_unison_stereo (bool stereo) noexcept;
 
 	/**
 	 * Set unison voices vibrato level.
 	 * \param	level Input param [0.0..1.0].
 	 */
 	void
-	set_unison_vibrato_level (Sample level);
+	set_unison_vibrato_level (Sample level) noexcept;
 
 	/**
 	 * Set unison voices vibrato frequency.
 	 * \param	frequency Absolute frequency [0.0..0.5].
 	 */
 	void
-	set_unison_vibrato_frequency (Sample frequency);
+	set_unison_vibrato_frequency (Sample frequency) noexcept;
 
 	/**
 	 * Fill output buffer.
 	 */
 	void
-	fill (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2);
+	fill (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2) noexcept;
 
   private:
 	/**
 	 * Return random sample in range [-2.0..2.0] with triangular distribution.
 	 */
 	Sample
-	noise_sample();
+	noise_sample() noexcept;
 
 	void
-	update_unison_coefficients();
+	update_unison_coefficients() noexcept;
 
 	template<bool with_noise, bool unison_stereo>
 		void
-		fill_impl (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2);
+		fill_impl (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2) noexcept;
 
   private:
 	/**
@@ -211,70 +211,70 @@ class VoiceOscillator
 
 
 inline void
-VoiceOscillator::set_wavetable_enabled (bool enabled)
+VoiceOscillator::set_wavetable_enabled (bool enabled) noexcept
 {
 	_wavetable_enabled = enabled;
 }
 
 
 inline void
-VoiceOscillator::set_wavetable (DSP::Wavetable* wavetable)
+VoiceOscillator::set_wavetable (DSP::Wavetable* wavetable) noexcept
 {
 	_wavetable = wavetable;
 }
 
 
 inline DSP::Wavetable*
-VoiceOscillator::wavetable() const
+VoiceOscillator::wavetable() const noexcept
 {
 	return _wavetable;
 }
 
 
 inline void
-VoiceOscillator::set_frequency_source (Haruhi::AudioBuffer* source)
+VoiceOscillator::set_frequency_source (Haruhi::AudioBuffer* source) noexcept
 {
 	_frequency_source = source;
 }
 
 
 inline void
-VoiceOscillator::set_amplitude_source (Haruhi::AudioBuffer* source)
+VoiceOscillator::set_amplitude_source (Haruhi::AudioBuffer* source) noexcept
 {
 	_amplitude_source = source;
 }
 
 
 inline void
-VoiceOscillator::set_fm_source (Haruhi::AudioBuffer* source)
+VoiceOscillator::set_fm_source (Haruhi::AudioBuffer* source) noexcept
 {
 	_fm_source = source;
 }
 
 
 inline void
-VoiceOscillator::set_noise_enabled (bool enabled)
+VoiceOscillator::set_noise_enabled (bool enabled) noexcept
 {
 	_noise_enabled = enabled;
 }
 
 
 inline void
-VoiceOscillator::set_noise_amplitude (Sample amplitude)
+VoiceOscillator::set_noise_amplitude (Sample amplitude) noexcept
 {
 	_noise_amplitude = amplitude;
 }
 
 
 inline void
-VoiceOscillator::set_initial_phases_spread (Sample spread)
+VoiceOscillator::set_initial_phases_spread (Sample spread) noexcept
 {
 	_initial_phase_spread = spread;
 }
 
 
 inline void
-VoiceOscillator::set_unison_spread (Sample spread)
+VoiceOscillator::set_unison_spread (Sample spread) noexcept
 {
 	float const k = 1.0f / 20.0f;
 
@@ -287,21 +287,21 @@ VoiceOscillator::set_unison_spread (Sample spread)
 
 
 inline void
-VoiceOscillator::set_unison_noise (Sample noise)
+VoiceOscillator::set_unison_noise (Sample noise) noexcept
 {
 	_unison_noise = (1.0f / 20.f) * noise;
 }
 
 
 inline void
-VoiceOscillator::set_unison_stereo (bool stereo)
+VoiceOscillator::set_unison_stereo (bool stereo) noexcept
 {
 	_unison_stereo = stereo;
 }
 
 
 inline void
-VoiceOscillator::set_unison_vibrato_level (Sample level)
+VoiceOscillator::set_unison_vibrato_level (Sample level) noexcept
 {
 	if (_unison_vibrato_level != level)
 	{
@@ -312,7 +312,7 @@ VoiceOscillator::set_unison_vibrato_level (Sample level)
 
 
 inline void
-VoiceOscillator::set_unison_vibrato_frequency (Sample frequency)
+VoiceOscillator::set_unison_vibrato_frequency (Sample frequency) noexcept
 {
 	if (_unison_vibrato_frequency != frequency)
 	{
@@ -323,7 +323,7 @@ VoiceOscillator::set_unison_vibrato_frequency (Sample frequency)
 
 
 inline void
-VoiceOscillator::fill (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2)
+VoiceOscillator::fill (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2) noexcept
 {
 	assert (output_1 != 0);
 	assert (output_2 != 0);
@@ -381,14 +381,14 @@ VoiceOscillator::fill (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* outpu
 
 
 inline Sample
-VoiceOscillator::noise_sample()
+VoiceOscillator::noise_sample() noexcept
 {
 	return _noise.get (_noise_state) + _noise.get (_noise_state);
 }
 
 
 inline void
-VoiceOscillator::update_unison_coefficients()
+VoiceOscillator::update_unison_coefficients() noexcept
 {
 	_unison_relative_spread = _unison_spread / _unison_number;
 	_half_unison_number = (_unison_number - 1) / 2.0f;
@@ -425,7 +425,7 @@ VoiceOscillator::update_unison_coefficients()
 
 template<bool with_noise, bool unison_stereo>
 	inline void
-	VoiceOscillator::fill_impl (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2)
+	VoiceOscillator::fill_impl (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2) noexcept
 	{
 		Sample f, g, v, e, sum1, sum2, tmpsum;
 		Sample* const o1 = output_1->begin();

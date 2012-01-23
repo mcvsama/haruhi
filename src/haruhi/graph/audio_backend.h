@@ -69,14 +69,14 @@ class AudioBackend: public Backend
 	 * \threadsafe (uses atomic operations)
 	 */
 	virtual Sample
-	master_volume() const;
+	master_volume() const noexcept;
 
 	/**
 	 * Sets master volume level. All output data will be attenuated using this value.
 	 * \threadsafe (uses atomic operations)
 	 */
 	virtual void
-	set_master_volume (Sample volume);
+	set_master_volume (Sample volume) noexcept;
 
 	/**
 	 * Returns pointer to master volume port.

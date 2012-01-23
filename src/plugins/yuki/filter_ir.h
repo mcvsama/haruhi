@@ -51,25 +51,25 @@ class FilterImpulseResponse: public DSP::ImpulseResponse<3, DSP::IIR>
 	};
 
   public:
-	FilterImpulseResponse (Type type = LowPass, Sample frequency = 0.0f, Sample resonance = 0.0f, Sample gain = 0.0f, Sample attenuation = 0.0f);
+	FilterImpulseResponse (Type type = LowPass, Sample frequency = 0.0f, Sample resonance = 0.0f, Sample gain = 0.0f, Sample attenuation = 0.0f) noexcept;
 
 	/**
 	 * Return filter type.
 	 */
 	Type
-	type() const;
+	type() const noexcept;
 
 	/**
 	 * Set filter type.
 	 */
 	void
-	set_type (Type type);
+	set_type (Type type) noexcept;
 
 	/**
 	 * Return current center frequency.
 	 */
 	Sample
-	frequency() const;
+	frequency() const noexcept;
 
 	/**
 	 * Set center frequency.
@@ -77,13 +77,13 @@ class FilterImpulseResponse: public DSP::ImpulseResponse<3, DSP::IIR>
 	 *			Frequency. Value in range (0, 0.5).
 	 */
 	void
-	set_frequency (Sample);
+	set_frequency (Sample) noexcept;
 
 	/**
 	 * Return current resonance.
 	 */
 	Sample
-	resonance() const;
+	resonance() const noexcept;
 
 	/**
 	 * Set Q/resonance.
@@ -92,13 +92,13 @@ class FilterImpulseResponse: public DSP::ImpulseResponse<3, DSP::IIR>
 	 *			Q/resonance. Value in range (0, 1.0]
 	 */
 	void
-	set_resonance (Sample resonance);
+	set_resonance (Sample resonance) noexcept;
 
 	/**
 	 * Return current gain.
 	 */
 	Sample
-	gain() const;
+	gain() const noexcept;
 
 	/**
 	 * Set gain for Peaking and Shelving filters.
@@ -106,42 +106,42 @@ class FilterImpulseResponse: public DSP::ImpulseResponse<3, DSP::IIR>
 	 *			Gain in decibels.
 	 */
 	void
-	set_gain (Sample gain);
+	set_gain (Sample gain) noexcept;
 
 	/**
 	 * Get current attenuation.
 	 */
 	Sample
-	attenuation() const;
+	attenuation() const noexcept;
 
 	/**
 	 * Set attenuation for filter.
 	 */
 	void
-	set_attenuation (Sample attenuation);
+	set_attenuation (Sample attenuation) noexcept;
 
 	/**
 	 * Return true if attenuation limiter is enabled.
 	 */
 	bool
-	limiter_enabled() const;
+	limiter_enabled() const noexcept;
 
 	/**
 	 * Enables/disables automatic attenuation limiter.
 	 */
 	void
-	set_limiter_enabled (bool enabled);
+	set_limiter_enabled (bool enabled) noexcept;
 
 	/*
 	 * ImpulseResponse API
 	 */
 
 	Sample
-	response (Sample frequency) const;
+	response (Sample frequency) const noexcept;
 
   private:
 	void
-	update();
+	update() noexcept;
 
   private:
 	Type	_type;
@@ -156,14 +156,14 @@ class FilterImpulseResponse: public DSP::ImpulseResponse<3, DSP::IIR>
 
 
 inline FilterImpulseResponse::Type
-FilterImpulseResponse::type() const
+FilterImpulseResponse::type() const noexcept
 {
 	return _type;
 }
 
 
 inline void
-FilterImpulseResponse::set_type (Type type)
+FilterImpulseResponse::set_type (Type type) noexcept
 {
 	if (_type != type)
 	{
@@ -174,14 +174,14 @@ FilterImpulseResponse::set_type (Type type)
 
 
 inline Sample
-FilterImpulseResponse::frequency() const
+FilterImpulseResponse::frequency() const noexcept
 {
 	return _frequency;
 }
 
 
 inline void
-FilterImpulseResponse::set_frequency (Sample frequency)
+FilterImpulseResponse::set_frequency (Sample frequency) noexcept
 {
 	// Limit frequency to 32Hz…23.99kHz for fs=48kHz
 	frequency = bound (frequency, 0.0006666666f, 0.4997916666f);
@@ -194,14 +194,14 @@ FilterImpulseResponse::set_frequency (Sample frequency)
 
 
 inline Sample
-FilterImpulseResponse::resonance() const
+FilterImpulseResponse::resonance() const noexcept
 {
 	return _resonance;
 }
 
 
 inline void
-FilterImpulseResponse::set_resonance (Sample resonance)
+FilterImpulseResponse::set_resonance (Sample resonance) noexcept
 {
 	// Q must be greater than 0:
 	resonance = std::max (0.01f, resonance);
@@ -214,14 +214,14 @@ FilterImpulseResponse::set_resonance (Sample resonance)
 
 
 inline Sample
-FilterImpulseResponse::gain() const
+FilterImpulseResponse::gain() const noexcept
 {
 	return _gain;
 }
 
 
 inline void
-FilterImpulseResponse::set_gain (Sample gain)
+FilterImpulseResponse::set_gain (Sample gain) noexcept
 {
 	if (_gain != gain)
 	{
@@ -232,14 +232,14 @@ FilterImpulseResponse::set_gain (Sample gain)
 
 
 inline Sample
-FilterImpulseResponse::attenuation() const
+FilterImpulseResponse::attenuation() const noexcept
 {
 	return _attenuation;
 }
 
 
 inline void
-FilterImpulseResponse::set_attenuation (Sample attenuation)
+FilterImpulseResponse::set_attenuation (Sample attenuation) noexcept
 {
 	if (_attenuation != attenuation)
 	{
@@ -250,14 +250,14 @@ FilterImpulseResponse::set_attenuation (Sample attenuation)
 
 
 inline bool
-FilterImpulseResponse::limiter_enabled() const
+FilterImpulseResponse::limiter_enabled() const noexcept
 {
 	return _limiter;
 }
 
 
 inline void
-FilterImpulseResponse::set_limiter_enabled (bool enabled)
+FilterImpulseResponse::set_limiter_enabled (bool enabled) noexcept
 {
 	if (_limiter != enabled)
 	{

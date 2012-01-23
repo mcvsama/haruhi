@@ -44,15 +44,15 @@ namespace Private {
 	class ConnectionBase
 	{
 	  public:
-		ConnectionBase (SignalBase* signal):
+		ConnectionBase (SignalBase* signal) noexcept:
 			_signal (signal)
 		{ }
 
-		virtual ~ConnectionBase()
+		virtual ~ConnectionBase() noexcept
 		{ }
 
 		SignalBase*
-		signal() const
+		signal() const noexcept
 		{
 			return _signal;
 		}
@@ -104,7 +104,7 @@ class Receiver
 	 * at the beginning of its destructor.
 	 */
 	virtual void
-	disconnect_all_signals()
+	disconnect_all_signals() noexcept
 	{
 		Private::Connections::iterator i = _connections.begin();
 		// Receiver doesn't manage its _connections. Signals do.
@@ -303,7 +303,7 @@ EMITER_TEMPLATE_SIGNATURE
 		class ConnectionBase: public Private::ConnectionBase
 		{
 		  public:
-			ConnectionBase (SignalBase* signal, Receiver* receiver):
+			ConnectionBase (SignalBase* signal, Receiver* receiver) noexcept:
 				Private::ConnectionBase (signal),
 				_base_r (receiver)
 			{ }
@@ -311,7 +311,7 @@ EMITER_TEMPLATE_SIGNATURE
 			virtual void call (EMITER_PARAMETERS_LIST) = 0;
 
 			Receiver*
-			receiver() const
+			receiver() const noexcept
 			{
 				return _base_r;
 			}
@@ -326,7 +326,7 @@ EMITER_TEMPLATE_SIGNATURE
 				typedef void (Receiver::*Method)(EMITER_PARAMETERS_LIST);
 
 			  public:
-				Connection (SignalBase* signal, Receiver* r, Method m):
+				Connection (SignalBase* signal, Receiver* r, Method m) noexcept:
 					ConnectionBase (signal, r),
 					_r (r),
 					_m (m)
@@ -339,7 +339,7 @@ EMITER_TEMPLATE_SIGNATURE
 				}
 
 				bool
-				is (Receiver* r, Method m)
+				is (Receiver* r, Method m) noexcept
 				{
 					return r == _r && m == _m;
 				}
@@ -355,7 +355,7 @@ EMITER_TEMPLATE_SIGNATURE
 				typedef boost::function<void (EMITER_PARAMETER_TYPES_LIST)> Callback;
 
 			  public:
-				BoostFunctionConnection (SignalBase* signal, Callback c):
+				BoostFunctionConnection (SignalBase* signal, Callback c) noexcept:
 					_c (c)
 				{ }
 
@@ -372,7 +372,7 @@ EMITER_TEMPLATE_SIGNATURE
 		typedef std::list<ConnectionBase*> Connections;
 
 	  public:
-		virtual ~EMITER_CLASS()
+		virtual ~EMITER_CLASS() noexcept
 		{
 			for (ConnectionBase* c: _connections)
 			{
@@ -401,7 +401,7 @@ EMITER_TEMPLATE_SIGNATURE
 
 		template<class Receiver>
 			void
-			disconnect (Receiver* receiver, void (Receiver::*method)(EMITER_PARAMETER_TYPES_LIST))
+			disconnect (Receiver* receiver, void (Receiver::*method)(EMITER_PARAMETER_TYPES_LIST)) noexcept
 			{
 				Connection<Receiver>* connection;
 				for (ConnectionBase* c: _connections)
@@ -425,11 +425,14 @@ EMITER_TEMPLATE_SIGNATURE
 		}
 
 		EMITER_TYPENAME Connections::size_type
-		connections_number() const { return _connections.size(); }
+		connections_number() const noexcept
+		{
+			return _connections.size();
+		}
 
 	  protected:
 		void
-		disconnect (Private::ConnectionBase* connection)
+		disconnect (Private::ConnectionBase* connection) noexcept
 		{
 			EMITER_TYPENAME Connections::iterator i = std::find (_connections.begin(), _connections.end(), connection);
 			if (i != _connections.end())

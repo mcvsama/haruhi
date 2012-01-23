@@ -37,7 +37,7 @@ VoiceModulator::VoiceModulator (Params::Part* part_params, unsigned int sample_r
 
 void
 VoiceModulator::modulate (Haruhi::AudioBuffer* amplitude_buf_source, Haruhi::AudioBuffer* frequency_buf_source,
-						  Haruhi::AudioBuffer* frequency_buf_target, Haruhi::AudioBuffer* tmp_buf)
+						  Haruhi::AudioBuffer* frequency_buf_target, Haruhi::AudioBuffer* tmp_buf) noexcept
 {
 	frequency_buf_target->fill (1.0f);
 
@@ -95,7 +95,7 @@ VoiceModulator::graph_updated (unsigned int sample_rate, std::size_t buffer_size
 
 
 void
-VoiceModulator::modulate_frequency (Haruhi::AudioBuffer* target, Haruhi::AudioBuffer* source, Haruhi::Sample factor)
+VoiceModulator::modulate_frequency (Haruhi::AudioBuffer* target, Haruhi::AudioBuffer* source, Haruhi::Sample factor) noexcept
 {
 	assert (target->size() == source->size());
 
@@ -105,7 +105,7 @@ VoiceModulator::modulate_frequency (Haruhi::AudioBuffer* target, Haruhi::AudioBu
 
 
 void
-VoiceModulator::modulate_amplitude (Haruhi::AudioBuffer* target, Haruhi::AudioBuffer* source, Haruhi::Sample factor)
+VoiceModulator::modulate_amplitude (Haruhi::AudioBuffer* target, Haruhi::AudioBuffer* source, Haruhi::Sample factor) noexcept
 {
 	assert (target->size() == source->size());
 

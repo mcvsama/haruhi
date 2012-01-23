@@ -53,10 +53,10 @@ class Wavetable
 	class WaveAdapter: public Wave
 	{
 	  public:
-		WaveAdapter (Wavetable* wavetable);
+		WaveAdapter (Wavetable* wavetable) noexcept;
 
 		Sample
-		operator() (Sample register phase, Sample frequency) const;
+		operator() (Sample register phase, Sample frequency) const noexcept;
 
 	  private:
 		Wavetable* _wavetable;
@@ -79,21 +79,21 @@ class Wavetable
 	 * Deletes previously allocated tables using delete operator.
 	 */
 	void
-	drop_tables();
+	drop_tables() noexcept;
 
 	/**
 	 * Sets new number of samples in wavetables.
 	 * Must be called by filler.
 	 */
 	void
-	set_wavetables_size (std::size_t size);
+	set_wavetables_size (std::size_t size) noexcept;
 
 	/**
 	 * There must be at least one table added. Otherwise behavior of this
 	 * method is undefined.
 	 */
 	Sample
-	operator() (Sample register phase, Sample frequency) const;
+	operator() (Sample register phase, Sample frequency) const noexcept;
 
   private:
 	/**
@@ -101,7 +101,7 @@ class Wavetable
 	 * There must be at least one table in set.
 	 */
 	Sample const*
-	table_for_frequency (float frequency) const;
+	table_for_frequency (float frequency) const noexcept;
 
   private:
 	Tables			_tables;
@@ -111,28 +111,28 @@ class Wavetable
 
 
 inline
-Wavetable::WaveAdapter::WaveAdapter (Wavetable* wavetable):
+Wavetable::WaveAdapter::WaveAdapter (Wavetable* wavetable) noexcept:
 	Wave (true),
 	_wavetable (wavetable)
 { }
 
 
 inline Sample
-Wavetable::WaveAdapter::operator() (Sample phase, Sample frequency) const
+Wavetable::WaveAdapter::operator() (Sample phase, Sample frequency) const noexcept
 {
 	return _wavetable->operator() (phase, frequency);
 }
 
 
 inline void
-Wavetable::set_wavetables_size (std::size_t size)
+Wavetable::set_wavetables_size (std::size_t size) noexcept
 {
 	_size = size;
 }
 
 
 inline Sample
-Wavetable::operator() (Sample phase, Sample frequency) const
+Wavetable::operator() (Sample phase, Sample frequency) const noexcept
 {
 	Sample const* table = table_for_frequency (frequency);
 	const float p = mod1 (phase) * _size;
@@ -145,7 +145,7 @@ Wavetable::operator() (Sample phase, Sample frequency) const
 
 
 inline Sample const*
-Wavetable::table_for_frequency (float frequency) const
+Wavetable::table_for_frequency (float frequency) const noexcept
 {
 	Tables::const_iterator t = _tables.lower_bound (frequency);
 	if (t == _tables.end())

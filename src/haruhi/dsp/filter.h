@@ -46,22 +46,22 @@ template<unsigned int tOrder, int tResponseType>
 		/**
 		 * Create filter with no impulse response.
 		 */
-		Filter();
+		Filter() noexcept;
 
 		/**
 		 * Create filter with given impulse response.
 		 * Filter does not take ownership of impulse_response.
 		 */
-		Filter (ImpulseResponseType* impulse_response);
+		Filter (ImpulseResponseType* impulse_response) noexcept;
 
 		/**
 		 * Resets the filter to state as it is newly created.
 		 */
 		void
-		reset();
+		reset() noexcept;
 
 		void
-		assign_impulse_response (ImpulseResponseType* impulse_response);
+		assign_impulse_response (ImpulseResponseType* impulse_response) noexcept;
 
 		/**
 		 * Note: input and output sequences must be distinct!
@@ -69,20 +69,20 @@ template<unsigned int tOrder, int tResponseType>
 		 */
 		template<class InputIterator, class OutputIterator>
 			void
-			transform (InputIterator begin, InputIterator end, OutputIterator output);
+			transform (InputIterator begin, InputIterator end, OutputIterator output) noexcept;
 
 	  private:
 		Sample
-		advance_fir (Sample* x);
+		advance_fir (Sample* x) noexcept;
 
 		Sample
-		advance_iir (Sample* x, Sample* y);
+		advance_iir (Sample* x, Sample* y) noexcept;
 
 		Sample
-		mixed_advance_fir (Sample* x, int position);
+		mixed_advance_fir (Sample* x, int position) noexcept;
 
 		Sample
-		mixed_advance_iir (Sample* x, Sample* y, int position);
+		mixed_advance_iir (Sample* x, Sample* y, int position) noexcept;
 
 	  private:
 		ImpulseResponseType*					_impulse_response;
@@ -95,7 +95,7 @@ template<unsigned int tOrder, int tResponseType>
 
 template<unsigned int O, int R>
 	inline
-	Filter<O, R>::Filter():
+	Filter<O, R>::Filter() noexcept:
 		_impulse_response (0),
 		_last_serial (0)
 	{ }
@@ -103,7 +103,7 @@ template<unsigned int O, int R>
 
 template<unsigned int O, int R>
 	inline
-	Filter<O, R>::Filter (ImpulseResponseType* impulse_response):
+	Filter<O, R>::Filter (ImpulseResponseType* impulse_response) noexcept:
 		_impulse_response (0),
 		_last_serial (0)
 	{
@@ -113,7 +113,7 @@ template<unsigned int O, int R>
 
 template<unsigned int O, int R>
 	inline void
-	Filter<O, R>::reset()
+	Filter<O, R>::reset() noexcept
 	{
 		std::fill (_px, _px + Order, 0.0f);
 		std::fill (_py, _py + Order, 0.0f);
@@ -122,7 +122,7 @@ template<unsigned int O, int R>
 
 template<unsigned int O, int R>
 	inline void
-	Filter<O, R>::assign_impulse_response (ImpulseResponseType* impulse_response)
+	Filter<O, R>::assign_impulse_response (ImpulseResponseType* impulse_response) noexcept
 	{
 		_impulse_response = impulse_response;
 
@@ -134,7 +134,7 @@ template<unsigned int O, int R>
 template<unsigned int O, int R>
 	template<class InputIterator, class OutputIterator>
 		inline void
-		Filter<O, R>::transform (InputIterator begin, InputIterator end, OutputIterator output)
+		Filter<O, R>::transform (InputIterator begin, InputIterator end, OutputIterator output) noexcept
 		{
 			if (std::distance (begin, end) < static_cast<int> (Order))
 			{
@@ -195,7 +195,7 @@ template<unsigned int O, int R>
 
 template<unsigned int O, int R>
 	inline Sample
-	Filter<O, R>::advance_fir (Sample* x)
+	Filter<O, R>::advance_fir (Sample* x) noexcept
 	{
 		Sample (&b)[Order] = _impulse_response->b;
 		Sample register sum = 0.0;
@@ -207,7 +207,7 @@ template<unsigned int O, int R>
 
 template<unsigned int O, int R>
 	inline Sample
-	Filter<O, R>::advance_iir (Sample* x, Sample* y)
+	Filter<O, R>::advance_iir (Sample* x, Sample* y) noexcept
 	{
 		Sample (&a)[Order] = _impulse_response->a;
 		Sample (&b)[Order] = _impulse_response->b;
@@ -220,7 +220,7 @@ template<unsigned int O, int R>
 
 template<unsigned int O, int R>
 	inline Sample
-	Filter<O, R>::mixed_advance_fir (Sample* x, int position)
+	Filter<O, R>::mixed_advance_fir (Sample* x, int position) noexcept
 	{
 		Sample (&b)[Order] = _impulse_response->b;
 		Sample register sum = 0.0;
@@ -232,7 +232,7 @@ template<unsigned int O, int R>
 
 template<unsigned int O, int R>
 	inline Sample
-	Filter<O, R>::mixed_advance_iir (Sample* x, Sample* y, int position)
+	Filter<O, R>::mixed_advance_iir (Sample* x, Sample* y, int position) noexcept
 	{
 		Sample (&a)[Order] = _impulse_response->a;
 		Sample (&b)[Order] = _impulse_response->b;

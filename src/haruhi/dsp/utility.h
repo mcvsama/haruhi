@@ -24,7 +24,7 @@
 
 
 inline float
-log_meter (float db, float lower_db = -70.0, float upper_db = 6.0)
+log_meter (float db, float lower_db = -70.0, float upper_db = 6.0) noexcept
 {
 	return db < lower_db ? 0.0 : pow2 ((db - lower_db) / (upper_db - lower_db));
 }

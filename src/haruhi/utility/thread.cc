@@ -27,7 +27,7 @@
 #include "thread.h"
 
 
-Thread::Thread():
+Thread::Thread() noexcept:
 	_sched_type (SchedOther),
 	_priority (50),
 	_stack_size (0),
@@ -72,21 +72,21 @@ Thread::start()
 }
 
 void
-Thread::cancel()
+Thread::cancel() noexcept
 {
 	::pthread_cancel (_pthread);
 }
 
 
 bool
-Thread::finished()
+Thread::finished() noexcept
 {
 	return _finished.load();
 }
 
 
 void
-Thread::set_sched (SchedType type, int priority)
+Thread::set_sched (SchedType type, int priority) noexcept
 {
 	_sched_type = type;
 	_priority = priority;
@@ -95,7 +95,7 @@ Thread::set_sched (SchedType type, int priority)
 
 
 void
-Thread::set_stack_size (std::size_t size)
+Thread::set_stack_size (std::size_t size) noexcept
 {
 	_stack_size = size;
 }
@@ -110,21 +110,21 @@ Thread::wait()
 
 
 void
-Thread::yield()
+Thread::yield() noexcept
 {
 	::pthread_yield();
 }
 
 
 Thread::ID
-Thread::id()
+Thread::id() noexcept
 {
 	return ::pthread_self();
 }
 
 
 void
-Thread::set_sched()
+Thread::set_sched() noexcept
 {
 	if (_started.load() && !_finished.load())
 	{

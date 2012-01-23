@@ -31,34 +31,34 @@ namespace DSP {
 class Smoother
 {
   public:
-	Smoother (unsigned int max_samples = 0);
+	Smoother (unsigned int max_samples = 0) noexcept;
 
 	void
-	set_smoothing_samples (unsigned int samples);
+	set_smoothing_samples (unsigned int samples) noexcept;
 
 	void
-	set_value (float value);
+	set_value (float value) noexcept;
 
 	void
-	set_absolute_value (float value);
+	set_absolute_value (float value) noexcept;
 
 	float
-	current() const;
+	current() const noexcept;
 
 	float
-	advance (unsigned int samples = 1);
+	advance (unsigned int samples = 1) noexcept;
 
 	template<class ForwardIterator>
 		void
-		fill (ForwardIterator begin, ForwardIterator end);
+		fill (ForwardIterator begin, ForwardIterator end) noexcept;
 
 	template<class ForwardIterator>
 		void
-		multiply (ForwardIterator begin, ForwardIterator end);
+		multiply (ForwardIterator begin, ForwardIterator end) noexcept;
 
   private:
 	void
-	set_samples (unsigned int samples);
+	set_samples (unsigned int samples) noexcept;
 
   private:
 	float			_current;
@@ -72,21 +72,21 @@ class Smoother
 
 
 inline void
-Smoother::set_smoothing_samples (unsigned int samples)
+Smoother::set_smoothing_samples (unsigned int samples) noexcept
 {
 	_samples_max = samples;
 }
 
 
 inline float
-Smoother::current() const
+Smoother::current() const noexcept
 {
 	return _current;
 }
 
 
 inline float
-Smoother::advance (unsigned int samples)
+Smoother::advance (unsigned int samples) noexcept
 {
 	_current += samples * _vector;
 	_samples_from_last_setup += samples;
@@ -101,7 +101,7 @@ Smoother::advance (unsigned int samples)
 
 template<class ForwardIterator>
 	inline void
-	Smoother::fill (ForwardIterator begin, ForwardIterator end)
+	Smoother::fill (ForwardIterator begin, ForwardIterator end) noexcept
 	{
 		for (ForwardIterator current = begin; current != end; ++current)
 			*current = advance (1);
@@ -110,7 +110,7 @@ template<class ForwardIterator>
 
 template<class ForwardIterator>
 	inline void
-	Smoother::multiply (ForwardIterator begin, ForwardIterator end)
+	Smoother::multiply (ForwardIterator begin, ForwardIterator end) noexcept
 	{
 		for (ForwardIterator current = begin; current != end; ++current)
 			*current *= advance (1);
@@ -118,7 +118,7 @@ template<class ForwardIterator>
 
 
 inline void
-Smoother::set_samples (unsigned int samples)
+Smoother::set_samples (unsigned int samples) noexcept
 {
 	_samples = std::max (samples, 1u);
 }

@@ -40,7 +40,7 @@ class BaseParam: public SaveableState
 	 * Return parameter unique name.
 	 */
 	virtual const char*
-	name() const = 0;
+	name() const noexcept = 0;
 
 	/**
 	 * Resets parameter to default value.
@@ -67,37 +67,37 @@ template<class tType>
 		typedef tType Type;
 
 	  public:
-		Param (const char* name = "");
+		Param (const char* name = "") noexcept;
 
-		Param (Type const& minimum, Type const& maximum, Type const& default_value, const char* name);
+		Param (Type const& minimum, Type const& maximum, Type const& default_value, const char* name) noexcept;
 
-		Param (Param const& other);
+		Param (Param const& other) noexcept;
 
 		Param&
-		operator= (Param const& other);
+		operator= (Param const& other) noexcept;
 
 		const char*
-		name() const;
+		name() const noexcept;
 
-		operator Type() const;
+		operator Type() const noexcept;
 
 		void
 		operator= (Type const& value);
 
 		Type
-		get() const;
+		get() const noexcept;
 
 		void
 		set (Type const& value);
 
 		Type
-		minimum() const;
+		minimum() const noexcept;
 
 		Type
-		maximum() const;
+		maximum() const noexcept;
 
 		Type
-		default_value() const;
+		default_value() const noexcept;
 
 		/*
 		 * BaseParam implementation
@@ -141,7 +141,7 @@ template<class tType>
 
 
 template<class tType>
-	Param<tType>::Param (const char* name):
+	Param<tType>::Param (const char* name) noexcept:
 		_minimum (0),
 		_maximum (0),
 		_default_value (0),
@@ -152,7 +152,7 @@ template<class tType>
 
 template<class tType>
 	inline
-	Param<tType>::Param (Type const& minimum, Type const& maximum, Type const& default_value, const char* name):
+	Param<tType>::Param (Type const& minimum, Type const& maximum, Type const& default_value, const char* name) noexcept:
 		_minimum (minimum),
 		_maximum (maximum),
 		_default_value (default_value),
@@ -162,7 +162,7 @@ template<class tType>
 
 
 template<class tType>
-	Param<tType>::Param (Param const& other)
+	Param<tType>::Param (Param const& other) noexcept
 	{
 		operator= (other);
 	}
@@ -170,7 +170,7 @@ template<class tType>
 
 template<class tType>
 	inline Param<tType>&
-	Param<tType>::operator= (Param const& other)
+	Param<tType>::operator= (Param const& other) noexcept
 	{
 		_minimum = other._minimum;
 		_maximum = other._maximum;
@@ -185,7 +185,7 @@ template<class tType>
 
 template<class tType>
 	inline const char*
-	Param<tType>::name() const
+	Param<tType>::name() const noexcept
 	{
 		return _name.c_str();
 	}
@@ -193,7 +193,7 @@ template<class tType>
 
 template<class tType>
 	inline
-	Param<tType>::operator Type() const
+	Param<tType>::operator Type() const noexcept
 	{
 		return get();
 	}
@@ -209,7 +209,7 @@ template<class tType>
 
 template<class tType>
 	inline tType
-	Param<tType>::get() const
+	Param<tType>::get() const noexcept
 	{
 		return _value.load();
 	}
@@ -227,7 +227,7 @@ template<class tType>
 
 template<class tType>
 	inline tType
-	Param<tType>::minimum() const
+	Param<tType>::minimum() const noexcept
 	{
 		return _minimum;
 	}
@@ -235,7 +235,7 @@ template<class tType>
 
 template<class tType>
 	inline tType
-	Param<tType>::maximum() const
+	Param<tType>::maximum() const noexcept
 	{
 		return _maximum;
 	}
@@ -243,7 +243,7 @@ template<class tType>
 
 template<class tType>
 	inline tType
-	Param<tType>::default_value() const
+	Param<tType>::default_value() const noexcept
 	{
 		return _default_value;
 	}

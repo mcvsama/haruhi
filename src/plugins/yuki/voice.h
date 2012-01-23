@@ -67,26 +67,26 @@ class Voice
 	 * Return voice's ID which came in Haruhi::VoiceEvent.
 	 */
 	Haruhi::VoiceID
-	id() const;
+	id() const noexcept;
 
 	/**
 	 * Return voice's timestamp.
 	 */
 	Haruhi::Timestamp
-	timestamp() const;
+	timestamp() const noexcept;
 
 	/**
 	 * Return current voice state.
 	 */
 	State
-	state() const;
+	state() const noexcept;
 
 	/**
 	 * Drop voice. Voice does not immediately stop sounding.
 	 * Use finished() to check if voice generation is really finished.
 	 */
 	void
-	drop();
+	drop() noexcept;
 
 	/**
 	 * Render voice.
@@ -99,7 +99,7 @@ class Voice
 	 * Mix rendered voice into given buffers.
 	 */
 	void
-	mix_result (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2) const;
+	mix_result (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2) const noexcept;
 
 	/**
 	 * Update buffers sizes.
@@ -117,21 +117,21 @@ class Voice
 	 * RW accessor to Voice params.
 	 */
 	Params::Voice*
-	params();
+	params() noexcept;
 
 	/**
 	 * Set voice amplitude.
 	 * \param	amplitude Amplitude value [0..1]
 	 */
 	void
-	set_amplitude (Sample amplitude);
+	set_amplitude (Sample amplitude) noexcept;
 
 	/**
 	 * Set new target absolute frequency of the voice.
 	 * \param	frequency Absolute frequency [0..0.5]
 	 */
 	void
-	set_frequency (Sample frequency);
+	set_frequency (Sample frequency) noexcept;
 
   public:
 	/**
@@ -139,7 +139,7 @@ class Voice
 	 * their timestamps.
 	 */
 	static Voice*
-	return_older (Voice* a, Voice* b);
+	return_older (Voice* a, Voice* b) noexcept;
 
   private:
 	/**
@@ -147,14 +147,14 @@ class Voice
 	 * voice frequency changes.
 	 */
 	void
-	update_glide_parameters();
+	update_glide_parameters() noexcept;
 
 	/**
 	 * Prepare amplitude buffer as amplitude source for VoiceOscillator.
 	 * \param	amplitude_buf Buffer where result is stored.
 	 */
 	void
-	prepare_amplitude_buffer (Haruhi::AudioBuffer* amplitude_buf);
+	prepare_amplitude_buffer (Haruhi::AudioBuffer* amplitude_buf) noexcept;
 
 	/**
 	 * Prepare frequency buffer as frequency source for VoiceOscillator.
@@ -162,7 +162,7 @@ class Voice
 	 * \param	tmp_buf Helper buffer.
 	 */
 	void
-	prepare_frequency_buffer (Haruhi::AudioBuffer* frequency_buf, Haruhi::AudioBuffer* tmp_buf);
+	prepare_frequency_buffer (Haruhi::AudioBuffer* frequency_buf, Haruhi::AudioBuffer* tmp_buf) noexcept;
 
   private:
 	Haruhi::VoiceID		_id;
@@ -208,35 +208,35 @@ class Voice
 
 
 inline Haruhi::VoiceID
-Voice::id() const
+Voice::id() const noexcept
 {
 	return _id;
 }
 
 
 inline Haruhi::Timestamp
-Voice::timestamp() const
+Voice::timestamp() const noexcept
 {
 	return _timestamp;
 }
 
 
 inline Voice::State
-Voice::state() const
+Voice::state() const noexcept
 {
 	return _state;
 }
 
 
 inline void
-Voice::drop()
+Voice::drop() noexcept
 {
 	_state = Dropped;
 }
 
 
 inline void
-Voice::mix_result (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2) const
+Voice::mix_result (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2) const noexcept
 {
 	output_1->mixin (&_output_1);
 	output_2->mixin (&_output_2);
@@ -244,7 +244,7 @@ Voice::mix_result (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2)
 
 
 inline Params::Voice*
-Voice::params()
+Voice::params() noexcept
 {
 	return &_params;
 }
@@ -258,14 +258,14 @@ Voice::set_wavetable (DSP::Wavetable* wavetable)
 
 
 inline void
-Voice::set_amplitude (Sample amplitude)
+Voice::set_amplitude (Sample amplitude) noexcept
 {
 	_amplitude = amplitude;
 }
 
 
 inline void
-Voice::set_frequency (Sample frequency)
+Voice::set_frequency (Sample frequency) noexcept
 {
 	_target_frequency = frequency;
 	update_glide_parameters();
@@ -273,7 +273,7 @@ Voice::set_frequency (Sample frequency)
 
 
 inline Voice*
-Voice::return_older (Voice* a, Voice* b)
+Voice::return_older (Voice* a, Voice* b) noexcept
 {
 	if (a->timestamp() < b->timestamp())
 		return a;

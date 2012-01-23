@@ -24,7 +24,7 @@
 #include "condition.h"
 
 
-Condition::Condition()
+Condition::Condition() noexcept
 {
 	static ::pthread_mutex_t mutex_initializer = PTHREAD_MUTEX_INITIALIZER;
 	static ::pthread_cond_t cond_initializer = PTHREAD_COND_INITIALIZER;
@@ -43,7 +43,7 @@ Condition::~Condition()
 
 
 void
-Condition::lock()
+Condition::lock() noexcept
 {
 	::pthread_mutex_lock (&_mutex);
 }
@@ -61,7 +61,7 @@ Condition::unlock()
 
 
 void
-Condition::wait (uint64_t nanoseconds)
+Condition::wait (uint64_t nanoseconds) noexcept
 {
 	if (nanoseconds)
 	{
@@ -78,7 +78,7 @@ Condition::wait (uint64_t nanoseconds)
 
 
 void
-Condition::signal()
+Condition::signal() noexcept
 {
 	::pthread_cond_signal (&_cond);
 }

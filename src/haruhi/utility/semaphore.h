@@ -31,9 +31,9 @@
 class Semaphore: private Noncopyable
 {
   public:
-	Semaphore (int value = 0);
+	Semaphore (int value = 0) noexcept;
 
-	~Semaphore();
+	~Semaphore() noexcept;
 
 	/**
 	 * Reset semaphore to initial value.
@@ -41,7 +41,7 @@ class Semaphore: private Noncopyable
 	 * of the call.
 	 */
 	void
-	reset();
+	reset() noexcept;
 
 	/**
 	 * Return semaphore value. If there are
@@ -49,26 +49,26 @@ class Semaphore: private Noncopyable
 	 * return 0 instead of negative number.
 	 */
 	int
-	value() const;
+	value() const noexcept;
 
 	/**
 	 * Locks semaphore.
 	 */
 	void
-	wait() const;
+	wait() const noexcept;
 
 	/**
 	 * Tries to lock semaphore. Returns true if semaphore was
 	 * locked successfully, false otherwise.
 	 */
 	bool
-	try_wait() const;
+	try_wait() const noexcept;
 
 	/**
 	 * Unlocks semaphore.
 	 */
 	void
-	post() const;
+	post() const noexcept;
 
   private:
 	::sem_t mutable	_semaphore;

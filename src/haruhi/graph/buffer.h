@@ -38,7 +38,7 @@ class Buffer: public Noncopyable
 	typedef const char* TypeID;
 
   public:
-	Buffer (TypeID type);
+	Buffer (TypeID type) noexcept;
 
 	virtual ~Buffer() { }
 
@@ -47,7 +47,7 @@ class Buffer: public Noncopyable
 	 * type. Comparison is done using pointers, not string contents.
 	 */
 	TypeID
-	type() const;
+	type() const noexcept;
 
 	/**
 	 * Clears buffer.
@@ -67,13 +67,13 @@ class Buffer: public Noncopyable
 
 
 inline
-Buffer::Buffer (TypeID type):
+Buffer::Buffer (TypeID type) noexcept:
 	_type (type)
 { }
 
 
 inline Buffer::TypeID
-Buffer::type() const
+Buffer::type() const noexcept
 {
 	return _type;
 }

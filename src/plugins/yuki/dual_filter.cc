@@ -189,7 +189,7 @@ DualFilter::process (Haruhi::AudioBuffer* input_1, Haruhi::AudioBuffer* input_2,
 
 
 void
-DualFilter::filterout (FilterType* filters, int stages, Haruhi::AudioBuffer* input, Haruhi::AudioBuffer* buffer, Haruhi::AudioBuffer* output)
+DualFilter::filterout (FilterType* filters, int stages, Haruhi::AudioBuffer* input, Haruhi::AudioBuffer* buffer, Haruhi::AudioBuffer* output) noexcept
 {
 	// ↓ stages
 	// 1: in -> out

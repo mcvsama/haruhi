@@ -20,13 +20,11 @@
 
 class Noncopyable
 {
-  protected:
-	Noncopyable() { }
+	Noncopyable (Noncopyable const&) = delete;
+	Noncopyable& operator= (Noncopyable const&) = delete;
 
-  private:
-	// Forbid copying:
-	Noncopyable (Noncopyable const&);
-	Noncopyable& operator= (Noncopyable const&);
+  protected:
+	Noncopyable() noexcept { }
 };
 
 #endif

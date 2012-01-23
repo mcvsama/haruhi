@@ -55,8 +55,10 @@ template<unsigned int tOrder, int tResponseType>
 			ResponseType	= tResponseType,
 		};
 
+		static_assert (tResponseType == FIR || tResponseType == IIR, "invalid ResponseType");
+
 	  public:
-		ImpulseResponse();
+		ImpulseResponse() noexcept;
 
 		virtual ~ImpulseResponse() { }
 
@@ -66,7 +68,7 @@ template<unsigned int tOrder, int tResponseType>
 		 * coefficients change.
 		 */
 		Serial
-		serial() const;
+		serial() const noexcept;
 
 	  protected:
 		/**
@@ -74,7 +76,7 @@ template<unsigned int tOrder, int tResponseType>
 		 * know to reset recursive coefficients.
 		 */
 		void
-		bump();
+		bump() noexcept;
 
 	  public:
 		// Array of H(z)'s denominator coefficients. Unused in FIR filters.
@@ -89,7 +91,7 @@ template<unsigned int tOrder, int tResponseType>
 
 template<unsigned int O, int T>
 	inline
-	ImpulseResponse<O, T>::ImpulseResponse():
+	ImpulseResponse<O, T>::ImpulseResponse() noexcept:
 		_serial (0)
 	{ }
 
@@ -97,7 +99,7 @@ template<unsigned int O, int T>
 template<unsigned int O, int T>
 	inline
 	typename ImpulseResponse<O, T>::Serial
-	ImpulseResponse<O, T>::serial() const
+	ImpulseResponse<O, T>::serial() const noexcept
 	{
 		return _serial;
 	}
@@ -105,7 +107,7 @@ template<unsigned int O, int T>
 
 template<unsigned int O, int T>
 	inline void
-	ImpulseResponse<O, T>::bump()
+	ImpulseResponse<O, T>::bump() noexcept
 	{
 		++_serial;
 	}

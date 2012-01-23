@@ -33,14 +33,14 @@ class Notification
 	 * Creates Notification targeted to all Units.
 	 * \param	sender Sender Unit. May be 0.
 	 */
-	Notification (Unit* sender);
+	Notification (Unit* sender) noexcept;
 
 	/**
 	 * Creates Notification targeted to Units with specified URN.
 	 * \param	sender Sender Unit. May be 0.
 	 * \param	target_urn URN of target Units.
 	 */
-	Notification (Unit* sender, std::string const& target_urn);
+	Notification (Unit* sender, std::string const& target_urn) noexcept;
 
 	virtual ~Notification() { }
 

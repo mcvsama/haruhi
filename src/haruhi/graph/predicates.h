@@ -35,10 +35,10 @@ template<class Port>
 		typedef Port* argument_type;
 
 	  public:
-		explicit ConnectedTo (Port* port);
+		explicit ConnectedTo (Port* port) noexcept;
 
 		bool
-		operator() (argument_type const& port) const;
+		operator() (argument_type const& port) const noexcept;
 
 	  private:
 		Port* _port;
@@ -47,7 +47,7 @@ template<class Port>
 
 template<class Port>
 	inline ConnectedTo<Port>
-	connected_to (Port* port)
+	connected_to (Port* port) noexcept
 	{
 		return ConnectedTo<Port> (port);
 	}
@@ -60,10 +60,10 @@ template<class Port>
 		typedef Port* argument_type;
 
 	  public:
-		explicit ConnectedFrom (Port* port);
+		explicit ConnectedFrom (Port* port) noexcept;
 
 		bool
-		operator() (argument_type const& port) const;
+		operator() (argument_type const& port) const noexcept;
 
 	  private:
 		Port* _port;
@@ -72,7 +72,7 @@ template<class Port>
 
 template<class Port>
 	inline ConnectedFrom<Port>
-	connected_from (Port* port)
+	connected_from (Port* port) noexcept
 	{
 		return ConnectedFrom<Port> (port);
 	}

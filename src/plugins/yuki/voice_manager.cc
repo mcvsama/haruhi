@@ -175,7 +175,7 @@ VoiceManager::wait_for_render()
 
 
 void
-VoiceManager::mix_rendering_result (Haruhi::AudioBuffer* b1, Haruhi::AudioBuffer* b2)
+VoiceManager::mix_rendering_result (Haruhi::AudioBuffer* b1, Haruhi::AudioBuffer* b2) noexcept
 {
 	assert (b1 != 0);
 	assert (b2 != 0);

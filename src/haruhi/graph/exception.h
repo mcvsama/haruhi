@@ -34,15 +34,6 @@ class GraphException: public Exception
 };
 
 
-class OutsideProcessingRound: public GraphException
-{
-  public:
-	explicit OutsideProcessingRound (const char* what, const char* details):
-		GraphException (what, details)
-	{ }
-};
-
-
 class PortException: public GraphException
 {
   public:
@@ -56,33 +47,6 @@ class PortIncompatible: public PortException
 {
   public:
 	explicit PortIncompatible (const char* what, const char* details):
-		PortException (what, details)
-	{ }
-};
-
-
-class GraphNotFound: public PortException
-{
-  public:
-	explicit GraphNotFound (const char* what, const char* details):
-		PortException (what, details)
-	{ }
-};
-
-
-class EventBackendNotFound: public PortException
-{
-  public:
-	explicit EventBackendNotFound (const char* what, const char* details):
-		PortException (what, details)
-	{ }
-};
-
-
-class SelfConnection: public PortException
-{
-  public:
-	explicit SelfConnection (const char* what, const char* details):
 		PortException (what, details)
 	{ }
 };

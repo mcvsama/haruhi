@@ -30,18 +30,13 @@
 
 namespace Haruhi {
 
-Port::Port (Unit* unit, std::string const& name, Direction direction, Buffer* buffer, PortGroup* group, Flags flags):
+Port::Port (Unit* unit, std::string const& name, Direction direction, Buffer* buffer, PortGroup* group, Flags flags) noexcept:
 	_unit (unit),
 	_name (name),
 	_direction (direction),
 	_buffer (buffer),
 	_group (group),
 	_flags (flags)
-{
-}
-
-
-Port::~Port()
 {
 }
 
@@ -72,7 +67,7 @@ Port::set_comment (std::string const& comment)
 
 
 bool
-Port::connected_to (Port* port) const
+Port::connected_to (Port* port) const noexcept
 {
 	Ports::const_iterator p;
 	// False if 'this._forward_connections' doesn't contain 'other':
@@ -91,8 +86,7 @@ Port::connected_to (Port* port) const
 void
 Port::connect_to (Port* port)
 {
-	if (this == port)
-		throw SelfConnection ("can't connect with itself", __func__);
+	assert (this != port);
 	// Skip if ports are already connected:
 	if (!connected_to (port))
 	{
@@ -162,11 +156,9 @@ void
 Port::start_learning (EventBackend::EventTypes)
 {
 	Graph* graph = this->graph();
-	if (!graph)
-		throw GraphNotFound ("port must be registered to graph before it can learn/stop learning connections", __func__);
+	assert (graph != nullptr, "port must be registered to graph before it can learn/stop learning connections");
 	EventBackend* event_backend = graph->event_backend();
-	if (!event_backend)
-		throw EventBackendNotFound ("graph must have event backend registered before port can learn/stop learning connections", __func__);
+	assert (event_backend != nullptr, "graph must have event backend registered before port can learn/stop learning connections");
 	event_backend->start_learning (this, EventBackend::Controller | EventBackend::Pitchbend);
 }
 
@@ -175,19 +167,11 @@ void
 Port::stop_learning()
 {
 	Graph* graph = this->graph();
-	if (!graph)
-		throw GraphNotFound ("port must be registered to graph before it can learn/stop learning connections", __func__);
+	assert (graph != nullptr, "port must be registered to graph before it can learn/stop learning connections");
 	EventBackend* event_backend = graph->event_backend();
 	if (!event_backend)
 		return;
 	event_backend->stop_learning (this);
-}
-
-
-Graph*
-Port::graph() const
-{
-	return _unit->graph();
 }
 
 

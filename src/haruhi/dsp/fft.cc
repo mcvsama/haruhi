@@ -44,18 +44,18 @@ FFT::Vector::~Vector()
 
 
 void
-FFT::Vector::normalize()
+FFT::Vector::normalize() noexcept
 {
 	for (std::size_t i = 0; i < _size; ++i)
 		_data[i] /= _size;
 }
 
 
-FFT::Forward::Forward (Vector& vector):
+FFT::Forward::Forward (Vector& vector) noexcept:
 	_source (vector),
 	_target (vector)
 {
-	FFT::_plan_mutex.synchronize ([&]() {
+	FFT::_plan_mutex.synchronize ([&]() noexcept {
 		_plan = fftw_plan_dft_1d (vector.size(),
 								  reinterpret_cast<fftw_complex*> (vector.data()),
 								  reinterpret_cast<fftw_complex*> (vector.data()),
@@ -64,13 +64,13 @@ FFT::Forward::Forward (Vector& vector):
 }
 
 
-FFT::Forward::Forward (Vector& source, Vector& target):
+FFT::Forward::Forward (Vector& source, Vector& target) noexcept:
 	_source (source),
 	_target (target)
 {
 	assert (source.size() == target.size());
 
-	FFT::_plan_mutex.synchronize ([&]() {
+	FFT::_plan_mutex.synchronize ([&]() noexcept {
 		_plan = fftw_plan_dft_1d (source.size(),
 								  reinterpret_cast<fftw_complex*> (source.data()),
 								  reinterpret_cast<fftw_complex*> (target.data()),
@@ -79,26 +79,26 @@ FFT::Forward::Forward (Vector& source, Vector& target):
 }
 
 
-FFT::Forward::~Forward()
+FFT::Forward::~Forward() noexcept
 {
-	FFT::_plan_mutex.synchronize ([&]() {
+	FFT::_plan_mutex.synchronize ([&]() noexcept {
 		fftw_destroy_plan (_plan);
 	});
 }
 
 
 void
-FFT::Forward::transform()
+FFT::Forward::transform() noexcept
 {
 	fftw_execute (_plan);
 }
 
 
-FFT::Inverse::Inverse (Vector& vector):
+FFT::Inverse::Inverse (Vector& vector) noexcept:
 	_source (vector),
 	_target (vector)
 {
-	FFT::_plan_mutex.synchronize ([&]() {
+	FFT::_plan_mutex.synchronize ([&]() noexcept {
 		_plan = fftw_plan_dft_1d (vector.size(),
 								  reinterpret_cast<fftw_complex*> (vector.data()),
 								  reinterpret_cast<fftw_complex*> (vector.data()),
@@ -107,13 +107,13 @@ FFT::Inverse::Inverse (Vector& vector):
 }
 
 
-FFT::Inverse::Inverse (Vector& source, Vector& target):
+FFT::Inverse::Inverse (Vector& source, Vector& target) noexcept:
 	_source (source),
 	_target (target)
 {
 	assert (source.size() == target.size());
 
-	FFT::_plan_mutex.synchronize ([&]() {
+	FFT::_plan_mutex.synchronize ([&]() noexcept {
 		_plan = fftw_plan_dft_1d (source.size(),
 								  reinterpret_cast<fftw_complex*> (source.data()),
 								  reinterpret_cast<fftw_complex*> (target.data()),
@@ -122,16 +122,16 @@ FFT::Inverse::Inverse (Vector& source, Vector& target):
 }
 
 
-FFT::Inverse::~Inverse()
+FFT::Inverse::~Inverse() noexcept
 {
-	FFT::_plan_mutex.synchronize ([&]() {
+	FFT::_plan_mutex.synchronize ([&]() noexcept {
 		fftw_destroy_plan (_plan);
 	});
 }
 
 
 void
-FFT::Inverse::transform()
+FFT::Inverse::transform() noexcept
 {
 	fftw_execute (_plan);
 	_target.normalize();

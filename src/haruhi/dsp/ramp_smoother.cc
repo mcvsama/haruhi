@@ -23,7 +23,7 @@ namespace Haruhi {
 
 namespace DSP {
 
-RampSmoother::RampSmoother (unsigned int max_samples):
+RampSmoother::RampSmoother (unsigned int max_samples) noexcept:
 	_current (0.0f),
 	_vector (+0.0f),
 	_target (0.0f),
@@ -36,7 +36,7 @@ RampSmoother::RampSmoother (unsigned int max_samples):
 
 
 void
-RampSmoother::set_value (float value)
+RampSmoother::set_value (float value) noexcept
 {
 	if (_target != value)
 	{
@@ -59,7 +59,7 @@ RampSmoother::set_value (float value)
 
 
 void
-RampSmoother::reset (float value)
+RampSmoother::reset (float value) noexcept
 {
 	_target = value;
 	_vector = +0.0f;

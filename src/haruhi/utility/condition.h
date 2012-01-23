@@ -45,7 +45,7 @@ class ConditionPermissionException: public std::runtime_error
 class Condition: private Noncopyable
 {
   public:
-	Condition();
+	Condition() noexcept;
 
 	~Condition();
 
@@ -53,7 +53,7 @@ class Condition: private Noncopyable
 	 * Locks condition variable.
 	 */
 	void
-	lock();
+	lock() noexcept;
 
 	/**
 	 * Unlocks condition variable.
@@ -66,14 +66,14 @@ class Condition: private Noncopyable
 	 * when condition variable is locked.
 	 */
 	void
-	wait (uint64_t nanoseconds = 0);
+	wait (uint64_t nanoseconds = 0) noexcept;
 
 	/**
 	 * Signals condition. Should be called when condition variable
 	 * is locked.
 	 */
 	void
-	signal();
+	signal() noexcept;
 
   private:
 	::pthread_mutex_t	_mutex;
