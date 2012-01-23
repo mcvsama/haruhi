@@ -22,6 +22,7 @@
 #include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/graph/port.h>
 #include <haruhi/graph/port_group.h>
 

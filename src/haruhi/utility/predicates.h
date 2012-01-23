@@ -21,6 +21,9 @@
 // System:
 #include <sys/time.h>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 template<class tType>
 	class PointerEquals

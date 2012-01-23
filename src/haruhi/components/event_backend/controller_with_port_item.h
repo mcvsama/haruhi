@@ -21,6 +21,7 @@
 #include <alsa/asoundlib.h>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/components/devices_manager/controller_item.h>
 #include <haruhi/components/devices_manager/controller_dialog.h>
 #include <haruhi/graph/event_port.h>

@@ -19,6 +19,7 @@
 #include <stdexcept>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/exception.h>
 
 

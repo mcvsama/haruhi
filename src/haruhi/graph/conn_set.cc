@@ -15,12 +15,13 @@
 #include <cstddef>
 #include <map>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+#include <haruhi/utility/qdom_sequence.h>
+
 // Local:
 #include "conn_set.h"
 #include "port.h"
-
-// Haruhi:
-#include <haruhi/utility/qdom_sequence.h>
 
 
 namespace Haruhi {

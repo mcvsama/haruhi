@@ -20,6 +20,7 @@
 #include <list>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/memory.h>
 #include <haruhi/utility/pool_allocator.h>
 

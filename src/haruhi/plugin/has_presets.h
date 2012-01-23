@@ -21,6 +21,9 @@
 #include <QtCore/QString>
 #include <QtXml/QDomNode>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 namespace Haruhi {
 

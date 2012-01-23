@@ -21,6 +21,9 @@
 #include "lookup_pow.h"
 #include "sse_pow.h"
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 namespace FastPow = LookupPow;
 

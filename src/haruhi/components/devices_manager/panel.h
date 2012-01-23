@@ -24,6 +24,7 @@
 #include <QtGui/QPushButton>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/components/event_backend/backend.h>
 #include <haruhi/lib/midi.h>
 #include <haruhi/utility/signal.h>

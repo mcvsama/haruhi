@@ -26,6 +26,7 @@
 #include <QtGui/QDialog>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/application/services.h>
 #include <haruhi/lib/controller.h>
 #include <haruhi/lib/controller_proxy.h>

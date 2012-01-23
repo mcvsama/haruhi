@@ -18,6 +18,7 @@
 #include <cstddef>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/graph/port_group.h>
 #include <haruhi/utility/saveable_state.h>
 

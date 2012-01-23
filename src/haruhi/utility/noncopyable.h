@@ -14,6 +14,10 @@
 #ifndef HARUHI__UTILITY__NONCOPYABLE_H__INCLUDED
 #define HARUHI__UTILITY__NONCOPYABLE_H__INCLUDED
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
+
 class Noncopyable
 {
   protected:

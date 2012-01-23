@@ -14,6 +14,9 @@
 // Standard:
 #include <cstddef>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 // Local:
 #include "event_backend.h"
 

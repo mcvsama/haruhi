@@ -23,6 +23,9 @@
 // Lib:
 #include <boost/function.hpp>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 namespace Signal {
 

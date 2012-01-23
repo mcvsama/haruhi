@@ -16,6 +16,7 @@
 #include <cmath>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/pool_allocator.h>
 
 // Local:

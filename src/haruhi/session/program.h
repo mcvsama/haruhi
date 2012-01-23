@@ -21,6 +21,7 @@
 #include <QtGui/QWidget>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/session/patch.h>
 

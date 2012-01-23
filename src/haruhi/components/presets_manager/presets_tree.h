@@ -22,6 +22,9 @@
 #include <QtGui/QTreeWidget>
 #include <QtGui/QTreeWidgetItem>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 // Local:
 #include "presets_manager.h"
 

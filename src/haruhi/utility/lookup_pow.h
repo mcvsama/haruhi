@@ -42,6 +42,9 @@
 #include <cmath>
 #include <stdint.h>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 namespace LookupPow {
 

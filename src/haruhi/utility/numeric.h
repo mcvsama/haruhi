@@ -24,6 +24,9 @@
 #include <xmmintrin.h>
 #endif
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 inline float
 renormalize (float value, float a1, float b1, float a2, float b2)

@@ -21,6 +21,9 @@
 #include <QtGui/QLineEdit>
 #include <QtGui/QPushButton>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 // Local:
 #include "port_dialog.h"
 #include "output_item.h"

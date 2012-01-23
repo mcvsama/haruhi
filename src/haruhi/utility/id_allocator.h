@@ -18,6 +18,9 @@
 #include <cstddef>
 #include <set>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 class IDAllocator
 {

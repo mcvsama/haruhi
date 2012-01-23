@@ -18,6 +18,7 @@
 #include <cstddef>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/atomic.h>
 #include <haruhi/lib/param.h>
 

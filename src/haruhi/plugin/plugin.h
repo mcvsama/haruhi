@@ -22,6 +22,7 @@
 #include <QtGui/QWidget>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/graph/unit.h>
 
 

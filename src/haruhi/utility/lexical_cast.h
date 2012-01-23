@@ -18,6 +18,9 @@
 #include <string>
 #include <sstream>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 /*
  * Simple lexical_cast<> implementation.

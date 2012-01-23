@@ -20,6 +20,9 @@
 // Qt:
 #include <QtGui/QLabel>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 namespace Haruhi {
 

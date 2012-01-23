@@ -22,6 +22,7 @@
 #include <QtGui/QTreeWidget>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/signal.h>
 

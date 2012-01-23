@@ -24,6 +24,9 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QCheckBox>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 // Local:
 #include "presets_manager.h"
 

@@ -18,6 +18,7 @@
 #include <cstddef>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/components/devices_manager/device_dialog.h>
 
 

@@ -22,6 +22,9 @@
 #include <cstddef>
 #include <stdint.h>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 #if defined(HARUHI_SSE1) && defined(HARUHI_SSE2)
 
 // System:

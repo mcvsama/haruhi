@@ -21,6 +21,9 @@
 #include <QtGui/QTreeWidgetItem>
 #include <QtGui/QBrush>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 namespace Haruhi {
 

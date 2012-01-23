@@ -18,6 +18,9 @@
 #include <cstddef>
 #include <string>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 namespace Haruhi {
 

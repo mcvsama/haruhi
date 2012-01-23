@@ -25,6 +25,9 @@
 #include <QtGui/QCheckBox>
 #include <QtGui/QKeyEvent>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 // Local:
 #include "device_item.h"
 

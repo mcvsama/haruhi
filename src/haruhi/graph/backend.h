@@ -19,6 +19,7 @@
 #include <string>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/signal.h>
 
 // Local:

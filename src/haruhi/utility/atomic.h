@@ -21,6 +21,7 @@
 #include <glib.h>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/config/system.h>
 
 

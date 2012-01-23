@@ -17,6 +17,9 @@
 // Standard:
 #include <cstddef>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 // Local:
 #include "unit.h"
 

@@ -20,6 +20,9 @@
 #include <vector>
 #include <ostream>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 #define SANITY_CHECK(x) \
 	if (!x) \

@@ -15,6 +15,7 @@
 #include <string>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/exception.h>
 
 // Local:

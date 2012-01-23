@@ -18,6 +18,9 @@
 #include <cstddef>
 #include <stdexcept>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 class Exception: public std::runtime_error
 {

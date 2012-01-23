@@ -19,6 +19,9 @@
 #include <string>
 #include <map>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 namespace Haruhi {
 

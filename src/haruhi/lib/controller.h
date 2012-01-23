@@ -18,6 +18,7 @@
 #include <cstddef>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/graph/event_backend.h>
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/utility/atomic.h>

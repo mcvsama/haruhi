@@ -20,6 +20,7 @@
 #include <list>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/semaphore.h>
 #include <haruhi/utility/thread.h>

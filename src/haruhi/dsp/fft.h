@@ -22,6 +22,7 @@
 #include <fftw3.h>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/noncopyable.h>
 

@@ -20,7 +20,7 @@
 #include <map>
 
 // Haruhi:
-#include <haruhi/config/types.h>
+#include <haruhi/config/all.h>
 #include <haruhi/utility/atomic.h>
 
 // Local:

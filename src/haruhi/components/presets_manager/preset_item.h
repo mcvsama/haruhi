@@ -20,6 +20,9 @@
 // Qt:
 #include <QtGui/QTreeWidgetItem>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 // Local:
 #include "preset.h"
 #include "presets_manager.h"

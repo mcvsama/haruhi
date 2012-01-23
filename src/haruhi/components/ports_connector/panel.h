@@ -20,6 +20,9 @@
 // Qt:
 #include <QtGui/QWidget>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 // Local:
 #include "ports_connector.h"
 #include "units_combobox.h"

@@ -30,6 +30,7 @@
 #include <QtGui/QListWidget>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/components/devices_manager/device.h>
 #include <haruhi/settings/session_loader_settings.h>
 

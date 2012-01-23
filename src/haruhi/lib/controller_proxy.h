@@ -18,6 +18,7 @@
 #include <cstddef>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/graph/event.h>
 #include <haruhi/graph/event_port.h>
 #include <haruhi/lib/controller_param.h>

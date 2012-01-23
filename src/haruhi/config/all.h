@@ -11,13 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__CONFIG__ALL_H__INCLUDED
-#define HARUHI__CONFIG__ALL_H__INCLUDED
-
 #include "types.h"
 #include "system.h"
 #include "resources.h"
 #include "version.h"
-
-#endif
 

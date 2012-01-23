@@ -14,6 +14,10 @@
 #ifndef HARUHI__APPLICATION__FAIL_H__INCLUDED
 #define HARUHI__APPLICATION__FAIL_H__INCLUDED
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
+
 namespace Haruhi {
 
 /**

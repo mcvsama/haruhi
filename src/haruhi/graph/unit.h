@@ -20,6 +20,7 @@
 #include <set>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/noncopyable.h>
 #include <haruhi/utility/atomic.h>
 #include <haruhi/utility/mutex.h>

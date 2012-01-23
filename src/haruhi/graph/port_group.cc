@@ -11,6 +11,9 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 // Local:
 #include "port_group.h"
 #include "graph.h"

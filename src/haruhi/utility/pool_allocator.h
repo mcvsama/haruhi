@@ -17,6 +17,9 @@
 // Boost:
 #include <boost/pool/pool_alloc.hpp>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 /**
  * Use this macro inside class.

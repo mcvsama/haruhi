@@ -21,6 +21,9 @@
 // System:
 #include <sys/time.h>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 class Timing
 {

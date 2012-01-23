@@ -14,7 +14,11 @@
 #ifndef HARUHI__CONFIG__TYPES_H__INCLUDED
 #define HARUHI__CONFIG__TYPES_H__INCLUDED
 
+// Standard:
 #include <stdint.h>
+
+// Haruhi:
+#include <haruhi/config/all.h>
 
 
 namespace Haruhi {

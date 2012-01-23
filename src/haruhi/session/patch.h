@@ -30,6 +30,7 @@
 #include <QtGui/QMenu>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/components/ports_connector/ports_connector.h>
 #include <haruhi/plugin/plugin.h>
 #include <haruhi/session/unit_bay.h>

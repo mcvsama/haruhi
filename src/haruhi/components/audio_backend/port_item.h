@@ -24,6 +24,7 @@
 #include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/graph/audio_port.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/atomic.h>

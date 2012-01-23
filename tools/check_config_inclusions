@@ -7,7 +7,14 @@ def ifdef path
 end
 
 def check file
-	File.open(file).readlines.any? { |line| line.chomp == "\#ifndef #{ifdef file}__INCLUDED" }
+	skip = %w[
+		haruhi/config/all.h
+		haruhi/config/system.h
+		haruhi/config/version.h
+		haruhi/utility/confusion.h
+	]
+	return true if skip.include?(file)
+	File.open(file).readlines.any? { |line| line.chomp == "\#include <haruhi/config/all.h>" }
 end
 
 def find dir

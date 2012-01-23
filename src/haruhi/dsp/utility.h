@@ -19,6 +19,7 @@
 #include <cmath>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/utility/numeric.h>
 
 

@@ -20,6 +20,9 @@
 // Qt:
 #include <QtXml/QDomNode>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 class SaveableState
 {

@@ -16,7 +16,9 @@
 #ifndef HARUHI__CONFIG__SYSTEM_H__INCLUDED
 #define HARUHI__CONFIG__SYSTEM_H__INCLUDED
 
+// Standard:
 #include <cstdio>
+#include <iostream>
 
 #ifdef __SSE__
 #define HARUHI_SSE1
@@ -29,29 +31,6 @@
 #ifdef __SSE3__
 #define HARUHI_SSE3
 #endif
-
-#undef assert
-
-#if HARUHI_ENABLE_ASSERT
-# include <signal.h>
-# undef assert
-
-inline void
-assert (bool expression)
-{
-	if (!expression)
-	{
-# if HARUHI_ENABLE_FATAL_ASSERT
-		raise (SIGTRAP);
-# endif
-	}
-}
-
-#else // HARUHI_ENABLE_ASSERT
-# undef assert
-# define assert
-#endif // HARUHI_ENABLE_ASSERT
-
 
 /**
  * Return size (number of elements) of an array.
@@ -71,10 +50,41 @@ template<class T, std::size_t N>
 	inline const char (&sizer (T (&)[N]))[N];
 
 
+inline void
+assert_function (bool expression, const char* message = nullptr) noexcept
+{
+	if (!expression)
+	{
+		if (message)
+			std::clog << "Assertion failed: " << message << std::endl;
+# if HARUHI_ENABLE_FATAL_ASSERT
+		raise (SIGTRAP);
+# endif
+	}
+}
+
+
 /**
  * Prints debug output.
  */
 #define debug(x...) fprintf (stderr, x)
 
 #endif
+
+
+/**
+ * Since most of standard headers override our assert, ensure
+ * that it's redefined every possible time, when this
+ * header is included.
+ */
+
+#undef assert
+#if HARUHI_ENABLE_ASSERT
+# include <signal.h>
+# undef assert
+# define assert assert_function
+#else // HARUHI_ENABLE_ASSERT
+# undef assert
+# define assert(a, b...)
+#endif // HARUHI_ENABLE_ASSERT
 

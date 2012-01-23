@@ -21,6 +21,9 @@
 #include <QtGui/QPixmap>
 #include <QtGui/QPixmapCache>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 namespace Config {
 

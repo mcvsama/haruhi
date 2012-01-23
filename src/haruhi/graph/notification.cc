@@ -14,6 +14,9 @@
 // Standard:
 #include <string>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 // Local:
 #include "notification.h"
 

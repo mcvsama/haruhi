@@ -17,6 +17,9 @@
 // Standard:
 #include <cstddef>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 
 int
 file_size (std::string file_name);

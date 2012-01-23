@@ -25,6 +25,9 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QLabel>
 
+// Haruhi:
+#include <haruhi/config/all.h>
+
 // Local:
 #include "controller_item.h"
 

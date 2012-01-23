@@ -36,6 +36,7 @@
 #include <QtGui/QMenu>
 
 // Haruhi:
+#include <haruhi/config/all.h>
 #include <haruhi/application/haruhi.h>
 #include <haruhi/application/services.h>
 #include <haruhi/graph/predicates.h>
