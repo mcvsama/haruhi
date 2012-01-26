@@ -3,9 +3,9 @@
 LIBS			=
 PKGCONFIG_LIBS	=
 PKGCONFIG_FLAGS	=
-CXX				= g++ -c -std=c++0x -Wall
-DEPCC			= g++
-CXXFLAGS		= -Wall -Wextra -Wunused  -Wunused-function -Wunused-label -fstrict-aliasing -Wstrict-aliasing=3 -Wnoexcept -fnothrow-opt $(PKGCONFIG_FLAGS)
+CXX				= g++
+DEPCC			= $(CXX)
+CXXFLAGS		= -c -std=c++0x -Wall -Wall -Wextra -Wunused  -Wunused-function -Wunused-label -fstrict-aliasing -Wstrict-aliasing=3 -Wnoexcept -fnothrow-opt $(PKGCONFIG_FLAGS)
 SO				= g++ -shared
 SOFLAGS			=
 LD				= g++
@@ -107,8 +107,7 @@ help:
 	@echo 'Available targets:'
 	@echo '  all        Compiles program.'
 	@echo '  dep        Generates dependencies.'
-	@echo '  clean      Cleans source tree.'
-	@echo '  depclean   Removes dep files.'
+	@echo '  clean      Cleans source tree and dep files'
 	@echo '  distclean  Cleans dist directory.'
 	@echo '  release    Creates release.'
 	@echo '  releases   Creates all configured releases.'
@@ -116,8 +115,6 @@ help:
 
 clean:
 	@rm -f $(MOCSRCS)
-
-depclean:
 	@rm -f $(DEPFILES)
 
 distclean:
