@@ -195,8 +195,8 @@ template<class PointerToParam>
 	{
 		if (voice_id == Haruhi::OmniVoice)
 		{
-			for (Voices::iterator v = _voices.begin(); v != _voices.end(); ++v)
-				((*v)->params()->filters[filter_no].*param_ptr).set (value);
+			for (Voice* v: _voices)
+				(v->params()->filters[filter_no].*param_ptr).set (value);
 		}
 		else
 		{

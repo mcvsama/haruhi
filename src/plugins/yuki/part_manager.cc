@@ -128,9 +128,8 @@ PartManager::remove_part (Part* part)
 void
 PartManager::remove_all_parts()
 {
-	Parts ps = _parts;
-	for (Parts::iterator p = ps.begin(); p != ps.end(); ++p)
-		remove_part (*p);
+	for (Part* p: Parts (_parts))
+		remove_part (p);
 }
 
 
@@ -183,14 +182,14 @@ PartManager::process()
 	Haruhi::EventBuffer const* buffer = _ports.voice_in->event_buffer();
 	bool const enabled = _main_params.enabled.get();
 
-	for (Haruhi::EventBuffer::Events::const_iterator e = buffer->events().begin(); e != buffer->events().end(); ++e)
+	for (auto e: buffer->events())
 	{
-		if ((*e)->event_type() == Haruhi::Event::VoiceEventType)
+		if (e->event_type() == Haruhi::Event::VoiceEventType)
 		{
-			Haruhi::VoiceEvent const* voice_event = static_cast<Haruhi::VoiceEvent const*> (e->get());
+			Haruhi::VoiceEvent const* voice_event = static_cast<Haruhi::VoiceEvent const*> (e.get());
 			if (enabled || voice_event->type() == Haruhi::VoiceEvent::Release || voice_event->type() == Haruhi::VoiceEvent::Drop)
-				for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
-					(*p)->handle_voice_event (voice_event);
+				for (Part* p: _parts)
+					p->handle_voice_event (voice_event);
 		}
 	}
 
@@ -199,16 +198,16 @@ PartManager::process()
 	Haruhi::AudioBuffer* buf_0 = _ports.audio_out[0]->audio_buffer();
 	Haruhi::AudioBuffer* buf_1 = _ports.audio_out[1]->audio_buffer();
 
-	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
+	for (Part* p: _parts)
 	{
-		(*p)->process_events();
-		(*p)->render();
+		p->process_events();
+		p->render();
 	}
 
-	for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
+	for (Part* p: _parts)
 	{
-		(*p)->wait_for_render();
-		(*p)->mix_rendering_result (buf_0, buf_1);
+		p->wait_for_render();
+		p->mix_rendering_result (buf_0, buf_1);
 	}
 
 	// Stereo width:
@@ -250,8 +249,8 @@ void
 PartManager::panic()
 {
 	_parts_mutex.synchronize ([&]() {
-		for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
-			(*p)->panic();
+		for (Part* p: _parts)
+			p->panic();
 	});
 }
 
@@ -267,8 +266,8 @@ PartManager::graph_updated()
 		_panorama_smoother[1].set_samples (samples);
 		_stereo_width_smoother.set_samples (samples);
 
-		for (Parts::iterator p = _parts.begin(); p != _parts.end(); ++p)
-			(*p)->graph_updated();
+		for (Part* p: _parts)
+			p->graph_updated();
 	});
 }
 
@@ -278,8 +277,8 @@ PartManager::voices_number() const
 {
 	unsigned int sum = 0;
 	_parts_mutex.synchronize ([&]() {
-		for (Parts::const_iterator p = _parts.begin(); p != _parts.end(); ++p)
-			sum += (*p)->voices_number();
+		for (Part* p: _parts)
+			sum += p->voices_number();
 	});
 	return sum;
 }
@@ -293,11 +292,11 @@ PartManager::save_state (QDomElement& element) const
 		_main_params.save_state (e);
 		element.appendChild (e);
 
-		for (Parts::const_iterator p = _parts.begin(); p != _parts.end(); ++p)
+		for (Part* p: _parts)
 		{
 			QDomElement e = element.ownerDocument().createElement ("part");
-			(*p)->save_state (e);
-			e.setAttribute ("id", (*p)->id());
+			p->save_state (e);
+			e.setAttribute ("id", p->id());
 			element.appendChild (e);
 		}
 	});

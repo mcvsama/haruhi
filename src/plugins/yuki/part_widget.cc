@@ -700,8 +700,8 @@ PartWidget::update_widgets()
 		}
 	}
 
-	for (std::list<QWidget*>::iterator w = _modulator_labels.begin(); w != _modulator_labels.end(); ++w)
-		(*w)->setEnabled (mod_enabled);
+	for (auto ml: _modulator_labels)
+		ml->setEnabled (mod_enabled);
 }
 
 

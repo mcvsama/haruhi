@@ -112,8 +112,8 @@ VoiceManager::handle_voice_event (Haruhi::VoiceEvent const* event)
 void
 VoiceManager::panic()
 {
-	for (Voices::iterator v = _voices.begin(); v != _voices.end(); ++v)
-		(*v)->drop();
+	for (Voice* v: _voices)
+		v->drop();
 }
 
 
@@ -126,11 +126,11 @@ VoiceManager::graph_updated (unsigned int sample_rate, std::size_t buffer_size)
 	_output_1.resize (buffer_size);
 	_output_2.resize (buffer_size);
 
-	for (SharedResourcesVec::iterator s = _shared_resources_vec.begin(); s != _shared_resources_vec.end(); ++s)
-		(*s)->graph_updated (sample_rate, buffer_size);
+	for (Voice::SharedResources* s: _shared_resources_vec)
+		s->graph_updated (sample_rate, buffer_size);
 
-	for (Voices::iterator v = _voices.begin(); v != _voices.end(); ++v)
-		(*v)->graph_updated (sample_rate, buffer_size);
+	for (Voice* v: _voices)
+		v->graph_updated (sample_rate, buffer_size);
 }
 
 
@@ -139,8 +139,8 @@ VoiceManager::set_wavetable (DSP::Wavetable* wavetable)
 {
 	_wavetable = wavetable;
 
-	for (Voices::iterator v = _voices.begin(); v != _voices.end(); ++v)
-		(*v)->set_wavetable (_wavetable);
+	for (Voice* v: _voices)
+		v->set_wavetable (_wavetable);
 }
 
 
@@ -149,8 +149,8 @@ VoiceManager::render()
 {
 	assert (_work_units.empty());
 
-	for (Voices::iterator v = _voices.begin(); v != _voices.end(); ++v)
-		_work_units.push_back (new RenderWorkUnit (*v, _shared_resources_vec));
+	for (Voice* v: _voices)
+		_work_units.push_back (new RenderWorkUnit (v, _shared_resources_vec));
 
 	for (WorkUnits::size_type i = 0, n = _work_units.size(); i < n; ++i)
 		_work_performer->add (_work_units[i]);
@@ -202,8 +202,8 @@ VoiceManager::update_voice_parameter (Haruhi::VoiceID voice_id, Params::Voice::C
 {
 	if (voice_id == Haruhi::OmniVoice)
 	{
-		for (Voices::iterator v = _voices.begin(); v != _voices.end(); ++v)
-			((*v)->params()->*param_ptr).set (value);
+		for (Voice* v: _voices)
+			(v->params()->*param_ptr).set (value);
 	}
 	else
 	{
@@ -223,13 +223,13 @@ VoiceManager::check_polyphony_limit()
 	{
 		// Select oldest Voice and drop it:
 		Voice* oldest = 0;
-		for (Voices::iterator v = _voices.begin(); v != _voices.end(); ++v)
+		for (Voice* v: _voices)
 		{
-			if ((*v)->state() == Voice::Dropped || (*v)->state() == Voice::Finished)
+			if (v->state() == Voice::Dropped || v->state() == Voice::Finished)
 				continue;
 			oldest = oldest
-				? Voice::return_older (*v, oldest)
-				: *v;
+				? Voice::return_older (v, oldest)
+				: v;
 		}
 		oldest->drop();
 		_active_voices_number--;
