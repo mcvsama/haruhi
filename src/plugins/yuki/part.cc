@@ -673,7 +673,7 @@ Part::save_state (QDomElement& element) const
 	for (std::size_t i = 0; i < Params::Voice::FiltersNumber; ++i)
 	{
 		QDomElement e = element.ownerDocument().createElement (QString ("filter-%1-parameters").arg (i + 1));
-		_part_params.voice.filters[0].save_state (e);
+		_part_params.voice.filters[i].save_state (e);
 		element.appendChild (e);
 	}
 }
