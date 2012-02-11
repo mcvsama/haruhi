@@ -20,7 +20,6 @@
 // Qt:
 #include <QtGui/QWidget>
 #include <QtGui/QSpinBox>
-#include <QtGui/QLabel>
 
 // Haruhi:
 #include <haruhi/config/all.h>

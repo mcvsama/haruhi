@@ -85,7 +85,7 @@ OperatorWidget::OperatorWidget (QWidget* parent, unsigned int operator_no, Param
 	group_layout->addWidget (_frequency_numerator, 1, 1);
 	group_layout->addWidget (new QLabel ("÷", this), 1, 2);
 	group_layout->addWidget (_frequency_denominator, 1, 3);
-	group_layout->addWidget (new QLabel ("Octave:"), 2, 0, 1, 2);
+	group_layout->addWidget (new QLabel ("Octave:", this), 2, 0, 1, 2);
 	group_layout->addWidget (_octave, 2, 1, 1, 3, Qt::AlignRight);
 	group_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 3, 0);
 
