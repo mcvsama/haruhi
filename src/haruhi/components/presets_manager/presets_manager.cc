@@ -505,7 +505,7 @@ PresetsManager::remove_package_item (Private::PackageItem* package_item)
 std::string
 PresetsManager::sanitize_urn (std::string urn) const
 {
-	for (auto c: urn)
+	for (auto& c: urn)
 		if (c == '/')
 			c = '_';
 	return urn;
