@@ -34,7 +34,7 @@ using Haruhi::Sample;
 class VoiceOperator
 {
   public:
-	VoiceOperator();
+	VoiceOperator() noexcept;
 
 	/**
 	 * Set frequency source buffer.
@@ -109,7 +109,7 @@ VoiceOperator::fill (Haruhi::AudioBuffer* output) noexcept
 	_phase = p;
 
 	// Amplitude modulation:
-//	output->attenuate (_amplitude_source);
+	output->attenuate (_amplitude_source);
 }
 
 } // namespace Yuki

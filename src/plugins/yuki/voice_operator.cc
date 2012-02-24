@@ -23,7 +23,7 @@
 
 namespace Yuki {
 
-VoiceOperator::VoiceOperator():
+VoiceOperator::VoiceOperator() noexcept:
 	_frequency_source (0),
 	_amplitude_source (0),
 	_phase (0.0f)
