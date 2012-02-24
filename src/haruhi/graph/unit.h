@@ -62,8 +62,8 @@ class Unit: private Noncopyable
 	 * \param	urn identifies Unit type. Used by notification system.
 	 * \param	title is Unit's name visible to user.
 	 * \param	id is Unit ID. It's not used internally by Unit, but might be useful
-	 * 			for other objects. It's not verified to be unique. If 0, then new ID
-	 * 			will be automatically assigned.
+	 *			for other objects. It's not verified to be unique. If 0, then new ID
+	 *			will be automatically assigned.
 	 */
 	Unit (std::string const& urn, std::string const& title, int id = 0) noexcept;
 
