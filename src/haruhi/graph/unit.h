@@ -136,11 +136,17 @@ class Unit: private Noncopyable
 	urn() const;
 
 	/**
-	 * Returns Unit's title to be presented to the user.
+	 * Return Unit's name to be presented to the user.
 	 * May not be called inside of processing round.
 	 */
 	std::string
 	title() const;
+
+	/**
+	 * Return Unit original title.
+	 */
+	std::string
+	original_title() const;
 
 	/**
 	 * Returns Unit's id.
@@ -256,8 +262,9 @@ class Unit: private Noncopyable
 	// Used by disable() and sync() methods:
 	Mutex		_processing_mutex;
 
-	std::string _urn;
+	std::string	_urn;
 	std::string	_title;
+	std::string	_original_title;
 
 	Ports		_inputs;
 	Ports		_outputs;
@@ -296,6 +303,13 @@ inline std::string
 Unit::title() const
 {
 	return _title;
+}
+
+
+inline std::string
+Unit::original_title() const
+{
+	return _original_title;
 }
 
 

@@ -36,7 +36,8 @@ Unit::Unit (std::string const& urn, std::string const& title, int id) noexcept:
 	_synced (true),
 	_enabled (false),
 	_urn (urn),
-	_title (title)
+	_title (title),
+	_original_title (title)
 {
 	set_id (id);
 }
