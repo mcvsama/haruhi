@@ -193,14 +193,12 @@ class VoiceOscillator
 	// Unison:
 	Sample					_initial_phase_spread;
 	int						_unison_number;
-	Sample					_unison_spread;
+	Sample					_unison_spread;				// Factor used to multiply input frequency: [1.0..2.0].
 	Sample					_unison_noise;
 	bool					_unison_stereo;
 	Sample					_unison_vibrato_level;
 	Sample					_unison_vibrato_frequency;
 	Sample					_1_div_unison_number;		// Cached 1.0f / _unison_number.
-	Sample					_unison_relative_spread;	// Cached _unison_spread / _unson_number.
-	Sample					_half_unison_number;		// Cached (_unison_number - 1) / 2.0f.
 
 	// Used for both white noise and unison noise:
 	DSP::Noise				_noise;
@@ -276,11 +274,9 @@ VoiceOscillator::set_initial_phases_spread (Sample spread) noexcept
 inline void
 VoiceOscillator::set_unison_spread (Sample spread) noexcept
 {
-	float const k = 1.0f / 20.0f;
-
-	if (_unison_spread != k * spread)
+	if (_unison_spread != spread + 1.0f)
 	{
-		_unison_spread = k * spread;
+		_unison_spread = spread + 1.0f;
 		update_unison_coefficients();
 	}
 }
@@ -390,8 +386,12 @@ VoiceOscillator::noise_sample() noexcept
 inline void
 VoiceOscillator::update_unison_coefficients() noexcept
 {
-	_unison_relative_spread = _unison_spread / _unison_number;
-	_half_unison_number = (_unison_number - 1) / 2.0f;
+	float const first_frequency = 1.0f / _unison_spread;
+	// Computing unison freq. multiplier:
+	//   (1/a)*x^(n-1)=a => x=root(a^2, n-1),
+	// where a is _unison_spread and n is _unison_number.
+	float const freq_multiplier = std::pow (_unison_spread * _unison_spread, 1.0f / (_unison_number - 1));
+
 	_1_div_unison_number = 1.0f / _unison_number;
 	// Noise levels for each unison voice:
 	if (_unison_number == 1)
@@ -408,7 +408,9 @@ VoiceOscillator::update_unison_coefficients() noexcept
 	// Relative frequencies and stereo spread values:
 	for (int u = 0; u < _unison_number; ++u)
 	{
-		_unison[u].relative_frequency = 1.0f - _unison_relative_spread * (0.5f * (_unison_number - 1) - u);
+		_unison[u].relative_frequency = u == 0
+			? first_frequency
+			: _unison[u - 1].relative_frequency * freq_multiplier;
 		_unison[u].stereo_level_1 = pow2 (_1_div_unison_number * (u + 1));
 	}
 	for (int u = 0; u < _unison_number; ++u)

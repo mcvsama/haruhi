@@ -96,7 +96,7 @@ Voice::render (SharedResources* res)
 	_vosc.set_amplitude_source (&res->amplitude_buf);
 	_vosc.set_frequency_source (&res->frequency_buf);
 	_vosc.set_fm_source (&res->fm_buf);
-	_vosc.set_unison_spread (2.0f * _params.unison_spread.to_f());
+	_vosc.set_unison_spread (_params.unison_spread.to_f());
 	_vosc.set_unison_number (_params.unison_index.get());
 	_vosc.set_unison_noise (_params.unison_noise.to_f());
 	_vosc.set_unison_stereo (!!_part_params->unison_stereo.get());
