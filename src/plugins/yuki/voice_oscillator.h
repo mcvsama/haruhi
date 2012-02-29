@@ -418,7 +418,7 @@ VoiceOscillator::update_unison_coefficients() noexcept
 	// Vibrato coefficients:
 	for (int u = 0; u < _unison_number; ++u)
 	{
-		_unison[u].vibrato_level = 2.0f * _unison_vibrato_level * _unison_spread;
+		_unison[u].vibrato_level = 0.025f * _unison_vibrato_level * _unison_spread;
 		_unison[u].vibrato_frequency = _unison_vibrato_frequency * renormalize (_noise.get (_noise_state), -1.0f, 1.0f, 0.5f, 2.0f);
 		limit_value (_unison[u].vibrato_frequency, 0.0f, 0.5f);
 	}
