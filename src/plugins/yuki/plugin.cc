@@ -32,6 +32,8 @@ namespace Yuki {
 Plugin::Plugin (std::string const& urn, std::string const& title, int id, QWidget* parent):
 	Haruhi::Plugin (urn, title, id, parent)
 {
+	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+
 	_part_manager = new PartManager (this);
 	_part_manager_widget = new PartManagerWidget (this, _part_manager);
 	_part_manager->set_widget (_part_manager_widget);

@@ -31,6 +31,7 @@
 #include <haruhi/plugin/has_presets.h>
 #include <haruhi/session/session.h>
 #include <haruhi/components/presets_manager/presets_manager.h>
+#include <haruhi/widgets/texture_widget.h>
 #include <haruhi/utility/qdom_sequence.h>
 
 // Local:
@@ -77,6 +78,7 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	_plugin (plugin)
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+
 	bool plugin_is_has_presets = dynamic_cast<HasPresets*> (_plugin);
 
 	QWidget* bar = new QWidget (this);
@@ -135,11 +137,26 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	bar->setPaletteBackgroundColor (QColor (0x00, 0x2A, 0x5B));
 	bar->setAutoFillBackground (true);
 
-	_plugin->reparent (_stack, QPoint(), true);
+	QWidget* plugin_container = new QWidget (this);
+	QWidget* plugin_with_background = new TextureWidget (TextureWidget::Filling::Solid, this);
+	plugin_with_background->setSizePolicy (_plugin->sizePolicy());
+
+	QGridLayout* plugin_with_background_layout = new QGridLayout (plugin_with_background);
+	plugin_with_background_layout->setMargin (0);
+	plugin_with_background_layout->setSpacing (0);
+	plugin_with_background_layout->addWidget (_plugin, 0, 0);
+
+	QGridLayout* plugin_container_layout = new QGridLayout (plugin_container);
+	plugin_container_layout->setMargin (0);
+	plugin_container_layout->setSpacing (0);
+	plugin_container_layout->addWidget (new TextureWidget (TextureWidget::Filling::Dotted, this), 0, 0, 2, 2);
+	plugin_container_layout->addWidget (plugin_with_background, 0, 0, 1, 1);
+
+	_plugin->reparent (plugin_with_background, QPoint(), true);
 	if (plugin_is_has_presets)
 		_stack->addWidget (_presets_manager);
-	_stack->addWidget (_plugin);
-	_stack->setCurrentWidget (_plugin);
+	_stack->addWidget (plugin_container);
+	_stack->setCurrentWidget (plugin_container);
 
 	// Layouts:
 

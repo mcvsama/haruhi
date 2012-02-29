@@ -51,6 +51,8 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 	_stop_widgets_to_params (false),
 	_stop_params_to_widgets (false)
 {
+	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+
 	// Knobs:
 
 	PartManager::MainProxies* proxies = _part_manager->proxies();
