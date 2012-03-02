@@ -137,7 +137,7 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	bar->setPaletteBackgroundColor (QColor (0x00, 0x2A, 0x5B));
 	bar->setAutoFillBackground (true);
 
-	QWidget* plugin_container = new QWidget (this);
+	_plugin_container = new QWidget (this);
 	QWidget* plugin_with_background = new TextureWidget (TextureWidget::Filling::Solid, this);
 	plugin_with_background->setSizePolicy (_plugin->sizePolicy());
 
@@ -146,7 +146,7 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	plugin_with_background_layout->setSpacing (0);
 	plugin_with_background_layout->addWidget (_plugin, 0, 0);
 
-	QGridLayout* plugin_container_layout = new QGridLayout (plugin_container);
+	QGridLayout* plugin_container_layout = new QGridLayout (_plugin_container);
 	plugin_container_layout->setMargin (0);
 	plugin_container_layout->setSpacing (0);
 	plugin_container_layout->addWidget (new TextureWidget (TextureWidget::Filling::Dotted, this), 0, 0, 2, 2);
@@ -155,8 +155,8 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	_plugin->reparent (plugin_with_background, QPoint(), true);
 	if (plugin_is_has_presets)
 		_stack->addWidget (_presets_manager);
-	_stack->addWidget (plugin_container);
-	_stack->setCurrentWidget (plugin_container);
+	_stack->addWidget (_plugin_container);
+	_stack->setCurrentWidget (_plugin_container);
 
 	// Layouts:
 
@@ -203,7 +203,7 @@ PluginTab::presets()
 {
 	if (_stack->currentWidget() == _presets_manager)
 	{
-		_stack->setCurrentWidget (_plugin);
+		_stack->setCurrentWidget (_plugin_container);
 		_presets_button->setPaletteForegroundColor (QColor (0xff, 0xff, 0xff));
 		_presets_button->setPaletteBackgroundColor (QColor (0x00, 0x2A, 0x5B));
 		_presets_button->setAutoFillBackground (true);

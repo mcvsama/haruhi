@@ -98,6 +98,7 @@ namespace PatchPrivate {
 	  private:
 		Patch*			_patch;
 		Plugin*			_plugin;
+		QWidget*		_plugin_container;
 		QStackedWidget*	_stack;
 		QPushButton*	_favorite_button;
 		QString			_preset_uuid;
