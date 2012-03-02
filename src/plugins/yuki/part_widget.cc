@@ -208,7 +208,16 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	// Harmonics+phases window:
 	_harmonics_window = new QDialog (this);
 	_harmonics_window->hide();
-	_harmonics_window->setWindowTitle ("Harmonics & Phases");
+	_harmonics_window->setWindowTitle (QString ("Part %1: Harmonics & Phases").arg (_part->id()));
+
+	// Reset all harmonics:
+	_harmonics_reset_button = new QPushButton ("Clear all harmonics and phases", _harmonics_window);
+	QObject::connect (_harmonics_reset_button, SIGNAL (clicked()), this, SLOT (reset_all_harmonics()));
+
+	// Close harmonics button:
+	QPushButton* close_harmonics_button = new QPushButton ("Close", _harmonics_window);
+	close_harmonics_button->setDefault (true);
+	QObject::connect (close_harmonics_button, SIGNAL (clicked()), _harmonics_window, SLOT (accept()));
 
 	// Harmonics:
 	_harmonics_widget = new QWidget (_harmonics_window);
@@ -518,13 +527,21 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	// Force normal text color. For some reason Qt uses white color on light-gray background.
 	harmonic_phases_label->setForegroundRole (QPalette::Text);
 
+	QHBoxLayout* harmonics_window_buttons_layout = new QHBoxLayout();
+	harmonics_window_buttons_layout->setMargin (0);
+	harmonics_window_buttons_layout->setSpacing (Config::Spacing);
+	harmonics_window_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
+	harmonics_window_buttons_layout->addWidget (close_harmonics_button);
+	harmonics_window_buttons_layout->addWidget (_harmonics_reset_button);
+
 	QVBoxLayout* harmonics_window_layout = new QVBoxLayout (_harmonics_window);
-	harmonics_window_layout->setMargin (Config::DialogMargin);
+	harmonics_window_layout->setMargin (Config::WindowMargin);
 	harmonics_window_layout->setSpacing (Config::Spacing);
 	harmonics_window_layout->addWidget (new StyledBackground (harmonics_label, _harmonics_window, 2));
 	harmonics_window_layout->addWidget (_harmonics_widget);
 	harmonics_window_layout->addWidget (new StyledBackground (harmonic_phases_label, _harmonics_window, 2));
 	harmonics_window_layout->addWidget (_harmonic_phases_widget);
+	harmonics_window_layout->addLayout (harmonics_window_buttons_layout);
 
 	// Save standard button colors:
 	_std_button_bg = _harmonics_resets[0]->paletteBackgroundColor();
@@ -652,6 +669,16 @@ PartWidget::update_phase_marker()
 	_base_wave_plot->plot_shape();
 	_final_wave_plot->set_phase_marker_position (pos);
 	_final_wave_plot->plot_shape();
+}
+
+
+void
+PartWidget::reset_all_harmonics()
+{
+	for (QSlider* s: _harmonics_sliders)
+		static_cast<Slider*> (s)->reset();
+	for (QSlider* s: _harmonic_phases_sliders)
+		static_cast<Slider*> (s)->reset();
 }
 
 

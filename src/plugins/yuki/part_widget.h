@@ -100,6 +100,12 @@ class PartWidget:
 	update_phase_marker();
 
 	/**
+	 * Reset all harmonics to default values.
+	 */
+	void
+	reset_all_harmonics();
+
+	/**
 	 * Update widgets deps (enable/disable, etc.)
 	 *
 	 */
@@ -196,6 +202,7 @@ class PartWidget:
 	Buttons				_harmonic_phases_resets;
 	QWidget*			_harmonics_widget;
 	QWidget*			_harmonic_phases_widget;
+	QPushButton*		_harmonics_reset_button;
 	QDialog*			_harmonics_window;
 
 	// Pitchbend/transposition:
