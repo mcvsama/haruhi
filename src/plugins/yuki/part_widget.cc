@@ -26,6 +26,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/application/services.h>
 #include <haruhi/widgets/knob.h>
+#include <haruhi/widgets/plot_frame.h>
 #include <haruhi/dsp/modulated_wave.h>
 #include <haruhi/dsp/translated_wave.h>
 #include <haruhi/dsp/scaled_wave.h>
@@ -127,27 +128,19 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	// Wave plots:
 
-	QFrame* base_plot_frame = new QFrame (this);
-	base_plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
-	base_plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	_base_wave_plot = new Haruhi::WavePlot (base_plot_frame);
+	_base_wave_plot = new Haruhi::WavePlot (this);
 	_base_wave_plot->set_phase_marker_enabled (true);
-	QToolTip::add (_base_wave_plot, "Base wave");
-	QVBoxLayout* base_plot_frame_layout = new QVBoxLayout (base_plot_frame);
-	base_plot_frame_layout->setMargin (0);
-	base_plot_frame_layout->setSpacing (Config::Spacing);
-	base_plot_frame_layout->addWidget (_base_wave_plot);
 
-	QFrame* harmonics_plot_frame = new QFrame (this);
-	harmonics_plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
-	harmonics_plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	_final_wave_plot = new Haruhi::WavePlot (harmonics_plot_frame);
+	Haruhi::PlotFrame* base_plot_frame = new Haruhi::PlotFrame (this);
+	base_plot_frame->set_widget (_base_wave_plot);
+	QToolTip::add (base_plot_frame, "Base wave");
+
+	_final_wave_plot = new Haruhi::WavePlot (this);
 	_final_wave_plot->set_phase_marker_enabled (true);
-	QToolTip::add (_final_wave_plot, "Output wave (with harmonics, modulation, auto-scaled, etc.)");
-	QVBoxLayout* harmonics_plot_frame_layout = new QVBoxLayout (harmonics_plot_frame);
-	harmonics_plot_frame_layout->setMargin (0);
-	harmonics_plot_frame_layout->setSpacing (Config::Spacing);
-	harmonics_plot_frame_layout->addWidget (_final_wave_plot);
+
+	Haruhi::PlotFrame* final_plot_frame = new Haruhi::PlotFrame (this);
+	final_plot_frame->set_widget (_final_wave_plot);
+	QToolTip::add (final_plot_frame, "Output wave (with harmonics, modulation, auto-scaled, etc.)");
 
 	// Shorthand link to part params:
 	Params::Part* pp = _part->part_params();
@@ -439,7 +432,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	panel_layout->addWidget (show_harmonics, 0, 8, 1, 2);
 	panel_layout->addWidget (group2, 1, 10, 3, 1);
 	panel_layout->addWidget (base_plot_frame, 1, 0, 1, 2);
-	panel_layout->addWidget (harmonics_plot_frame, 1, 2, 1, 2);
+	panel_layout->addWidget (final_plot_frame, 1, 2, 1, 2);
 	panel_layout->addWidget (_knob_volume, 1, 4);
 	panel_layout->addWidget (_knob_panorama, 1, 5);
 	panel_layout->addWidget (_knob_velocity_sens, 1, 6);

@@ -95,6 +95,9 @@ class ControllerParam: public Param<int>
 	ControllerParam&
 	operator= (ControllerParam const& other);
 
+	/**
+	 * Return Adapter object. Never returns nullptr.
+	 */
 	Adapter*
 	adapter() noexcept;
 

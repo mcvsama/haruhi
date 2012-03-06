@@ -31,6 +31,7 @@
 #include <haruhi/lib/controller.h>
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/widgets/dial_control.h>
+#include <haruhi/widgets/wave_plot.h>
 
 
 namespace Haruhi {
@@ -45,6 +46,18 @@ class KnobProperties: public QDialog
 {
 	Q_OBJECT
 
+	class CurveWave: public DSP::Wave
+	{
+	  public:
+		CurveWave (Knob* knob);
+
+		Sample
+		operator() (Sample phase, Sample frequency) const noexcept;
+
+	  private:
+		Knob* _knob;
+	};
+
   public:
 	KnobProperties (Knob* knob, QWidget* parent);
 
@@ -58,11 +71,16 @@ class KnobProperties: public QDialog
 	void
 	limit_max_updated();
 
+	void
+	update_plot();
+
   private:
 	Knob*		_knob;
 	QSpinBox*	_curve_spinbox;
 	QSpinBox*	_user_limit_min_spinbox;
 	QSpinBox*	_user_limit_max_spinbox;
+	WavePlot*	_curve_plot;
+	CurveWave	_curve_wave;
 };
 
 
@@ -343,6 +361,23 @@ class Knob:
 	QMenu*				_connect_menu;
 	QMenu*				_disconnect_menu;
 };
+
+
+inline
+KnobProperties::CurveWave::CurveWave (Knob* knob):
+	Wave (true),
+	_knob (knob)
+{
+}
+
+
+inline Sample
+KnobProperties::CurveWave::operator() (Sample phase, Sample) const noexcept
+{
+	ControllerParam::Adapter const* adapter = _knob->param()->adapter();
+	return renormalize (adapter->forward_normalized (phase),
+						static_cast<float> (adapter->hard_limit_min), static_cast<float> (adapter->hard_limit_max), -1.0f, 1.0f);
+}
 
 
 inline float

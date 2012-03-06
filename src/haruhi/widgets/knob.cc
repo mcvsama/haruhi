@@ -38,6 +38,7 @@
 #include <haruhi/session/unit_bay.h>
 #include <haruhi/utility/atomic.h>
 #include <haruhi/utility/numeric.h>
+#include <haruhi/widgets/plot_frame.h>
 
 // Local:
 #include "knob.h"
@@ -47,7 +48,8 @@ namespace Haruhi {
 
 KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	QDialog (parent),
-	_knob (knob)
+	_knob (knob),
+	_curve_wave (knob)
 {
 	setCaption ("Knob properties");
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -60,6 +62,7 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	curve_spinbox->set_detached (true);
 	curve_spinbox->setValue (a->curve * 1000.0);
 	curve_spinbox->setFixedWidth (80);
+	QObject::connect (curve_spinbox, SIGNAL (valueChanged (int)), this, SLOT (update_plot()));
 	_curve_spinbox = curve_spinbox;
 
 	QLabel* range_min_label = new QLabel ("Range minimum:", this);
@@ -69,6 +72,7 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	user_limit_min_spinbox->setFixedWidth (80);
 	user_limit_min_spinbox->set_volume_scale (knob->volume_scale(), knob->volume_scale_exp());
 	QObject::connect (user_limit_min_spinbox, SIGNAL (valueChanged (int)), this, SLOT (limit_min_updated()));
+	QObject::connect (user_limit_min_spinbox, SIGNAL (valueChanged (int)), this, SLOT (update_plot()));
 	_user_limit_min_spinbox = user_limit_min_spinbox;
 
 	QLabel* range_max_label = new QLabel ("Range maximum:", this);
@@ -78,7 +82,14 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	user_limit_max_spinbox->setFixedWidth (80);
 	user_limit_max_spinbox->set_volume_scale (knob->volume_scale(), knob->volume_scale_exp());
 	QObject::connect (user_limit_max_spinbox, SIGNAL (valueChanged (int)), this, SLOT (limit_max_updated()));
+	QObject::connect (user_limit_max_spinbox, SIGNAL (valueChanged (int)), this, SLOT (update_plot()));
 	_user_limit_max_spinbox = user_limit_max_spinbox;
+
+	_curve_plot = new WavePlot (this);
+	_curve_plot->assign_wave (&_curve_wave, true, true, false);
+
+	PlotFrame* plot_frame = new PlotFrame (this);
+	plot_frame->set_widget (_curve_plot);
 
 	QPushButton* accept_button = new QPushButton ("&Ok", this);
 	accept_button->setDefault (true);
@@ -91,12 +102,14 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 
 	QGridLayout* grid_layout = new QGridLayout();
 	grid_layout->setSpacing (Config::Spacing);
-	grid_layout->addWidget (curve_label, 0, 0, Qt::AlignLeft);
-	grid_layout->addWidget (range_min_label, 1, 0, Qt::AlignLeft);
-	grid_layout->addWidget (range_max_label, 2, 0, Qt::AlignLeft);
-	grid_layout->addWidget (_curve_spinbox, 0, 1, Qt::AlignRight);
-	grid_layout->addWidget (_user_limit_min_spinbox, 1, 1, Qt::AlignRight);
-	grid_layout->addWidget (_user_limit_max_spinbox, 2, 1, Qt::AlignRight);
+	grid_layout->addWidget (plot_frame, 0, 0, 3, 1);
+	grid_layout->addItem (new QSpacerItem (Config::Spacing, 0, QSizePolicy::Fixed, QSizePolicy::Fixed), 0, 1);
+	grid_layout->addWidget (curve_label, 0, 2, Qt::AlignLeft);
+	grid_layout->addWidget (range_min_label, 1, 2, Qt::AlignLeft);
+	grid_layout->addWidget (range_max_label, 2, 2, Qt::AlignLeft);
+	grid_layout->addWidget (_curve_spinbox, 0, 3, Qt::AlignRight);
+	grid_layout->addWidget (_user_limit_min_spinbox, 1, 3, Qt::AlignRight);
+	grid_layout->addWidget (_user_limit_max_spinbox, 2, 3, Qt::AlignRight);
 
 	QHBoxLayout* buttons_layout = new QHBoxLayout();
 	buttons_layout->setSpacing (Config::Spacing);
@@ -111,6 +124,9 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	layout->addLayout (grid_layout);
 	layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
 	layout->addLayout (buttons_layout);
+
+	layout->activate();
+	plot_frame->setFixedWidth (plot_frame->height());
 
 	// Range spinboxes: min must be strictly less than max
 	_user_limit_min_spinbox->setMaximum (_user_limit_max_spinbox->maximum() - 1);
@@ -142,6 +158,14 @@ KnobProperties::limit_max_updated()
 {
 	if (_user_limit_max_spinbox->value() <= _user_limit_min_spinbox->value())
 		_user_limit_min_spinbox->setValue (_user_limit_max_spinbox->value() - _user_limit_max_spinbox->singleStep());
+}
+
+
+void
+KnobProperties::update_plot()
+{
+	apply();
+	_curve_plot->plot_shape();
 }
 
 

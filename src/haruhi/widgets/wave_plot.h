@@ -70,7 +70,7 @@ class WavePlot: public QWidget
 	 *
 	 * \param	wave is the wave to use. 0 deassigns wave.
 	 * \param	dont_scale_grid tells to draw always the same grid
-	 * 			regardless of min/max values of wave.
+	 *			regardless of min/max values of wave.
 	 * \param	invert tells whether to invert wave plot on screen vertically.
 	 * \entry	Any thread.
 	 * \threadsafe

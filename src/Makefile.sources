@@ -370,6 +370,7 @@ SRC_HEADERS += haruhi/widgets/envelope_plot.h
 SRC_HEADERS += haruhi/widgets/frequency_response_plot.h
 SRC_HEADERS += haruhi/widgets/knob.h
 SRC_HEADERS += haruhi/widgets/level_meter.h
+SRC_HEADERS += haruhi/widgets/plot_frame.h
 SRC_HEADERS += haruhi/widgets/texture_widget.h
 SRC_HEADERS += haruhi/widgets/wave_plot.h
 
@@ -379,6 +380,7 @@ SRC_SOURCES += haruhi/widgets/envelope_plot.cc
 SRC_SOURCES += haruhi/widgets/frequency_response_plot.cc
 SRC_SOURCES += haruhi/widgets/knob.cc
 SRC_SOURCES += haruhi/widgets/level_meter.cc
+SRC_SOURCES += haruhi/widgets/plot_frame.cc
 SRC_SOURCES += haruhi/widgets/texture_widget.cc
 SRC_SOURCES += haruhi/widgets/wave_plot.cc
 
