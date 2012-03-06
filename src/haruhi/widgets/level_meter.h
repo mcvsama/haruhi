@@ -28,6 +28,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/numeric.h>
+#include <haruhi/utility/atomic.h>
 
 
 namespace Haruhi {
@@ -111,7 +112,7 @@ class LevelMeter: public QWidget
 	// Current meter value:
 	float				_sample;
 	float				_sample_prev;
-	float				_peak;
+	Atomic<float>		_peak;
 	int					_peak_decounter;
 	float				_decay_speed;
 	int					_fps;

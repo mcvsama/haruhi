@@ -84,7 +84,7 @@ class EnvelopePlot: public QWidget
 	 * \entry	Any thread.
 	 */
 	DSP::Envelope*
-	envelope() const { return _envelope; }
+	envelope() const { return _envelope.load(); }
 
 	/**
 	 * Sets editable mode of the plot.
@@ -164,26 +164,26 @@ class EnvelopePlot: public QWidget
 	customEvent (QEvent* event);
 
   private:
-	unsigned int		_sample_rate;
-	QPixmap				_double_buffer;
-	bool				_force_repaint;
-	bool				_last_enabled_state;
-	DSP::Envelope*		_envelope;
-	QSize				_prev_size;
-	bool				_editable;
-	float				_max_segment_time; // in seconds
+	unsigned int			_sample_rate;
+	QPixmap					_double_buffer;
+	bool					_force_repaint;
+	bool					_last_enabled_state;
+	Atomic<DSP::Envelope*>	_envelope;
+	QSize					_prev_size;
+	bool					_editable;
+	float					_max_segment_time; // in seconds
 	// True when mouse is over the plot:
-	bool				_hovered;
+	bool					_hovered;
 	// Mouse position over the plot:
-	QPoint				_mouse_pos;
+	QPoint					_mouse_pos;
 	// Index of active/dragged point or -1 if none:
-	int					_active_point_index;
-	int					_hovered_point_index;
+	int						_active_point_index;
+	int						_hovered_point_index;
 	// Samples number for active point in envelope:
-	int					_active_point_samples;
-	float				_active_point_value;
-	bool				_dragging;
-	QPoint				_drag_start_pos;
+	int						_active_point_samples;
+	float					_active_point_value;
+	bool					_dragging;
+	QPoint					_drag_start_pos;
 };
 
 } // namespace Haruhi

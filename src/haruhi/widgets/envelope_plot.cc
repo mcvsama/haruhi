@@ -74,7 +74,7 @@ EnvelopePlot::~EnvelopePlot()
 void
 EnvelopePlot::assign_envelope (DSP::Envelope* envelope)
 {
-	atomic (_envelope) = envelope;
+	_envelope.store (envelope);
 }
 
 
@@ -83,12 +83,12 @@ EnvelopePlot::set_active_point (int index)
 {
 	if (index == -1)
 		_active_point_index = index;
-	else if (index >= 0 && index < static_cast<int> (_envelope->points().size()))
+	else if (index >= 0 && index < static_cast<int> (_envelope.load()->points().size()))
 	{
 		_active_point_index = index;
 		// We'll be altering length of previous point and value of the current:
-		_active_point_samples = index > 0 ? _envelope->points()[index - 1].samples : 0;
-		_active_point_value = _envelope->points()[index].value;
+		_active_point_samples = index > 0 ? _envelope.load()->points()[index - 1].samples : 0;
+		_active_point_value = _envelope.load()->points()[index].value;
 
 		_force_repaint = true;
 		update();
@@ -143,7 +143,7 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 		if (w > 1 && h > 1)
 		{
 			QColor grid_color = isEnabled() ? QColor (0xd7, 0xd7, 0xd7) : QColor (0xe0, 0xe0, 0xe0);
-			DSP::Envelope::Points& points = _envelope->points();
+			DSP::Envelope::Points& points = _envelope.load()->points();
 
 			int sum_samples = 0;
 			int sustain_sample = 0;
@@ -151,7 +151,7 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 			unsigned int i = 0;
 			for (DSP::Envelope::Point& p: points)
 			{
-				if (_envelope->sustain_point() == i)
+				if (_envelope.load()->sustain_point() == i)
 				{
 					sustain_sample = sum_samples;
 					sustain_value = p.value;
@@ -372,8 +372,8 @@ EnvelopePlot::mouseMoveEvent (QMouseEvent* event)
 			const float new_value = std::max (0.0f, std::min (1.0f, _active_point_value + 1.0f * (_drag_start_pos - _mouse_pos).y() / height()));
 			// Don't allow moving first point horizontally:
 			if (_active_point_index > 0)
-				_envelope->points()[_active_point_index - 1].samples = new_samples;
-			_envelope->points()[_active_point_index].value = new_value;
+				_envelope.load()->points()[_active_point_index - 1].samples = new_samples;
+			_envelope.load()->points()[_active_point_index].value = new_value;
 			// Emit signal:
 			emit envelope_updated();
 		}
