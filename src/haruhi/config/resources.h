@@ -153,6 +153,10 @@ small_font();
 		HARUHI_CONFIG_HAS_ICON_16 (filter_highshelf, "filter-highshelf.png");
 		HARUHI_CONFIG_HAS_ICON_16 (main, "main.png");
 		HARUHI_CONFIG_HAS_ICON_16 (parts, "parts.png");
+		HARUHI_CONFIG_HAS_ICON_16 (dialog_ok, "dialog-ok.png");
+		HARUHI_CONFIG_HAS_ICON_16 (dialog_ok_apply, "dialog-ok-apply.png");
+		HARUHI_CONFIG_HAS_ICON_16 (dialog_cancel, "dialog-cancel.png");
+		HARUHI_CONFIG_HAS_ICON_16 (clear_list, "clear-list.png");
 
 #undef HARUHI_CONFIG_HAS_ICON_16
 	} // namespace Icons16

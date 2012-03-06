@@ -211,11 +211,11 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_harmonics_window->setWindowTitle (QString ("Part %1: Harmonics & Phases").arg (_part->id()));
 
 	// Reset all harmonics:
-	_harmonics_reset_button = new QPushButton ("Clear all harmonics and phases", _harmonics_window);
+	_harmonics_reset_button = new QPushButton (Resources::Icons16::clear_list(), "Clear all harmonics and phases", _harmonics_window);
 	QObject::connect (_harmonics_reset_button, SIGNAL (clicked()), this, SLOT (reset_all_harmonics()));
 
 	// Close harmonics button:
-	QPushButton* close_harmonics_button = new QPushButton ("Close", _harmonics_window);
+	QPushButton* close_harmonics_button = new QPushButton (Resources::Icons16::dialog_ok(), "Close", _harmonics_window);
 	close_harmonics_button->setDefault (true);
 	QObject::connect (close_harmonics_button, SIGNAL (clicked()), _harmonics_window, SLOT (accept()));
 
