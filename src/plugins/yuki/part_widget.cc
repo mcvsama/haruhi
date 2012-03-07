@@ -130,6 +130,8 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	_base_wave_plot = new Haruhi::WavePlot (this);
 	_base_wave_plot->set_phase_marker_enabled (true);
+	_base_wave_plot->set_closed_ring (true);
+	_base_wave_plot->set_filled_wave (true);
 
 	Haruhi::PlotFrame* base_plot_frame = new Haruhi::PlotFrame (this);
 	base_plot_frame->set_widget (_base_wave_plot);
@@ -137,6 +139,8 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	_final_wave_plot = new Haruhi::WavePlot (this);
 	_final_wave_plot->set_phase_marker_enabled (true);
+	_final_wave_plot->set_closed_ring (true);
+	_final_wave_plot->set_filled_wave (true);
 
 	Haruhi::PlotFrame* final_plot_frame = new Haruhi::PlotFrame (this);
 	final_plot_frame->set_widget (_final_wave_plot);

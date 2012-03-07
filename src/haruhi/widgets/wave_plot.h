@@ -114,6 +114,23 @@ class WavePlot: public QWidget
 	void
 	set_phase_marker_position (float position);
 
+	/**
+	 * Enable/disable painting first and last samples on last and first
+	 * position, respectively.
+	 *
+	 * Disabled by default.
+	 */
+	void
+	set_closed_ring (bool enabled);
+
+	/**
+	 * Enable/disable drawing filled polygon for values > 0 and < abs(x).
+	 *
+	 * Disabled by default.
+	 */
+	void
+	set_filled_wave (bool enabled);
+
   protected:
 	void
 	resizeEvent (QResizeEvent*);
@@ -150,6 +167,8 @@ class WavePlot: public QWidget
 	bool				_invert;
 	bool				_phase_enabled;
 	float				_phase_position;
+	bool				_closed_ring;
+	bool				_filled_wave;
 };
 
 
@@ -171,6 +190,20 @@ inline void
 WavePlot::set_phase_marker_position (float position)
 {
 	_phase_position = position;
+}
+
+
+inline void
+WavePlot::set_closed_ring (bool enabled)
+{
+	_closed_ring = enabled;
+}
+
+
+inline void
+WavePlot::set_filled_wave (bool enabled)
+{
+	_filled_wave = enabled;
 }
 
 } // namespace Haruhi

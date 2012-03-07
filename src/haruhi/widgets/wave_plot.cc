@@ -44,7 +44,9 @@ WavePlot::WavePlot (QWidget* parent, const char* name):
 	_dont_scale_grid (false),
 	_invert (false),
 	_phase_enabled (false),
-	_phase_position (0.0f)
+	_phase_position (0.0f),
+	_closed_ring (false),
+	_filled_wave (false)
 {
 	configure_widget();
 }
@@ -61,7 +63,9 @@ WavePlot::WavePlot (DSP::Wave* wave, QWidget* parent, const char* name):
 	_dont_scale_grid (false),
 	_invert (false),
 	_phase_enabled (false),
-	_phase_position (0.0f)
+	_phase_position (0.0f),
+	_closed_ring (false),
+	_filled_wave (false)
 {
 	configure_widget();
 	assign_wave (wave, false, false);
@@ -148,6 +152,7 @@ WavePlot::paintEvent (QPaintEvent* paint_event)
 				shape_polygon << point;
 			}
 			_samples_mutex.unlock();
+
 			shape_polygon << QPointF (n, shape_polygon[n-1].y());
 			shape_polygon << QPointF (n, h / 2);
 			shape_polygon << QPointF (-1, h / 2);
@@ -171,12 +176,16 @@ WavePlot::paintEvent (QPaintEvent* paint_event)
 				painter.drawLine (0, h / 2 + (h / 2 / grid_denominator), w, h / 2 + (h / 2 / grid_denominator));
 			}
 
-			// Draw polygon:
 			painter.translate (0, 0.5f);
 			painter.setRenderHint (QPainter::Antialiasing, true);
-			painter.setPen (Qt::NoPen);
-			painter.setBrush (isEnabled() ? QColor (0xf1, 0xf4, 0xff, 0x7f) : QColor (0xfb, 0xfb, 0xfb, 0x7f));
-			painter.drawPolygon (shape_polygon);
+
+			// Draw polygon:
+			if (_filled_wave)
+			{
+				painter.setPen (Qt::NoPen);
+				painter.setBrush (isEnabled() ? QColor (0xf1, 0xf4, 0xff, 0x7f) : QColor (0xfb, 0xfb, 0xfb, 0x7f));
+				painter.drawPolygon (shape_polygon);
+			}
 
 			// Draw shape line:
 			painter.setPen (QPen (isEnabled() ? QColor (0, 0, 0) : QColor (0xca, 0xca, 0xca), 1.0, Qt::SolidLine));
@@ -230,14 +239,16 @@ WavePlot::resample_wave()
 			_denominator = 1.0;
 			int n = _samples.size();
 			float inverter = _invert ? -1.0f : 1.0f;
-			for (int x = 0; x < n - 1; ++x)
+			int const m = _closed_ring ? n - 1 : n;
+			for (int x = 0; x < m; ++x)
 			{
 				_samples[x] = inverter * (*_wave)(1.0f * x / n, 0);
 				_denominator = std::max (_denominator, std::abs (_samples[x]));
 			}
 			// Since wave(0.0) should be the same as wave(1.0), we'll use wave(0.0)
-			// for the last sample:
-			_samples[n-1] = inverter * (*_wave)(0.0f, 0);
+			// for the last sample, but only if this feature is enabled (closed ring):
+			if (_closed_ring)
+				_samples[n - 1] = inverter * (*_wave)(0.0f, 0);
 		}
 		_to_repaint_buffer = true;
 	}

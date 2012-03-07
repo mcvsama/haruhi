@@ -87,6 +87,7 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 
 	_curve_plot = new WavePlot (this);
 	_curve_plot->assign_wave (&_curve_wave, true, true, false);
+	_curve_plot->set_phase_marker_enabled (true);
 
 	PlotFrame* plot_frame = new PlotFrame (this);
 	plot_frame->set_widget (_curve_plot);
@@ -131,6 +132,8 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	// Range spinboxes: min must be strictly less than max
 	_user_limit_min_spinbox->setMaximum (_user_limit_max_spinbox->maximum() - 1);
 	_user_limit_max_spinbox->setMinimum (_user_limit_min_spinbox->minimum() + 1);
+
+	update_plot();
 }
 
 
@@ -142,6 +145,19 @@ KnobProperties::apply()
 	_knob->controller_proxy()->param()->adapter()->user_limit_min = _user_limit_min_spinbox->value();
 	_knob->controller_proxy()->param()->adapter()->user_limit_max = _user_limit_max_spinbox->value();
 	_knob->controller_proxy()->set_absolute_value (value);
+}
+
+
+void
+KnobProperties::update_plot()
+{
+	apply();
+	ControllerParam* param = _knob->controller_proxy()->param();
+	_curve_plot->set_phase_marker_position (renormalize (param->adapter()->reverse (param->get()),
+														 static_cast<float> (param->minimum()),
+														 static_cast<float> (param->maximum()),
+														 0.0f, 1.0f));
+	_curve_plot->plot_shape();
 }
 
 
@@ -158,14 +174,6 @@ KnobProperties::limit_max_updated()
 {
 	if (_user_limit_max_spinbox->value() <= _user_limit_min_spinbox->value())
 		_user_limit_min_spinbox->setValue (_user_limit_max_spinbox->value() - _user_limit_max_spinbox->singleStep());
-}
-
-
-void
-KnobProperties::update_plot()
-{
-	apply();
-	_curve_plot->plot_shape();
 }
 
 
@@ -329,12 +337,15 @@ Knob::reset()
 void
 Knob::configure()
 {
-	KnobProperties* dialog = new KnobProperties (this, this);
-	if (dialog->exec() == KnobProperties::Accepted)
+	_knob_properties = new KnobProperties (this, this);
+	if (_knob_properties->exec() == KnobProperties::Accepted)
 	{
-		dialog->apply();
+		_knob_properties->apply();
 		read_config();
 	}
+	//TODO restore original settings if user clicked Rejected
+	//TODO add icons to OK and Cancel
+	_knob_properties = nullptr;
 }
 
 
@@ -342,8 +353,9 @@ void
 Knob::initialize (QString const& label, float shown_min, float shown_max, int shown_decimals, int step)
 {
 	_prevent_recursion = false;
-	_connect_signal_mapper = 0;
-	_disconnect_signal_mapper = 0;
+	_connect_signal_mapper = nullptr;
+	_disconnect_signal_mapper = nullptr;
+	_knob_properties = nullptr;
 
 	int const hard_limit_min = controller_proxy()->param()->adapter()->hard_limit_min;
 	int const hard_limit_max = controller_proxy()->param()->adapter()->hard_limit_max;
@@ -396,6 +408,9 @@ Knob::update_widgets()
 	palette.setColor (QPalette::Active, QPalette::WindowText, learning() ? QColor (0x00, 0x11, 0xff) : _std_text_color);
 	palette.setColor (QPalette::Inactive, QPalette::WindowText, learning() ? QColor (0x00, 0x11, 0xff) : _std_text_color);
 	_label->setPalette (palette);
+	// If KnobProperties is opened, update it about current value, too:
+	if (_knob_properties)
+		_knob_properties->update_plot();
 	update();
 }
 

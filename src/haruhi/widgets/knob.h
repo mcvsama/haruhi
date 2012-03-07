@@ -64,15 +64,19 @@ class KnobProperties: public QDialog
 	void
 	apply();
 
+  public slots:
+	/**
+	 * Update plot depending on current knob state.
+	 */
+	void
+	update_plot();
+
   private slots:
 	void
 	limit_min_updated();
 
 	void
 	limit_max_updated();
-
-	void
-	update_plot();
 
   private:
 	Knob*		_knob;
@@ -354,6 +358,7 @@ class Knob:
 	QColor				_std_text_color;
 
 	// Widgets:
+	KnobProperties*		_knob_properties;
 	QLabel*				_label;
 	DialControl*		_dial_control;
 	SpinBox*			_spin_box;
