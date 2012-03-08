@@ -241,7 +241,6 @@ SRC_HEADERS += haruhi/graph/port.h
 SRC_HEADERS += haruhi/graph/ports.h
 SRC_HEADERS += haruhi/graph/port_group.h
 SRC_HEADERS += haruhi/graph/predicates.h
-SRC_HEADERS += haruhi/graph/predicates.tcc
 SRC_HEADERS += haruhi/graph/unit.h
 
 SRC_SOURCES += haruhi/graph/audio_backend.cc
