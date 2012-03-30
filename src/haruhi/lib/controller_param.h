@@ -318,7 +318,7 @@ ControllerParam::step() const noexcept
 inline void
 ControllerParam::set_from_event (float value)
 {
-	set (_adapter.denormalize (value));
+	set (_adapter.forward (_adapter.denormalize (value)));
 }
 
 
