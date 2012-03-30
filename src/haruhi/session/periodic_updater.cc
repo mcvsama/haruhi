@@ -67,18 +67,16 @@ PeriodicUpdater::~PeriodicUpdater()
 void
 PeriodicUpdater::schedule (Receiver* receiver)
 {
-	_set_mutex.lock();
+	Mutex::Lock lock (_set_mutex);
 	_set.insert (receiver);
-	_set_mutex.unlock();
 }
 
 
 void
 PeriodicUpdater::forget (Receiver* receiver)
 {
-	_set_mutex.lock();
+	Mutex::Lock lock (_set_mutex);
 	_set.erase (receiver);
-	_set_mutex.unlock();
 }
 
 
@@ -87,10 +85,10 @@ PeriodicUpdater::timeout()
 {
 	Set copy;
 
-	_set_mutex.lock();
-	copy = _set;
-	_set.clear();
-	_set_mutex.unlock();
+	_set_mutex.synchronize ([&] {
+		copy = _set;
+		_set.clear();
+	});
 
 	for (auto w: copy)
 		w->periodic_update();

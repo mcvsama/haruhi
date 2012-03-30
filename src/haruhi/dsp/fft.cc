@@ -55,12 +55,11 @@ FFT::Forward::Forward (Vector& vector) noexcept:
 	_source (vector),
 	_target (vector)
 {
-	FFT::_plan_mutex.synchronize ([&]() noexcept {
-		_plan = fftw_plan_dft_1d (vector.size(),
-								  reinterpret_cast<fftw_complex*> (vector.data()),
-								  reinterpret_cast<fftw_complex*> (vector.data()),
-								  FFTW_FORWARD, FFTW_ESTIMATE);
-	});
+	Mutex::Lock lock (FFT::_plan_mutex);
+	_plan = fftw_plan_dft_1d (vector.size(),
+							  reinterpret_cast<fftw_complex*> (vector.data()),
+							  reinterpret_cast<fftw_complex*> (vector.data()),
+							  FFTW_FORWARD, FFTW_ESTIMATE);
 }
 
 
@@ -70,20 +69,18 @@ FFT::Forward::Forward (Vector& source, Vector& target) noexcept:
 {
 	assert (source.size() == target.size());
 
-	FFT::_plan_mutex.synchronize ([&]() noexcept {
-		_plan = fftw_plan_dft_1d (source.size(),
-								  reinterpret_cast<fftw_complex*> (source.data()),
-								  reinterpret_cast<fftw_complex*> (target.data()),
-								  FFTW_FORWARD, FFTW_ESTIMATE);
-	});
+	Mutex::Lock lock (FFT::_plan_mutex);
+	_plan = fftw_plan_dft_1d (source.size(),
+							  reinterpret_cast<fftw_complex*> (source.data()),
+							  reinterpret_cast<fftw_complex*> (target.data()),
+							  FFTW_FORWARD, FFTW_ESTIMATE);
 }
 
 
 FFT::Forward::~Forward() noexcept
 {
-	FFT::_plan_mutex.synchronize ([&]() noexcept {
-		fftw_destroy_plan (_plan);
-	});
+	Mutex::Lock lock (FFT::_plan_mutex);
+	fftw_destroy_plan (_plan);
 }
 
 
@@ -98,12 +95,11 @@ FFT::Inverse::Inverse (Vector& vector) noexcept:
 	_source (vector),
 	_target (vector)
 {
-	FFT::_plan_mutex.synchronize ([&]() noexcept {
-		_plan = fftw_plan_dft_1d (vector.size(),
-								  reinterpret_cast<fftw_complex*> (vector.data()),
-								  reinterpret_cast<fftw_complex*> (vector.data()),
-								  FFTW_BACKWARD, FFTW_ESTIMATE);
-	});
+	Mutex::Lock lock (FFT::_plan_mutex);
+	_plan = fftw_plan_dft_1d (vector.size(),
+							  reinterpret_cast<fftw_complex*> (vector.data()),
+							  reinterpret_cast<fftw_complex*> (vector.data()),
+							  FFTW_BACKWARD, FFTW_ESTIMATE);
 }
 
 
@@ -113,20 +109,18 @@ FFT::Inverse::Inverse (Vector& source, Vector& target) noexcept:
 {
 	assert (source.size() == target.size());
 
-	FFT::_plan_mutex.synchronize ([&]() noexcept {
-		_plan = fftw_plan_dft_1d (source.size(),
-								  reinterpret_cast<fftw_complex*> (source.data()),
-								  reinterpret_cast<fftw_complex*> (target.data()),
-								  FFTW_BACKWARD, FFTW_ESTIMATE);
-	});
+	Mutex::Lock lock (FFT::_plan_mutex);
+	_plan = fftw_plan_dft_1d (source.size(),
+							  reinterpret_cast<fftw_complex*> (source.data()),
+							  reinterpret_cast<fftw_complex*> (target.data()),
+							  FFTW_BACKWARD, FFTW_ESTIMATE);
 }
 
 
 FFT::Inverse::~Inverse() noexcept
 {
-	FFT::_plan_mutex.synchronize ([&]() noexcept {
-		fftw_destroy_plan (_plan);
-	});
+	Mutex::Lock lock (FFT::_plan_mutex);
+	fftw_destroy_plan (_plan);
 }
 
 

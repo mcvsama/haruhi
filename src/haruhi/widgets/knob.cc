@@ -449,8 +449,7 @@ Knob::create_context_menu()
 		_disconnect_menu = _context_menu->addMenu (Resources::Icons16::disconnect(), "&Disconnect");
 
 		Graph* graph = unit_bay()->graph();
-
-		graph->lock();
+		Mutex::Lock lock (*graph);
 
 		// Connect AudioBackend:
 		QMenu* audio_backend_menu = _connect_menu->addMenu (pixmap_for_unit, QString::fromStdString (graph->audio_backend()->title()));
@@ -486,8 +485,6 @@ Knob::create_context_menu()
 
 		_connect_menu->setEnabled (!_connect_menu->isEmpty());
 		_disconnect_menu->setEnabled (!_disconnect_menu->isEmpty());
-
-		unit_bay()->graph()->unlock();
 	}
 
 	return _context_menu;
@@ -605,12 +602,11 @@ Knob::connect_port (int action_id)
 {
 	if (unit_bay())
 	{
-		unit_bay()->graph()->synchronize ([&]() {
-			ContextMenuPortMap::iterator a = _context_menu_port_map.find (action_id);
-			// FIXME If port is deleted between menu popup and action exec, connect_to() will be executed on singular object.
-			if (a != _context_menu_port_map.end())
-				a->second->connect_to (event_port());
-		});
+		Mutex::Lock lock (*unit_bay()->graph());
+		ContextMenuPortMap::iterator a = _context_menu_port_map.find (action_id);
+		// FIXME If port is deleted between menu popup and action exec, connect_to() will be executed on singular object.
+		if (a != _context_menu_port_map.end())
+			a->second->connect_to (event_port());
 	}
 }
 
@@ -620,12 +616,11 @@ Knob::disconnect_port (int action_id)
 {
 	if (unit_bay())
 	{
-		unit_bay()->graph()->synchronize ([&]() {
-			ContextMenuPortMap::iterator a = _context_menu_port_map.find (action_id);
-			// FIXME If port is deleted between menu popup and action exec, connect_to() will be executed on singular object.
-			if (a != _context_menu_port_map.end())
-				a->second->disconnect_from (event_port());
-		});
+		Mutex::Lock lock (*unit_bay()->graph());
+		ContextMenuPortMap::iterator a = _context_menu_port_map.find (action_id);
+		// FIXME If port is deleted between menu popup and action exec, connect_to() will be executed on singular object.
+		if (a != _context_menu_port_map.end())
+			a->second->disconnect_from (event_port());
 	}
 }
 
@@ -635,9 +630,8 @@ Knob::disconnect_from_all()
 {
 	if (unit_bay())
 	{
-		unit_bay()->graph()->synchronize ([&]() {
-			event_port()->disconnect();
-		});
+		Mutex::Lock lock (*unit_bay()->graph());
+		event_port()->disconnect();
 	}
 }
 

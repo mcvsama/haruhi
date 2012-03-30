@@ -32,10 +32,10 @@ OutputItem::OutputItem (Tree* parent, QString const& name):
 {
 	_transport_port = _backend->transport()->create_output (name.toStdString());
 	// Allocate new port:
-	_backend->graph()->synchronize ([&]() {
+	_backend->graph()->synchronize ([&] {
 		_port = new AudioPort (_backend, name.ascii(), Port::Input);
 	});
-	_backend->_ports_lock.synchronize ([&]() {
+	_backend->_ports_lock.synchronize ([&] {
 		_backend->_outputs[_transport_port] = this;
 	});
 	// Configure item:
@@ -47,11 +47,11 @@ OutputItem::OutputItem (Tree* parent, QString const& name):
 
 OutputItem::~OutputItem()
 {
-	_backend->_ports_lock.synchronize ([&]() {
+	_backend->_ports_lock.synchronize ([&] {
 		_backend->_outputs.erase (_transport_port);
 	});
 	_backend->transport()->destroy_port (_transport_port);
-	_backend->graph()->synchronize ([&]() {
+	_backend->graph()->synchronize ([&] {
 		delete _port;
 	});
 	// Remove itself from External ports list view:

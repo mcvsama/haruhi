@@ -201,7 +201,7 @@ Backend::data_ready()
 		return;
 	}
 
-	_ports_lock.synchronize ([&]() {
+	_ports_lock.synchronize ([&] {
 		// Use Master Volume control to adjust volume of outputs:
 		_master_volume_smoother.fill (_master_volume_smoother_buffer.begin(),
 									  _master_volume_smoother_buffer.end(),
@@ -227,7 +227,7 @@ Backend::data_ready()
 	_transport->data_ready();
 
 	// Copy data from transport to graph (input):
-	_ports_lock.synchronize ([&]() {
+	_ports_lock.synchronize ([&] {
 		_transport->lock_ports();
 		for (auto& p: _inputs)
 			if (p.second->ready())
@@ -242,20 +242,20 @@ Backend::peak_levels (LevelsMap& levels)
 {
 	levels.clear();
 
-	_ports_lock.synchronize ([&]() {
-		for (auto& p: _outputs)
-		{
-			Sample register max = 0.0f;
-			AudioPort* port = p.second->port();
-			AudioBuffer* buf = port->audio_buffer();
+	Mutex::Lock lock (_ports_lock);
 
-			for (Sample s: *buf)
-				if (std::abs (s) > max)
-					max = std::abs (s);
+	for (auto& p: _outputs)
+	{
+		Sample register max = 0.0f;
+		AudioPort* port = p.second->port();
+		AudioBuffer* buf = port->audio_buffer();
 
-			levels[port] = master_volume() * max;
-		}
-	});
+		for (Sample s: *buf)
+			if (std::abs (s) > max)
+				max = std::abs (s);
+
+		levels[port] = master_volume() * max;
+	}
 }
 
 
@@ -567,7 +567,7 @@ Backend::dummy_round()
 	const int DummyPeriodTime = 33; // ms
 	const int DummySampleRate = 48000;
 	const int DummyBufferSize = DummySampleRate / (1000.0 / DummyPeriodTime);
-	graph()->synchronize ([&]() {
+	graph()->synchronize ([&] {
 		graph()->set_sample_rate (DummySampleRate);
 		graph()->set_buffer_size (DummyBufferSize);
 	});

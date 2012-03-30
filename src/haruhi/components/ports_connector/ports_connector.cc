@@ -261,18 +261,17 @@ PortsConnector::disconnect_all_from_selected()
 		PortItem* port_item = dynamic_cast<PortItem*> (_context_item);
 		if (port_item)
 		{
-			_unit_bay->graph()->synchronize ([&]() {
-				if (port_item->treeWidget() == _ipanel->list())
-				{
-					while (!port_item->port()->back_connections().empty())
-						(*port_item->port()->back_connections().begin())->disconnect_from (port_item->port());
-				}
-				else if (port_item->treeWidget() == _opanel->list())
-				{
-					while (!port_item->port()->forward_connections().empty())
-						port_item->port()->disconnect_from (*port_item->port()->forward_connections().begin());
-				}
-			});
+			Mutex::Lock lock (*_unit_bay->graph());
+			if (port_item->treeWidget() == _ipanel->list())
+			{
+				while (!port_item->port()->back_connections().empty())
+					(*port_item->port()->back_connections().begin())->disconnect_from (port_item->port());
+			}
+			else if (port_item->treeWidget() == _opanel->list())
+			{
+				while (!port_item->port()->forward_connections().empty())
+					port_item->port()->disconnect_from (*port_item->port()->forward_connections().begin());
+			}
 		}
 	}
 }
@@ -281,26 +280,24 @@ PortsConnector::disconnect_all_from_selected()
 void
 PortsConnector::insert_unit (Unit* unit)
 {
-	_unit_bay->graph()->synchronize ([&]() {
-		unit_registered (unit);
-		for (Port* p: unit->inputs())
-			port_registered (p, unit);
-		for (Port* p: unit->outputs())
-			port_registered (p, unit);
-	});
+	Mutex::Lock lock (*_unit_bay->graph());
+	unit_registered (unit);
+	for (Port* p: unit->inputs())
+		port_registered (p, unit);
+	for (Port* p: unit->outputs())
+		port_registered (p, unit);
 }
 
 
 void
 PortsConnector::remove_unit (Unit* unit)
 {
-	_unit_bay->graph()->synchronize ([&]() {
-		for (Port* p: unit->inputs())
-			port_unregistered (p, unit);
-		for (Port* p: unit->outputs())
-			port_unregistered (p, unit);
-		unit_unregistered (unit);
-	});
+	Mutex::Lock lock (*_unit_bay->graph());
+	for (Port* p: unit->inputs())
+		port_unregistered (p, unit);
+	for (Port* p: unit->outputs())
+		port_unregistered (p, unit);
+	unit_unregistered (unit);
 }
 
 
@@ -373,14 +370,12 @@ void
 PortsConnector::graph_changed()
 {
 	remove_call_outs();
-
-	_unit_bay->graph()->synchronize ([&]() {
-		_ipanel->list()->read_units();
-		_opanel->list()->read_units();
-		_ipanel->filter()->read_units();
-		_opanel->filter()->read_units();
-		_connector->update();
-	});
+	Mutex::Lock lock (*_unit_bay->graph());
+	_ipanel->list()->read_units();
+	_opanel->list()->read_units();
+	_ipanel->filter()->read_units();
+	_opanel->filter()->read_units();
+	_connector->update();
 }
 
 
@@ -401,13 +396,12 @@ template<class Port>
 		if (oport && iport && typeid (*oport) != typeid (*iport))
 			return;
 
-		_unit_bay->graph()->synchronize ([&]() {
-			switch (operation)
-			{
-				case Private::Connect:		oport->connect_to (iport); break;
-				case Private::Disconnect:	oport->disconnect_from (iport); break;
-			}
-		});
+		Mutex::Lock lock (*_unit_bay->graph());
+		switch (operation)
+		{
+			case Private::Connect:		oport->connect_to (iport); break;
+			case Private::Disconnect:	oport->disconnect_from (iport); break;
+		}
 	}
 
 
@@ -567,17 +561,16 @@ PortsConnector::highlight_connected()
 		PortItem* oportitem = dynamic_cast<PortItem*> (oitem);
 		if (oportitem)
 		{
-			_unit_bay->graph()->synchronize ([&]() {
-				for (Port* p: oportitem->port()->forward_connections())
+			Mutex::Lock lock (*_unit_bay->graph());
+			for (Port* p: oportitem->port()->forward_connections())
+			{
+				PortItem* pi = find_port_item (p);
+				if (pi)
 				{
-					PortItem* pi = find_port_item (p);
-					if (pi)
-					{
-						pi->set_highlighted (true);
-						_highlighted_items.insert (pi);
-					}
+					pi->set_highlighted (true);
+					_highlighted_items.insert (pi);
 				}
-			});
+			}
 		}
 	}
 
@@ -587,17 +580,16 @@ PortsConnector::highlight_connected()
 		PortItem* iportitem = dynamic_cast<PortItem*> (iitem);
 		if (iportitem)
 		{
-			_unit_bay->graph()->synchronize ([&]() {
-				for (Port* p: iportitem->port()->back_connections())
+			Mutex::Lock lock (*_unit_bay->graph());
+			for (Port* p: iportitem->port()->back_connections())
+			{
+				PortItem* pi = find_port_item (p);
+				if (pi)
 				{
-					PortItem* pi = find_port_item (p);
-					if (pi)
-					{
-						pi->set_highlighted (true);
-						_highlighted_items.insert (pi);
-					}
+					pi->set_highlighted (true);
+					_highlighted_items.insert (pi);
 				}
-			});
+			}
 		}
 	}
 }

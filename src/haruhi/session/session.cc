@@ -583,16 +583,14 @@ Session::update_level_meters()
 		std::vector<AudioPort*> ports;
 
 		// Hold lock until we finish operations on Ports (sorting by name):
-		graph()->lock();
+		graph()->synchronize ([&] {
+			_audio_backend->peak_levels (levels_map);
 
-		_audio_backend->peak_levels (levels_map);
-
-		// Sort ports by name:
-		for (auto& p: levels_map)
-			ports.push_back (p.first);
-		std::sort (ports.begin(), ports.end(), AudioPort::compare_by_name);
-
-		graph()->unlock();
+			// Sort ports by name:
+			for (auto& p: levels_map)
+				ports.push_back (p.first);
+			std::sort (ports.begin(), ports.end(), AudioPort::compare_by_name);
+		});
 
 		// Update level meter widget:
 		for (unsigned int i = 0; i < std::min (ports.size(), static_cast<std::vector<AudioPort*>::size_type> (2u)); ++i)
@@ -759,18 +757,16 @@ Session::rename_session()
 void
 Session::tempo_value_changed (double new_tempo)
 {
-	graph()->lock();
+	Mutex::Lock lock (*graph());
 	graph()->set_tempo (new_tempo);
-	graph()->unlock();
 }
 
 
 void
 Session::panic_button_clicked()
 {
-	graph()->lock();
+	Mutex::Lock lock (*graph());
 	graph()->panic();
-	graph()->unlock();
 }
 
 

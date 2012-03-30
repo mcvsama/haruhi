@@ -54,10 +54,63 @@ class Mutex: private Noncopyable
 	 */
 	enum MutexType { Normal, Recursive };
 
+	/**
+	 * Lock representation for RAII-way locking. Instead of doing m.lock()
+	 * and m.unlock() or m.synchronize ([] { … }) you can just create instance
+	 * of below class and it will acquire the lock. It's released when the Lock
+	 * object is destructed.
+	 *
+	 * Beware of the behavior when exceptions are thrown: the lock is released
+	 * when exception is handled and stack is unwinded.
+	 */
+	class Lock: public Noncopyable
+	{
+	  public:
+		// Ctor. Acquire lock.
+		explicit Lock (Mutex const& mutex);
+
+		// Move ctor:
+		Lock (Lock&& other);
+
+		// Dtor. Release lock.
+		~Lock();
+
+	  private:
+		Mutex const&	_mutex;
+		bool			_owns_lock;
+	};
+
+	/**
+	 * Lock representation for RAII-way locking.
+	 * Similar to Lock, but can fail acquiring the lock.
+	 */
+	class TryLock: public Noncopyable
+	{
+	  public:
+		// Ctor. Try to acquire lock.
+		explicit TryLock (Mutex const& mutex);
+
+		// Move ctor:
+		TryLock (TryLock&& other);
+
+		// Dtor. Release lock if it was acquired.
+		~TryLock();
+
+		/**
+		 * Return true if lock has been acquired.
+		 */
+		bool
+		acquired() const;
+
+	  private:
+		Mutex const&	_mutex;
+		bool			_owns_lock;
+	};
+
   public:
 	/**
 	 * \param	mutex_kind
-	 * 			Type of mutex (Normal or Recursive).
+	 *			Type of mutex (Normal or Recursive).
 	 */
 	Mutex (MutexType = Normal) noexcept;
 
@@ -81,7 +134,7 @@ class Mutex: private Noncopyable
 	 * that locked mutex, std::invalid_argument is thrown.
 	 *
 	 * \throws	std::invalid_argument
-	 * 			When calling thread does not own the mutex.
+	 *			When calling thread does not own the mutex.
 	 */
 	void
 	unlock() const;
@@ -131,6 +184,64 @@ class RecursiveMutex: public Mutex
   public:
 	RecursiveMutex() noexcept;
 };
+
+
+inline
+Mutex::Lock::Lock (Mutex const& mutex):
+	_mutex (mutex),
+	_owns_lock (true)
+{
+	_mutex.lock();
+}
+
+
+inline
+Mutex::Lock::Lock (Lock&& other):
+	_mutex (other._mutex),
+	_owns_lock (other._owns_lock)
+{
+	other._owns_lock = false;
+}
+
+
+inline
+Mutex::Lock::~Lock()
+{
+	if (_owns_lock)
+		_mutex.unlock();
+}
+
+
+inline
+Mutex::TryLock::TryLock (Mutex const& mutex):
+	_mutex (mutex)
+{
+	_owns_lock = _mutex.try_lock();
+}
+
+
+inline
+Mutex::TryLock::TryLock (TryLock&& other):
+	_mutex (other._mutex),
+	_owns_lock (other._owns_lock)
+{
+	other._owns_lock = false;
+}
+
+
+inline
+Mutex::TryLock::~TryLock()
+{
+	if (_owns_lock)
+		_mutex.unlock();
+}
+
+
+inline bool
+Mutex::TryLock::acquired() const
+{
+	return _owns_lock;
+}
 
 
 inline void

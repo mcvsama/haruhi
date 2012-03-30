@@ -141,11 +141,10 @@ Thread::callback (void* arg)
 	Thread *k = reinterpret_cast<Thread*> (arg);
 	k->_started.store (true);
 	k->set_sched();
-	k->_wait.synchronize ([&]() {
-		k->_finished.store (false);
-		k->run();
-		k->_finished.store (true);
-	});
+	Mutex::Lock lock (k->_wait);
+	k->_finished.store (false);
+	k->run();
+	k->_finished.store (true);
 	return 0;
 }
 

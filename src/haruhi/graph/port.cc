@@ -209,9 +209,8 @@ Port::learned_connection (EventBackend::EventTypes event_types, EventPort* learn
 {
 	if (graph() && graph() == learned_port->graph())
 	{
-		graph()->synchronize ([&]() {
-			learned_port->connect_to (this);
-		});
+		Mutex::Lock lock (*graph());
+		learned_port->connect_to (this);
 	}
 	// Emit signal:
 	learned_connection_signal (event_types, learned_port);

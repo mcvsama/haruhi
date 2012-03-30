@@ -74,7 +74,7 @@ BugFuzzer::process()
 void
 BugFuzzer::connect_ports()
 {
-	graph()->lock();
+	Mutex::Lock lock (*graph());
 	for (int i = 0; i < EventPortsNum; ++i)
 	{
 		_event_ports[i]->disconnect();
@@ -97,7 +97,6 @@ BugFuzzer::connect_ports()
 found:
 		;
 	}
-	graph()->unlock();
 }
 
 

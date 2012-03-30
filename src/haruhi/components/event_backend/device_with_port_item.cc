@@ -34,7 +34,7 @@ DeviceWithPortItem::DeviceWithPortItem (Backend* p_backend, Tree* parent, Device
 	_transport_port = backend()->transport()->create_input (device->name().toStdString());
 	backend()->_inputs[_transport_port] = this;
 	// Allocate port group:
-	backend()->graph()->synchronize ([&]() {
+	backend()->graph()->synchronize ([&] {
 		_port_group = new PortGroup (backend()->graph(), device->name().toStdString());
 	});
 	// Ready for handling events:
@@ -51,7 +51,7 @@ DeviceWithPortItem::~DeviceWithPortItem()
 	// TODO lock for _inputs map:
 	backend()->_inputs.erase (_transport_port);
 	backend()->transport()->destroy_port (_transport_port);
-	backend()->graph()->synchronize ([&]() {
+	backend()->graph()->synchronize ([&] {
 		delete _port_group;
 	});
 }
@@ -69,7 +69,7 @@ DeviceWithPortItem::update_name()
 {
 	_transport_port->rename (name().toStdString());
 	// Update group name:
-	backend()->graph()->synchronize ([&]() {
+	backend()->graph()->synchronize ([&] {
 		_port_group->set_name (name().toStdString());
 	});
 }

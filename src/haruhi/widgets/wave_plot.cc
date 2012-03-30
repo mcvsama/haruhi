@@ -80,13 +80,12 @@ WavePlot::~WavePlot()
 void
 WavePlot::assign_wave (DSP::Wave* wave, bool dont_scale_wave, bool dont_scale_grid, bool invert)
 {
-	_samples_mutex.lock();
+	Mutex::Lock lock (_samples_mutex);
 	_wave = wave;
 	_wave_is_immutable = wave && wave->immutable();
 	_dont_scale_wave = dont_scale_wave;
 	_dont_scale_grid = dont_scale_grid;
 	_invert = invert;
-	_samples_mutex.unlock();
 }
 
 
@@ -229,7 +228,7 @@ WavePlot::paintEvent (QPaintEvent* paint_event)
 void
 WavePlot::resample_wave()
 {
-	_samples_mutex.lock();
+	Mutex::Lock lock (_samples_mutex);
 	if (_wave)
 	{
 		// Don't bother if wave is not immutable.
@@ -252,7 +251,6 @@ WavePlot::resample_wave()
 		}
 		_to_repaint_buffer = true;
 	}
-	_samples_mutex.unlock();
 }
 
 

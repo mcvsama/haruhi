@@ -47,7 +47,7 @@ Unit::~Unit()
 {
 	free_id (id());
 	// Prevent processing:
-	_processing_mutex.lock();
+	Mutex::Lock lock (_processing_mutex);
 	// Check if unit is properly disabled when destroyed:
 	assert (!enabled(), "disable unit before deletion");
 	assert (!graph(), "unregister unit before deletion");
@@ -71,7 +71,6 @@ Unit::~Unit()
 		}
 		assert (_inputs.empty() && _outputs.empty(), ("delete all ports before deleting unit (" + ports + ")").c_str());
 	}
-	_processing_mutex.unlock();
 }
 
 
@@ -84,15 +83,11 @@ Unit::sync()
 	// Check if we can acquire processing lock. If not, unit
 	// is disabled - don't wait for it.
 	// This prevents disabling unit when it's being processed.
-	if (_processing_mutex.try_lock())
+	Mutex::TryLock lock (_processing_mutex);
+	if (lock.acquired() && !_synced && _enabled)
 	{
-		// Process:
-		if (!_synced && _enabled)
-		{
-			_synced = true;
-			this->process();
-		}
-		_processing_mutex.unlock();
+		_synced = true;
+		this->process();
 	}
 }
 
@@ -101,9 +96,8 @@ void
 Unit::disable() noexcept
 {
 	// Wait for processing end:
-	_processing_mutex.synchronize ([&]() noexcept {
-		_enabled = false;
-	});
+	Mutex::Lock lock (_processing_mutex);
+	_enabled = false;
 }
 
 
@@ -152,12 +146,11 @@ Unit::clear_outputs()
 void
 Unit::graph_updated()
 {
-	graph()->synchronize ([&]() {
-		for (Port* p: _inputs)
-			p->graph_updated();
-		for (Port*p: _outputs)
-			p->graph_updated();
-	});
+	Mutex::Lock lock (*graph());
+	for (Port* p: _inputs)
+		p->graph_updated();
+	for (Port*p: _outputs)
+		p->graph_updated();
 }
 
 

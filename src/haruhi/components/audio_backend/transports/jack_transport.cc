@@ -310,9 +310,8 @@ JackTransport::c_process (jack_nframes_t)
 int
 JackTransport::c_sample_rate_change (jack_nframes_t sample_rate)
 {
-	backend()->graph()->synchronize ([&]() {
-		backend()->graph()->set_sample_rate (sample_rate);
-	});
+	Mutex::Lock (*backend()->graph());
+	backend()->graph()->set_sample_rate (sample_rate);
 	return 0;
 }
 
@@ -325,9 +324,8 @@ JackTransport::c_buffer_size_change (jack_nframes_t buffer_size)
 	for (JackPort* p: _ports)
 		p->buffer()->resize (buffer_size);
 	unlock_ports();
-	backend()->graph()->synchronize ([&]() {
-		backend()->graph()->set_buffer_size (buffer_size);
-	});
+	Mutex::Lock (*backend()->graph());
+	backend()->graph()->set_buffer_size (buffer_size);
 	return 0;
 }
 

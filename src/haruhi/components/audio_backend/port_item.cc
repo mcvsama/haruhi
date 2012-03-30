@@ -65,9 +65,8 @@ void
 PortItem::update_name()
 {
 	_transport_port->rename (name().toStdString());
-	_backend->graph()->synchronize ([&]() {
-		_port->set_name (name().toStdString());
-	});
+	Mutex::Lock lock (*_backend->graph());
+	_port->set_name (name().toStdString());
 }
 
 } // namespace AudioBackendImpl

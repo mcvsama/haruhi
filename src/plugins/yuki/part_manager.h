@@ -230,10 +230,8 @@ class PartManager:
 inline unsigned int
 PartManager::parts_number() const noexcept
 {
-	_parts_mutex.lock();
-	unsigned int k = _parts.size();
-	_parts_mutex.unlock();
-	return k;
+	Mutex::Lock lock (_parts_mutex);
+	return _parts.size();
 }
 
 

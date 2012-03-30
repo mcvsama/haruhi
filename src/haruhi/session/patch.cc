@@ -431,7 +431,7 @@ Patch::save_state (QDomElement& element) const
 
 	QDomElement connections = element.ownerDocument().createElement ("connections");
 	ConnSet conn_set;
-	graph()->synchronize ([&]() {
+	graph()->synchronize ([&] {
 		conn_set.insert_units (this->units().begin(), this->units().end());
 		conn_set.insert_unit (session()->graph()->audio_backend());
 		conn_set.insert_unit (session()->graph()->event_backend());
@@ -477,13 +477,12 @@ Patch::load_state (QDomElement const& element)
 	if (!connections.isNull())
 	{
 		ConnSet conn_set;
-		graph()->synchronize ([&]() {
-			conn_set.insert_units (this->units().begin(), this->units().end());
-			conn_set.insert_unit (session()->graph()->audio_backend());
-			conn_set.insert_unit (session()->graph()->event_backend());
-			conn_set.load_state (connections);
-			conn_set.load();
-		});
+		Mutex::Lock lock (*graph());
+		conn_set.insert_units (this->units().begin(), this->units().end());
+		conn_set.insert_unit (session()->graph()->audio_backend());
+		conn_set.insert_unit (session()->graph()->event_backend());
+		conn_set.load_state (connections);
+		conn_set.load();
 	}
 }
 
