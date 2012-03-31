@@ -50,8 +50,23 @@ template<class tValueType>
 		void
 		set_max (ValueType max) noexcept;
 
+		/**
+		 * Return maximum() - minimum().
+		 */
 		ValueType
 		extent() const noexcept;
+
+		/**
+		 * Swap minimum and maximum values.
+		 */
+		void
+		flip();
+
+		/**
+		 * Return a copy with swapped minimum and maximum values.
+		 */
+		Range
+		flipped() const;
 
 	  private:
 		ValueType	_min;
@@ -112,6 +127,22 @@ template<class T>
 	Range<T>::extent() const noexcept
 	{
 		return _max - _min;
+	}
+
+
+template<class T>
+	void
+	Range<T>::flip()
+	{
+		std::swap (_min, _max);
+	}
+
+
+template<class T>
+	Range<T>
+	Range<T>::flipped() const
+	{
+		return Range { _max, _min };
 	}
 
 #endif

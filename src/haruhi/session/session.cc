@@ -910,7 +910,7 @@ Session::customEvent (QEvent* e)
 		return;
 	e->accept();
 	if (_audio_backend)
-		meter_panel()->master_volume()->setValue (renormalize (ue->value, 0.0, 1.0, Session::MeterPanel::MinVolume, Session::MeterPanel::MaxVolume));
+		meter_panel()->master_volume()->setValue (renormalize (ue->value, 0.0f, 1.0f, Session::MeterPanel::MinVolume, Session::MeterPanel::MaxVolume));
 }
 
 

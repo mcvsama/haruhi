@@ -36,22 +36,40 @@ ControllerParam::Adapter::Adapter (Range<int> limit, int center_value) noexcept:
 int
 ControllerParam::Adapter::encurve (int in) const noexcept
 {
-	float power = curve < 0
-		? renormalize (curve, -1.0f, 0.0f, 0.4f, 1.0f)
-		: renormalize (curve, 0.0f, +1.0f, 1.0f, 2.5f);
-	return roundf (renormalize (std::pow (std::max (+0.0f, renormalize (in, 1.0f * hard_limit.min(), 1.0f * hard_limit.max(), 0.0f, 1.0f)), power),
-								{ 0.0f, 1.0f }, hard_limit));
+	Range<float> hard_range (hard_limit.min(), _center);
+	Range<float> temp_range { 1.0f, 0.0f };
+	if (in >= _center)
+	{
+		hard_range = Range<float> (_center, hard_limit.max());
+		temp_range.flip();
+	}
+	float const power = (curve < 0)
+		? renormalize (curve, -1.0f, +0.0f, 0.4f, 1.0f)
+		: renormalize (curve, +0.0f, +1.0f, 1.0f, 2.5f);
+	float const a = renormalize (in, hard_range, temp_range);
+	float const b = std::pow (std::max (0.0f, a), power);
+	float const c = renormalize (b, temp_range, hard_range);
+	return roundf (c);
 }
 
 
 int
 ControllerParam::Adapter::decurve (int in) const noexcept
 {
-	float power = curve < 0
-		? renormalize (curve, -1.0f, 0.0f, 0.4f, 1.0f)
-		: renormalize (curve, 0.0f, +1.0f, 1.0f, 2.5f);
-	return roundf (renormalize (std::pow (renormalize (in, 1.0f * hard_limit.min(), 1.0f * hard_limit.max(), 0.0f, 1.0f), 1.0f / power),
-								{ 0.0f, 1.0f }, hard_limit));
+	Range<float> hard_range (hard_limit.min(), _center);
+	Range<float> temp_range { 1.0f, 0.0f };
+	if (in >= _center)
+	{
+		hard_range = Range<float> (_center, hard_limit.max());
+		temp_range.flip();
+	}
+	float const power = (curve < 0)
+		? renormalize (curve, -1.0f, +0.0f, 0.4f, 1.0f)
+		: renormalize (curve, +0.0f, +1.0f, 1.0f, 2.5f);
+	float const a = renormalize (in, hard_range, temp_range);
+	float const b = std::pow (a, 1.0f / power);
+	float const c = renormalize (b, temp_range, hard_range);
+	return roundf (c);
 }
 
 

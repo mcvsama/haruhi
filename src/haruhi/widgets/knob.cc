@@ -154,9 +154,7 @@ KnobProperties::update_plot()
 	apply();
 	ControllerParam* param = _knob->controller_proxy()->param();
 	_curve_plot->set_phase_marker_position (renormalize (param->adapter()->reverse (param->get()),
-														 static_cast<float> (param->minimum()),
-														 static_cast<float> (param->maximum()),
-														 0.0f, 1.0f));
+														 param->range(), { 0.0f, 1.0f }));
 	_curve_plot->plot_shape();
 }
 

@@ -91,7 +91,7 @@ class LevelMeter: public QWidget
 	static float
 	curve (float value)
 	{
-		return 1.0 + 0.4 * std::sin (renormalize (value, 0.0, 1.0, 0.0, M_PI));
+		return 1.0f + 0.4f * std::sin (renormalize (value, 0.0f, 1.0f, 0.0f, M_PI));
 	}
 
   private:
