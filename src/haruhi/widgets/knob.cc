@@ -58,7 +58,7 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	ControllerParam::Adapter* a = _knob->controller_proxy()->param()->adapter();
 
 	QLabel* curve_label = new QLabel ("Response curve:", this);
-	Knob::SpinBox* curve_spinbox = new Knob::SpinBox (this, _knob, -1000, 1000, -1.0, 1.0, 1, 100);
+	Knob::SpinBox* curve_spinbox = new Knob::SpinBox (this, _knob, { -1000, 1000 }, { -1.0, 1.0 }, 1, 100);
 	curve_spinbox->set_detached (true);
 	curve_spinbox->setValue (a->curve * 1000.0);
 	curve_spinbox->setFixedWidth (80);
@@ -66,9 +66,9 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	_curve_spinbox = curve_spinbox;
 
 	QLabel* range_min_label = new QLabel ("Range minimum:", this);
-	Knob::SpinBox* user_limit_min_spinbox = new Knob::SpinBox (this, _knob, a->hard_limit_min, a->hard_limit_max, s->shown_min(), s->shown_max(), s->shown_decimals(), s->singleStep());
+	Knob::SpinBox* user_limit_min_spinbox = new Knob::SpinBox (this, _knob, a->hard_limit, s->shown_range(), s->shown_decimals(), s->singleStep());
 	user_limit_min_spinbox->set_detached (true);
-	user_limit_min_spinbox->setValue (a->user_limit_min);
+	user_limit_min_spinbox->setValue (a->user_limit.min());
 	user_limit_min_spinbox->setFixedWidth (80);
 	user_limit_min_spinbox->set_volume_scale (knob->volume_scale(), knob->volume_scale_exp());
 	QObject::connect (user_limit_min_spinbox, SIGNAL (valueChanged (int)), this, SLOT (limit_min_updated()));
@@ -76,9 +76,9 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	_user_limit_min_spinbox = user_limit_min_spinbox;
 
 	QLabel* range_max_label = new QLabel ("Range maximum:", this);
-	Knob::SpinBox* user_limit_max_spinbox = new Knob::SpinBox (this, _knob, a->hard_limit_min, a->hard_limit_max, s->shown_min(), s->shown_max(), s->shown_decimals(), s->singleStep());
+	Knob::SpinBox* user_limit_max_spinbox = new Knob::SpinBox (this, _knob, a->hard_limit, s->shown_range(), s->shown_decimals(), s->singleStep());
 	user_limit_max_spinbox->set_detached (true);
-	user_limit_max_spinbox->setValue (a->user_limit_max);
+	user_limit_max_spinbox->setValue (a->user_limit.max());
 	user_limit_max_spinbox->setFixedWidth (80);
 	user_limit_max_spinbox->set_volume_scale (knob->volume_scale(), knob->volume_scale_exp());
 	QObject::connect (user_limit_max_spinbox, SIGNAL (valueChanged (int)), this, SLOT (limit_max_updated()));
@@ -142,8 +142,8 @@ KnobProperties::apply()
 {
 	int value = _knob->param()->get();
 	_knob->controller_proxy()->param()->adapter()->curve = _curve_spinbox->value() / 1000.0;
-	_knob->controller_proxy()->param()->adapter()->user_limit_min = _user_limit_min_spinbox->value();
-	_knob->controller_proxy()->param()->adapter()->user_limit_max = _user_limit_max_spinbox->value();
+	_knob->controller_proxy()->param()->adapter()->user_limit.set_min (_user_limit_min_spinbox->value());
+	_knob->controller_proxy()->param()->adapter()->user_limit.set_max (_user_limit_max_spinbox->value());
 	_knob->controller_proxy()->set_absolute_value (value);
 }
 
@@ -177,18 +177,17 @@ KnobProperties::limit_max_updated()
 }
 
 
-Knob::SpinBox::SpinBox (QWidget* parent, Knob* knob, int user_limit_min, int user_limit_max, float shown_min, float shown_max, int shown_decimals, int step):
+Knob::SpinBox::SpinBox (QWidget* parent, Knob* knob, Range<int> user_limit, Range<float> shown_range, int shown_decimals, int step):
 	QSpinBox (parent),
 	_knob (knob),
-	_shown_min (shown_min),
-	_shown_max (shown_max),
+	_shown_range (shown_range),
 	_shown_decimals (shown_decimals),
 	_detached (false),
 	_volume_scale (false)
 {
-	_validator = new QDoubleValidator (shown_min, shown_max, shown_decimals, this);
-	QSpinBox::setMinimum (user_limit_min);
-	QSpinBox::setMaximum (user_limit_max);
+	_validator = new QDoubleValidator (_shown_range.min(), _shown_range.max(), shown_decimals, this);
+	QSpinBox::setMinimum (user_limit.min());
+	QSpinBox::setMaximum (user_limit.max());
 	QSpinBox::setSingleStep (step);
 	set_narrow (false);
 }
@@ -216,9 +215,8 @@ Knob::SpinBox::textFromValue (int value) const
 {
 	if (_volume_scale)
 	{
-		int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy()->param()->adapter()->hard_limit_min;
-		int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy()->param()->adapter()->hard_limit_max;
-		double x = static_cast<double> (value - hard_limit_min) / static_cast<double> (hard_limit_max - hard_limit_min);
+		Range<int> const hard_limit = _detached ? Range<int> {minimum(), maximum()} : _knob->controller_proxy()->param()->adapter()->hard_limit;
+		double x = static_cast<double> (value - hard_limit.min()) / static_cast<double> (hard_limit.extent());
 		return QString ("%1").arg (20.0 * std::log10 (std::pow (x, _volume_scale_exp)), 0, 'f', 1);
 	}
 	else
@@ -231,9 +229,8 @@ Knob::SpinBox::valueFromText (QString const& string) const
 {
 	if (_volume_scale)
 	{
-		int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy()->param()->adapter()->hard_limit_min;
-		int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy()->param()->adapter()->hard_limit_max;
-		return std::pow (std::pow (10.0, string.toFloat() / 20.0), 1.0 / _volume_scale_exp) * static_cast<double> (hard_limit_max - hard_limit_min);
+		Range<int> const hard_limit = _detached ? Range<int> {minimum(), maximum()} : _knob->controller_proxy()->param()->adapter()->hard_limit;
+		return std::pow (std::pow (10.0, string.toFloat() / 20.0), 1.0 / _volume_scale_exp) * static_cast<double> (hard_limit.extent());
 	}
 	else
 		return float_to_int (string.toFloat());
@@ -243,10 +240,8 @@ Knob::SpinBox::valueFromText (QString const& string) const
 float
 Knob::SpinBox::int_to_float (int x) const
 {
-	int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy()->param()->adapter()->hard_limit_min;
-	int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy()->param()->adapter()->hard_limit_max;
-
-	float f = renormalize (x, hard_limit_min, hard_limit_max, _shown_min, _shown_max);
+	Range<int> const hard_limit = _detached ? Range<int> {minimum(), maximum()} : _knob->controller_proxy()->param()->adapter()->hard_limit;
+	float f = renormalize (x, hard_limit, _shown_range);
 	if (f < 0.0 && f > 0.5 * -std::pow (0.1, _shown_decimals))
 		f = 0.0;
 	return f;
@@ -256,19 +251,17 @@ Knob::SpinBox::int_to_float (int x) const
 int
 Knob::SpinBox::float_to_int (float y) const
 {
-	int const hard_limit_min = _detached ? minimum() : _knob->controller_proxy()->param()->adapter()->hard_limit_min;
-	int const hard_limit_max = _detached ? maximum() : _knob->controller_proxy()->param()->adapter()->hard_limit_max;
-
-	return renormalize (y, _shown_min, _shown_max, hard_limit_min, hard_limit_max);
+	Range<int> const hard_limit = _detached ? Range<int> {minimum(), maximum()} : _knob->controller_proxy()->param()->adapter()->hard_limit;
+	return renormalize (y, _shown_range, hard_limit);
 }
 
 
 Knob::Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param,
-			QString const& label, float shown_min, float shown_max, int step, int shown_decimals):
+			QString const& label, Range<float> shown_range, int step, int shown_decimals):
 	QFrame (parent),
 	Controller (event_port, controller_param)
 {
-	initialize (label, shown_min, shown_max, shown_decimals, step);
+	initialize (label, shown_range, shown_decimals, step);
 }
 
 
@@ -276,16 +269,16 @@ Knob::Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_
 	QFrame (parent),
 	Controller (event_port, controller_param)
 {
-	initialize (label, controller_param->shown_min(), controller_param->shown_max(), controller_param->shown_decimals(), controller_param->step());
+	initialize (label, controller_param->shown_range(), controller_param->shown_decimals(), controller_param->step());
 }
 
 
 Knob::Knob (QWidget* parent, ControllerProxy* controller_proxy,
-			QString const& label, float shown_min, float shown_max, int step, int shown_decimals):
+			QString const& label, Range<float> shown_range, int step, int shown_decimals):
 	QFrame (parent),
 	Controller (controller_proxy)
 {
-	initialize (label, shown_min, shown_max, shown_decimals, step);
+	initialize (label, shown_range, shown_decimals, step);
 }
 
 
@@ -294,15 +287,15 @@ Knob::Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& l
 	Controller (controller_proxy)
 {
 	ControllerParam* controller_param = controller_proxy->param();
-	initialize (label, controller_param->shown_min(), controller_param->shown_max(), controller_param->shown_decimals(), controller_param->step());
+	initialize (label, controller_param->shown_range(), controller_param->shown_decimals(), controller_param->step());
 }
 
 
 void
 Knob::read_config()
 {
-	_spin_box->setMinimum (controller_proxy()->param()->adapter()->user_limit_min);
-	_spin_box->setMaximum (controller_proxy()->param()->adapter()->user_limit_max);
+	_spin_box->setMinimum (controller_proxy()->param()->adapter()->user_limit.min());
+	_spin_box->setMaximum (controller_proxy()->param()->adapter()->user_limit.max());
 	schedule_for_update();
 }
 
@@ -350,25 +343,23 @@ Knob::configure()
 
 
 void
-Knob::initialize (QString const& label, float shown_min, float shown_max, int shown_decimals, int step)
+Knob::initialize (QString const& label, Range<float> shown_range, int shown_decimals, int step)
 {
 	_prevent_recursion = false;
 	_connect_signal_mapper = nullptr;
 	_disconnect_signal_mapper = nullptr;
 	_knob_properties = nullptr;
 
-	int const hard_limit_min = controller_proxy()->param()->adapter()->hard_limit_min;
-	int const hard_limit_max = controller_proxy()->param()->adapter()->hard_limit_max;
-	int const user_limit_min = controller_proxy()->param()->adapter()->user_limit_min;
-	int const user_limit_max = controller_proxy()->param()->adapter()->user_limit_max;
+	Range<int> const& hard_limit = controller_proxy()->param()->adapter()->hard_limit;
+	Range<int> const& user_limit = controller_proxy()->param()->adapter()->user_limit;
 
 	setFrameStyle (QFrame::StyledPanel | QFrame::Raised);
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-	_dial_control = new DialControl (this, hard_limit_min, hard_limit_max, controller_proxy()->param()->adapter()->reverse (controller_proxy()->param()->get()));
+	_dial_control = new DialControl (this, hard_limit, controller_proxy()->param()->adapter()->reverse (controller_proxy()->param()->get()));
 	_dial_control->set_ring_visible (true);
-	_dial_control->set_zero_value (controller_proxy()->param()->zero_value());
-	_spin_box = new SpinBox (this, this, user_limit_min, user_limit_max, shown_min, shown_max, shown_decimals, step);
+	_dial_control->set_center_value (controller_proxy()->param()->center_value());
+	_spin_box = new SpinBox (this, this, user_limit, shown_range, shown_decimals, step);
 	_label = new QLabel (label, this);
 	_label->setBuddy (_spin_box);
 	_label->setTextFormat (Qt::PlainText);

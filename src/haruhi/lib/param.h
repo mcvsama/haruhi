@@ -24,6 +24,7 @@
 #include <haruhi/utility/numeric.h>
 #include <haruhi/utility/signal.h>
 #include <haruhi/utility/saveable_state.h>
+#include <haruhi/utility/range.h>
 
 
 namespace Haruhi {
@@ -69,7 +70,7 @@ template<class tType>
 	  public:
 		Param (const char* name = "") noexcept;
 
-		Param (Type const& minimum, Type const& maximum, Type const& default_value, const char* name) noexcept;
+		Param (Range<Type> range, Type default_value, const char* name) noexcept;
 
 		Param (Param const& other) noexcept;
 
@@ -95,6 +96,9 @@ template<class tType>
 
 		Type
 		maximum() const noexcept;
+
+		Range<Type> const&
+		range() const noexcept;
 
 		Type
 		default_value() const noexcept;
@@ -132,8 +136,7 @@ template<class tType>
 		Signal::Emiter1<Type> on_change_with_value;
 
 	  private:
-		Type			_minimum;
-		Type			_maximum;
+		Range<Type>		_range;
 		Type			_default_value;
 		Atomic<Type>	_value;
 		std::string		_name;
@@ -142,8 +145,7 @@ template<class tType>
 
 template<class tType>
 	Param<tType>::Param (const char* name) noexcept:
-		_minimum (0),
-		_maximum (0),
+		_range (0, 0),
 		_default_value (0),
 		_value (0),
 		_name (name)
@@ -152,9 +154,8 @@ template<class tType>
 
 template<class tType>
 	inline
-	Param<tType>::Param (Type const& minimum, Type const& maximum, Type const& default_value, const char* name) noexcept:
-		_minimum (minimum),
-		_maximum (maximum),
+	Param<tType>::Param (Range<Type> range, Type default_value, const char* name) noexcept:
+		_range (range),
 		_default_value (default_value),
 		_value (default_value),
 		_name (name)
@@ -172,8 +173,7 @@ template<class tType>
 	inline Param<tType>&
 	Param<tType>::operator= (Param const& other) noexcept
 	{
-		_minimum = other._minimum;
-		_maximum = other._maximum;
+		_range = other._range;
 		_default_value = other._default_value;
 		_value = other._value;
 		_name = other._name;
@@ -229,7 +229,7 @@ template<class tType>
 	inline tType
 	Param<tType>::minimum() const noexcept
 	{
-		return _minimum;
+		return _range.min();
 	}
 
 
@@ -237,7 +237,15 @@ template<class tType>
 	inline tType
 	Param<tType>::maximum() const noexcept
 	{
-		return _maximum;
+		return _range.max();
+	}
+
+
+template<class tType>
+	inline Range<tType> const&
+	Param<tType>::range() const noexcept
+	{
+		return _range;
 	}
 
 
@@ -261,7 +269,7 @@ template<class tType>
 	inline void
 	Param<tType>::sanitize()
 	{
-		set (bound (get(), _minimum, _maximum));
+		set (bound (get(), _range));
 	}
 
 
@@ -278,7 +286,7 @@ template<class tType>
 	inline void
 	Param<tType>::load_state (QDomElement const& parent)
 	{
-		set (bound<int> (parent.text().toInt(), minimum(), maximum()));
+		set (bound<int> (parent.text().toInt(), _range));
 		sanitize();
 	}
 

@@ -33,41 +33,37 @@
 	void get_params (Haruhi::BaseParam const**, std::size_t max_entries) const;					\
 	public:
 
-#define HARUHI_CONTROLLER_PARAM(name, min, max, deflt, zeroval, denominator)					\
+#define HARUHI_CONTROLLER_PARAM(name, min, max, deflt, centerval, denominator)					\
 	enum {																						\
 		name##Min = min,																		\
 		name##Max = max,																		\
-		name##ZeroValue = zeroval,																\
+		name##CenterValue = centerval,															\
 		name##Default = deflt,																	\
 		name##Denominator = denominator,														\
 	};
 
 #define HARUHI_CONTROLLER_PARAM_CONSTRUCT(var, name, shown_decimals)							\
-	var (name##Min,																				\
-		 name##Max,																				\
+	var ({ name##Min, name##Max },																\
 		 name##Default,																			\
-		 name##ZeroValue,																		\
+		 name##CenterValue,																		\
 		 name##Denominator,																		\
 		 #name,																					\
-		 1.0f * name##Min / name##Denominator,													\
-		 1.0f * name##Max / name##Denominator,													\
+		 { 1.0f * name##Min / name##Denominator, 1.0f * name##Max / name##Denominator },		\
 		 shown_decimals,																		\
 		 (name##Max - name##Min) / 400)
 
-#define HARUHI_CONTROLLER_PARAM_CONSTRUCT_EXPLICIT(var, name, smin, smax, sdecimals, step)		\
-	var (name##Min,																				\
-		 name##Max,																				\
+#define HARUHI_CONTROLLER_PARAM_CONSTRUCT_EXPLICIT(var, name, shown_range, sdecimals, step)		\
+	var ({ name##Min, name##Max },																\
 		 name##Default,																			\
-		 name##ZeroValue,																		\
+		 name##CenterValue,																		\
 		 name##Denominator,																		\
 		 #name,																					\
-		 smin, smax, sdecimals, step)
+		 shown_range, sdecimals, step)
 
 #define HARUHI_CONTROLLER_PARAM_ADDITIONAL_ARGS(name, shown_decimals)							\
-		 1.0f * name##Min / name##Denominator,													\
-		 1.0f * name##Max / name##Denominator,													\
-		 shown_decimals,																		\
-		 (name##Max - name##Min) / 400
+		{ 1.0f * name##Min / name##Denominator, 1.0f * name##Max / name##Denominator },			\
+		shown_decimals,																			\
+		(name##Max - name##Min) / 400
 
 #define HARUHI_DEFINE_SAVEABLE_PARAMS(klass)													\
 	void																						\

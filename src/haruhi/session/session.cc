@@ -331,7 +331,7 @@ Session::MeterPanel::MeterPanel (Session* session, QWidget* parent):
 	setFrameStyle (QFrame::StyledPanel | QFrame::Raised);
 
 	_level_meters_group = new LevelMetersGroup (this);
-	_master_volume = new DialControl (this, MinVolume, MaxVolume, ZeroVolume * std::pow (attenuate_db (-3.0f), 1.0f / M_E));
+	_master_volume = new DialControl (this, { MinVolume, MaxVolume }, ZeroVolume * std::pow (attenuate_db (-3.0f), 1.0f / M_E));
 	QObject::connect (_master_volume, SIGNAL (valueChanged (int)), _session, SLOT (master_volume_changed (int)));
 	QToolTip::add (_master_volume, "Master Volume");
 

@@ -105,7 +105,7 @@ class Knob:
 	class SpinBox: public QSpinBox
 	{
 	  public:
-		SpinBox (QWidget* parent, Knob* knob, int user_limit_min, int user_limit_max, float shown_min, float shown_max, int shown_decimals, int step);
+		SpinBox (QWidget* parent, Knob* knob, Range<int> user_limit, Range<float> shown_range, int shown_decimals, int step);
 
 		/*
 		 * QSpinBox API
@@ -114,20 +114,17 @@ class Knob:
 		QValidator::State
 		validate (QString&, int&) const;
 
-		float
-		shown_min() const;
-
-		float
-		shown_max() const;
+		Range<float>
+		shown_range() const noexcept;
 
 		int
-		shown_decimals() const;
+		shown_decimals() const noexcept;
 
 		bool
-		volume_scale() const;
+		volume_scale() const noexcept;
 
 		float
-		volume_scale_exp() const;
+		volume_scale_exp() const noexcept;
 
 		void
 		set_volume_scale (bool setting, float exp = 1.0f);
@@ -162,8 +159,7 @@ class Knob:
 
 	  private:
 		Knob*				_knob;
-		float				_shown_min;
-		float				_shown_max;
+		Range<float>		_shown_range;
 		int					_shown_decimals;
 		QDoubleValidator*	_validator;
 		bool				_detached;
@@ -186,7 +182,7 @@ class Knob:
 	 * \param	shown_decimals: How many decimal digits should be shown in spinbox.
 	 */
 	Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param,
-		  QString const& label, float shown_min, float shown_max, int step, int shown_decimals);
+		  QString const& label, Range<float> shown_range, int step, int shown_decimals);
 
 	/**
 	 * Create Knob.
@@ -199,7 +195,7 @@ class Knob:
 	 * Create Knob. Use external ControllerProxy instead of own one.
 	 */
 	Knob (QWidget* parent, ControllerProxy* controller_proxy,
-		  QString const& label, float shown_min, float shown_max, int step, int shown_decimals);
+		  QString const& label, Range<float> shown_range, int step, int shown_decimals);
 
 	/**
 	 * Create Knob. Use external ControllerProxy and min/max/step/decimals params taken from the
@@ -211,13 +207,13 @@ class Knob:
 	 * Returns true if volume scale has been enabled.
 	 */
 	bool
-	volume_scale() const;
+	volume_scale() const noexcept;
 
 	/**
 	 * Returns volume scale exponent.
 	 */
 	float
-	volume_scale_exp() const;
+	volume_scale_exp() const noexcept;
 
 	/**
 	 * Show/hide label.
@@ -295,7 +291,7 @@ class Knob:
 	 * Common ctor code.
 	 */
 	void
-	initialize (QString const& label, float shown_min, float shown_max, int shown_decimals, int step);
+	initialize (QString const& label, Range<float> shown_range, int shown_decimals, int step);
 
 	void
 	update_widgets();
@@ -380,41 +376,33 @@ inline Sample
 KnobProperties::CurveWave::operator() (Sample phase, Sample) const noexcept
 {
 	ControllerParam::Adapter const* adapter = _knob->param()->adapter();
-	return renormalize (adapter->forward_normalized (phase),
-						static_cast<float> (adapter->hard_limit_min), static_cast<float> (adapter->hard_limit_max), -1.0f, 1.0f);
+	return renormalize (adapter->forward_normalized (phase), adapter->hard_limit, Range<float> {-1.0f, 1.0f});
 }
 
 
-inline float
-Knob::SpinBox::shown_min() const
+inline Range<float>
+Knob::SpinBox::shown_range() const noexcept
 {
-	return _shown_min;
-}
-
-
-inline float
-Knob::SpinBox::shown_max() const
-{
-	return _shown_max;
+	return _shown_range;
 }
 
 
 inline int
-Knob::SpinBox::shown_decimals() const
+Knob::SpinBox::shown_decimals() const noexcept
 {
 	return _shown_decimals;
 }
 
 
 inline bool
-Knob::SpinBox::volume_scale() const
+Knob::SpinBox::volume_scale() const noexcept
 {
 	return _volume_scale;
 }
 
 
 inline float
-Knob::SpinBox::volume_scale_exp() const
+Knob::SpinBox::volume_scale_exp() const noexcept
 {
 	return _volume_scale_exp;
 }
@@ -435,14 +423,14 @@ Knob::SpinBox::set_detached (bool setting)
 
 
 inline bool
-Knob::volume_scale() const
+Knob::volume_scale() const noexcept
 {
 	return _spin_box->volume_scale();
 }
 
 
 inline float
-Knob::volume_scale_exp() const
+Knob::volume_scale_exp() const noexcept
 {
 	return _spin_box->volume_scale_exp();
 }

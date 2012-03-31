@@ -30,7 +30,7 @@
 
 namespace Haruhi {
 
-DialControl::DialControl (QWidget* parent, int value_min, int value_max, int value):
+DialControl::DialControl (QWidget* parent, Range<int> value_range, int value):
 	QAbstractSlider (parent),
 	_dial_pixmap ("share/images/dial.png"),
 	_disabled_dial_pixmap ("share/images/dial:disabled.png"),
@@ -39,14 +39,14 @@ DialControl::DialControl (QWidget* parent, int value_min, int value_max, int val
 	_last_enabled_state (isEnabled()),
 	_mouse_pressed (false),
 	_ring_visible (false),
-	_zero_value (0)
+	_center_value (0)
 {
 	setWindowFlags (Qt::WRepaintNoErase);
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	setFixedSize (37, 37);
 
-	setMinimum (value_min);
-	setMaximum (value_max);
+	setMinimum (value_range.min());
+	setMaximum (value_range.max());
 	setValue (value);
 	setPageStep (1);
 	setSingleStep (1);
@@ -74,13 +74,13 @@ DialControl::paintEvent (QPaintEvent* paint_event)
 		float curr_angle = renormalize (value(), minValue(), maxValue(), -152, +152);
 		if (_ring_visible)
 		{
-			float zero_angle = renormalize (_zero_value, minValue(), maxValue(), -152, +152);
-			float span_angle = zero_angle - curr_angle;
+			float center_angle = renormalize (_center_value, minValue(), maxValue(), -152, +152);
+			float span_angle = center_angle - curr_angle;
 			QRect r = rect().adjusted (1, 1, -1, -1);
 			b.setPen (QPen (path2_color, 2));
 			b.drawArc (r, (152 + 90) * 16, -2 * 152 * 16);
 			b.setPen (QPen (path1_color, 2));
-			b.drawArc (r, (-zero_angle + 90) * 16, span_angle * 16);
+			b.drawArc (r, (-center_angle + 90) * 16, span_angle * 16);
 		}
 
 		b.setPen (QPen (indicator_color, 2));

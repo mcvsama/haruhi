@@ -20,6 +20,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/atomic.h>
+#include <haruhi/utility/range.h>
 #include <haruhi/lib/param.h>
 
 
@@ -40,7 +41,7 @@ class ControllerParam: public Param<int>
 	class Adapter
 	{
 	  public:
-		Adapter (int limit_min, int limit_max) noexcept;
+		Adapter (Range<int> limit, int center_value) noexcept;
 
 		/**
 		 * Applies forward transform. Takes input value,
@@ -77,18 +78,19 @@ class ControllerParam: public Param<int>
 		decurve (int in) const noexcept;
 
 	  public:
-		float	curve;
-		int		hard_limit_min;
-		int		hard_limit_max;
-		int		user_limit_min;
-		int		user_limit_max;
+		float		curve;
+		Range<int>	hard_limit;	// Hard limit is hardcoded limit for parameter.
+		Range<int>	user_limit;	// User limit is user-defined convenience limit.
+
+	  private:
+		int			_center;
 	};
 
   public:
 	explicit ControllerParam (const char* name = "") noexcept;
 
-	ControllerParam (int minimum, int maximum, int default_value, int zero_value, int denominator, const char* name,
-					 float shown_min = 0.0f, float shown_max = 1.0f, int shown_decimals = 1, int step = 1) noexcept;
+	ControllerParam (Range<int> range, int default_value, int center_value, int denominator, const char* name,
+					 Range<float> shown_range = Range<float> { 0.0f, 1.0f }, int shown_decimals = 1, int step = 1) noexcept;
 
 	ControllerParam (ControllerParam const& other) noexcept;
 
@@ -105,7 +107,7 @@ class ControllerParam: public Param<int>
 	adapter() const noexcept;
 
 	int
-	zero_value() const noexcept;
+	center_value() const noexcept;
 
 	int
 	denominator() const noexcept;
@@ -116,11 +118,8 @@ class ControllerParam: public Param<int>
 	float
 	to_f() const noexcept;
 
-	float
-	shown_min() const noexcept;
-
-	float
-	shown_max() const noexcept;
+	Range<float>
+	shown_range() const noexcept;
 
 	int
 	shown_decimals() const noexcept;
@@ -159,35 +158,34 @@ class ControllerParam: public Param<int>
 	load_state (QDomElement const& parent);
 
   private:
-	Adapter	_adapter;
-	int		_zero_value;
-	int		_denominator;
-	float	_1_div_denominator;
-	float	_shown_min;
-	float	_shown_max;
-	int		_shown_decimals;
-	int		_step;
+	Adapter			_adapter;
+	int				_center_value;
+	int				_denominator;
+	float			_1_div_denominator;
+	Range<float>	_shown_range;
+	int				_shown_decimals;
+	int				_step;
 };
 
 
 inline int
 ControllerParam::Adapter::forward (int in) const noexcept
 {
-	return renormalize (encurve (in), hard_limit_min, hard_limit_max, user_limit_min, user_limit_max);
+	return renormalize (encurve (in), hard_limit, user_limit);
 }
 
 
 inline int
 ControllerParam::Adapter::reverse (int in) const noexcept
 {
-	return decurve (renormalize (in, user_limit_min, user_limit_max, hard_limit_min, hard_limit_max));
+	return decurve (renormalize (in, user_limit, hard_limit));
 }
 
 
 inline int
 ControllerParam::Adapter::denormalize (float in) const noexcept
 {
-	return renormalize (in, 0.0f, 1.0f, 1.0f * hard_limit_min, 1.0f * hard_limit_max);
+	return renormalize (in, { 0.0f, 1.0f }, hard_limit);
 }
 
 
@@ -201,22 +199,21 @@ ControllerParam::Adapter::forward_normalized (float in) const noexcept
 inline
 ControllerParam::ControllerParam (const char* name) noexcept:
 	Param (name),
-	_adapter (0, 0),
+	_adapter ({ 0, 0 }, 0),
 	_denominator (1),
 	_1_div_denominator (1.0f / _denominator)
 { }
 
 
 inline
-ControllerParam::ControllerParam (int minimum, int maximum, int default_value, int zero_value, int denominator, const char* name,
-								  float shown_min, float shown_max, int shown_decimals, int step) noexcept:
-	Param (minimum, maximum, default_value, name),
-	_adapter (minimum, maximum),
-	_zero_value (zero_value),
+ControllerParam::ControllerParam (Range<int> range, int default_value, int center_value, int denominator, const char* name,
+								  Range<float> shown_range, int shown_decimals, int step) noexcept:
+	Param (range, default_value, name),
+	_adapter (range, center_value),
+	_center_value (center_value),
 	_denominator (denominator),
 	_1_div_denominator (1.0f / _denominator),
-	_shown_min (shown_min),
-	_shown_max (shown_max),
+	_shown_range (shown_range),
 	_shown_decimals (shown_decimals),
 	_step (step)
 { }
@@ -226,11 +223,10 @@ inline
 ControllerParam::ControllerParam (ControllerParam const& other) noexcept:
 	Param (other),
 	_adapter (other._adapter),
-	_zero_value (other._zero_value),
+	_center_value (other._center_value),
 	_denominator (other._denominator),
 	_1_div_denominator (other._1_div_denominator),
-	_shown_min (other._shown_min),
-	_shown_max (other._shown_max),
+	_shown_range (other._shown_range),
 	_shown_decimals (other._shown_decimals),
 	_step (other._step)
 { }
@@ -241,11 +237,10 @@ ControllerParam::operator= (ControllerParam const& other)
 {
 	Param<int>::operator= (other);
 	_adapter = other._adapter;
-	_zero_value = other._zero_value;
+	_center_value = other._center_value;
 	_denominator = other._denominator;
 	_1_div_denominator = other._1_div_denominator;
-	_shown_min = other._shown_min;
-	_shown_max = other._shown_max;
+	_shown_range = other._shown_range;
 	_shown_decimals = other._shown_decimals;
 	_step = other._step;
 	return *this;
@@ -267,9 +262,9 @@ ControllerParam::adapter() const noexcept
 
 
 inline int
-ControllerParam::zero_value() const noexcept
+ControllerParam::center_value() const noexcept
 {
-	return _zero_value;
+	return _center_value;
 }
 
 
@@ -287,17 +282,10 @@ ControllerParam::to_f() const noexcept
 }
 
 
-inline float
-ControllerParam::shown_min() const noexcept
+inline Range<float>
+ControllerParam::shown_range() const noexcept
 {
-	return _shown_min;
-}
-
-
-inline float
-ControllerParam::shown_max() const noexcept
-{
-	return _shown_max;
+	return _shown_range;
 }
 
 

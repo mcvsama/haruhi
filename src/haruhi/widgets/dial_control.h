@@ -23,6 +23,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/utility/range.h>
 
 
 namespace Haruhi {
@@ -32,7 +33,7 @@ class DialControl: public QAbstractSlider
 	Q_OBJECT
 
   public:
-	DialControl (QWidget* parent, int value_min, int value_max, int value);
+	DialControl (QWidget* parent, Range<int> value_range, int value);
 
 	/**
 	 * Enables additional value indicator - a ring drawn around
@@ -42,10 +43,10 @@ class DialControl: public QAbstractSlider
 	set_ring_visible (bool visible);
 
 	/**
-	 * Sets zero-value for ring drawn around the dial.
+	 * Sets center (neutral) value for ring drawn around the dial.
 	 */
 	void
-	set_zero_value (int value);
+	set_center_value (int value);
 
 	/**
 	 * Returns true if mouse button is pressed over a dial,
@@ -93,7 +94,7 @@ class DialControl: public QAbstractSlider
 	bool		_last_enabled_state;
 	bool		_mouse_pressed;
 	bool		_ring_visible;
-	int			_zero_value;
+	int			_center_value;
 };
 
 
@@ -105,9 +106,9 @@ DialControl::set_ring_visible (bool visible)
 
 
 inline void
-DialControl::set_zero_value (int value)
+DialControl::set_center_value (int value)
 {
-	_zero_value = value;
+	_center_value = value;
 }
 
 } // namespace Haruhi

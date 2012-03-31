@@ -21,6 +21,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/utility/range.h>
 
 // System:
 #ifdef HARUHI_SSE2
@@ -36,6 +37,13 @@ renormalize (float value, float a1, float b1, float a2, float b2) noexcept
 	float scaler = (b2 - a2) / (b1 - a1);
 	float offset = -scaler * a1 + a2;
 	return scaler * value + offset;
+}
+
+
+inline float
+renormalize (float value, Range<float> range1, Range<float> range2) noexcept
+{
+	return renormalize (value, range1.min(), range1.max(), range2.min(), range2.max());
 }
 
 
@@ -77,11 +85,27 @@ template<class Value>
 
 
 template<class Value>
+	inline void
+	limit_value (Value& value, Range<Value> range) noexcept
+	{
+		limit_value (value, range.min(), range.max());
+	}
+
+
+template<class Value>
 	inline Value
 	bound (Value value, Value min, Value max) noexcept
 	{
 		limit_value (value, min, max);
 		return value;
+	}
+
+
+template<class Value>
+	inline Value
+	bound (Value value, Range<Value> range) noexcept
+	{
+		return bound (value, range.min(), range.max());
 	}
 
 

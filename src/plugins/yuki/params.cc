@@ -30,12 +30,12 @@
 namespace Yuki {
 
 Params::Main::Main():
-	HARUHI_CONTROLLER_PARAM_CONSTRUCT_EXPLICIT (volume, Volume, -std::numeric_limits<float>::infinity(), 0.0f, 2, (VolumeMax - VolumeMin) / 500),
+	HARUHI_CONTROLLER_PARAM_CONSTRUCT_EXPLICIT (volume, Volume, Range<float> (-std::numeric_limits<float>::infinity(), 0.0f), 2, (VolumeMax - VolumeMin) / 500),
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (panorama, Panorama, 2),
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (detune, Detune, 2),
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (stereo_width, StereoWidth, 2),
-	enabled (0, 1, 1, "enabled"),
-	polyphony (0, 512, 32, "polyphony")
+	enabled ({ 0, 1 }, 1, "enabled"),
+	polyphony ({ 0, 512 }, 32, "polyphony")
 { }
 
 
@@ -53,15 +53,15 @@ Params::Filter::Filter():
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (frequency, Frequency, 2),
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (resonance, Resonance, 2),
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (gain, Gain, 2),
-	HARUHI_CONTROLLER_PARAM_CONSTRUCT_EXPLICIT (attenuation, Attenuation, -std::numeric_limits<float>::infinity(), 0.0f, 2, (AttenuationMax - AttenuationMin) / 500),
-	enabled (0, 1, 0, "enabled"),
-	type (0, 7, 0, "type"),
-	stages (1, 5, 1, "stages"),
-	limiter_enabled (0, 1, 1, "limiter_enabled")
+	HARUHI_CONTROLLER_PARAM_CONSTRUCT_EXPLICIT (attenuation, Attenuation, Range<float> (-std::numeric_limits<float>::infinity(), 0.0f), 2, (AttenuationMax - AttenuationMin) / 500),
+	enabled ({ 0, 1 }, 0, "enabled"),
+	type ({ 0, 7 }, 0, "type"),
+	stages ({ 1, 5 }, 1, "stages"),
+	limiter_enabled ({ 0, 1 }, 1, "limiter_enabled")
 {
 	frequency.adapter()->curve = 1.0;
-	frequency.adapter()->user_limit_min = 0.04 * Params::Filter::FrequencyDenominator;
-	frequency.adapter()->user_limit_max = 22.0 * Params::Filter::FrequencyDenominator;
+	frequency.adapter()->user_limit.set_min (0.04f * Params::Filter::FrequencyDenominator);
+	frequency.adapter()->user_limit.set_max (22.0f * Params::Filter::FrequencyDenominator);
 	resonance.adapter()->curve = 1.0;
 	attenuation.adapter()->curve = 1.0;
 }
@@ -81,9 +81,9 @@ HARUHI_FINISH_SAVEABLE_PARAMS_DEFINITION()
 
 Params::Operator::Operator():
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (detune, Detune, 2),
-	frequency_numerator (1, 32, 1, "frequency_numerator"),
-	frequency_denominator (1, 32, 1, "frequency_denominator"),
-	octave (-8, +8, 0, "octave")
+	frequency_numerator ({ 1, 32 }, 1, "frequency_numerator"),
+	frequency_denominator ({ 1, 32 }, 1, "frequency_denominator"),
+	octave ({ -8, +8 }, 0, "octave")
 { }
 
 
@@ -102,7 +102,7 @@ Params::Voice::Voice():
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (detune, Detune, 2),
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (pitchbend, Pitchbend, 2),
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (velocity_sens, VelocitySens, 2),
-	HARUHI_CONTROLLER_PARAM_CONSTRUCT_EXPLICIT (unison_index, UnisonIndex, UnisonIndexMin, UnisonIndexMax, 0, 1),
+	HARUHI_CONTROLLER_PARAM_CONSTRUCT_EXPLICIT (unison_index, UnisonIndex, Range<int> (UnisonIndexMin, UnisonIndexMax), 0, 1),
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (unison_spread, UnisonSpread, 2),
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (unison_init, UnisonInit, 2),
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (unison_noise, UnisonNoise, 2),
@@ -130,36 +130,37 @@ HARUHI_FINISH_SAVEABLE_PARAMS_DEFINITION()
 
 
 Params::Part::Part():
-	HARUHI_CONTROLLER_PARAM_CONSTRUCT_EXPLICIT (volume, Volume, -std::numeric_limits<float>::infinity(), 0.0f, 2, (VolumeMax - VolumeMin) / 500),
+	// TODO check with gcc-4.7 if it's possible to use { a, b } instead of Range<int> (a, b)
+	HARUHI_CONTROLLER_PARAM_CONSTRUCT_EXPLICIT (volume, Volume, Range<float> (-std::numeric_limits<float>::infinity(), 0.0f), 2, (VolumeMax - VolumeMin) / 500),
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (portamento_time, PortamentoTime, 2),
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (phase, Phase, 2),
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (noise_level, NoiseLevel, 2),
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (wave_shape, WaveShape, 2),
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (modulator_amplitude, ModulatorAmplitude, 2),
-	HARUHI_CONTROLLER_PARAM_CONSTRUCT_EXPLICIT (modulator_index, ModulatorIndex, ModulatorIndexMin, ModulatorIndexMax, 0, 1),
+	HARUHI_CONTROLLER_PARAM_CONSTRUCT_EXPLICIT (modulator_index, ModulatorIndex, Range<int> (ModulatorIndexMin, ModulatorIndexMax), 0, 1),
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (modulator_shape, ModulatorShape, 2),
-	part_enabled (0, 1, 1, "part_enabled"),
-	modulator_enabled (0, 1, 0, "modulator_enabled"),
-	wave_enabled (0, 1, 1, "wave_enabled"),
-	noise_enabled (0, 1, 0, "noise_enabled"),
-	frequency_mod_range (0, 60, 12, "frequency_mod_range"),
-	pitchbend_enabled (0, 1, 1, "pitchbend_enabled"),
-	pitchbend_up_semitones (0, 60, 2, "pitchbend_up_semitones"),
-	pitchbend_down_semitones (0, 60, 2, "pitchbend_down_semitones"),
-	transposition_semitones (-60, 60, 0, "transposition_semitones"),
-	const_portamento_time (0, 1, 1, "const_portamento_time"),
-	unison_stereo (0, 1, 1, "unison_stereo"),
-	pseudo_stereo (0, 1, 0, "pseudo_stereo"),
-	wave_type (0, 8, 0, "wave_type"),
-	modulator_type (0, 1, Haruhi::DSP::ModulatedWave::Ring, "modulator_type"),
-	modulator_wave_type (0, 3, 0, "modulator_wave_type"),
-	auto_center (0, 1, 0, "auto_center"),
-	filter_configuration (0, 1, 0, "filter_configuration")
+	part_enabled ({ 0, 1 }, 1, "part_enabled"),
+	modulator_enabled ({ 0, 1 }, 0, "modulator_enabled"),
+	wave_enabled ({ 0, 1 }, 1, "wave_enabled"),
+	noise_enabled ({ 0, 1 }, 0, "noise_enabled"),
+	frequency_mod_range ({ 0, 60 }, 12, "frequency_mod_range"),
+	pitchbend_enabled ({ 0, 1 }, 1, "pitchbend_enabled"),
+	pitchbend_up_semitones ({ 0, 60 }, 2, "pitchbend_up_semitones"),
+	pitchbend_down_semitones ({ 0, 60 }, 2, "pitchbend_down_semitones"),
+	transposition_semitones ({ -60, 60 }, 0, "transposition_semitones"),
+	const_portamento_time ({ 0, 1 }, 1, "const_portamento_time"),
+	unison_stereo ({ 0, 1 }, 1, "unison_stereo"),
+	pseudo_stereo ({ 0, 1 }, 0, "pseudo_stereo"),
+	wave_type ({ 0, 8 }, 0, "wave_type"),
+	modulator_type ({ 0, 1 }, Haruhi::DSP::ModulatedWave::Ring, "modulator_type"),
+	modulator_wave_type ({ 0, 3 }, 0, "modulator_wave_type"),
+	auto_center ({ 0, 1 }, 0, "auto_center"),
+	filter_configuration ({ 0, 1 }, 0, "filter_configuration")
 {
 	for (unsigned int i = 0; i < HarmonicsNumber; ++i)
-		harmonics[i] = Haruhi::ControllerParam (HarmonicMin, HarmonicMax, HarmonicZeroValue, HarmonicDefault, HarmonicDenominator, QString ("harmonic[%1]").arg (i).utf8());
+		harmonics[i] = Haruhi::ControllerParam ({ HarmonicMin, HarmonicMax }, HarmonicCenterValue, HarmonicDefault, HarmonicDenominator, QString ("harmonic[%1]").arg (i).utf8());
 	for (unsigned int i = 0; i < HarmonicsNumber; ++i)
-		harmonic_phases[i] = Haruhi::ControllerParam (HarmonicPhaseMin, HarmonicPhaseMax, HarmonicPhaseZeroValue, HarmonicPhaseDefault, HarmonicPhaseDenominator, QString ("harmonic-phase[%1]").arg (i).utf8());
+		harmonic_phases[i] = Haruhi::ControllerParam ({ HarmonicPhaseMin, HarmonicPhaseMax }, HarmonicPhaseCenterValue, HarmonicPhaseDefault, HarmonicPhaseDenominator, QString ("harmonic-phase[%1]").arg (i).utf8());
 	// First/base harmonic should be fully max:
 	harmonics[0].set (HarmonicMax);
 
@@ -168,15 +169,15 @@ Params::Part::Part():
 	{
 		for (unsigned int i = 0; i < 3; ++i)
 		{
-			fm_matrix[o][i] = Haruhi::ControllerParam (FrequencyModMin, FrequencyModMax, FrequencyModZeroValue, FrequencyModDefault, FrequencyModDenominator,
+			fm_matrix[o][i] = Haruhi::ControllerParam ({ FrequencyModMin, FrequencyModMax }, FrequencyModCenterValue, FrequencyModDefault, FrequencyModDenominator,
 													   QString ("fm-matrix[%1][%2]").arg (o).arg (i).utf8(), HARUHI_CONTROLLER_PARAM_ADDITIONAL_ARGS (FrequencyMod, 2));
-			am_matrix[o][i] = Haruhi::ControllerParam (AmplitudeModMin, AmplitudeModMax, AmplitudeModZeroValue, AmplitudeModDefault, AmplitudeModDenominator,
+			am_matrix[o][i] = Haruhi::ControllerParam ({ AmplitudeModMin, AmplitudeModMax }, AmplitudeModCenterValue, AmplitudeModDefault, AmplitudeModDenominator,
 													   QString ("am-matrix[%1][%2]").arg (o).arg (i).utf8(), HARUHI_CONTROLLER_PARAM_ADDITIONAL_ARGS (AmplitudeMod, 2));
 		}
 	}
 
 	portamento_time.adapter()->curve = 1.0;
-	portamento_time.adapter()->user_limit_max = 0.5f * Params::Part::PortamentoTimeDenominator;
+	portamento_time.adapter()->user_limit.set_max (0.5f * Params::Part::PortamentoTimeDenominator);
 }
 
 

@@ -24,12 +24,11 @@
 
 namespace Haruhi {
 
-ControllerParam::Adapter::Adapter (int limit_min, int limit_max) noexcept:
+ControllerParam::Adapter::Adapter (Range<int> limit, int center_value) noexcept:
 	curve (0.0f),
-	hard_limit_min (limit_min),
-	hard_limit_max (limit_max),
-	user_limit_min (limit_min),
-	user_limit_max (limit_max)
+	hard_limit (limit),
+	user_limit (limit),
+	_center (center_value)
 {
 }
 
@@ -40,8 +39,8 @@ ControllerParam::Adapter::encurve (int in) const noexcept
 	float power = curve < 0
 		? renormalize (curve, -1.0f, 0.0f, 0.4f, 1.0f)
 		: renormalize (curve, 0.0f, +1.0f, 1.0f, 2.5f);
-	return roundf (renormalize (std::pow (std::max (+0.0f, renormalize (in, 1.0f * hard_limit_min, 1.0f * hard_limit_max, 0.0f, 1.0f)), power),
-								0.0f, 1.0f, 1.0f * hard_limit_min, 1.0f * hard_limit_max));
+	return roundf (renormalize (std::pow (std::max (+0.0f, renormalize (in, 1.0f * hard_limit.min(), 1.0f * hard_limit.max(), 0.0f, 1.0f)), power),
+								{ 0.0f, 1.0f }, hard_limit));
 }
 
 
@@ -51,8 +50,8 @@ ControllerParam::Adapter::decurve (int in) const noexcept
 	float power = curve < 0
 		? renormalize (curve, -1.0f, 0.0f, 0.4f, 1.0f)
 		: renormalize (curve, 0.0f, +1.0f, 1.0f, 2.5f);
-	return roundf (renormalize (std::pow (renormalize (in, 1.0f * hard_limit_min, 1.0f * hard_limit_max, 0.0f, 1.0f), 1.0f / power),
-								0.0f, 1.0f, 1.0f * hard_limit_min, 1.0f * hard_limit_max));
+	return roundf (renormalize (std::pow (renormalize (in, 1.0f * hard_limit.min(), 1.0f * hard_limit.max(), 0.0f, 1.0f), 1.0f / power),
+								{ 0.0f, 1.0f }, hard_limit));
 }
 
 
@@ -61,8 +60,8 @@ ControllerParam::save_state (QDomElement& element) const
 {
 	Param<int>::save_state (element);
 	element.setAttribute ("curve", QString ("%1").arg (_adapter.curve, 0, 'f', 1));
-	element.setAttribute ("user-limit-min", QString ("%1").arg (_adapter.user_limit_min));
-	element.setAttribute ("user-limit-max", QString ("%1").arg (_adapter.user_limit_max));
+	element.setAttribute ("user-limit-min", QString ("%1").arg (_adapter.user_limit.min()));
+	element.setAttribute ("user-limit-max", QString ("%1").arg (_adapter.user_limit.max()));
 }
 
 
@@ -70,14 +69,14 @@ void
 ControllerParam::load_state (QDomElement const& element)
 {
 	_adapter.curve = 0.0;
-	_adapter.user_limit_min = 0;
-	_adapter.user_limit_max = 1;
+	_adapter.user_limit.set_min (0);
+	_adapter.user_limit.set_max (1);
 	if (element.hasAttribute ("curve"))
 		_adapter.curve = bound (element.attribute ("curve").toFloat(), -1.0f, 1.0f);
 	if (element.hasAttribute ("user-limit-min"))
-		_adapter.user_limit_min = bound (element.attribute ("user-limit-min").toInt(), _adapter.hard_limit_min, _adapter.hard_limit_max);
+		_adapter.user_limit.set_min (bound (element.attribute ("user-limit-min").toInt(), _adapter.hard_limit.min(), _adapter.hard_limit.max()));
 	if (element.hasAttribute ("user-limit-max"))
-		_adapter.user_limit_max = bound (element.attribute ("user-limit-max").toInt(), _adapter.hard_limit_min, _adapter.hard_limit_max);
+		_adapter.user_limit.set_max (bound (element.attribute ("user-limit-max").toInt(), _adapter.hard_limit.min(), _adapter.hard_limit.max()));
 	Param<int>::load_state (element);
 	sanitize();
 }
@@ -88,10 +87,10 @@ ControllerParam::sanitize()
 {
 	Param<int>::sanitize();
 	limit_value (_adapter.curve, -1.0f, +1.0f);
-	limit_value (_adapter.hard_limit_min, minimum(), maximum());
-	limit_value (_adapter.hard_limit_max, _adapter.hard_limit_min, maximum());
-	limit_value (_adapter.user_limit_min, minimum(), maximum());
-	limit_value (_adapter.user_limit_max, _adapter.user_limit_min, maximum());
+	_adapter.hard_limit.set_min (bound (_adapter.hard_limit.min(), range()));
+	_adapter.hard_limit.set_max (bound (_adapter.hard_limit.max(), _adapter.hard_limit.min(), maximum()));
+	_adapter.user_limit.set_min (bound (_adapter.user_limit.min(), range()));
+	_adapter.user_limit.set_max (bound (_adapter.user_limit.max(), _adapter.user_limit.min(), maximum()));
 }
 
 } // namespace Haruhi
