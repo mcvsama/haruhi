@@ -57,12 +57,15 @@ TextureWidget::paintEvent (QPaintEvent* paint_event)
 			break;
 
 		case Filling::Dotted:
+		{
 			b.fillRect (rect(), backgroundColor());
-			for (int x = 0; x < _double_buffer.size().width(); x += 10)
+			const int xstep = 8;
+			const int ystep = 7;
+			for (int x = 0; x < _double_buffer.size().width(); x += xstep)
 			{
-				for (int y = 0; y < _double_buffer.size().height(); y += 10)
+				for (int y = 0; y < _double_buffer.size().height(); y += ystep)
 				{
-					QPoint p (((y % 20 == 10) ? x : x + 5) + 3, y + 3);
+					QPoint p (((y % (2 * ystep) == ystep) ? x : x + xstep / 2) + 3, y + 3);
 					b.setPen (QPen (dark, 1));
 					b.drawPoint (p);
 					b.setPen (QPen (light, 1));
@@ -70,6 +73,7 @@ TextureWidget::paintEvent (QPaintEvent* paint_event)
 				}
 			}
 			break;
+		}
 	}
 
 	QPainter (this).drawPixmap (paint_event->rect().topLeft(), _double_buffer, _double_buffer.rect());
