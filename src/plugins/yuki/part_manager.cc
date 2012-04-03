@@ -185,7 +185,7 @@ PartManager::process()
 		if (e->event_type() == Haruhi::Event::VoiceEventType)
 		{
 			Haruhi::VoiceEvent const* voice_event = static_cast<Haruhi::VoiceEvent const*> (e.get());
-			if (enabled || voice_event->type() == Haruhi::VoiceEvent::Release || voice_event->type() == Haruhi::VoiceEvent::Drop)
+			if (enabled || voice_event->type() == Haruhi::VoiceEvent::Drop)
 				for (Part* p: _parts)
 					p->handle_voice_event (voice_event);
 		}

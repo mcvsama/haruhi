@@ -108,12 +108,10 @@ BugFuzzer::get_random_event()
 		case 0:
 		{
 			int v = rand() % 127;
-			int t = rand() % 3;
+			int t = rand() % 2;
 			Haruhi::VoiceEvent::Type type = t == 0
 				? Haruhi::VoiceEvent::Create
-				: t == 1
-					? Haruhi::VoiceEvent::Release
-					: Haruhi::VoiceEvent::Drop;
+				: Haruhi::VoiceEvent::Drop;
 			float f = Haruhi::VoiceEvent::frequency_from_key_id (v, 440.0);
 			return new Haruhi::VoiceEvent (Haruhi::Graph::now(), v, v, type, f, 1.0f * rand() / RAND_MAX);
 		}

@@ -141,13 +141,13 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 				{
 					float velocity = midi_event.note_on.velocity / 127.0f;
 					buffer.push (new VoiceControllerEvent (t, midi_event.note_on.note, midi_event.note_on.velocity / 127.0f));
-					buffer.push (new VoiceEvent (t, midi_event.note_on.note, _voice_ids[midi_event.note_on.note], VoiceEvent::Release,
+					buffer.push (new VoiceEvent (t, midi_event.note_on.note, _voice_ids[midi_event.note_on.note], VoiceEvent::Drop,
 												 VoiceEvent::frequency_from_key_id (midi_event.note_on.note, graph->master_tune()), velocity));
 				}
 
 				float velocity = midi_event.note_on.velocity / 127.0f;
 				VoiceEvent* ve = new VoiceEvent (t, midi_event.note_on.note, VoiceAuto,
-												 (midi_event.note_on.velocity == 0)? VoiceEvent::Release : VoiceEvent::Create,
+												 (midi_event.note_on.velocity == 0)? VoiceEvent::Drop : VoiceEvent::Create,
 												 VoiceEvent::frequency_from_key_id (midi_event.note_on.note, graph->master_tune()), velocity);
 				_voice_ids[midi_event.note_on.note] = ve->voice_id();
 				buffer.push (ve);
@@ -161,7 +161,7 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 			{
 				float velocity = midi_event.note_off.velocity / 127.0f;
 				buffer.push (new VoiceControllerEvent (t, midi_event.note_off.note, midi_event.note_off.velocity / 127.0f));
-				buffer.push (new VoiceEvent (t, midi_event.note_off.note, _voice_ids[midi_event.note_off.note], VoiceEvent::Release,
+				buffer.push (new VoiceEvent (t, midi_event.note_off.note, _voice_ids[midi_event.note_off.note], VoiceEvent::Drop,
 											 VoiceEvent::frequency_from_key_id (midi_event.note_off.note, graph->master_tune()), velocity));
 				_voice_ids[midi_event.note_off.note] = OmniVoice;
 				handled = true;

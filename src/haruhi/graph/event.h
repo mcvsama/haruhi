@@ -26,6 +26,7 @@
 
 namespace Haruhi {
 
+// Must be int-enum to be compatible with VoiceID.
 enum {
 	OmniKey		= -1, // All keys.
 	OmniVoice	= -1, // All voices (where applicable).
@@ -131,9 +132,8 @@ class VoiceEvent: public Event
 
   public:
 	enum Type {
-		Create,		// Create new voice
-		Release,	// Release voice
-		Drop,		// Drop voice without releasing
+		Create,		// Create new voice.
+		Drop,		// Destroy voice.
 	};
 
 	typedef float Frequency;

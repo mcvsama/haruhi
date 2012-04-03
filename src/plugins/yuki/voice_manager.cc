@@ -97,7 +97,7 @@ VoiceManager::handle_voice_event (Haruhi::VoiceEvent const* event)
 			check_polyphony_limit();
 		}
 	}
-	else if (event->type() == Haruhi::VoiceEvent::Release || event->type() == Haruhi::VoiceEvent::Drop)
+	else if (event->type() == Haruhi::VoiceEvent::Drop)
 	{
 		Voice* v = find_voice_by_id (event->voice_id());
 		if (v && v->state() == Voice::Voicing)
