@@ -16,7 +16,6 @@
 
 // Standard:
 #include <cstddef>
-#include <map>
 
 // Haruhi:
 #include <haruhi/dsp/harmonics_wave.h>

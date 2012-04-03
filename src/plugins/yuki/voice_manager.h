@@ -104,11 +104,11 @@ class VoiceManager
 	/**
 	 * Start rendering of all voices.
 	 *
-	 * This function is non-blocking. It will create a WorkUnit
-	 * and pass it to configured WorkPerformer.
+	 * This function is non-blocking. It will create WorkUnits
+	 * and pass them to configured WorkPerformer.
 	 *
 	 * Use wait_for_render() to wait until rendering is done.
-	 * Use mix_result() to mix rendered voices into given output buffers.
+	 * Use mix_rendering_result() to mix rendered voices into given output buffers.
 	 */
 	void
 	render();

@@ -19,7 +19,6 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/utility/id_allocator.h>
 #include <haruhi/plugin/plugin.h>
 #include <haruhi/plugin/plugin_factory.h>
 

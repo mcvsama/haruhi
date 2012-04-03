@@ -14,32 +14,19 @@
 // Standard:
 #include <cstddef>
 
+// Qt:
+#include <QtGui/QLayout>
+
 // Haruhi:
 #include <haruhi/config/all.h>
 
 // Local:
-#include "eg.h"
-#include "plugin.h"
+#include "key_manager.h"
 
 
-Haruhi::Plugin*
-EGFactory::create_plugin (int id, QWidget* parent)
-{
-	return new EG::Plugin (urn(), title(), id, parent);
-}
+namespace EG {
 
+KeyManager::KeyManager
 
-void
-EGFactory::destroy_plugin (Haruhi::Plugin* plugin)
-{
-	delete plugin;
-}
-
-
-const char**
-EGFactory::author_contacts() const
-{
-	static const char* table[] = { "mailto:michal@gawron.name", "xmpp:mcv@jabber.org", 0 };
-	return table;
-}
+} // namespace EG
 

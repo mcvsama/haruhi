@@ -16,84 +16,11 @@
 
 // Standard:
 #include <cstddef>
-#include <map>
-#include <set>
-
-// Qt:
-#include <QtGui/QLabel>
-#include <QtGui/QPushButton>
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/graph/event.h>
-#include <haruhi/graph/event_port.h>
 #include <haruhi/plugin/plugin.h>
 #include <haruhi/plugin/plugin_factory.h>
-#include <haruhi/session/unit_bay.h>
-#include <haruhi/utility/saveable_state.h>
-#include <haruhi/utility/id_allocator.h>
-
-// Local:
-#include "eg.h"
-
-
-class EG:
-	public Haruhi::Plugin,
-	public Haruhi::UnitBayAware,
-	public SaveableState
-{
-	Q_OBJECT
-
-  public:
-	EG (std::string const& urn, std::string const& title, int id, QWidget* parent);
-
-	virtual ~EG();
-
-	/*
-	 * Plugin implementation.
-	 */
-
-	void
-	registered();
-
-	void
-	unregistered();
-
-	void
-	process();
-
-	void
-	panic();
-
-	void
-	graph_updated();
-
-	/*
-	 * Haruhi::HasUnitBay implementation.
-	 */
-
-	void
-	set_unit_bay (Haruhi::UnitBay*);
-
-	/*
-	 * SaveableState implementation.
-	 */
-
-	void
-	save_state (QDomElement&) const;
-
-	void
-	load_state (QDomElement const&);
-
-  private:
-	QPushButton*					_muted;
-	IDAllocator						_adsr_ids;
-	IDAllocator						_lfo_ids;
-	IDAllocator						_eg_ids;
-
-	Haruhi::EventPort*				_port_keyboard;
-	Haruhi::EventPort*				_port_sustain;
-};
 
 
 class EGFactory: public Haruhi::PluginFactory
