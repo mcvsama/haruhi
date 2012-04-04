@@ -109,11 +109,11 @@ BugFuzzer::get_random_event()
 		{
 			int v = rand() % 127;
 			int t = rand() % 2;
-			Haruhi::VoiceEvent::Type type = t == 0
-				? Haruhi::VoiceEvent::Create
-				: Haruhi::VoiceEvent::Drop;
+			Haruhi::VoiceEvent::Action action= t == 0
+				? Haruhi::VoiceEvent::Action::Create
+				: Haruhi::VoiceEvent::Action::Drop;
 			float f = Haruhi::VoiceEvent::frequency_from_key_id (v, 440.0);
-			return new Haruhi::VoiceEvent (Haruhi::Graph::now(), v, v, type, f, 1.0f * rand() / RAND_MAX);
+			return new Haruhi::VoiceEvent (Haruhi::Graph::now(), v, v, action, f, 1.0f * rand() / RAND_MAX);
 		}
 		case 1:
 			return new Haruhi::ControllerEvent (Haruhi::Graph::now(), 1.0f * rand() / RAND_MAX);

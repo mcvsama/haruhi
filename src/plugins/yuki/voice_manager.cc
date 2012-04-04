@@ -75,7 +75,7 @@ VoiceManager::~VoiceManager()
 void
 VoiceManager::handle_voice_event (Haruhi::VoiceEvent const* event)
 {
-	if (event->type() == Haruhi::VoiceEvent::Create)
+	if (event->action() == Haruhi::VoiceEvent::Action::Create)
 	{
 		Haruhi::VoiceID id = event->voice_id();
 
@@ -97,7 +97,7 @@ VoiceManager::handle_voice_event (Haruhi::VoiceEvent const* event)
 			check_polyphony_limit();
 		}
 	}
-	else if (event->type() == Haruhi::VoiceEvent::Drop)
+	else if (event->action() == Haruhi::VoiceEvent::Action::Drop)
 	{
 		Voice* v = find_voice_by_id (event->voice_id());
 		if (v && v->state() == Voice::Voicing)

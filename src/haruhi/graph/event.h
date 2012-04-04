@@ -131,7 +131,7 @@ class VoiceEvent: public Event
 	USES_POOL_ALLOCATOR (VoiceEvent)
 
   public:
-	enum Type {
+	enum class Action {
 		Create,		// Create new voice.
 		Drop,		// Destroy voice.
 	};
@@ -140,7 +140,7 @@ class VoiceEvent: public Event
 	typedef ControllerEvent::Value Value;
 
   public:
-	VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Type type, Frequency frequency, Value value) noexcept;
+	VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Action action, Frequency frequency, Value value) noexcept;
 
   protected:
 	VoiceEvent (VoiceEvent const& other) noexcept;
@@ -152,8 +152,8 @@ class VoiceEvent: public Event
 	VoiceID
 	voice_id() const noexcept;
 
-	Type
-	type() const noexcept;
+	Action
+	action() const noexcept;
 
 	Frequency
 	frequency() const noexcept;
@@ -170,7 +170,7 @@ class VoiceEvent: public Event
   private:
 	KeyID			_key_id;
 	VoiceID			_voice_id;
-	Type			_type;
+	Action			_action;
 	Frequency		_frequency;
 	Value			_value;
 	static VoiceID	_last_voice_id;
@@ -284,11 +284,11 @@ ControllerEvent::clone() const
 
 
 inline
-VoiceEvent::VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Type type, Frequency frequency, Value value) noexcept:
+VoiceEvent::VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Action action, Frequency frequency, Value value) noexcept:
 	Event (VoiceEventType, timestamp),
 	_key_id (key_id),
 	_voice_id (voice_id),
-	_type (type),
+	_action (action),
 	_frequency (frequency),
 	_value (value)
 {
@@ -302,7 +302,7 @@ VoiceEvent::VoiceEvent (VoiceEvent const& other) noexcept:
 	Event (other),
 	_key_id (other._key_id),
 	_voice_id (other._voice_id),
-	_type (other._type),
+	_action (other._action),
 	_frequency (other._frequency),
 	_value (other._value)
 { }
@@ -322,10 +322,10 @@ VoiceEvent::voice_id() const noexcept
 }
 
 
-inline VoiceEvent::Type
-VoiceEvent::type() const noexcept
+inline VoiceEvent::Action
+VoiceEvent::action() const noexcept
 {
-	return _type;
+	return _action;
 }
 
 
