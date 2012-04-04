@@ -352,7 +352,7 @@ Controller::load_state (QDomElement const& element)
 void
 Controller::controller_smoothing_setup (Timestamp t, float target, float min_coeff, float max_coeff, unsigned int sample_rate)
 {
-	float dt = sample_rate * (t - _controller_smoother.prev_timestamp) / 1000.0;
+	float dt = sample_rate * (t - _controller_smoother.prev_timestamp).microseconds() / 1000.0;
 	_controller_smoother.target = target;
 	_controller_smoother.smoother.set_samples (bound (dt, min_coeff * sample_rate, max_coeff * sample_rate));
 	_controller_smoother.prev_timestamp = t;
@@ -362,7 +362,7 @@ Controller::controller_smoothing_setup (Timestamp t, float target, float min_coe
 void
 Controller::channel_pressure_smoothing_setup (Timestamp t, float target, float min_coeff, float max_coeff, unsigned int sample_rate)
 {
-	float dt = sample_rate * (t - _channel_pressure_smoother.prev_timestamp) / 1000.0;
+	float dt = sample_rate * (t - _channel_pressure_smoother.prev_timestamp).microseconds() / 1000.0;
 	_channel_pressure_smoother.target = target;
 	_channel_pressure_smoother.smoother.set_samples (bound (dt, min_coeff * sample_rate, max_coeff * sample_rate));
 	_channel_pressure_smoother.prev_timestamp = t;
@@ -372,7 +372,7 @@ Controller::channel_pressure_smoothing_setup (Timestamp t, float target, float m
 void
 Controller::key_pressure_smoothing_setup (unsigned int key, Timestamp t, float target, float min_coeff, float max_coeff, unsigned int sample_rate)
 {
-	float dt = sample_rate * (t - _key_pressure_smoother[key].prev_timestamp) / 1000.0;
+	float dt = sample_rate * (t - _key_pressure_smoother[key].prev_timestamp).microseconds() / 1000.0;
 	_key_pressure_smoother[key].target = target;
 	_key_pressure_smoother[key].smoother.set_samples (bound (dt, min_coeff * sample_rate, max_coeff * sample_rate));
 	_key_pressure_smoother[key].prev_timestamp = t;

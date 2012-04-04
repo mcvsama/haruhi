@@ -14,9 +14,6 @@
 // Standard:
 #include <cstddef>
 
-// System:
-#include <sys/time.h>
-
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/mutex.h>
@@ -135,7 +132,7 @@ void
 Graph::enter_processing_round()
 {
 	lock();
-	_timestamp = Graph::now();
+	_timestamp.touch();
 	_inside_processing_round = true;
 	_dummy_syncing = false;
 	// Wakeup all Units:
@@ -208,15 +205,6 @@ Graph::notify (Notification* notification)
 	for (Unit* u: _units)
 		u->notify (notification);
 	delete notification;
-}
-
-
-Timestamp
-Graph::now() noexcept
-{
-	struct timeval t;
-	::gettimeofday (&t, 0);
-	return t.tv_sec * 1000000 + t.tv_usec;
 }
 
 

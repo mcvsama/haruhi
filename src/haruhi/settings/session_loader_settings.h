@@ -22,6 +22,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/saveable_state.h>
+#include <haruhi/utility/timestamp.h>
 
 // Local:
 #include "settings.h"

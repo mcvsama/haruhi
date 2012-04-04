@@ -20,6 +20,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/utility/timestamp.h>
 
 
 namespace Haruhi {

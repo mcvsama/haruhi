@@ -27,7 +27,7 @@ namespace Haruhi {
 SessionLoaderSettings::RecentSession::RecentSession():
 	name(),
 	file_name(),
-	timestamp (0)
+	timestamp()
 {
 }
 
@@ -45,7 +45,7 @@ SessionLoaderSettings::RecentSession::save_state (QDomElement& element) const
 {
 	element.setAttribute ("name", name);
 	element.setAttribute ("file-name", file_name);
-	element.setAttribute ("timestamp", static_cast<qlonglong> (timestamp));
+	element.setAttribute ("timestamp", static_cast<qlonglong> (timestamp.microseconds()));
 }
 
 
@@ -54,7 +54,7 @@ SessionLoaderSettings::RecentSession::load_state (QDomElement const& element)
 {
 	name = element.attribute ("name", "<unknown name>");
 	file_name = element.attribute ("file-name", "");
-	timestamp = element.attribute ("timestamp", "0").toInt();
+	timestamp.set_epoch_microseconds (element.attribute ("timestamp", "0").toInt());
 }
 
 

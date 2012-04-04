@@ -22,6 +22,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/signal.h>
+#include <haruhi/utility/timestamp.h>
 
 // Local:
 #include "unit.h"
@@ -191,12 +192,6 @@ class Graph: public RecursiveMutex
 	 */
 	Units const&
 	units() const noexcept;
-
-	/**
-	 * Creates timestamp at the time of call.
-	 */
-	static Timestamp
-	now() noexcept;
 
 	/**
 	 * Returns true if syncing is dummy.

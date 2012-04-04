@@ -22,6 +22,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/utility/pool_allocator.h>
 #include <haruhi/utility/memory.h>
+#include <haruhi/utility/timestamp.h>
 
 
 namespace Haruhi {

@@ -33,7 +33,7 @@ BugFuzzer::BugFuzzer (std::string const& urn, std::string const& title, int id, 
 {
 	for (int i = 0; i < EventPortsNum; ++i)
 		_event_ports[i] = new Haruhi::EventPort (this, QString ("Garbage source %1").arg (i).toStdString(), Haruhi::Port::Output);
-	srand (Haruhi::Graph::now());
+	srand (Timestamp::now().microseconds());
 	QTimer* timer = new QTimer (this);
 	QObject::connect (timer, SIGNAL (timeout()), this, SLOT (connect_ports()));
 	timer->start (250);
@@ -113,12 +113,12 @@ BugFuzzer::get_random_event()
 				? Haruhi::VoiceEvent::Action::Create
 				: Haruhi::VoiceEvent::Action::Drop;
 			float f = Haruhi::VoiceEvent::frequency_from_key_id (v, 440.0);
-			return new Haruhi::VoiceEvent (Haruhi::Graph::now(), v, v, action, f, 1.0f * rand() / RAND_MAX);
+			return new Haruhi::VoiceEvent (Timestamp::now(), v, v, action, f, 1.0f * rand() / RAND_MAX);
 		}
 		case 1:
-			return new Haruhi::ControllerEvent (Haruhi::Graph::now(), 1.0f * rand() / RAND_MAX);
+			return new Haruhi::ControllerEvent (Timestamp::now(), 1.0f * rand() / RAND_MAX);
 		case 2:
-			return new Haruhi::VoiceControllerEvent (Haruhi::Graph::now(), rand() % 127, 1.0f * rand() / RAND_MAX);
+			return new Haruhi::VoiceControllerEvent (Timestamp::now(), rand() % 127, 1.0f * rand() / RAND_MAX);
 		default:
 			return 0;
 	}

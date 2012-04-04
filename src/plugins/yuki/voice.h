@@ -58,7 +58,7 @@ class Voice
 
   public:
 	// Ctor.
-	Voice (Haruhi::VoiceID id, Haruhi::Timestamp timestamp, Params::Main* main_params, Params::Part* part_params,
+	Voice (Haruhi::VoiceID id, Timestamp timestamp, Params::Main* main_params, Params::Part* part_params,
 		   Sample amplitude, Sample frequency, unsigned int sample_rate, std::size_t buffer_size);
 
 	/**
@@ -70,7 +70,7 @@ class Voice
 	/**
 	 * Return voice's timestamp.
 	 */
-	Haruhi::Timestamp
+	Timestamp
 	timestamp() const noexcept;
 
 	/**
@@ -164,7 +164,7 @@ class Voice
 
   private:
 	Haruhi::VoiceID		_id;
-	Haruhi::Timestamp	_timestamp;
+	Timestamp			_timestamp;
 	State				_state;
 	Params::Voice		_params;
 	Params::Part*		_part_params;
@@ -212,7 +212,7 @@ Voice::id() const noexcept
 }
 
 
-inline Haruhi::Timestamp
+inline Timestamp
 Voice::timestamp() const noexcept
 {
 	return _timestamp;
