@@ -11,21 +11,17 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__CONFIG__TYPES_H__INCLUDED
-#define HARUHI__CONFIG__TYPES_H__INCLUDED
+#ifndef HARUHI__UTILITY__AMPLITUDE_H__INCLUDED
+#define HARUHI__UTILITY__AMPLITUDE_H__INCLUDED
 
 // Standard:
-#include <stdint.h>
+#include <cstddef>
 
 // Haruhi:
 #include <haruhi/config/all.h>
 
 
-namespace Haruhi {
-
-typedef float Sample;
-
-} // namespace Haruhi
+typedef float Amplitude;
 
 #endif
 

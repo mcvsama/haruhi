@@ -19,6 +19,8 @@
 #include <haruhi/config/all.h>
 #include <haruhi/utility/memory.h>
 #include <haruhi/utility/work_performer.h>
+#include <haruhi/utility/amplitude.h>
+#include <haruhi/utility/frequency.h>
 
 // Local:
 #include "voice_manager.h"
@@ -79,16 +81,11 @@ VoiceManager::handle_voice_event (Haruhi::VoiceEvent const* event)
 	{
 		Haruhi::VoiceID id = event->voice_id();
 
-		// If there is already voice with the same voice_id, don't create new voice.
-		// Instead update its parameters.
-		if (Voice* v = find_voice_by_id (id))
+		// If there is already voice with the same voice_id, ignore the event.
+		if (!find_voice_by_id (id))
 		{
-			v->set_amplitude (event->value());
-			v->set_frequency (event->frequency() / _sample_rate);
-		}
-		else
-		{
-			Voice* v = new Voice (id, event->timestamp(), _main_params, _part_params, event->value(), event->frequency() / _sample_rate, _sample_rate, _buffer_size);
+			// TODO change Amplitude (0) to 0dB and Frequency (440.0f) to 440Hz on gcc-4.7
+			Voice* v = new Voice (id, event->timestamp(), _main_params, _part_params, Amplitude (0.0f), Frequency (440.0f), _sample_rate, _buffer_size);
 			v->set_wavetable (_wavetable);
 
 			_voices_by_id[id] = _voices.insert (v).first;
@@ -106,6 +103,22 @@ VoiceManager::handle_voice_event (Haruhi::VoiceEvent const* event)
 			_active_voices_number--;
 		}
 	}
+}
+
+
+void
+VoiceManager::handle_amplitude_event (Haruhi::VoiceControllerEvent const* event)
+{
+	if (Voice* v = find_voice_by_id (event->voice_id()))
+		v->set_amplitude (event->value());
+}
+
+
+void
+VoiceManager::handle_frequency_event (Haruhi::VoiceControllerEvent const* event)
+{
+	if (Voice* v = find_voice_by_id (event->voice_id()))
+		v->set_frequency (event->frequency (_sample_rate));
 }
 
 

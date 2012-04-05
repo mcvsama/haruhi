@@ -112,8 +112,7 @@ BugFuzzer::get_random_event()
 			Haruhi::VoiceEvent::Action action= t == 0
 				? Haruhi::VoiceEvent::Action::Create
 				: Haruhi::VoiceEvent::Action::Drop;
-			float f = Haruhi::VoiceEvent::frequency_from_key_id (v, 440.0);
-			return new Haruhi::VoiceEvent (Timestamp::now(), v, v, action, f, 1.0f * rand() / RAND_MAX);
+			return new Haruhi::VoiceEvent (Timestamp::now(), v, v, action);
 		}
 		case 1:
 			return new Haruhi::ControllerEvent (Timestamp::now(), 1.0f * rand() / RAND_MAX);

@@ -366,6 +366,18 @@ class Part:
 	handle_voice_event (Haruhi::VoiceEvent const*);
 
 	/**
+	 * Handle voice velocity event.
+	 */
+	void
+	handle_amplitude_event (Haruhi::VoiceControllerEvent const*);
+
+	/**
+	 * Handle voice pitch event.
+	 */
+	void
+	handle_frequency_event (Haruhi::VoiceControllerEvent const*);
+
+	/**
 	 * Process events.
 	 */
 	void

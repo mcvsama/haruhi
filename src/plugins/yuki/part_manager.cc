@@ -35,6 +35,8 @@ PartManager::MainPorts::MainPorts (Plugin* plugin):
 	audio_out[1]	= new Haruhi::AudioPort (plugin, "Output 2", Haruhi::Port::Output, 0, Haruhi::Port::StandardAudio);
 
 	voice_in		= new Haruhi::EventPort (plugin, "Voice control", Haruhi::Port::Input, 0, Haruhi::Port::ControlVoice);
+	voice_pitch		= new Haruhi::EventPort (plugin, "Voice pitch", Haruhi::Port::Input, 0, Haruhi::Port::ControlVoicePitch | Haruhi::Port::Polyphonic);
+	voice_velocity	= new Haruhi::EventPort (plugin, "Voice velocity", Haruhi::Port::Input, 0, Haruhi::Port::ControlVoiceVelocity | Haruhi::Port::Polyphonic);
 
 	volume			= new Haruhi::EventPort (plugin, "Volume", Haruhi::Port::Input);
 	panorama		= new Haruhi::EventPort (plugin, "Panorama", Haruhi::Port::Input);
@@ -56,6 +58,8 @@ PartManager::MainPorts::~MainPorts()
 	delete audio_out[0];
 	delete audio_out[1];
 	delete voice_in;
+	delete voice_pitch;
+	delete voice_velocity;
 	delete volume;
 	delete panorama;
 	delete detune;
@@ -174,20 +178,47 @@ PartManager::process()
 
 	Mutex::Lock lock (_parts_mutex);
 
-	// Send voice events:
+	// Distribute voice events to all Parts:
 
 	_ports.voice_in->sync();
-	Haruhi::EventBuffer const* buffer = _ports.voice_in->event_buffer();
 	bool const enabled = _main_params.enabled.get();
 
-	for (auto e: buffer->events())
+	// VoiceEvents:
+	for (auto e: _ports.voice_in->event_buffer()->events())
 	{
 		if (e->event_type() == Haruhi::Event::VoiceEventType)
 		{
-			Haruhi::VoiceEvent const* voice_event = static_cast<Haruhi::VoiceEvent const*> (e.get());
-			if (enabled || voice_event->action() == Haruhi::VoiceEvent::Action::Drop)
+			Haruhi::VoiceEvent const* ev = static_cast<Haruhi::VoiceEvent const*> (e.get());
+			if (enabled || ev->action() == Haruhi::VoiceEvent::Action::Drop)
 				for (Part* p: _parts)
-					p->handle_voice_event (voice_event);
+					p->handle_voice_event (ev);
+		}
+	}
+
+	if (enabled)
+	{
+		// Pitch (frequency) events:
+		_ports.voice_pitch->sync();
+		for (auto e: _ports.voice_pitch->event_buffer()->events())
+		{
+			if (e->event_type() == Haruhi::Event::VoiceControllerEventType)
+			{
+				Haruhi::VoiceControllerEvent const* ev = static_cast<Haruhi::VoiceControllerEvent const*> (e.get());
+				for (Part* p: _parts)
+					p->handle_frequency_event (ev);
+			}
+		}
+
+		// Velocity (amplitude) events:
+		_ports.voice_velocity->sync();
+		for (auto e: _ports.voice_velocity->event_buffer()->events())
+		{
+			if (e->event_type() == Haruhi::Event::VoiceControllerEventType)
+			{
+				Haruhi::VoiceControllerEvent const* ev = static_cast<Haruhi::VoiceControllerEvent const*> (e.get());
+				for (Part* p: _parts)
+					p->handle_amplitude_event (ev);
+			}
 		}
 	}
 

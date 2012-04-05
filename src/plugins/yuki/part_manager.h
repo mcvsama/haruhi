@@ -63,8 +63,10 @@ class PartManager:
 		// Ports (0 = L, 1 = R):
 		Haruhi::AudioPort* audio_out[2];
 
-		// Voice port:
+		// Voice inputs:
 		Haruhi::EventPort* voice_in;
+		Haruhi::EventPort* voice_pitch;
+		Haruhi::EventPort* voice_velocity;
 
 		// Main controls:
 		Haruhi::EventPort* volume;

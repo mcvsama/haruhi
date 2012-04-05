@@ -23,6 +23,7 @@
 #include <haruhi/utility/pool_allocator.h>
 #include <haruhi/utility/memory.h>
 #include <haruhi/utility/timestamp.h>
+#include <haruhi/utility/frequency.h>
 
 
 namespace Haruhi {
@@ -135,11 +136,8 @@ class VoiceEvent: public Event
 		Drop,		// Destroy voice.
 	};
 
-	typedef float Frequency;
-	typedef ControllerEvent::Value Value;
-
   public:
-	VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Action action, Frequency frequency, Value value) noexcept;
+	VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Action action) noexcept;
 
   protected:
 	VoiceEvent (VoiceEvent const& other) noexcept;
@@ -154,15 +152,10 @@ class VoiceEvent: public Event
 	Action
 	action() const noexcept;
 
-	Frequency
-	frequency() const noexcept;
-
-	Value
-	value() const noexcept;
-
 	VoiceEvent*
 	clone() const;
 
+	// TODO move to MIDI utilities
 	static Frequency
 	frequency_from_key_id (KeyID, float master_tune) noexcept;
 
@@ -170,8 +163,6 @@ class VoiceEvent: public Event
 	KeyID			_key_id;
 	VoiceID			_voice_id;
 	Action			_action;
-	Frequency		_frequency;
-	Value			_value;
 	static VoiceID	_last_voice_id;
 };
 
@@ -192,6 +183,12 @@ class VoiceControllerEvent: public ControllerEvent
 
 	VoiceControllerEvent*
 	clone() const;
+
+	/**
+	 * Interpret event value as frequency.
+	 */
+	Frequency
+	frequency (Frequency sample_rate) const noexcept;
 
   private:
 	VoiceID _voice_id;
@@ -283,13 +280,11 @@ ControllerEvent::clone() const
 
 
 inline
-VoiceEvent::VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Action action, Frequency frequency, Value value) noexcept:
+VoiceEvent::VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Action action) noexcept:
 	Event (VoiceEventType, timestamp),
 	_key_id (key_id),
 	_voice_id (voice_id),
-	_action (action),
-	_frequency (frequency),
-	_value (value)
+	_action (action)
 {
 	if (_voice_id == VoiceAuto)
 		_voice_id = ++_last_voice_id;
@@ -301,9 +296,7 @@ VoiceEvent::VoiceEvent (VoiceEvent const& other) noexcept:
 	Event (other),
 	_key_id (other._key_id),
 	_voice_id (other._voice_id),
-	_action (other._action),
-	_frequency (other._frequency),
-	_value (other._value)
+	_action (other._action)
 { }
 
 
@@ -328,24 +321,17 @@ VoiceEvent::action() const noexcept
 }
 
 
-inline VoiceEvent::Frequency
-VoiceEvent::frequency() const noexcept
-{
-	return _frequency;
-}
-
-
-inline VoiceEvent::Value
-VoiceEvent::value() const noexcept
-{
-	return _value;
-}
-
-
 inline VoiceEvent*
 VoiceEvent::clone() const
 {
 	return new VoiceEvent (*this);
+}
+
+
+inline Frequency
+VoiceEvent::frequency_from_key_id (KeyID key_id, float master_tune) noexcept
+{
+	return master_tune * std::pow (2.0f, ((static_cast<float> (key_id) - 69.0f) / 12.0f));
 }
 
 
@@ -376,6 +362,13 @@ inline VoiceControllerEvent*
 VoiceControllerEvent::clone() const
 {
 	return new VoiceControllerEvent (*this);
+}
+
+
+inline Frequency
+VoiceControllerEvent::frequency (Frequency sample_rate) const noexcept
+{
+	return value() * sample_rate;
 }
 
 } // namespace Haruhi

@@ -22,6 +22,8 @@
 #include <haruhi/config/all.h>
 #include <haruhi/graph/event.h>
 #include <haruhi/dsp/ramp_smoother.h>
+#include <haruhi/utility/amplitude.h>
+#include <haruhi/utility/frequency.h>
 
 // Local:
 #include "params.h"
@@ -59,7 +61,7 @@ class Voice
   public:
 	// Ctor.
 	Voice (Haruhi::VoiceID id, Timestamp timestamp, Params::Main* main_params, Params::Part* part_params,
-		   Sample amplitude, Sample frequency, unsigned int sample_rate, std::size_t buffer_size);
+		   Amplitude amplitude, Frequency frequency, unsigned int sample_rate, std::size_t buffer_size);
 
 	/**
 	 * Return voice's ID which came in Haruhi::VoiceEvent.
@@ -122,14 +124,14 @@ class Voice
 	 * \param	amplitude Amplitude value [0..1]
 	 */
 	void
-	set_amplitude (Sample amplitude) noexcept;
+	set_amplitude (Amplitude amplitude) noexcept;
 
 	/**
 	 * Set new target absolute frequency of the voice.
 	 * \param	frequency Absolute frequency [0..0.5]
 	 */
 	void
-	set_frequency (Sample frequency) noexcept;
+	set_frequency (Frequency frequency) noexcept;
 
   public:
 	/**
@@ -169,8 +171,8 @@ class Voice
 	Params::Voice		_params;
 	Params::Part*		_part_params;
 	Params::Main*		_main_params;
-	Sample				_amplitude;
-	Sample				_frequency;
+	Amplitude			_amplitude;
+	Frequency			_frequency;
 	unsigned int		_sample_rate;
 	std::size_t			_buffer_size;
 	VoiceModulator		_vmod;
@@ -187,8 +189,8 @@ class Voice
 	DSP::RampSmoother	_smoother_panorama_2;
 
 	// Glide params:
-	Sample				_target_frequency;
-	Sample				_frequency_change;
+	Frequency			_target_frequency;
+	Amplitude			_frequency_change;
 
 	// Pitchbend params:
 	float				_last_pitchbend_value;
@@ -256,14 +258,14 @@ Voice::set_wavetable (DSP::Wavetable* wavetable)
 
 
 inline void
-Voice::set_amplitude (Sample amplitude) noexcept
+Voice::set_amplitude (Amplitude amplitude) noexcept
 {
 	_amplitude = amplitude;
 }
 
 
 inline void
-Voice::set_frequency (Sample frequency) noexcept
+Voice::set_frequency (Frequency frequency) noexcept
 {
 	_target_frequency = frequency;
 	update_glide_parameters();

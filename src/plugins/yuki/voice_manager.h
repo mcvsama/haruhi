@@ -68,10 +68,22 @@ class VoiceManager
 	~VoiceManager();
 
 	/**
-	 * Processes new VoiceEvent.
+	 * Process incoming VoiceEvent.
 	 */
 	void
 	handle_voice_event (Haruhi::VoiceEvent const*);
+
+	/**
+	 * Process incoming event from the voice amplitude (velocity) port.
+	 */
+	void
+	handle_amplitude_event (Haruhi::VoiceControllerEvent const*);
+
+	/**
+	 * Process incoming event from voice frequency (pitch) port.
+	 */
+	void
+	handle_frequency_event (Haruhi::VoiceControllerEvent const*);
 
 	/**
 	 * Drop all existing voices now.

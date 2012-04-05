@@ -129,26 +129,27 @@ bool
 Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Graph* graph)
 {
 	bool handled = false;
-	Timestamp const t = midi_event.timestamp;
+	Timestamp const& t = midi_event.timestamp;
 
 	switch (midi_event.type)
 	{
 		case MIDI::Event::NoteOn:
 			if (note_filter && (note_channel == 0 || note_channel == midi_event.note_on.channel + 1))
 			{
+				float velocity = midi_event.note_on.velocity / 127.0f;
+
 				// If there was previously note-on on that key, send voice-off:
-				if (_voice_ids[midi_event.note_on.note] != OmniVoice)
+				if (_voice_ids[midi_event.note_on.note] != OmniVoice && midi_event.note_on.velocity != 0)
 				{
-					float velocity = midi_event.note_on.velocity / 127.0f;
-					buffer.push (new VoiceControllerEvent (t, midi_event.note_on.note, midi_event.note_on.velocity / 127.0f));
-					buffer.push (new VoiceEvent (t, midi_event.note_on.note, _voice_ids[midi_event.note_on.note], VoiceEvent::Action::Drop,
-												 VoiceEvent::frequency_from_key_id (midi_event.note_on.note, graph->master_tune()), velocity));
+					// TODO the first event below should be sent via velocity buffer.
+					buffer.push (new VoiceControllerEvent (t, midi_event.note_on.note, velocity));
+					buffer.push (new VoiceEvent (t, midi_event.note_on.note, _voice_ids[midi_event.note_on.note], VoiceEvent::Action::Drop));
 				}
 
-				float velocity = midi_event.note_on.velocity / 127.0f;
 				VoiceEvent* ve = new VoiceEvent (t, midi_event.note_on.note, VoiceAuto,
-												 (midi_event.note_on.velocity == 0)? VoiceEvent::Action::Drop : VoiceEvent::Action::Create,
-												 VoiceEvent::frequency_from_key_id (midi_event.note_on.note, graph->master_tune()), velocity);
+												 // Some keyboards send NOTEON with velocity 0 instead of NOTEOFF:
+												 (midi_event.note_on.velocity == 0)? VoiceEvent::Action::Drop : VoiceEvent::Action::Create);
+				// TODO send VoiceControllerEvents from frequency and velocity buffers: F: VoiceEvent::frequency_from_key_id (midi_event.note_on.note, graph->master_tune()); V: velocity;
 				_voice_ids[midi_event.note_on.note] = ve->voice_id();
 				buffer.push (ve);
 				buffer.push (new VoiceControllerEvent (t, midi_event.note_on.note, velocity));
@@ -160,9 +161,10 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 			if (note_filter && (note_channel == 0 || note_channel == midi_event.note_off.channel + 1))
 			{
 				float velocity = midi_event.note_off.velocity / 127.0f;
-				buffer.push (new VoiceControllerEvent (t, midi_event.note_off.note, midi_event.note_off.velocity / 127.0f));
-				buffer.push (new VoiceEvent (t, midi_event.note_off.note, _voice_ids[midi_event.note_off.note], VoiceEvent::Action::Drop,
-											 VoiceEvent::frequency_from_key_id (midi_event.note_off.note, graph->master_tune()), velocity));
+				// TODO the first event below should be sent via velocity buffer.
+				buffer.push (new VoiceControllerEvent (t, midi_event.note_off.note, velocity));
+				buffer.push (new VoiceEvent (t, midi_event.note_off.note, _voice_ids[midi_event.note_off.note], VoiceEvent::Action::Drop));
+				// TODO send via freq. and vel. buffers: F VoiceEvent::frequency_from_key_id (midi_event.note_off.note, graph->master_tune()); V: velocity;
 				_voice_ids[midi_event.note_off.note] = OmniVoice;
 				handled = true;
 			}

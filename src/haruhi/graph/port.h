@@ -62,26 +62,30 @@ class Port:
 	 */
 	enum {
 		ControlVoice			= 1 << 0,	// Port is a voice/keyboard output port or expects keyboard input events.
-		ControlSustain			= 1 << 1,	// Similarly.
-		ControlPitchbend		= 1 << 2,	// Similarly.
-		ControlModulation		= 1 << 3,	// Similarly.
-		ControlVolume			= 1 << 4,	// Similarly.
-		ControlProgramChange	= 1 << 5,	// Similarly.
+		ControlVoicePitch		= 1 << 1,	// Port expects voice pitch events.
+		ControlVoiceVelocity	= 1 << 2,	// Port expects voice velocity events.
+		ControlSustain			= 1 << 3,	// Similarly.
+		ControlPitchbend		= 1 << 4,	// Similarly.
+		ControlModulation		= 1 << 5,	// Similarly.
+		ControlVolume			= 1 << 6,	// Similarly.
+		ControlProgramChange	= 1 << 7,	// Similarly.
 
 		/**
 		 * As audio ports can be used not only for audio data, it's good idea
 		 * to mark normal audio ports with this flag.
 		 */
-		StandardAudio			= 1 << 6,
+		StandardAudio			= 1 << 8,
 
 		/**
 		 * This port outputs polyphonic events or can handle input polyphonic events.
 		 * Polyphonic event is an event that has voice associated with it. It changes
 		 * of a one, specific voice currently sounding.
 		 */
-		Polyphonic				= 1 << 7,
+		Polyphonic				= 1 << 9,
 
 		/**
+		 * TODO implement HD ports.
+		 *
 		 * This port is a HD port, that is it can generate HD data or make use
 		 * of input HD data (see description of ControllerEvent).
 		 *
@@ -96,7 +100,7 @@ class Port:
 		 * If this number is = 0, no HD data is necessary, otherwise output port should generate
 		 * HD data buffers for each appropriate output event.
 		 */
-		HighDefinition			= 1 << 8,
+		HighDefinition			= 1 << 10,
 	};
 
 	typedef int Flags;

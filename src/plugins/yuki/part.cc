@@ -524,6 +524,22 @@ Part::handle_voice_event (Haruhi::VoiceEvent const* event)
 
 
 void
+Part::handle_amplitude_event (Haruhi::VoiceControllerEvent const* event)
+{
+	if (_part_params.part_enabled.get())
+		_voice_manager->handle_amplitude_event (event);
+}
+
+
+void
+Part::handle_frequency_event (Haruhi::VoiceControllerEvent const* event)
+{
+	if (_part_params.part_enabled.get())
+		_voice_manager->handle_frequency_event (event);
+}
+
+
+void
 Part::process_events()
 {
 	_proxies.process_events();
