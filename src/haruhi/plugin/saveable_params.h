@@ -122,7 +122,7 @@ template<class SubClass>
 	inline void
 	SaveableParams<SubClass>::sanitize()
 	{
-		BaseParam const** params = reinterpret_cast<BaseParam const**> (alloca (sizeof (BaseParam*) * SubClass::NUM_PARAMS));
+		BaseParam** params = reinterpret_cast<BaseParam**> (alloca (sizeof (BaseParam*) * SubClass::NUM_PARAMS));
 		get_params (params, SubClass::NUM_PARAMS);
 		for (std::size_t i = 0; i < SubClass::NUM_PARAMS; ++i)
 			params[i]->sanitize();

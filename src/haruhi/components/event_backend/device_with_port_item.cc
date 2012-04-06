@@ -51,7 +51,7 @@ DeviceWithPortItem::~DeviceWithPortItem()
 	// TODO lock for _inputs map:
 	backend()->_inputs.erase (_transport_port);
 	backend()->transport()->destroy_port (_transport_port);
-	backend()->graph()->synchronize ([&] {
+	backend()->graph()->synchronize ([&]() noexcept {
 		delete _port_group;
 	});
 }
