@@ -110,7 +110,7 @@ void
 VoiceManager::handle_amplitude_event (Haruhi::VoiceControllerEvent const* event)
 {
 	if (Voice* v = find_voice_by_id (event->voice_id()))
-		v->set_amplitude (event->value());
+		v->set_amplitude (Amplitude (event->value()));
 }
 
 

@@ -25,6 +25,7 @@
 #include <haruhi/dsp/wavetable.h>
 #include <haruhi/dsp/noise.h>
 #include <haruhi/dsp/functions.h>
+#include <haruhi/utility/amplitude.h>
 #include <haruhi/utility/numeric.h>
 
 
@@ -93,7 +94,7 @@ class VoiceOscillator
 	 * Set noise amplitude.
 	 */
 	void
-	set_noise_amplitude (Sample amplitude) noexcept;
+	set_noise_amplitude (Amplitude amplitude) noexcept;
 
 	/**
 	 * Argument: [-1.0…1.0]
@@ -204,7 +205,7 @@ class VoiceOscillator
 	DSP::Noise				_noise;
 	DSP::Noise::State		_noise_state;
 	bool					_noise_enabled;
-	Sample					_noise_amplitude;
+	Amplitude				_noise_amplitude;
 };
 
 
@@ -258,7 +259,7 @@ VoiceOscillator::set_noise_enabled (bool enabled) noexcept
 
 
 inline void
-VoiceOscillator::set_noise_amplitude (Sample amplitude) noexcept
+VoiceOscillator::set_noise_amplitude (Amplitude amplitude) noexcept
 {
 	_noise_amplitude = amplitude;
 }
@@ -355,7 +356,7 @@ VoiceOscillator::fill (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* outpu
 	}
 
 	// Add noise:
-	if (_noise_enabled && _noise_amplitude > 0.0f)
+	if (_noise_enabled && _noise_amplitude.factor() > 0.0f)
 	{
 		for (std::size_t i = 0, n = output_1->size(); i < n; ++i)
 		{

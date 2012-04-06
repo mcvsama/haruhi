@@ -190,7 +190,7 @@ class Voice
 
 	// Glide params:
 	Frequency			_target_frequency;
-	Amplitude			_frequency_change;
+	Frequency			_frequency_change;
 
 	// Pitchbend params:
 	float				_last_pitchbend_value;
