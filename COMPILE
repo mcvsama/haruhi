@@ -1,3 +1,5 @@
+Requires GCC 4.7.3 or newer to compile.
+
 You will need at least following packages (names are for Arch Linux):
  • jack-audio-connection-kit
  • alsa-lib
