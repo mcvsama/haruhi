@@ -191,7 +191,7 @@ ControllerDialog::from (ControllerItem* item)
 	_key_pressure_checkbox->setChecked (controller->key_pressure_filter);
 	_key_pressure_channel->setValue (controller->key_pressure_channel);
 	_key_pressure_invert->setChecked (controller->key_pressure_invert);
-	_smoothing->setValue (controller->smoothing);
+	_smoothing->setValue (controller->smoothing.milliseconds());
 	_name->selectAll();
 	_name->setFocus();
 	update_widgets();
@@ -216,7 +216,7 @@ ControllerDialog::apply (ControllerItem* item) const
 	controller->key_pressure_filter = _key_pressure_checkbox->isChecked();
 	controller->key_pressure_channel = _key_pressure_channel->value();
 	controller->key_pressure_invert = _key_pressure_invert->isChecked();
-	controller->smoothing = _smoothing->value();
+	controller->smoothing = 1_ms * _smoothing->value();
 	item->set_name (_name->text());
 	emit item_configured (item);
 }

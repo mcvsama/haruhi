@@ -260,7 +260,7 @@ class Session:
 	void
 	save_session (QString const& file_name);
 
-	float
+	Frequency
 	master_tune() const;
 
 	void

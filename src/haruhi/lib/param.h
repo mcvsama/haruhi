@@ -68,8 +68,10 @@ template<class tType>
 		typedef tType Type;
 
 	  public:
+		constexpr
 		Param (const char* name = "") noexcept;
 
+		constexpr
 		Param (Range<Type> range, Type default_value, const char* name) noexcept;
 
 		Param (Param const& other) noexcept;
@@ -78,7 +80,7 @@ template<class tType>
 		operator= (Param const& other) noexcept;
 
 		const char*
-		name() const noexcept;
+		name() const noexcept override;
 
 		operator Type() const noexcept;
 
@@ -108,20 +110,20 @@ template<class tType>
 		 */
 
 		void
-		reset();
+		reset() override;
 
 		void
-		sanitize();
+		sanitize() override;
 
 		/*
 		 * SaveableState implementation
 		 */
 
 		void
-		save_state (QDomElement& parent) const;
+		save_state (QDomElement& parent) const override;
 
 		void
-		load_state (QDomElement const& parent);
+		load_state (QDomElement const& parent) override;
 
 	  public:
 		/**
@@ -144,6 +146,7 @@ template<class tType>
 
 
 template<class tType>
+	inline constexpr
 	Param<tType>::Param (const char* name) noexcept:
 		_range (0, 0),
 		_default_value (0),
@@ -153,7 +156,7 @@ template<class tType>
 
 
 template<class tType>
-	inline
+	inline constexpr
 	Param<tType>::Param (Range<Type> range, Type default_value, const char* name) noexcept:
 		_range (range),
 		_default_value (default_value),
@@ -163,6 +166,7 @@ template<class tType>
 
 
 template<class tType>
+	inline
 	Param<tType>::Param (Param const& other) noexcept
 	{
 		operator= (other);

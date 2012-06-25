@@ -26,6 +26,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/application/services.h>
 #include <haruhi/widgets/knob.h>
+#include <haruhi/utility/literals.h>
 
 // Local:
 #include "part_manager_widget.h"
@@ -149,7 +150,7 @@ PartManagerWidget::add_part (Part* part)
 {
 	PartWidget* pw = new PartWidget (this, part);
 	part->set_widget (pw);
-	_tabs->addTab (pw, Resources::Icons16::wave_sine(), QString ("Part %1").arg (part->id()));
+	_tabs->addTab (pw, Resources::Icons16::wave_sine(), "Part %1"_qstr.arg (part->id()));
 	_tabs->setCurrentWidget (pw);
 	update_widgets();
 }

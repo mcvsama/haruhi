@@ -27,6 +27,7 @@
 #include <haruhi/dsp/functions.h>
 #include <haruhi/utility/amplitude.h>
 #include <haruhi/utility/numeric.h>
+#include <haruhi/utility/normalized_frequency.h>
 
 
 namespace Yuki {
@@ -141,10 +142,10 @@ class VoiceOscillator
 
 	/**
 	 * Set unison voices vibrato frequency.
-	 * \param	frequency Absolute frequency [0.0..0.5].
+	 * \param	frequency Normalized frequency [0.0..0.5].
 	 */
 	void
-	set_unison_vibrato_frequency (Sample frequency) noexcept;
+	set_unison_vibrato_frequency (NormalizedFrequency frequency) noexcept;
 
 	/**
 	 * Fill output buffer.
@@ -309,7 +310,7 @@ VoiceOscillator::set_unison_vibrato_level (Sample level) noexcept
 
 
 inline void
-VoiceOscillator::set_unison_vibrato_frequency (Sample frequency) noexcept
+VoiceOscillator::set_unison_vibrato_frequency (NormalizedFrequency frequency) noexcept
 {
 	if (_unison_vibrato_frequency != frequency)
 	{
@@ -356,11 +357,11 @@ VoiceOscillator::fill (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* outpu
 	}
 
 	// Add noise:
-	if (_noise_enabled && _noise_amplitude.factor() > 0.0f)
+	if (_noise_enabled && _noise_amplitude > 0.0f)
 	{
 		for (std::size_t i = 0, n = output_1->size(); i < n; ++i)
 		{
-			float const x = _noise_amplitude * _noise.get (_noise_state);
+			float const x = static_cast<float> (_noise_amplitude * _noise.get (_noise_state));
 			o1[i] += x;
 			o2[i] += x;
 		}

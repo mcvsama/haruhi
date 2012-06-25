@@ -290,7 +290,8 @@ class Backend:
 class Exception: public ::Exception
 {
   public:
-	explicit Exception (const char* what, const char* details):
+	explicit
+	Exception (const char* what, const char* details):
 		::Exception (what, details)
 	{ }
 };
@@ -302,7 +303,8 @@ class Exception: public ::Exception
 class PortException: public Exception
 {
   public:
-	explicit PortException (const char* what, const char* details):
+	explicit
+	PortException (const char* what, const char* details):
 		Exception (what, details)
 	{ }
 };

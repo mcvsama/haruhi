@@ -20,6 +20,8 @@
 #include <haruhi/utility/confusion.h>
 #include <haruhi/utility/numeric.h>
 #include <haruhi/utility/simd_ops.h>
+#include <haruhi/utility/amplitude.h>
+#include <haruhi/utility/units.h>
 
 // Local:
 #include "voice.h"
@@ -28,7 +30,7 @@
 namespace Yuki {
 
 void
-Voice::SharedResources::graph_updated (unsigned int, std::size_t buffer_size)
+Voice::SharedResources::graph_updated (Frequency, std::size_t buffer_size)
 {
 	amplitude_buf.resize (buffer_size);
 	frequency_buf.resize (buffer_size);
@@ -39,7 +41,7 @@ Voice::SharedResources::graph_updated (unsigned int, std::size_t buffer_size)
 
 
 Voice::Voice (Haruhi::VoiceID id, Timestamp timestamp, Params::Main* main_params, Params::Part* part_params,
-			  Amplitude amplitude, Frequency frequency, unsigned int sample_rate, std::size_t buffer_size):
+			  Amplitude amplitude, NormalizedFrequency frequency, Frequency sample_rate, std::size_t buffer_size):
 	_id (id),
 	_timestamp (timestamp),
 	_state (Voicing),
@@ -55,20 +57,20 @@ Voice::Voice (Haruhi::VoiceID id, Timestamp timestamp, Params::Main* main_params
 	_target_frequency (frequency),
 	_frequency_change (0.0f),
 	_attack_sample (0),
-	_attack_samples (0.001f * sample_rate), // 1ms
+	_attack_samples (1_ms * sample_rate),
 	_drop_sample (0),
-	_drop_samples (0.001f * sample_rate), // 1ms
+	_drop_samples (1_ms * sample_rate),
 	_first_pass (true)
 {
 	// Resize buffers:
 	graph_updated (sample_rate, buffer_size);
 
 	// Setup smoothers for 5ms/50ms. Response time must be independent from sample rate.
-	_smoother_amplitude.set_samples (0.005f * _sample_rate);
-	_smoother_frequency.set_samples (0.005f * _sample_rate);
-	_smoother_pitchbend.set_samples (0.05f * _sample_rate);
-	_smoother_panorama_1.set_samples (0.005f * _sample_rate);
-	_smoother_panorama_2.set_samples (0.005f * _sample_rate);
+	_smoother_amplitude.set_samples (5_ms * _sample_rate);
+	_smoother_frequency.set_samples (5_ms * _sample_rate);
+	_smoother_pitchbend.set_samples (50_ms * _sample_rate);
+	_smoother_panorama_1.set_samples (5_ms * _sample_rate);
+	_smoother_panorama_2.set_samples (5_ms * _sample_rate);
 
 	// Prepare main oscillator:
 	_vosc.set_phase (_part_params->phase.to_f());
@@ -101,7 +103,7 @@ Voice::render (SharedResources* res)
 	_vosc.set_unison_noise (_params.unison_noise.to_f());
 	_vosc.set_unison_stereo (!!_part_params->unison_stereo.get());
 	_vosc.set_unison_vibrato_level (_params.unison_vibrato_level.to_f());
-	_vosc.set_unison_vibrato_frequency (_params.unison_vibrato_frequency.to_f() / _sample_rate); // Max 10 Hz
+	_vosc.set_unison_vibrato_frequency (Hertz (_params.unison_vibrato_frequency.to_f()) / _sample_rate); // Max 10 Hz
 	_vosc.set_noise_amplitude (Amplitude (_part_params->noise_level.to_f()));
 	_vosc.set_wavetable_enabled (_part_params->wave_enabled.get());
 	_vosc.set_noise_enabled (_part_params->noise_enabled.get());
@@ -179,7 +181,7 @@ Voice::render (SharedResources* res)
 
 
 void
-Voice::graph_updated (unsigned int sample_rate, std::size_t buffer_size)
+Voice::graph_updated (Frequency sample_rate, std::size_t buffer_size)
 {
 	_sample_rate = sample_rate;
 	_buffer_size = buffer_size;
@@ -194,26 +196,25 @@ Voice::graph_updated (unsigned int sample_rate, std::size_t buffer_size)
 void
 Voice::update_glide_parameters() noexcept
 {
-	float source_frequency = _frequency;
-	int portamento_time = _part_params->portamento_time.get();
+	Seconds portamento_time = Seconds (_part_params->portamento_time.get());
 
 	if (portamento_time > 0)
 	{
 		if (_part_params->const_portamento_time.get())
 		{
-			_frequency_change = FastPow::pow (_target_frequency / source_frequency,
+			_frequency_change = FastPow::pow (_target_frequency / _frequency,
 											  1.0f / (1.0f / Params::Part::PortamentoTimeDenominator * portamento_time * _sample_rate));
 		}
 		else
 		{
 			// 2 octaves per portamento time:
-			Sample difference = _target_frequency - source_frequency > 0 ? 2.0f : 0.5f;
+			Sample difference = _target_frequency > _frequency ? 2.0f : 0.5f;
 			_frequency_change = FastPow::pow (difference,
 											  1.0f / (1.0f / Params::Part::PortamentoTimeDenominator * portamento_time * _sample_rate));
 		}
 	}
 	else
-		_frequency_change = 1.0;
+		_frequency_change = 1.0f;
 }
 
 

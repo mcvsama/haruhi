@@ -11,37 +11,17 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__UTILITY__EXCEPTION_H__INCLUDED
-#define HARUHI__UTILITY__EXCEPTION_H__INCLUDED
+#ifndef HARUHI__UTILITY__NORMALIZED_FREQUENCY_H__INCLUDED
+#define HARUHI__UTILITY__NORMALIZED_FREQUENCY_H__INCLUDED
 
 // Standard:
 #include <cstddef>
-#include <stdexcept>
 
 // Haruhi:
 #include <haruhi/config/all.h>
 
 
-class Exception: public std::runtime_error
-{
-  public:
-	explicit
-	Exception (const char* what, const char* details = ""):
-		std::runtime_error (what),
-		_details (details)
-	{ }
-
-	virtual ~Exception() noexcept { }
-
-	const char*
-	details() const noexcept
-	{
-		return _details.c_str();
-	}
-
-  private:
-	std::string _details;
-};
+typedef float NormalizedFrequency;
 
 #endif
 

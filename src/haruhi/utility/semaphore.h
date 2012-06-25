@@ -31,6 +31,7 @@
 class Semaphore: private Noncopyable
 {
   public:
+	explicit
 	Semaphore (int value = 0) noexcept;
 
 	~Semaphore() noexcept;

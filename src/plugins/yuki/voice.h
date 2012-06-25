@@ -23,7 +23,7 @@
 #include <haruhi/graph/event.h>
 #include <haruhi/dsp/ramp_smoother.h>
 #include <haruhi/utility/amplitude.h>
-#include <haruhi/utility/frequency.h>
+#include <haruhi/utility/normalized_frequency.h>
 
 // Local:
 #include "params.h"
@@ -50,7 +50,7 @@ class Voice
 	struct SharedResources
 	{
 		void
-		graph_updated (unsigned int sample_rate, std::size_t buffer_size);
+		graph_updated (Frequency sample_rate, std::size_t buffer_size);
 
 		Haruhi::AudioBuffer	amplitude_buf;
 		Haruhi::AudioBuffer	frequency_buf;
@@ -61,7 +61,7 @@ class Voice
   public:
 	// Ctor.
 	Voice (Haruhi::VoiceID id, Timestamp timestamp, Params::Main* main_params, Params::Part* part_params,
-		   Amplitude amplitude, Frequency frequency, unsigned int sample_rate, std::size_t buffer_size);
+		   Amplitude amplitude, NormalizedFrequency frequency, Frequency sample_rate, std::size_t buffer_size);
 
 	/**
 	 * Return voice's ID which came in Haruhi::VoiceEvent.
@@ -105,7 +105,7 @@ class Voice
 	 * Update buffers sizes.
 	 */
 	void
-	graph_updated (unsigned int sample_rate, std::size_t buffer_size);
+	graph_updated (Frequency sample_rate, std::size_t buffer_size);
 
 	/**
 	 * Make voice use given Wavetable.
@@ -127,11 +127,10 @@ class Voice
 	set_amplitude (Amplitude amplitude) noexcept;
 
 	/**
-	 * Set new target absolute frequency of the voice.
-	 * \param	frequency Absolute frequency [0..0.5]
+	 * Set new target normalized frequency of the voice.
 	 */
 	void
-	set_frequency (Frequency frequency) noexcept;
+	set_frequency (NormalizedFrequency normalized_frequency) noexcept;
 
   public:
 	/**
@@ -172,8 +171,8 @@ class Voice
 	Params::Part*		_part_params;
 	Params::Main*		_main_params;
 	Amplitude			_amplitude;
-	Frequency			_frequency;
-	unsigned int		_sample_rate;
+	NormalizedFrequency	_frequency;
+	Frequency			_sample_rate;
 	std::size_t			_buffer_size;
 	VoiceModulator		_vmod;
 	VoiceOscillator		_vosc;
@@ -189,8 +188,8 @@ class Voice
 	DSP::RampSmoother	_smoother_panorama_2;
 
 	// Glide params:
-	Frequency			_target_frequency;
-	Frequency			_frequency_change;
+	NormalizedFrequency	_target_frequency;
+	Sample				_frequency_change;
 
 	// Pitchbend params:
 	float				_last_pitchbend_value;
@@ -265,7 +264,7 @@ Voice::set_amplitude (Amplitude amplitude) noexcept
 
 
 inline void
-Voice::set_frequency (Frequency frequency) noexcept
+Voice::set_frequency (NormalizedFrequency frequency) noexcept
 {
 	_target_frequency = frequency;
 	update_glide_parameters();

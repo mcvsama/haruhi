@@ -32,6 +32,7 @@
 class RefCounted: private Noncopyable
 {
   public:
+	constexpr
 	RefCounted() noexcept:
 		_ref_count (1)
 	{ }

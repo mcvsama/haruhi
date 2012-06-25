@@ -21,6 +21,7 @@
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/filter.h>
 #include <haruhi/dsp/one_pole_smoother.h>
+#include <haruhi/utility/frequency.h>
 
 // Local:
 #include "filter_ir.h"
@@ -55,7 +56,7 @@ class DualFilter
 	 * \param	configuration (serial/parallel)
 	 */
 	void
-	configure (Configuration configuration, unsigned int sample_rate);
+	configure (Configuration configuration, Frequency sample_rate);
 
 	/**
 	 * Returns true if actual filtering was done, false otherwise (output buffer was not filled).

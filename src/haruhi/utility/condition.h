@@ -25,6 +25,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/noncopyable.h>
+#include <haruhi/utility/literals.h>
 
 
 /**
@@ -33,8 +34,9 @@
 class ConditionPermissionException: public std::runtime_error
 {
   public:
-	explicit ConditionPermissionException (const char* what, const char* details):
-		std::runtime_error ((std::string (what) + ": " + details).c_str())
+	explicit
+	ConditionPermissionException (const char* what, const char* details):
+		std::runtime_error ((what + ": "_str + details).c_str())
 	{ }
 };
 

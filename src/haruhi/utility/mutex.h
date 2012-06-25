@@ -25,6 +25,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/noncopyable.h>
+#include <haruhi/utility/literals.h>
 
 
 /**
@@ -33,8 +34,9 @@
 class MutexPermissionException: public std::runtime_error
 {
   public:
-	explicit MutexPermissionException (const char* what, const char* details):
-		std::runtime_error ((std::string (what) + ": " + details).c_str())
+	explicit
+	MutexPermissionException (const char* what, const char* details):
+		std::runtime_error ((what + ": "_str + details).c_str())
 	{ }
 };
 
@@ -67,7 +69,8 @@ class Mutex: private Noncopyable
 	{
 	  public:
 		// Ctor. Acquire lock.
-		explicit Lock (Mutex const& mutex);
+		explicit
+		Lock (Mutex const& mutex);
 
 		// Move ctor:
 		Lock (Lock&& other);
@@ -88,7 +91,8 @@ class Mutex: private Noncopyable
 	{
 	  public:
 		// Ctor. Try to acquire lock.
-		explicit TryLock (Mutex const& mutex);
+		explicit
+		TryLock (Mutex const& mutex);
 
 		// Move ctor:
 		TryLock (TryLock&& other);
@@ -112,6 +116,7 @@ class Mutex: private Noncopyable
 	 * \param	mutex_kind
 	 *			Type of mutex (Normal or Recursive).
 	 */
+	explicit
 	Mutex (MutexType = Normal) noexcept;
 
 	~Mutex() noexcept;

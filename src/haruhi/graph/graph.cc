@@ -173,7 +173,7 @@ Graph::set_buffer_size (std::size_t buffer_size)
 
 
 void
-Graph::set_sample_rate (unsigned int sample_rate)
+Graph::set_sample_rate (Frequency sample_rate)
 {
 	_sample_rate = sample_rate;
 	for (Unit* u: _units)
@@ -182,7 +182,7 @@ Graph::set_sample_rate (unsigned int sample_rate)
 
 
 void
-Graph::set_tempo (float tempo)
+Graph::set_tempo (Frequency tempo)
 {
 	_tempo = tempo;
 	for (Unit* u: _units)
@@ -191,7 +191,7 @@ Graph::set_tempo (float tempo)
 
 
 void
-Graph::set_master_tune (float master_tune)
+Graph::set_master_tune (Frequency master_tune)
 {
 	_master_tune = master_tune;
 	for (Unit* u: _units)

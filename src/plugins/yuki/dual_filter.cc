@@ -56,11 +56,11 @@ DualFilter::reset()
 
 
 void
-DualFilter::configure (Configuration configuration, unsigned int sample_rate)
+DualFilter::configure (Configuration configuration, Frequency sample_rate)
 {
 	_configuration = configuration;
 
-	float const samples = 0.005f * sample_rate;
+	float const samples = 5_ms * sample_rate;
 
 	// Setup smoothers:
 	if (_params_1->enabled)

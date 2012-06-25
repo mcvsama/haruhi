@@ -21,6 +21,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/wavetable.h>
+#include <haruhi/utility/frequency.h>
 
 // Local:
 #include "params.h"
@@ -36,7 +37,7 @@ namespace Yuki {
 class VoiceModulator
 {
   public:
-	VoiceModulator (Params::Part* part_params, unsigned int sample_rate, std::size_t buffer_size);
+	VoiceModulator (Params::Part* part_params, Frequency sample_rate, std::size_t buffer_size);
 
 	/**
 	 * Modulate given amplitude and frequency buffers.
@@ -52,7 +53,7 @@ class VoiceModulator
 	 * Update buffers sizes.
 	 */
 	void
-	graph_updated (unsigned int sample_rate, std::size_t buffer_size);
+	graph_updated (Frequency sample_rate, std::size_t buffer_size);
 
   private:
 	/**
@@ -71,7 +72,7 @@ class VoiceModulator
 	Params::Part*		_part_params;
 	Haruhi::AudioBuffer	_operator_output[Params::Part::OperatorsNumber];
 	VoiceOperator		_operator[Params::Part::OperatorsNumber];
-	unsigned int		_sample_rate;
+	Frequency			_sample_rate;
 	std::size_t			_buffer_size;
 };
 

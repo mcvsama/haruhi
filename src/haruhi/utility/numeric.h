@@ -29,28 +29,28 @@
 #endif
 
 
-inline float
+inline constexpr float
 renormalize (float value, float a1, float b1, float a2, float b2) noexcept
 {
-	if (b1 == a1)
-		return a2;
-	float scaler = (b2 - a2) / (b1 - a1);
-	float offset = -scaler * a1 + a2;
-	return scaler * value + offset;
+	return b1 == a1
+		? a2
+		: (b2 - a2) / (b1 - a1) * value + (-(b2 - a2) / (b1 - a1) * a1 + a2);
 }
 
 
-inline float
+inline constexpr float
 renormalize (float value, Range<float> range1, Range<float> range2) noexcept
 {
 	return renormalize (value, range1.min(), range1.max(), range2.min(), range2.max());
 }
 
 
-inline int
+inline constexpr int
 cut (int value) noexcept
 {
-	return (value > 255)? 255 : value;
+	return (value > 255)
+		? 255
+		: value;
 }
 
 
@@ -64,12 +64,12 @@ undenormalize (float& sample) noexcept
 
 
 template<class Value>
-	inline Value
+	inline constexpr Value
 	ifnan (Value const& test, Value val) noexcept
 	{
-		if (std::isnan (test))
-			return val;
-		return test;
+		return std::isnan (test)
+			? val
+			: test;
 	}
 
 
@@ -93,16 +93,19 @@ template<class Value>
 
 
 template<class Value>
-	inline Value
+	inline constexpr Value
 	bound (Value value, Value min, Value max) noexcept
 	{
-		limit_value (value, min, max);
-		return value;
+		return value < min
+			? min
+			: value > max
+				? max
+				: value;
 	}
 
 
 template<class Value>
-	inline Value
+	inline constexpr Value
 	bound (Value value, Range<Value> range) noexcept
 	{
 		return bound (value, range.min(), range.max());
@@ -110,7 +113,7 @@ template<class Value>
 
 
 template<class Value>
-	inline Value
+	inline constexpr Value
 	pow2 (Value v) noexcept
 	{
 		return v * v;
@@ -223,10 +226,10 @@ mod1 (float v) noexcept
  * Returns attenuation factor from given number of decibels.
  * \param	db Attenuation value (-inf..0), eg. -3 means -3dB.
  */
-inline float
+inline constexpr float
 attenuate_db (float db) noexcept
 {
-	return powf (10.0f, db / 20.0f);
+	return std::pow (10.0f, db / 20.0f);
 }
 
 #endif

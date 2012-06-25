@@ -26,7 +26,8 @@
 
 
 template<class Type>
-	void delete_operator (Type element) noexcept
+	inline void
+	delete_operator (Type element) noexcept
 	{
 		delete element;
 	}

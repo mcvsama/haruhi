@@ -37,7 +37,7 @@ int
 ControllerParam::Adapter::encurve (int in) const noexcept
 {
 	Range<float> hard_range (hard_limit.min(), _center);
-	Range<float> temp_range { 1.0f, 0.0f };
+	Range<float> temp_range (1.0f, 0.0f);
 	if (in >= _center)
 	{
 		hard_range = Range<float> (_center, hard_limit.max());
@@ -57,7 +57,7 @@ int
 ControllerParam::Adapter::decurve (int in) const noexcept
 {
 	Range<float> hard_range (hard_limit.min(), _center);
-	Range<float> temp_range { 1.0f, 0.0f };
+	Range<float> temp_range (1.0f, 0.0f);
 	if (in >= _center)
 	{
 		hard_range = Range<float> (_center, hard_limit.max());

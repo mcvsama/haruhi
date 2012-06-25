@@ -87,7 +87,8 @@ class ControllerParam: public Param<int>
 	};
 
   public:
-	explicit ControllerParam (const char* name = "") noexcept;
+	explicit
+	ControllerParam (const char* name = "") noexcept;
 
 	ControllerParam (Range<int> range, int default_value, int center_value, int denominator, const char* name,
 					 Range<float> shown_range = Range<float> { 0.0f, 1.0f }, int shown_decimals = 1, int step = 1) noexcept;

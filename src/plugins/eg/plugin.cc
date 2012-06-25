@@ -79,13 +79,13 @@ Plugin::set_unit_bay (Haruhi::UnitBay* unit_bay)
 
 
 void
-Plugin::save_state (QDomElement& element) const
+Plugin::save_state (QDomElement&) const
 {
 }
 
 
 void
-Plugin::load_state (QDomElement const& element)
+Plugin::load_state (QDomElement const&)
 {
 	disable();
 	enable();

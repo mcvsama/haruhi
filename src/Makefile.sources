@@ -322,25 +322,32 @@ SRC_SOURCES += haruhi/settings/session_loader_settings.cc
 
 ######## /utility ########
 
+SRC_HEADERS += haruhi/utility/amplitude.h
 SRC_HEADERS += haruhi/utility/atomic.h
 SRC_HEADERS += haruhi/utility/backtrace.h
 SRC_HEADERS += haruhi/utility/condition.h
 SRC_HEADERS += haruhi/utility/confusion.h
+SRC_HEADERS += haruhi/utility/decibels.h
 SRC_HEADERS += haruhi/utility/exception.h
 SRC_HEADERS += haruhi/utility/fast_pow.h
 SRC_HEADERS += haruhi/utility/filesystem.h
+SRC_HEADERS += haruhi/utility/frequency.h
+SRC_HEADERS += haruhi/utility/hertz.h
 SRC_HEADERS += haruhi/utility/id_allocator.h
 SRC_HEADERS += haruhi/utility/lexical_cast.h
+SRC_HEADERS += haruhi/utility/literals.h
 SRC_HEADERS += haruhi/utility/lookup_pow.h
 SRC_HEADERS += haruhi/utility/memory.h
 SRC_HEADERS += haruhi/utility/mutex.h
 SRC_HEADERS += haruhi/utility/noncopyable.h
+SRC_HEADERS += haruhi/utility/normalized_frequency.h
 SRC_HEADERS += haruhi/utility/numeric.h
 SRC_HEADERS += haruhi/utility/pool_allocator.h
 SRC_HEADERS += haruhi/utility/predicates.h
 SRC_HEADERS += haruhi/utility/qdom_sequence.h
 SRC_HEADERS += haruhi/utility/ref_counted.h
 SRC_HEADERS += haruhi/utility/saveable_state.h
+SRC_HEADERS += haruhi/utility/seconds.h
 SRC_HEADERS += haruhi/utility/semaphore.h
 SRC_HEADERS += haruhi/utility/simd_ops.h
 SRC_HEADERS += haruhi/utility/shared.h
@@ -348,6 +355,7 @@ SRC_HEADERS += haruhi/utility/signal.h
 SRC_HEADERS += haruhi/utility/sse_pow.h
 SRC_HEADERS += haruhi/utility/thread.h
 SRC_HEADERS += haruhi/utility/timing.h
+SRC_HEADERS += haruhi/utility/units.h
 SRC_HEADERS += haruhi/utility/work_performer.h
 
 SRC_SOURCES += haruhi/utility/backtrace.cc

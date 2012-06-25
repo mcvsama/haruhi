@@ -96,7 +96,7 @@ class VoiceManager
 	 * 'graph_updated' message to all voices.
 	 */
 	void
-	graph_updated (unsigned int sample_rate, std::size_t buffer_size);
+	graph_updated (Frequency sample_rate, std::size_t buffer_size);
 
 	/**
 	 * Make all current and future voices use given Wavetable.
@@ -185,7 +185,7 @@ class VoiceManager
 	WorkUnits			_work_units;
 	ID2VoiceMap			_voices_by_id;
 	SharedResourcesVec	_shared_resources_vec;
-	unsigned int		_sample_rate;
+	Frequency			_sample_rate;
 	std::size_t			_buffer_size;
 	DSP::Wavetable*		_wavetable;
 	Haruhi::AudioBuffer	_output_1;

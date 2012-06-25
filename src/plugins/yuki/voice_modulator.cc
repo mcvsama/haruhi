@@ -26,8 +26,9 @@
 
 namespace Yuki {
 
-VoiceModulator::VoiceModulator (Params::Part* part_params, unsigned int sample_rate, std::size_t buffer_size):
-	_part_params (part_params)
+VoiceModulator::VoiceModulator (Params::Part* part_params, Frequency sample_rate, std::size_t buffer_size):
+	_part_params (part_params),
+	_sample_rate (sample_rate)
 {
 	assert (countof (_operator_output) == Params::Part::OperatorsNumber);
 
@@ -81,7 +82,7 @@ VoiceModulator::modulate (Haruhi::AudioBuffer* amplitude_buf_source, Haruhi::Aud
 
 
 void
-VoiceModulator::graph_updated (unsigned int sample_rate, std::size_t buffer_size)
+VoiceModulator::graph_updated (Frequency sample_rate, std::size_t buffer_size)
 {
 	_sample_rate = sample_rate;
 	_buffer_size = buffer_size;

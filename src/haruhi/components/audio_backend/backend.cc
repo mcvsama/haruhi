@@ -556,7 +556,7 @@ Backend::graph_updated()
 {
 	Unit::graph_updated();
 	// Keep smoothing time independent from sample rate:
-	_master_volume_smoother.set_samples (0.01f * graph()->sample_rate());
+	_master_volume_smoother.set_samples (10_ms * graph()->sample_rate());
 	_master_volume_smoother_buffer.resize (graph()->buffer_size());
 }
 
@@ -564,14 +564,14 @@ Backend::graph_updated()
 void
 Backend::dummy_round()
 {
-	const int DummyPeriodTime = 33; // ms
-	const int DummySampleRate = 48000;
-	const int DummyBufferSize = DummySampleRate / (1000.0 / DummyPeriodTime);
+	const Seconds dummy_period_time = 33_ms;
+	const Frequency dummy_sample_rate = 48_kHz;
+	const std::size_t dummy_buffer_size = dummy_sample_rate * dummy_period_time;
 	graph()->synchronize ([&] {
-		graph()->set_sample_rate (DummySampleRate);
-		graph()->set_buffer_size (DummyBufferSize);
+		graph()->set_sample_rate (dummy_sample_rate);
+		graph()->set_buffer_size (dummy_buffer_size);
 	});
-	usleep (DummyPeriodTime * 1000); // Sleep for 33ms
+	usleep (dummy_period_time.microseconds());
 }
 
 } // namespace AudioBackendImpl

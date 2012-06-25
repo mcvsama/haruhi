@@ -311,7 +311,7 @@ int
 JackTransport::c_sample_rate_change (jack_nframes_t sample_rate)
 {
 	Mutex::Lock (*backend()->graph());
-	backend()->graph()->set_sample_rate (sample_rate);
+	backend()->graph()->set_sample_rate (sample_rate * 1_Hz);
 	return 0;
 }
 

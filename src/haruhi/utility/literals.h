@@ -11,37 +11,32 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__UTILITY__EXCEPTION_H__INCLUDED
-#define HARUHI__UTILITY__EXCEPTION_H__INCLUDED
+#ifndef HARUHI__UTILITY__LITERALS_H__INCLUDED
+#define HARUHI__UTILITY__LITERALS_H__INCLUDED
 
 // Standard:
 #include <cstddef>
-#include <stdexcept>
+#include <string>
+
+// Qt:
+#include <QtCore/QString>
 
 // Haruhi:
 #include <haruhi/config/all.h>
 
 
-class Exception: public std::runtime_error
+inline std::string
+operator"" _str (const char* string, size_t)
 {
-  public:
-	explicit
-	Exception (const char* what, const char* details = ""):
-		std::runtime_error (what),
-		_details (details)
-	{ }
+	return std::string (string);
+}
 
-	virtual ~Exception() noexcept { }
 
-	const char*
-	details() const noexcept
-	{
-		return _details.c_str();
-	}
-
-  private:
-	std::string _details;
-};
+inline QString
+operator"" _qstr (const char* string, size_t)
+{
+	return QString (string);
+}
 
 #endif
 

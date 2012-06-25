@@ -24,6 +24,7 @@
 #include <haruhi/utility/memory.h>
 #include <haruhi/utility/timestamp.h>
 #include <haruhi/utility/frequency.h>
+#include <haruhi/utility/normalized_frequency.h>
 
 
 namespace Haruhi {
@@ -157,7 +158,7 @@ class VoiceEvent: public Event
 
 	// TODO move to MIDI utilities
 	static Frequency
-	frequency_from_key_id (KeyID, float master_tune) noexcept;
+	frequency_from_key_id (KeyID, Frequency master_tune) noexcept;
 
   private:
 	KeyID			_key_id;
@@ -187,8 +188,8 @@ class VoiceControllerEvent: public ControllerEvent
 	/**
 	 * Interpret event value as frequency.
 	 */
-	Frequency
-	frequency (Frequency sample_rate) const noexcept;
+	NormalizedFrequency
+	normalized_frequency() const noexcept;
 
   private:
 	VoiceID _voice_id;
@@ -329,7 +330,7 @@ VoiceEvent::clone() const
 
 
 inline Frequency
-VoiceEvent::frequency_from_key_id (KeyID key_id, float master_tune) noexcept
+VoiceEvent::frequency_from_key_id (KeyID key_id, Frequency master_tune) noexcept
 {
 	return master_tune * std::pow (2.0f, ((static_cast<float> (key_id) - 69.0f) / 12.0f));
 }
@@ -365,10 +366,10 @@ VoiceControllerEvent::clone() const
 }
 
 
-inline Frequency
-VoiceControllerEvent::frequency (Frequency sample_rate) const noexcept
+inline NormalizedFrequency
+VoiceControllerEvent::normalized_frequency() const noexcept
 {
-	return value() * sample_rate;
+	return NormalizedFrequency (value());
 }
 
 } // namespace Haruhi

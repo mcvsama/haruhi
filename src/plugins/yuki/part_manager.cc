@@ -286,7 +286,7 @@ PartManager::graph_updated()
 {
 	Mutex::Lock lock (_parts_mutex);
 
-	float const samples = 0.005f * graph()->sample_rate();
+	float const samples = 5_ms * graph()->sample_rate();
 	_volume_smoother[0].set_samples (samples);
 	_volume_smoother[1].set_samples (samples);
 	_panorama_smoother[0].set_samples (samples);

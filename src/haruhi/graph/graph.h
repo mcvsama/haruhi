@@ -23,6 +23,7 @@
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/signal.h>
 #include <haruhi/utility/timestamp.h>
+#include <haruhi/utility/frequency.h>
 
 // Local:
 #include "unit.h"
@@ -140,39 +141,39 @@ class Graph: public RecursiveMutex
 	/**
 	 * Returns current sample rate.
 	 */
-	unsigned int
+	Frequency
 	sample_rate() const noexcept;
 
 	/**
 	 * Sets sample rate and updates all connected port buffers.
 	 */
 	void
-	set_sample_rate (unsigned int sample_rate);
+	set_sample_rate (Frequency sample_rate);
 
 	/**
 	 * Returns current graph tempo measured
 	 * in quarter notes per minute (BPM).
 	 */
-	float
+	Frequency
 	tempo() const noexcept;
 
 	/**
 	 * Sets new tempo.
 	 */
 	void
-	set_tempo (float tempo);
+	set_tempo (Frequency tempo);
 
 	/**
 	 * Returns current master tune in Hz. Default value is 440.0.
 	 */
-	float
+	Frequency
 	master_tune() const noexcept;
 
 	/**
 	 * Sets new master tune in Hz.
 	 */
 	void
-	set_master_tune (float master_tune);
+	set_master_tune (Frequency master_tune);
 
 	/**
 	 * Sends notification to all registered units
@@ -238,9 +239,9 @@ class Graph: public RecursiveMutex
 
 	// Graph parameters:
 	std::size_t		_buffer_size;
-	unsigned int	_sample_rate;
-	float			_tempo;
-	float			_master_tune;
+	Frequency		_sample_rate;
+	Frequency		_tempo;
+	Frequency		_master_tune;
 
 	// Registered backends:
 	AudioBackend*	_audio_backend;
@@ -269,21 +270,21 @@ Graph::buffer_size() const noexcept
 }
 
 
-inline unsigned int
+inline Frequency
 Graph::sample_rate() const noexcept
 {
 	return _sample_rate;
 }
 
 
-inline float
+inline Frequency
 Graph::tempo() const noexcept
 {
 	return _tempo;
 }
 
 
-inline float
+inline Frequency
 Graph::master_tune() const noexcept
 {
 	return _master_tune;

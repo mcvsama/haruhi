@@ -28,20 +28,26 @@ template<class tValueType>
 		typedef tValueType ValueType;
 
 	  public:
+		constexpr
 		Range() noexcept;
 
+		constexpr
 		Range (ValueType min, ValueType max) noexcept;
 
+		constexpr
+		Range (Range const& other) noexcept;
+
 		template<class OtherType>
+			constexpr
 			operator Range<OtherType>() const noexcept
 			{
 				return Range<OtherType> (_min, _max);
 			}
 
-		ValueType
+		constexpr ValueType
 		min() const noexcept;
 
-		ValueType
+		constexpr ValueType
 		max() const noexcept;
 
 		void
@@ -53,7 +59,7 @@ template<class tValueType>
 		/**
 		 * Return maximum() - minimum().
 		 */
-		ValueType
+		constexpr ValueType
 		extent() const noexcept;
 
 		/**
@@ -65,7 +71,7 @@ template<class tValueType>
 		/**
 		 * Return a copy with swapped minimum and maximum values.
 		 */
-		Range
+		constexpr Range
 		flipped() const;
 
 	  private:
@@ -75,6 +81,7 @@ template<class tValueType>
 
 
 template<class T>
+	constexpr
 	Range<T>::Range() noexcept:
 		_min(),
 		_max()
@@ -82,6 +89,7 @@ template<class T>
 
 
 template<class T>
+	constexpr
 	Range<T>::Range (ValueType min, ValueType max) noexcept:
 		_min (min),
 		_max (max)
@@ -89,8 +97,16 @@ template<class T>
 
 
 template<class T>
-	typename
-	Range<T>::ValueType
+	constexpr
+	Range<T>::Range (Range<T> const& other) noexcept:
+		_min (other._min),
+		_max (other._max)
+	{ }
+
+
+template<class T>
+	constexpr
+	typename Range<T>::ValueType
 	Range<T>::min() const noexcept
 	{
 		return _min;
@@ -98,8 +114,8 @@ template<class T>
 
 
 template<class T>
-	typename
-	Range<T>::ValueType
+	constexpr
+	typename Range<T>::ValueType
 	Range<T>::max() const noexcept
 	{
 		return _max;
@@ -123,6 +139,7 @@ template<class T>
 
 
 template<class T>
+	constexpr
 	typename Range<T>::ValueType
 	Range<T>::extent() const noexcept
 	{
@@ -139,7 +156,7 @@ template<class T>
 
 
 template<class T>
-	Range<T>
+	constexpr Range<T>
 	Range<T>::flipped() const
 	{
 		return Range { _max, _min };

@@ -79,7 +79,7 @@ small_font();
 	namespace Icons16
 	{
 #define HARUHI_CONFIG_HAS_ICON_16(key, file) \
-		HARUHI_CONFIG_HAS_ICON(key, HARUHI_SHARED_DIRECTORY"/images/16/"#file)
+		HARUHI_CONFIG_HAS_ICON(key, HARUHI_SHARED_DIRECTORY "/images/16/" file)
 
 		HARUHI_CONFIG_HAS_ICON_16 (haruhi, "haruhi.png");
 		HARUHI_CONFIG_HAS_ICON_16 (all, "all.png");
@@ -164,7 +164,7 @@ small_font();
 	namespace Icons22
 	{
 #define HARUHI_CONFIG_HAS_ICON_22(key, file) \
-		HARUHI_CONFIG_HAS_ICON(key, HARUHI_SHARED_DIRECTORY"/images/22/"#file)
+		HARUHI_CONFIG_HAS_ICON(key, HARUHI_SHARED_DIRECTORY "/images/22/" file)
 
 		HARUHI_CONFIG_HAS_ICON_22 (spacer, "spacer.png");
 		HARUHI_CONFIG_HAS_ICON_22 (show_audio, "show-audio.png");
@@ -178,7 +178,7 @@ small_font();
 	namespace NoteIcons
 	{
 #define HARUHI_CONFIG_HAS_NOTE_ICON(key, file) \
-		HARUHI_CONFIG_HAS_ICON(key, HARUHI_SHARED_DIRECTORY"/images/notes/"#file)
+		HARUHI_CONFIG_HAS_ICON(key, HARUHI_SHARED_DIRECTORY "/images/notes/" file)
 
 		HARUHI_CONFIG_HAS_NOTE_ICON (note_01, "note-01.png");
 		HARUHI_CONFIG_HAS_NOTE_ICON (note_02, "note-02.png");

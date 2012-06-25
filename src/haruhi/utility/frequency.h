@@ -20,8 +20,11 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 
+// Local:
+#include "hertz.h"
 
-typedef float Frequency;
+
+typedef Hertz Frequency;
 
 #endif
 

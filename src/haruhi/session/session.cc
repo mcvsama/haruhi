@@ -194,7 +194,7 @@ Private::SessionGlobal::update_params()
 void
 Private::SessionGlobal::update_widgets()
 {
-	_tuning_hz->setText (QString::number (_session->master_tune(), 'f', 2) + "Hz");
+	_tuning_hz->setText (QString::number (_session->master_tune().to_f(), 'f', 2) + " Hz");
 }
 
 
@@ -331,7 +331,9 @@ Session::MeterPanel::MeterPanel (Session* session, QWidget* parent):
 	setFrameStyle (QFrame::StyledPanel | QFrame::Raised);
 
 	_level_meters_group = new LevelMetersGroup (this);
-	_master_volume = new DialControl (this, { MinVolume, MaxVolume }, ZeroVolume * std::pow (attenuate_db (-3.0f), 1.0f / M_E));
+	_master_volume = new DialControl (this,
+									  { MinVolume, MaxVolume },
+									  ZeroVolume * std::pow (attenuate_db (-3.0f), 1.0f / M_E));
 	QObject::connect (_master_volume, SIGNAL (valueChanged (int)), _session, SLOT (master_volume_changed (int)));
 	QToolTip::add (_master_volume, "Master Volume");
 
@@ -567,10 +569,10 @@ Session::save_session (QString const& file_name)
 }
 
 
-float
+Frequency
 Session::master_tune() const
 {
-	return 440.0f * std::pow (2.0f, (1.0f / 12.0f) * (_parameters.tuning / 100.0f + _parameters.transpose));
+	return 440_Hz * std::pow (2.0f, (1.0f / 12.0f) * (_parameters.tuning / 100.0f + _parameters.transpose));
 }
 
 
@@ -758,7 +760,7 @@ void
 Session::tempo_value_changed (double new_tempo)
 {
 	Mutex::Lock lock (*graph());
-	graph()->set_tempo (new_tempo);
+	graph()->set_tempo (1_Hz * new_tempo);
 }
 
 

@@ -30,15 +30,16 @@ class Timestamp
 	/**
 	 * Construct "0" timestamp.
 	 */
+	constexpr
 	Timestamp() noexcept;
 
-	bool
+	constexpr bool
 	operator< (Timestamp const& other) const noexcept;
 
-	bool
+	constexpr bool
 	operator> (Timestamp const& other) const noexcept;
 
-	Timestamp
+	constexpr Timestamp
 	operator-() const noexcept;
 
 	Timestamp&
@@ -47,16 +48,16 @@ class Timestamp
 	Timestamp&
 	operator-= (Timestamp const& other) noexcept;
 
-	Timestamp
+	constexpr Timestamp
 	operator+ (Timestamp const& other) const noexcept;
 
-	Timestamp
+	constexpr Timestamp
 	operator- (Timestamp const& other) const noexcept;
 
 	/**
 	 * Return UNIX time for given timestamp measured in µs.
 	 */
-	int64_t
+	constexpr int64_t
 	microseconds() const noexcept;
 
 	/**
@@ -81,42 +82,45 @@ class Timestamp
 	static Timestamp
 	now() noexcept;
 
-	static Timestamp
-	from_epoch (int64_t epoch) noexcept;
+	// FIXME: GCC bug <http://gcc.gnu.org/bugzilla/show_bug.cgi?id=53473> - remove "(false)" when this is fixed.
+	static constexpr Timestamp
+	from_epoch (int64_t epoch) noexcept (false);
 
-	static Timestamp
-	from_epoch_microseconds (int64_t epoch_us) noexcept;
+	// FIXME: GCC bug <http://gcc.gnu.org/bugzilla/show_bug.cgi?id=53473> - remove "(false)" when this is fixed.
+	static constexpr Timestamp
+	from_epoch_microseconds (int64_t epoch_us) noexcept (false);
 
   private:
 	// Ctor
-	explicit Timestamp (int64_t epoch_microseconds) noexcept;
+	constexpr explicit
+	Timestamp (int64_t epoch_microseconds) noexcept;
 
   private:
 	int64_t _epoch_us;
 };
 
 
-inline
+inline constexpr
 Timestamp::Timestamp() noexcept:
 	_epoch_us (0)
 { }
 
 
-inline bool
+inline constexpr bool
 Timestamp::operator< (Timestamp const& other) const noexcept
 {
 	return _epoch_us < other._epoch_us;
 }
 
 
-inline bool
+inline constexpr bool
 Timestamp::operator> (Timestamp const& other) const noexcept
 {
 	return other < *this;
 }
 
 
-inline Timestamp
+inline constexpr Timestamp
 Timestamp::operator-() const noexcept
 {
 	return Timestamp (-_epoch_us);
@@ -139,21 +143,21 @@ Timestamp::operator-= (Timestamp const& other) noexcept
 }
 
 
-inline Timestamp
+inline constexpr Timestamp
 Timestamp::operator+ (Timestamp const& other) const noexcept
 {
 	return Timestamp (_epoch_us + other._epoch_us);
 }
 
 
-inline Timestamp
+inline constexpr Timestamp
 Timestamp::operator- (Timestamp const& other) const noexcept
 {
 	return Timestamp (_epoch_us - other._epoch_us);
 }
 
 
-inline int64_t
+inline constexpr int64_t
 Timestamp::microseconds() const noexcept
 {
 	return _epoch_us;
@@ -192,21 +196,23 @@ Timestamp::now() noexcept
 }
 
 
-inline Timestamp
-Timestamp::from_epoch (int64_t epoch) noexcept
+// FIXME: GCC bug <http://gcc.gnu.org/bugzilla/show_bug.cgi?id=53473> - remove "(false)" when this is fixed.
+inline constexpr Timestamp
+Timestamp::from_epoch (int64_t epoch) noexcept (false)
 {
 	return Timestamp (epoch * 1000000ull);
 }
 
 
-inline Timestamp
-Timestamp::from_epoch_microseconds (int64_t epoch_us) noexcept
+// FIXME: GCC bug <http://gcc.gnu.org/bugzilla/show_bug.cgi?id=53473> - remove "(false)" when this is fixed.
+inline constexpr Timestamp
+Timestamp::from_epoch_microseconds (int64_t epoch_us) noexcept (false)
 {
-	return Timestamp {epoch_us};
+	return Timestamp (epoch_us);
 }
 
 
-inline
+inline constexpr
 Timestamp::Timestamp (int64_t epoch_us) noexcept:
 	_epoch_us (epoch_us)
 { }

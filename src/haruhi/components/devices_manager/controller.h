@@ -29,6 +29,8 @@
 #include <haruhi/lib/midi.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/shared.h>
+#include <haruhi/utility/seconds.h>
+#include <haruhi/utility/frequency.h>
 
 
 namespace Haruhi {
@@ -104,13 +106,13 @@ class Controller: public SaveableState
 
   private:
 	void
-	controller_smoothing_setup (Timestamp t, float target, float min_coeff, float max_coeff, unsigned int sample_rate);
+	controller_smoothing_setup (Timestamp t, float target, Seconds min_coeff, Seconds max_coeff, Frequency sample_rate);
 
 	void
-	channel_pressure_smoothing_setup (Timestamp t, float target, float min_coeff, float max_coeff, unsigned int sample_rate);
+	channel_pressure_smoothing_setup (Timestamp t, float target, Seconds min_coeff, Seconds max_coeff, Frequency sample_rate);
 
 	void
-	key_pressure_smoothing_setup (unsigned int key, Timestamp t, float target, float min_coeff, float max_coeff, unsigned int sample_rate);
+	key_pressure_smoothing_setup (unsigned int key, Timestamp t, float target, Seconds min_coeff, Seconds max_coeff, Frequency sample_rate);
 
   public:
 	// MIDI filters:
@@ -128,8 +130,8 @@ class Controller: public SaveableState
 	bool	key_pressure_filter;
 	int		key_pressure_channel;		// 0 means 'all'
 	bool	key_pressure_invert;
-	// Smooth controller/pressure events, value measured in ms:
-	int		smoothing;
+	// Smooth controller/pressure events:
+	Seconds	smoothing;
 
   private:
 	QString			_name;

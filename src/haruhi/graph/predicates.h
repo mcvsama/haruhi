@@ -35,7 +35,8 @@ template<class Port>
 		typedef Port* argument_type;
 
 	  public:
-		explicit ConnectedTo (Port* port) noexcept;
+		explicit
+		ConnectedTo (Port* port) noexcept;
 
 		bool
 		operator() (argument_type const& port) const noexcept;
@@ -60,7 +61,8 @@ template<class Port>
 		typedef Port* argument_type;
 
 	  public:
-		explicit ConnectedFrom (Port* port) noexcept;
+		explicit
+		ConnectedFrom (Port* port) noexcept;
 
 		bool
 		operator() (argument_type const& port) const noexcept;
