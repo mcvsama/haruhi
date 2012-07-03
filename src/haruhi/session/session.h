@@ -41,6 +41,7 @@
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/signal.h>
 #include <haruhi/utility/work_performer.h>
+#include <haruhi/utility/noncopyable.h>
 #include <haruhi/widgets/level_meter.h>
 #include <haruhi/widgets/dial_control.h>
 
@@ -58,7 +59,7 @@ namespace SessionPrivate {
 	  public:
 		SettingsDialog (QWidget* parent, Session* session);
 
-		virtual ~SettingsDialog() { }
+		virtual ~SettingsDialog() = default;
 
 		QString
 		name() const;
@@ -141,9 +142,12 @@ namespace SessionPrivate {
 class Session:
 	public QWidget,
 	public Signal::Receiver,
-	public SaveableState
+	public SaveableState,
+	public Noncopyable
 {
 	Q_OBJECT
+
+	friend class SessionPrivate::SettingsDialog;
 
   public:
 	/**
@@ -205,13 +209,6 @@ class Session:
 
 		Sample value;
 	};
-
-  private:
-	// Prevent copying:
-	Session (Session const&);
-	Session& operator= (Session const&);
-
-	friend class SessionPrivate::SettingsDialog;
 
   public:
 	Session (QWidget* parent);

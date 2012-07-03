@@ -28,7 +28,7 @@
 #define HARUHI_SAVEABLE_PARAMS_STANDARD_METHODS(klass)											\
 	typedef klass ThisType;																		\
 	klass();																					\
-	virtual ~klass() { }																		\
+	virtual ~klass() = default;																	\
 	protected:																					\
 	void get_params (Haruhi::BaseParam const**, std::size_t max_entries) const;					\
 	public:

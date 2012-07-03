@@ -33,31 +33,18 @@ namespace Haruhi {
 
 FrequencyResponsePlot::FrequencyResponsePlot (QWidget* parent, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
-	_num_stages (1.0f),
-	_to_repaint_buffer (false),
-	_to_replot (false),
-	_last_enabled_state (isEnabled()),
-	_impulse_response (0)
+	_last_enabled_state (isEnabled())
 {
-	configure_widget();
+	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+	setBackgroundColor (QColor (0xff, 0xff, 0xff));
+	setAutoFillBackground (true);
 }
 
 
 FrequencyResponsePlot::FrequencyResponsePlot (DSP::PlotableImpulseResponse* impulse_response, QWidget* parent, const char* name):
-	QWidget (parent, name, Qt::WNoAutoErase),
-	_num_stages (1.0f),
-	_to_repaint_buffer (false),
-	_to_replot (false),
-	_last_enabled_state (isEnabled()),
-	_impulse_response (0)
+	FrequencyResponsePlot (parent, name)
 {
-	configure_widget();
 	assign_impulse_response (impulse_response);
-}
-
-
-FrequencyResponsePlot::~FrequencyResponsePlot()
-{
 }
 
 
@@ -247,15 +234,6 @@ FrequencyResponsePlot::repaint_grid()
 				painter.drawText (pos + 2, 8, QString::number (f / 1000) + "k");
 		}
 	}
-}
-
-
-void
-FrequencyResponsePlot::configure_widget()
-{
-	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	setBackgroundColor (QColor (0xff, 0xff, 0xff));
-	setAutoFillBackground (true);
 }
 
 } // namespace Haruhi

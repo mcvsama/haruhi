@@ -40,7 +40,7 @@ class InputDialog: public PortDialog
   public:
 	InputDialog (QWidget* parent, Backend* backend);
 
-	virtual ~InputDialog() { }
+	virtual ~InputDialog() = default;
 
 	void
 	from (InputItem const*);

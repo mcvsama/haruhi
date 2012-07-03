@@ -56,7 +56,7 @@ class FrequencyResponsePlot: public QWidget
 
 	FrequencyResponsePlot (DSP::PlotableImpulseResponse* impulse_response, QWidget* parent, const char* name = 0);
 
-	virtual ~FrequencyResponsePlot();
+	virtual ~FrequencyResponsePlot() = default;
 
 	/**
 	 * Sets number of stages the same filter will be applied.
@@ -105,9 +105,6 @@ class FrequencyResponsePlot: public QWidget
 	customEvent (QEvent*) override;
 
   private:
-	void
-	configure_widget();
-
 	/**
 	 * Paints grid using DotLine style on buffer,
 	 * which is workaround for extremely slow Qt4 in this task.
@@ -116,14 +113,14 @@ class FrequencyResponsePlot: public QWidget
 	repaint_grid();
 
   private:
-	Graph*							_graph;
-	float							_num_stages;
+	Graph*							_graph					= nullptr;
+	float							_num_stages				= 1.0f;
 	QPixmap							_double_buffer;
 	QPixmap							_grid_buffer;
-	bool							_to_repaint_buffer;
-	bool							_to_replot;
+	bool							_to_repaint_buffer		= false;
+	bool							_to_replot				= false;
 	bool							_last_enabled_state;
-	DSP::PlotableImpulseResponse*	_impulse_response;
+	DSP::PlotableImpulseResponse*	_impulse_response		= nullptr;
 	std::vector<float>				_values;
 	QSize							_prev_size;
 };

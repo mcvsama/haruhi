@@ -37,41 +37,18 @@ namespace Haruhi {
 
 EnvelopePlot::EnvelopePlot (QWidget* parent, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
-	_sample_rate (1_Hz),
-	_force_repaint (false),
-	_last_enabled_state (isEnabled()),
-	_envelope (0),
-	_editable (false),
-	_max_segment_time (64_s),
-	_hovered (false),
-	_active_point_index (-1),
-	_hovered_point_index (-1),
-	_dragging (false)
+	_last_enabled_state (isEnabled())
 {
-	configure_widget();
+	setMouseTracking (true);
+	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+	setBackgroundColor (QColor (0xff, 0xff, 0xff));
 }
 
 
 EnvelopePlot::EnvelopePlot (DSP::Envelope* envelope, QWidget* parent, const char* name):
-	QWidget (parent, name, Qt::WNoAutoErase),
-	_sample_rate (1_Hz),
-	_force_repaint (false),
-	_last_enabled_state (isEnabled()),
-	_envelope (0),
-	_editable (false),
-	_max_segment_time (64_s),
-	_hovered (false),
-	_active_point_index (-1),
-	_hovered_point_index (-1),
-	_dragging (false)
+	EnvelopePlot (parent, name)
 {
-	configure_widget();
 	assign_envelope (envelope);
-}
-
-
-EnvelopePlot::~EnvelopePlot()
-{
 }
 
 
@@ -406,15 +383,6 @@ EnvelopePlot::mouseReleaseEvent (QMouseEvent*)
 	_dragging = false;
 	_force_repaint = true;
 	update();
-}
-
-
-void
-EnvelopePlot::configure_widget()
-{
-	setMouseTracking (true);
-	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	setBackgroundColor (QColor (0xff, 0xff, 0xff));
 }
 
 

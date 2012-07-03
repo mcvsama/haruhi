@@ -41,7 +41,7 @@ class PluginFactory
   public:
 	PluginFactory();
 
-	virtual ~PluginFactory() { }
+	virtual ~PluginFactory() = default;
 
 	/**
 	 * Creates new plugin and returns pointer to it.

@@ -51,7 +51,7 @@ class DeviceDialog: public QDialog
   public:
 	DeviceDialog (QWidget* parent, Flags flags = 0);
 
-	virtual ~DeviceDialog() { }
+	virtual ~DeviceDialog() = default;
 
 	virtual void
 	clear();

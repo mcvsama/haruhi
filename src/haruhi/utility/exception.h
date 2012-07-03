@@ -31,7 +31,7 @@ class Exception: public std::runtime_error
 		_details (details)
 	{ }
 
-	virtual ~Exception() noexcept { }
+	virtual ~Exception() noexcept = default;
 
 	const char*
 	details() const noexcept

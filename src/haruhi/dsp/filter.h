@@ -46,7 +46,7 @@ template<unsigned int tOrder, int tResponseType>
 		/**
 		 * Create filter with no impulse response.
 		 */
-		Filter() noexcept;
+		Filter() noexcept = default;
 
 		/**
 		 * Create filter with given impulse response.
@@ -85,20 +85,12 @@ template<unsigned int tOrder, int tResponseType>
 		mixed_advance_iir (Sample* x, Sample* y, int position) noexcept;
 
 	  private:
-		ImpulseResponseType*					_impulse_response;
-		typename ImpulseResponseType::Serial	_last_serial;
+		ImpulseResponseType*					_impulse_response	= 0;
+		typename ImpulseResponseType::Serial	_last_serial		= 0;
 		// Previous samples buffer, stored in reverse order (index 0 contains last sample, 1 one before last, etc):
 		Sample	_px[Order];
 		Sample	_py[Order];
 	};
-
-
-template<unsigned int O, int R>
-	inline
-	Filter<O, R>::Filter() noexcept:
-		_impulse_response (0),
-		_last_serial (0)
-	{ }
 
 
 template<unsigned int O, int R>

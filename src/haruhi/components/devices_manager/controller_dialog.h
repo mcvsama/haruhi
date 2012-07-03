@@ -43,7 +43,7 @@ class ControllerDialog: public QDialog
   public:
 	ControllerDialog (QWidget* parent);
 
-	virtual ~ControllerDialog() { }
+	virtual ~ControllerDialog() = default;
 
 	ControllerItem*
 	item() const;

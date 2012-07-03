@@ -65,7 +65,7 @@ class Event: public FastShared
 	set_event_type (EventType type) noexcept;
 
   public:
-	virtual ~Event() { }
+	virtual ~Event() = default;
 
 	Timestamp
 	timestamp() const noexcept;

@@ -43,7 +43,7 @@ class Transport
 	  public:
 		Port (Transport* transport);
 
-		virtual ~Port() { }
+		virtual ~Port() = default;
 
 		virtual void
 		rename (std::string const&) = 0;
@@ -69,7 +69,7 @@ class Transport
   public:
 	Transport (Backend* backend);
 
-	virtual ~Transport() { }
+	virtual ~Transport() = default;
 
 	Backend*
 	backend() const;

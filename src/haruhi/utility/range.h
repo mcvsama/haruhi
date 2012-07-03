@@ -29,7 +29,7 @@ template<class tValueType>
 
 	  public:
 		constexpr
-		Range() noexcept;
+		Range() noexcept = default;
 
 		constexpr
 		Range (ValueType min, ValueType max) noexcept;
@@ -75,17 +75,9 @@ template<class tValueType>
 		flipped() const;
 
 	  private:
-		ValueType	_min;
-		ValueType	_max;
+		ValueType	_min	= ValueType();
+		ValueType	_max	= ValueType();
 	};
-
-
-template<class T>
-	constexpr
-	Range<T>::Range() noexcept:
-		_min(),
-		_max()
-	{ }
 
 
 template<class T>

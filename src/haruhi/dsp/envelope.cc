@@ -26,16 +26,6 @@ namespace Haruhi {
 
 namespace DSP {
 
-Envelope::Envelope() noexcept:
-	_phase (0),
-	_p (0),
-	_sustain_point (0),
-	_sustain (false),
-	_forced_release (false)
-{
-}
-
-
 void
 Envelope::prepare() noexcept
 {

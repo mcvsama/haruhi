@@ -27,7 +27,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/graph/graph.h>
 #include <haruhi/dsp/envelope.h>
-#include <haruhi/utility/frequency.h>
+#include <haruhi/utility/units.h>
 
 
 namespace Haruhi {
@@ -55,12 +55,6 @@ class EnvelopePlot: public QWidget
 	 * \param	envelope is envelope object.
 	 */
 	EnvelopePlot (DSP::Envelope* envelope, QWidget* parent, const char* name = 0);
-
-	/**
-	 * Dtor
-	 * Does NOT delete envelope object.
-	 */
-	virtual ~EnvelopePlot();
 
 	/**
 	 * Sets sample rate for Plot to correctly display
@@ -159,31 +153,28 @@ class EnvelopePlot: public QWidget
 
   private:
 	void
-	configure_widget();
-
-	void
 	customEvent (QEvent* event) override;
 
   private:
-	Frequency				_sample_rate;
+	Frequency				_sample_rate				= 1_Hz;
 	QPixmap					_double_buffer;
-	bool					_force_repaint;
+	bool					_force_repaint				= false;
 	bool					_last_enabled_state;
-	Atomic<DSP::Envelope*>	_envelope;
+	Atomic<DSP::Envelope*>	_envelope					= 0;
 	QSize					_prev_size;
-	bool					_editable;
-	Seconds					_max_segment_time;
+	bool					_editable					= false;
+	Seconds					_max_segment_time			= 64_s;
 	// True when mouse is over the plot:
-	bool					_hovered;
+	bool					_hovered					= false;
 	// Mouse position over the plot:
 	QPoint					_mouse_pos;
 	// Index of active/dragged point or -1 if none:
-	int						_active_point_index;
-	int						_hovered_point_index;
+	int						_active_point_index			= -1;
+	int						_hovered_point_index		= -1;
 	// Samples number for active point in envelope:
-	int						_active_point_samples;
-	float					_active_point_value;
-	bool					_dragging;
+	int						_active_point_samples		= 0;
+	float					_active_point_value			= 0.0f;
+	bool					_dragging					= false;
 	QPoint					_drag_start_pos;
 };
 

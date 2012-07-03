@@ -160,12 +160,12 @@ class ControllerParam: public Param<int>
 
   private:
 	Adapter			_adapter;
-	int				_center_value;
-	int				_denominator;
-	float			_1_div_denominator;
-	Range<float>	_shown_range;
-	int				_shown_decimals;
-	int				_step;
+	int				_center_value			= 0;
+	int				_denominator			= 1;
+	float			_1_div_denominator		= 1.0f;
+	Range<float>	_shown_range			= { 0.0f, 1.0f };
+	int				_shown_decimals			= 0;
+	int				_step					= 1;
 };
 
 

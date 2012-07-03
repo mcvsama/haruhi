@@ -111,7 +111,7 @@ class Port:
 	/**
 	 * Disconnects from any connected ports and deletes parameters if not null.
 	 */
-	virtual ~Port() { }
+	virtual ~Port() = default;
 
   public:
 	/**

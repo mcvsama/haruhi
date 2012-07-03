@@ -27,24 +27,20 @@
 namespace Haruhi {
 
 Controller::Controller (EventPort* event_port, ControllerParam* controller_param):
-	_controller_proxy (new ControllerProxy (event_port, controller_param)),
-	_own_controller_proxy (true),
-	_unit_bay (0),
-	_learning (false),
-	on_voice_controller_event (_controller_proxy->on_voice_controller_event)
+	Controller (new ControllerProxy (event_port, controller_param))
 {
-	initialize();
+	_own_controller_proxy = true;
 }
 
 
 Controller::Controller (ControllerProxy* controller_proxy):
 	_controller_proxy (controller_proxy),
-	_own_controller_proxy (false),
-	_unit_bay (0),
-	_learning (false),
 	on_voice_controller_event (_controller_proxy->on_voice_controller_event)
 {
-	initialize();
+	if (event_port())
+		event_port()->learned_connection_signal.connect (this, &Controller::learned_connection);
+	_controller_proxy->set_widget (this);
+	schedule_for_update();
 }
 
 
@@ -85,16 +81,6 @@ Controller::stop_learning()
 		_learning.store (false);
 		learning_state_changed();
 	}
-}
-
-
-void
-Controller::initialize()
-{
-	if (event_port())
-		event_port()->learned_connection_signal.connect (this, &Controller::learned_connection);
-	_controller_proxy->set_widget (this);
-	schedule_for_update();
 }
 
 

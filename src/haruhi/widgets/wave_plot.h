@@ -62,7 +62,7 @@ class WavePlot: public QWidget
 	 * Dtor
 	 * Does NOT delete wave object.
 	 */
-	virtual ~WavePlot();
+	virtual ~WavePlot() = default;
 
 	/**
 	 * Assigns Wave object to this plot.
@@ -147,28 +147,25 @@ class WavePlot: public QWidget
 	resample_wave();
 
 	void
-	configure_widget();
-
-	void
 	customEvent (QEvent* event) override;
 
   private:
 	QPixmap				_double_buffer;
-	bool				_to_repaint_buffer;
+	bool				_to_repaint_buffer	= false;
 	bool				_last_enabled_state;
-	DSP::Wave*			_wave;
-	bool				_wave_is_immutable;
+	DSP::Wave*			_wave				= nullptr;
+	bool				_wave_is_immutable	= false;
 	std::vector<float>	_samples;
 	Mutex				_samples_mutex;
 	QSize				_prev_size;
-	float				_denominator;
-	bool				_dont_scale_wave;
-	bool				_dont_scale_grid;
-	bool				_invert;
-	bool				_phase_enabled;
-	float				_phase_position;
-	bool				_closed_ring;
-	bool				_filled_wave;
+	float				_denominator		= 1.0f;
+	bool				_dont_scale_wave	= false;
+	bool				_dont_scale_grid	= false;
+	bool				_invert				= false;
+	bool				_phase_enabled		= false;
+	float				_phase_position		= 0.0f;
+	bool				_closed_ring		= false;
+	bool				_filled_wave		= false;
 };
 
 

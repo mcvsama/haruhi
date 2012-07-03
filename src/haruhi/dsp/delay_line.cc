@@ -26,12 +26,7 @@ namespace Haruhi {
 
 namespace DSP {
 
-DelayLine::DelayLine() noexcept:
-	_data (0),
-	_max_delay (64),
-	_size (1),
-	_delay (0),
-	_wpos (0)
+DelayLine::DelayLine() noexcept
 {
 	set_max_delay (64);
 	set_delay (0);
@@ -40,11 +35,9 @@ DelayLine::DelayLine() noexcept:
 
 
 DelayLine::DelayLine (std::size_t delay, std::size_t max_delay, std::size_t size) noexcept:
-	_data (0),
 	_max_delay (max_delay),
 	_size (size),
-	_delay (delay),
-	_wpos (0)
+	_delay (delay)
 {
 	assert (size > 0);
 	assert (max_delay > size);

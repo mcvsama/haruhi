@@ -48,25 +48,25 @@ class Plugin:
 	 */
 
 	void
-	registered();
+	registered() override;
 
 	void
-	unregistered();
+	unregistered() override;
 
 	void
-	process();
+	process() override;
 
 	void
-	panic();
+	panic() override;
 
 	void
-	graph_updated();
+	graph_updated() override;
 
 	int
-	voices_number() const;
+	voices_number() const override;
 
 	void
-	set_unit_bay (Haruhi::UnitBay*);
+	set_unit_bay (Haruhi::UnitBay*) override;
 
 	/*
 	 * SaveableState implementation

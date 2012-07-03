@@ -64,7 +64,7 @@ class WorkPerformer: private Noncopyable
 		/**
 		 * Deleted by WorkPerformer.
 		 */
-		virtual ~Unit() { }
+		virtual ~Unit() = default;
 
 		/**
 		 * Starts work.

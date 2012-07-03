@@ -106,11 +106,11 @@ class DelayLine
 	clear() noexcept;
 
   private:
-	Sample*		_data;
-	std::size_t	_max_delay;		// Whole buffer size (number of samples).
-	std::size_t	_size;			// Number of samples read/written on each round.
-	std::size_t	_delay;
-	std::size_t	_wpos;
+	Sample*		_data		= 0;
+	std::size_t	_max_delay	= 64;		// Whole buffer size (number of samples).
+	std::size_t	_size		= 1;		// Number of samples read/written on each round.
+	std::size_t	_delay		= 0;
+	std::size_t	_wpos		= 0;
 };
 
 

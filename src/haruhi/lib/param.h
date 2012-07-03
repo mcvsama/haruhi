@@ -35,7 +35,7 @@ namespace Haruhi {
 class BaseParam: public SaveableState
 {
   public:
-	virtual ~BaseParam() { }
+	virtual ~BaseParam() = default;
 
 	/**
 	 * Return parameter unique name.

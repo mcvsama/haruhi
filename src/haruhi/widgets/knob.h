@@ -181,8 +181,8 @@ class Knob:
 	 * \param	step: Change step.
 	 * \param	shown_decimals: How many decimal digits should be shown in spinbox.
 	 */
-	Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param,
-		  QString const& label, Range<float> shown_range, int step, int shown_decimals);
+	Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param, QString const& label,
+		  Range<float> shown_range, int step, int shown_decimals);
 
 	/**
 	 * Create Knob.
@@ -194,8 +194,8 @@ class Knob:
 	/**
 	 * Create Knob. Use external ControllerProxy instead of own one.
 	 */
-	Knob (QWidget* parent, ControllerProxy* controller_proxy,
-		  QString const& label, Range<float> shown_range, int step, int shown_decimals);
+	Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& label,
+		  Range<float> shown_range, int step, int shown_decimals);
 
 	/**
 	 * Create Knob. Use external ControllerProxy and min/max/step/decimals params taken from the
@@ -291,7 +291,7 @@ class Knob:
 	 * Common ctor code.
 	 */
 	void
-	initialize (QString const& label, Range<float> shown_range, int shown_decimals, int step);
+	initialize (QString const& label, Range<float> shown_range, int step, int shown_decimals);
 
 	void
 	update_widgets();
@@ -346,21 +346,21 @@ class Knob:
 	changed (int);
 
   private:
-	bool				_prevent_recursion;
-	QSignalMapper*		_connect_signal_mapper;
-	QSignalMapper*		_disconnect_signal_mapper;
+	bool				_prevent_recursion			= false;
+	QSignalMapper*		_connect_signal_mapper		= nullptr;
+	QSignalMapper*		_disconnect_signal_mapper	= nullptr;
 	ContextMenuPortMap	_context_menu_port_map;
 	int					_action_id; // Helper for generating new IDs for _signal_mapper.
 	QColor				_std_text_color;
 
 	// Widgets:
-	KnobProperties*		_knob_properties;
-	QLabel*				_label;
-	DialControl*		_dial_control;
-	SpinBox*			_spin_box;
-	QMenu*				_context_menu;
-	QMenu*				_connect_menu;
-	QMenu*				_disconnect_menu;
+	KnobProperties*		_knob_properties			= nullptr;
+	QLabel*				_label						= nullptr;
+	DialControl*		_dial_control				= nullptr;
+	SpinBox*			_spin_box					= nullptr;
+	QMenu*				_context_menu				= nullptr;
+	QMenu*				_connect_menu				= nullptr;
+	QMenu*				_disconnect_menu			= nullptr;
 };
 
 

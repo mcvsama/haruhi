@@ -35,45 +35,17 @@ namespace Haruhi {
 
 WavePlot::WavePlot (QWidget* parent, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
-	_to_repaint_buffer (false),
-	_last_enabled_state (isEnabled()),
-	_wave (0),
-	_wave_is_immutable (false),
-	_denominator (1.0),
-	_dont_scale_wave (false),
-	_dont_scale_grid (false),
-	_invert (false),
-	_phase_enabled (false),
-	_phase_position (0.0f),
-	_closed_ring (false),
-	_filled_wave (false)
+	_last_enabled_state (isEnabled())
 {
-	configure_widget();
+	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+	setBackgroundColor (QColor (0xff, 0xff, 0xff));
 }
 
 
 WavePlot::WavePlot (DSP::Wave* wave, QWidget* parent, const char* name):
-	QWidget (parent, name, Qt::WNoAutoErase),
-	_to_repaint_buffer (false),
-	_last_enabled_state (isEnabled()),
-	_wave (0),
-	_wave_is_immutable (false),
-	_denominator (1.0),
-	_dont_scale_wave (false),
-	_dont_scale_grid (false),
-	_invert (false),
-	_phase_enabled (false),
-	_phase_position (0.0f),
-	_closed_ring (false),
-	_filled_wave (false)
+	WavePlot (parent, name)
 {
-	configure_widget();
 	assign_wave (wave, false, false);
-}
-
-
-WavePlot::~WavePlot()
-{
 }
 
 
@@ -251,14 +223,6 @@ WavePlot::resample_wave()
 		}
 		_to_repaint_buffer = true;
 	}
-}
-
-
-void
-WavePlot::configure_widget()
-{
-	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	setBackgroundColor (QColor (0xff, 0xff, 0xff));
 }
 
 

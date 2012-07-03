@@ -42,7 +42,7 @@ class Notification
 	 */
 	Notification (Unit* sender, std::string const& target_urn) noexcept;
 
-	virtual ~Notification() { }
+	virtual ~Notification() = default;
 
 	/**
 	 * \returns	true if Notification is broadcast-type.

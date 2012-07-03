@@ -34,7 +34,7 @@ namespace Haruhi {
 class HasPresets
 {
   public:
-	virtual ~HasPresets() { }
+	virtual ~HasPresets() = default;
 
 	virtual void
 	save_preset (QDomElement&) const = 0;

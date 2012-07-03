@@ -40,7 +40,7 @@ class Buffer: public Noncopyable
   public:
 	Buffer (TypeID type) noexcept;
 
-	virtual ~Buffer() { }
+	virtual ~Buffer() = default;
 
 	/**
 	 * Returns string (pointer) that identifies

@@ -45,8 +45,6 @@ class Envelope
 	typedef std::vector<Point>  Points;
 
   public:
-	Envelope() noexcept;
-
 	Points::size_type
 	sustain_point() const noexcept;
 
@@ -83,11 +81,11 @@ class Envelope
 
   private:
 	Points				_points;
-	unsigned int		_phase;
-	unsigned int		_p;
-	Points::size_type	_sustain_point;
-	bool				_sustain;
-	bool				_forced_release;
+	unsigned int		_phase				= 0;
+	unsigned int		_p					= 0;
+	Points::size_type	_sustain_point		= 0;
+	bool				_sustain			= false;
+	bool				_forced_release		= false;
 };
 
 

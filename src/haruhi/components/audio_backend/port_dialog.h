@@ -35,7 +35,7 @@ class PortDialog: public QDialog
   public:
 	PortDialog (QWidget* parent, Backend* backend);
 
-	virtual ~PortDialog() { }
+	virtual ~PortDialog() = default;
 
   protected:
 	Backend* _backend;

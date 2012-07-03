@@ -121,12 +121,6 @@ class Controller:
 
   private:
 	/**
-	 * Common construction code.
-	 */
-	void
-	initialize();
-
-	/**
 	 * Callback from Port's learned_connection_signal.
 	 * Updates UI and learning state. It's not defined from within
 	 * what thread this method will be called.
@@ -135,10 +129,10 @@ class Controller:
 	learned_connection (EventBackend::EventTypes, EventPort*);
 
   private:
-	ControllerProxy*	_controller_proxy;
-	bool				_own_controller_proxy;
-	UnitBay*			_unit_bay;
-	Atomic<bool>		_learning;
+	ControllerProxy*	_controller_proxy		= nullptr;
+	bool				_own_controller_proxy	= false;
+	UnitBay*			_unit_bay				= nullptr;
+	Atomic<bool>		_learning				= false;
 
   public:
 	/**

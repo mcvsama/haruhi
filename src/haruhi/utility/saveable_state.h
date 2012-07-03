@@ -27,7 +27,7 @@
 class SaveableState
 {
   public:
-	virtual ~SaveableState() { }
+	virtual ~SaveableState() = default;
 
 	virtual void
 	save_state (QDomElement&) const = 0;

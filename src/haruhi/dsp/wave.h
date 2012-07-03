@@ -100,23 +100,20 @@ class Wave: private Noncopyable
 	compute_min_max (unsigned int samples = 1024) const noexcept;
 
   private:
-	bool	_immutable;
-	Wave*	_inner_wave;
-	bool	_auto_delete;
+	bool	_immutable		= true;
+	Wave*	_inner_wave		= 0;
+	bool	_auto_delete	= false;
 };
 
 
 inline
 Wave::Wave (bool immutable) noexcept:
-	_immutable (immutable),
-	_inner_wave (0),
-	_auto_delete (false)
+	_immutable (immutable)
 { }
 
 
 inline
 Wave::Wave (Wave* inner_wave, bool auto_delete) noexcept:
-	_immutable (true),
 	_inner_wave (inner_wave),
 	_auto_delete (auto_delete)
 { }

@@ -42,7 +42,7 @@ class Connector: public QWidget
   public:
 	Connector (PortsConnector* ports_connector, QWidget* parent = 0);
 
-	virtual ~Connector() { }
+	virtual ~Connector() = default;
 
   protected:
 	void

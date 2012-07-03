@@ -58,9 +58,7 @@ template<unsigned int tOrder, int tResponseType>
 		static_assert (tResponseType == FIR || tResponseType == IIR, "invalid ResponseType");
 
 	  public:
-		ImpulseResponse() noexcept;
-
-		virtual ~ImpulseResponse() { }
+		virtual ~ImpulseResponse() = default;
 
 		/**
 		 * Returns current serial number.
@@ -85,15 +83,8 @@ template<unsigned int tOrder, int tResponseType>
 		Sample	b[Order];
 
 	  private:
-		Serial	_serial;
+		Serial	_serial = 0;
 	};
-
-
-template<unsigned int O, int T>
-	inline
-	ImpulseResponse<O, T>::ImpulseResponse() noexcept:
-		_serial (0)
-	{ }
 
 
 template<unsigned int O, int T>

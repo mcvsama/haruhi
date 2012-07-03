@@ -48,8 +48,7 @@ namespace Private {
 			_signal (signal)
 		{ }
 
-		virtual ~ConnectionBase() noexcept
-		{ }
+		virtual ~ConnectionBase() noexcept = default;
 
 		SignalBase*
 		signal() const noexcept

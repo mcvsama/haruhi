@@ -35,7 +35,7 @@ class QDomElementIterator
 	/**
 	 * Create past-the-end iterator.
 	 */
-	QDomElementIterator();
+	QDomElementIterator() = default;
 
 	QDomElementIterator (QDomElement element);
 
@@ -73,11 +73,6 @@ class QDomChildElementsSequence
   private:
 	QDomElement _parent;
 };
-
-
-inline
-QDomElementIterator::QDomElementIterator()
-{ }
 
 
 inline

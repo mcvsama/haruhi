@@ -40,7 +40,7 @@ class OutputDialog: public PortDialog
   public:
 	OutputDialog (QWidget* parent, Backend* backend);
 
-	virtual ~OutputDialog() { }
+	virtual ~OutputDialog() = default;
 
 	void
 	from (OutputItem const*);

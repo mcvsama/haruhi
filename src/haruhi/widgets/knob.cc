@@ -254,38 +254,35 @@ Knob::SpinBox::float_to_int (float y) const
 }
 
 
-Knob::Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param,
-			QString const& label, Range<float> shown_range, int step, int shown_decimals):
+Knob::Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param, QString const& label,
+			Range<float> shown_range, int step, int shown_decimals):
 	QFrame (parent),
 	Controller (event_port, controller_param)
 {
-	initialize (label, shown_range, shown_decimals, step);
+	initialize (label, shown_range, step, shown_decimals);
 }
 
 
 Knob::Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param, QString const& label):
-	QFrame (parent),
-	Controller (event_port, controller_param)
+	Knob (parent, event_port, controller_param, label,
+		  controller_param->shown_range(), controller_param->step(), controller_param->shown_decimals())
 {
-	initialize (label, controller_param->shown_range(), controller_param->shown_decimals(), controller_param->step());
 }
 
 
-Knob::Knob (QWidget* parent, ControllerProxy* controller_proxy,
-			QString const& label, Range<float> shown_range, int step, int shown_decimals):
+Knob::Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& label,
+			Range<float> shown_range, int step, int shown_decimals):
 	QFrame (parent),
 	Controller (controller_proxy)
 {
-	initialize (label, shown_range, shown_decimals, step);
+	initialize (label, shown_range, step, shown_decimals);
 }
 
 
 Knob::Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& label):
-	QFrame (parent),
-	Controller (controller_proxy)
+	Knob (parent, controller_proxy, label,
+		  controller_proxy->param()->shown_range(), controller_proxy->param()->step(), controller_proxy->param()->shown_decimals())
 {
-	ControllerParam* controller_param = controller_proxy->param();
-	initialize (label, controller_param->shown_range(), controller_param->shown_decimals(), controller_param->step());
 }
 
 
@@ -341,13 +338,8 @@ Knob::configure()
 
 
 void
-Knob::initialize (QString const& label, Range<float> shown_range, int shown_decimals, int step)
+Knob::initialize (QString const& label, Range<float> shown_range, int step, int shown_decimals)
 {
-	_prevent_recursion = false;
-	_connect_signal_mapper = nullptr;
-	_disconnect_signal_mapper = nullptr;
-	_knob_properties = nullptr;
-
 	Range<int> const& hard_limit = controller_proxy()->param()->adapter()->hard_limit;
 	Range<int> const& user_limit = controller_proxy()->param()->adapter()->user_limit;
 
