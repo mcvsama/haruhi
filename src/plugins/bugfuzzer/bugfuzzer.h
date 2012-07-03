@@ -44,16 +44,16 @@ class BugFuzzer: public Haruhi::Plugin
 	 * Unit API
 	 */
 	void
-	registered();
+	registered() override;
 
 	/**
 	 * Unit API
 	 */
 	void
-	unregistered();
+	unregistered() override;
 
 	void
-	process();
+	process() override;
 
   private slots:
 	void
@@ -74,28 +74,28 @@ class BugFuzzerFactory: public Haruhi::PluginFactory
 	BugFuzzerFactory();
 
 	Haruhi::Plugin*
-	create_plugin (int id, QWidget* parent);
+	create_plugin (int id, QWidget* parent) override;
 
 	void
-	destroy_plugin (Haruhi::Plugin* plugin);
+	destroy_plugin (Haruhi::Plugin* plugin) override;
 
 	const char*
-	urn() const { return  "urn://haruhi.mulabs.org/synth/bugfuzzer/1"; }
+	urn() const override { return  "urn://haruhi.mulabs.org/synth/bugfuzzer/1"; }
 
 	const char*
-	title() const { return "BugFuzzer"; }
+	title() const override { return "BugFuzzer"; }
 
 	Type
-	type() const { return Other; }
+	type() const override { return Other; }
 
 	const char*
-	author() const { return "Michał <mcv> Gawron"; }
+	author() const override { return "Michał <mcv> Gawron"; }
 
 	const char**
-	author_contacts() const { return 0; }
+	author_contacts() const override { return 0; }
 
 	const char*
-	license() const { return "GPL-3.0"; }
+	license() const override { return "GPL-3.0"; }
 };
 
 #endif

@@ -120,7 +120,7 @@ class ControllerEvent: public Event
 	value() const noexcept;
 
 	ControllerEvent*
-	clone() const;
+	clone() const override;
 
   private:
 	Value _value;
@@ -154,7 +154,7 @@ class VoiceEvent: public Event
 	action() const noexcept;
 
 	VoiceEvent*
-	clone() const;
+	clone() const override;
 
 	// TODO move to MIDI utilities
 	static Frequency
@@ -183,7 +183,7 @@ class VoiceControllerEvent: public ControllerEvent
 	voice_id() const noexcept;
 
 	VoiceControllerEvent*
-	clone() const;
+	clone() const override;
 
 	/**
 	 * Interpret event value as frequency.

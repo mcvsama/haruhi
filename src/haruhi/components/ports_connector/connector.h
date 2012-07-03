@@ -46,10 +46,10 @@ class Connector: public QWidget
 
   protected:
 	void
-	paintEvent (QPaintEvent*);
+	paintEvent (QPaintEvent*) override;
 
 	void
-	resizeEvent (QResizeEvent*);
+	resizeEvent (QResizeEvent*) override;
 
   private:
 	void

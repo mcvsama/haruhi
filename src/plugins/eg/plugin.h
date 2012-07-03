@@ -49,42 +49,42 @@ class Plugin:
 	 */
 
 	void
-	registered();
+	registered() override;
 
 	void
-	unregistered();
+	unregistered() override;
 
 	void
-	process();
+	process() override;
 
 	void
-	panic();
+	panic() override;
 
 	void
-	graph_updated();
+	graph_updated() override;
 
 	void
-	set_unit_bay (Haruhi::UnitBay*);
+	set_unit_bay (Haruhi::UnitBay*) override;
 
 	/*
 	 * SaveableState implementation
 	 */
 
 	void
-	save_state (QDomElement&) const;
+	save_state (QDomElement&) const override;
 
 	void
-	load_state (QDomElement const&);
+	load_state (QDomElement const&) override;
 
 	/*
 	 * HasPresets implementation.
 	 */
 
 	void
-	save_preset (QDomElement& element) const;
+	save_preset (QDomElement& element) const override;
 
 	void
-	load_preset (QDomElement const& element);
+	load_preset (QDomElement const& element) override;
 
   private:
 	Haruhi::EventPort*	_port_keyboard;

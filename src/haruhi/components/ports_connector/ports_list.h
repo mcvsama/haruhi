@@ -93,22 +93,22 @@ class PortsList: public QTreeWidget
 	 */
 
 	void
-	dragEnterEvent (QDragEnterEvent*);
+	dragEnterEvent (QDragEnterEvent*) override;
 
 	void
-	dragMoveEvent (QDragMoveEvent*);
+	dragMoveEvent (QDragMoveEvent*) override;
 
 	void
-	dragLeaveEvent (QDragLeaveEvent*);
+	dragLeaveEvent (QDragLeaveEvent*) override;
 
 	void
-	dropEvent (QDropEvent*);
+	dropEvent (QDropEvent*) override;
 
 	void
-	mousePressEvent (QMouseEvent*);
+	mousePressEvent (QMouseEvent*) override;
 
 	void
-	mouseMoveEvent (QMouseEvent*);
+	mouseMoveEvent (QMouseEvent*) override;
 
   private:
 	QTreeWidgetItem*

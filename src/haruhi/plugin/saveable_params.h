@@ -99,13 +99,13 @@ template<class SubClass>
 		 * Dump/marshal all parameters into XML node.
 		 */
 		void
-		save_state (QDomElement& parent) const;
+		save_state (QDomElement& parent) const override;
 
 		/**
 		 * Restore parameter values from XML.
 		 */
 		void
-		load_state (QDomElement const& element);
+		load_state (QDomElement const& element) override;
 
 	  protected:
 		/**

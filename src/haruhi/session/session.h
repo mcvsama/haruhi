@@ -140,7 +140,8 @@ namespace SessionPrivate {
 
 class Session:
 	public QWidget,
-	public Signal::Receiver
+	public Signal::Receiver,
+	public SaveableState
 {
 	Q_OBJECT
 
@@ -154,10 +155,10 @@ class Session:
 		Parameters();
 
 		void
-		load_state (QDomElement const& element);
+		load_state (QDomElement const& element) override;
 
 		void
-		save_state (QDomElement&) const;
+		save_state (QDomElement&) const override;
 
 	  private:
 		void
@@ -274,10 +275,10 @@ class Session:
 	 */
 
 	void
-	save_state (QDomElement&) const;
+	save_state (QDomElement&) const override;
 
 	void
-	load_state (QDomElement const&);
+	load_state (QDomElement const&) override;
 
   private slots:
 	void
@@ -336,10 +337,10 @@ class Session:
 
   protected:
 	void
-	closeEvent (QCloseEvent*);
+	closeEvent (QCloseEvent*) override;
 
 	void
-	customEvent (QEvent*);
+	customEvent (QEvent*) override;
 
   private:
 	QWidget*

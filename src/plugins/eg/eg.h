@@ -27,28 +27,28 @@ class EGFactory: public Haruhi::PluginFactory
 {
   public:
 	Haruhi::Plugin*
-	create_plugin (int id, QWidget* parent);
+	create_plugin (int id, QWidget* parent) override;
 
 	void
-	destroy_plugin (Haruhi::Plugin* plugin);
+	destroy_plugin (Haruhi::Plugin* plugin) override;
 
 	const char*
-	urn() const { return  "urn://haruhi.mulabs.org/synth/eg/1"; }
+	urn() const override { return  "urn://haruhi.mulabs.org/synth/eg/1"; }
 
 	const char*
-	title() const { return "EG"; }
+	title() const override { return "EG"; }
 
 	Type
-	type() const { return Envelope; }
+	type() const override { return Envelope; }
 
 	const char*
-	author() const { return "Michał <mcv> Gawron"; }
+	author() const override { return "Michał <mcv> Gawron"; }
 
 	const char**
-	author_contacts() const;
+	author_contacts() const override;
 
 	const char*
-	license() const { return "GPL-3.0"; }
+	license() const override { return "GPL-3.0"; }
 };
 
 #endif

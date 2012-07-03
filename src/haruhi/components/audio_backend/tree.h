@@ -46,10 +46,10 @@ class Tree:
 	selected_item() const;
 
 	void
-	save_state (QDomElement&) const;
+	save_state (QDomElement&) const override;
 
 	void
-	load_state (QDomElement const&);
+	load_state (QDomElement const&) override;
 
   private:
 	Backend* _backend;

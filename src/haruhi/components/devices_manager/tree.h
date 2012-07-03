@@ -133,7 +133,7 @@ class Tree:
 
   protected:
 	void
-	customEvent (QEvent*);
+	customEvent (QEvent*) override;
 
   private:
 	Model* _model;

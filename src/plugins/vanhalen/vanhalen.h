@@ -46,22 +46,22 @@ class VanHalen:
 	 * Unit API
 	 */
 	void
-	registered();
+	registered() override;
 
 	/**
 	 * Unit API
 	 */
 	void
-	unregistered();
+	unregistered() override;
 
 	void
-	process();
+	process() override;
 
 	void
-	panic();
+	panic() override;
 
 	void
-	graph_updated();
+	graph_updated() override;
 
   private:
 	// Drive:

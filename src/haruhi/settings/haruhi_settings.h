@@ -51,10 +51,10 @@ class HaruhiSettings: public Settings::Module
 	 */
 
 	void
-	load_state (QDomElement const& element);
+	load_state (QDomElement const& element) override;
 
 	void
-	save_state (QDomElement& element) const;
+	save_state (QDomElement& element) const override;
 
   private:
 	int	_engine_thread_priority;

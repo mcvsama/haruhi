@@ -44,7 +44,7 @@ class Engine: public Thread
 	 * that data is ready for consumption.
 	 */
 	void
-	run();
+	run() override;
 
   private:
 	/**

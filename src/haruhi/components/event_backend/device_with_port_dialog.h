@@ -34,7 +34,7 @@ class DeviceWithPortDialog: public DevicesManager::DeviceDialog
 	DeviceWithPortDialog (QWidget* parent);
 
 	void
-	apply (DeviceItem*) const;
+	apply (DeviceItem*) const override;
 };
 
 } // namespace EventBackendImpl

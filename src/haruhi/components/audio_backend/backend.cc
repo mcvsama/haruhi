@@ -151,17 +151,16 @@ Backend::connected() const
 
 
 void
-Backend::enable()
+Backend::start_processing()
 {
 	_transport->activate();
 }
 
 
 void
-Backend::disable()
+Backend::stop_processing()
 {
 	_transport->deactivate();
-	// Don't call Unit::disable() as we never want to be truly disabled from processing rounds.
 }
 
 
@@ -299,7 +298,7 @@ Backend::connect()
 	try {
 		_transport->connect (_client_name.toStdString());
 		graph_updated();
-		enable();
+		start_processing();
 		QApplication::postEvent (this, new StateChange (true, false));
 	}
 	catch (Exception const& e)
@@ -313,7 +312,7 @@ Backend::connect()
 void
 Backend::disconnect()
 {
-	disable();
+	stop_processing();
 	_transport->deactivate();
 	_transport->disconnect();
 	QApplication::postEvent (this, new StateChange (false, false));

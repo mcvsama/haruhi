@@ -46,7 +46,7 @@ class CallOutDispatcher: public QObject
 	 * Receive CallOut events.
 	 */
 	void
-	customEvent (QEvent*);
+	customEvent (QEvent*) override;
 };
 
 

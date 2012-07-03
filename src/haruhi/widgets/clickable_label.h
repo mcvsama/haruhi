@@ -38,10 +38,10 @@ class ClickableLabel: public QLabel
 
   protected:
 	void
-	mousePressEvent (QMouseEvent*);
+	mousePressEvent (QMouseEvent*) override;
 
 	void
-	mouseReleaseEvent (QMouseEvent*);
+	mouseReleaseEvent (QMouseEvent*) override;
 
   signals:
 	void

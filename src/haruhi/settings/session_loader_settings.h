@@ -49,10 +49,10 @@ class SessionLoaderSettings: public Settings::Module
 		 */
 
 		void
-		save_state (QDomElement& element) const;
+		save_state (QDomElement& element) const override;
 
 		void
-		load_state (QDomElement const& element);
+		load_state (QDomElement const& element) override;
 
 		/*
 		 * Predicates used by standard algorithms.

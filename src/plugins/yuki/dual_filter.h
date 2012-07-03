@@ -59,7 +59,8 @@ class DualFilter
 	configure (Configuration configuration, Frequency sample_rate);
 
 	/**
-	 * Returns true if actual filtering was done, false otherwise (output buffer was not filled).
+	 * Process (filter) buffers.
+	 * Return true if actual filtering was done, false otherwise (output buffer was not filled).
 	 * All buffers must be distinct.
 	 */
 	bool

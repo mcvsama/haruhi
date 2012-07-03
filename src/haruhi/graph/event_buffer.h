@@ -44,14 +44,14 @@ class EventBuffer: public Buffer
 	EventBuffer() noexcept;
 
 	void
-	clear() noexcept;
+	clear() noexcept override;
 
 	/**
 	 * Mixes in other buffer into this one.
 	 * Other buffer must be static_castable to EventBuffer.
 	 */
 	void
-	mixin (Buffer const*);
+	mixin (Buffer const*) override;
 
 	void
 	push (Shared<Event> const& event);

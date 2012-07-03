@@ -82,10 +82,10 @@ class Category: public SaveableState
 	 */
 
 	void
-	save_state (QDomElement& element) const;
+	save_state (QDomElement& element) const override;
 
 	void
-	load_state (QDomElement const& element);
+	load_state (QDomElement const& element) override;
 
   private:
 	QString	_name;

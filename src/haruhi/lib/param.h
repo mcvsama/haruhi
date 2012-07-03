@@ -79,9 +79,6 @@ template<class tType>
 		Param&
 		operator= (Param const& other) noexcept;
 
-		const char*
-		name() const noexcept override;
-
 		operator Type() const noexcept;
 
 		void
@@ -108,6 +105,9 @@ template<class tType>
 		/*
 		 * BaseParam implementation
 		 */
+
+		const char*
+		name() const noexcept override;
 
 		void
 		reset() override;
@@ -188,14 +188,6 @@ template<class tType>
 
 
 template<class tType>
-	inline const char*
-	Param<tType>::name() const noexcept
-	{
-		return _name.c_str();
-	}
-
-
-template<class tType>
 	inline
 	Param<tType>::operator Type() const noexcept
 	{
@@ -258,6 +250,14 @@ template<class tType>
 	Param<tType>::default_value() const noexcept
 	{
 		return _default_value;
+	}
+
+
+template<class tType>
+	inline const char*
+	Param<tType>::name() const noexcept
+	{
+		return _name.c_str();
 	}
 
 

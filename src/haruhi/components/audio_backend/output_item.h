@@ -20,7 +20,6 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/saveable_state.h>
-#include <haruhi/dsp/smoother.h>
 
 // Local:
 #include "port_item.h"
@@ -38,13 +37,13 @@ class OutputItem: public PortItem
 	virtual ~OutputItem();
 
 	void
-	configure();
+	configure() override;
 
 	void
-	save_state (QDomElement&) const;
+	save_state (QDomElement&) const override;
 
 	void
-	load_state (QDomElement const&);
+	load_state (QDomElement const&) override;
 };
 
 } // namespace AudioBackendImpl

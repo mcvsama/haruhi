@@ -333,7 +333,7 @@ EMITER_TEMPLATE_SIGNATURE
 				{ }
 
 				void
-				call (EMITER_PARAMETERS_LIST)
+				call (EMITER_PARAMETERS_LIST) override
 				{
 					(_r->*_m)(EMITER_ARGUMENTS_LIST);
 				}
@@ -360,7 +360,7 @@ EMITER_TEMPLATE_SIGNATURE
 				{ }
 
 				void
-				call (EMITER_PARAMETERS_LIST)
+				call (EMITER_PARAMETERS_LIST) override
 				{
 					_c (EMITER_ARGUMENTS_LIST);
 				}
@@ -384,7 +384,7 @@ EMITER_TEMPLATE_SIGNATURE
 
 		template<class Receiver>
 			void
-			connect (Receiver* receiver, void (Receiver::*method)(EMITER_PARAMETER_TYPES_LIST))
+			connect (Receiver* receiver, void (Receiver::*method)(EMITER_PARAMETER_TYPES_LIST)) override
 			{
 				Connection<Receiver>* connection = new Connection<Receiver> (this, receiver, method);
 				_connections.push_back (connection);
@@ -393,7 +393,7 @@ EMITER_TEMPLATE_SIGNATURE
 
 		template<class Receiver>
 			void
-			connect (boost::function<void (EMITER_PARAMETER_TYPES_LIST)> const& function)
+			connect (boost::function<void (EMITER_PARAMETER_TYPES_LIST)> const& function) override
 			{
 				Connection<Receiver>* connection = new BoostFunctionConnection<Receiver> (this, function);
 				_connections.push_back (connection);
@@ -401,7 +401,7 @@ EMITER_TEMPLATE_SIGNATURE
 
 		template<class Receiver>
 			void
-			disconnect (Receiver* receiver, void (Receiver::*method)(EMITER_PARAMETER_TYPES_LIST)) noexcept
+			disconnect (Receiver* receiver, void (Receiver::*method)(EMITER_PARAMETER_TYPES_LIST)) noexcept override
 			{
 				Connection<Receiver>* connection;
 				for (ConnectionBase* c: _connections)
@@ -432,7 +432,7 @@ EMITER_TEMPLATE_SIGNATURE
 
 	  protected:
 		void
-		disconnect (Private::ConnectionBase* connection) noexcept
+		disconnect (Private::ConnectionBase* connection) noexcept override
 		{
 			EMITER_TYPENAME Connections::iterator i = std::find (_connections.begin(), _connections.end(), connection);
 			if (i != _connections.end())

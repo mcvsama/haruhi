@@ -94,7 +94,7 @@ class JackTransport: public Transport
 		 */
 
 		void
-		rename (std::string const&);
+		rename (std::string const&) override;
 
 	  private:
 		/**
@@ -141,40 +141,40 @@ class JackTransport: public Transport
 	 */
 
 	void
-	connect (std::string const& client_name);
+	connect (std::string const& client_name) override;
 
 	void
-	disconnect();
+	disconnect() override;
 
 	bool
-	connected() const;
+	connected() const override;
 
 	void
-	activate();
+	activate() override;
 
 	void
-	deactivate();
-
-	void
-	lock_ports();
-
-	void
-	unlock_ports();
-
-	void
-	data_ready();
+	deactivate() override;
 
 	bool
-	active() const;
-
-	Port*
-	create_input (std::string const& port_name);
-
-	Port*
-	create_output (std::string const& port_name);
+	active() const override;
 
 	void
-	destroy_port (Port*);
+	lock_ports() override;
+
+	void
+	unlock_ports() override;
+
+	void
+	data_ready() override;
+
+	Port*
+	create_input (std::string const& port_name) override;
+
+	Port*
+	create_output (std::string const& port_name) override;
+
+	void
+	destroy_port (Port*) override;
 
   private:
 	/**
@@ -251,6 +251,13 @@ JackTransport::jack_client() const
 }
 
 
+inline bool
+JackTransport::active() const
+{
+	return _active;
+}
+
+
 inline void
 JackTransport::lock_ports()
 {
@@ -262,13 +269,6 @@ inline void
 JackTransport::unlock_ports()
 {
 	_ports_mutex.unlock();
-}
-
-
-inline bool
-JackTransport::active() const
-{
-	return _active;
 }
 
 

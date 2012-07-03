@@ -76,7 +76,7 @@ class LevelMeter: public QWidget
 
   protected:
 	void
-	paintEvent (QPaintEvent*);
+	paintEvent (QPaintEvent*) override;
 
   private:
 	static QColor

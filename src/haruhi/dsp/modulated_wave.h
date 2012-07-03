@@ -71,7 +71,7 @@ class ModulatedWave: public Wave
 	 * 			be used in (this is for limiting bandwidth).
 	 */
 	Sample
-	operator() (Sample register phase, Sample frequency) const noexcept;
+	operator() (Sample register phase, Sample frequency) const noexcept override;
 
   private:
 	Sample

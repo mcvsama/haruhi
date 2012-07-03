@@ -55,7 +55,7 @@ class AlsaTransport: public Transport
 		alsa_port() const;
 
 		void
-		rename (std::string const&);
+		rename (std::string const&) override;
 
 		/**
 		 * Returns the number of ALSA clients listening on this port.
@@ -114,28 +114,28 @@ class AlsaTransport: public Transport
 	 */
 
 	void
-	connect (std::string const& client_name);
+	connect (std::string const& client_name) override;
 
 	void
-	disconnect();
+	disconnect() override;
 
 	bool
-	connected() const;
+	connected() const override;
 
 	Port*
-	create_input (std::string const& port_name);
+	create_input (std::string const& port_name) override;
 
 	Port*
-	create_output (std::string const& port_name);
+	create_output (std::string const& port_name) override;
 
 	void
-	destroy_port (Port*);
+	destroy_port (Port*) override;
 
 	void
-	sync();
+	sync() override;
 
 	bool
-	learning_possible() const;
+	learning_possible() const override;
 
   private:
 	/**

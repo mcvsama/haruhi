@@ -136,32 +136,32 @@ class EnvelopePlot: public QWidget
 
   protected:
 	void
-	resizeEvent (QResizeEvent*);
+	resizeEvent (QResizeEvent*) override;
 
 	void
-	paintEvent (QPaintEvent*);
+	paintEvent (QPaintEvent*) override;
 
 	void
-	enterEvent (QEvent*);
+	enterEvent (QEvent*) override;
 
 	void
-	leaveEvent (QEvent*);
+	leaveEvent (QEvent*) override;
 
 	void
-	mouseMoveEvent (QMouseEvent*);
+	mouseMoveEvent (QMouseEvent*) override;
 
 	void
-	mousePressEvent (QMouseEvent*);
+	mousePressEvent (QMouseEvent*) override;
 
 	void
-	mouseReleaseEvent (QMouseEvent*);
+	mouseReleaseEvent (QMouseEvent*) override;
 
   private:
 	void
 	configure_widget();
 
 	void
-	customEvent (QEvent* event);
+	customEvent (QEvent* event) override;
 
   private:
 	unsigned int			_sample_rate;

@@ -54,6 +54,10 @@ namespace Haruhi {
 
 namespace AudioBackendImpl {
 
+/**
+ * Don't ever disable this unit, it never wants to be disabled
+ * from processing rounds.
+ */
 class Backend:
 	public QWidget,
 	public SaveableState,
@@ -88,54 +92,54 @@ class Backend:
 	Transport*
 	transport() const;
 
-	EventPort*
-	master_volume_port() const;
-
-	EventPort*
-	panic_port() const;
-
 	/**
 	 * Starts processing, that is: enables ticks from audio subsystem.
 	 * After this call engine should call periodically data_ready().
 	 */
 	void
-	enable();
+	start_processing();
 
 	/**
 	 * Stops processing. Backend must not enter processing round after this call starts.
 	 * Otherwise system behavior is undefined.
 	 */
 	void
-	disable();
+	stop_processing();
 
 	/**
 	 * Returns true if backend is connected to the transport.
 	 */
 	bool
-	connected() const;
+	connected() const override;
 
 	/*
 	 * Unit API
 	 */
 
 	void
-	registered();
+	registered() override;
 
 	void
-	unregistered();
+	unregistered() override;
 
 	void
-	process();
+	process() override;
 
 	/*
 	 * AudioBackend API
 	 */
 
 	void
-	data_ready();
+	data_ready() override;
 
 	void
-	peak_levels (LevelsMap& levels_map);
+	peak_levels (LevelsMap& levels_map) override;
+
+	EventPort*
+	master_volume_port() const override;
+
+	EventPort*
+	panic_port() const override;
 
 	/*
 	 * SaveableState API
@@ -146,13 +150,13 @@ class Backend:
 	 * \entry	Qt thread only.
 	 */
 	void
-	save_state (QDomElement&) const;
+	save_state (QDomElement&) const override;
 
 	/**
 	 * \entry	Qt thread only.
 	 */
 	void
-	load_state (QDomElement const&);
+	load_state (QDomElement const&) override;
 
   public slots:
 	/**
@@ -160,13 +164,13 @@ class Backend:
 	 * allow operation.
 	 */
 	void
-	connect();
+	connect() override;
 
 	/**
 	 * Disconnects backend from transport.
 	 */
 	void
-	disconnect();
+	disconnect() override;
 
 	/**
 	 * \threadsafe
@@ -186,27 +190,27 @@ class Backend:
 	 * Creates new input port with default name.
 	 */
 	void
-	create_input();
+	create_input() override;
 
 	/**
 	 * Creates new input port with given name.
 	 * \param	name Name for new port.
 	 */
 	void
-	create_input (QString const& name);
+	create_input (QString const& name) override;
 
 	/**
 	 * Creates new output port with default name.
 	 */
 	void
-	create_output();
+	create_output() override;
 
 	/**
 	 * Creates new output port with given name.
 	 * \param	name Name for new port.
 	 */
 	void
-	create_output (QString const& name);
+	create_output (QString const& name) override;
 
 	void
 	context_menu_for_inputs (QPoint const&);
@@ -240,13 +244,13 @@ class Backend:
 
   protected:
 	void
-	customEvent (QEvent* event);
+	customEvent (QEvent* event) override;
 
 	/**
 	 * Unit API
 	 */
 	void
-	graph_updated();
+	graph_updated() override;
 
   private:
 	void

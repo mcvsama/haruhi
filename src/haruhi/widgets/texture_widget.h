@@ -36,10 +36,10 @@ class TextureWidget: public QWidget
 
   protected:
 	void
-	moveEvent (QMoveEvent*);
+	moveEvent (QMoveEvent*) override;
 
 	void
-	paintEvent (QPaintEvent*);
+	paintEvent (QPaintEvent*) override;
 
   private:
 	Filling	_filling;

@@ -45,7 +45,7 @@ class AudioBuffer: public Buffer
 	 * Clears (zeroes) buffer.
 	 */
 	void
-	clear() noexcept;
+	clear() noexcept override;
 
 	/**
 	 * Fills this buffer from other buffer.
@@ -64,7 +64,7 @@ class AudioBuffer: public Buffer
 	 * Calls add().
 	 */
 	void
-	mixin (Buffer const* other) noexcept;
+	mixin (Buffer const* other) noexcept override;
 
 	/**
 	 * Calls add().

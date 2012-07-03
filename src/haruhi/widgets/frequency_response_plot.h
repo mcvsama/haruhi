@@ -96,13 +96,13 @@ class FrequencyResponsePlot: public QWidget
 
   protected:
 	void
-	resizeEvent (QResizeEvent*);
+	resizeEvent (QResizeEvent*) override;
 
 	void
-	paintEvent (QPaintEvent*);
+	paintEvent (QPaintEvent*) override;
 
 	void
-	customEvent (QEvent*);
+	customEvent (QEvent*) override;
 
   private:
 	void

@@ -73,20 +73,20 @@ class Plugin:
 	 */
 
 	void
-	save_state (QDomElement&) const;
+	save_state (QDomElement&) const override;
 
 	void
-	load_state (QDomElement const&);
+	load_state (QDomElement const&) override;
 
 	/*
 	 * HasPresets implementation.
 	 */
 
 	void
-	save_preset (QDomElement& element) const;
+	save_preset (QDomElement& element) const override;
 
 	void
-	load_preset (QDomElement const& element);
+	load_preset (QDomElement const& element) override;
 
   private:
 	PartManager*		_part_manager;

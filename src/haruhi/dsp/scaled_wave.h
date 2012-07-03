@@ -39,7 +39,7 @@ class ScaledWave: public Wave
 	ScaledWave (Sample scale, Wave* wave, bool auto_delete = false) noexcept;
 
 	Sample
-	operator() (Sample register phase, Sample frequency) const noexcept;
+	operator() (Sample register phase, Sample frequency) const noexcept override;
 
   private:
 	Sample _scale;

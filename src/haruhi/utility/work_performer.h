@@ -44,7 +44,7 @@ class WorkPerformer: private Noncopyable
 		Performer (WorkPerformer*, unsigned int thread_id) noexcept;
 
 		void
-		run();
+		run() override;
 
 	  private:
 		WorkPerformer*	_work_performer;
@@ -156,7 +156,7 @@ class WorkPerformer: private Noncopyable
 			{
 				Specialized (Function fun): _fun (fun) { }
 
-				void execute() { _fun(); }
+				void execute() override { _fun(); }
 
 			  private:
 				Function _fun;

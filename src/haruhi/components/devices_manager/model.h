@@ -84,10 +84,10 @@ class Model: public SaveableState
 	 */
 
 	void
-	save_state (QDomElement& element) const;
+	save_state (QDomElement& element) const override;
 
 	void
-	load_state (QDomElement const& element);
+	load_state (QDomElement const& element) override;
 
   public:
 	// Emited when model_changed() is called:

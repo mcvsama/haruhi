@@ -56,7 +56,7 @@ class ControllerItem: public Item
 	set_name (QString const& name);
 
 	/**
-	 * Returns Device object associated with this UI item.
+	 * Returns Controller object associated with this UI item.
 	 */
 	Controller*
 	controller() const;

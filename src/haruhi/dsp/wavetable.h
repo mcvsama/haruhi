@@ -56,7 +56,7 @@ class Wavetable
 		WaveAdapter (Wavetable* wavetable) noexcept;
 
 		Sample
-		operator() (Sample register phase, Sample frequency) const noexcept;
+		operator() (Sample register phase, Sample frequency) const noexcept override;
 
 	  private:
 		Wavetable* _wavetable;

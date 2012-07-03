@@ -55,7 +55,7 @@ class Tree: public DevicesManager::Tree
 	 * Overridden from DevicesManager::Tree.
 	 */
 	DeviceItem*
-	create_device_item (DevicesManager::Device* device);
+	create_device_item (DevicesManager::Device* device) override;
 
   private:
 	Backend* _backend;

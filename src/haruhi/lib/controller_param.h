@@ -146,17 +146,17 @@ class ControllerParam: public Param<int>
 	 * Adds sanitization of Adapter parameters.
 	 */
 	void
-	sanitize();
+	sanitize() override;
 
 	/*
 	 * SaveableState reimplementation
 	 */
 
 	void
-	save_state (QDomElement& parent) const;
+	save_state (QDomElement& parent) const override;
 
 	void
-	load_state (QDomElement const& parent);
+	load_state (QDomElement const& parent) override;
 
   private:
 	Adapter			_adapter;

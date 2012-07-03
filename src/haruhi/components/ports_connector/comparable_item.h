@@ -34,7 +34,7 @@ class ComparableItem: virtual public QTreeWidgetItem
 	ComparableItem();
 
 	bool
-	operator< (QTreeWidgetItem const& other) const;
+	operator< (QTreeWidgetItem const& other) const override;
 };
 
 } // namespace PortsConnectorPrivate

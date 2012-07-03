@@ -72,7 +72,7 @@ class DeviceWithPortItem:
 	 * \see	DevicesManager::Device::create_controller_item().
 	 */
 	ControllerItem*
-	create_controller_item (DevicesManager::Controller* controller);
+	create_controller_item (DevicesManager::Controller* controller) override;
 
   protected:
 	// For quick traversal over children. Child items

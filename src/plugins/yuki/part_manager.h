@@ -44,6 +44,7 @@ class Plugin;
 class PartManager:
 	public HasWidget<PartManagerWidget>,
 	public HasPlugin,
+	public SaveableState,
 	private Noncopyable
 {
   public:
@@ -200,10 +201,10 @@ class PartManager:
 	 */
 
 	void
-	save_state (QDomElement&) const;
+	save_state (QDomElement&) const override;
 
 	void
-	load_state (QDomElement const&);
+	load_state (QDomElement const&) override;
 
   public:
 	Signal::Emiter1<Part*>	part_added;

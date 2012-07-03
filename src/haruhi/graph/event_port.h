@@ -78,11 +78,11 @@ class EventPort: public Port
 	 */
 
 	void
-	graph_updated() { }
+	graph_updated() override { }
 
   protected:
 	void
-	no_input();
+	no_input() override;
 
   private:
 	bool					_default_value_set;

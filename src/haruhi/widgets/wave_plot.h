@@ -133,10 +133,10 @@ class WavePlot: public QWidget
 
   protected:
 	void
-	resizeEvent (QResizeEvent*);
+	resizeEvent (QResizeEvent*) override;
 
 	void
-	paintEvent (QPaintEvent*);
+	paintEvent (QPaintEvent*) override;
 
   private:
 	/**
@@ -150,7 +150,7 @@ class WavePlot: public QWidget
 	configure_widget();
 
 	void
-	customEvent (QEvent* event);
+	customEvent (QEvent* event) override;
 
   private:
 	QPixmap				_double_buffer;

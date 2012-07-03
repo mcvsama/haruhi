@@ -52,7 +52,7 @@ class KnobProperties: public QDialog
 		CurveWave (Knob* knob);
 
 		Sample
-		operator() (Sample phase, Sample frequency) const noexcept;
+		operator() (Sample phase, Sample frequency) const noexcept override;
 
 	  private:
 		Knob* _knob;
@@ -112,7 +112,7 @@ class Knob:
 		 */
 
 		QValidator::State
-		validate (QString&, int&) const;
+		validate (QString&, int&) const override;
 
 		Range<float>
 		shown_range() const noexcept;
@@ -145,10 +145,10 @@ class Knob:
 		 */
 
 		QString
-		textFromValue (int value) const;
+		textFromValue (int value) const override;
 
 		int
-		valueFromText (QString const& text) const;
+		valueFromText (QString const& text) const override;
 
 	  private:
 		float
@@ -310,14 +310,14 @@ class Knob:
 
 	// Controller API:
 	void
-	learning_state_changed();
+	learning_state_changed() override;
 
   protected:
 	void
-	mousePressEvent (QMouseEvent*);
+	mousePressEvent (QMouseEvent*) override;
 
 	void
-	mouseDoubleClickEvent (QMouseEvent*);
+	mouseDoubleClickEvent (QMouseEvent*) override;
 
   private slots:
 	void

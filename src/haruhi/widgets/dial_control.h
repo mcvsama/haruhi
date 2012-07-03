@@ -61,28 +61,28 @@ class DialControl: public QAbstractSlider
 
   protected:
 	void
-	paintEvent (QPaintEvent*);
+	paintEvent (QPaintEvent*) override;
 
 	void
-	resizeEvent (QResizeEvent*);
+	resizeEvent (QResizeEvent*) override;
 
 	void
-	mousePressEvent (QMouseEvent*);
+	mousePressEvent (QMouseEvent*) override;
 
 	void
-	mouseReleaseEvent (QMouseEvent*);
+	mouseReleaseEvent (QMouseEvent*) override;
 
 	void
-	mouseMoveEvent (QMouseEvent*);
+	mouseMoveEvent (QMouseEvent*) override;
 
 	void
-	wheelEvent (QWheelEvent*);
+	wheelEvent (QWheelEvent*) override;
 
 	void
-	mouseDoubleClickEvent (QMouseEvent*);
+	mouseDoubleClickEvent (QMouseEvent*) override;
 
 	void
-	sliderChange (SliderChange change);
+	sliderChange (SliderChange change) override;
 
   private:
 	QPixmap		_dial_pixmap;

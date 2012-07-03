@@ -80,18 +80,18 @@ class UnitBay:
 	Units const&
 	units() const;
 
-	void
-	process();
-
 	/*
 	 * Unit API.
 	 */
 
 	void
-	registered();
+	process() override;
 
 	void
-	unregistered();
+	registered() override;
+
+	void
+	unregistered() override;
 
   private:
 	void

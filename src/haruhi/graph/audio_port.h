@@ -54,10 +54,10 @@ class AudioPort: public Port
 	audio_buffer() const noexcept;
 
 	/**
-	 * Implementation of Port::graph_updated().
+	 * Reimplemented from Port.
 	 */
 	void
-	graph_updated();
+	graph_updated() override;
 };
 
 

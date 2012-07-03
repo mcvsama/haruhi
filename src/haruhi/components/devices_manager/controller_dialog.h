@@ -70,7 +70,7 @@ class ControllerDialog: public QDialog
 	 * the dialog widget.
 	 */
 	void
-	keyPressEvent (QKeyEvent*);
+	keyPressEvent (QKeyEvent*) override;
 
   private slots:
 	void

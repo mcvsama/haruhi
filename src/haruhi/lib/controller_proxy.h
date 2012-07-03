@@ -52,7 +52,7 @@ class ControllerProxy: public Signal::Receiver
 	{
 	  public:
 		/**
-		 * Return true if user is controlling the widget right now
+		 * Return true if user is controlling the widget at the moment
 		 * (eg. moving the knob dial).
 		 *
 		 * Tells ControllerProxy that it should ignore input events.

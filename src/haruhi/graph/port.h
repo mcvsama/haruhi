@@ -283,7 +283,7 @@ class Port:
 	 * and the Graph is the same as learned port's Graph.
 	 */
 	void
-	learned_connection (EventBackend::EventTypes, EventPort* learned_port);
+	learned_connection (EventBackend::EventTypes, EventPort* learned_port) override;
 
 	/**
 	 * Called by friendly Graph when Unit is unregistered. Causes total disconnection

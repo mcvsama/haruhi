@@ -34,7 +34,7 @@ class ControllerWithPortDialog: public DevicesManager::ControllerDialog
 	ControllerWithPortDialog (QWidget* parent);
 
 	void
-	apply (ControllerItem*) const;
+	apply (ControllerItem*) const override;
 };
 
 } // namespace EventBackendImpl

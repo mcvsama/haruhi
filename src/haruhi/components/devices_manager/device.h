@@ -106,10 +106,10 @@ class Device: public SaveableState
 	 */
 
 	void
-	save_state (QDomElement&) const;
+	save_state (QDomElement&) const override;
 
 	void
-	load_state (QDomElement const&);
+	load_state (QDomElement const&) override;
 
   private:
 	QString		_name;

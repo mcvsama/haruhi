@@ -72,11 +72,15 @@ class ConnSet: public SaveableState
 	void
 	load() const;
 
-	void
-	save_state (QDomElement&) const;
+	/*
+	 * API of SaveableState
+	 */
 
 	void
-	load_state (QDomElement const&);
+	save_state (QDomElement&) const override;
+
+	void
+	load_state (QDomElement const&) override;
 
   private:
 	Units		_units;

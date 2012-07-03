@@ -95,10 +95,24 @@ class Backend:
 	~Backend();
 
 	/**
+	 * Connects to backend to transport to allow operation.
+	 * Done automatically after unit is registered.
+	 */
+	void
+	connect() override;
+
+	/**
+	 * Disconnects backend from transport.
+	 * Done automatically before unit is unregistered.
+	 */
+	void
+	disconnect() override;
+
+	/**
 	 * Returns true, if backend is connected to transport.
 	 */
 	bool
-	connected() const;
+	connected() const override;
 
 	/**
 	 * Inserts given Device into list.
@@ -124,13 +138,13 @@ class Backend:
 	 */
 
 	void
-	registered();
+	registered() override;
 
 	void
-	unregistered();
+	unregistered() override;
 
 	void
-	process();
+	process() override;
 
 	/*
 	 * SaveableState API
@@ -138,24 +152,10 @@ class Backend:
 	 */
 
 	void
-	save_state (QDomElement&) const;
+	save_state (QDomElement&) const override;
 
 	void
-	load_state (QDomElement const&);
-
-	/**
-	 * Connects to backend to transport to allow operation.
-	 * Done automatically after unit is registered.
-	 */
-	void
-	connect();
-
-	/**
-	 * Disconnects backend from transport.
-	 * Done automatically before unit is unregistered.
-	 */
-	void
-	disconnect();
+	load_state (QDomElement const&) override;
 
   public:
 	/**
@@ -252,7 +252,7 @@ class Backend:
 
   protected:
 	void
-	customEvent (QEvent* event);
+	customEvent (QEvent* event) override;
 
   private:
 	QString						_client_name;
