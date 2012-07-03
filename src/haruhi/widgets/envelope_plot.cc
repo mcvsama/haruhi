@@ -27,6 +27,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/dsp/utility.h>
 #include <haruhi/utility/atomic.h>
+#include <haruhi/utility/units.h>
 
 // Local:
 #include "envelope_plot.h"
@@ -36,11 +37,12 @@ namespace Haruhi {
 
 EnvelopePlot::EnvelopePlot (QWidget* parent, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
-	_sample_rate (1),
+	_sample_rate (1_Hz),
 	_force_repaint (false),
 	_last_enabled_state (isEnabled()),
 	_envelope (0),
 	_editable (false),
+	_max_segment_time (64_s),
 	_hovered (false),
 	_active_point_index (-1),
 	_hovered_point_index (-1),
@@ -52,10 +54,12 @@ EnvelopePlot::EnvelopePlot (QWidget* parent, const char* name):
 
 EnvelopePlot::EnvelopePlot (DSP::Envelope* envelope, QWidget* parent, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
+	_sample_rate (1_Hz),
 	_force_repaint (false),
 	_last_enabled_state (isEnabled()),
 	_envelope (0),
 	_editable (false),
+	_max_segment_time (64_s),
 	_hovered (false),
 	_active_point_index (-1),
 	_hovered_point_index (-1),
@@ -190,19 +194,18 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 			// Grid:
 			painter.setPen (QPen (grid_color, 0.5, Qt::SolidLine));
 			// 1ms, 10ms, 100ms, 1s, 10s lines:
-			float ks[] = { 0.001, 0.01, 0.1, 1, 10 };
-			int ks_size = sizeof ks / sizeof *ks;
-			for (float* k = ks; k != ks + ks_size; ++k)
+			Seconds ks[] = { 1_ms, 10_ms, 100_ms, 1_s, 10_s };
+			for (Seconds k: ks)
 			{
-				if (sum_samples < 15.0 * *k * _sample_rate)
+				if (sum_samples < 15.0 * k * _sample_rate)
 				{
-					for (int64_t i = 1; i <= sum_samples / *k / _sample_rate; ++i)
+					for (int64_t i = 1; i <= sum_samples / k / _sample_rate; ++i)
 					{
-						int64_t x = i * _sample_rate * w / (sum_samples / *k);
+						int64_t x = i * _sample_rate * w / (sum_samples / k);
 						painter.drawLine (x, 0, x, h);
 						painter.translate (+x + 3, +2);
 						painter.rotate (+90);
-						painter.drawText (0, 0, QString::number (i * *k) + " s");
+						painter.drawText (0, 0, QString::number (static_cast<int> (static_cast<float> (i * k))) + " s");
 						painter.rotate (-90);
 						painter.translate (-x - 3, -2);
 					}
@@ -365,7 +368,7 @@ EnvelopePlot::mouseMoveEvent (QMouseEvent* event)
 	{
 		if (_dragging && _active_point_index != -1)
 		{
-			const int samples_per_pixel = _sample_rate / 240;
+			const int samples_per_pixel = static_cast<float> (_sample_rate / 240);
 			const int max_samples = _max_segment_time * _sample_rate;
 			const int samples_diff = samples_per_pixel * (_drag_start_pos - _mouse_pos).x();
 			const unsigned int new_samples = std::max (0, std::min (max_samples, _active_point_samples - samples_diff));

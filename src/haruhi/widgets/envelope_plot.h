@@ -27,6 +27,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/graph/graph.h>
 #include <haruhi/dsp/envelope.h>
+#include <haruhi/utility/frequency.h>
 
 
 namespace Haruhi {
@@ -66,7 +67,7 @@ class EnvelopePlot: public QWidget
 	 * time bars.
 	 */
 	void
-	set_sample_rate (unsigned int sample_rate) { _sample_rate = sample_rate; }
+	set_sample_rate (Frequency sample_rate) { _sample_rate = sample_rate; }
 
 	/**
 	 * Assigns Envelope object to this plot.
@@ -92,7 +93,7 @@ class EnvelopePlot: public QWidget
 	 * \entry	Qt thread only.
 	 */
 	void
-	set_editable (bool editable, float max_segment_time) { _editable = editable; _max_segment_time = max_segment_time; }
+	set_editable (bool editable, Seconds max_segment_time) { _editable = editable; _max_segment_time = max_segment_time; }
 
 	/**
 	 * \returns	Currently edited point or -1 if no point is active.
@@ -164,14 +165,14 @@ class EnvelopePlot: public QWidget
 	customEvent (QEvent* event) override;
 
   private:
-	unsigned int			_sample_rate;
+	Frequency				_sample_rate;
 	QPixmap					_double_buffer;
 	bool					_force_repaint;
 	bool					_last_enabled_state;
 	Atomic<DSP::Envelope*>	_envelope;
 	QSize					_prev_size;
 	bool					_editable;
-	float					_max_segment_time; // in seconds
+	Seconds					_max_segment_time;
 	// True when mouse is over the plot:
 	bool					_hovered;
 	// Mouse position over the plot:
