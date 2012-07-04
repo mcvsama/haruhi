@@ -171,8 +171,7 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 			// Grid:
 			painter.setPen (QPen (grid_color, 0.5, Qt::SolidLine));
 			// 1ms, 10ms, 100ms, 1s, 10s lines:
-			Seconds ks[] = { 1_ms, 10_ms, 100_ms, 1_s, 10_s };
-			for (Seconds k: ks)
+			for (Seconds k: { 1_ms, 10_ms, 100_ms, 1_s, 10_s })
 			{
 				if (sum_samples < 15.0 * k * _sample_rate)
 				{
