@@ -27,7 +27,8 @@
 class SaveableState
 {
   public:
-	virtual ~SaveableState() = default;
+	// FIXME change to "= default" in new GCC.
+	virtual ~SaveableState() { }
 
 	virtual void
 	save_state (QDomElement&) const = 0;

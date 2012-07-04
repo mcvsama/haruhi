@@ -111,7 +111,8 @@ class Port:
 	/**
 	 * Disconnects from any connected ports and deletes parameters if not null.
 	 */
-	virtual ~Port() = default;
+	// FIXME change to "= default" in new GCC.
+	virtual ~Port() { }
 
   public:
 	/**

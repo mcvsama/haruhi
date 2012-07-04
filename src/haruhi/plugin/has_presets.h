@@ -34,7 +34,8 @@ namespace Haruhi {
 class HasPresets
 {
   public:
-	virtual ~HasPresets() = default;
+	// FIXME change to "= default" in new GCC.
+	virtual ~HasPresets() { }
 
 	virtual void
 	save_preset (QDomElement&) const = 0;
