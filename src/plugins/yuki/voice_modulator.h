@@ -43,11 +43,11 @@ class VoiceModulator
 	 * Modulate given amplitude and frequency buffers.
 	 * Modifies buffers in-place.
 	 *
-	 * \param	tmp_buf should be array of at least 2 * Params::Part::OperatorsNumber temporary buffers.
+	 * \param	tmp_bufs should be array of at least 2 * Params::Part::OperatorsNumber temporary buffers.
 	 */
 	void
 	modulate (Haruhi::AudioBuffer* amplitude_buf_source, Haruhi::AudioBuffer* frequency_buf_source,
-			  Haruhi::AudioBuffer* frequency_buf_target, Haruhi::AudioBuffer* tmp_buf) noexcept;
+			  Haruhi::AudioBuffer* frequency_buf_target, Haruhi::AudioBuffer* tmp_bufs) noexcept;
 
 	/**
 	 * Update buffers sizes.
@@ -71,6 +71,7 @@ class VoiceModulator
   private:
 	Params::Part*		_part_params;
 	Haruhi::AudioBuffer	_operator_output[Params::Part::OperatorsNumber];
+	Haruhi::AudioBuffer	_operator_fm_output[Params::Part::OperatorsNumber];
 	VoiceOperator		_operator[Params::Part::OperatorsNumber];
 	Frequency			_sample_rate;
 	std::size_t			_buffer_size;

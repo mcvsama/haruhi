@@ -36,7 +36,7 @@
  * Return size (number of elements) of an array.
  */
 template<class T, std::size_t N>
-	inline std::size_t
+	inline constexpr std::size_t
 	countof (T(&)[N])
 	{
 		return N;
@@ -47,7 +47,7 @@ template<class T, std::size_t N>
  * Return size of an array. Can be used in const expressions.
  */
 template<class T, std::size_t N>
-	inline const char (&sizer (T (&)[N]))[N];
+	inline constexpr const char (&sizer (T (&)[N]))[N];
 
 
 inline void

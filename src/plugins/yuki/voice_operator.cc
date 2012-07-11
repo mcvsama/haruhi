@@ -23,11 +23,31 @@
 
 namespace Yuki {
 
-VoiceOperator::VoiceOperator() noexcept:
-	_frequency_source (0),
-	_amplitude_source (0),
-	_phase (0.0f)
-{ }
+void
+VoiceOperator::fill (Haruhi::AudioBuffer* output, Haruhi::AudioBuffer* fm_output) noexcept
+{
+	assert (output != nullptr);
+	assert (fm_output != nullptr);
+	assert (output->size() == fm_output->size());
+
+	Sample* const fs = _frequency_source->begin();
+	Sample f;
+	Sample p = _phase;
+
+	// Oscillate:
+	for (std::size_t i = 0; i < output->size(); ++i)
+	{
+		f = bound (fs[i] * _detune, 0.0f, 0.5f);
+		p = mod1 (p + f);
+		(*fm_output)[i] = Haruhi::DSP::base_sin<5, Haruhi::Sample> (p * 2.0f - 1.0f);
+	}
+
+	_phase = p;
+
+	// Amplitude modulation:
+	output->fill (fm_output);
+	output->attenuate (_amplitude_source);
+}
 
 } // namespace Yuki
 

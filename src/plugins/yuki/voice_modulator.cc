@@ -30,7 +30,8 @@ VoiceModulator::VoiceModulator (Params::Part* part_params, Frequency sample_rate
 	_part_params (part_params),
 	_sample_rate (sample_rate)
 {
-	assert (countof (_operator_output) == Params::Part::OperatorsNumber);
+	assert (countof (_operator_output) == countof (_operator_fm_output));
+	assert (countof (_operator_output) == countof (_operator));
 
 	graph_updated (sample_rate, buffer_size);
 }
@@ -38,25 +39,27 @@ VoiceModulator::VoiceModulator (Params::Part* part_params, Frequency sample_rate
 
 void
 VoiceModulator::modulate (Haruhi::AudioBuffer* amplitude_buf_source, Haruhi::AudioBuffer* frequency_buf_source,
-						  Haruhi::AudioBuffer* frequency_buf_target, Haruhi::AudioBuffer* tmp_buf) noexcept
+						  Haruhi::AudioBuffer* frequency_buf_target, Haruhi::AudioBuffer* tmp_bufs) noexcept
 {
 	frequency_buf_target->fill (1.0f);
 
-	// Note: tmp_buf[0..2] = FM buffers, [3..5] = AM buffers.
+	// tmp_bufs[0..Params::Part::OperatorsNumber] will be used as  FM buffers, the rest - as AM buffers.
+	Haruhi::AudioBuffer* fm_bufs = tmp_bufs + 0;
+	Haruhi::AudioBuffer* am_bufs = tmp_bufs + Params::Part::OperatorsNumber;
 
-	for (std::size_t i = 0; i < 3; ++i)
-		tmp_buf[i].fill (frequency_buf_source);
-
-	for (std::size_t i = 3; i < 6; ++i)
-		tmp_buf[i].fill (1.0f);
+	for (std::size_t i = 0; i < Params::Part::OperatorsNumber; ++i)
+	{
+		fm_bufs[i].fill (frequency_buf_source);
+		am_bufs[i].fill (1.0f);
+	}
 
 	// Mix matrix. Skip main output (last index):
 	for (std::size_t o = 0; o < Params::Part::OperatorsNumber; ++o)
 	{
 		for (std::size_t i = 0; i < Params::Part::OperatorsNumber; ++i)
 		{
-			modulate_frequency (&tmp_buf[o + 0], &_operator_output[i], _part_params->fm_matrix[o][i].to_f());
-			modulate_amplitude (&tmp_buf[o + 3], &_operator_output[i], _part_params->am_matrix[o][i].to_f());
+			modulate_frequency (&fm_bufs[o], &_operator_fm_output[i], _part_params->fm_matrix[o][i].to_f());
+			modulate_amplitude (&am_bufs[o], &_operator_output[i], _part_params->am_matrix[o][i].to_f());
 		}
 	}
 
@@ -66,10 +69,10 @@ VoiceModulator::modulate (Haruhi::AudioBuffer* amplitude_buf_source, Haruhi::Aud
 		Params::Operator* p = &_part_params->operators[o];
 		Haruhi::Sample detune = static_cast<Haruhi::Sample> (p->frequency_numerator) / p->frequency_denominator
 			* FastPow::pow_radix_2 (p->octave.get() + (1.0f / 12.0f * p->detune.to_f()));
-		_operator[o].set_frequency_source (&tmp_buf[o + 0]);
-		_operator[o].set_amplitude_source (&tmp_buf[o + 3]);
+		_operator[o].set_frequency_source (&fm_bufs[o]);
+		_operator[o].set_amplitude_source (&am_bufs[o]);
 		_operator[o].set_detune (detune);
-		_operator[o].fill (&_operator_output[o]);
+		_operator[o].fill (&_operator_output[o], &_operator_fm_output[o]);
 	}
 
 	// Modulate output buffers (mix operators to main oscillator):
@@ -87,10 +90,16 @@ VoiceModulator::graph_updated (Frequency sample_rate, std::size_t buffer_size)
 	_sample_rate = sample_rate;
 	_buffer_size = buffer_size;
 
-	for (Haruhi::AudioBuffer& op: _operator_output)
+	for (Haruhi::AudioBuffer& buf: _operator_output)
 	{
-		op.resize (buffer_size);
-		op.clear();
+		buf.resize (buffer_size);
+		buf.clear();
+	}
+
+	for (Haruhi::AudioBuffer& buf: _operator_fm_output)
+	{
+		buf.resize (buffer_size);
+		buf.clear();
 	}
 }
 

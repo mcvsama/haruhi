@@ -34,8 +34,6 @@ using Haruhi::Sample;
 class VoiceOperator
 {
   public:
-	VoiceOperator() noexcept;
-
 	/**
 	 * Set frequency source buffer.
 	 */
@@ -55,16 +53,19 @@ class VoiceOperator
 	set_detune (Sample detune) noexcept;
 
 	/**
-	 * Fill output buffer.
+	 * Fill output buffers.
+	 * \param	output Fully modulated output (amplitude and frequency modulated).
+	 * \param	fm_output Frequency modulated output. Amplitude modulation does
+	 *			not affect this buffer, hence it's always at 0 dB level.
 	 */
 	void
-	fill (Haruhi::AudioBuffer* output) noexcept;
+	fill (Haruhi::AudioBuffer* output, Haruhi::AudioBuffer* fm_output) noexcept;
 
   private:
-	Haruhi::AudioBuffer*	_frequency_source;
-	Haruhi::AudioBuffer*	_amplitude_source;
-	Sample					_detune;
-	Sample					_phase;
+	Haruhi::AudioBuffer*	_frequency_source	= nullptr;
+	Haruhi::AudioBuffer*	_amplitude_source	= nullptr;
+	Sample					_detune				= 0.0f;
+	Sample					_phase				= 0.0f;
 };
 
 
@@ -86,30 +87,6 @@ inline void
 VoiceOperator::set_detune (Sample detune) noexcept
 {
 	_detune = detune;
-}
-
-
-inline void
-VoiceOperator::fill (Haruhi::AudioBuffer* output) noexcept
-{
-	assert (output != 0);
-
-	Sample* const fs = _frequency_source->begin();
-	Sample f;
-	Sample p = _phase;
-
-	// Oscillate:
-	for (std::size_t i = 0; i < output->size(); ++i)
-	{
-		f = bound (fs[i] * _detune, 0.0f, 0.5f);
-		p = mod1 (p + f);
-		(*output)[i] = Haruhi::DSP::base_sin<5, Haruhi::Sample> (p * 2.0f - 1.0f);
-	}
-
-	_phase = p;
-
-	// Amplitude modulation:
-	output->attenuate (_amplitude_source);
 }
 
 } // namespace Yuki
