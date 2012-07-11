@@ -31,21 +31,21 @@ namespace Yuki {
 PartManager::MainPorts::MainPorts (Plugin* plugin):
 	HasPlugin (plugin)
 {
-	audio_out[0]	= new Haruhi::AudioPort (plugin, "Output 1", Haruhi::Port::Output, 0, Haruhi::Port::StandardAudio);
-	audio_out[1]	= new Haruhi::AudioPort (plugin, "Output 2", Haruhi::Port::Output, 0, Haruhi::Port::StandardAudio);
+	audio_out[0]	= new Haruhi::AudioPort (plugin, "Output 1", Haruhi::Port::Output, nullptr, Haruhi::Port::StandardAudio, { "audio-1" });
+	audio_out[1]	= new Haruhi::AudioPort (plugin, "Output 2", Haruhi::Port::Output, nullptr, Haruhi::Port::StandardAudio, { "audio-2" });
 
-	voice_in		= new Haruhi::EventPort (plugin, "Voice control", Haruhi::Port::Input, 0, Haruhi::Port::ControlVoice);
-	voice_pitch		= new Haruhi::EventPort (plugin, "Voice pitch", Haruhi::Port::Input, 0, Haruhi::Port::ControlVoicePitch | Haruhi::Port::Polyphonic);
-	voice_velocity	= new Haruhi::EventPort (plugin, "Voice velocity", Haruhi::Port::Input, 0, Haruhi::Port::ControlVoiceVelocity | Haruhi::Port::Polyphonic);
+	voice_in		= new Haruhi::EventPort (plugin, "Voice control", Haruhi::Port::Input, nullptr, 0, { "voice" });
+	voice_pitch		= new Haruhi::EventPort (plugin, "Voice pitch", Haruhi::Port::Input, nullptr, Haruhi::Port::Polyphonic, { "voice-pitch" });
+	voice_velocity	= new Haruhi::EventPort (plugin, "Voice velocity", Haruhi::Port::Input, nullptr, Haruhi::Port::Polyphonic, { "voice-velocity" });
 
 	volume			= new Haruhi::EventPort (plugin, "Volume", Haruhi::Port::Input);
 	panorama		= new Haruhi::EventPort (plugin, "Panorama", Haruhi::Port::Input);
 	detune			= new Haruhi::EventPort (plugin, "Detune", Haruhi::Port::Input);
 	stereo_width	= new Haruhi::EventPort (plugin, "Stereo width", Haruhi::Port::Input);
 
-	amplitude		= new Haruhi::EventPort (plugin, "Mod. amplitude", Haruhi::Port::Input, 0, Haruhi::Port::Polyphonic);
-	frequency		= new Haruhi::EventPort (plugin, "Mod. frequency", Haruhi::Port::Input, 0, Haruhi::Port::Polyphonic);
-	pitchbend		= new Haruhi::EventPort (plugin, "Mod. pitchbend", Haruhi::Port::Input, 0, Haruhi::Port::Polyphonic | Haruhi::Port::ControlPitchbend);
+	amplitude		= new Haruhi::EventPort (plugin, "Mod. amplitude", Haruhi::Port::Input, nullptr, Haruhi::Port::Polyphonic);
+	frequency		= new Haruhi::EventPort (plugin, "Mod. frequency", Haruhi::Port::Input, nullptr, Haruhi::Port::Polyphonic);
+	pitchbend		= new Haruhi::EventPort (plugin, "Mod. pitchbend", Haruhi::Port::Input, nullptr, Haruhi::Port::Polyphonic, { "pitchbend" });
 
 	amplitude->set_default_value (1.0);
 	frequency->set_default_value (1.0);

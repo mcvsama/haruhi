@@ -30,13 +30,14 @@
 
 namespace Haruhi {
 
-Port::Port (Unit* unit, std::string const& name, Direction direction, Buffer* buffer, PortGroup* group, Flags flags) noexcept:
+Port::Port (Unit* unit, std::string const& name, Direction direction, Buffer* buffer, PortGroup* group, Flags flags, Tags tags) noexcept:
 	_unit (unit),
 	_name (name),
 	_direction (direction),
 	_buffer (buffer),
 	_group (group),
-	_flags (flags)
+	_flags (flags),
+	_tags (tags)
 {
 }
 

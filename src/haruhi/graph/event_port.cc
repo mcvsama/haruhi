@@ -24,8 +24,8 @@
 
 namespace Haruhi {
 
-EventPort::EventPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group, Flags flags):
-	Port (unit, name, direction, new EventBuffer(), group, flags),
+EventPort::EventPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group, Flags flags, Tags tags):
+	Port (unit, name, direction, new EventBuffer(), group, flags, tags),
 	_default_value_set (false),
 	_default_value()
 {

@@ -25,8 +25,8 @@
 
 namespace Haruhi {
 
-AudioPort::AudioPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group, Flags flags):
-	Port (unit, name, direction, new AudioBuffer(), group, flags)
+AudioPort::AudioPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group, Flags flags, Tags tags):
+	Port (unit, name, direction, new AudioBuffer(), group, flags, tags)
 {
 	Graph* g = graph();
 	if (g)

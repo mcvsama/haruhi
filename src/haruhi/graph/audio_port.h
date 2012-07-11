@@ -38,7 +38,7 @@ class AudioPort: public Port
 	 * without need to explicitly locking Graph before.
 	 * \entry	Any thread.
 	 */
-	AudioPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group = 0, Flags flags = 0);
+	AudioPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group = 0, Flags flags = 0, Tags tags = {});
 
 	/**
 	 * Locks Graph for operation - it is safe to delete AudioPort
