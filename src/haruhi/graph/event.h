@@ -24,7 +24,6 @@
 #include <haruhi/utility/memory.h>
 #include <haruhi/utility/timestamp.h>
 #include <haruhi/utility/frequency.h>
-#include <haruhi/utility/normalized_frequency.h>
 
 
 namespace Haruhi {
@@ -160,6 +159,9 @@ class VoiceEvent: public Event
 	static Frequency
 	frequency_from_key_id (KeyID, Frequency master_tune) noexcept;
 
+	static VoiceID
+	allocate_voice_id() noexcept;
+
   private:
 	KeyID			_key_id;
 	VoiceID			_voice_id;
@@ -186,10 +188,10 @@ class VoiceControllerEvent: public ControllerEvent
 	clone() const override;
 
 	/**
-	 * Interpret event value as frequency.
+	 * Interpret event value as frequency in Hertz.
 	 */
-	NormalizedFrequency
-	normalized_frequency() const noexcept;
+	Frequency
+	frequency() const noexcept;
 
   private:
 	VoiceID _voice_id;
@@ -288,7 +290,7 @@ VoiceEvent::VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Act
 	_action (action)
 {
 	if (_voice_id == VoiceAuto)
-		_voice_id = ++_last_voice_id;
+		_voice_id = allocate_voice_id();
 }
 
 
@@ -336,6 +338,13 @@ VoiceEvent::frequency_from_key_id (KeyID key_id, Frequency master_tune) noexcept
 }
 
 
+inline VoiceID
+VoiceEvent::allocate_voice_id() noexcept
+{
+	return ++_last_voice_id;
+}
+
+
 inline
 VoiceControllerEvent::VoiceControllerEvent (Timestamp timestamp, VoiceID voice_id, Value value) noexcept:
 	ControllerEvent (timestamp, value),
@@ -366,10 +375,10 @@ VoiceControllerEvent::clone() const
 }
 
 
-inline NormalizedFrequency
-VoiceControllerEvent::normalized_frequency() const noexcept
+inline Frequency
+VoiceControllerEvent::frequency() const noexcept
 {
-	return NormalizedFrequency (value());
+	return 1_Hz * value();
 }
 
 } // namespace Haruhi

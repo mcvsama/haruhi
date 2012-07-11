@@ -64,7 +64,7 @@ class ControllerWithPortItem:
 	 * Returns true if event has been actually passed by port.
 	 */
 	bool
-	handle_event (MIDI::Event const& event);
+	handle_event (MIDI::Event const& event, DeviceWithPortItem& device);
 
 	/**
 	 * Create and push ControllerEvents used for value smoothing.

@@ -28,6 +28,7 @@
 
 // Local:
 #include "controller.h"
+#include "device.h"
 
 
 namespace Haruhi {
@@ -35,25 +36,8 @@ namespace Haruhi {
 namespace DevicesManager {
 
 Controller::Controller (QString const& name):
-	note_filter (false),
-	note_channel (0),
-	controller_filter (false),
-	controller_channel (0),
-	controller_number (0),
-	controller_invert (false),
-	pitchbend_filter (false),
-	pitchbend_channel (0),
-	channel_pressure_filter (false),
-	channel_pressure_channel (0),
-	channel_pressure_invert (false),
-	key_pressure_filter (false),
-	key_pressure_channel (0),
-	key_pressure_invert (false),
-	smoothing (0.0),
 	_name (name)
 {
-	for (auto& voice_id: _voice_ids)
-		voice_id = 0;
 }
 
 
@@ -63,6 +47,10 @@ Controller::operator== (Controller const& other) const
 	return
 		note_filter == other.note_filter &&
 		note_channel == other.note_channel &&
+		note_pitch_filter == other.note_pitch_filter &&
+		note_pitch_channel == other.note_pitch_channel &&
+		note_velocity_filter == other.note_velocity_filter &&
+		note_velocity_channel == other.note_velocity_channel &&
 		controller_filter == other.controller_filter &&
 		controller_channel == other.controller_channel &&
 		controller_number == other.controller_number &&
@@ -87,37 +75,39 @@ Controller::learn_from_event (MIDI::Event const& event)
 	{
 		case MIDI::Event::NoteOn:
 		case MIDI::Event::NoteOff:
+			reset_filters();
 			note_filter = true;
 			note_channel = (event.type == MIDI::Event::NoteOn ? event.note_on.channel : event.note_off.channel) + 1;
-			controller_filter = false;
-			pitchbend_filter = false;
-			channel_pressure_filter = false;
+			note_pitch_channel = note_channel;
+			note_velocity_channel = note_channel;
 			return true;
 
 		case MIDI::Event::Controller:
-			note_filter = false;
+			reset_filters();
 			controller_filter = true;
 			controller_channel = event.controller.channel + 1;
 			controller_number = event.controller.number;
 			controller_invert = false;
-			pitchbend_filter = false;
-			channel_pressure_filter = false;
 			return true;
 
 		case MIDI::Event::Pitchbend:
-			note_filter = false;
-			controller_filter = false;
+			reset_filters();
 			pitchbend_filter = true;
 			pitchbend_channel = event.pitchbend.channel + 1;
-			channel_pressure_filter = false;
 			return true;
 
 		case MIDI::Event::ChannelPressure:
-			note_filter = false;
-			controller_filter = false;
-			pitchbend_filter = false;
+			reset_filters();
 			channel_pressure_filter = true;
+			channel_pressure_invert = false;
 			channel_pressure_channel = event.channel_pressure.channel + 1;
+			return true;
+
+		case MIDI::Event::KeyPressure:
+			reset_filters();
+			key_pressure_filter = true;
+			key_pressure_invert = false;
+			key_pressure_channel = event.key_pressure.channel + 1;
 			return true;
 
 		default:
@@ -127,7 +117,7 @@ Controller::learn_from_event (MIDI::Event const& event)
 
 
 bool
-Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Graph* graph)
+Controller::handle_event (MIDI::Event const& midi_event, Device& device, EventBuffer& buffer, Graph* graph)
 {
 	bool handled = false;
 	Timestamp const& t = midi_event.timestamp;
@@ -135,41 +125,60 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 	switch (midi_event.type)
 	{
 		case MIDI::Event::NoteOn:
+		{
+			if (device._last_midi_event_id != midi_event.id)
+			{
+				device._allocated_voice_id = VoiceEvent::allocate_voice_id();
+				device._last_midi_event_id = midi_event.id;
+			}
+
+			float velocity = midi_event.note_on.velocity / 127.0f;
+
 			if (note_filter && (note_channel == 0 || note_channel == midi_event.note_on.channel + 1))
 			{
-				float velocity = midi_event.note_on.velocity / 127.0f;
-
 				// If there was previously note-on on that key, send voice-off:
-				if (_voice_ids[midi_event.note_on.note] != OmniVoice && midi_event.note_on.velocity != 0)
-				{
-					// TODO the first event below should be sent via velocity buffer.
-					buffer.push (new VoiceControllerEvent (t, midi_event.note_on.note, velocity));
-					buffer.push (new VoiceEvent (t, midi_event.note_on.note, _voice_ids[midi_event.note_on.note], VoiceEvent::Action::Drop));
-				}
+				if (device._voice_ids[midi_event.note_on.note] != OmniVoice)
+					buffer.push (new VoiceEvent (t, midi_event.note_on.note, device._voice_ids[midi_event.note_on.note], VoiceEvent::Action::Drop));
 
-				VoiceEvent* ve = new VoiceEvent (t, midi_event.note_on.note, VoiceAuto,
-												 // Some keyboards send NOTEON with velocity 0 instead of NOTEOFF:
-												 (midi_event.note_on.velocity == 0)? VoiceEvent::Action::Drop : VoiceEvent::Action::Create);
-				// TODO send VoiceControllerEvents from frequency and velocity buffers: F: VoiceEvent::frequency_from_key_id (midi_event.note_on.note, graph->master_tune()); V: velocity;
-				_voice_ids[midi_event.note_on.note] = ve->voice_id();
-				buffer.push (ve);
-				buffer.push (new VoiceControllerEvent (t, midi_event.note_on.note, velocity));
+				device._voice_ids[midi_event.note_on.note] = device._allocated_voice_id;
+				buffer.push (new VoiceEvent (t, midi_event.note_on.note, device._allocated_voice_id, VoiceEvent::Action::Create));
+				handled = true;
+			}
+
+			if (note_velocity_filter && (note_velocity_channel == 0 || note_velocity_channel == midi_event.note_on.channel + 1))
+			{
+				buffer.push (new VoiceControllerEvent (t, device._allocated_voice_id, velocity));
+				handled = true;
+			}
+
+			if (note_pitch_filter && (note_pitch_channel == 0 || note_pitch_channel == midi_event.note_on.channel + 1))
+			{
+				buffer.push (new VoiceControllerEvent (t, device._allocated_voice_id,
+							 static_cast<Haruhi::ControllerEvent::Value> (VoiceEvent::frequency_from_key_id (midi_event.note_on.note, graph->master_tune()))));
 				handled = true;
 			}
 			break;
+		}
 
 		case MIDI::Event::NoteOff:
+		{
+			float velocity = midi_event.note_off.velocity / 127.0f;
+
 			if (note_filter && (note_channel == 0 || note_channel == midi_event.note_off.channel + 1))
 			{
-				float velocity = midi_event.note_off.velocity / 127.0f;
-				// TODO the first event below should be sent via velocity buffer.
-				buffer.push (new VoiceControllerEvent (t, midi_event.note_off.note, velocity));
-				buffer.push (new VoiceEvent (t, midi_event.note_off.note, _voice_ids[midi_event.note_off.note], VoiceEvent::Action::Drop));
-				// TODO send via freq. and vel. buffers: F VoiceEvent::frequency_from_key_id (midi_event.note_off.note, graph->master_tune()); V: velocity;
-				_voice_ids[midi_event.note_off.note] = OmniVoice;
+				buffer.push (new VoiceEvent (t, midi_event.note_off.note, device._voice_ids[midi_event.note_off.note], VoiceEvent::Action::Drop));
+				device._allocated_voice_id = device._voice_ids[midi_event.note_off.note];
+				device._voice_ids[midi_event.note_off.note] = OmniVoice;
+				handled = true;
+			}
+
+			if (note_velocity_filter && (note_velocity_channel == 0 || note_velocity_channel == midi_event.note_off.channel + 1))
+			{
+				buffer.push (new VoiceControllerEvent (t, device._allocated_voice_id, velocity));
 				handled = true;
 			}
 			break;
+		}
 
 		case MIDI::Event::Controller:
 			{
@@ -222,8 +231,11 @@ Controller::handle_event (MIDI::Event const& midi_event, EventBuffer& buffer, Gr
 				if (key_pressure_filter && (key_pressure_channel == 0 || key_pressure_channel == midi_event.key_pressure.channel + 1))
 				{
 					unsigned int key = bound (static_cast<unsigned int> (midi_event.key_pressure.note), 0u, 127u);
+					// KeyPressure before NoteOn? A buggy device:
+					if (device._voice_ids[key] == OmniVoice)
+						break;
 					float const fvalue = value / 127.0f;
-					buffer.push (new VoiceControllerEvent (t, key, fvalue));
+					buffer.push (new VoiceControllerEvent (t, device._voice_ids[key], fvalue));
 					handled = true;
 					if (smoothing > 0)
 						key_pressure_smoothing_setup (key, t, fvalue, 1_ms, smoothing, graph->sample_rate());
@@ -244,8 +256,7 @@ Controller::generate_smoothing_events (EventBuffer& buffer, Graph* graph)
 
 	Timestamp const t = graph->timestamp();
 
-	SmoothingParams* sp_tab[] = { &_controller_smoother, &_channel_pressure_smoother };
-	for (SmoothingParams* sp: sp_tab)
+	for (SmoothingParams* sp: { &_controller_smoother, &_channel_pressure_smoother })
 	{
 		if (sp->current != sp->target)
 		{
@@ -258,7 +269,7 @@ Controller::generate_smoothing_events (EventBuffer& buffer, Graph* graph)
 		}
 	}
 
-	for (unsigned int key = 0; key < countof (_key_pressure_smoother); ++key)
+	for (unsigned int key = 0; key < _key_pressure_smoother.size(); ++key)
 	{
 		SmoothingParams& ks = _key_pressure_smoother[key];
 		if (ks.current != ks.target)
@@ -276,34 +287,58 @@ Controller::generate_smoothing_events (EventBuffer& buffer, Graph* graph)
 void
 Controller::save_state (QDomElement& element) const
 {
+	std::function<QDomElement (const char*)> create_element = [&element](const char* name) -> QDomElement {
+		return element.ownerDocument().createElement (name);
+	};
+
+	std::function<const char* (bool)> bool_to_str = [](bool value) noexcept -> const char* {
+		return value ? "true" : "false";
+	};
+
+	std::function<QString (int)> channel_to_str = [](int channel) noexcept -> QString {
+		return channel == 0
+			? "all"
+			: QString ("%1").arg (channel);
+	};
+
 	element.setAttribute ("name", _name);
 	element.setAttribute ("smoothing", smoothing.milliseconds());
 
-	QDomElement note_filter_el = element.ownerDocument().createElement ("note-filter");
-	note_filter_el.setAttribute ("enabled", note_filter ? "true" : "false");
-	note_filter_el.setAttribute ("channel", note_channel == 0 ? "all" : QString ("%1").arg (note_channel));
+	QDomElement note_filter_el = create_element ("note-filter");
+	note_filter_el.setAttribute ("enabled", bool_to_str (note_filter));
+	note_filter_el.setAttribute ("channel", channel_to_str (note_channel));
 
-	QDomElement controller_filter_el = element.ownerDocument().createElement ("controller-filter");
-	controller_filter_el.setAttribute ("enabled", controller_filter ? "true" : "false");
-	controller_filter_el.setAttribute ("channel", controller_filter == 0 ? "all" : QString ("%1").arg (controller_channel));
+	QDomElement note_velocity_el = create_element ("note-velocity");
+	note_velocity_el.setAttribute ("enabled", bool_to_str (note_velocity_filter));
+	note_velocity_el.setAttribute ("channel", channel_to_str (note_velocity_channel));
+
+	QDomElement note_pitch_el = create_element ("note-pitch");
+	note_pitch_el.setAttribute ("enabled", bool_to_str (note_pitch_filter));
+	note_pitch_el.setAttribute ("channel", channel_to_str (note_pitch_channel));
+
+	QDomElement controller_filter_el = create_element ("controller-filter");
+	controller_filter_el.setAttribute ("enabled", bool_to_str (controller_filter));
+	controller_filter_el.setAttribute ("channel", channel_to_str (controller_channel));
 	controller_filter_el.setAttribute ("controller-number", QString ("%1").arg (controller_number));
-	controller_filter_el.setAttribute ("controller-invert", controller_invert ? "true" : "false");
+	controller_filter_el.setAttribute ("controller-invert", bool_to_str (controller_invert));
 
-	QDomElement pitchbend_filter_el = element.ownerDocument().createElement ("pitchbend-filter");
-	pitchbend_filter_el.setAttribute ("enabled", pitchbend_filter ? "true" : "false");
-	pitchbend_filter_el.setAttribute ("channel", pitchbend_channel == 0 ? "all" : QString ("%1").arg (pitchbend_channel));
+	QDomElement pitchbend_filter_el = create_element ("pitchbend-filter");
+	pitchbend_filter_el.setAttribute ("enabled", bool_to_str (pitchbend_filter));
+	pitchbend_filter_el.setAttribute ("channel", channel_to_str (pitchbend_channel));
 
-	QDomElement channel_pressure_filter_el = element.ownerDocument().createElement ("channel-pressure");
-	channel_pressure_filter_el.setAttribute ("enabled", channel_pressure_filter ? "true" : "false");
-	channel_pressure_filter_el.setAttribute ("channel", channel_pressure_channel == 0 ? "all" : QString ("%1").arg (channel_pressure_channel));
-	channel_pressure_filter_el.setAttribute ("invert", channel_pressure_invert ? "true" : "false");
+	QDomElement channel_pressure_filter_el = create_element ("channel-pressure");
+	channel_pressure_filter_el.setAttribute ("enabled", bool_to_str (channel_pressure_filter));
+	channel_pressure_filter_el.setAttribute ("channel", channel_to_str (channel_pressure_channel));
+	channel_pressure_filter_el.setAttribute ("invert", bool_to_str (channel_pressure_invert));
 
-	QDomElement key_pressure_filter_el = element.ownerDocument().createElement ("key-pressure");
-	key_pressure_filter_el.setAttribute ("enabled", key_pressure_filter ? "true" : "false");
-	key_pressure_filter_el.setAttribute ("channel", key_pressure_channel == 0 ? "all" : QString ("%1").arg (key_pressure_channel));
-	key_pressure_filter_el.setAttribute ("invert", key_pressure_invert ? "true" : "false");
+	QDomElement key_pressure_filter_el = create_element ("key-pressure");
+	key_pressure_filter_el.setAttribute ("enabled", bool_to_str (key_pressure_filter));
+	key_pressure_filter_el.setAttribute ("channel", channel_to_str (key_pressure_channel));
+	key_pressure_filter_el.setAttribute ("invert", bool_to_str (key_pressure_invert));
 
 	element.appendChild (note_filter_el);
+	element.appendChild (note_velocity_el);
+	element.appendChild (note_pitch_el);
 	element.appendChild (controller_filter_el);
 	element.appendChild (pitchbend_filter_el);
 	element.appendChild (channel_pressure_filter_el);
@@ -314,6 +349,19 @@ Controller::save_state (QDomElement& element) const
 void
 Controller::load_state (QDomElement const& element)
 {
+	std::function<bool (QDomElement&)> is_enabled = [](QDomElement& e) -> bool {
+		return e.attribute ("enabled") == "true";
+	};
+
+	std::function<bool (QDomElement&)> is_inverted = [](QDomElement& e) -> bool {
+		return e.attribute ("invert") == "true";
+	};
+
+	std::function<int (QDomElement&)> get_channel = [](QDomElement& e) -> int {
+		QString ch = e.attribute ("channel");
+		return ch == "all" ? 0 : ch.toInt();
+	};
+
 	_name = element.attribute ("name", "<unnamed>");
 	smoothing = 1_ms * element.attribute ("smoothing", "0").toInt();
 
@@ -321,34 +369,52 @@ Controller::load_state (QDomElement const& element)
 	{
 		if (e.tagName() == "note-filter")
 		{
-			note_filter = e.attribute ("enabled") == "true";
-			note_channel = e.attribute ("channel") == "all" ? 0 : e.attribute ("channel").toInt();
+			note_filter = is_enabled (e);
+			note_channel = get_channel (e);
+		}
+		else if (e.tagName() == "note-velocity")
+		{
+			note_velocity_filter = is_enabled (e);
+			note_velocity_channel = get_channel (e);
+		}
+		else if (e.tagName() == "note-pitch")
+		{
+			note_pitch_filter = is_enabled (e);
+			note_pitch_channel = get_channel (e);
 		}
 		else if (e.tagName() == "controller-filter")
 		{
-			controller_filter = e.attribute ("enabled") == "true";
-			controller_channel = e.attribute ("channel") == "all" ? 0 : e.attribute ("channel").toInt();
+			controller_filter = is_enabled (e);
+			controller_channel = get_channel (e);
 			controller_number = e.attribute ("controller-number").toInt();
-			controller_invert = e.attribute ("controller-invert") == "true";
+			controller_invert = is_inverted (e);
 		}
 		else if (e.tagName() == "pitchbend-filter")
 		{
-			pitchbend_filter = e.attribute ("enabled") == "true";
-			pitchbend_channel = e.attribute ("channel") == "all" ? 0 : e.attribute ("channel").toInt();
+			pitchbend_filter = is_enabled (e);
+			pitchbend_channel = get_channel (e);
 		}
 		else if (e.tagName() == "channel-pressure")
 		{
-			channel_pressure_filter = e.attribute ("enabled") == "true";
-			channel_pressure_channel = e.attribute ("channel") == "all" ? 0 : e.attribute ("channel").toInt();
-			channel_pressure_invert = e.attribute ("invert") == "true";
+			channel_pressure_filter = is_enabled (e);
+			channel_pressure_channel = get_channel (e);
+			channel_pressure_invert = is_inverted (e);
 		}
 		else if (e.tagName() == "key-pressure")
 		{
-			key_pressure_filter = e.attribute ("enabled") == "true";
-			key_pressure_channel = e.attribute ("channel") == "all" ? 0 : e.attribute ("channel").toInt();
-			key_pressure_invert = e.attribute ("invert") == "true";
+			key_pressure_filter = is_enabled (e);
+			key_pressure_channel = get_channel (e);
+			key_pressure_invert = is_inverted (e);
 		}
 	}
+}
+
+
+void
+Controller::reset_filters()
+{
+	note_filter = note_pitch_filter = note_velocity_filter = controller_filter =
+		pitchbend_filter = channel_pressure_filter = key_pressure_filter = false;
 }
 
 

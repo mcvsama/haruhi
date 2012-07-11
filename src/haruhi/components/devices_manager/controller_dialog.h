@@ -89,6 +89,10 @@ class ControllerDialog: public QDialog
 	QPushButton*		_save_button;
 	QCheckBox*			_note_checkbox;
 	QSpinBox*			_note_channel;
+	QCheckBox*			_note_velocity_checkbox;
+	QSpinBox*			_note_velocity_channel;
+	QCheckBox*			_note_pitch_checkbox;
+	QSpinBox*			_note_pitch_channel;
 	QCheckBox*			_controller_checkbox;
 	QSpinBox*			_controller_channel;
 	QSpinBox*			_controller_number;

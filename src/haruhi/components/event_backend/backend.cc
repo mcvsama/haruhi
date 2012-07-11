@@ -185,15 +185,15 @@ Backend::process()
 	{
 		Transport::Port* transport_port = h.first;
 		DeviceWithPortItem* device_item = h.second;
-		// For each Controller:
-		for (ControllerWithPortItem* c: *device_item->controllers())
+		// For each event that comes from transport:
+		for (MIDI::Event& m: transport_port->buffer())
 		{
-			if (c->ready())
+			// For each Controller:
+			for (ControllerWithPortItem* c: *device_item->controllers())
 			{
-				// For each event that comes from transport:
-				for (MIDI::Event& m: transport_port->buffer())
+				if (c->ready())
 				{
-					if (c->handle_event (m))
+					if (c->handle_event (m, *device_item))
 						handle_event_for_learnables (m, c->port());
 					on_event (m);
 				}

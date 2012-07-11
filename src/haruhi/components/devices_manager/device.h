@@ -16,6 +16,7 @@
 
 // Standard:
 #include <cstddef>
+#include <array>
 #include <list>
 
 // Qt:
@@ -41,6 +42,8 @@ namespace DevicesManager {
  */
 class Device: public SaveableState
 {
+	friend class Controller;
+
   public:
 	typedef std::list<Controller> Controllers;
 
@@ -112,9 +115,12 @@ class Device: public SaveableState
 	load_state (QDomElement const&) override;
 
   private:
-	QString		_name;
-	Controllers	_controllers;
-	bool		_auto_add;
+	QString						_name;
+	Controllers					_controllers;
+	bool						_auto_add;
+	std::array<VoiceID, 128>	_voice_ids;
+	MIDI::Event::ID				_last_midi_event_id	= 0;
+	VoiceID						_allocated_voice_id	= OmniVoice;
 };
 
 

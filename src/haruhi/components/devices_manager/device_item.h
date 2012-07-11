@@ -60,7 +60,7 @@ class DeviceItem: public Item
 	/**
 	 * Allocates ControllerItem that will be used as child for this DeviceItem.
 	 * \param	controller Controller object associated with newly created item.
-	 * 			Item will not take ownership of the object.
+	 *			Item will not take ownership of the object.
 	 */
 	virtual ControllerItem*
 	create_controller_item (Controller* controller);

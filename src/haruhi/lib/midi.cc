@@ -26,6 +26,9 @@ namespace Haruhi {
 
 namespace MIDI {
 
+Event::ID Event::_last_id = 0;
+
+
 std::string
 key_name (Note key)
 {

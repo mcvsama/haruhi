@@ -238,10 +238,21 @@ AlsaTransport::map_alsa_to_internal (MIDI::Event& midi, ::snd_seq_event_t* event
 	switch (event->type)
 	{
 		case SND_SEQ_EVENT_NOTEON:
-			midi.type = MIDI::Event::NoteOn;
-			midi.note_on.channel = event->data.note.channel;
-			midi.note_on.note = event->data.note.note;
-			midi.note_on.velocity = event->data.note.velocity;
+			// Some keyboards send NOTEON with velocity 0 instead of NOTEOFF:
+			if (event->data.note.velocity > 0)
+			{
+				midi.type = MIDI::Event::NoteOn;
+				midi.note_on.channel = event->data.note.channel;
+				midi.note_on.note = event->data.note.note;
+				midi.note_on.velocity = event->data.note.velocity;
+			}
+			else
+			{
+				midi.type = MIDI::Event::NoteOff;
+				midi.note_off.channel = event->data.note.channel;
+				midi.note_off.note = event->data.note.note;
+				midi.note_off.velocity = 0;
+			}
 			break;
 
 		case SND_SEQ_EVENT_NOTEOFF:

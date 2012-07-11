@@ -35,6 +35,7 @@ Device::Device (QString const& name):
 	_name (name),
 	_auto_add (false)
 {
+	_voice_ids.fill (OmniVoice);
 }
 
 

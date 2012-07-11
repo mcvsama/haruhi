@@ -117,7 +117,7 @@ void
 VoiceManager::handle_frequency_event (Haruhi::VoiceControllerEvent const* event)
 {
 	if (Voice* v = find_voice_by_id (event->voice_id()))
-		v->set_frequency (event->normalized_frequency());
+		v->set_frequency (event->frequency());
 }
 
 

@@ -61,11 +61,11 @@ ControllerWithPortItem::update_name()
 
 
 bool
-ControllerWithPortItem::handle_event (MIDI::Event const& midi_event)
+ControllerWithPortItem::handle_event (MIDI::Event const& midi_event, DeviceWithPortItem& device_item)
 {
 	if (learning())
 		learn_from_event (midi_event);
-	return _controller->handle_event (midi_event, *_port->event_buffer(), _port->graph());
+	return _controller->handle_event (midi_event, *device_item.device(), *_port->event_buffer(), _port->graph());
 }
 
 

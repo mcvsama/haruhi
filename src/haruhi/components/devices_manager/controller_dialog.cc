@@ -60,6 +60,16 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 
 	_note_channel = create_channel_spinbox (filters);
 
+	_note_velocity_checkbox = new QCheckBox ("Note velocity", filters);
+	QObject::connect (_note_velocity_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
+
+	_note_velocity_channel = create_channel_spinbox (filters);
+
+	_note_pitch_checkbox = new QCheckBox ("Note pitch", filters);
+	QObject::connect (_note_pitch_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
+
+	_note_pitch_channel = create_channel_spinbox (filters);
+
 	// Controller filters:
 
 	_controller_checkbox = new QCheckBox ("Controller", filters);
@@ -129,20 +139,24 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 	QGridLayout* filters_layout = new QGridLayout (filters);
 	filters_layout->addWidget (_note_checkbox, 0, 0);
 	filters_layout->addWidget (_note_channel, 0, 2);
-	filters_layout->addWidget (_controller_checkbox, 1, 0);
-	filters_layout->addWidget (_controller_number, 1, 1);
-	filters_layout->addWidget (_controller_channel, 1, 2);
-	filters_layout->addWidget (_controller_invert, 1, 3);
-	filters_layout->addWidget (_channel_pressure_checkbox, 2, 0);
-	filters_layout->addWidget (_channel_pressure_channel, 2, 2);
-	filters_layout->addWidget (_channel_pressure_invert, 2, 3);
-	filters_layout->addWidget (_key_pressure_checkbox, 3, 0);
-	filters_layout->addWidget (_key_pressure_channel, 3, 2);
-	filters_layout->addWidget (_key_pressure_invert, 3, 3);
-	filters_layout->addWidget (_pitchbend_checkbox, 4, 0);
-	filters_layout->addWidget (_pitchbend_channel, 4, 2);
-	filters_layout->addWidget (_smoothing_label, 5, 0);
-	filters_layout->addWidget (_smoothing, 5, 2);
+	filters_layout->addWidget (_note_velocity_checkbox, 1, 0);
+	filters_layout->addWidget (_note_velocity_channel, 1, 2);
+	filters_layout->addWidget (_note_pitch_checkbox, 2, 0);
+	filters_layout->addWidget (_note_pitch_channel, 2, 2);
+	filters_layout->addWidget (_controller_checkbox, 3, 0);
+	filters_layout->addWidget (_controller_number, 3, 1);
+	filters_layout->addWidget (_controller_channel, 4, 2);
+	filters_layout->addWidget (_controller_invert, 4, 3);
+	filters_layout->addWidget (_channel_pressure_checkbox, 5, 0);
+	filters_layout->addWidget (_channel_pressure_channel, 5, 2);
+	filters_layout->addWidget (_channel_pressure_invert, 5, 3);
+	filters_layout->addWidget (_key_pressure_checkbox, 6, 0);
+	filters_layout->addWidget (_key_pressure_channel, 6, 2);
+	filters_layout->addWidget (_key_pressure_invert, 6, 3);
+	filters_layout->addWidget (_pitchbend_checkbox, 7, 0);
+	filters_layout->addWidget (_pitchbend_channel, 7, 2);
+	filters_layout->addWidget (_smoothing_label, 8, 0);
+	filters_layout->addWidget (_smoothing, 8, 2);
 
 	QHBoxLayout* buttons_layout = new QHBoxLayout();
 	buttons_layout->setSpacing (Config::Spacing);
@@ -179,6 +193,10 @@ ControllerDialog::from (ControllerItem* item)
 	_name->setText (controller->name());
 	_note_checkbox->setChecked (controller->note_filter);
 	_note_channel->setValue (controller->note_channel);
+	_note_velocity_checkbox->setChecked (controller->note_velocity_filter);
+	_note_velocity_channel->setValue (controller->note_velocity_channel);
+	_note_pitch_checkbox->setChecked (controller->note_pitch_filter);
+	_note_pitch_channel->setValue (controller->note_pitch_channel);
 	_controller_checkbox->setChecked (controller->controller_filter);
 	_controller_channel->setValue (controller->controller_channel);
 	_controller_number->setValue (controller->controller_number);
@@ -204,6 +222,10 @@ ControllerDialog::apply (ControllerItem* item) const
 	Controller* controller = item->controller();
 	controller->note_filter = _note_checkbox->isChecked();
 	controller->note_channel = _note_channel->value();
+	controller->note_velocity_filter = _note_velocity_checkbox->isChecked();
+	controller->note_velocity_channel = _note_velocity_channel->value();
+	controller->note_pitch_filter = _note_pitch_checkbox->isChecked();
+	controller->note_pitch_channel = _note_pitch_channel->value();
 	controller->controller_filter = _controller_checkbox->isChecked();
 	controller->controller_channel = _controller_channel->value();
 	controller->controller_number = _controller_number->value();
@@ -236,8 +258,13 @@ void
 ControllerDialog::update_widgets()
 {
 	bool note_checkbox = _note_checkbox->isChecked();
-	_save_button->setEnabled (!_name->text().isEmpty());
 	_note_channel->setEnabled (note_checkbox);
+
+	bool note_velocity_checkbox = _note_velocity_checkbox->isChecked();
+	_note_velocity_channel->setEnabled (note_velocity_checkbox);
+
+	bool note_pitch_checkbox = _note_pitch_checkbox->isChecked();
+	_note_pitch_channel->setEnabled (note_pitch_checkbox);
 
 	bool controller_checkbox = _controller_checkbox->isChecked();
 	_controller_channel->setEnabled (controller_checkbox);
@@ -260,6 +287,7 @@ ControllerDialog::update_widgets()
 	_smoothing_label->setEnabled (smoothing);
 	_smoothing->setEnabled (smoothing);
 
+	_save_button->setEnabled (!_name->text().isEmpty());
 	_save_button->setDefault (true);
 }
 

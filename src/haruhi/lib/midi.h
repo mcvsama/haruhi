@@ -71,6 +71,7 @@ enum Note
 
 struct Event
 {
+  public:
 	enum Type {
 		NoteOn,
 		NoteOff,
@@ -80,11 +81,19 @@ struct Event
 		KeyPressure,
 	};
 
-	Timestamp timestamp;
-	Type type;
+	typedef uint64_t ID;
 
-	union
-	{
+  public:
+	Event():
+		id (++_last_id)
+	{ }
+
+  public:
+	Timestamp	timestamp;
+	Type		type;
+	ID			id; // Unique identifier.
+
+	union {
 		struct {
 			uint8_t channel;
 			uint8_t note;
@@ -119,6 +128,9 @@ struct Event
 			uint8_t value;
 		} key_pressure;
 	};
+
+  private:
+	static ID _last_id;
 };
 
 

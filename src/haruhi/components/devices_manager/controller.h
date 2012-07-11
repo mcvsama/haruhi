@@ -16,6 +16,7 @@
 
 // Standard:
 #include <cstddef>
+#include <array>
 
 // Qt:
 #include <QtCore/QString>
@@ -36,6 +37,8 @@
 namespace Haruhi {
 
 namespace DevicesManager {
+
+class Device;
 
 /**
  * Represents controller inside device. Used to filter certain MIDI events.
@@ -80,12 +83,13 @@ class Controller: public SaveableState
 	/**
 	 * Interprets MIDI event and maybe adds new Haruhi Events to the buffer.
 	 * \param	event Input MIDI event.
+	 * \param	device Device that owns this controller.
 	 * \param	buffer Buffer where new events will be added.
 	 * \param	graph Graph object for audio/event context (master-tune).
 	 * \returns	true if event has been handled, false otherwise.
 	 */
 	bool
-	handle_event (MIDI::Event const& event, EventBuffer& buffer, Graph* graph);
+	handle_event (MIDI::Event const& event, Device& device, EventBuffer& buffer, Graph* graph);
 
 	/**
 	 * Create and push events for value smoothing.
@@ -106,6 +110,9 @@ class Controller: public SaveableState
 
   private:
 	void
+	reset_filters();
+
+	void
 	controller_smoothing_setup (Timestamp t, float target, Seconds min_coeff, Seconds max_coeff, Frequency sample_rate);
 
 	void
@@ -116,30 +123,33 @@ class Controller: public SaveableState
 
   public:
 	// MIDI filters:
-	bool	note_filter;
-	int		note_channel;				// 0 means 'all'
-	bool	controller_filter;
-	int		controller_channel;			// 0 means 'all'
-	int		controller_number;
-	bool	controller_invert;
-	bool	pitchbend_filter;
-	int		pitchbend_channel;			// 0 means 'all'
-	bool	channel_pressure_filter;
-	int		channel_pressure_channel;	// 0 means 'all'
-	bool	channel_pressure_invert;
-	bool	key_pressure_filter;
-	int		key_pressure_channel;		// 0 means 'all'
-	bool	key_pressure_invert;
+	bool	note_filter					= false;
+	int		note_channel				= 0;		// 0 means 'all'
+	bool	note_velocity_filter		= false;
+	int		note_velocity_channel		= 0;		// 0 means 'all'
+	bool	note_pitch_filter			= false;
+	int		note_pitch_channel			= 0;		// 0 means 'all'
+	bool	controller_filter			= false;
+	int		controller_channel			= 0;		// 0 means 'all'
+	int		controller_number			= 0;
+	bool	controller_invert			= false;
+	bool	pitchbend_filter			= false;
+	int		pitchbend_channel			= 0;		// 0 means 'all'
+	bool	channel_pressure_filter		= false;
+	int		channel_pressure_channel	= 0;		// 0 means 'all'
+	bool	channel_pressure_invert		= false;
+	bool	key_pressure_filter			= false;
+	int		key_pressure_channel		= 0;		// 0 means 'all'
+	bool	key_pressure_invert			= false;
 	// Smooth controller/pressure events:
-	Seconds	smoothing;
+	Seconds	smoothing					= 0_ms;
 
   private:
-	QString			_name;
+	QString								_name;
 	// Used for value smoothing:
-	SmoothingParams	_controller_smoother;
-	SmoothingParams	_channel_pressure_smoother;
-	SmoothingParams	_key_pressure_smoother[128];
-	VoiceID			_voice_ids[128];
+	SmoothingParams						_controller_smoother;
+	SmoothingParams						_channel_pressure_smoother;
+	std::array<SmoothingParams, 128>	_key_pressure_smoother;
 };
 
 

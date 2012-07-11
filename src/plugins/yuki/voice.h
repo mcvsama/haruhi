@@ -130,7 +130,7 @@ class Voice
 	 * Set new target normalized frequency of the voice.
 	 */
 	void
-	set_frequency (NormalizedFrequency normalized_frequency) noexcept;
+	set_frequency (Frequency frequency) noexcept;
 
   public:
 	/**
@@ -264,9 +264,9 @@ Voice::set_amplitude (Amplitude amplitude) noexcept
 
 
 inline void
-Voice::set_frequency (NormalizedFrequency frequency) noexcept
+Voice::set_frequency (Frequency frequency) noexcept
 {
-	_target_frequency = frequency;
+	_target_frequency = frequency / _sample_rate;
 	update_glide_parameters();
 }
 
