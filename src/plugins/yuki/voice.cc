@@ -163,7 +163,7 @@ Voice::render (SharedResources* res)
 		f = f > 1.0f ? 1.0 : f;
 		if (_first_pass)
 			_smoother_panorama_2.reset (f);
-		_smoother_panorama_2.multiply (_output_2.begin(), _output_2.end(), f);
+		_smoother_panorama_2.multiply (filters_output_2->begin(), filters_output_2->end(), f);
 
 		__brainfuck (",>,>++++++[-<--------<-------->>]", &res->output_1, &res->output_2);
 		__brainfuck ("<<<<++++++[-<++++++++>]<.", &res);
