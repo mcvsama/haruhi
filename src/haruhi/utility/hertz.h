@@ -46,6 +46,9 @@ class Hertz
 	constexpr float
 	to_f() const noexcept;
 
+	constexpr bool
+	operator< (Hertz const& other) noexcept;
+
 	Hertz&
 	operator*= (float factor) noexcept;
 
@@ -98,6 +101,13 @@ inline constexpr float
 Hertz::to_f() const noexcept
 {
 	return _hz;
+}
+
+
+inline constexpr bool
+Hertz::operator< (Hertz const& other) noexcept
+{
+	return _hz < other._hz;
 }
 
 

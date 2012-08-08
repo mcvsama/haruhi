@@ -47,8 +47,9 @@ struct Params
 
 		Haruhi::Param<int> enabled;
 		Haruhi::Param<unsigned int> polyphony;
+		Haruhi::Param<unsigned int> oversampling;
 
-		static const std::size_t NUM_PARAMS = 6;
+		static const std::size_t NUM_PARAMS = 7;
 	};
 
 	/**

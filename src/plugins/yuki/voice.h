@@ -52,16 +52,34 @@ class Voice
 		void
 		graph_updated (Frequency sample_rate, std::size_t buffer_size);
 
+		/**
+		 * Needs Graph lock.
+		 */
+		void
+		set_oversampling (unsigned int oversampling);
+
 		Haruhi::AudioBuffer	amplitude_buf;
 		Haruhi::AudioBuffer	frequency_buf;
 		Haruhi::AudioBuffer fm_buf;
 		Haruhi::AudioBuffer	tmp_buf[6];
+
+	  private:
+		void
+		resize_buffers();
+
+	  private:
+		std::size_t			_buffer_size	= 1;
+		unsigned int		_oversampling	= 1;
 	};
+
+  private:
+	static constexpr Seconds AttackTime = 1_ms;
+	static constexpr Seconds DropTime = 1_ms;
 
   public:
 	// Ctor.
 	Voice (Haruhi::VoiceID id, Timestamp timestamp, Params::Main* main_params, Params::Part* part_params,
-		   Amplitude amplitude, NormalizedFrequency frequency, Frequency sample_rate, std::size_t buffer_size);
+		   Amplitude amplitude, NormalizedFrequency frequency, Frequency sample_rate, std::size_t buffer_size, unsigned int oversampling);
 
 	/**
 	 * Return voice's ID which came in Haruhi::VoiceEvent.
@@ -108,6 +126,13 @@ class Voice
 	graph_updated (Frequency sample_rate, std::size_t buffer_size);
 
 	/**
+	 * Set oversampling factor.
+	 * Needs Graph lock.
+	 */
+	void
+	set_oversampling (unsigned int oversampling);
+
+	/**
 	 * Make voice use given Wavetable.
 	 */
 	void
@@ -142,6 +167,18 @@ class Voice
 
   private:
 	/**
+	 * Update buffers sizes according to Graph params and oversampling.
+	 */
+	void
+	resize_buffers();
+
+	/**
+	 * Precompute some handy variables and update smoothers.
+	 */
+	void
+	recompute_sampling_rate_dependents() noexcept;
+
+	/**
 	 * Update glide/portamento params when
 	 * voice frequency changes.
 	 */
@@ -174,6 +211,7 @@ class Voice
 	NormalizedFrequency	_frequency;
 	Frequency			_sample_rate;
 	std::size_t			_buffer_size;
+	unsigned int		_oversampling;
 	VoiceModulator		_vmod;
 	VoiceOscillator		_vosc;
 	DualFilter			_dual_filter;

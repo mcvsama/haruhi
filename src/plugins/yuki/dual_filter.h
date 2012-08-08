@@ -35,7 +35,7 @@ class DualFilter
   public:
 	typedef DSP::Filter<FilterImpulseResponse::Order, FilterImpulseResponse::ResponseType> FilterType;
 
-	static const int MaxStages = 5;
+	static constexpr int MaxStages = 5;
 
 	enum Configuration
 	{
@@ -59,6 +59,12 @@ class DualFilter
 	configure (Configuration configuration, Frequency sample_rate);
 
 	/**
+	 * Set oversampling factor.
+	 */
+	void
+	set_oversampling (unsigned int oversampling);
+
+	/**
 	 * Process (filter) buffers.
 	 * Return true if actual filtering was done, false otherwise (output buffer was not filled).
 	 * All buffers must be distinct.
@@ -76,9 +82,11 @@ class DualFilter
 	filterout (FilterType* filters, int stages, Haruhi::AudioBuffer* input, Haruhi::AudioBuffer* buffer, Haruhi::AudioBuffer* output) noexcept;
 
   public:
-	Configuration			_configuration;
-	Params::Filter*			_params_1;
-	Params::Filter*			_params_2;
+	Configuration			_configuration		= Serial;
+	Frequency				_sample_rate		= 0_Hz;
+	unsigned int			_oversampling		= 1;
+	Params::Filter*			_params_1			= nullptr;
+	Params::Filter*			_params_2			= nullptr;
 	FilterImpulseResponse	_impulse_response_1;
 	FilterImpulseResponse	_impulse_response_2;
 	// Two channels, for each up to 5 stages:

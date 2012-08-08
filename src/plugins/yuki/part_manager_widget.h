@@ -145,6 +145,7 @@ class PartManagerWidget:
 	QPushButton*	_remove_part_button;
 	QWidget*		_placeholder;
 	QSpinBox*		_polyphony;
+	QSpinBox*		_oversampling;
 
 	Haruhi::Knob*	_knob_volume;
 	Haruhi::Knob*	_knob_panorama;

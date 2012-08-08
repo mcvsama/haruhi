@@ -29,19 +29,39 @@
 
 namespace Yuki {
 
+constexpr Seconds Voice::AttackTime;
+constexpr Seconds Voice::DropTime;
+
+
 void
 Voice::SharedResources::graph_updated (Frequency, std::size_t buffer_size)
 {
-	amplitude_buf.resize (buffer_size);
-	frequency_buf.resize (buffer_size);
-	fm_buf.resize (buffer_size);
-	for (std::size_t i = 0; i < countof (tmp_buf); ++i)
-		tmp_buf[i].resize (buffer_size);
+	_buffer_size = buffer_size;
+	resize_buffers();
+}
+
+
+void
+Voice::SharedResources::set_oversampling (unsigned int oversampling)
+{
+	_oversampling = oversampling;
+	resize_buffers();
+}
+
+
+void
+Voice::SharedResources::resize_buffers()
+{
+	amplitude_buf.resize (_buffer_size * _oversampling);
+	frequency_buf.resize (_buffer_size * _oversampling);
+	fm_buf.resize (_buffer_size * _oversampling);
+	for (Haruhi::AudioBuffer& buf: tmp_buf)
+		buf.resize (_buffer_size * _oversampling);
 }
 
 
 Voice::Voice (Haruhi::VoiceID id, Timestamp timestamp, Params::Main* main_params, Params::Part* part_params,
-			  Amplitude amplitude, NormalizedFrequency frequency, Frequency sample_rate, std::size_t buffer_size):
+			  Amplitude amplitude, NormalizedFrequency frequency, Frequency sample_rate, std::size_t buffer_size, unsigned int oversampling):
 	_id (id),
 	_timestamp (timestamp),
 	_state (Voicing),
@@ -52,29 +72,22 @@ Voice::Voice (Haruhi::VoiceID id, Timestamp timestamp, Params::Main* main_params
 	_frequency (frequency),
 	_sample_rate (sample_rate),
 	_buffer_size (buffer_size),
-	_vmod (part_params, sample_rate, buffer_size),
+	_oversampling (oversampling),
+	_vmod (part_params, buffer_size),
 	_dual_filter (&_params.filters[0], &_params.filters[1]),
 	_target_frequency (frequency),
 	_frequency_change (0.0f),
 	_attack_sample (0),
-	_attack_samples (1_ms * sample_rate),
 	_drop_sample (0),
-	_drop_samples (1_ms * sample_rate),
 	_first_pass (true)
 {
-	// Resize buffers:
-	graph_updated (sample_rate, buffer_size);
+	resize_buffers();
+	recompute_sampling_rate_dependents();
 
-	// Setup smoothers for 5ms/50ms. Response time must be independent from sample rate.
-	_smoother_amplitude.set_samples (5_ms * _sample_rate);
-	_smoother_frequency.set_samples (5_ms * _sample_rate);
-	_smoother_pitchbend.set_samples (50_ms * _sample_rate);
-	_smoother_panorama_1.set_samples (5_ms * _sample_rate);
-	_smoother_panorama_2.set_samples (5_ms * _sample_rate);
-
-	// Prepare main oscillator:
 	_vosc.set_phase (_part_params->phase.to_f());
 	_vosc.set_initial_phases_spread (_params.unison_init.to_f());
+
+	set_oversampling (_oversampling);
 
 	update_glide_parameters();
 }
@@ -118,7 +131,7 @@ Voice::render (SharedResources* res)
 	// Smooth Attacking or dropping:
 	if (_attack_sample < _attack_samples)
 	{
-		for (std::size_t i = 0; i < _buffer_size && _attack_sample < _attack_samples; ++i, ++_attack_sample)
+		for (std::size_t i = 0; i < _buffer_size * _oversampling && _attack_sample < _attack_samples; ++i, ++_attack_sample)
 		{
 			float const k = 1.0f * _attack_sample / _attack_samples;
 			(*filters_output_1)[i] *= k;
@@ -130,7 +143,7 @@ Voice::render (SharedResources* res)
 		if (_drop_sample < _drop_samples)
 		{
 			std::size_t i;
-			for (i = 0; i < _buffer_size && _drop_sample < _drop_samples; ++i, ++_drop_sample)
+			for (i = 0; i < _buffer_size * _oversampling && _drop_sample < _drop_samples; ++i, ++_drop_sample)
 			{
 				float const k = 1.0 - 1.0f * _drop_sample / _drop_samples;
 				(*filters_output_1)[i] *= k;
@@ -186,10 +199,50 @@ Voice::graph_updated (Frequency sample_rate, std::size_t buffer_size)
 	_sample_rate = sample_rate;
 	_buffer_size = buffer_size;
 
-	_output_1.resize (buffer_size);
-	_output_2.resize (buffer_size);
+	_vmod.graph_updated (buffer_size);
+	resize_buffers();
 
-	_vmod.graph_updated (sample_rate, buffer_size);
+}
+
+
+void
+Voice::set_oversampling (unsigned int oversampling)
+{
+	float change_factor = static_cast<float> (oversampling) / _oversampling;
+	_oversampling = oversampling;
+
+	// Update some sample rate dependent variables to correctly
+	// reflect position in buffer:
+	_attack_sample *= change_factor;
+	_drop_sample *= change_factor;
+
+	_vmod.set_oversampling (oversampling);
+	_dual_filter.set_oversampling (oversampling);
+	resize_buffers();
+	recompute_sampling_rate_dependents();
+}
+
+
+void
+Voice::resize_buffers()
+{
+	_output_1.resize (_buffer_size * _oversampling);
+	_output_2.resize (_buffer_size * _oversampling);
+}
+
+
+void
+Voice::recompute_sampling_rate_dependents() noexcept
+{
+	_attack_samples = AttackTime * _sample_rate * _oversampling;
+	_drop_samples = DropTime * _sample_rate * _oversampling;
+
+	// Setup smoothers for 5ms/50ms. Response time must be independent from sample rate.
+	_smoother_amplitude.set_samples (5_ms * _sample_rate * _oversampling);
+	_smoother_frequency.set_samples (5_ms * _sample_rate * _oversampling);
+	_smoother_pitchbend.set_samples (50_ms * _sample_rate * _oversampling);
+	_smoother_panorama_1.set_samples (5_ms * _sample_rate * _oversampling);
+	_smoother_panorama_2.set_samples (5_ms * _sample_rate * _oversampling);
 }
 
 
@@ -238,7 +291,7 @@ Voice::prepare_amplitude_buffer (Haruhi::AudioBuffer* buffer) noexcept
 void
 Voice::prepare_frequency_buffer (Haruhi::AudioBuffer* buffer, Haruhi::AudioBuffer* tmp_buf) noexcept
 {
-	buffer->fill (1.0f);
+	buffer->fill (1.0f / _oversampling);
 
 	// Transposition:
 	float frequency = FastPow::pow_radix_2 ((1.0f / 12.0f) * _part_params->transposition_semitones.get());
@@ -299,6 +352,7 @@ Voice::prepare_frequency_buffer (Haruhi::AudioBuffer* buffer, Haruhi::AudioBuffe
 		Sample* tb = tmp_buf->begin();
 		Sample* fb = buffer->begin();
 		float range = 1.0f * _part_params->frequency_mod_range.get();
+		std::size_t nsamples = _buffer_size * _oversampling;
 
 #if defined(HARUHI_SSE1) && defined(HARUHI_HAS_SSE_POW)
 		// 2 times faster on Core2 than scalar code using SSEPow, but
@@ -309,7 +363,7 @@ Voice::prepare_frequency_buffer (Haruhi::AudioBuffer* buffer, Haruhi::AudioBuffe
 		__m128* tp = reinterpret_cast<__m128*> (tb);
 		__m128* fp = reinterpret_cast<__m128*> (fb);
 
-		for (std::size_t i = 0; i < _buffer_size; i += 4, ++tp, ++fp)
+		for (std::size_t i = 0; i < nsamples; i += 4, ++tp, ++fp)
 		{
 			t = _mm_mul_ps (*tp, range4);					// tb[i] * range
 			t = _mm_add_ps (t, frq_det4);					// frq_det + tb[i] * range
@@ -319,11 +373,11 @@ Voice::prepare_frequency_buffer (Haruhi::AudioBuffer* buffer, Haruhi::AudioBuffe
 		}
 
 		// The rest:
-		for (std::size_t i = _buffer_size / 4 * 4; i < _buffer_size; ++i)
+		for (std::size_t i = nsamples / 4 * 4; i < nsamples; ++i)
 			fb[i] *= FastPow::pow_radix_2 ((1.0f / 12.0f) * (frq_det + tb[i] * range));
 #else
 		// Generic code:
-		for (std::size_t i = 0; i < _buffer_size; ++i)
+		for (std::size_t i = 0; i < nsamples; ++i)
 			fb[i] *= FastPow::pow_radix_2 ((1.0f / 12.0f) * (frq_det + tb[i] * range));
 #endif
 	}

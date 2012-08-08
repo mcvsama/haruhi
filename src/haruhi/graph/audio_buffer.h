@@ -34,6 +34,9 @@ class AudioBuffer: public Buffer
 	USES_POOL_ALLOCATOR (AudioBuffer)
 
   public:
+	typedef std::size_t		size_type;
+	typedef std::ptrdiff_t	difference_type;
+
 	static TypeID TYPE;
 
   public:

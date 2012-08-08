@@ -15,6 +15,9 @@
 #include <cstddef>
 #include <algorithm>
 
+// Lib:
+#include <boost/bind.hpp>
+
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/graph/event_buffer.h>
@@ -96,7 +99,9 @@ PartManager::PartManager (Plugin* plugin):
 	HasPlugin (plugin),
 	_ports (plugin),
 	_proxies (&_ports, &_main_params)
-{ }
+{
+	_main_params.oversampling.on_change.connect (this, &PartManager::oversampling_updated);
+}
 
 
 PartManager::~PartManager()
@@ -353,6 +358,23 @@ PartManager::load_state (QDomElement const& element)
 		else if (e.tagName() == "main")
 			_main_params.load_state (e);
 	}
+}
+
+
+void
+PartManager::oversampling_updated()
+{
+	Haruhi::Services::call_out (boost::bind (&PartManager::set_oversampling, this, _main_params.oversampling.get()));
+}
+
+
+void
+PartManager::set_oversampling (unsigned int oversampling)
+{
+	graph()->synchronize ([&] {
+		for (Part* p: _parts)
+			p->set_oversampling (oversampling);
+	});
 }
 
 } // namespace Yuki

@@ -21,6 +21,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/dsp/filter.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/graph/event.h>
 #include <haruhi/utility/work_performer.h>
@@ -40,6 +41,7 @@ class VoiceManager
 {
 	class RenderWorkUnit;
 
+	typedef DSP::Filter<FilterImpulseResponse::Order, FilterImpulseResponse::ResponseType> AntialiasingFilter;
 	typedef std::map<Haruhi::VoiceID, Voices::iterator> ID2VoiceMap;
 	typedef std::vector<RenderWorkUnit*> WorkUnits;
 	typedef std::vector<Voice::SharedResources*> SharedResourcesVec;
@@ -97,6 +99,13 @@ class VoiceManager
 	 */
 	void
 	graph_updated (Frequency sample_rate, std::size_t buffer_size);
+
+	/**
+	 * Set oversampling factor.
+	 * Needs Graph lock.
+	 */
+	void
+	set_oversampling (unsigned int oversampling);
 
 	/**
 	 * Make all current and future voices use given Wavetable.
@@ -160,6 +169,12 @@ class VoiceManager
 
   private:
 	/**
+	 * Update buffers sizes according to Graph params and oversampling.
+	 */
+	void
+	resize_buffers();
+
+	/**
 	 * Check polyphony limit and drop excess voices.
 	 */
 	void
@@ -178,19 +193,27 @@ class VoiceManager
 	kill_voices();
 
   private:
-	WorkPerformer*		_work_performer;
-	Params::Main*		_main_params;
-	Params::Part*		_part_params;
-	Voices				_voices;
-	WorkUnits			_work_units;
-	ID2VoiceMap			_voices_by_id;
-	SharedResourcesVec	_shared_resources_vec;
-	Frequency			_sample_rate;
-	std::size_t			_buffer_size;
-	DSP::Wavetable*		_wavetable;
-	Haruhi::AudioBuffer	_output_1;
-	Haruhi::AudioBuffer	_output_2;
-	unsigned int		_active_voices_number;
+	WorkPerformer*			_work_performer;
+	Params::Main*			_main_params;
+	Params::Part*			_part_params;
+	Voices					_voices;
+	WorkUnits				_work_units;
+	ID2VoiceMap				_voices_by_id;
+	SharedResourcesVec		_shared_resources_vec;
+	Frequency				_sample_rate;
+	std::size_t				_buffer_size;
+	unsigned int			_oversampling;
+	FilterImpulseResponse	_antialiasing_filter_ir;
+	AntialiasingFilter		_antialiasing_filter_1[5]; // Multi-stage filtering, number must be odd.
+	AntialiasingFilter		_antialiasing_filter_2[5]; // Multi-stage filtering, number must be odd.
+	DSP::Wavetable*			_wavetable;
+	Haruhi::AudioBuffer		_output_1;
+	Haruhi::AudioBuffer		_output_2;
+	Haruhi::AudioBuffer		_output_1_oversampled;
+	Haruhi::AudioBuffer		_output_2_oversampled;
+	Haruhi::AudioBuffer		_output_1_filtered;
+	Haruhi::AudioBuffer		_output_2_filtered;
+	unsigned int			_active_voices_number;
 };
 
 

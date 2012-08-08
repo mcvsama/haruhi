@@ -20,7 +20,11 @@
 
 namespace Yuki {
 
+constexpr int DualFilter::MaxStages;
+
+
 DualFilter::DualFilter (Params::Filter* params_1, Params::Filter* params_2):
+	_sample_rate (0_Hz),
 	_params_1 (params_1),
 	_params_2 (params_2),
 	_impulse_response_1 (FilterImpulseResponse::LowPass, 0.0, 0.0, 0.0, 1.0),
@@ -59,8 +63,9 @@ void
 DualFilter::configure (Configuration configuration, Frequency sample_rate)
 {
 	_configuration = configuration;
+	_sample_rate = sample_rate;
 
-	float const samples = 5_ms * sample_rate;
+	float const samples = 5_ms * sample_rate * _oversampling;
 
 	// Setup smoothers:
 	if (_params_1->enabled)
@@ -78,6 +83,14 @@ DualFilter::configure (Configuration configuration, Frequency sample_rate)
 		_smoother_2_gain.set_samples (samples);
 		_smoother_2_attenuation.set_samples (samples);
 	}
+}
+
+
+void
+DualFilter::set_oversampling (unsigned int oversampling)
+{
+	_oversampling = oversampling;
+	configure (_configuration, _sample_rate);
 }
 
 
@@ -105,7 +118,7 @@ DualFilter::process (Haruhi::AudioBuffer* input_1, Haruhi::AudioBuffer* input_2,
 		Sample const attenuation = _smoother_1_attenuation.process (_params_1->attenuation.to_f(), nsamples);
 
 		_impulse_response_1.set_type (static_cast<FilterImpulseResponse::Type> (_params_1->type.get()));
-		_impulse_response_1.set_frequency (frequency);
+		_impulse_response_1.set_frequency (frequency / _oversampling);
 		_impulse_response_1.set_resonance (resonance);
 		_impulse_response_1.set_gain (gain);
 		_impulse_response_1.set_attenuation (attenuation);
@@ -114,13 +127,13 @@ DualFilter::process (Haruhi::AudioBuffer* input_1, Haruhi::AudioBuffer* input_2,
 
 	if (f2)
 	{
-		Sample const frequency = _smoother_1_frequency.process (0.5f * _params_2->frequency.get() / Params::Filter::FrequencyMax, nsamples);
-		Sample const resonance = _smoother_1_resonance.process (_params_2->resonance.to_f(), nsamples);
-		Sample const gain = _smoother_1_gain.process (_params_2->gain.to_f(), nsamples);
-		Sample const attenuation = _smoother_1_attenuation.process (_params_2->attenuation.to_f(), nsamples);
+		Sample const frequency = _smoother_2_frequency.process (0.5f * _params_2->frequency.get() / Params::Filter::FrequencyMax, nsamples);
+		Sample const resonance = _smoother_2_resonance.process (_params_2->resonance.to_f(), nsamples);
+		Sample const gain = _smoother_2_gain.process (_params_2->gain.to_f(), nsamples);
+		Sample const attenuation = _smoother_2_attenuation.process (_params_2->attenuation.to_f(), nsamples);
 
 		_impulse_response_2.set_type (static_cast<FilterImpulseResponse::Type> (_params_2->type.get()));
-		_impulse_response_2.set_frequency (frequency);
+		_impulse_response_2.set_frequency (frequency / _oversampling);
 		_impulse_response_2.set_resonance (resonance);
 		_impulse_response_2.set_gain (gain);
 		_impulse_response_2.set_attenuation (attenuation);

@@ -25,6 +25,7 @@
 #include <haruhi/graph/event_buffer.h>
 #include <haruhi/lib/controller_proxy.h>
 #include <haruhi/utility/noncopyable.h>
+#include <haruhi/utility/signal.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/id_allocator.h>
 #include <haruhi/utility/saveable_state.h>
@@ -45,6 +46,7 @@ class PartManager:
 	public HasWidget<PartManagerWidget>,
 	public HasPlugin,
 	public SaveableState,
+	public Signal::Receiver,
 	private Noncopyable
 {
   public:
@@ -205,6 +207,20 @@ class PartManager:
 
 	void
 	load_state (QDomElement const&) override;
+
+  private:
+	/**
+	 * Called whenever oversampling parameter changes.
+	 * Calls-out set_oversampling() with proper value.
+	 */
+	void
+	oversampling_updated();
+
+	/**
+	 * Set oversampling on all parts.
+	 */
+	void
+	set_oversampling (unsigned int oversampling);
 
   public:
 	Signal::Emiter1<Part*>	part_added;

@@ -140,8 +140,6 @@ template<unsigned int O, int R>
 			for (InputIterator c = begin; c != end; ++c)
 				*c += 1e-30;
 
-			std::copy (begin, end, output);
-
 			if (_impulse_response)
 			{
 				InputIterator current = begin;
@@ -182,6 +180,8 @@ template<unsigned int O, int R>
 						_px[i] = current[-i-1];
 				}
 			}
+			else
+				std::copy (begin, end, output);
 		}
 
 

@@ -37,7 +37,7 @@ namespace Yuki {
 class VoiceModulator
 {
   public:
-	VoiceModulator (Params::Part* part_params, Frequency sample_rate, std::size_t buffer_size);
+	VoiceModulator (Params::Part* part_params, std::size_t buffer_size);
 
 	/**
 	 * Modulate given amplitude and frequency buffers.
@@ -53,9 +53,22 @@ class VoiceModulator
 	 * Update buffers sizes.
 	 */
 	void
-	graph_updated (Frequency sample_rate, std::size_t buffer_size);
+	graph_updated (std::size_t buffer_size);
+
+	/**
+	 * Set oversampling factor.
+	 * Needs Graph lock.
+	 */
+	void
+	set_oversampling (unsigned int oversampling);
 
   private:
+	/**
+	 * Update buffers sizes according to Graph params and oversampling.
+	 */
+	void
+	resize_buffers();
+
 	/**
 	 * \param	source Buffer with values in range [-1.0, 1.0].
 	 */
@@ -73,8 +86,8 @@ class VoiceModulator
 	Haruhi::AudioBuffer	_operator_output[Params::Part::OperatorsNumber];
 	Haruhi::AudioBuffer	_operator_fm_output[Params::Part::OperatorsNumber];
 	VoiceOperator		_operator[Params::Part::OperatorsNumber];
-	Frequency			_sample_rate;
-	std::size_t			_buffer_size;
+	std::size_t			_buffer_size	= 0;
+	unsigned int		_oversampling	= 1;
 };
 
 } // namespace Yuki

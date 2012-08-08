@@ -53,6 +53,7 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 	_stop_params_to_widgets (false)
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+	Params::Main* main_params = _part_manager->main_params();
 
 	// Knobs:
 
@@ -67,9 +68,17 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 
 	// Polyphony:
 
-	_polyphony = new QSpinBox (1, 256, 1, this);
-	_polyphony->setValue (_part_manager->main_params()->polyphony.get());
+	_polyphony = new QSpinBox (main_params->polyphony.minimum(), main_params->polyphony.maximum(), 1, this);
+	_polyphony->setValue (main_params->polyphony.get());
 	QObject::connect (_polyphony, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_params()));
+
+	// Oversampling:
+
+	_oversampling = new QSpinBox (main_params->oversampling.minimum(), main_params->oversampling.maximum(), 1, this);
+	_oversampling->setValue (_part_manager->main_params()->oversampling.get());
+	_oversampling->setSpecialValueText ("None");
+	_oversampling->setSuffix ("x");
+	QObject::connect (_oversampling, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_params()));
 
 	// Top buttons:
 
@@ -112,6 +121,8 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 	main_layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
 	main_layout->addWidget (new QLabel ("Max voices:", this));
 	main_layout->addWidget (_polyphony);
+	main_layout->addWidget (new QLabel ("Ovrsmpling:", this));
+	main_layout->addWidget (_oversampling);
 	main_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
 	QHBoxLayout* layout = new QHBoxLayout (this);
@@ -222,8 +233,32 @@ PartManagerWidget::widgets_to_params()
 	_stop_params_to_widgets = true;
 
 	_part_manager->main_params()->polyphony = _polyphony->value();
+	_part_manager->main_params()->oversampling = _oversampling->value();
 
 	_stop_params_to_widgets = false;
+}
+
+
+void
+PartManagerWidget::params_to_widgets()
+{
+	if (_stop_params_to_widgets)
+		return;
+	_stop_widgets_to_params = true;
+
+	_polyphony->setValue (_part_manager->main_params()->polyphony);
+	_oversampling->setValue (_part_manager->main_params()->oversampling);
+
+	_stop_widgets_to_params = false;
+
+	update_widgets();
+}
+
+
+void
+PartManagerWidget::post_params_to_widgets()
+{
+	Haruhi::Services::call_out (boost::bind (&PartManagerWidget::params_to_widgets, this));
 }
 
 
@@ -245,28 +280,6 @@ PartManagerWidget::update_widgets()
 				_tabs->removeTab (i--);
 		}
 	}
-}
-
-
-void
-PartManagerWidget::params_to_widgets()
-{
-	if (_stop_params_to_widgets)
-		return;
-	_stop_widgets_to_params = true;
-
-	_polyphony->setValue (_part_manager->main_params()->polyphony);
-
-	_stop_widgets_to_params = false;
-
-	update_widgets();
-}
-
-
-void
-PartManagerWidget::post_params_to_widgets()
-{
-	Haruhi::Services::call_out (boost::bind (&PartManagerWidget::params_to_widgets, this));
 }
 
 } // namespace Yuki

@@ -396,6 +396,13 @@ class Part:
 	graph_updated();
 
 	/**
+	 * Set oversampling for all parts.
+	 * Needs Graph lock.
+	 */
+	void
+	set_oversampling (unsigned int oversampling);
+
+	/**
 	 * Update wavetable according to new parameters.
 	 * Switch double-buffered wavetables.
 	 * Do not propagate new wavetable to VoiceManager - this

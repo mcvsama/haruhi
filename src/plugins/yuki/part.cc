@@ -562,6 +562,13 @@ Part::graph_updated()
 
 
 void
+Part::set_oversampling (unsigned int oversampling)
+{
+	_voice_manager->set_oversampling (oversampling);
+}
+
+
+void
 Part::update_wavetable()
 {
 	_wt_update_request.inc();

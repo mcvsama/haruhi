@@ -26,14 +26,14 @@
 
 namespace Yuki {
 
-VoiceModulator::VoiceModulator (Params::Part* part_params, Frequency sample_rate, std::size_t buffer_size):
+VoiceModulator::VoiceModulator (Params::Part* part_params, std::size_t buffer_size):
 	_part_params (part_params),
-	_sample_rate (sample_rate)
+	_buffer_size (buffer_size)
 {
 	assert (countof (_operator_output) == countof (_operator_fm_output));
 	assert (countof (_operator_output) == countof (_operator));
 
-	graph_updated (sample_rate, buffer_size);
+	resize_buffers();
 }
 
 
@@ -85,20 +85,35 @@ VoiceModulator::modulate (Haruhi::AudioBuffer* amplitude_buf_source, Haruhi::Aud
 
 
 void
-VoiceModulator::graph_updated (Frequency sample_rate, std::size_t buffer_size)
+VoiceModulator::graph_updated (std::size_t buffer_size)
 {
-	_sample_rate = sample_rate;
 	_buffer_size = buffer_size;
 
+	resize_buffers();
+}
+
+
+void
+VoiceModulator::set_oversampling (unsigned int oversampling)
+{
+	_oversampling = oversampling;
+
+	resize_buffers();
+}
+
+
+void
+VoiceModulator::resize_buffers()
+{
 	for (Haruhi::AudioBuffer& buf: _operator_output)
 	{
-		buf.resize (buffer_size);
+		buf.resize (_buffer_size * _oversampling);
 		buf.clear();
 	}
 
 	for (Haruhi::AudioBuffer& buf: _operator_fm_output)
 	{
-		buf.resize (buffer_size);
+		buf.resize (_buffer_size * _oversampling);
 		buf.clear();
 	}
 }

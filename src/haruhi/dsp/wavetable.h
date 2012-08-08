@@ -89,8 +89,8 @@ class Wavetable
 	set_wavetables_size (std::size_t size) noexcept;
 
 	/**
-	 * There must be at least one table added. Otherwise behavior of this
-	 * method is undefined.
+	 * There must be at least one table added and frequency must be between
+	 * 0 and 0.5. Otherwise behavior of this method is undefined.
 	 */
 	Sample
 	operator() (Sample register phase, Sample frequency) const noexcept;

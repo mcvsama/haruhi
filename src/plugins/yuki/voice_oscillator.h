@@ -431,6 +431,11 @@ template<bool with_noise, bool unison_stereo>
 	inline void
 	VoiceOscillator::fill_impl (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* output_2) noexcept
 	{
+		assert (output_1->size() == output_2->size());
+		assert (output_1->size() == _amplitude_source->size());
+		assert (output_1->size() == _frequency_source->size());
+		assert (output_1->size() == _fm_source->size());
+
 		Sample f, g, v, e, sum1, sum2, tmpsum;
 		Sample* const o1 = output_1->begin();
 		Sample* const o2 = output_2->begin();

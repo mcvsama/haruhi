@@ -35,7 +35,8 @@ Params::Main::Main():
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (detune, Detune, 2),
 	HARUHI_CONTROLLER_PARAM_CONSTRUCT (stereo_width, StereoWidth, 2),
 	enabled ({ 0, 1 }, 1, "enabled"),
-	polyphony ({ 0, 512 }, 32, "polyphony")
+	polyphony ({ 1, 512 }, 32, "polyphony"),
+	oversampling ({ 1, 16 }, 1, "oversampling")
 { }
 
 
@@ -46,6 +47,7 @@ HARUHI_DEFINE_SAVEABLE_PARAMS (Main)
 	HARUHI_DEFINE_SAVEABLE_PARAM (stereo_width)
 	HARUHI_DEFINE_SAVEABLE_PARAM (enabled)
 	HARUHI_DEFINE_SAVEABLE_PARAM (polyphony)
+	HARUHI_DEFINE_SAVEABLE_PARAM (oversampling)
 HARUHI_FINISH_SAVEABLE_PARAMS_DEFINITION()
 
 
