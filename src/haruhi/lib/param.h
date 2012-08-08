@@ -281,7 +281,6 @@ template<class tType>
 	inline void
 	Param<tType>::save_state (QDomElement& parent) const
 	{
-		parent.setAttribute ("value", QString ("%1").arg (get()));
 		parent.appendChild (parent.ownerDocument().createTextNode (QString::number (get())));
 	}
 
