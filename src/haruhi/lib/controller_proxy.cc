@@ -48,31 +48,23 @@ ControllerProxy::process_events()
 
 	if (!buffer->events().empty())
 	{
-		bool found_ce = false;
-		bool found_vce = false;
-
-		// Use last controller value from buffer:
-		for (EventBuffer::Events::const_reverse_iterator e = buffer->events().rbegin(); e != buffer->events().rend() && !(found_ce && found_vce); ++e)
+		for (auto& event: buffer->events())
 		{
-			switch ((*e)->event_type())
+			switch (event->event_type())
 			{
 				case Event::ControllerEventType:
-					if (!found_ce)
-					{
-						ControllerEvent const* ce = static_cast<ControllerEvent const*> (e->get());
-						process_event (ce);
-						found_ce = true;
-					}
+				{
+					ControllerEvent const* ce = static_cast<ControllerEvent const*> (event.get());
+					process_event (ce);
 					break;
+				}
 
 				case Event::VoiceControllerEventType:
-					if (!found_vce)
-					{
-						VoiceControllerEvent const* vce = static_cast<VoiceControllerEvent const*> (e->get());
-						on_voice_controller_event (vce, param()->adapter()->forward_normalized (vce->value()));
-						found_vce = true;
-					}
+				{
+					VoiceControllerEvent const* vce = static_cast<VoiceControllerEvent const*> (event.get());
+					on_voice_controller_event (vce, param()->adapter()->forward_normalized (vce->value()));
 					break;
+				}
 
 				default:
 					break;
