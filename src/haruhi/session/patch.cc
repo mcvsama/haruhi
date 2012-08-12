@@ -460,6 +460,8 @@ Patch::load_state (QDomElement const& element)
 					if (plugin)
 					{
 						plugin->set_id (e2.attribute ("id").toInt());
+						// ID has changed, so update tab title to reflect correct ID:
+						update_tab_title (plugin);
 						HasPresets* has_presets = dynamic_cast<HasPresets*> (plugin);
 						if (has_presets)
 							_plugins_to_frames_map[plugin]->set_preset (e2.attribute ("preset-uuid"), e2.attribute ("preset-name"));
