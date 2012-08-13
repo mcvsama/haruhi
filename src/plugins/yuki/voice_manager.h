@@ -214,6 +214,7 @@ class VoiceManager
 	Haruhi::AudioBuffer		_output_1_filtered;
 	Haruhi::AudioBuffer		_output_2_filtered;
 	unsigned int			_active_voices_number;
+	Frequency				_last_voice_frequency;
 };
 
 

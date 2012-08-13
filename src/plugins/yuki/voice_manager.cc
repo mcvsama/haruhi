@@ -59,7 +59,8 @@ VoiceManager::VoiceManager (Params::Main* main_params, Params::Part* part_params
 	_buffer_size (0),
 	_oversampling (1),
 	_wavetable (0),
-	_active_voices_number (0)
+	_active_voices_number (0),
+	_last_voice_frequency (440_Hz) // Initially concert A.
 {
 	for (unsigned int i = 0; i < _work_performer->threads_number(); ++i)
 		_shared_resources_vec.push_back (new Voice::SharedResources());
@@ -91,7 +92,11 @@ VoiceManager::handle_voice_event (Haruhi::VoiceEvent const* event)
 		// If there is already voice with the same voice_id, ignore the event.
 		if (!find_voice_by_id (id))
 		{
-			Voice* v = new Voice (id, event->timestamp(), _main_params, _part_params, (0_dB).factor(), 440_Hz / _sample_rate, _sample_rate, _buffer_size, _oversampling);
+			// For glide effect to work, let's set initial voice frequency to the last
+			// voice pitch event we got:
+			NormalizedFrequency initial_frequency = _last_voice_frequency / _sample_rate / _oversampling;
+
+			Voice* v = new Voice (id, event->timestamp(), _main_params, _part_params, (0_dB).factor(), initial_frequency, _sample_rate, _buffer_size, _oversampling);
 			v->set_wavetable (_wavetable);
 
 			_voices_by_id[id] = _voices.insert (v).first;
@@ -125,6 +130,7 @@ VoiceManager::handle_frequency_event (Haruhi::VoiceControllerEvent const* event)
 {
 	if (Voice* v = find_voice_by_id (event->voice_id()))
 		v->set_frequency (event->frequency());
+	_last_voice_frequency = event->frequency();
 }
 
 
