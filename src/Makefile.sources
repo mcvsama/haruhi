@@ -39,6 +39,7 @@ SRC_SOURCES += haruhi/components/audio_backend/transports/jack_transport.cc
 ######## /components/audio_backend ########
 
 SRC_HEADERS += haruhi/components/audio_backend/backend.h
+SRC_HEADERS += haruhi/components/audio_backend/exception.h
 SRC_HEADERS += haruhi/components/audio_backend/input_dialog.h
 SRC_HEADERS += haruhi/components/audio_backend/input_item.h
 SRC_HEADERS += haruhi/components/audio_backend/output_dialog.h

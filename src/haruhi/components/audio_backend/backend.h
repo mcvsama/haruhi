@@ -21,6 +21,7 @@
 #include <utility>
 
 // Qt:
+#include <QtCore/QTimer>
 #include <QtGui/QLayout>
 #include <QtGui/QPushButton>
 #include <QtGui/QWhatsThis>
@@ -40,6 +41,7 @@
 #include <haruhi/utility/exception.h>
 
 // Local:
+#include "exception.h"
 #include "tree.h"
 #include "port_item.h"
 #include "input_item.h"
@@ -256,11 +258,15 @@ class Backend:
 	void
 	dummy_round();
 
+	void
+	retry_connect();
+
   private:
 	QString					_client_name;
 	Transport*				_transport;
 	// Lock for _inputs and _outputs:
 	RecursiveMutex			_ports_lock;
+	QTimer*					_connect_retry_timer;
 
 	// Views:
 	QPushButton*			_disconnect_button;
@@ -285,32 +291,6 @@ class Backend:
 	// For smoothing master volume:
 	AudioBuffer				_master_volume_smoother_buffer;
 	DSP::OnePoleSmoother	_master_volume_smoother;
-};
-
-
-/**
- * Exception
- */
-class Exception: public ::Exception
-{
-  public:
-	explicit
-	Exception (const char* what, const char* details):
-		::Exception (what, details)
-	{ }
-};
-
-
-/**
- * AudioBackendPortException
- */
-class PortException: public Exception
-{
-  public:
-	explicit
-	PortException (const char* what, const char* details):
-		Exception (what, details)
-	{ }
 };
 
 

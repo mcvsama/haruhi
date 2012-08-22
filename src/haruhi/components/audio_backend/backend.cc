@@ -51,6 +51,9 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 
 	_transport = new JackTransport (this);
 
+	_connect_retry_timer = new QTimer (this);
+	QObject::connect (_connect_retry_timer, SIGNAL (timeout()), this, SLOT (connect()));
+
 	_disconnect_button = new QPushButton (Resources::Icons16::disconnect(), "Disconnect from JACK", this);
 	_disconnect_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QObject::connect (_disconnect_button, SIGNAL (clicked()), this, SLOT (disconnect()));
@@ -300,10 +303,11 @@ Backend::connect()
 		graph_updated();
 		start_processing();
 		QApplication::postEvent (this, new StateChange (true, false));
+		_connect_retry_timer->stop();
 	}
-	catch (Exception const& e)
+	catch (ConnectException const& e)
 	{
-		QMessageBox::warning (this, "Audio backend", "Can't connect to audio backend: " + Qt::escape (e.what()));
+		retry_connect();
 	}
 	update_widgets();
 }
@@ -324,6 +328,7 @@ void
 Backend::notify_disconnected()
 {
 	QApplication::postEvent (this, new StateChange (false, true));
+	retry_connect();
 }
 
 
@@ -541,8 +546,6 @@ Backend::customEvent (QEvent* event)
 		{
 			update_widgets();
 			on_state_change (state_change->online);
-			// Show message to user:
-			QMessageBox::warning (this, "Audio backend", "Audio transport disconnected.\nUse «Reconnect» button on Audio backend tab (or press C-j) to reconnect.");
 		}
 		else
 			on_state_change (state_change->online);
@@ -571,6 +574,13 @@ Backend::dummy_round()
 		graph()->set_buffer_size (dummy_buffer_size);
 	});
 	usleep (dummy_period_time.microseconds());
+}
+
+
+void
+Backend::retry_connect()
+{
+	_connect_retry_timer->start (1000);
 }
 
 } // namespace AudioBackendImpl
