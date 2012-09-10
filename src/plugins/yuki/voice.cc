@@ -255,15 +255,15 @@ Voice::update_glide_parameters() noexcept
 	{
 		if (_part_params->const_portamento_time.get())
 		{
-			_frequency_change = FastPow::pow (_target_frequency / _frequency,
-											  1.0f / (1.0f / Params::Part::PortamentoTimeDenominator * portamento_time * _sample_rate));
+			_frequency_change = std::pow (_target_frequency / _frequency,
+										  1.0f / (1.0f / Params::Part::PortamentoTimeDenominator * portamento_time * _sample_rate * _oversampling));
 		}
 		else
 		{
 			// 2 octaves per portamento time:
 			Sample difference = _target_frequency > _frequency ? 2.0f : 0.5f;
-			_frequency_change = FastPow::pow (difference,
-											  1.0f / (1.0f / Params::Part::PortamentoTimeDenominator * portamento_time * _sample_rate));
+			_frequency_change = std::pow (difference,
+										  1.0f / (1.0f / Params::Part::PortamentoTimeDenominator * portamento_time * _sample_rate * _oversampling));
 		}
 	}
 	else

@@ -94,7 +94,7 @@ VoiceManager::handle_voice_event (Haruhi::VoiceEvent const* event)
 		{
 			// For glide effect to work, let's set initial voice frequency to the last
 			// voice pitch event we got:
-			NormalizedFrequency initial_frequency = _last_voice_frequency / _sample_rate / _oversampling;
+			NormalizedFrequency initial_frequency = _last_voice_frequency / _sample_rate;
 
 			Voice* v = new Voice (id, event->timestamp(), _main_params, _part_params, (0_dB).factor(), initial_frequency, _sample_rate, _buffer_size, _oversampling);
 			v->set_wavetable (_wavetable);
