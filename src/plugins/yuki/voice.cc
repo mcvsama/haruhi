@@ -116,7 +116,7 @@ Voice::render (SharedResources* res)
 	_vosc.set_unison_noise (_params.unison_noise.to_f());
 	_vosc.set_unison_stereo (!!_part_params->unison_stereo.get());
 	_vosc.set_unison_vibrato_level (_params.unison_vibrato_level.to_f());
-	_vosc.set_unison_vibrato_frequency (Hertz (_params.unison_vibrato_frequency.to_f()) / _sample_rate); // Max 10 Hz
+	_vosc.set_unison_vibrato_frequency (Hertz (_params.unison_vibrato_frequency.to_f()) / _sample_rate / _oversampling); // Max 10 Hz
 	_vosc.set_noise_amplitude (Amplitude (_part_params->noise_level.to_f()));
 	_vosc.set_wavetable_enabled (_part_params->wave_enabled.get());
 	_vosc.set_noise_enabled (_part_params->noise_enabled.get());
