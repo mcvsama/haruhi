@@ -528,7 +528,7 @@ Session::load_session (QString const& file_name)
 
 		// Add session to recent sessions list:
 		SessionLoaderSettings* settings = Haruhi::haruhi()->session_loader_settings();
-		settings->recent_sessions().push_back (SessionLoaderSettings::RecentSession (_name, file_name, Timestamp::from_epoch (0)));
+		settings->recent_sessions().push_back (SessionLoaderSettings::RecentSession (_name, file_name, Timestamp::now()));
 		settings->save();
 	}
 	catch (Exception const& e)
@@ -559,7 +559,7 @@ Session::save_session (QString const& file_name)
 
 		// Add session to recent sessions list:
 		SessionLoaderSettings* settings = Haruhi::haruhi()->session_loader_settings();
-		settings->recent_sessions().push_back (SessionLoaderSettings::RecentSession (_name, file_name, Timestamp::from_epoch (0)));
+		settings->recent_sessions().push_back (SessionLoaderSettings::RecentSession (_name, file_name, Timestamp::now()));
 		settings->save();
 	}
 	catch (Exception const& e)
