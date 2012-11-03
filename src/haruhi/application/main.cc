@@ -67,5 +67,7 @@ int main (int argc, char** argv, char** envp)
 #ifdef HARUHI_HAS_SSE_POW
 	SSEPow::deinitialize();
 #endif
+
+	return EXIT_SUCCESS;
 }
 
