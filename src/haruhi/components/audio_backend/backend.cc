@@ -282,7 +282,7 @@ Backend::load_state (QDomElement const& element)
 	if (active)
 		_transport->deactivate();
 
-	for (QDomElement& e: QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "inputs")
 			_inputs_list->load_state (e);

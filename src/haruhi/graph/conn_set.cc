@@ -122,7 +122,7 @@ void
 ConnSet::load_state (QDomElement const& element)
 {
 	_connections.clear();
-	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "connection")
 		{

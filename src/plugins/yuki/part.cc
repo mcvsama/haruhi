@@ -705,7 +705,7 @@ Part::save_state (QDomElement& element) const
 void
 Part::load_state (QDomElement const& element)
 {
-	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "part-parameters")
 			_part_params.load_state (e);

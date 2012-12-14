@@ -120,7 +120,7 @@ void
 Plugin::load_state (QDomElement const& element)
 {
 	disable();
-	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "state")
 		{

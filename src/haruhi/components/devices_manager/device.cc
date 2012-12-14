@@ -87,7 +87,7 @@ Device::load_state (QDomElement const& element)
 	_auto_add = element.attribute ("auto-add") == "true";
 	_controllers.clear();
 
-	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "controller")
 		{

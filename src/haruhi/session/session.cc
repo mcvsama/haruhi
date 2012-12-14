@@ -276,7 +276,7 @@ Session::Parameters::Parameters():
 void
 Session::Parameters::load_state (QDomElement const& element)
 {
-	for (QDomElement& e: QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "tuning")
 			tuning = e.text().toInt();
@@ -626,7 +626,7 @@ Session::load_state (QDomElement const& element)
 	QDomElement event_backend_element;
 	QDomElement program_element;
 
-	for (QDomElement& e: QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "parameters")
 			parameters_element = e;

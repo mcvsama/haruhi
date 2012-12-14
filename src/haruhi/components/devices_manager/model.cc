@@ -88,7 +88,7 @@ void
 Model::load_state (QDomElement const& element)
 {
 	_devices.clear();
-	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "device")
 		{

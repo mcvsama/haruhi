@@ -82,7 +82,7 @@ HasPresetsSettings::load_state (QDomElement const& element)
 {
 	_units.clear();
 
-	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "unit")
 		{
@@ -90,7 +90,7 @@ HasPresetsSettings::load_state (QDomElement const& element)
 			if (!unit_urn.isEmpty())
 			{
 				FavoritePresets& favorite_presets = _units[unit_urn.toStdString()];
-				for (QDomElement& e2: Haruhi::QDomChildElementsSequence (e))
+				for (QDomElement& e2: e)
 				{
 					QString fp_uuid = e2.attribute ("uuid");
 					if (!fp_uuid.isEmpty())

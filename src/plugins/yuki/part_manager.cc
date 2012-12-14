@@ -340,7 +340,7 @@ PartManager::load_state (QDomElement const& element)
 
 	remove_all_parts();
 
-	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "part")
 		{

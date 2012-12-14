@@ -219,7 +219,7 @@ Backend::load_state (QDomElement const& element)
 	bool e = enabled();
 	if (e)
 		disable();
-	for (QDomElement& e: QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "inputs")
 			_model.load_state (e);

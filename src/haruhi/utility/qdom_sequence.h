@@ -56,25 +56,6 @@ class QDomElementIterator
 };
 
 
-/**
- * Create sequence for iterating through chlid QDomElements.
- */
-class QDomChildElementsSequence
-{
-  public:
-	QDomChildElementsSequence (QDomElement parent);
-
-	QDomElementIterator
-	begin();
-
-	QDomElementIterator
-	end();
-
-  private:
-	QDomElement _parent;
-};
-
-
 inline
 QDomElementIterator::QDomElementIterator (QDomElement element):
 	_element (element)
@@ -108,27 +89,25 @@ QDomElementIterator::operator*()
 	return _element;
 }
 
-
-inline
-QDomChildElementsSequence::QDomChildElementsSequence (QDomElement parent):
-	_parent (parent)
-{ }
-
-
-inline QDomElementIterator
-QDomChildElementsSequence::begin()
-{
-	return QDomElementIterator (_parent.firstChildElement());
-}
-
-
-inline QDomElementIterator
-QDomChildElementsSequence::end()
-{
-	return QDomElementIterator();
-}
-
 } // namespace Haruhi
+
+
+namespace std {
+
+inline Haruhi::QDomElementIterator
+begin (QDomElement element)
+{
+	return Haruhi::QDomElementIterator (element.firstChildElement());
+}
+
+
+inline Haruhi::QDomElementIterator
+end (QDomElement)
+{
+	return Haruhi::QDomElementIterator();
+}
+
+} // namespace std
 
 #endif
 

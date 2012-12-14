@@ -69,11 +69,11 @@ Preset::load_state (QDomElement const& element)
 	_uuid = element.attribute ("uuid");
 	if (_uuid.isEmpty() || _uuid.isNull())
 		generate_uuid();
-	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "meta")
 		{
-			for (QDomElement& e2: Haruhi::QDomChildElementsSequence (e))
+			for (QDomElement& e2: e)
 			{
 				if (e2.tagName() == "name")
 					_name = e2.text();

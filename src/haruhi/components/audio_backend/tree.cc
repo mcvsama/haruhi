@@ -93,7 +93,7 @@ Tree::save_state (QDomElement& element) const
 void
 Tree::load_state (QDomElement const& element)
 {
-	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "input")
 		{

@@ -59,7 +59,7 @@ Program::save_state (QDomElement& element) const
 void
 Program::load_state (QDomElement const& element)
 {
-	for (QDomElement& e: QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "patch")
 			_patch->load_state (e);

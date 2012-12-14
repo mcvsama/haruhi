@@ -36,7 +36,7 @@ HaruhiSettings::HaruhiSettings():
 void
 HaruhiSettings::load_state (QDomElement const& element)
 {
-	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "engine-thread-priority")
 			_engine_thread_priority = e.text().toInt();

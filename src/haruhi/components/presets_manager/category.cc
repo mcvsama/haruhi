@@ -73,7 +73,7 @@ Category::load_state (QDomElement const& element)
 
 	set_name (element.attribute ("name", "<unnamed category>"));
 
-	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "preset")
 		{

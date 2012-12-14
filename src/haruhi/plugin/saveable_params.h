@@ -152,7 +152,7 @@ template<class SubClass>
 		typedef std::map<QString, QDomElement> Map;
 
 		Map map;
-		for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
+		for (QDomElement& e: element)
 			if (e.tagName() == "parameter")
 				map[e.attribute ("name", "")] = e;
 

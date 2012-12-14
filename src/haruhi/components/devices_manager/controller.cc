@@ -365,7 +365,7 @@ Controller::load_state (QDomElement const& element)
 	_name = element.attribute ("name", "<unnamed>");
 	smoothing = 1_ms * element.attribute ("smoothing", "0").toInt();
 
-	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "note-filter")
 		{

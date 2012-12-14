@@ -121,11 +121,11 @@ SessionLoaderSettings::load_state (QDomElement const& element)
 {
 	_recent_sessions.clear();
 
-	for (QDomElement& e: Haruhi::QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "recent-sessions")
 		{
-			for (QDomElement& e2: Haruhi::QDomChildElementsSequence (e))
+			for (QDomElement& e2: e)
 			{
 				if (e2.tagName() == "recent-session")
 				{

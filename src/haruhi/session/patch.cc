@@ -448,11 +448,11 @@ void
 Patch::load_state (QDomElement const& element)
 {
 	QDomElement connections;
-	for (QDomElement& e: QDomChildElementsSequence (element))
+	for (QDomElement& e: element)
 	{
 		if (e.tagName() == "plugins")
 		{
-			for (QDomElement& e2: QDomChildElementsSequence (e))
+			for (QDomElement& e2: e)
 			{
 				if (e2.tagName() == "plugin")
 				{

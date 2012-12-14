@@ -197,7 +197,7 @@ Settings::parse()
 		return;
 	}
 
-	for (QDomElement& e: Haruhi::QDomChildElementsSequence (_document.documentElement()))
+	for (QDomElement& e: _document.documentElement())
 	{
 		// Load module settings:
 		if (e.tagName() == "module" && !e.attribute ("name").isEmpty())
