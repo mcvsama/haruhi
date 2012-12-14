@@ -32,7 +32,7 @@
 #include <haruhi/session/session.h>
 #include <haruhi/components/presets_manager/presets_manager.h>
 #include <haruhi/widgets/texture_widget.h>
-#include <haruhi/utility/qdom_sequence.h>
+#include <haruhi/utility/qdom.h>
 
 // Local:
 #include "patch.h"

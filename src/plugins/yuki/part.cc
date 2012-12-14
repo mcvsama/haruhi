@@ -28,7 +28,7 @@
 #include <haruhi/dsp/translated_wave.h>
 #include <haruhi/dsp/scaled_wave.h>
 #include <haruhi/utility/fast_pow.h>
-#include <haruhi/utility/qdom_sequence.h>
+#include <haruhi/utility/qdom.h>
 #include <haruhi/utility/signal.h>
 
 // Local:

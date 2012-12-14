@@ -22,7 +22,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/graph/event_buffer.h>
 #include <haruhi/application/services.h>
-#include <haruhi/utility/qdom_sequence.h>
+#include <haruhi/utility/qdom.h>
 
 // Local:
 #include "part_manager.h"

@@ -22,7 +22,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/lib/param.h>
 #include <haruhi/utility/saveable_state.h>
-#include <haruhi/utility/qdom_sequence.h>
+#include <haruhi/utility/qdom.h>
 
 
 #define HARUHI_SAVEABLE_PARAMS_STANDARD_METHODS(klass)											\

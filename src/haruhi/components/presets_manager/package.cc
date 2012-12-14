@@ -24,7 +24,7 @@
 #include <haruhi/utility/filesystem.h>
 #include <haruhi/utility/exception.h>
 #include <haruhi/utility/predicates.h>
-#include <haruhi/utility/qdom_sequence.h>
+#include <haruhi/utility/qdom.h>
 
 // Local:
 #include "helpers.h"

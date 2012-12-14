@@ -23,7 +23,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/lib/midi.h>
 #include <haruhi/utility/numeric.h>
-#include <haruhi/utility/qdom_sequence.h>
+#include <haruhi/utility/qdom.h>
 #include <haruhi/utility/frequency.h>
 
 // Local:

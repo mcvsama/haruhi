@@ -18,7 +18,7 @@
 #include "has_presets_settings.h"
 
 // Haruhi:
-#include <haruhi/utility/qdom_sequence.h>
+#include <haruhi/utility/qdom.h>
 
 
 namespace Haruhi {

@@ -30,7 +30,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/application/haruhi.h>
 #include <haruhi/utility/numeric.h>
-#include <haruhi/utility/qdom_sequence.h>
+#include <haruhi/utility/qdom.h>
 
 // Local:
 #include "transports/jack_transport.h"

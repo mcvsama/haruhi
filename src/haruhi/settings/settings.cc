@@ -35,7 +35,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/utility/exception.h>
 #include <haruhi/utility/filesystem.h>
-#include <haruhi/utility/qdom_sequence.h>
+#include <haruhi/utility/qdom.h>
 
 // Local:
 #include "settings.h"

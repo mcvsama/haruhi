@@ -43,7 +43,7 @@
 #include <haruhi/settings/session_loader_settings.h>
 #include <haruhi/widgets/clickable_label.h>
 #include <haruhi/utility/numeric.h>
-#include <haruhi/utility/qdom_sequence.h>
+#include <haruhi/utility/qdom.h>
 
 // Local:
 #include "session.h"

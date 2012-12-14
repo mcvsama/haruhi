@@ -19,7 +19,7 @@
 #include "session_loader_settings.h"
 
 // Haruhi:
-#include <haruhi/utility/qdom_sequence.h>
+#include <haruhi/utility/qdom.h>
 
 
 namespace Haruhi {

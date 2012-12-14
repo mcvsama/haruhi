@@ -17,7 +17,7 @@
 
 // Haruhi:
 #include <haruhi/utility/numeric.h>
-#include <haruhi/utility/qdom_sequence.h>
+#include <haruhi/utility/qdom.h>
 
 // Local:
 #include "haruhi_settings.h"

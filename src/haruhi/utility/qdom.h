@@ -92,6 +92,10 @@ QDomElementIterator::operator*()
 } // namespace Haruhi
 
 
+/**
+ * Support for generic iterating over element's children
+ * with range-for.
+ */
 namespace std {
 
 inline Haruhi::QDomElementIterator
@@ -108,6 +112,66 @@ end (QDomElement)
 }
 
 } // namespace std
+
+
+/**
+ * Compare element's name to a string.
+ */
+inline bool
+operator== (QDomElement const& element, const char* string) noexcept
+{
+	return element.tagName() == string;
+}
+
+
+/**
+ * Compare element's name to a string.
+ */
+inline bool
+operator== (QDomElement const& element, std::string const& string) noexcept
+{
+	return element.tagName() == string.c_str();
+}
+
+
+/**
+ * Compare element's name to a string.
+ */
+inline bool
+operator== (QDomElement const& element, QString const& string) noexcept
+{
+	return element.tagName() == string;
+}
+
+
+/**
+ * Compare element's name to a string.
+ */
+inline bool
+operator!= (QDomElement const& element, const char* string) noexcept
+{
+	return !(element == string);
+}
+
+
+/**
+ * Compare element's name to a string.
+ */
+inline bool
+operator!= (QDomElement const& element, std::string const& string) noexcept
+{
+	return !(element == string);
+}
+
+
+/**
+ * Compare element's name to a string.
+ */
+inline bool
+operator!= (QDomElement const& element, QString const& string) noexcept
+{
+	return !(element == string);
+}
 
 #endif
 
