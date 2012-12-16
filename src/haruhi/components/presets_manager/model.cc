@@ -144,7 +144,7 @@ Model::load_state()
 	{
 		QString path = directory() + "/" + p;
 		QFile file (path);
-		if (!file.open (IO_ReadOnly))
+		if (!file.open (QFile::ReadOnly))
 			continue;
 		QDomDocument doc;
 		if (!doc.setContent (&file, true))
@@ -186,7 +186,7 @@ Model::save_state()
 
 		// Save file:
 		QFile file (file_name + "~");
-		if (!file.open (IO_WriteOnly))
+		if (!file.open (QFile::WriteOnly))
 			throw Exception (QString ("Could not save package: ") + file.errorString());
 		QTextStream ts (&file);
 		ts << doc.toString();

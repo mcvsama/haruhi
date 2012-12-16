@@ -132,7 +132,7 @@ Settings::load()
 			return;
 	}
 
-	if (!file.open (IO_ReadOnly))
+	if (!file.open (QFile::ReadOnly))
 		std::cerr << "Warning: failed to open settings file." << std::endl;
 	else if (!_document.setContent (&file, true))
 		std::cerr << "Warning: failed to parse settings file." << std::endl;
@@ -162,7 +162,7 @@ Settings::save()
 
 	// Save XML file:
 	QFile file (_settings_file + "~");
-	if (!file.open (IO_WriteOnly))
+	if (!file.open (QFile::WriteOnly))
 		throw Exception (QString ("could not save settings file: ") + file.errorString());
 	QTextStream ts (&file);
 	ts << _document.toString();

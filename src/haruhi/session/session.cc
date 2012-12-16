@@ -513,7 +513,7 @@ Session::load_session (QString const& file_name)
 
 		// Open file:
 		QFile file (file_name);
-		if (!file.open (IO_ReadOnly))
+		if (!file.open (QFile::ReadOnly))
 			throw Exception (QString ("Could not open session file: ") + file.errorString());
 		else if (!document.setContent (&file, true))
 			throw Exception ("Failed to parse session file.");
@@ -549,7 +549,7 @@ Session::save_session (QString const& file_name)
 
 		// TODO maybe saving should be done in another thread? std::future?
 		QFile file (file_name + "~");
-		if (!file.open (IO_WriteOnly))
+		if (!file.open (QFile::WriteOnly))
 			throw Exception (QString ("Could not save session file: ") + file.errorString());
 		QTextStream ts (&file);
 		ts << document.toString();
