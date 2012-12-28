@@ -136,7 +136,7 @@ class Controller:
 
   public:
 	/**
-	 * Emited when VoiceControllerEvent is encountered
+	 * Emitted when VoiceControllerEvent is encountered
 	 * in ControllerProxy::process_events().
 	 *
 	 * Actually, this is just reference to

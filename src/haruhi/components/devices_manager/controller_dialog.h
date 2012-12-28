@@ -59,7 +59,7 @@ class ControllerDialog: public QDialog
 
   signals:
 	/**
-	 * Emited when user saves controller item.
+	 * Emitted when user saves controller item.
 	 */
 	void
 	item_configured (ControllerItem*) const;

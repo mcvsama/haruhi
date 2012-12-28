@@ -129,7 +129,7 @@ class Model
 	save_state();
 
   public:
-	// Emited when model_changed() is called:
+	// Emitted when model_changed() is called:
 	Signal::Emiter0	on_change;
 
   private:

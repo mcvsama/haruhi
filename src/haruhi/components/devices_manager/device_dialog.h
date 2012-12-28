@@ -64,7 +64,7 @@ class DeviceDialog: public QDialog
 
   signals:
 	/**
-	 * Emited when user saves device item.
+	 * Emitted when user saves device item.
 	 */
 	void
 	item_configured (DeviceItem*) const;

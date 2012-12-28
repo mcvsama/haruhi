@@ -53,9 +53,9 @@ class Backend: public Unit
 
   public:
 	/**
-	 * Emited when backend goes online/offline.
+	 * Emitted when backend goes online/offline.
 	 * Argument says whether backend is now online.
-	 * Always emited from UI thread.
+	 * Always emitted from UI thread.
 	 */
 	Signal::Emiter1<bool> on_state_change;
 };

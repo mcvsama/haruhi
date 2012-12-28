@@ -127,12 +127,12 @@ template<class tType>
 
 	  public:
 		/**
-		 * Emited when parameter has changed:
+		 * Emitted when parameter has changed:
 		 */
 		Signal::Emiter0 on_change;
 
 		/**
-		 * Emited after on_change when parameter has changed.
+		 * Emitted after on_change when parameter has changed.
 		 * New value is given as parameter.
 		 */
 		Signal::Emiter1<Type> on_change_with_value;

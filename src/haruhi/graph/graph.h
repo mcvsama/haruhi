@@ -213,7 +213,7 @@ class Graph: public RecursiveMutex
 
   public:
 	// Signals.
-	// It is not defined from within what thread these signals will be emited.
+	// It is not defined from within what thread these signals will be emitted.
 	Signal::Emiter1<Unit*>			unit_registered;
 	Signal::Emiter1<Unit*>			unit_unregistered;
 	Signal::Emiter1<Unit*>			unit_retitled;

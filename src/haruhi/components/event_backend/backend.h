@@ -159,7 +159,7 @@ class Backend:
 
   public:
 	/**
-	 * Emited after user saves Device as template. Can be used to inform DevicesManager to save new device template.
+	 * Emitted after user saves Device as template. Can be used to inform DevicesManager to save new device template.
 	 * If nothing is connected to this signal, 'save as template' menu item will be hidden in device popup menu.
 	 * \param	device Device to be saved as template.
 	 * \thread	UI thread
@@ -167,7 +167,7 @@ class Backend:
 	Signal::Emiter1<DevicesManager::Device const&> device_saved_as_template;
 
 	/**
-	 * Emited on each event from transport.
+	 * Emitted on each event from transport.
 	 * \thread	Engine thread
 	 */
 	Signal::Emiter1<MIDI::Event const&> on_event;

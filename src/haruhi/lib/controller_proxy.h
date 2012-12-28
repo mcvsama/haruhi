@@ -122,7 +122,7 @@ class ControllerProxy: public Signal::Receiver
 
   public:
 	/**
-	 * Emited when VoiceControllerEvent is encountered
+	 * Emitted when VoiceControllerEvent is encountered
 	 * in process_events().
 	 */
 	Signal::Emiter2<VoiceControllerEvent const*, int> on_voice_controller_event;

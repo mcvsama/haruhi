@@ -303,7 +303,7 @@ class Port:
 	 * by EventBackend. Called always, even if actual connection hasn't been made
 	 * because of distinct Graphs or other reasons.
 	 *
-	 * It is not defined from within what thread this signal will be emited.
+	 * It is not defined from within what thread this signal will be emitted.
 	 */
 	Signal::Emiter2<EventBackend::EventTypes, EventPort*> learned_connection_signal;
 
