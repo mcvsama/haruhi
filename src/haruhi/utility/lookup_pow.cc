@@ -1,6 +1,6 @@
 /* vim:ts=4
  *
- * Copyleft 2008…2012  Michał Gawron
+ * Copyleft 2008…2013  Michał Gawron
  * Marduk Unix Labs, http://mulabs.org/
  * --
  * Implementation of the pow_generic() and initialize() functions were
