@@ -41,7 +41,7 @@ class LevelMeter: public QWidget
 	enum { PEAK_DECOUNTER = 100 };
 
   public:
-	LevelMeter (QWidget* parent, LevelMetersGroup* group = 0, float lower_db = -70.0, float upper_db = 6.0, const char* name = 0);
+	LevelMeter (QWidget* parent, LevelMetersGroup* group = 0, float lower_db = -70.0, float upper_db = 6.0);
 
 	~LevelMeter();
 
@@ -131,7 +131,7 @@ class LevelMetersGroup: public QWidget
 	class Scale: public QWidget
 	{
 	  public:
-		Scale (QWidget* parent, float lower_db, float upper_db, const char* name = 0);
+		Scale (QWidget* parent, float lower_db, float upper_db);
 
 	  protected:
 		void
@@ -146,7 +146,7 @@ class LevelMetersGroup: public QWidget
 	typedef std::vector<LevelMeter*>  Vector;
 
   public:
-	LevelMetersGroup (QWidget* parent, float lower_db = -70.0, float upper_db = 6.0, const char* name = 0);
+	LevelMetersGroup (QWidget* parent, float lower_db = -70.0, float upper_db = 6.0);
 
 	~LevelMetersGroup();
 

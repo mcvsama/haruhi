@@ -42,8 +42,8 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	QDialog (parent),
 	_result (NoResult)
 {
-	setCaption ("Haruhi — Session Control");
-	setIcon (QPixmap ("share/images/haruhi.png"));
+	setWindowTitle ("Haruhi — Session Control");
+	setWindowIcon (QPixmap ("share/images/haruhi.png"));
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 	_tabs = new QTabWidget (this);
@@ -99,10 +99,14 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	QGroupBox* audio_box = new QGroupBox ("Audio setup", _new_tab);
 	QGroupBox* event_box = new QGroupBox ("Devices setup", _new_tab);
 
-	_new_session_audio_inputs = new QSpinBox (0, 16, 1, audio_box);
+	_new_session_audio_inputs = new QSpinBox (audio_box);
+	_new_session_audio_inputs->setMinimum (0);
+	_new_session_audio_inputs->setMaximum (16);
 	_new_session_audio_inputs->setValue (2);
 
-	_new_session_audio_outputs = new QSpinBox (0, 16, 1, audio_box);
+	_new_session_audio_outputs = new QSpinBox (audio_box);
+	_new_session_audio_outputs->setMinimum (0);
+	_new_session_audio_outputs->setMaximum (16);
 	_new_session_audio_outputs->setValue (2);
 
 	_devices_combobox = new QComboBox (event_box);
@@ -124,8 +128,7 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	QGridLayout* audio_grid = new QGridLayout (audio_box);
 	audio_grid->setSpacing (Config::Spacing);
 	audio_grid->setMargin (3 * Config::Margin);
-	audio_grid->setColSpacing (0, 100);
-	audio_grid->setColSpacing (1, 150);
+	audio_grid->setHorizontalSpacing (100);
 	audio_grid->addWidget (new QLabel ("Audio inputs:", _new_tab), 0, 0);
 	audio_grid->addWidget (_new_session_audio_inputs, 0, 1);
 	audio_grid->addWidget (new QLabel ("Audio outputs:", _new_tab), 1, 0);
@@ -166,18 +169,18 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	switch (default_tab)
 	{
 		case OpenTab:
-			_tabs->showPage (_open_tab);
+			_tabs->setCurrentWidget (_open_tab);
 			break;
 
 		case NewTab:
-			_tabs->showPage (_new_tab);
+			_tabs->setCurrentWidget (_new_tab);
 			break;
 
 		case AutoTab:
 			if (_recent_listview->invisibleRootItem()->childCount() > 0)
-				_tabs->showPage (_open_tab);
+				_tabs->setCurrentWidget (_open_tab);
 			else
-				_tabs->showPage (_new_tab);
+				_tabs->setCurrentWidget (_new_tab);
 			break;
 	}
 
@@ -197,7 +200,6 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (Config::DialogMargin);
 	layout->setSpacing (Config::Spacing);
-	layout->setResizeMode (QLayout::Fixed);
 	layout->addWidget (_tabs);
 	layout->addLayout (buttons_layout);
 
@@ -248,19 +250,19 @@ SessionLoader::apply (Session* session)
 void
 SessionLoader::update_widgets()
 {
-	_open_button->setText (_tabs->currentPage() == _new_tab ? "New" : "Open");
+	_open_button->setText (_tabs->currentWidget() == _new_tab ? "New" : "Open");
 }
 
 
 void
 SessionLoader::validate_and_accept()
 {
-	if (_tabs->currentPage() == _new_tab)
+	if (_tabs->currentWidget() == _new_tab)
 	{
 		_result = NewSession;
 		accept();
 	}
-	else if (_tabs->currentPage() == _open_tab)
+	else if (_tabs->currentWidget() == _open_tab)
 	{
 		_result = OpenSession;
 		if (!_recent_listview->selectedItems().empty())
@@ -273,13 +275,13 @@ void
 SessionLoader::browse_file()
 {
 	QFileDialog* file_dialog = new QFileDialog (this, "Load session", ".", QString());
-	file_dialog->setMode (QFileDialog::ExistingFile);
+	file_dialog->setFileMode (QFileDialog::ExistingFile);
 	file_dialog->setNameFilter ("All Haruhi session files (*.haruhi-session)");
 	file_dialog->setAcceptMode (QFileDialog::AcceptOpen);
 	if (file_dialog->exec() == QFileDialog::Accepted)
 	{
 		_result = OpenSession;
-		_file_name = file_dialog->selectedFile();
+		_file_name = file_dialog->selectedFiles().front();
 		accept();
 	}
 }

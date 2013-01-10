@@ -163,7 +163,7 @@ Settings::save()
 	// Save XML file:
 	QFile file (_settings_file + "~");
 	if (!file.open (QFile::WriteOnly))
-		throw Exception (QString ("could not save settings file: ") + file.errorString());
+		throw Exception ((QString ("could not save settings file: ") + file.errorString()).toUtf8());
 	QTextStream ts (&file);
 	ts << _document.toString();
 	file.flush();
@@ -172,7 +172,7 @@ Settings::save()
 	{
 		char buf[256];
 		strerror_r (errno, buf, countof (buf));
-		throw Exception (QString ("could not save settings file: %1").arg (buf));
+		throw Exception (QString ("could not save settings file: %1").arg (buf).toUtf8());
 	}
 }
 
@@ -181,7 +181,7 @@ void
 Settings::create_dirs()
 {
 	// Create required directories:
-	char* copy = strdup (_settings_file.toStdString().c_str());
+	char* copy = strdup (_settings_file.toUtf8());
 	char* dir = dirname (copy);
 	mkpath (dir, 0700);
 	free (copy);

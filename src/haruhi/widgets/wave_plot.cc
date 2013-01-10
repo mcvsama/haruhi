@@ -33,17 +33,19 @@
 
 namespace Haruhi {
 
-WavePlot::WavePlot (QWidget* parent, const char* name):
-	QWidget (parent, name, Qt::WNoAutoErase),
+WavePlot::WavePlot (QWidget* parent):
+	QWidget (parent),
 	_last_enabled_state (isEnabled())
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	setBackgroundColor (QColor (0xff, 0xff, 0xff));
+	QPalette p = palette();
+	p.setColor (QPalette::Window, Qt::white);
+	setPalette (p);
 }
 
 
-WavePlot::WavePlot (DSP::Wave* wave, QWidget* parent, const char* name):
-	WavePlot (parent, name)
+WavePlot::WavePlot (DSP::Wave* wave, QWidget* parent):
+	WavePlot (parent)
 {
 	assign_wave (wave, false, false);
 }
@@ -96,7 +98,7 @@ WavePlot::paintEvent (QPaintEvent* paint_event)
 		int w = width();
 		int h = height();
 
-		_double_buffer.resize (w, h);
+		_double_buffer = QPixmap (size());
 		QPainter painter (&_double_buffer);
 		painter.fillRect (rect(), isEnabled() ? QColor (0xff, 0xff, 0xff) : QColor (0xfa, 0xfa, 0xfa));
 		painter.setFont (Resources::small_font());

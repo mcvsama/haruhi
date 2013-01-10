@@ -67,6 +67,7 @@ PortsList::PortsList (Port::Direction type, PortsConnector::Panel* panel, PortsC
 	}
 
 	_auto_open_timer = new QTimer (this);
+	_auto_open_timer->setSingleShot (true);
 	QObject::connect (_auto_open_timer, SIGNAL (timeout()), this, SLOT (auto_open_selected()));
 	QObject::connect (this, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu (const QPoint&)));
 }
@@ -279,7 +280,7 @@ PortsList::drag_drop_item (QPoint const& epos)
 			clearSelection();
 			item->setSelected (true);
 			_drag_drop_item = item;
-			_auto_open_timer->start (750, true);
+			_auto_open_timer->start (750);
 		}
 	}
 	else

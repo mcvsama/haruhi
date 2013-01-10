@@ -22,7 +22,6 @@
 // Qt:
 #include <QtGui/QApplication>
 #include <QtGui/QMessageBox>
-#include <QtGui/QToolTip>
 #include <QtGui/QMenu>
 #include <QtGui/QTextDocument>
 
@@ -69,12 +68,12 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 
 	_create_input_button = new QPushButton (Resources::Icons16::add(), "New input", this);
 	_create_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	QToolTip::add (_create_input_button, "Create new input port");
+	_create_input_button->setToolTip ("Create new input port");
 	QObject::connect (_create_input_button, SIGNAL (clicked()), this, SLOT (create_input()));
 
 	_destroy_input_button = new QPushButton (Resources::Icons16::remove(), "Destroy", this);
 	_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	QToolTip::add (_destroy_input_button, "Destroy selected port");
+	_destroy_input_button->setToolTip ("Destroy selected port");
 	QObject::connect (_destroy_input_button, SIGNAL (clicked()), this, SLOT (destroy_selected_input()));
 
 	_outputs_list = new Tree (this, this, "Audio outputs");
@@ -84,12 +83,12 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 
 	_create_output_button = new QPushButton (Resources::Icons16::add(), "New output", this);
 	_create_output_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	QToolTip::add (_create_output_button, "Create new output port");
+	_create_output_button->setToolTip ("Create new output port");
 	QObject::connect (_create_output_button, SIGNAL (clicked()), this, SLOT (create_output()));
 
 	_destroy_output_button = new QPushButton (Resources::Icons16::remove(), "Destroy", this);
 	_destroy_output_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	QToolTip::add (_destroy_output_button, "Destroy selected port");
+	_destroy_output_button->setToolTip ("Destroy selected port");
 	QObject::connect (_destroy_output_button, SIGNAL (clicked()), this, SLOT (destroy_selected_output()));
 
 	// Layouts:

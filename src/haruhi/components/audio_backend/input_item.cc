@@ -33,7 +33,7 @@ InputItem::InputItem (Tree* parent, QString const& name):
 	_transport_port = _backend->transport()->create_input (name.toStdString());
 	// Allocate new port:
 	_backend->graph()->synchronize ([&] {
-		_port = new AudioPort (_backend, name.ascii(), Port::Output);
+		_port = new AudioPort (_backend, name.toStdString(), Port::Output);
 	});
 	_backend->_ports_lock.synchronize ([&] {
 		_backend->_inputs[_transport_port] = this;

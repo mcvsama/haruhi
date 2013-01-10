@@ -19,7 +19,6 @@
 #include <QtGui/QLayout>
 #include <QtGui/QPushButton>
 #include <QtGui/QLabel>
-#include <QtGui/QToolTip>
 #include <QtGui/QMessageBox>
 #include <QtGui/QGroupBox>
 #include <QtGui/QGridLayout>
@@ -76,8 +75,8 @@ PresetEditor::PresetEditor (PresetsManager* presets_manager, QWidget* parent):
 	grid_layout->addWidget (_favorite, 4, 0, 1, 2);
 
 	_update_details_button = new QPushButton (Resources::Icons16::save(), "Save de&tails", this);
-	_update_details_button->setAccel (Qt::CTRL + Qt::Key_T);
-	QToolTip::add (_update_details_button, "Saves metadata without current patch");
+	_update_details_button->setShortcut (Qt::CTRL + Qt::Key_T);
+	_update_details_button->setToolTip ("Saves metadata without current patch");
 	QObject::connect (_update_details_button, SIGNAL (clicked()), this, SLOT (update_details()));
 
 	QHBoxLayout* hor_layout = new QHBoxLayout();

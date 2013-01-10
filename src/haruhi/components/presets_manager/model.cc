@@ -172,7 +172,7 @@ Model::save_state()
 		if (p.file_name() == QString::null)
 			p.set_file_name (file_name);
 
-		char* copy = strdup (file_name.utf8());
+		char* copy = strdup (file_name.toUtf8());
 		char* dir = dirname (copy);
 		mkpath (dir, 0700);
 		free (copy);
@@ -187,12 +187,12 @@ Model::save_state()
 		// Save file:
 		QFile file (file_name + "~");
 		if (!file.open (QFile::WriteOnly))
-			throw Exception (QString ("Could not save package: ") + file.errorString());
+			throw Exception ((QString ("Could not save package: ") + file.errorString()).toUtf8());
 		QTextStream ts (&file);
 		ts << doc.toString();
 		file.flush();
 		file.close();
-		::rename (file_name + "~", file_name);
+		::rename ((file_name + "~").toUtf8(), file_name.toUtf8());
 		p.set_file_name (file_name);
 
 		if (to_delete != QString::null)
@@ -208,22 +208,22 @@ Model::acquire_lock()
 
 	for (int t = 0; t < 2; ++t)
 	{
-		_lock_file = ::open (_lock_file_name, O_CREAT | O_EXCL | O_WRONLY, 0644);
+		_lock_file = ::open (_lock_file_name.toUtf8(), O_CREAT | O_EXCL | O_WRONLY, 0644);
 		// If lock is acquired:
 		if (_lock_file != -1)
 		{
 			// Write our pid to file:
 			QString pid = QString ("%1").arg (::getpid());
-			if (::write (_lock_file, pid.ascii(), strlen (pid.ascii())) == -1)
+			if (::write (_lock_file, pid.toUtf8(), strlen (pid.toUtf8())) == -1)
 				throw Locked ("failed to write Haruhi's PID to the lock file");
 			break;
 		}
 		else
 		{
 			// Check if process that acquired lock still exist:
-			_lock_file = ::open (_lock_file_name, O_EXCL | O_RDONLY);
+			_lock_file = ::open (_lock_file_name.toUtf8(), O_EXCL | O_RDONLY);
 			if (_lock_file == -1)
-				throw Locked (QString ("failed to obtain lock '%1'"));
+				throw Locked ("failed to obtain lock '%1'");
 			// Read PID:
 			char buf[16] = {0};
 			int pid = 0;
@@ -231,9 +231,9 @@ Model::acquire_lock()
 				pid = lexical_cast<int> (buf);
 			// Check if other process exist:
 			if (pid != 0 && kill (pid, 0) != 0)
-				unlink (_lock_file_name);
+				unlink (_lock_file_name.toUtf8());
 			else
-				throw Locked (QString ("locked by process %1").arg (pid).utf8());
+				throw Locked (QString ("locked by process %1").arg (pid).toUtf8());
 		}
 	}
 }
@@ -243,7 +243,7 @@ void
 Model::release_lock()
 {
 	if (_lock_file != -1)
-		::unlink (_lock_file_name);
+		::unlink (_lock_file_name.toUtf8());
 }
 
 } // namespace PresetsManagerPrivate

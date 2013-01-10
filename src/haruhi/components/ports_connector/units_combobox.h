@@ -73,7 +73,7 @@ class UnitsCombobox: public QComboBox
 inline Unit*
 UnitsCombobox::unit() const
 {
-	return _units[currentItem()];
+	return _units[currentIndex()];
 }
 
 } // namespace PortsConnectorPrivate

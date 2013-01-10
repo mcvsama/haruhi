@@ -28,8 +28,8 @@
 
 namespace Haruhi {
 
-TextureWidget::TextureWidget (Filling filling, QWidget* parent, const char* name):
-	QWidget (parent, name),
+TextureWidget::TextureWidget (Filling filling, QWidget* parent):
+	QWidget (parent),
 	_filling (filling)
 {
 }
@@ -45,7 +45,7 @@ TextureWidget::moveEvent (QMoveEvent*)
 void
 TextureWidget::paintEvent (QPaintEvent* paint_event)
 {
-	_double_buffer.resize (paint_event->rect().size());
+	_double_buffer = QPixmap (paint_event->rect().size());
 	QPainter b (&_double_buffer);
 	QColor dark = palette().color (QPalette::Mid);
 	QColor light = palette().color (QPalette::Light);
@@ -53,12 +53,12 @@ TextureWidget::paintEvent (QPaintEvent* paint_event)
 	switch (_filling)
 	{
 		case Filling::Solid:
-			b.fillRect (rect(), backgroundColor());
+			b.fillRect (rect(), palette().color (QPalette::Window));
 			break;
 
 		case Filling::Dotted:
 		{
-			b.fillRect (rect(), backgroundColor());
+			b.fillRect (rect(), palette().color (QPalette::Window));
 			const int xstep = 8;
 			const int ystep = 7;
 			for (int x = 0; x < _double_buffer.size().width(); x += xstep)

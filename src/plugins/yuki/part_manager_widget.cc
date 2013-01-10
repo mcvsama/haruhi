@@ -16,7 +16,6 @@
 
 // Qt:
 #include <QtGui/QStackedWidget>
-#include <QtGui/QToolTip>
 #include <QtGui/QLayout>
 
 // Lib:
@@ -68,13 +67,17 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 
 	// Polyphony:
 
-	_polyphony = new QSpinBox (main_params->polyphony.minimum(), main_params->polyphony.maximum(), 1, this);
+	_polyphony = new QSpinBox (this);
+	_polyphony->setMinimum (main_params->polyphony.minimum());
+	_polyphony->setMaximum (main_params->polyphony.maximum());
 	_polyphony->setValue (main_params->polyphony.get());
 	QObject::connect (_polyphony, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_params()));
 
 	// Oversampling:
 
-	_oversampling = new QSpinBox (main_params->oversampling.minimum(), main_params->oversampling.maximum(), 1, this);
+	_oversampling = new QSpinBox (this);
+	_oversampling->setMinimum (main_params->oversampling.minimum());
+	_oversampling->setMaximum (main_params->oversampling.maximum());
 	_oversampling->setValue (_part_manager->main_params()->oversampling.get());
 	_oversampling->setSpecialValueText ("None");
 	_oversampling->setSuffix ("x");
@@ -89,8 +92,8 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 	QObject::connect (_add_part_button, SIGNAL (clicked()), this, SLOT (add_part()));
 
 	_remove_part_button = new QPushButton (Resources::Icons16::remove(), "", this);
+	_remove_part_button->setToolTip ("Remove current part");
 	QObject::connect (_remove_part_button, SIGNAL (clicked()), this, SLOT (remove_current_part()));
-	QToolTip::add (_remove_part_button, "Remove current part");
 
 	// Part tabs:
 
@@ -210,7 +213,7 @@ PartManagerWidget::remove_current_part()
 {
 	if (_tabs->count() > 0)
 	{
-		PartWidget* pw = dynamic_cast<PartWidget*> (_tabs->currentPage());
+		PartWidget* pw = dynamic_cast<PartWidget*> (_tabs->currentWidget());
 		assert (pw != 0);
 		if (pw)
 			_part_manager->remove_part (pw->part());

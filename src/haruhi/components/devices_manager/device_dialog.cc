@@ -38,7 +38,7 @@ DeviceDialog::DeviceDialog (QWidget* parent, Flags flags):
 	QDialog (parent),
 	_flags (flags)
 {
-	setCaption ("Device configuration");
+	setWindowTitle ("Device configuration");
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	setMinimumWidth (300);
 
@@ -66,7 +66,7 @@ DeviceDialog::DeviceDialog (QWidget* parent, Flags flags):
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (Config::DialogMargin);
 	layout->setSpacing (Config::Spacing);
-	layout->setResizeMode (QLayout::FreeResize);
+	layout->setSizeConstraint (QLayout::SetNoConstraint);
 	layout->addLayout (grid_layout);
 	layout->addLayout (buttons_layout);
 

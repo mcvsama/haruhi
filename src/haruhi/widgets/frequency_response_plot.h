@@ -52,9 +52,9 @@ class FrequencyResponsePlot: public QWidget
 	};
 
   public:
-	FrequencyResponsePlot (QWidget* parent, const char* name = 0);
+	FrequencyResponsePlot (QWidget* parent);
 
-	FrequencyResponsePlot (DSP::PlotableImpulseResponse* impulse_response, QWidget* parent, const char* name = 0);
+	FrequencyResponsePlot (DSP::PlotableImpulseResponse* impulse_response, QWidget* parent);
 
 	virtual ~FrequencyResponsePlot() = default;
 

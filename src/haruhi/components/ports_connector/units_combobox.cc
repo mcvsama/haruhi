@@ -55,7 +55,7 @@ UnitsCombobox::read_units()
 	_units.clear();
 
 	_units.push_back (0); // 0 is for "All units".
-	insertItem (Resources::Icons16::all(), "All units", 0);
+	addItem (Resources::Icons16::all(), "All units", 0);
 
 	Units list;
 
@@ -66,7 +66,7 @@ UnitsCombobox::read_units()
 	{
 		if (((_type == Port::Input) ? u->inputs() : u->outputs()).empty())
 			continue;
-		insertItem (unit_icon, QString::fromStdString (u->title()));
+		addItem (unit_icon, QString::fromStdString (u->title()));
 		_units.push_back (u);
 	}
 
@@ -77,7 +77,7 @@ UnitsCombobox::read_units()
 	{
 		if (((_type == Port::Input) ? u->inputs() : u->outputs()).empty())
 			continue;
-		insertItem (unit_icon, QString::fromStdString (u->title()), _units.size());
+		addItem (unit_icon, QString::fromStdString (u->title()), static_cast<qulonglong> (_units.size()));
 		_units.push_back (u);
 	}
 }

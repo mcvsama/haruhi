@@ -51,7 +51,7 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	_knob (knob),
 	_curve_wave (knob)
 {
-	setCaption ("Knob properties");
+	setWindowTitle ("Knob properties");
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 	Knob::SpinBox* s = knob->_spin_box;
@@ -121,7 +121,6 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (Config::DialogMargin);
 	layout->setSpacing (Config::Spacing);
-	layout->setResizeMode (QLayout::Fixed);
 	layout->addLayout (grid_layout);
 	layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
 	layout->addLayout (buttons_layout);
@@ -354,7 +353,7 @@ Knob::initialize (QString const& label, Range<float> shown_range, int step, int 
 	_label->setBuddy (_spin_box);
 	_label->setTextFormat (Qt::PlainText);
 	_context_menu = new QMenu (this);
-	_std_text_color = _label->paletteForegroundColor();
+	_std_text_color = _label->palette().color (QPalette::WindowText);
 
 	QObject::connect (_dial_control, SIGNAL (valueChanged (int)), this, SLOT (dial_changed (int)));
 	QObject::connect (_spin_box, SIGNAL (valueChanged (int)), this, SLOT (spin_changed (int)));

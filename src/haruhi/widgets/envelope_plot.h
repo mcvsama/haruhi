@@ -48,13 +48,13 @@ class EnvelopePlot: public QWidget
 	/**
 	 * Creates plot without assigned envelope.
 	 */
-	EnvelopePlot (QWidget* parent, const char* name = 0);
+	EnvelopePlot (QWidget* parent);
 
 	/**
 	 * Creates plot and assigns envelope to it.
 	 * \param	envelope is envelope object.
 	 */
-	EnvelopePlot (DSP::Envelope* envelope, QWidget* parent, const char* name = 0);
+	EnvelopePlot (DSP::Envelope* envelope, QWidget* parent);
 
 	/**
 	 * Sets sample rate for Plot to correctly display

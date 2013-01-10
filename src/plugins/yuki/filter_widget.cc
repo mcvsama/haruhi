@@ -15,7 +15,6 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QToolTip>
 #include <QtGui/QLayout>
 #include <QtGui/QGroupBox>
 
@@ -92,7 +91,7 @@ FilterWidget::FilterWidget (QWidget* parent, unsigned int filter_no, Params::Fil
 	_filter_type->addItem (Resources::Icons16::filter_peaking(), "Peaking", FilterImpulseResponse::Peaking);
 	_filter_type->addItem (Resources::Icons16::filter_lowshelf(), "Low shelf", FilterImpulseResponse::LowShelf);
 	_filter_type->addItem (Resources::Icons16::filter_highshelf(), "High shelf", FilterImpulseResponse::HighShelf);
-	_filter_type->setCurrentItem (_params->type);
+	_filter_type->setCurrentIndex (_params->type);
 	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (widgets_to_params()));
 	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_widgets()));
 	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_impulse_response()));
@@ -109,7 +108,7 @@ FilterWidget::FilterWidget (QWidget* parent, unsigned int filter_no, Params::Fil
 	// Limiter:
 	_limiter_enabled = new QCheckBox ("Limit", this);
 	_limiter_enabled->setChecked (_params->limiter_enabled);
-	QToolTip::add (_limiter_enabled, "Automatic attenuation limit");
+	_limiter_enabled->setToolTip ("Automatic attenuation limit");
 	QObject::connect (_limiter_enabled, SIGNAL (toggled (bool)), this, SLOT (widgets_to_params()));
 	QObject::connect (_limiter_enabled, SIGNAL (toggled (bool)), this, SLOT (update_impulse_response()));
 
@@ -182,7 +181,7 @@ FilterWidget::widgets_to_params()
 	_stop_params_to_widgets = true;
 
 	_params->enabled = _enabled_widget->isChecked();
-	_params->type = _filter_type->currentItem();
+	_params->type = _filter_type->currentIndex();
 	_params->stages = _stages->value();
 	_params->limiter_enabled = _limiter_enabled->isChecked();
 
@@ -193,7 +192,7 @@ FilterWidget::widgets_to_params()
 void
 FilterWidget::update_widgets()
 {
-	int ft = _filter_type->currentItem();
+	int ft = _filter_type->currentIndex();
 	_panel->setEnabled (_params->enabled.get());
 	_knob_gain->setEnabled (ft == FilterImpulseResponse::Peaking || ft == FilterImpulseResponse::LowShelf || ft == FilterImpulseResponse::HighShelf);
 	_limiter_enabled->setEnabled (ft == FilterImpulseResponse::LowPass || ft == FilterImpulseResponse::HighPass || ft == FilterImpulseResponse::BandPass ||
@@ -228,7 +227,7 @@ FilterWidget::params_to_widgets()
 	_stop_widgets_to_params = true;
 
 	_enabled_widget->setChecked (_params->enabled);
-	_filter_type->setCurrentItem (_params->type);
+	_filter_type->setCurrentIndex (_params->type);
 	_stages->setValue (_params->stages);
 	_limiter_enabled->setChecked (_params->limiter_enabled);
 

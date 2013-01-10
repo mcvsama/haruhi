@@ -33,9 +33,10 @@ namespace Haruhi {
 namespace PortsConnectorPrivate {
 
 Connector::Connector (PortsConnector* ports_connector, QWidget* parent):
-	QWidget (parent, 0, Qt::WRepaintNoErase),
+	QWidget (parent),
 	_ports_connector (ports_connector)
 {
+	setAttribute (Qt::WA_NoBackground);
 	setMinimumWidth (100);
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 }
@@ -51,14 +52,14 @@ Connector::paintEvent (QPaintEvent*)
 void
 Connector::resizeEvent (QResizeEvent*)
 {
-	QWidget::repaint (true);
+	QWidget::repaint();
 }
 
 
 void
 Connector::draw_connections()
 {
-	_double_buffer.resize (width(), height());
+	_double_buffer = QPixmap (size());
 	QPainter painter (&_double_buffer);
 	painter.setRenderHint (QPainter::Antialiasing, true);
 
@@ -70,7 +71,7 @@ Connector::draw_connections()
 	int h1 = _ports_connector->_opanel->list()->header()->height();
 	int h2 = _ports_connector->_ipanel->list()->header()->height();
 
-	painter.fillRect (rect(), backgroundColor());
+	painter.fillRect (rect(), palette().color (QPalette::Window));
 
 	for (QTreeWidgetItem* oitem: Connector::get_all_items_from (_ports_connector->_opanel->list()))
 	{

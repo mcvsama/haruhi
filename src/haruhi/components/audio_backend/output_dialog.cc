@@ -34,7 +34,7 @@ namespace AudioBackendImpl {
 OutputDialog::OutputDialog (QWidget* parent, Backend* backend):
 	PortDialog (parent, backend)
 {
-	setCaption ("Output port configuration");
+	setWindowTitle ("Output port configuration");
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	setMinimumWidth (300);
 
@@ -66,7 +66,7 @@ OutputDialog::OutputDialog (QWidget* parent, Backend* backend):
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (Config::DialogMargin);
 	layout->setSpacing (Config::Spacing);
-	layout->setResizeMode (QLayout::FreeResize);
+	layout->setSizeConstraint (QLayout::SetNoConstraint);
 	layout->addLayout (name_layout);
 	layout->addLayout (buttons_layout);
 
@@ -90,6 +90,13 @@ OutputDialog::apply (OutputItem* item) const
 {
 	item->setText (0, _name->text());
 	item->update_name();
+}
+
+
+QString
+OutputDialog::name() const
+{
+	return _name->text();
 }
 
 

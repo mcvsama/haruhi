@@ -50,13 +50,13 @@ class WavePlot: public QWidget
 	/**
 	 * Creates plot without assigned wave.
 	 */
-	WavePlot (QWidget* parent, const char* name = 0);
+	WavePlot (QWidget* parent);
 
 	/**
 	 * Creates plot and assigns wave to it.
 	 * \param	wave is wave object.
 	 */
-	WavePlot (DSP::Wave* wave, QWidget* parent, const char* name = 0);
+	WavePlot (DSP::Wave* wave, QWidget* parent);
 
 	/**
 	 * Dtor

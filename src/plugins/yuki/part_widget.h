@@ -267,8 +267,10 @@ PartWidget::part() const
 inline void
 PartWidget::set_button_highlighted (QPushButton* button, bool highlight)
 {
-	button->setPaletteBackgroundColor (highlight ? QColor (0x00, 0xff, 0x00) : _std_button_bg);
-	button->setPaletteForegroundColor (highlight ? QColor (0x00, 0x00, 0x00) : _std_button_fg);
+	QPalette p = button->palette();
+	p.setColor (QPalette::Button, highlight ? QColor (0x00, 0xff, 0x00) : _std_button_bg);
+	p.setColor (QPalette::ButtonText, highlight ? QColor (0x00, 0x00, 0x00) : _std_button_fg);
+	button->setPalette (p);
 }
 
 

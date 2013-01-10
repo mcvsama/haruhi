@@ -32,7 +32,7 @@ class TextureWidget: public QWidget
 	enum class Filling { Solid, Dotted };
 
   public:
-	TextureWidget (Filling filling, QWidget* parent, const char* name = 0);
+	TextureWidget (Filling filling, QWidget* parent);
 
   protected:
 	void

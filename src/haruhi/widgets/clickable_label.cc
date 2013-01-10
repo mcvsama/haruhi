@@ -23,8 +23,8 @@
 
 namespace Haruhi {
 
-ClickableLabel::ClickableLabel (QString const& text, QWidget* parent, const char* name, Qt::WFlags f):
-	QLabel (text, parent, name, f),
+ClickableLabel::ClickableLabel (QString const& text, QWidget* parent):
+	QLabel (text, parent),
 	_button_state (Qt::NoButton)
 {
 }

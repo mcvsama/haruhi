@@ -34,7 +34,7 @@ class ClickableLabel: public QLabel
 	Q_OBJECT
 
   public:
-	ClickableLabel (QString const& text, QWidget* parent, const char* name = 0, Qt::WFlags f = 0);
+	ClickableLabel (QString const& text, QWidget* parent);
 
   protected:
 	void
@@ -48,7 +48,7 @@ class ClickableLabel: public QLabel
 	clicked();
 
   private:
-	Qt::ButtonState _button_state;
+	Qt::MouseButton _button_state;
 };
 
 } // namespace Haruhi

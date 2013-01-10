@@ -15,7 +15,6 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QToolTip>
 #include <QtGui/QLayout>
 #include <QtGui/QGroupBox>
 
@@ -118,13 +117,13 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	// Help tooltips:
 
-	QToolTip::add (_knob_unison_index, "Number of voices playing in unison");
-	QToolTip::add (_knob_unison_spread, "Unison frequencies spread");
-	QToolTip::add (_knob_unison_init, "Unison initial phases spread");
-	QToolTip::add (_knob_unison_noise, "Unison noise");
-	QToolTip::add (_knob_unison_vibrato_level, "Unison vibrato level");
-	QToolTip::add (_knob_unison_vibrato_frequency, "Unison vibrato frequency");
-	QToolTip::add (_knob_velocity_sens, "Velocity sensitivity (-1 for reverse, 0 for none)");
+	_knob_unison_index->setToolTip ("Number of voices playing in unison");
+	_knob_unison_spread->setToolTip ("Unison frequencies spread");
+	_knob_unison_init->setToolTip ("Unison initial phases spread");
+	_knob_unison_noise->setToolTip ("Unison noise");
+	_knob_unison_vibrato_level->setToolTip ("Unison vibrato level");
+	_knob_unison_vibrato_frequency->setToolTip ("Unison vibrato frequency");
+	_knob_velocity_sens->setToolTip ("Velocity sensitivity (-1 for reverse, 0 for none)");
 
 	// Wave plots:
 
@@ -135,7 +134,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	Haruhi::PlotFrame* base_plot_frame = new Haruhi::PlotFrame (this);
 	base_plot_frame->set_widget (_base_wave_plot);
-	QToolTip::add (base_plot_frame, "Base wave");
+	base_plot_frame->setToolTip ("Base wave");
 
 	_final_wave_plot = new Haruhi::WavePlot (this);
 	_final_wave_plot->set_phase_marker_enabled (true);
@@ -144,7 +143,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	Haruhi::PlotFrame* final_plot_frame = new Haruhi::PlotFrame (this);
 	final_plot_frame->set_widget (_final_wave_plot);
-	QToolTip::add (final_plot_frame, "Output wave (with harmonics, modulation, auto-scaled, etc.)");
+	final_plot_frame->setToolTip ("Output wave (with harmonics, modulation, auto-scaled, etc.)");
 
 	// Shorthand link to part params:
 	Params::Part* pp = _part->part_params();
@@ -172,35 +171,35 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	// Wave type:
 	_wave_type = new QComboBox (this);
-	_wave_type->insertItem (Resources::Icons16::wave_sine(),		"Sine",		0);
-	_wave_type->insertItem (Resources::Icons16::wave_triangle(),	"Triangle",	1);
-	_wave_type->insertItem (Resources::Icons16::wave_square(),		"Square",	2);
-	_wave_type->insertItem (Resources::Icons16::wave_sawtooth(),	"Sawtooth",	3);
-	_wave_type->insertItem (Resources::Icons16::wave_pulse(),		"Pulse",	4);
-	_wave_type->insertItem (Resources::Icons16::wave_power(),		"Power",	5);
-	_wave_type->insertItem (Resources::Icons16::wave_gauss(),		"Gauss",	6);
-	_wave_type->insertItem (Resources::Icons16::wave_diode(),		"Diode",	7);
-	_wave_type->insertItem (Resources::Icons16::wave_chirp(),		"Chirp",	8);
-	_wave_type->setCurrentItem (pp->wave_type);
+	_wave_type->insertItem (0, Resources::Icons16::wave_sine(), "Sine");
+	_wave_type->insertItem (1, Resources::Icons16::wave_triangle(), "Triangle");
+	_wave_type->insertItem (2, Resources::Icons16::wave_square(), "Square");
+	_wave_type->insertItem (3, Resources::Icons16::wave_sawtooth(), "Sawtooth");
+	_wave_type->insertItem (4, Resources::Icons16::wave_pulse(), "Pulse");
+	_wave_type->insertItem (5, Resources::Icons16::wave_power(), "Power");
+	_wave_type->insertItem (6, Resources::Icons16::wave_gauss(), "Gauss");
+	_wave_type->insertItem (7, Resources::Icons16::wave_diode(), "Diode");
+	_wave_type->insertItem (8, Resources::Icons16::wave_chirp(), "Chirp");
+	_wave_type->setCurrentIndex (pp->wave_type);
 	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (widgets_to_wave_params()));
 
 	// Modulator wave type:
 	_modulator_wave_type = new QComboBox (this);
-	_modulator_wave_type->insertItem (Resources::Icons16::wave_sine(),		"Sine",		0);
-	_modulator_wave_type->insertItem (Resources::Icons16::wave_triangle(),	"Triangle",	1);
-	_modulator_wave_type->insertItem (Resources::Icons16::wave_square(),	"Square",	2);
-	_modulator_wave_type->insertItem (Resources::Icons16::wave_sawtooth(),	"Sawtooth",	3);
-	_modulator_wave_type->setCurrentItem (pp->modulator_wave_type);
+	_modulator_wave_type->insertItem (0, Resources::Icons16::wave_sine(), "Sine");
+	_modulator_wave_type->insertItem (1, Resources::Icons16::wave_triangle(), "Triangle");
+	_modulator_wave_type->insertItem (2, Resources::Icons16::wave_square(), "Square");
+	_modulator_wave_type->insertItem (3, Resources::Icons16::wave_sawtooth(), "Sawtooth");
+	_modulator_wave_type->setCurrentIndex (pp->modulator_wave_type);
+	_modulator_wave_type->setToolTip ("Modulator wave");
 	QObject::connect (_modulator_wave_type, SIGNAL (activated (int)), this, SLOT (widgets_to_wave_params()));
-	QToolTip::add (_modulator_wave_type, "Modulator wave");
 
 	// Modulator type:
 	_modulator_type = new QComboBox (this);
-	_modulator_type->insertItem (Resources::Icons16::modulator_ring(), "Ring mod.", DSP::ModulatedWave::Ring);
-	_modulator_type->insertItem (Resources::Icons16::modulator_fm(), "FM mod.", DSP::ModulatedWave::Frequency);
-	_modulator_type->setCurrentItem (pp->modulator_type);
+	_modulator_type->insertItem (DSP::ModulatedWave::Ring, Resources::Icons16::modulator_ring(), "Ring mod.");
+	_modulator_type->insertItem (DSP::ModulatedWave::Frequency, Resources::Icons16::modulator_fm(), "FM mod.");
+	_modulator_type->setCurrentIndex (pp->modulator_type);
+	_modulator_type->setToolTip ("Modulator type");
 	QObject::connect (_modulator_type, SIGNAL (activated (int)), this, SLOT (widgets_to_wave_params()));
-	QToolTip::add (_modulator_type, "Modulator type");
 
 	// Harmonics+phases window:
 	_harmonics_window = new QDialog (this);
@@ -242,7 +241,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 		QPushButton* reset = new QPushButton ("R", harmonics_grid);
 		reset->setFixedWidth (23);
 		reset->setFixedHeight (18);
-		QToolTip::add (reset, "Reset");
+		reset->setToolTip ("Reset");
 		QObject::connect (reset, SIGNAL (clicked()), slider, SLOT (reset()));
 		harmonics_layout->addWidget (reset, 2, i);
 
@@ -279,7 +278,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 		QPushButton* reset = new QPushButton ("R", phases_grid);
 		reset->setFixedWidth (23);
 		reset->setFixedHeight (18);
-		QToolTip::add (reset, "Reset");
+		reset->setToolTip ("Reset");
 		phases_layout->addWidget (reset, 2, i);
 
 		QObject::connect (reset, SIGNAL (clicked()), slider, SLOT (reset()));
@@ -296,18 +295,20 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_unison_stereo = new QPushButton ("Unison stereo", this);
 	_unison_stereo->setCheckable (true);
 	_unison_stereo->setChecked (pp->unison_stereo);
+	_unison_stereo->setToolTip ("Spreads unison voices across stereo channels.");
 	QObject::connect (_unison_stereo, SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
-	QToolTip::add (_unison_stereo, "Spreads unison voices across stereo channels.");
 
 	// Pseudo stereo:
 	_pseudo_stereo = new QPushButton ("Pseudo stereo", this);
 	_pseudo_stereo->setCheckable (true);
 	_pseudo_stereo->setChecked (pp->pseudo_stereo);
+	_pseudo_stereo->setToolTip ("Inverts right channel to give pseudo-stereo effect for monophonic voices.");
 	QObject::connect (_pseudo_stereo, SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
-	QToolTip::add (_pseudo_stereo, "Inverts right channel to give pseudo-stereo effect for monophonic voices.");
 
 	// Transposition:
-	_transposition_semitones = new QSpinBox (-60, 60, 1, this);
+	_transposition_semitones = new QSpinBox (this);
+	_transposition_semitones->setMinimum (-60);
+	_transposition_semitones->setMaximum (60);
 	_transposition_semitones->setSuffix (" semitones");
 	_transposition_semitones->setValue (pp->transposition_semitones);
 	QObject::connect (_transposition_semitones, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_oscillator_params()));
@@ -316,8 +317,8 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_auto_center = new QPushButton ("Auto center", this);
 	_auto_center->setCheckable (true);
 	_auto_center->setChecked (pp->auto_center);
+	_auto_center->setToolTip ("Auto center wave around 0 level. Takes more CPU power to update wavetables.");
 	QObject::connect (_auto_center, SIGNAL (toggled (bool)), this, SLOT (widgets_to_wave_params()));
-	QToolTip::add (_auto_center, "Auto center wave around 0 level. Takes more CPU power to update wavetables.");
 
 	// Const. glide:
 	_const_portamento_time = new QPushButton ("Const. glide", this);
@@ -326,12 +327,16 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QObject::connect (_const_portamento_time, SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
 
 	// Pitchbend down:
-	_pitchbend_down_semitones = new QSpinBox (-60, 0, 1, this);
+	_pitchbend_down_semitones = new QSpinBox (this);
+	_pitchbend_down_semitones->setMinimum (-60);
+	_pitchbend_down_semitones->setMaximum (0);
 	_pitchbend_down_semitones->setValue (-pp->pitchbend_down_semitones);
 	QObject::connect (_pitchbend_down_semitones, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_oscillator_params()));
 
 	// Pitchbend up:
-	_pitchbend_up_semitones = new QSpinBox (0, 60, 1, this);
+	_pitchbend_up_semitones = new QSpinBox (this);
+	_pitchbend_up_semitones->setMinimum (0);
+	_pitchbend_up_semitones->setMaximum (60);
 	_pitchbend_up_semitones->setValue (pp->pitchbend_up_semitones);
 	QObject::connect (_pitchbend_up_semitones, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_oscillator_params()));
 
@@ -342,7 +347,9 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QObject::connect (_pitchbend_enabled, SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
 
 	// Frequency modulation range:
-	_frequency_modulation_range = new QSpinBox (1, 60, 1, this);
+	_frequency_modulation_range = new QSpinBox (this);
+	_frequency_modulation_range->setMinimum (1);
+	_frequency_modulation_range->setMaximum (60);
 	_frequency_modulation_range->setSuffix (" semitones");
 	_frequency_modulation_range->setValue (pp->frequency_mod_range);
 	QObject::connect (_frequency_modulation_range, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_oscillator_params()));
@@ -373,9 +380,9 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	// Filters configuration:
 	_filter_configuration = new QComboBox (this);
-	_filter_configuration->insertItem ("Filters: Serial", DualFilter::Serial);
-	_filter_configuration->insertItem ("Filters: Parallel", DualFilter::Parallel);
-	_filter_configuration->setCurrentItem (pp->filter_configuration);
+	_filter_configuration->insertItem (DualFilter::Serial, "Filters: Serial");
+	_filter_configuration->insertItem (DualFilter::Parallel, "Filters: Parallel");
+	_filter_configuration->setCurrentIndex (pp->filter_configuration);
 	QObject::connect (_filter_configuration, SIGNAL (activated (int)), this, SLOT (widgets_to_oscillator_params()));
 
 	// Modulator top widget:
@@ -541,8 +548,8 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	harmonics_window_layout->addLayout (harmonics_window_buttons_layout);
 
 	// Save standard button colors:
-	_std_button_bg = _harmonics_resets[0]->paletteBackgroundColor();
-	_std_button_fg = _harmonics_resets[0]->paletteForegroundColor();
+	_std_button_bg = _harmonics_resets[0]->palette().color (QPalette::Button);
+	_std_button_fg = _harmonics_resets[0]->palette().color (QPalette::ButtonText);
 
 	widgets_to_wave_params();
 	update_widgets();
@@ -608,9 +615,9 @@ PartWidget::widgets_to_wave_params()
 	Params::Part* pp = _part->part_params();
 
 	// Update params that are not controller by knobs:
-	pp->wave_type = _wave_type->currentItem();
-	pp->modulator_type = _modulator_type->currentItem();
-	pp->modulator_wave_type = _modulator_wave_type->currentItem();
+	pp->wave_type = _wave_type->currentIndex();
+	pp->modulator_type = _modulator_type->currentIndex();
+	pp->modulator_wave_type = _modulator_wave_type->currentIndex();
 	pp->auto_center = _auto_center->isChecked();
 	for (std::size_t i = 0; i < countof (pp->harmonics); ++i)
 		pp->harmonics[i].set (_harmonics_sliders[i]->value());
@@ -644,7 +651,7 @@ PartWidget::widgets_to_oscillator_params()
 	pp->const_portamento_time = _const_portamento_time->isChecked();
 	pp->unison_stereo = _unison_stereo->isChecked();
 	pp->pseudo_stereo = _pseudo_stereo->isChecked();
-	pp->filter_configuration = _filter_configuration->currentItem();
+	pp->filter_configuration = _filter_configuration->currentIndex();
 
 	_stop_params_to_widgets = false;
 }
@@ -738,9 +745,9 @@ PartWidget::params_to_widgets()
 
 	Params::Part* pp = _part->part_params();
 
-	_wave_type->setCurrentItem (pp->wave_type);
-	_modulator_type->setCurrentItem (pp->modulator_type);
-	_modulator_wave_type->setCurrentItem (pp->modulator_wave_type);
+	_wave_type->setCurrentIndex (pp->wave_type);
+	_modulator_type->setCurrentIndex (pp->modulator_type);
+	_modulator_wave_type->setCurrentIndex (pp->modulator_wave_type);
 	_auto_center->setChecked (pp->auto_center);
 	for (std::size_t i = 0; i < countof (pp->harmonics); ++i)
 		_harmonics_sliders[i]->setValue (pp->harmonics[i]);
@@ -759,7 +766,7 @@ PartWidget::params_to_widgets()
 	_const_portamento_time->setChecked (pp->const_portamento_time);
 	_unison_stereo->setChecked (pp->unison_stereo);
 	_pseudo_stereo->setChecked (pp->pseudo_stereo);
-	_filter_configuration->setCurrentItem (pp->filter_configuration);
+	_filter_configuration->setCurrentIndex (pp->filter_configuration);
 
 	_stop_widgets_to_params = false;
 

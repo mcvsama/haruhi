@@ -41,7 +41,7 @@ DialControl::DialControl (QWidget* parent, Range<int> value_range, int value):
 	_ring_visible (false),
 	_center_value (0)
 {
-	setWindowFlags (Qt::WRepaintNoErase);
+	setAttribute (Qt::WA_NoBackground);
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	setFixedSize (37, 37);
 
@@ -58,23 +58,23 @@ DialControl::paintEvent (QPaintEvent* paint_event)
 {
 	if (_to_update || _last_enabled_state != isEnabled())
 	{
-		_double_buffer.resize (width(), height());
+		_double_buffer = QPixmap (width(), height());
 		QColor indicator_color = isEnabled() ? QColor (0x5c, 0x64, 0x72) : QColor (0xd4, 0xd6, 0xda);
 		QColor path1_color = isEnabled() ? QColor (0x2a, 0x41, 0x5b) : QColor (0xd4, 0xd6, 0xda);
 		QColor path2_color = isEnabled() ? QColor (0xd1, 0xd3, 0xd6) : QColor (0xea, 0xec, 0xf0);
 
 		QPainter b (&_double_buffer);
 		b.setRenderHint (QPainter::Antialiasing, true);
-		b.fillRect (rect(), backgroundColor());
+		b.fillRect (rect(), palette().color (QPalette::Window));
 
 		float pos_x = (width() - _dial_pixmap.width()) / 2.0f;
 		float pos_y = (height() - _dial_pixmap.height()) / 2.0f;
 		b.drawPixmap (pos_x, pos_y, isEnabled() ? _dial_pixmap : _disabled_dial_pixmap);
 
-		float curr_angle = renormalize (value(), minValue(), maxValue(), -152, +152);
+		float curr_angle = renormalize (value(), minimum(), maximum(), -152, +152);
 		if (_ring_visible)
 		{
-			float center_angle = renormalize (_center_value, minValue(), maxValue(), -152, +152);
+			float center_angle = renormalize (_center_value, minimum(), maximum(), -152, +152);
 			float span_angle = center_angle - curr_angle;
 			QRect r = rect().adjusted (1, 1, -1, -1);
 			b.setPen (QPen (path2_color, 2));
@@ -85,7 +85,7 @@ DialControl::paintEvent (QPaintEvent* paint_event)
 
 		b.setPen (QPen (indicator_color, 2));
 		b.translate (width() / 2, height() / 2);
-		b.rotate (renormalize (value(), minValue(), maxValue(), -152, +152));
+		b.rotate (renormalize (value(), minimum(), maximum(), -152, +152));
 		b.drawLine (0, -4, 0, -11);
 	}
 	QPainter (this).drawPixmap (paint_event->rect().topLeft(), _double_buffer, paint_event->rect());
@@ -134,7 +134,7 @@ void
 DialControl::mouseMoveEvent (QMouseEvent* event)
 {
 	event->accept();
-	setValue (_mouse_press_value + renormalize (_mouse_press_position.y() - event->pos().y(), 0, 200, 0, maxValue() - minValue()));
+	setValue (_mouse_press_value + renormalize (_mouse_press_position.y() - event->pos().y(), 0, 200, 0, maximum() - minimum()));
 }
 
 
@@ -143,7 +143,7 @@ DialControl::wheelEvent (QWheelEvent* event)
 {
 	event->accept();
 	float sgn = event->delta() > 0 ? 1.0f : -1.0f;
-	float delta = 0.05f * sgn * (maxValue() - minValue());
+	float delta = 0.05f * sgn * (maximum() - minimum());
 	if (std::abs (delta) < 1.0f)
 		delta = sgn;
 	setValue (value() + static_cast<int> (delta));

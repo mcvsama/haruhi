@@ -20,7 +20,6 @@
 #include <QtGui/QApplication>
 #include <QtGui/QShortcut>
 #include <QtGui/QPainter>
-#include <QtGui/QToolTip>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -34,8 +33,8 @@
 
 namespace Haruhi {
 
-LevelMeter::LevelMeter (QWidget* parent, LevelMetersGroup* group, float lower_db, float upper_db, const char* name):
-	QWidget (parent, name, Qt::WNoAutoErase),
+LevelMeter::LevelMeter (QWidget* parent, LevelMetersGroup* group, float lower_db, float upper_db):
+	QWidget (parent),
 	_group (group),
 	_to_repaint_bar_buffer (false),
 	_lower_db (lower_db),
@@ -52,11 +51,16 @@ LevelMeter::LevelMeter (QWidget* parent, LevelMetersGroup* group, float lower_db
 {
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
 	setFixedWidth (5);
-	setBackgroundColor (QColor (0, 0, 0));
+	setAutoFillBackground (false);
+	QPalette p = palette();
+	p.setColor (QPalette::Window, Qt::black);
+	setPalette (p);
 
 	// Precalculate gradient:
-	const QColor a = QColor (220, 255, 255, QColor::Hsv);
-	const QColor b = QColor (127, 255, 255, QColor::Hsv);
+	QColor a;
+	a.setHsv (220, 255, 255);
+	QColor b;
+	b.setHsv (127, 255, 255);
 	for (int i = 0; i < 256; ++i)
 		_colors[i] = LevelMeter::color_between (a, b, static_cast<float> (i) / (256));
 
@@ -164,8 +168,8 @@ LevelMeter::color_between (QColor const& from, QColor const& to, float value)
 {
 	int r1, g1, b1;
 	int r2, g2, b2;
-	from.rgb (&r1, &g1, &b1);
-	to.rgb (&r2, &g2, &b2);
+	from.getRgb (&r1, &g1, &b1);
+	to.getRgb (&r2, &g2, &b2);
 
 	const float r = (r2 - r1) * value + r1;
 	const float g = (g2 - g1) * value + g1;
@@ -174,8 +178,7 @@ LevelMeter::color_between (QColor const& from, QColor const& to, float value)
 	return QColor (
 		cut (r * curve (value)),
 		cut (g * curve (value)),
-		cut (b * curve (value)),
-		QColor::Rgb
+		cut (b * curve (value))
 	);
 }
 
@@ -198,7 +201,7 @@ LevelMeter::repaint_bar_buffer()
 
 	recalculate_vars();
 
-	_bar_buffer.resize (w, h);
+	_bar_buffer = QPixmap (size());
 	QPainter painter (&_bar_buffer);
 
 	// Green zone:
@@ -213,8 +216,8 @@ LevelMeter::repaint_bar_buffer()
 }
 
 
-LevelMetersGroup::Scale::Scale (QWidget* parent, float lower_db, float upper_db, const char* name):
-	QWidget (parent, name),
+LevelMetersGroup::Scale::Scale (QWidget* parent, float lower_db, float upper_db):
+	QWidget (parent),
 	_lower_db (lower_db),
 	_upper_db (upper_db)
 {
@@ -227,7 +230,7 @@ void
 LevelMetersGroup::Scale::paintEvent (QPaintEvent*)
 {
 	QPainter painter (this);
-	painter.setPen (QColorGroup::Text);
+	painter.setPen (palette().color (QPalette::WindowText));
 	painter.setFont (Resources::small_font());
 
 	int h = height();
@@ -242,8 +245,8 @@ LevelMetersGroup::Scale::paintEvent (QPaintEvent*)
 }
 
 
-LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper_db, const char* name):
-	QWidget (parent, name),
+LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper_db):
+	QWidget (parent),
 	_lower_db (lower_db),
 	_upper_db (upper_db),
 	_peak_sample (0),
@@ -253,8 +256,9 @@ LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper
 	_peak_button->setFont (Resources::small_font());
 	_peak_button->setFixedHeight (2 * Resources::small_font().pixelSize());
 	_peak_button->setFixedWidth (35);
-	_peak_button_bg = _peak_button->paletteBackgroundColor();
-	_peak_button_fg = _peak_button->paletteForegroundColor();
+	_peak_button->setToolTip ("C-r to reset");
+	_peak_button_bg = _peak_button->palette().color (QPalette::Button);
+	_peak_button_fg = _peak_button->palette().color (QPalette::ButtonText);
 
 	_vector.push_back (new LevelMeter (this, this));
 	_vector.push_back (new LevelMeter (this, this));
@@ -266,7 +270,6 @@ LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper
 	QObject::connect (_peak_button, SIGNAL (clicked()), this, SLOT (reset_peak()));
 	QObject::connect (_timer, SIGNAL (timeout()), this, SLOT (update_meters()));
 	new QShortcut (Qt::CTRL + Qt::Key_R, this, SLOT (reset_peak()));
-	QToolTip::add (_peak_button, "C-r to reset");
 
 	// Layouts:
 
@@ -314,8 +317,10 @@ LevelMetersGroup::update_peak (Sample sample)
 		_peak_button->setText (QString::number (db, 'f', 1) + " dB");
 		if (sample >= 1.0)
 		{
-			_peak_button->setPaletteBackgroundColor (QColor (255, 0, 0));
-			_peak_button->setPaletteForegroundColor (QColor (0, 0, 0));
+			QPalette p = _peak_button->palette();
+			p.setColor (QPalette::Button, Qt::red);
+			p.setColor (QPalette::ButtonText, Qt::black);
+			_peak_button->setPalette (p);
 		}
 	}
 }
@@ -345,8 +350,10 @@ LevelMetersGroup::reset_peak()
 		m->reset_peak();
 	_peak_sample = 0;
 	_peak_button->setText ("-inf dB");
-	_peak_button->setPaletteBackgroundColor (_peak_button_bg);
-	_peak_button->setPaletteForegroundColor (_peak_button_fg);
+	QPalette p = _peak_button->palette();
+	p.setColor (QPalette::Button, _peak_button_bg);
+	p.setColor (QPalette::ButtonText, _peak_button_fg);
+	_peak_button->setPalette (p);
 }
 
 

@@ -20,7 +20,6 @@
 #include <QtGui/QLabel>
 #include <QtGui/QGridLayout>
 #include <QtGui/QGroupBox>
-#include <QtGui/QToolTip>
 
 // Lib:
 #include <boost/bind.hpp>
@@ -80,7 +79,7 @@ OperatorWidget::OperatorWidget (QWidget* parent, unsigned int operator_no, Param
 	group_layout->setSpacing (Config::Spacing);
 	group_layout->addWidget (new StyledBackground (label, this, 2), 0, 0, 1, 4);
 	QLabel* f = new QLabel ("Frequency: ", this);
-	QToolTip::add (f, "Relative frequency");
+	f->setToolTip ("Relative frequency");
 	group_layout->addWidget (f, 1, 0);
 	group_layout->addWidget (_frequency_numerator, 1, 1);
 	group_layout->addWidget (new QLabel ("÷", this), 1, 2);

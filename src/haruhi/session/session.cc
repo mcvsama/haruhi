@@ -22,7 +22,6 @@
 #include <QtGui/QApplication>
 #include <QtGui/QShortcut>
 #include <QtGui/QCursor>
-#include <QtGui/QToolTip>
 #include <QtGui/QMessageBox>
 #include <QtGui/QWhatsThis>
 #include <QtGui/QSlider>
@@ -57,7 +56,7 @@ Private::SettingsDialog::SettingsDialog (QWidget* parent, Session* session):
 	QDialog (parent),
 	_session (session)
 {
-	setCaption ("Session properties");
+	setWindowTitle ("Session properties");
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	setMinimumWidth (300);
 
@@ -91,7 +90,6 @@ Private::SettingsDialog::SettingsDialog (QWidget* parent, Session* session):
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (Config::DialogMargin);
 	layout->setSpacing (Config::Spacing);
-	layout->setResizeMode (QLayout::FreeResize);
 	layout->addLayout (name_layout);
 	layout->addLayout (buttons_layout);
 
@@ -208,7 +206,7 @@ Private::HaruhiGlobal::HaruhiGlobal (Session* session, QWidget* parent):
 	_engine_thread_priority = new QSpinBox (this);
 	_engine_thread_priority->setRange (1, 99);
 	_engine_thread_priority->setValue (50);
-	QToolTip::add (_engine_thread_priority, "Higher values mean higher priority");
+	_engine_thread_priority->setToolTip ("Higher values mean higher priority");
 	QObject::connect (_engine_thread_priority, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 
 	_level_meter_fps = new QSpinBox (this);
@@ -334,8 +332,8 @@ Session::MeterPanel::MeterPanel (Session* session, QWidget* parent):
 	_master_volume = new DialControl (this,
 									  { MinVolume, MaxVolume },
 									  ZeroVolume * std::pow (attenuate_db (-3.0f), 1.0f / M_E));
+	_master_volume->setToolTip ("Master Volume");
 	QObject::connect (_master_volume, SIGNAL (valueChanged (int)), _session, SLOT (master_volume_changed (int)));
-	QToolTip::add (_master_volume, "Master Volume");
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (Config::Margin);
@@ -356,14 +354,16 @@ Session::Session (QWidget* parent):
 {
 	_name = "";
 
-	setIcon (QPixmap ("share/images/haruhi.png"));
+	setWindowIcon (QPixmap ("share/images/haruhi.png"));
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
 	create_main_menu();
 
 	QFrame* header = new QFrame (this);
 	header->setAutoFillBackground (true);
-	header->setBackgroundColor (QColor (0xda, 0xe1, 0xe9));
+	QPalette p = header->palette();
+	p.setColor (QPalette::Window, QColor (0xda, 0xe1, 0xe9));
+	header->setPalette (p);
 	header->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	header->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
@@ -377,7 +377,7 @@ Session::Session (QWidget* parent):
 	_session_name->setFont (f);
 	_session_name->setCursor (QCursor (Qt::PointingHandCursor));
 	_session_name->setTextFormat (Qt::PlainText);
-	QToolTip::add (_session_name, "Click to rename session");
+	_session_name->setToolTip ("Click to rename session");
 	QObject::connect (_session_name, SIGNAL (clicked()), this, SLOT (rename_session()));
 
 	QLabel* tempo_note = new QLabel (QString::fromUtf8 ("♩ = "), inner_header);
@@ -392,18 +392,18 @@ Session::Session (QWidget* parent):
 	_tempo_spinbox->setDecimals (2);
 	_tempo_spinbox->setWrapping (true);
 	_tempo_spinbox->setValue (120.0);
-	QToolTip::add (_tempo_spinbox, "Master tempo");
+	_tempo_spinbox->setToolTip ("Master tempo");
 	QObject::connect (_tempo_spinbox, SIGNAL (valueChanged (double)), this, SLOT (tempo_value_changed (double)));
 
 	_panic_button = new QPushButton ("Panic!", inner_header);
 	_panic_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	QToolTip::add (_panic_button, "Stops all sound processing (F10)");
+	_panic_button->setToolTip ("Stops all sound processing (F10)");
 	QObject::connect (_panic_button, SIGNAL (clicked()), this, SLOT (panic_button_clicked()));
 	new QShortcut (Qt::Key_F10, this, SLOT (panic_button_clicked()));
 
 	_main_menu_button = new QPushButton ("Menu", inner_header);
 	_main_menu_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	_main_menu_button->setPopup (_main_menu);
+	_main_menu_button->setMenu (_main_menu);
 
 	_meter_panel = new MeterPanel (this, this);
 	_stack = new QStackedWidget (this);
@@ -514,7 +514,7 @@ Session::load_session (QString const& file_name)
 		// Open file:
 		QFile file (file_name);
 		if (!file.open (QFile::ReadOnly))
-			throw Exception (QString ("Could not open session file: ") + file.errorString());
+			throw Exception ((QString ("Could not open session file: ") + file.errorString()).toUtf8().data());
 		else if (!document.setContent (&file, true))
 			throw Exception ("Failed to parse session file.");
 
@@ -550,7 +550,7 @@ Session::save_session (QString const& file_name)
 		// TODO maybe saving should be done in another thread? std::future?
 		QFile file (file_name + "~");
 		if (!file.open (QFile::WriteOnly))
-			throw Exception (QString ("Could not save session file: ") + file.errorString());
+			throw Exception ((QString ("Could not save session file: ") + file.errorString()).toUtf8().data());
 		QTextStream ts (&file);
 		ts << document.toString();
 		file.flush();
@@ -619,7 +619,7 @@ Session::load_state (QDomElement const& element)
 	delete _engine;
 	_engine = 0;
 
-	set_name (element.attribute ("name", "").ascii());
+	set_name (element.attribute ("name", "").toUtf8().data());
 
 	QDomElement parameters_element;
 	QDomElement audio_backend_element;
@@ -735,12 +735,12 @@ Session::save_session_as()
 {
 	QFileDialog* file_dialog = new QFileDialog (this, "Save session", ".", QString());
 	file_dialog->setNameFilter ("All Haruhi session files (*.haruhi-session)");
-	file_dialog->setMode (QFileDialog::AnyFile);
+	file_dialog->setFileMode (QFileDialog::AnyFile);
 	file_dialog->setAcceptMode (QFileDialog::AcceptSave);
 	if (file_dialog->exec() == QFileDialog::Accepted)
 	{
-		_file_name = file_dialog->selectedFile().ascii();
-		if (!QString (_file_name).endsWith (".haruhi-session", false))
+		_file_name = file_dialog->selectedFiles().front();
+		if (!QString (_file_name).endsWith (".haruhi-session", Qt::CaseInsensitive))
 			_file_name += ".haruhi-session";
 		save_session (_file_name);
 	}
@@ -832,6 +832,7 @@ Session::start_audio_backend()
 {
 	try {
 		AudioBackendImpl::Backend* audio_backend = new AudioBackendImpl::Backend ("Haruhi", _audio_tab);
+		_audio_tab->layout()->addWidget (audio_backend);
 		_audio_backend = audio_backend;
 		audio_backend->on_state_change.connect (this, &Session::audio_backend_state_change);
 		audio_backend->show();
@@ -851,6 +852,7 @@ Session::start_event_backend()
 {
 	try {
 		EventBackendImpl::Backend* event_backend = new EventBackendImpl::Backend ("Haruhi", _event_tab);
+		_event_tab->layout()->addWidget (event_backend);
 		_event_backend = event_backend;
 		event_backend->show();
 		_graph->register_event_backend (_event_backend);
@@ -891,7 +893,6 @@ Session::update_window_title()
 	QString s ("Haruhi");
 	if (!_audio_backend || !_audio_backend->connected())
 		s = "Haruhi (offline)";
-	setCaption (s);
 	setWindowTitle (s);
 }
 
@@ -925,7 +926,6 @@ Session::create_container (QWidget* parent)
 	QHBoxLayout* layout = new QHBoxLayout (w);
 	layout->setMargin (0);
 	layout->setSpacing (0);
-	layout->setAutoAdd (true);
 	return w;
 }
 

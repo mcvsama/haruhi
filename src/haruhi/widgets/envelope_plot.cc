@@ -35,19 +35,22 @@
 
 namespace Haruhi {
 
-EnvelopePlot::EnvelopePlot (QWidget* parent, const char* name):
-	QWidget (parent, name, Qt::WNoAutoErase),
+EnvelopePlot::EnvelopePlot (QWidget* parent):
+	QWidget (parent),
 	_last_enabled_state (isEnabled()),
 	_envelope (nullptr)
 {
 	setMouseTracking (true);
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	setBackgroundColor (QColor (0xff, 0xff, 0xff));
+	setAutoFillBackground (false);
+	QPalette p = palette();
+	p.setColor (QPalette::Window, Qt::white);
+	setPalette (p);
 }
 
 
-EnvelopePlot::EnvelopePlot (DSP::Envelope* envelope, QWidget* parent, const char* name):
-	EnvelopePlot (parent, name)
+EnvelopePlot::EnvelopePlot (DSP::Envelope* envelope, QWidget* parent):
+	EnvelopePlot (parent)
 {
 	assign_envelope (envelope);
 }
@@ -115,7 +118,7 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 		int w = width();
 		int h = height();
 
-		_double_buffer.resize (w, h);
+		_double_buffer = QPixmap (size());
 		QPainter painter (&_double_buffer);
 		painter.fillRect (rect(), isEnabled() ? QColor (0xff, 0xff, 0xff) : QColor (0xfa, 0xfa, 0xfa));
 		painter.setFont (Resources::small_font());

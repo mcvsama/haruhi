@@ -92,7 +92,7 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 	QObject::connect (_save_button, SIGNAL (clicked()), this, SLOT (save_preset()));
 
 	_create_button = new QPushButton (Resources::Icons16::save_as(), "Create", this);
-	_create_button->setPopup (_create_menu);
+	_create_button->setMenu (_create_menu);
 
 	_destroy_button = new QPushButton (Resources::Icons16::remove(), "Destroy…", this);
 	QObject::connect (_destroy_button, SIGNAL (clicked()), this, SLOT (destroy()));

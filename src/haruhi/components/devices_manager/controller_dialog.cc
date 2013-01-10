@@ -22,7 +22,6 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QGridLayout>
 #include <QtGui/QGroupBox>
-#include <QtGui/QToolTip>
 #include <QtGui/QKeyEvent>
 
 // Haruhi:
@@ -39,7 +38,7 @@ namespace DevicesManager {
 ControllerDialog::ControllerDialog (QWidget* parent):
 	QDialog (parent)
 {
-	setCaption ("Controller configuration");
+	setWindowTitle ("Controller configuration");
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	setMinimumWidth (300);
 
@@ -77,12 +76,13 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 
 	_controller_channel = create_channel_spinbox (filters);
 
-	_controller_number = new QSpinBox (0, 127, 1, filters);
+	_controller_number = new QSpinBox (filters);
+	_controller_number->setRange (0, 127);
 	_controller_number->setPrefix ("CC #");
-	QToolTip::add (_controller_number, "MIDI controller number");
+	_controller_number->setToolTip ("MIDI controller number");
 
 	_controller_invert = new QCheckBox ("Invert", filters);
-	QToolTip::add (_controller_invert, "Invert values");
+	_controller_invert->setToolTip ("Invert values");
 
 	// Channel pressure filters:
 
@@ -92,7 +92,7 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 	_channel_pressure_channel = create_channel_spinbox (filters);
 
 	_channel_pressure_invert = new QCheckBox ("Invert", filters);
-	QToolTip::add (_channel_pressure_invert, "Invert values");
+	_channel_pressure_invert->setToolTip ("Invert values");
 
 	// Key pressure filters:
 
@@ -102,7 +102,7 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 	_key_pressure_channel = create_channel_spinbox (filters);
 
 	_key_pressure_invert = new QCheckBox ("Invert", filters);
-	QToolTip::add (_key_pressure_invert, "Invert values");
+	_key_pressure_invert->setToolTip ("Invert values");
 
 	// Pitchbend filters:
 
@@ -115,7 +115,9 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 
 	_smoothing_label = new QLabel ("Smoothing:", filters);
 
-	_smoothing = new QSpinBox (0, 1000, 50, filters);
+	_smoothing = new QSpinBox (filters);
+	_smoothing->setRange (0, 1000);
+	_smoothing->setSingleStep (50);
 	_smoothing->setSuffix (" ms");
 	_smoothing->setSpecialValueText ("Off");
 
@@ -129,7 +131,7 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (Config::DialogMargin);
 	layout->setSpacing (Config::Spacing);
-	layout->setResizeMode (QLayout::FreeResize);
+	layout->setSizeConstraint (QLayout::SetNoConstraint);
 
 	QHBoxLayout* name_layout = new QHBoxLayout();
 	name_layout->setSpacing (Config::Spacing);
@@ -305,7 +307,8 @@ ControllerDialog::validate_and_save()
 QSpinBox*
 ControllerDialog::create_channel_spinbox (QWidget* parent)
 {
-	QSpinBox* spinbox = new QSpinBox (0, 16, 1, parent);
+	QSpinBox* spinbox = new QSpinBox (parent);
+	spinbox->setRange (0, 16);
 	spinbox->setPrefix ("Channel ");
 	spinbox->setSpecialValueText ("All channels");
 	return spinbox;

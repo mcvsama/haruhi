@@ -92,9 +92,11 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	title_button->clearFocus();
 	title_button->setFlat (true);
 	title_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	title_button->setPaletteForegroundColor (QColor (0xff, 0xff, 0xff));
-	title_button->setPaletteBackgroundColor (QColor (0x00, 0x2A, 0x5B));
-	title_button->setPopup (_menu);
+	title_button->setMenu (_menu);
+	QPalette p = title_button->palette();
+	p.setColor (QPalette::Button, QColor (0x00, 0x2A, 0x5B));
+	p.setColor (QPalette::ButtonText, QColor (0xff, 0xff, 0xff));
+	title_button->setPalette (p);
 	QFont font (QApplication::font());
 	font.setWeight (QFont::Black);
 	title_button->setFont (font);
@@ -119,8 +121,10 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 		_presets_button->clearFocus();
 		_presets_button->setFlat (true);
 		_presets_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-		_presets_button->setPaletteForegroundColor (QColor (0xff, 0xff, 0xff));
-		_presets_button->setPaletteBackgroundColor (QColor (0x00, 0x2A, 0x5B));
+		QPalette p = _presets_button->palette();
+		p.setColor (QPalette::Button, QColor (0x00, 0x2A, 0x5B));
+		p.setColor (QPalette::ButtonText, QColor (0xff, 0xff, 0xff));
+		_presets_button->setPalette (p);
 		QObject::connect (_presets_button, SIGNAL (clicked()), this, SLOT (presets()));
 
 		// Presets manager/favoriting:
@@ -133,8 +137,10 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 		QObject::connect (_favorite_button, SIGNAL (toggled (bool)), this, SLOT (favorited (bool)));
 	}
 
-	bar->setPaletteForegroundColor (QColor (0xff, 0xff, 0xff));
-	bar->setPaletteBackgroundColor (QColor (0x00, 0x2A, 0x5B));
+	p = bar->palette();
+	p.setColor (QPalette::Window, QColor (0x00, 0x2A, 0x5B));
+	p.setColor (QPalette::WindowText, Qt::white);
+	bar->setPalette (p);
 	bar->setAutoFillBackground (true);
 
 	_plugin_container = new QWidget (this);
@@ -152,7 +158,8 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	plugin_container_layout->addWidget (new TextureWidget (TextureWidget::Filling::Dotted, this), 0, 0, 2, 2);
 	plugin_container_layout->addWidget (plugin_with_background, 0, 0, 1, 1);
 
-	_plugin->reparent (plugin_with_background, QPoint(), true);
+	_plugin->setParent (plugin_with_background);
+	_plugin->show();
 	if (plugin_is_has_presets)
 		_stack->addWidget (_presets_manager);
 	_stack->addWidget (_plugin_container);
@@ -204,17 +211,21 @@ PluginTab::presets()
 	if (_stack->currentWidget() == _presets_manager)
 	{
 		_stack->setCurrentWidget (_plugin_container);
-		_presets_button->setPaletteForegroundColor (QColor (0xff, 0xff, 0xff));
-		_presets_button->setPaletteBackgroundColor (QColor (0x00, 0x2A, 0x5B));
-		_presets_button->setAutoFillBackground (true);
+		QPalette p = _presets_button->palette();
+		p.setColor (QPalette::Button, QColor (0x00, 0x2A, 0x5B));
+		p.setColor (QPalette::ButtonText, QColor (0xff, 0xff, 0xff));
+		_presets_button->setPalette (p);
 	}
 	else
 	{
 		_stack->setCurrentWidget (_presets_manager);
-		_presets_button->setPaletteForegroundColor (QColor (0xff, 0xff, 0xff));
-		_presets_button->setPaletteBackgroundColor (QColor (0x0c, 0x62, 0xf8));
-		_presets_button->setAutoFillBackground (true);
+		QPalette p = _presets_button->palette();
+		p.setColor (QPalette::Button, QColor (0x0c, 0x62, 0xf8));
+		p.setColor (QPalette::ButtonText, QColor (0xff, 0xff, 0xff));
+		_presets_button->setPalette (p);
 	}
+
+	_presets_button->setAutoFillBackground (true);
 }
 
 
@@ -248,8 +259,10 @@ PluginTab::update_widgets()
 {
 	if (dynamic_cast<HasPresets*> (_plugin))
 	{
-		_favorite_button->setPaletteForegroundColor (QColor (0xff, 0xff, 0xff));
-		_favorite_button->setPaletteBackgroundColor (_favorite_button->isChecked() ? QColor (0x00, 0xff, 0x00) : QColor (0x00, 0x2A, 0x5B));
+		QPalette p = _favorite_button->palette();
+		p.setColor (QPalette::Button, _favorite_button->isChecked() ? QColor (0x00, 0xff, 0x00) : QColor (0x00, 0x2A, 0x5B));
+		p.setColor (QPalette::ButtonText, Qt::white);
+		_favorite_button->setPalette (p);
 		_favorite_button->setAutoFillBackground (false);
 	}
 }
@@ -275,7 +288,7 @@ Patch::Patch (Session* session, std::string const& title, QWidget* parent):
 	QPushButton* add_plugin_button = new QPushButton (Resources::Icons16::add(), "Load plugin", add_plugin_frame);
 	add_plugin_button->setFlat (true);
 	add_plugin_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
-	add_plugin_button->setPopup (_plugins_menu);
+	add_plugin_button->setMenu (_plugins_menu);
 
 	_tabs = new QTabWidget (this);
 	_tabs->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
@@ -517,7 +530,7 @@ void
 Patch::load_plugin_request (int i)
 {
 	Plugin* plugin = load_plugin (_urns[i]);
-	_tabs->showPage (_plugins_to_frames_map[plugin]);
+	_tabs->setCurrentWidget (_plugins_to_frames_map[plugin]);
 }
 
 } // namespace Haruhi

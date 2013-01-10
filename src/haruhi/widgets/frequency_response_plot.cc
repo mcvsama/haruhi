@@ -31,18 +31,20 @@
 
 namespace Haruhi {
 
-FrequencyResponsePlot::FrequencyResponsePlot (QWidget* parent, const char* name):
-	QWidget (parent, name, Qt::WNoAutoErase),
+FrequencyResponsePlot::FrequencyResponsePlot (QWidget* parent):
+	QWidget (parent),
 	_last_enabled_state (isEnabled())
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	setBackgroundColor (QColor (0xff, 0xff, 0xff));
-	setAutoFillBackground (true);
+	QPalette p = palette();
+	p.setColor (QPalette::Window, Qt::white);
+	setPalette (p);
+	setAutoFillBackground (false);
 }
 
 
-FrequencyResponsePlot::FrequencyResponsePlot (DSP::PlotableImpulseResponse* impulse_response, QWidget* parent, const char* name):
-	FrequencyResponsePlot (parent, name)
+FrequencyResponsePlot::FrequencyResponsePlot (DSP::PlotableImpulseResponse* impulse_response, QWidget* parent):
+	FrequencyResponsePlot (parent)
 {
 	assign_impulse_response (impulse_response);
 }
@@ -125,13 +127,12 @@ FrequencyResponsePlot::paintEvent (QPaintEvent* paint_event)
 
 	if (_to_repaint_buffer || _last_enabled_state != isEnabled())
 	{
-		int w = width();
 		int h = height();
 
 		const float lower_db = -70;
 		const float upper_db = +30;
 
-		_double_buffer.resize (w, h);
+		_double_buffer = QPixmap (size());
 		QPainter painter (&_double_buffer);
 
 		// Draw grid:
@@ -187,7 +188,7 @@ FrequencyResponsePlot::repaint_grid()
 	const float lower_db = -70;
 	const float upper_db = +30;
 
-	_grid_buffer.resize (w, h);
+	_grid_buffer = QPixmap (size());
 
 	QPainter painter (&_grid_buffer);
 	painter.fillRect (rect(), isEnabled() ? QColor (0xff, 0xff, 0xff) : QColor (0xfa, 0xfa, 0xfa, 0xff));

@@ -13,7 +13,7 @@ PROFILING		:= 0
 # Debugging enabled?
 DEBUG			:= 0
 # Where Qt is installed?
-QT_PREFIX		:= /usr
+QT_PREFIX		:= /usr/lib/qt4
 # Profile name:
 PROFILE			:=
 # Version:

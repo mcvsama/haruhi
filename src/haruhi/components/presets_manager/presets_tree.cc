@@ -62,6 +62,7 @@ PresetsTree::PresetsTree (PresetsManager* presets_manager, QWidget* parent):
 	setHeaderLabel ("Presets");
 
 	_auto_open_timer = new QTimer (this);
+	_auto_open_timer->setSingleShot (true);
 	QObject::connect (_auto_open_timer, SIGNAL (timeout()), this, SLOT (auto_open_selected()));
 	QObject::connect (this, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu (const QPoint&)));
 }
@@ -304,7 +305,7 @@ PresetsTree::drag_drop_item (QPoint const& epos)
 			clearSelection();
 			item->setSelected (true);
 			_dropped_on_item = item;
-			_auto_open_timer->start (750, true);
+			_auto_open_timer->start (750);
 		}
 	}
 	else

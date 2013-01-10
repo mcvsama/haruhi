@@ -48,6 +48,9 @@ class InputDialog: public PortDialog
 	void
 	apply (InputItem*) const;
 
+	QString
+	name() const;
+
   private slots:
 	void
 	update_widgets();
