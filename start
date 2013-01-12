@@ -4,7 +4,7 @@
 
 o_run_in_gdb=0
 o_run_in_valgrind=0
-o_target="debug"
+o_target=$(uname -m)
 
 for arg in "$@"; do
 	case "$arg" in
@@ -26,7 +26,7 @@ if [ "$o_run_in_valgrind" = "1" ] && [ "$o_run_in_gdb" = "1" ]; then
 	exit 1
 fi
 
-executable="src/.build/$o_target/haruhi.run" # executable file
+executable="src/build/$o_target/haruhi" # executable file
 run="$executable" # run command (with gdb/valgrind)
 corefile="core"
 

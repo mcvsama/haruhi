@@ -1,21 +1,5 @@
 # vim:ts=4
 
--include Makefile.conf
-
-PKGCONFIG_LIBS	+= $(shell pkg-config --libs jack alsa glib-2.0 fftw3 QtCore QtGui QtXml Qt3Support)
-PKGCONFIG_FLAGS	+= $(shell pkg-config --cflags jack alsa glib-2.0 fftw3 QtCore QtGui QtXml Qt3Support)
-
-ifeq ($(PROFILING), 1)
-	PROFILING_CXXFLAGS = -pg -fno-omit-frame-pointer
-	PROFILING_LDFLAGS = -pg
-endif
-
-LDFLAGS			+= -rdynamic $(LDFLAGS_$(DIST)) $(PROFILING_LDFLAGS)
-LIBS			+= m dl pthread uuid boost_system
-CXXFLAGS		+= -pthread -rdynamic -I. -Wall -DQT_NO_DEBUG $(CXXFLAGS_$(DIST)) $(PROFILING_CXXFLAGS) $(foreach feature, $(HARUHI_FEATURES), -D$(feature))
-CXXFLAGS_s		:= $(CXXFLAGS)
-CXXFLAGS		+= -DCXXFLAGS='"$(CXXFLAGS_s)"'
-
 ######## /application ########
 
 SRC_HEADERS += haruhi/application/fail.h
@@ -473,9 +457,9 @@ SOURCES += $(SRC_SOURCES)
 MOCSRCS += $(call mkmocs, $(foreach file, $(SRC_MOCHDRS), $(file)))
 OBJECTS += $(call mkobjs, $(SOURCES))
 OBJECTS += $(call mkobjs, $(NODEP_SOURCES))
-MOCOBJS += $(call mkobjs, $(MOCSRCS))
-TARGETS += $(distdir)/haruhi.run
-LINKEDS += $(distdir)/haruhi.run
+MOCOBJS += $(call mkmocobjs, $(MOCSRCS))
+TARGETS += $(distdir)/haruhi
+LINKEDS += $(distdir)/haruhi
 
-$(distdir)/haruhi.run: $(OBJECTS) $(MOCOBJS)
+$(distdir)/haruhi: $(OBJECTS) $(MOCOBJS)
 
