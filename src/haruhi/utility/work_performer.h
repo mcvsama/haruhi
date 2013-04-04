@@ -17,7 +17,6 @@
 // Standard:
 #include <cstddef>
 #include <queue>
-#include <list>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -61,9 +60,6 @@ class WorkPerformer: private Noncopyable
 		friend class WorkPerformer;
 
 	  public:
-		/**
-		 * Deleted by WorkPerformer.
-		 */
 		virtual ~Unit() = default;
 
 		/**

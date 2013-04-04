@@ -26,43 +26,11 @@
 
 // Standard:
 #include <cstddef>
+#include <type_traits>
 
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/atomic.h>
-
-
-namespace SharedPrivate {
-
-	template<bool C, typename T = void>
-		struct enable_if {
-		  typedef T type;
-		};
-
-	template<typename T>
-		struct enable_if<false, T> { };
-
-	template<typename, typename>
-		struct is_same {
-			static bool const value = false;
-		};
-
-	template<typename A>
-		struct is_same<A, A> {
-			static bool const value = true;
-		};
-
-	template<typename B, typename D>
-		struct is_base_of {
-			static D * create_d();
-			static char (& chk(B *))[1];
-			static char (& chk(...))[2];
-			static bool const value = sizeof chk(create_d()) == 1 &&
-									  !is_same<B    volatile const,
-											   void volatile const>::value;
-		};
-
-} // namespace SharedPrivate
 
 
 /**
@@ -211,7 +179,7 @@ class FastShared
  * as for standard (non-specialized) version of Shared.
  */
 template<class T>
-	class Shared<T, class SharedPrivate::enable_if<SharedPrivate::is_base_of<FastShared, T>::value>::type>
+	class Shared<T, class std::enable_if<std::is_base_of<FastShared, T>::value>::type>
 	{
 	  public:
 		typedef T Type;
