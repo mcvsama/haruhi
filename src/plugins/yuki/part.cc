@@ -571,7 +571,7 @@ Part::set_oversampling (unsigned int oversampling)
 void
 Part::update_wavetable()
 {
-	_wt_update_request.inc();
+	++_wt_update_request;
 }
 
 

@@ -166,7 +166,7 @@ template<class T, class = void>
 		void
 		leave_data() noexcept
 		{
-			if (_data->references.dec_and_test())
+			if (--_data->references == 0)
 				delete _data;
 		}
 
@@ -174,7 +174,7 @@ template<class T, class = void>
 		acquire_data (Data* data) noexcept
 		{
 			_data = data;
-			_data->references.inc();
+			++_data->references;
 		}
 
 	  private:
@@ -275,7 +275,7 @@ template<class T>
 		void
 		leave_data() noexcept
 		{
-			if (_object->FastShared::references.dec_and_test())
+			if (--_object->FastShared::references == 0)
 				delete _object;
 		}
 
@@ -283,7 +283,7 @@ template<class T>
 		acquire_data (Type* object) noexcept
 		{
 			_object = object;
-			_object->FastShared::references.inc();
+			++_object->FastShared::references;
 		}
 
 	  private:

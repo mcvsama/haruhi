@@ -179,7 +179,7 @@ template<class tType>
 	{
 		_range = other._range;
 		_default_value = other._default_value;
-		_value = other._value;
+		_value.store (other._value.load());
 		_name = other._name;
 		on_change();
 		on_change_with_value (_value.load());

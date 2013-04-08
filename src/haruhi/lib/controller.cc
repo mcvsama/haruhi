@@ -35,6 +35,7 @@ Controller::Controller (EventPort* event_port, ControllerParam* controller_param
 
 Controller::Controller (ControllerProxy* controller_proxy):
 	_controller_proxy (controller_proxy),
+	_learning (false),
 	on_voice_controller_event (_controller_proxy->on_voice_controller_event)
 {
 	if (event_port())

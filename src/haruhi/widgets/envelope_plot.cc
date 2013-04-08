@@ -37,7 +37,8 @@ namespace Haruhi {
 
 EnvelopePlot::EnvelopePlot (QWidget* parent, const char* name):
 	QWidget (parent, name, Qt::WNoAutoErase),
-	_last_enabled_state (isEnabled())
+	_last_enabled_state (isEnabled()),
+	_envelope (nullptr)
 {
 	setMouseTracking (true);
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);

@@ -160,7 +160,7 @@ class EnvelopePlot: public QWidget
 	QPixmap					_double_buffer;
 	bool					_force_repaint				= false;
 	bool					_last_enabled_state;
-	Atomic<DSP::Envelope*>	_envelope					= 0;
+	Atomic<DSP::Envelope*>	_envelope;
 	QSize					_prev_size;
 	bool					_editable					= false;
 	Seconds					_max_segment_time			= 64_s;

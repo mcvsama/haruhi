@@ -132,7 +132,7 @@ class Controller:
 	ControllerProxy*	_controller_proxy		= nullptr;
 	bool				_own_controller_proxy	= false;
 	UnitBay*			_unit_bay				= nullptr;
-	Atomic<bool>		_learning				= false;
+	Atomic<bool>		_learning;
 
   public:
 	/**
