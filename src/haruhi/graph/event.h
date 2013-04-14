@@ -37,6 +37,8 @@ enum {
 typedef int KeyID;
 typedef int VoiceID;
 
+static constexpr int MaxKeyID = 127;
+
 
 class Event: public FastShared
 {

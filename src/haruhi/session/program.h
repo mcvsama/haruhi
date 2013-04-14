@@ -41,6 +41,16 @@ class Program:
 	virtual ~Program();
 
 	void
+	show_prev_plugin();
+
+	void
+	show_next_plugin();
+
+	/*
+	 * API of SaveableState
+	 */
+
+	void
 	save_state (QDomElement&) const override;
 
 	void

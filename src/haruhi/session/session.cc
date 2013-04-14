@@ -400,6 +400,8 @@ Session::Session (QWidget* parent):
 	_panic_button->setToolTip ("Stops all sound processing (F10)");
 	QObject::connect (_panic_button, SIGNAL (clicked()), this, SLOT (panic_button_clicked()));
 	new QShortcut (Qt::Key_F10, this, SLOT (panic_button_clicked()));
+	new QShortcut (Qt::ControlModifier + Qt::Key_PageUp, this, SLOT (show_prev_plugin()));
+	new QShortcut (Qt::ControlModifier + Qt::Key_PageDown, this, SLOT (show_next_plugin()));
 
 	_main_menu_button = new QPushButton ("Menu", inner_header);
 	_main_menu_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -769,6 +771,20 @@ Session::panic_button_clicked()
 {
 	Mutex::Lock lock (*graph());
 	graph()->panic();
+}
+
+
+void
+Session::show_prev_plugin()
+{
+	_program->show_prev_plugin();
+}
+
+
+void
+Session::show_next_plugin()
+{
+	_program->show_next_plugin();
 }
 
 

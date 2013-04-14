@@ -47,6 +47,20 @@ Program::~Program()
 
 
 void
+Program::show_prev_plugin()
+{
+	_patch->show_prev_tab();
+}
+
+
+void
+Program::show_next_plugin()
+{
+	_patch->show_next_tab();
+}
+
+
+void
 Program::save_state (QDomElement& element) const
 {
 	QDomElement patch = element.ownerDocument().createElement ("patch");

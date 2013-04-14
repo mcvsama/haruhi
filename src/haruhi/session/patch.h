@@ -156,6 +156,18 @@ class Patch:
 	void
 	update_tab_title (Plugin*);
 
+	/**
+	 * Switch to previous tab.
+	 */
+	void
+	show_prev_tab();
+
+	/**
+	 * Switch to next tab.
+	 */
+	void
+	show_next_tab();
+
 	/*
 	 * SaveableState API
 	 */

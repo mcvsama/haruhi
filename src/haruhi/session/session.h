@@ -297,6 +297,12 @@ class Session:
 	panic_button_clicked();
 
 	void
+	show_prev_plugin();
+
+	void
+	show_next_plugin();
+
+	void
 	create_main_menu();
 
 	void

@@ -408,6 +408,23 @@ Patch::update_tab_title (Plugin* plugin)
 
 
 void
+Patch::show_prev_tab()
+{
+	int c = (_tabs->currentIndex() - 1) % _tabs->count();
+	if (c < 0)
+		c = _tabs->count() - 1;
+	_tabs->setCurrentIndex (c);
+}
+
+
+void
+Patch::show_next_tab()
+{
+	_tabs->setCurrentIndex ((_tabs->currentIndex() + 1) % _tabs->count());
+}
+
+
+void
 Patch::save_state (QDomElement& element) const
 {
 	QDomElement plugins = element.ownerDocument().createElement ("plugins");
