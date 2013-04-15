@@ -184,6 +184,7 @@ Backend::process()
 	{
 		Transport::Port* transport_port = h.first;
 		DeviceWithPortItem* device_item = h.second;
+
 		// For each event that comes from transport:
 		for (MIDI::Event& m: transport_port->buffer())
 		{
@@ -196,9 +197,12 @@ Backend::process()
 						handle_event_for_learnables (m, c->port());
 					on_event (m);
 				}
-				c->generate_smoothing_events();
 			}
 		}
+
+		// For each Controller:
+		for (ControllerWithPortItem* c: *device_item->controllers())
+			c->generate_smoothing_events();
 	}
 }
 
