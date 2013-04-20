@@ -55,7 +55,6 @@ SessionLoaderSettings::RecentSession::load_state (QDomElement const& element)
 	name = element.attribute ("name", "<unknown name>");
 	file_name = element.attribute ("file-name", "");
 	timestamp.set_epoch_microseconds (element.attribute ("timestamp", "0").toULongLong());
-	fprintf(stderr,"TS %s %ld\n", file_name.toUtf8().data(), (int64_t)timestamp.microseconds());
 }
 
 
