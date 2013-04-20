@@ -54,7 +54,8 @@ SessionLoaderSettings::RecentSession::load_state (QDomElement const& element)
 {
 	name = element.attribute ("name", "<unknown name>");
 	file_name = element.attribute ("file-name", "");
-	timestamp.set_epoch_microseconds (element.attribute ("timestamp", "0").toInt());
+	timestamp.set_epoch_microseconds (element.attribute ("timestamp", "0").toULongLong());
+	fprintf(stderr,"TS %s %ld\n", file_name.toUtf8().data(), (int64_t)timestamp.microseconds());
 }
 
 
@@ -156,7 +157,7 @@ SessionLoaderSettings::cleanup() const
 	std::sort (_recent_sessions.begin(), _recent_sessions.end(), RecentSession::gt_by_timestamp);
 	_recent_sessions.resize (std::min (static_cast<RecentSessions::difference_type> (_recent_sessions.size()),
 									   static_cast<RecentSessions::difference_type> (32)));
-	std::sort (_recent_sessions.begin(), _recent_sessions.end(), RecentSession::lt_by_name);
+	std::sort (_recent_sessions.begin(), _recent_sessions.end(), RecentSession::gt_by_timestamp);
 }
 
 } // namespace Haruhi
