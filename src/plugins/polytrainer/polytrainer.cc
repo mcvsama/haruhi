@@ -13,21 +13,33 @@
 
 // Standard:
 #include <cstddef>
-#include <string>
 
 // Haruhi:
-#include <haruhi/utility/lexical_cast.h>
+#include <haruhi/config/all.h>
 
 // Local:
-#include "midi.h"
+#include "polytrainer.h"
+#include "plugin.h"
 
 
-namespace Haruhi {
+Haruhi::Plugin*
+PolytrainerFactory::create_plugin (int id, QWidget* parent)
+{
+	return new Polytrainer::Plugin (urn(), title(), id, parent);
+}
 
-namespace MIDI {
 
-Event::ID Event::_last_id = 0;
+void
+PolytrainerFactory::destroy_plugin (Haruhi::Plugin* plugin)
+{
+	delete plugin;
+}
 
-} // namespace MIDI
 
-} // namespace Haruhi
+const char**
+PolytrainerFactory::author_contacts() const
+{
+	static const char* tab[] = { "mailto:michal@gawron.name", "xmpp:mcv@jabber.org", 0 };
+	return tab;
+}
+

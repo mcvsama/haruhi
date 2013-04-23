@@ -39,11 +39,11 @@ enum {
 
 
 #ifndef HARUHI_PREFIX
-#define HARUHI_PREFIX ""
+#define HARUHI_PREFIX "."
 #endif
 
 #ifndef HARUHI_SHARED_DIRECTORY
-#define HARUHI_SHARED_DIRECTORY HARUHI_PREFIX "share"
+#define HARUHI_SHARED_DIRECTORY HARUHI_PREFIX "/share"
 #endif
 
 #ifndef HARUHI_XDG_SETTINGS_HOME

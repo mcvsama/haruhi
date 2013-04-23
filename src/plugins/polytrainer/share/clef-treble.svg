@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="3.272985"
+   height="10.007903"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="clef-treble.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="5.6"
+     inkscape:cx="-16.205264"
+     inkscape:cy="8.2127375"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1914"
+     inkscape:window-height="1030"
+     inkscape:window-x="0"
+     inkscape:window-y="26"
+     inkscape:window-maximized="1"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <sodipodi:guide
+       orientation="0,1"
+       position="-20.536347,10.000061"
+       id="guide3090" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="-19.822062,6.0960852e-05"
+       id="guide3092" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-431.57011,-228.64324)">
+    <path
+       style="fill:#000000"
+       d="m 432.41055,238.58234 c -0.38874,-0.19975 -0.60626,-0.52289 -0.60626,-0.90073 0,-0.23099 0.0351,-0.31564 0.17733,-0.42751 0.38224,-0.30067 0.83221,-0.0906 0.83221,0.3885 0,0.28925 -0.15666,0.48154 -0.39229,0.48154 -0.0804,0 -0.14613,0.0285 -0.14613,0.0635 0,0.13117 0.30962,0.27302 0.59593,0.27302 0.88959,-0.15677 0.90918,-1.25154 0.90385,-1.86919 -1.72657,0.13504 -2.18058,-1.00919 -2.20506,-1.89974 -8.2e-4,-0.28286 0.0305,-0.57211 0.2142,-0.9599 0.11857,-0.25032 0.38877,-0.68525 0.60045,-0.9665 l 0.3891,-0.52411 -0.14624,-0.53506 c -0.33212,-1.21497 -0.24837,-2.01969 0.2299,-2.71831 0.34977,-0.51092 0.44431,-0.48023 0.83475,0.27092 0.57696,1.10999 0.48674,1.98733 -0.31781,3.0908 l -0.23061,0.31629 0.1789,0.57381 c 0.0877,0.28125 0.16685,0.5465 0.17491,0.57179 -0.003,-0.002 0.11828,0.0101 0.2426,0.0428 0.43209,0.0986 0.78915,0.3877 0.95913,0.73883 0.30041,0.62058 0.11434,1.41193 -0.41423,1.76172 -0.0235,0.0174 -0.17799,0.13404 -0.29474,0.18953 0.0879,1.52692 -0.56457,2.36049 -1.57989,2.03803 z m 1.07026,-3.90745 c -0.041,-0.15539 -0.0837,-0.30215 -0.0837,-0.30215 -0.22521,0.034 -0.36079,0.11611 -0.45619,0.20723 -0.12352,0.11799 -0.21392,0.27466 -0.20364,0.47533 0.007,0.14139 0.0545,0.32726 0.23357,0.48885 0.19165,0.17297 0.30189,0.25494 0.24168,0.34058 -0.0362,0.0515 -0.15276,0.0151 -0.36671,-0.11723 -0.26925,-0.16641 -0.43575,-0.49946 -0.43575,-0.87164 0,-0.43283 0.23745,-0.79191 0.6546,-0.98985 0.12054,-0.0572 0.20921,-0.0728 0.20921,-0.0728 0,0 -0.0897,-0.2916 -0.15077,-0.50444 -0.0611,-0.21285 -0.0962,-0.31264 -0.14603,-0.4656 -0.0424,0.0425 -0.77866,1.14708 -0.91432,1.50409 -0.4148,1.09165 0.17539,1.99661 1.30717,2.00431 0,0 0.23694,0.009 0.37503,-0.0144 -0.0464,-0.52871 -0.12307,-1.13069 -0.26409,-1.6824 z m 0.85686,1.32412 c 0.25473,-0.38833 0.21398,-0.91863 -0.0965,-1.26169 -0.13649,-0.15084 -0.25647,-0.30669 -0.61766,-0.3853 0.16541,0.66217 0.29241,1.31668 0.34572,1.95554 0.11638,-0.0596 0.30341,-0.20943 0.36843,-0.30855 z m -0.86833,-4.857 c 0.20299,-0.44341 0.27577,-1.15693 0.15526,-1.5221 -0.0446,-0.13479 -0.10497,-0.24507 -0.13439,-0.24507 -0.0294,0 -0.177,0.13396 -0.32792,0.29768 -0.38895,0.42197 -0.53014,0.92601 -0.42778,1.52729 0.0417,0.24491 0.10811,0.53028 0.1476,0.63414 l 0.0633,0.19948 0.18041,-0.26362 c 0.095,-0.13884 0.24914,-0.42166 0.34351,-0.6278 z"
+       id="path3057"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cssssscccsscsssscscccccccccssssssscscssccssccssssssscss" />
+  </g>
+</svg>

@@ -24,6 +24,8 @@
 #include <haruhi/utility/memory.h>
 #include <haruhi/utility/timestamp.h>
 #include <haruhi/utility/frequency.h>
+#include <haruhi/utility/lexical_cast.h>
+#include <haruhi/utility/numeric.h>
 
 
 namespace Haruhi {
@@ -38,6 +40,94 @@ typedef int KeyID;
 typedef int VoiceID;
 
 static constexpr int MaxKeyID = 127;
+
+class Key
+{
+  public:
+	enum Note {
+		C	= 0,
+		D	= 2,
+		E	= 4,
+		F	= 5,
+		G	= 7,
+		A	= 9,
+		B	= 11,
+	};
+
+  public:
+	// Ctor:
+	constexpr
+	Key();
+
+	// Ctor:
+	explicit constexpr
+	Key (KeyID key_id);
+
+	// Ctor:
+	constexpr
+	Key (Key const& other);
+
+	Key&
+	operator= (Key const& other);
+
+	constexpr bool
+	operator== (Key const& other) const;
+
+	constexpr bool
+	operator!= (Key const& other) const;
+
+	constexpr bool
+	operator< (Key const& other) const;
+
+	constexpr bool
+	operator<= (Key const& other) const;
+
+	constexpr bool
+	operator> (Key const& other) const;
+
+	constexpr bool
+	operator>= (Key const& other) const;
+
+	Key&
+	operator++();
+
+	Key
+	operator++ (int);
+
+	Key&
+	operator--();
+
+	Key
+	operator-- (int);
+
+	constexpr bool
+	is_white() const;
+
+	constexpr bool
+	is_black() const;
+
+	int
+	white_keys_to (Key other) const;
+
+	constexpr KeyID
+	id() const;
+
+	std::string
+	name() const;
+
+	constexpr Note
+	note() const;
+
+  public:
+	static constexpr Key
+	lowest();
+
+	static constexpr Key
+	highest();
+
+  private:
+	KeyID	_key_id;
+};
 
 
 class Event: public FastShared
@@ -145,6 +235,9 @@ class VoiceEvent: public Event
 	VoiceEvent (VoiceEvent const& other) noexcept;
 
   public:
+	Key
+	key() const noexcept;
+
 	KeyID
 	key_id() const noexcept;
 
@@ -198,6 +291,203 @@ class VoiceControllerEvent: public ControllerEvent
   private:
 	VoiceID _voice_id;
 };
+
+
+inline constexpr
+Key::Key():
+	_key_id (0)
+{ }
+
+
+inline constexpr
+Key::Key (KeyID key_id):
+	_key_id (key_id)
+{ }
+
+
+inline constexpr
+Key::Key (Key const& other):
+	_key_id (other._key_id)
+{ }
+
+
+inline Key&
+Key::operator= (Key const& other)
+{
+	_key_id = other._key_id;
+	return *this;
+}
+
+
+inline constexpr bool
+Key::operator== (Key const& other) const
+{
+	return _key_id == other._key_id;
+}
+
+
+inline constexpr bool
+Key::operator!= (Key const& other) const
+{
+	return !operator== (other);
+}
+
+
+inline constexpr bool
+Key::operator< (Key const& other) const
+{
+	return _key_id < other._key_id;
+}
+
+
+inline constexpr bool
+Key::operator<= (Key const& other) const
+{
+	return _key_id <= other._key_id;
+}
+
+
+inline constexpr bool
+Key::operator> (Key const& other) const
+{
+	return _key_id > other._key_id;
+}
+
+
+inline constexpr bool
+Key::operator>= (Key const& other) const
+{
+	return _key_id >= other._key_id;
+}
+
+
+inline Key&
+Key::operator++()
+{
+	++_key_id;
+	return *this;
+}
+
+
+inline Key
+Key::operator++ (int)
+{
+	KeyID o = _key_id;
+	++_key_id;
+	return Key (o);
+}
+
+
+inline Key&
+Key::operator--()
+{
+	--_key_id;
+	return *this;
+}
+
+
+inline Key
+Key::operator-- (int)
+{
+	KeyID o = _key_id;
+	--_key_id;
+	return Key (o);
+}
+
+
+inline constexpr bool
+Key::is_white() const
+{
+	return (_key_id % 12) == 0
+		|| (_key_id % 12) == 2
+		|| (_key_id % 12) == 4
+		|| (_key_id % 12) == 5
+		|| (_key_id % 12) == 7
+		|| (_key_id % 12) == 9
+		|| (_key_id % 12) == 11;
+}
+
+
+inline constexpr bool
+Key::is_black() const
+{
+	return !is_white();
+}
+
+
+inline int
+Key::white_keys_to (Key other) const
+{
+	int c = 0;
+
+	while (*this < other)
+	{
+		if (other.is_white())
+			++c;
+		--other;
+	}
+	while (*this > other)
+	{
+		if (other.is_white())
+			--c;
+		++other;
+	}
+	return c;
+}
+
+
+inline constexpr KeyID
+Key::id() const
+{
+	return _key_id;
+}
+
+
+inline std::string
+Key::name() const
+{
+	std::string r;
+
+	switch (_key_id % 12)
+	{
+		case 0:		r += "C";			break;
+		case 1:		r += "Cis/Des";		break;
+		case 2:		r += "D";			break;
+		case 3:		r += "Dis/Es";		break;
+		case 4:		r += "E";			break;
+		case 5:		r += "F";			break;
+		case 6:		r += "Fis/Ges";		break;
+		case 7:		r += "G";			break;
+		case 8:		r += "Gis/Aes";		break;
+		case 9:		r += "A";			break;
+		case 10:	r += "Ais/Bes";		break;
+		case 11:	r += "B";			break;
+	}
+
+	r += ' ' + lexical_cast<std::string> (_key_id / 12);
+	return r;
+}
+
+
+inline constexpr Key
+Key::lowest()
+{
+	return Key (0);
+}
+
+
+inline constexpr Key
+Key::highest()
+{
+	return Key (MaxKeyID);
+}
+
+
+inline constexpr Key::Note
+Key::note() const
+{
+	return static_cast<Note> (_key_id % 12);
+}
 
 
 inline
@@ -303,6 +593,13 @@ VoiceEvent::VoiceEvent (VoiceEvent const& other) noexcept:
 	_voice_id (other._voice_id),
 	_action (other._action)
 { }
+
+
+inline Key
+VoiceEvent::key() const noexcept
+{
+	return Key (_key_id);
+}
 
 
 inline KeyID

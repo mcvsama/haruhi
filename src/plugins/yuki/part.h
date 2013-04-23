@@ -168,7 +168,7 @@ class Part:
 	{
 	  public:
 		// [0..3][0..2] -- [controlled][controlling]:
-		typedef std::vector<std::vector<Haruhi::EventPort*> > MatrixPorts;
+		typedef std::vector<std::vector<Haruhi::EventPort*>> MatrixPorts;
 
 	  public:
 		PartPorts (Plugin*, unsigned int part_id);
@@ -225,7 +225,7 @@ class Part:
 	class PartControllerProxies: private Noncopyable
 	{
 	  public:
-		typedef std::vector<std::vector<Haruhi::ControllerProxy*> > MatrixControllerProxies;
+		typedef std::vector<std::vector<Haruhi::ControllerProxy*>> MatrixControllerProxies;
 
 	  public:
 		PartControllerProxies (PartManager*, PartPorts*, Params::Part*);

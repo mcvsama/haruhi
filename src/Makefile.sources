@@ -449,6 +449,20 @@ SRC_SOURCES += plugins/eg/plugin.cc
 
 SRC_MOCHDRS += plugins/eg/plugin.h
 
+######### /plugins/polytrainer ########
+
+SRC_HEADERS += plugins/polytrainer/piano_widget.h
+SRC_HEADERS += plugins/polytrainer/plugin.h
+SRC_HEADERS += plugins/polytrainer/polytrainer.h
+SRC_HEADERS += plugins/polytrainer/staff_widget.h
+
+SRC_SOURCES += plugins/polytrainer/piano_widget.cc
+SRC_SOURCES += plugins/polytrainer/plugin.cc
+SRC_SOURCES += plugins/polytrainer/polytrainer.cc
+SRC_SOURCES += plugins/polytrainer/staff_widget.cc
+
+SRC_MOCHDRS += plugins/polytrainer/plugin.cc
+
 ################
 
 VERSION_FILE := haruhi/config/version.cc

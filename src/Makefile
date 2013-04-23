@@ -41,7 +41,7 @@ LDFLAGS			:= -rdynamic
 AR				:= ar
 MOC				:= $(QT_PREFIX)/bin/moc
 LIBS			+= m dl pthread boost_system
-PKGCONFIGS		+= jack alsa fftw3 uuid QtCore QtGui QtXml
+PKGCONFIGS		+= jack alsa fftw3 uuid QtCore QtGui QtXml QtSvg
 CXXFLAGS_s		:= $(CXXFLAGS)
 ifeq ($(OPTIMIZE),debug)
 HARUHI_FEATURES	+= HARUHI_ASSERTS

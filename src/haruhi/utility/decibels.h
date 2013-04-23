@@ -113,7 +113,7 @@ Decibels::to_f() const noexcept
 
 // FIXME: GCC bug <http://gcc.gnu.org/bugzilla/show_bug.cgi?id=53473> - remove "(false)" when this is fixed.
 inline constexpr Decibels
-Decibels::from_factor (float multiplication_factor) noexcept
+Decibels::from_factor (float multiplication_factor) noexcept (false)
 {
 	return Decibels (10.0f * std::log10 (multiplication_factor));
 }

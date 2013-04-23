@@ -55,10 +55,10 @@ class PartWidget:
 {
 	Q_OBJECT
 
-	typedef std::vector<QSlider*>						Sliders;
-	typedef std::vector<QPushButton*>					Buttons;
+	typedef std::vector<QSlider*>					Sliders;
+	typedef std::vector<QPushButton*>				Buttons;
 	// Modulation matrix knobs [0..3][0..2]:
-	typedef std::vector<std::vector<Haruhi::Knob*> >	MatrixKnobs;
+	typedef std::vector<std::vector<Haruhi::Knob*>>	MatrixKnobs;
 
   public:
 	PartWidget (PartManagerWidget*, Part*);

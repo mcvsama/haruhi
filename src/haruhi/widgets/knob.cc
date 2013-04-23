@@ -475,7 +475,6 @@ void
 Knob::create_connect_menu (QMenu* unit_menu, Unit* unit, QPixmap const& pixmap_for_port_group, QPixmap const& pixmap_for_port)
 {
 	typedef std::vector<Port*> PortsVector;
-	typedef std::vector<PortGroup*> GroupsVector;
 	typedef std::map<PortGroup*, PortsVector> GroupsMap;
 
 	GroupsMap groups;

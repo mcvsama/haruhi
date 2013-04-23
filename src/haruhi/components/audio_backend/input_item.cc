@@ -47,11 +47,11 @@ InputItem::InputItem (Tree* parent, QString const& name):
 
 InputItem::~InputItem()
 {
-	_backend->_ports_lock.synchronize ([&] {
+	_backend->_ports_lock.synchronize ([&]() noexcept {
 		_backend->_inputs.erase (_transport_port);
 	});
 	_backend->transport()->destroy_port (_transport_port);
-	_backend->graph()->synchronize ([&] {
+	_backend->graph()->synchronize ([&]() noexcept {
 		delete _port;
 	});
 	// Remove itself from External ports list view:
