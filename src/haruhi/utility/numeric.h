@@ -195,21 +195,31 @@ fractional_part (__m128 x) noexcept
 #endif
 
 
+template<class T>
+	inline constexpr int
+	sgn (T x, std::false_type) noexcept
+	{
+		return T (0) < x;
+	}
+
+
+template<class T>
+	inline constexpr int
+	sgn (T x, std::true_type) noexcept
+	{
+		return (T (0) < x) - (x < T (0));
+	}
+
+
 /**
- * Returns x > 0.0 ? 1.0 : -1.0.
+ * Return signum (x) (-1, 0 or 1).
  */
-inline float
-sgn (float const& v) noexcept
-{
-	union {
-		float f;
-		uint32_t i;
-	} u = {v};
-	const uint32_t s = u.i & (1 << 31);
-	u.f = 1.0f;
-	u.i |= s;
-	return u.f;
-}
+template<class T>
+	inline constexpr int
+	sgn (T x) noexcept
+	{
+		return signum(x, std::is_signed<T>());
+	}
 
 
 /**
