@@ -50,6 +50,13 @@ class PianoWidget: public QWidget
 	set_key_range (Haruhi::Key lowest, Haruhi::Key highest);
 
 	/**
+	 * Set enabled range.
+	 * Default is 0..127.
+	 */
+	void
+	set_enabled_range (Haruhi::Key lowest_enabled, Haruhi::Key highest_enabled);
+
+	/**
 	 * Highlight key.
 	 */
 	void
@@ -95,6 +102,8 @@ class PianoWidget: public QWidget
 	std::array<bool, Haruhi::MaxKeyID + 1>	_depressed;
 	Haruhi::Key								_lowest_key;
 	Haruhi::Key								_highest_key;
+	Haruhi::Key								_lowest_enabled;
+	Haruhi::Key								_highest_enabled;
 };
 
 } // namespace Polytrainer

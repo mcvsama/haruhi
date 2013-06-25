@@ -51,6 +51,14 @@ PianoWidget::set_key_range (Haruhi::Key lowest, Haruhi::Key highest)
 
 
 void
+PianoWidget::set_enabled_range (Haruhi::Key lowest_enabled, Haruhi::Key highest_enabled)
+{
+	_lowest_enabled = lowest_enabled;
+	_highest_enabled = highest_enabled;
+}
+
+
+void
 PianoWidget::set_key_highlighted (Haruhi::Key key, bool highlighted)
 {
 	_highlighted[bound<Haruhi::KeyID> (key.id(), 0, _highlighted.size() - 1)] = highlighted;

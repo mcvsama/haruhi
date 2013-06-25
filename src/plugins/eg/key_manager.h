@@ -24,8 +24,10 @@
 
 namespace EG {
 
-class KeyManager:
-	public SaveableState
+/**
+ * Manages the state of keyboard and pedals.
+ */
+class KeyManager: public SaveableState
 {
 	enum class KeyMode
 	{
