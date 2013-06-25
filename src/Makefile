@@ -30,16 +30,16 @@ HARUHI_FEATURES	:= HARUHI_IEEE754
 #   HARUHI_ASSERTS_FATAL	- makes assertion failures fatal (self kill).
 
 CXX				:= g++
-DEPCC			:= $(CXX)
+DEPCC			 = $(CXX)
 CXXFLAGS		+= -fPIE -O4 -g -c -std=c++11 -Wall -Wall -Wextra -Wunused  -Wunused-function -Wunused-label -Wnoexcept -fstrict-aliasing -Wstrict-aliasing=3 -fnothrow-opt
 CXXFLAGS		+= -pthread -rdynamic -I.
 CXXFLAGS		+= -finline -march=native -mtune=native -falign-functions=4 -mpreferred-stack-boundary=4 -funroll-loops -mfpmath=sse,387 -msse4.1 -fomit-frame-pointer
-SO				:= $(CXX) -shared
+SO				 = $(CXX) -shared
 SOFLAGS			:=
-LD				:= $(CXX)
+LD				 = $(CXX)
 LDFLAGS			:= -rdynamic
 AR				:= ar
-MOC				:= $(QT_PREFIX)/bin/moc
+MOC				 = $(QT_PREFIX)/bin/moc
 LIBS			+= m dl pthread boost_system
 PKGCONFIGS		+= jack alsa fftw3 uuid QtCore QtGui QtXml QtSvg
 CXXFLAGS_s		:= $(CXXFLAGS)
