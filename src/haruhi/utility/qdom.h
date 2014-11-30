@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__UTILITY__QDOM_SEQUENCE_H__INCLUDED
-#define HARUHI__UTILITY__QDOM_SEQUENCE_H__INCLUDED
+#ifndef HARUHI__UTILITY__QDOM_H__INCLUDED
+#define HARUHI__UTILITY__QDOM_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -96,8 +96,6 @@ QDomElementIterator::operator*()
  * Support for generic iterating over element's children
  * with range-for.
  */
-namespace std {
-
 inline Haruhi::QDomElementIterator
 begin (QDomElement element)
 {
@@ -105,13 +103,15 @@ begin (QDomElement element)
 }
 
 
+/**
+ * Support for generic iterating over element's children
+ * with range-for.
+ */
 inline Haruhi::QDomElementIterator
 end (QDomElement)
 {
 	return Haruhi::QDomElementIterator();
 }
-
-} // namespace std
 
 
 /**

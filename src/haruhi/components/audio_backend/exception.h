@@ -17,6 +17,7 @@
 // Standard:
 #include <cstddef>
 
+
 namespace Haruhi {
 
 namespace AudioBackendImpl {

@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__UTILITY__DECIBEL_H__INCLUDED
-#define HARUHI__UTILITY__DECIBEL_H__INCLUDED
+#ifndef HARUHI__UTILITY__DECIBELS_H__INCLUDED
+#define HARUHI__UTILITY__DECIBELS_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -64,7 +64,7 @@ class Decibels
 	 */
 	// FIXME: GCC bug <http://gcc.gnu.org/bugzilla/show_bug.cgi?id=53473> - remove "(false)" when this is fixed.
 	static constexpr Decibels
-	from_factor (float multiplication_factor) noexcept (false);
+	from_factor (float multiplication_factor) noexcept;
 
   private:
 	float _decibels;
