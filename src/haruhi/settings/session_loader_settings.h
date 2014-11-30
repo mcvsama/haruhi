@@ -22,7 +22,6 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/saveable_state.h>
-#include <haruhi/utility/timestamp.h>
 
 // Local:
 #include "settings.h"
@@ -42,7 +41,7 @@ class SessionLoaderSettings: public Settings::Module
 	  public:
 		RecentSession();
 
-		RecentSession (QString const& name, QString const& file_name, Timestamp timestamp);
+		RecentSession (QString const& name, QString const& file_name, Time timestamp);
 
 		/*
 		 * SaveableState API
@@ -76,7 +75,7 @@ class SessionLoaderSettings: public Settings::Module
 	  public:
 		QString		name;
 		QString		file_name;
-		Timestamp	timestamp;
+		Time		timestamp;
 	};
 
 	typedef std::vector<RecentSession> RecentSessions;

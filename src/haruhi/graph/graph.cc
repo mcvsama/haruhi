@@ -32,9 +32,9 @@ Graph::Graph():
 	_inside_processing_round (false),
 	_next_tempo_tick (0),
 	_buffer_size (0),
-	_sample_rate (0),
-	_tempo (120.0),
-	_master_tune (440.0),
+	_sample_rate (0_Hz),
+	_tempo (120.0_Hz),
+	_master_tune (440.0_Hz),
 	_audio_backend (0),
 	_event_backend (0)
 {
@@ -132,7 +132,7 @@ void
 Graph::enter_processing_round()
 {
 	lock();
-	_timestamp.touch();
+	_timestamp = Time::now();
 	_inside_processing_round = true;
 	_dummy_syncing = false;
 	// Wakeup all Units:

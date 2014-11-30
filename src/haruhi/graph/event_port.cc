@@ -53,7 +53,7 @@ void
 EventPort::no_input()
 {
 	if (_default_value_set)
-		event_buffer()->push (new ControllerEvent (Timestamp::now(), _default_value));
+		event_buffer()->push (new ControllerEvent (Time::now(), _default_value));
 }
 
 } // namespace Haruhi

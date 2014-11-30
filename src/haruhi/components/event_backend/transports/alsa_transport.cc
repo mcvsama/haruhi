@@ -196,7 +196,7 @@ AlsaTransport::sync()
 		return;
 
 	::snd_seq_event_t* e = 0;
-	Timestamp t = backend()->graph()->timestamp();
+	Time t = backend()->graph()->timestamp();
 
 	// Clear all buffers:
 	for (auto& p: _ports)

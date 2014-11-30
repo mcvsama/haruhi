@@ -32,7 +32,7 @@ SessionLoaderSettings::RecentSession::RecentSession():
 }
 
 
-SessionLoaderSettings::RecentSession::RecentSession (QString const& name, QString const& file_name, Timestamp timestamp):
+SessionLoaderSettings::RecentSession::RecentSession (QString const& name, QString const& file_name, Time timestamp):
 	name (name),
 	file_name (file_name),
 	timestamp (timestamp)
@@ -45,7 +45,7 @@ SessionLoaderSettings::RecentSession::save_state (QDomElement& element) const
 {
 	element.setAttribute ("name", name);
 	element.setAttribute ("file-name", file_name);
-	element.setAttribute ("timestamp", static_cast<qlonglong> (timestamp.microseconds()));
+	element.setAttribute ("timestamp", static_cast<qlonglong> (timestamp.us()));
 }
 
 
@@ -54,7 +54,7 @@ SessionLoaderSettings::RecentSession::load_state (QDomElement const& element)
 {
 	name = element.attribute ("name", "<unknown name>");
 	file_name = element.attribute ("file-name", "");
-	timestamp.set_epoch_microseconds (element.attribute ("timestamp", "0").toULongLong());
+	timestamp = 1_us * element.attribute ("timestamp", "0").toULongLong();
 }
 
 

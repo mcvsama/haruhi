@@ -73,12 +73,12 @@ class Voice
 	};
 
   private:
-	static constexpr Seconds AttackTime = 1_ms;
-	static constexpr Seconds DropTime = 1_ms;
+	static constexpr Time	AttackTime = 1_ms;
+	static constexpr Time	DropTime = 1_ms;
 
   public:
 	// Ctor.
-	Voice (Haruhi::VoiceID id, Timestamp timestamp, Params::Main* main_params, Params::Part* part_params,
+	Voice (Haruhi::VoiceID id, Time timestamp, Params::Main* main_params, Params::Part* part_params,
 		   Amplitude amplitude, NormalizedFrequency frequency, Frequency sample_rate, std::size_t buffer_size, unsigned int oversampling);
 
 	/**
@@ -90,7 +90,7 @@ class Voice
 	/**
 	 * Return voice's timestamp.
 	 */
-	Timestamp
+	Time
 	timestamp() const noexcept;
 
 	/**
@@ -202,7 +202,7 @@ class Voice
 
   private:
 	Haruhi::VoiceID		_id;
-	Timestamp			_timestamp;
+	Time				_timestamp;
 	State				_state;
 	Params::Voice		_params;
 	Params::Part*		_part_params;
@@ -251,7 +251,7 @@ Voice::id() const noexcept
 }
 
 
-inline Timestamp
+inline Time
 Voice::timestamp() const noexcept
 {
 	return _timestamp;

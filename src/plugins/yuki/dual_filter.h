@@ -21,7 +21,6 @@
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/filter.h>
 #include <haruhi/dsp/one_pole_smoother.h>
-#include <haruhi/utility/frequency.h>
 
 // Local:
 #include "filter_ir.h"

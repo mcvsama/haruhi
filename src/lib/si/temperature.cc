@@ -1,6 +1,6 @@
 /* vim:ts=4
  *
- * Copyleft 2008…2013  Michał Gawron
+ * Copyleft 2012…2014  Michał Gawron
  * Marduk Unix Labs, http://mulabs.org/
  *
  * This program is free software: you can redistribute it and/or modify
@@ -11,20 +11,16 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__UTILITY__UNITS_H__INCLUDED
-#define HARUHI__UTILITY__UNITS_H__INCLUDED
-
 // Standard:
 #include <cstddef>
-#include <stdexcept>
-
-// Haruhi:
-#include <haruhi/config/all.h>
 
 // Local:
-#include "decibels.h"
-#include "hertz.h"
-#include "seconds.h"
+#include "temperature.h"
 
-#endif
+
+namespace SI {
+
+std::vector<std::string> Temperature::_supported_units = { "k", "ra", "degc", "degf" };
+
+} // namespace SI
 

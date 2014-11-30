@@ -30,8 +30,6 @@
 #include <haruhi/lib/midi.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/shared.h>
-#include <haruhi/utility/seconds.h>
-#include <haruhi/utility/frequency.h>
 
 
 namespace Haruhi {
@@ -52,7 +50,7 @@ class Controller: public SaveableState
 		ControllerEvent::Value	current;
 		ControllerEvent::Value	target;
 		DSP::OnePoleSmoother	smoother;
-		Timestamp				prev_timestamp;
+		Time					prev_timestamp;
 	};
 
   public:
@@ -113,13 +111,13 @@ class Controller: public SaveableState
 	reset_filters();
 
 	void
-	controller_smoothing_setup (Timestamp t, float target, Seconds min_coeff, Seconds max_coeff, Frequency sample_rate);
+	controller_smoothing_setup (Time t, float target, Time min_coeff, Time max_coeff, Frequency sample_rate);
 
 	void
-	channel_pressure_smoothing_setup (Timestamp t, float target, Seconds min_coeff, Seconds max_coeff, Frequency sample_rate);
+	channel_pressure_smoothing_setup (Time t, float target, Time min_coeff, Time max_coeff, Frequency sample_rate);
 
 	void
-	key_pressure_smoothing_setup (unsigned int key, Timestamp t, float target, Seconds min_coeff, Seconds max_coeff, Frequency sample_rate);
+	key_pressure_smoothing_setup (unsigned int key, Time t, float target, Time min_coeff, Time max_coeff, Frequency sample_rate);
 
   public:
 	// MIDI filters:
@@ -142,7 +140,7 @@ class Controller: public SaveableState
 	int		key_pressure_channel		= 0;		// 0 means 'all'
 	bool	key_pressure_invert			= false;
 	// Smooth controller/pressure events:
-	Seconds	smoothing					= 0_ms;
+	Time	smoothing					= 0_ms;
 
   private:
 	QString								_name;

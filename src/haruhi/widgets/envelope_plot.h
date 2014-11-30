@@ -27,7 +27,6 @@
 #include <haruhi/config/all.h>
 #include <haruhi/graph/graph.h>
 #include <haruhi/dsp/envelope.h>
-#include <haruhi/utility/units.h>
 
 
 namespace Haruhi {
@@ -87,7 +86,7 @@ class EnvelopePlot: public QWidget
 	 * \entry	Qt thread only.
 	 */
 	void
-	set_editable (bool editable, Seconds max_segment_time) { _editable = editable; _max_segment_time = max_segment_time; }
+	set_editable (bool editable, Time max_segment_time) { _editable = editable; _max_segment_time = max_segment_time; }
 
 	/**
 	 * \returns	Currently edited point or -1 if no point is active.
@@ -163,7 +162,7 @@ class EnvelopePlot: public QWidget
 	Atomic<DSP::Envelope*>	_envelope;
 	QSize					_prev_size;
 	bool					_editable					= false;
-	Seconds					_max_segment_time			= 64_s;
+	Time					_max_segment_time			= 64_s;
 	// True when mouse is over the plot:
 	bool					_hovered					= false;
 	// Mouse position over the plot:

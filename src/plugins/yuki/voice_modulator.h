@@ -21,7 +21,6 @@
 #include <haruhi/config/all.h>
 #include <haruhi/graph/audio_buffer.h>
 #include <haruhi/dsp/wavetable.h>
-#include <haruhi/utility/frequency.h>
 
 // Local:
 #include "params.h"

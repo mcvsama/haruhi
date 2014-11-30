@@ -27,7 +27,6 @@
 #include <haruhi/config/all.h>
 #include <haruhi/dsp/utility.h>
 #include <haruhi/utility/atomic.h>
-#include <haruhi/utility/units.h>
 
 // Local:
 #include "envelope_plot.h"
@@ -175,7 +174,7 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 			// Grid:
 			painter.setPen (QPen (grid_color, 0.5, Qt::SolidLine));
 			// 1ms, 10ms, 100ms, 1s, 10s lines:
-			for (Seconds k: { 1_ms, 10_ms, 100_ms, 1_s, 10_s })
+			for (Time k: { 1_ms, 10_ms, 100_ms, 1_s, 10_s })
 			{
 				if (sum_samples < 15.0 * k * _sample_rate)
 				{
@@ -185,7 +184,7 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 						painter.drawLine (x, 0, x, h);
 						painter.translate (+x + 3, +2);
 						painter.rotate (+90);
-						painter.drawText (0, 0, QString::number (static_cast<int> (static_cast<float> (i * k))) + " s");
+						painter.drawText (0, 0, QString::number (static_cast<int> ((i * k).s())) + " s");
 						painter.rotate (-90);
 						painter.translate (-x - 3, -2);
 					}
@@ -348,7 +347,7 @@ EnvelopePlot::mouseMoveEvent (QMouseEvent* event)
 	{
 		if (_dragging && _active_point_index != -1)
 		{
-			const int samples_per_pixel = static_cast<float> (_sample_rate / 240);
+			const int samples_per_pixel = static_cast<float> (_sample_rate / 240_Hz);
 			const int max_samples = _max_segment_time * _sample_rate;
 			const int samples_diff = samples_per_pixel * (_drag_start_pos - _mouse_pos).x();
 			const unsigned int new_samples = std::max (0, std::min (max_samples, _active_point_samples - samples_diff));

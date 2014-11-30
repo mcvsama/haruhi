@@ -211,7 +211,7 @@ ControllerDialog::from (ControllerItem* item)
 	_key_pressure_checkbox->setChecked (controller->key_pressure_filter);
 	_key_pressure_channel->setValue (controller->key_pressure_channel);
 	_key_pressure_invert->setChecked (controller->key_pressure_invert);
-	_smoothing->setValue (controller->smoothing.milliseconds());
+	_smoothing->setValue (controller->smoothing.ms());
 	_name->selectAll();
 	_name->setFocus();
 	update_widgets();

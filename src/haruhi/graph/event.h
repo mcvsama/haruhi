@@ -22,8 +22,6 @@
 #include <haruhi/config/all.h>
 #include <haruhi/utility/pool_allocator.h>
 #include <haruhi/utility/memory.h>
-#include <haruhi/utility/timestamp.h>
-#include <haruhi/utility/frequency.h>
 
 
 namespace Haruhi {
@@ -56,7 +54,7 @@ class Event: public FastShared
 	};
 
   public:
-	Event (EventType type, Timestamp timestamp) noexcept;
+	Event (EventType type, Time timestamp) noexcept;
 
   protected:
 	// Hide copy constructor from public:
@@ -68,7 +66,7 @@ class Event: public FastShared
   public:
 	virtual ~Event() = default;
 
-	Timestamp
+	Time
 	timestamp() const noexcept;
 
 	bool
@@ -98,7 +96,7 @@ class Event: public FastShared
 	shared_strict_weak_ordering (Shared<Event> const& first, Shared<Event> const& second) noexcept;
 
   private:
-	Timestamp	_timestamp;
+	Time		_timestamp;
 	EventType	_event_type;
 };
 
@@ -111,7 +109,7 @@ class ControllerEvent: public Event
 	typedef float Value;
 
   public:
-	ControllerEvent (Timestamp timestamp, Value value) noexcept;
+	ControllerEvent (Time timestamp, Value value) noexcept;
 
   protected:
 	ControllerEvent (ControllerEvent const& other) noexcept;
@@ -139,7 +137,7 @@ class VoiceEvent: public Event
 	};
 
   public:
-	VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Action action) noexcept;
+	VoiceEvent (Time timestamp, KeyID key_id, VoiceID voice_id, Action action) noexcept;
 
   protected:
 	VoiceEvent (VoiceEvent const& other) noexcept;
@@ -177,7 +175,7 @@ class VoiceControllerEvent: public ControllerEvent
 	USES_POOL_ALLOCATOR (VoiceControllerEvent)
 
   public:
-	VoiceControllerEvent (Timestamp timestamp, VoiceID voice_id, Value value) noexcept;
+	VoiceControllerEvent (Time timestamp, VoiceID voice_id, Value value) noexcept;
 
   protected:
 	VoiceControllerEvent (VoiceControllerEvent const& other) noexcept;
@@ -201,7 +199,7 @@ class VoiceControllerEvent: public ControllerEvent
 
 
 inline
-Event::Event (EventType type, Timestamp timestamp) noexcept:
+Event::Event (EventType type, Time timestamp) noexcept:
 	_timestamp (timestamp),
 	_event_type (type)
 { }
@@ -221,7 +219,7 @@ Event::set_event_type (EventType type) noexcept
 }
 
 
-inline Timestamp
+inline Time
 Event::timestamp() const noexcept
 {
 	return _timestamp;
@@ -257,7 +255,7 @@ Event::shared_strict_weak_ordering (Shared<Event> const& first, Shared<Event> co
 
 
 inline
-ControllerEvent::ControllerEvent (Timestamp timestamp, Value value) noexcept:
+ControllerEvent::ControllerEvent (Time timestamp, Value value) noexcept:
 	Event (ControllerEventType, timestamp),
 	_value (value)
 { }
@@ -285,7 +283,7 @@ ControllerEvent::clone() const
 
 
 inline
-VoiceEvent::VoiceEvent (Timestamp timestamp, KeyID key_id, VoiceID voice_id, Action action) noexcept:
+VoiceEvent::VoiceEvent (Time timestamp, KeyID key_id, VoiceID voice_id, Action action) noexcept:
 	Event (VoiceEventType, timestamp),
 	_key_id (key_id),
 	_voice_id (voice_id),
@@ -348,7 +346,7 @@ VoiceEvent::allocate_voice_id() noexcept
 
 
 inline
-VoiceControllerEvent::VoiceControllerEvent (Timestamp timestamp, VoiceID voice_id, Value value) noexcept:
+VoiceControllerEvent::VoiceControllerEvent (Time timestamp, VoiceID voice_id, Value value) noexcept:
 	ControllerEvent (timestamp, value),
 	_voice_id (voice_id)
 {

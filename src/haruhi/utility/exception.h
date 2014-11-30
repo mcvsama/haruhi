@@ -18,20 +18,31 @@
 #include <cstddef>
 #include <stdexcept>
 
-// Haruhi:
-#include <haruhi/config/all.h>
-
 
 class Exception: public std::runtime_error
 {
   public:
 	explicit
 	Exception (const char* what, const char* details = ""):
-		std::runtime_error (what),
+		std::runtime_error (""),
+		_what (what),
+		_details (details)
+	{ }
+
+	explicit
+	Exception (std::string const& what, std::string const& details = ""):
+		std::runtime_error (""),
+		_what (what),
 		_details (details)
 	{ }
 
 	virtual ~Exception() noexcept = default;
+
+	const char*
+	what() const noexcept
+	{
+		return _what.c_str();
+	}
 
 	const char*
 	details() const noexcept
@@ -40,7 +51,8 @@ class Exception: public std::runtime_error
 	}
 
   private:
-	std::string _details;
+	std::string	_what;
+	std::string	_details;
 };
 
 #endif

@@ -22,8 +22,6 @@
 #include <haruhi/config/all.h>
 #include <haruhi/utility/mutex.h>
 #include <haruhi/utility/signal.h>
-#include <haruhi/utility/timestamp.h>
-#include <haruhi/utility/frequency.h>
 
 // Local:
 #include "unit.h"
@@ -185,7 +183,7 @@ class Graph: public RecursiveMutex
 	/**
 	 * Returns timestamp of last entering into processing round.
 	 */
-	Timestamp
+	Time
 	timestamp() const noexcept;
 
 	/**
@@ -234,7 +232,7 @@ class Graph: public RecursiveMutex
 	bool			_dummy_syncing;
 
 	// Timestamp of last enter_processing_round:
-	Timestamp		_timestamp;
+	Time			_timestamp;
 	unsigned int	_next_tempo_tick;
 
 	// Graph parameters:
@@ -291,7 +289,7 @@ Graph::master_tune() const noexcept
 }
 
 
-inline Timestamp
+inline Time
 Graph::timestamp() const noexcept
 {
 	return _timestamp;

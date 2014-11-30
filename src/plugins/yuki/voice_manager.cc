@@ -20,7 +20,6 @@
 #include <haruhi/utility/memory.h>
 #include <haruhi/utility/work_performer.h>
 #include <haruhi/utility/amplitude.h>
-#include <haruhi/utility/frequency.h>
 
 // Local:
 #include "voice_manager.h"

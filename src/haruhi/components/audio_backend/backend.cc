@@ -565,14 +565,14 @@ Backend::graph_updated()
 void
 Backend::dummy_round()
 {
-	const Seconds dummy_period_time = 33_ms;
+	const Time dummy_period_time = 33_ms;
 	const Frequency dummy_sample_rate = 48_kHz;
 	const std::size_t dummy_buffer_size = dummy_sample_rate * dummy_period_time;
 	graph()->synchronize ([&] {
 		graph()->set_sample_rate (dummy_sample_rate);
 		graph()->set_buffer_size (dummy_buffer_size);
 	});
-	usleep (dummy_period_time.microseconds());
+	usleep (dummy_period_time.us());
 }
 
 

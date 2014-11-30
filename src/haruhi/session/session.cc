@@ -192,7 +192,7 @@ Private::SessionGlobal::update_params()
 void
 Private::SessionGlobal::update_widgets()
 {
-	_tuning_hz->setText (QString::number (_session->master_tune().to_f(), 'f', 2) + " Hz");
+	_tuning_hz->setText (QString::number (_session->master_tune().Hz(), 'f', 2) + " Hz");
 }
 
 
@@ -530,7 +530,7 @@ Session::load_session (QString const& file_name)
 
 		// Add session to recent sessions list:
 		SessionLoaderSettings* settings = Haruhi::haruhi()->session_loader_settings();
-		settings->recent_sessions().push_back (SessionLoaderSettings::RecentSession (_name, file_name, Timestamp::now()));
+		settings->recent_sessions().push_back (SessionLoaderSettings::RecentSession (_name, file_name, Time::now()));
 		settings->save();
 	}
 	catch (Exception const& e)
@@ -561,7 +561,7 @@ Session::save_session (QString const& file_name)
 
 		// Add session to recent sessions list:
 		SessionLoaderSettings* settings = Haruhi::haruhi()->session_loader_settings();
-		settings->recent_sessions().push_back (SessionLoaderSettings::RecentSession (_name, file_name, Timestamp::now()));
+		settings->recent_sessions().push_back (SessionLoaderSettings::RecentSession (_name, file_name, Time::now()));
 		settings->save();
 	}
 	catch (Exception const& e)

@@ -11,6 +11,10 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
+#include <lib/si/all.h>
+
+using namespace SI;
+
 #include "types.h"
 #include "system.h"
 #include "resources.h"

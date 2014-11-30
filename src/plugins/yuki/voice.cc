@@ -21,7 +21,6 @@
 #include <haruhi/utility/numeric.h>
 #include <haruhi/utility/simd_ops.h>
 #include <haruhi/utility/amplitude.h>
-#include <haruhi/utility/units.h>
 
 // Local:
 #include "voice.h"
@@ -29,8 +28,8 @@
 
 namespace Yuki {
 
-constexpr Seconds Voice::AttackTime;
-constexpr Seconds Voice::DropTime;
+constexpr Time	Voice::AttackTime;
+constexpr Time	Voice::DropTime;
 
 
 void
@@ -60,7 +59,7 @@ Voice::SharedResources::resize_buffers()
 }
 
 
-Voice::Voice (Haruhi::VoiceID id, Timestamp timestamp, Params::Main* main_params, Params::Part* part_params,
+Voice::Voice (Haruhi::VoiceID id, Time timestamp, Params::Main* main_params, Params::Part* part_params,
 			  Amplitude amplitude, NormalizedFrequency frequency, Frequency sample_rate, std::size_t buffer_size, unsigned int oversampling):
 	_id (id),
 	_timestamp (timestamp),
@@ -116,7 +115,7 @@ Voice::render (SharedResources* res)
 	_vosc.set_unison_noise (_params.unison_noise.to_f());
 	_vosc.set_unison_stereo (!!_part_params->unison_stereo.get());
 	_vosc.set_unison_vibrato_level (_params.unison_vibrato_level.to_f());
-	_vosc.set_unison_vibrato_frequency (Hertz (_params.unison_vibrato_frequency.to_f()) / _sample_rate / _oversampling); // Max 10 Hz
+	_vosc.set_unison_vibrato_frequency (1_Hz * _params.unison_vibrato_frequency.to_f() / _sample_rate / _oversampling); // Max 10 Hz
 	_vosc.set_noise_amplitude (Amplitude (_part_params->noise_level.to_f()));
 	_vosc.set_wavetable_enabled (_part_params->wave_enabled.get());
 	_vosc.set_noise_enabled (_part_params->noise_enabled.get());
@@ -249,9 +248,9 @@ Voice::recompute_sampling_rate_dependents() noexcept
 void
 Voice::update_glide_parameters() noexcept
 {
-	Seconds portamento_time = Seconds (_part_params->portamento_time.get());
+	Time portamento_time = 1_s * _part_params->portamento_time.get();
 
-	if (portamento_time > 0)
+	if (portamento_time > 0_s)
 	{
 		if (_part_params->const_portamento_time.get())
 		{

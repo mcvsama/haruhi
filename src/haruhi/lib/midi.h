@@ -20,7 +20,6 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/utility/timestamp.h>
 
 
 namespace Haruhi {
@@ -89,7 +88,7 @@ struct Event
 	{ }
 
   public:
-	Timestamp	timestamp;
+	Time		timestamp;
 	Type		type;
 	ID			id; // Unique identifier.
 

@@ -24,7 +24,6 @@
 #include <haruhi/lib/midi.h>
 #include <haruhi/utility/numeric.h>
 #include <haruhi/utility/qdom.h>
-#include <haruhi/utility/frequency.h>
 
 // Local:
 #include "controller.h"
@@ -120,7 +119,7 @@ bool
 Controller::handle_event (MIDI::Event const& midi_event, Device& device, EventBuffer& buffer, Graph* graph)
 {
 	bool handled = false;
-	Timestamp const& t = midi_event.timestamp;
+	Time const& t = midi_event.timestamp;
 
 	switch (midi_event.type)
 	{
@@ -154,7 +153,7 @@ Controller::handle_event (MIDI::Event const& midi_event, Device& device, EventBu
 			if (note_pitch_filter && (note_pitch_channel == 0 || note_pitch_channel == midi_event.note_on.channel + 1))
 			{
 				buffer.push (new VoiceControllerEvent (t, device._allocated_voice_id,
-							 static_cast<Haruhi::ControllerEvent::Value> (VoiceEvent::frequency_from_key_id (midi_event.note_on.note, graph->master_tune()))));
+							 static_cast<Haruhi::ControllerEvent::Value> (VoiceEvent::frequency_from_key_id (midi_event.note_on.note, graph->master_tune()).Hz())));
 				handled = true;
 			}
 			break;
@@ -190,7 +189,7 @@ Controller::handle_event (MIDI::Event const& midi_event, Device& device, EventBu
 					float const fvalue = value / 127.0f;
 					buffer.push (new ControllerEvent (t, fvalue));
 					handled = true;
-					if (smoothing > 0)
+					if (smoothing > 0_ms)
 						controller_smoothing_setup (t, fvalue, 1_ms, smoothing, graph->sample_rate());
 				}
 			}
@@ -202,7 +201,7 @@ Controller::handle_event (MIDI::Event const& midi_event, Device& device, EventBu
 				float const fvalue = midi_event.pitchbend.value == 0 ? 0.5f : (midi_event.pitchbend.value + 8192) / 16382.0f;
 				buffer.push (new ControllerEvent (t, fvalue));
 				handled = true;
-				if (smoothing > 0)
+				if (smoothing > 0_ms)
 					controller_smoothing_setup (t, fvalue, 1_ms, smoothing, graph->sample_rate());
 			}
 			break;
@@ -217,7 +216,7 @@ Controller::handle_event (MIDI::Event const& midi_event, Device& device, EventBu
 					float const fvalue = value / 127.0f;
 					buffer.push (new ControllerEvent (t, fvalue));
 					handled = true;
-					if (smoothing > 0)
+					if (smoothing > 0_ms)
 						channel_pressure_smoothing_setup (t, fvalue, 1_ms, smoothing, graph->sample_rate());
 				}
 			}
@@ -237,7 +236,7 @@ Controller::handle_event (MIDI::Event const& midi_event, Device& device, EventBu
 					float const fvalue = value / 127.0f;
 					buffer.push (new VoiceControllerEvent (t, device._voice_ids[key], fvalue));
 					handled = true;
-					if (smoothing > 0)
+					if (smoothing > 0_ms)
 						key_pressure_smoothing_setup (key, t, fvalue, 1_ms, smoothing, graph->sample_rate());
 				}
 			}
@@ -251,10 +250,10 @@ Controller::handle_event (MIDI::Event const& midi_event, Device& device, EventBu
 void
 Controller::generate_smoothing_events (EventBuffer& buffer, Graph* graph)
 {
-	if (smoothing == 0.0f)
+	if (smoothing == 0_ms)
 		return;
 
-	Timestamp const t = graph->timestamp();
+	Time const t = graph->timestamp();
 
 	for (SmoothingParams* sp: { &_controller_smoother, &_channel_pressure_smoother })
 	{
@@ -302,7 +301,7 @@ Controller::save_state (QDomElement& element) const
 	};
 
 	element.setAttribute ("name", _name);
-	element.setAttribute ("smoothing", smoothing.milliseconds());
+	element.setAttribute ("smoothing", smoothing.ms());
 
 	QDomElement note_filter_el = create_element ("note-filter");
 	note_filter_el.setAttribute ("enabled", bool_to_str (note_filter));
@@ -419,9 +418,9 @@ Controller::reset_filters()
 
 
 void
-Controller::controller_smoothing_setup (Timestamp t, float target, Seconds min_ms, Seconds max_ms, Frequency sample_rate)
+Controller::controller_smoothing_setup (Time t, float target, Time min_ms, Time max_ms, Frequency sample_rate)
 {
-	float dt = sample_rate * 1_us * (t - _controller_smoother.prev_timestamp).microseconds();
+	double dt = sample_rate * 1_us * (t - _controller_smoother.prev_timestamp).us();
 	_controller_smoother.target = target;
 	_controller_smoother.smoother.set_samples (bound (dt, min_ms * sample_rate, max_ms * sample_rate));
 	_controller_smoother.prev_timestamp = t;
@@ -429,9 +428,9 @@ Controller::controller_smoothing_setup (Timestamp t, float target, Seconds min_m
 
 
 void
-Controller::channel_pressure_smoothing_setup (Timestamp t, float target, Seconds min_ms, Seconds max_ms, Frequency sample_rate)
+Controller::channel_pressure_smoothing_setup (Time t, float target, Time min_ms, Time max_ms, Frequency sample_rate)
 {
-	float dt = sample_rate * 1_us * (t - _channel_pressure_smoother.prev_timestamp).microseconds();
+	double dt = sample_rate * 1_us * (t - _channel_pressure_smoother.prev_timestamp).us();
 	_channel_pressure_smoother.target = target;
 	_channel_pressure_smoother.smoother.set_samples (bound (dt, min_ms * sample_rate, max_ms * sample_rate));
 	_channel_pressure_smoother.prev_timestamp = t;
@@ -439,9 +438,9 @@ Controller::channel_pressure_smoothing_setup (Timestamp t, float target, Seconds
 
 
 void
-Controller::key_pressure_smoothing_setup (unsigned int key, Timestamp t, float target, Seconds min_ms, Seconds max_ms, Frequency sample_rate)
+Controller::key_pressure_smoothing_setup (unsigned int key, Time t, float target, Time min_ms, Time max_ms, Frequency sample_rate)
 {
-	float dt = sample_rate * 1_us * (t - _key_pressure_smoother[key].prev_timestamp).microseconds();
+	double dt = sample_rate * 1_us * (t - _key_pressure_smoother[key].prev_timestamp).us();
 	_key_pressure_smoother[key].target = target;
 	_key_pressure_smoother[key].smoother.set_samples (bound (dt, min_ms * sample_rate, max_ms * sample_rate));
 	_key_pressure_smoother[key].prev_timestamp = t;
