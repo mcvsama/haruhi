@@ -51,7 +51,7 @@ InputItem::~InputItem()
 		_backend->_inputs.erase (_transport_port);
 	});
 	_backend->transport()->destroy_port (_transport_port);
-	_backend->graph()->synchronize ([&] {
+	_backend->graph()->synchronize ([&]() noexcept {
 		delete _port;
 	});
 	// Remove itself from External ports list view:
