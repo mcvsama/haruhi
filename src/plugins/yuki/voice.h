@@ -73,8 +73,8 @@ class Voice
 	};
 
   private:
-	static constexpr Time	AttackTime = 1_ms;
-	static constexpr Time	DropTime = 1_ms;
+	static constexpr Time	AttackTime		= 1_ms;
+	static constexpr Time	DropTime		= 1_ms;
 
   public:
 	// Ctor.

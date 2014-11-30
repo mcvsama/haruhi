@@ -144,7 +144,7 @@ Voice::render (SharedResources* res)
 			std::size_t i;
 			for (i = 0; i < _buffer_size * _oversampling && _drop_sample < _drop_samples; ++i, ++_drop_sample)
 			{
-				float const k = 1.0 - 1.0f * _drop_sample / _drop_samples;
+				float const k = 1.0f - 1.0f * _drop_sample / _drop_samples;
 				(*filters_output_1)[i] *= k;
 				(*filters_output_2)[i] *= k;
 			}
