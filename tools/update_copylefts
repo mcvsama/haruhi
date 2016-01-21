@@ -7,5 +7,5 @@ if [ "$old" = "" ] || [ "$new" = "" ]; then
 	echo "Example: $0 2011 2012"
 	exit 1
 fi
-find . -type f -exec sed -i -e 's/Copyleft 2008…'"$old"'/Copyleft 2008…'"$new"'/g' {} \;
+find ../share/ -type f -exec sed -i -e 's/Copyleft 2008…'"$old"'/Copyleft 2008…'"$new"'/g' {} \;
 
