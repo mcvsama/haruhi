@@ -143,6 +143,13 @@ class Services
 	static float
 	y_pixels_per_point();
 
+	/**
+	 * Master UI scaling factor. Decides what x_pixels_per_point() and y_pixels_per_point()
+	 * will actually return.
+	 */
+	static float
+	master_ui_scaling_factor();
+
   private:
 	static WorkPerformer*		_hi_priority_work_performer;
 	static WorkPerformer*		_lo_priority_work_performer;
@@ -192,7 +199,7 @@ inline float
 Services::x_pixels_per_point()
 {
 	// 1 point is 1/72 of an inch:
-	return QX11Info::appDpiX() / 72.0f;
+	return QX11Info::appDpiX() / 72.0f * master_ui_scaling_factor();
 }
 
 
@@ -200,7 +207,7 @@ inline float
 Services::y_pixels_per_point()
 {
 	// 1 point is 1/72 of an inch:
-	return QX11Info::appDpiY() / 72.0f;
+	return QX11Info::appDpiY() / 72.0f * master_ui_scaling_factor();
 }
 
 

@@ -117,5 +117,12 @@ Services::call_out (boost::function<void()> callback)
 	return e;
 }
 
+
+float
+Services::master_ui_scaling_factor()
+{
+	return 1.0;
+}
+
 } // namespace Haruhi
 
