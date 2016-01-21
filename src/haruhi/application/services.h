@@ -191,6 +191,7 @@ Services::lo_priority_work_performer()
 inline float
 Services::x_pixels_per_point()
 {
+	// 1 point is 1/72 of an inch:
 	return QX11Info::appDpiX() / 72.0f;
 }
 
@@ -198,8 +199,50 @@ Services::x_pixels_per_point()
 inline float
 Services::y_pixels_per_point()
 {
+	// 1 point is 1/72 of an inch:
 	return QX11Info::appDpiY() / 72.0f;
 }
+
+
+/**
+ * Return value in pixels that give 1 point.
+ */
+inline float
+operator"" _screen_pt (long double pt)
+{
+	return Services::x_pixels_per_point() * pt;
+}
+
+
+/**
+ * Return value in pixels that give 1 point.
+ */
+inline float
+operator"" _screen_pt (unsigned long long pt)
+{
+	return Services::x_pixels_per_point() * pt;
+}
+
+
+/**
+ * Return value in pixels that give 1 mm.
+ */
+inline float
+operator"" _screen_mm (long double mm)
+{
+	return Services::x_pixels_per_point() * 72 / 25.4 * mm;
+}
+
+
+/**
+ * Return value in pixels that give 1 point.
+ */
+inline float
+operator"" _screen_mm (unsigned long long mm)
+{
+	return Services::x_pixels_per_point() * 72 / 25.4 * mm;
+}
+
 
 } // namespace Haruhi
 

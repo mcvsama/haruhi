@@ -25,6 +25,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/config/resources.h>
 #include <haruhi/dsp/utility.h>
 #include <haruhi/utility/atomic.h>
 

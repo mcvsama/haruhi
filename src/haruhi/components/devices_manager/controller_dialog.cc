@@ -26,6 +26,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/config/resources.h>
 
 // Local:
 #include "controller_dialog.h"

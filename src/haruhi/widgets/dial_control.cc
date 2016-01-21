@@ -19,9 +19,11 @@
 #include <QtGui/QLayout>
 #include <QtGui/QPainter>
 #include <QtGui/QPaintEvent>
+#include <QtSvg/QSvgRenderer>
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/application/services.h>
 #include <haruhi/utility/numeric.h>
 
 // Local:
@@ -32,8 +34,6 @@ namespace Haruhi {
 
 DialControl::DialControl (QWidget* parent, Range<int> value_range, int value):
 	QAbstractSlider (parent),
-	_dial_pixmap ("share/images/dial.png"),
-	_disabled_dial_pixmap ("share/images/dial:disabled.png"),
 	_mouse_press_value (0),
 	_to_update (false),
 	_last_enabled_state (isEnabled()),
@@ -43,13 +43,38 @@ DialControl::DialControl (QWidget* parent, Range<int> value_range, int value):
 {
 	setAttribute (Qt::WA_NoBackground);
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	setFixedSize (37, 37);
+	setFixedSize (10_screen_mm, 10_screen_mm);
 
 	setMinimum (value_range.min());
 	setMaximum (value_range.max());
 	setValue (value);
 	setPageStep (1);
 	setSingleStep (1);
+
+	_dial_pixmap = QPixmap (QSize (9_screen_mm, 9_screen_mm));
+	_disabled_dial_pixmap = QPixmap (QSize (9_screen_mm, 9_screen_mm));
+
+	// Render SVG into dial pixmaps:
+	QSvgRenderer _dial_renderer (QString ("share/images/dial.svg"));
+
+	// Normal:
+	{
+		QColor background = palette().color (QPalette::Window);
+		QPainter painter (&_dial_pixmap);
+		painter.fillRect (_dial_pixmap.rect(), background);
+		_dial_renderer.render (&painter);
+	}
+
+	// Disabled:
+	{
+
+		QColor background = palette().color (QPalette::Window);
+		QPainter painter (&_disabled_dial_pixmap);
+		painter.fillRect (_disabled_dial_pixmap.rect(), background);
+		_dial_renderer.render (&painter);
+		background.setAlphaF (0.75);
+		painter.fillRect (_disabled_dial_pixmap.rect(), background);
+	}
 }
 
 
@@ -76,17 +101,18 @@ DialControl::paintEvent (QPaintEvent* paint_event)
 		{
 			float center_angle = renormalize (_center_value, minimum(), maximum(), -152, +152);
 			float span_angle = center_angle - curr_angle;
-			QRect r = rect().adjusted (1, 1, -1, -1);
-			b.setPen (QPen (path2_color, 2));
+			auto adj = 0.2_screen_mm;
+			QRect r = rect().adjusted (adj, adj, -adj, -adj);
+			b.setPen (QPen (path2_color, 0.4_screen_mm));
 			b.drawArc (r, (152 + 90) * 16, -2 * 152 * 16);
-			b.setPen (QPen (path1_color, 2));
+			b.setPen (QPen (path1_color, 0.4_screen_mm));
 			b.drawArc (r, (-center_angle + 90) * 16, span_angle * 16);
 		}
 
-		b.setPen (QPen (indicator_color, 2));
+		b.setPen (QPen (indicator_color, 0.4_screen_mm));
 		b.translate (width() / 2, height() / 2);
 		b.rotate (renormalize (value(), minimum(), maximum(), -152, +152));
-		b.drawLine (0, -4, 0, -11);
+		b.drawLine (0, -1.2_screen_mm, 0, -3.2_screen_mm);
 	}
 	QPainter (this).drawPixmap (paint_event->rect().topLeft(), _double_buffer, paint_event->rect());
 	_last_enabled_state = isEnabled();

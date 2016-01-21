@@ -19,6 +19,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/config/resources.h>
 #include <haruhi/components/event_backend/transport.h>
 #include <haruhi/lib/midi.h>
 #include <haruhi/utility/saveable_state.h>

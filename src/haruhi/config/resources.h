@@ -27,6 +27,7 @@
 
 namespace Config {
 
+// TODO remove
 enum {
 	Spacing			= 3,
 	Margin			= 2,
@@ -34,6 +35,14 @@ enum {
 	WindowMargin	= 4,
 	DialogMargin	= 6
 };
+
+extern int spacing();
+
+extern int margin();
+
+extern int window_margin();
+
+extern int dialog_margin();
 
 } // namespace Config
 
@@ -60,20 +69,17 @@ namespace Resources {
 QFont&
 small_font();
 
+QPixmap
+get_icon (QString const& file) noexcept;
+
 /*
  * Icons resources
  */
 
-#define HARUHI_CONFIG_HAS_ICON(key, file)				\
-	static inline QPixmap key()							\
-	{													\
-		QPixmap p;										\
-		if (!QPixmapCache::find (#key, p))				\
-		{												\
-			p = QPixmap (file);							\
-			QPixmapCache::insert (#key, p);				\
-		}												\
-		return p;										\
+#define HARUHI_CONFIG_HAS_ICON(key, file)	\
+	static inline QPixmap key()				\
+	{										\
+		return get_icon (file);				\
 	}
 
 	namespace Icons16

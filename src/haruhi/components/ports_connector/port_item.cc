@@ -23,6 +23,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/graph/audio_port.h>
 #include <haruhi/graph/event_port.h>
+#include <haruhi/application/services.h>
 
 // Local:
 #include "port_item.h"
@@ -40,9 +41,9 @@ PortItem::PortItem (Port::Direction type, Port* port, QTreeWidgetItem* parent, Q
 	_port (port)
 {
 	QSize s = sizeHint (0);
-	if (s.height() < 18)
+	if (s.height() < 5_screen_mm)
 	{
-		s.setHeight (18);
+		s.setHeight (5_screen_mm);
 		setSizeHint (0, s);
 	}
 

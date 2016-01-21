@@ -17,6 +17,5 @@ using namespace SI;
 
 #include "types.h"
 #include "system.h"
-#include "resources.h"
 #include "version.h"
 

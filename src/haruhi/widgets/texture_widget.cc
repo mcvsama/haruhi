@@ -21,6 +21,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/application/services.h>
 
 // Local:
 #include "texture_widget.h"
@@ -59,17 +60,17 @@ TextureWidget::paintEvent (QPaintEvent* paint_event)
 		case Filling::Dotted:
 		{
 			b.fillRect (rect(), palette().color (QPalette::Window));
-			const int xstep = 8;
-			const int ystep = 7;
+			const int xstep = 4_screen_mm;
+			const int ystep = 3.5_screen_mm;
 			for (int x = 0; x < _double_buffer.size().width(); x += xstep)
 			{
 				for (int y = 0; y < _double_buffer.size().height(); y += ystep)
 				{
 					QPoint p (((y % (2 * ystep) == ystep) ? x : x + xstep / 2) + 3, y + 3);
-					b.setPen (QPen (dark, 1));
+					b.setPen (QPen (dark, 0.4_screen_mm));
 					b.drawPoint (p);
-					b.setPen (QPen (light, 1));
-					b.drawPoint (p + QPoint (1, 1));
+					b.setPen (QPen (light, 0.4_screen_mm));
+					b.drawPoint (p + QPoint (0.2_screen_mm, 0.2_screen_mm));
 				}
 			}
 			break;

@@ -59,6 +59,7 @@ PortsList::PortsList (Port::Direction type, PortsConnector::Panel* panel, PortsC
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	setVerticalScrollMode (QAbstractItemView::ScrollPerPixel);
 	setContextMenuPolicy (Qt::CustomContextMenu);
+	setIconSize (Resources::Icons16::port_group().size());
 
 	switch (_type)
 	{

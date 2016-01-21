@@ -30,6 +30,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/config/resources.h>
 #include <haruhi/widgets/knob.h>
 #include <haruhi/widgets/wave_plot.h>
 #include <haruhi/dsp/wave.h>

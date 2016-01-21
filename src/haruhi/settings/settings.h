@@ -40,6 +40,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/config/resources.h>
 #include <haruhi/utility/confusion.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/backtrace.h>

@@ -19,6 +19,8 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/config/resources.h>
+#include <haruhi/application/services.h>
 
 // Local:
 #include "group_item.h"
@@ -34,9 +36,9 @@ GroupItem::GroupItem (PortGroup* group, UnitItem* parent):
 	_group (group)
 {
 	QSize s = sizeHint (0);
-	if (s.height() < 18)
+	if (s.height() < 5_screen_mm)
 	{
-		s.setHeight (18);
+		s.setHeight (5_screen_mm);
 		setSizeHint (0, s);
 	}
 

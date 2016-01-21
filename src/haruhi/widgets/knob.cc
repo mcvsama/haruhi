@@ -102,9 +102,9 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	// Layouts:
 
 	QGridLayout* grid_layout = new QGridLayout();
-	grid_layout->setSpacing (Config::Spacing);
+	grid_layout->setSpacing (Config::spacing());
 	grid_layout->addWidget (plot_frame, 0, 0, 3, 1);
-	grid_layout->addItem (new QSpacerItem (Config::Spacing, 0, QSizePolicy::Fixed, QSizePolicy::Fixed), 0, 1);
+	grid_layout->addItem (new QSpacerItem (Config::spacing(), 0, QSizePolicy::Fixed, QSizePolicy::Fixed), 0, 1);
 	grid_layout->addWidget (curve_label, 0, 2, Qt::AlignLeft);
 	grid_layout->addWidget (range_min_label, 1, 2, Qt::AlignLeft);
 	grid_layout->addWidget (range_max_label, 2, 2, Qt::AlignLeft);
@@ -113,16 +113,16 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	grid_layout->addWidget (_user_limit_max_spinbox, 2, 3, Qt::AlignRight);
 
 	QHBoxLayout* buttons_layout = new QHBoxLayout();
-	buttons_layout->setSpacing (Config::Spacing);
+	buttons_layout->setSpacing (Config::spacing());
 	buttons_layout->addItem (new QSpacerItem (50, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 	buttons_layout->addWidget (accept_button);
 	buttons_layout->addWidget (reject_button);
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
-	layout->setMargin (Config::DialogMargin);
-	layout->setSpacing (Config::Spacing);
+	layout->setMargin (Config::dialog_margin());
+	layout->setSpacing (Config::spacing());
 	layout->addLayout (grid_layout);
-	layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
+	layout->addItem (new QSpacerItem (0, Config::spacing(), QSizePolicy::Fixed, QSizePolicy::Fixed));
 	layout->addLayout (buttons_layout);
 
 	layout->activate();
@@ -373,8 +373,8 @@ Knob::initialize (QString const& label, Range<float> shown_range, int step, int 
 	dial_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
-	layout->setMargin (Config::Margin);
-	layout->setSpacing (Config::Spacing + 1);
+	layout->setMargin (Config::margin());
+	layout->setSpacing (2_screen_mm);
 	layout->addLayout (label_layout);
 	layout->addLayout (dial_layout);
 	layout->addWidget (_spin_box, 0, Qt::AlignCenter);

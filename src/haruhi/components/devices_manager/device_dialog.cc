@@ -25,6 +25,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/config/resources.h>
 
 // Local:
 #include "device_dialog.h"

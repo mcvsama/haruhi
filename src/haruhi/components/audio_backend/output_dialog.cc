@@ -22,6 +22,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/config/resources.h>
 
 // Local:
 #include "output_dialog.h"

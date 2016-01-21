@@ -23,6 +23,8 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/config/resources.h>
+#include <haruhi/application/services.h>
 #include <haruhi/dsp/utility.h>
 #include <haruhi/utility/memory.h>
 #include <haruhi/utility/atomic.h>
@@ -50,7 +52,7 @@ LevelMeter::LevelMeter (QWidget* parent, LevelMetersGroup* group, float lower_db
 	_fps (30)
 {
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
-	setFixedWidth (5);
+	setFixedWidth (1.5_screen_mm);
 	setAutoFillBackground (false);
 	QPalette p = palette();
 	p.setColor (QPalette::Window, Qt::black);
@@ -222,7 +224,7 @@ LevelMetersGroup::Scale::Scale (QWidget* parent, float lower_db, float upper_db)
 	_upper_db (upper_db)
 {
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
-	setFixedWidth (16);
+	setFixedWidth (5_screen_mm);
 }
 
 
@@ -255,7 +257,7 @@ LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper
 	_peak_button = new QPushButton ("-inf dB", this);
 	_peak_button->setFont (Resources::small_font());
 	_peak_button->setFixedHeight (2 * Resources::small_font().pixelSize());
-	_peak_button->setFixedWidth (35);
+	_peak_button->setFixedWidth (10_screen_mm);
 	_peak_button->setToolTip ("C-r to reset");
 	_peak_button_bg = _peak_button->palette().color (QPalette::Button);
 	_peak_button_fg = _peak_button->palette().color (QPalette::ButtonText);
@@ -274,7 +276,7 @@ LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper
 	// Layouts:
 
 	QHBoxLayout* meters_layout = new QHBoxLayout();
-	meters_layout->setSpacing (1);
+	meters_layout->setSpacing (0.5_screen_mm);
 	meters_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
 	for (LevelMeter* m: _vector)
 		meters_layout->addWidget (m);

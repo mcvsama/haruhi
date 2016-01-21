@@ -16,6 +16,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/config/resources.h>
 
 // Local:
 #include "plot_frame.h"

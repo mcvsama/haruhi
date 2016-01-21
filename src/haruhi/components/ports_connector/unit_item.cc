@@ -42,9 +42,9 @@ UnitItem::UnitItem (Port::Direction type, Unit* unit, QTreeWidget* parent, QStri
 	_unit (unit)
 {
 	QSize s = sizeHint (0);
-	if (s.height() < 18)
+	if (s.height() < 5_screen_mm)
 	{
-		s.setHeight (18);
+		s.setHeight (5_screen_mm);
 		setSizeHint (0, s);
 	}
 
