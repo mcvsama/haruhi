@@ -201,7 +201,10 @@ PluginTab::~PluginTab()
 void
 PluginTab::unload()
 {
-	_patch->unload_plugin (_plugin);
+	// Do it asynchronously, since QMenu that implements the "unload" action
+	// is inside the plugin, so deleting plugin might be synchronous and
+	// delete object that's still in use (QMenu).
+	_patch->unload_plugin_later (_plugin);
 }
 
 
@@ -293,7 +296,7 @@ Patch::Patch (Session* session, std::string const& title, QWidget* parent):
 	_tabs = new QTabWidget (this);
 	_tabs->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_tabs->setTabPosition (QTabWidget::North);
-	_tabs->setIconSize (QSize (32, 22));
+	_tabs->setIconSize (QSize (6_screen_mm, 6_screen_mm));
 	_tabs->setMovable (true);
 	_tabs->setCornerWidget (add_plugin_frame, Qt::BottomRightCorner);
 
@@ -384,6 +387,19 @@ Patch::unload_plugin (Plugin* plugin)
 		delete plugin_tab;
 		_plugins_to_frames_map.erase (u);
 	}
+}
+
+
+void
+Patch::unload_plugin_later (Plugin* plugin)
+{
+	// TODO prevent double unregistration (by disabling QMenu action?):
+	auto callback = [=](std::weak_ptr<int> tracker) {
+		if (tracker.lock())
+			unload_plugin (plugin);
+	};
+
+	Services::call_out (std::bind (callback, std::weak_ptr<int> (_lifetime_tracker)));
 }
 
 

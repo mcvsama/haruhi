@@ -148,6 +148,12 @@ class Patch:
 	unload_plugin (Plugin*);
 
 	/**
+	 * Call unload_plugin() from the event loop.
+	 */
+	void
+	unload_plugin_later (Plugin*);
+
+	/**
 	 * Returns tab-position of given plugin.
 	 */
 	int
@@ -190,6 +196,7 @@ class Patch:
 	load_plugin_request (int i);
 
   private:
+	std::shared_ptr<int>			_lifetime_tracker = std::make_shared<int> (0);
 	Session*						_session;
 	QTabWidget*						_tabs;
 	PatchPrivate::ConnectionsTab*	_connections_tab;
