@@ -85,6 +85,10 @@ class DialControl: public QAbstractSlider
 	sliderChange (SliderChange change) override;
 
   private:
+	static int
+	round_to_even (float value);
+
+  private:
 	QPixmap		_dial_pixmap;
 	QPixmap		_disabled_dial_pixmap;
 	QPixmap		_double_buffer;

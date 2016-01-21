@@ -33,6 +33,9 @@
 
 namespace Haruhi {
 
+using namespace ScreenLiterals;
+
+
 FrequencyResponsePlot::FrequencyResponsePlot (QWidget* parent):
 	QWidget (parent),
 	_last_enabled_state (isEnabled())
@@ -206,7 +209,7 @@ FrequencyResponsePlot::repaint_grid()
 		painter.drawLine (0, h - pos, w, h - pos);
 		float const scale = 1.0f;
 		if (db >= -40)
-			painter.drawText (3, h - pos - 2, QString::number (std::abs (scale * db)) + ((db == 0) ? " dB" : ""));
+			painter.drawText (1_screen_mm, h - pos - 0.4_screen_mm, QString::number (std::abs (scale * db)) + ((db == 0) ? " dB" : ""));
 	}
 
 	// 0dB line:
@@ -228,13 +231,13 @@ FrequencyResponsePlot::repaint_grid()
 			// Draw first frequency, 100Hz, 1k and 10k:
 			if (!drawn_first)
 			{
-				painter.drawText (pos + 2, 8, QString::number (f));
+				painter.drawText (pos + 2, 2.6_screen_mm, QString::number (f));
 				drawn_first = true;
 			}
 			else if (f == 100)
-				painter.drawText (pos + 2, 8, QString::number (f));
+				painter.drawText (pos + 2, 2.6_screen_mm, QString::number (f));
 			else if (f == 1000 || f == 10000)
-				painter.drawText (pos + 2, 8, QString::number (f / 1000) + "k");
+				painter.drawText (pos + 2, 2.6_screen_mm, QString::number (f / 1000) + "k");
 		}
 	}
 }

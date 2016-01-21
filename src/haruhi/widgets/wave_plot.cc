@@ -35,6 +35,9 @@
 
 namespace Haruhi {
 
+using namespace ScreenLiterals;
+
+
 WavePlot::WavePlot (QWidget* parent):
 	QWidget (parent),
 	_last_enabled_state (isEnabled())

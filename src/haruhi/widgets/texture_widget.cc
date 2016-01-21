@@ -29,6 +29,9 @@
 
 namespace Haruhi {
 
+using namespace ScreenLiterals;
+
+
 TextureWidget::TextureWidget (Filling filling, QWidget* parent):
 	QWidget (parent),
 	_filling (filling)

@@ -27,7 +27,7 @@
 
 namespace Config {
 
-using namespace Haruhi;
+using namespace Haruhi::ScreenLiterals;
 
 int spacing()
 {
@@ -54,6 +54,9 @@ int dialog_margin()
 
 namespace Resources {
 
+using namespace Haruhi::ScreenLiterals;
+
+
 QFont&
 small_font()
 {
@@ -63,7 +66,7 @@ small_font()
 	if (!sf_initialized)
 	{
 		sf = QApplication::font();
-		sf.setPointSize (8);
+		sf.setPixelSize (2.5_screen_mm);
 	}
 
 	return sf;
@@ -73,12 +76,10 @@ small_font()
 QPixmap
 get_icon (QString const& file) noexcept
 {
-	using namespace Haruhi;
-
 	QPixmap p;
 	if (!QPixmapCache::find (file, p))
 	{
-		p = QPixmap (file).scaled (QSize (4_screen_mm, 4_screen_mm), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+		p = QPixmap (file).scaled (QSize (5_screen_mm, 5_screen_mm), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 		QPixmapCache::insert (file, p);
 	}
 	return p;

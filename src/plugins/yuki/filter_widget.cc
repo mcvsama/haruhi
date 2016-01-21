@@ -36,6 +36,9 @@
 
 namespace Yuki {
 
+using namespace Haruhi::ScreenLiterals;
+
+
 FilterWidget::FilterWidget (QWidget* parent, unsigned int filter_no, Params::Filter* params, Part* part):
 	QWidget (parent),
 	_params (params),
@@ -74,7 +77,7 @@ FilterWidget::FilterWidget (QWidget* parent, unsigned int filter_no, Params::Fil
 	QFrame* plot_frame = new QFrame (this);
 	plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	plot_frame->setMinimumHeight (80);
+	plot_frame->setMinimumHeight (25_screen_mm);
 	_response_plot = new Haruhi::FrequencyResponsePlot (plot_frame);
 	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame);
 	plot_frame_layout->setMargin (0);

@@ -204,6 +204,8 @@ Services::y_pixels_per_point()
 }
 
 
+namespace ScreenLiterals {
+
 /**
  * Return value in pixels that give 1 point.
  */
@@ -243,6 +245,7 @@ operator"" _screen_mm (unsigned long long mm)
 	return Services::x_pixels_per_point() * 72 / 25.4 * mm;
 }
 
+} // namespace ScreenLiterals
 
 } // namespace Haruhi
 

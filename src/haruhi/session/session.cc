@@ -412,11 +412,11 @@ Session::Session (QWidget* parent):
 
 	_session_settings = new QTabWidget (this);
 	_session_settings->setTabPosition (QTabWidget::South);
-	_session_settings->setIconSize (QSize (32, 22));
+	_session_settings->setIconSize (Resources::Icons16::haruhi().size());
 
 	_haruhi_settings = new QTabWidget (this);
 	_haruhi_settings->setTabPosition (QTabWidget::South);
-	_haruhi_settings->setIconSize (QSize (32, 22));
+	_haruhi_settings->setIconSize (Resources::Icons16::haruhi().size());
 
 	_session_global = new Private::SessionGlobal (this, _session_settings);
 	_haruhi_global = new Private::HaruhiGlobal (this, _session_settings);

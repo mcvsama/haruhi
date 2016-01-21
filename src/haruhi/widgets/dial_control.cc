@@ -32,6 +32,9 @@
 
 namespace Haruhi {
 
+using namespace ScreenLiterals;
+
+
 DialControl::DialControl (QWidget* parent, Range<int> value_range, int value):
 	QAbstractSlider (parent),
 	_mouse_press_value (0),
@@ -43,7 +46,7 @@ DialControl::DialControl (QWidget* parent, Range<int> value_range, int value):
 {
 	setAttribute (Qt::WA_NoBackground);
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	setFixedSize (10_screen_mm, 10_screen_mm);
+	setFixedSize (round_to_even (10.5_screen_mm), round_to_even (10.5_screen_mm));
 
 	setMinimum (value_range.min());
 	setMaximum (value_range.max());
@@ -51,8 +54,8 @@ DialControl::DialControl (QWidget* parent, Range<int> value_range, int value):
 	setPageStep (1);
 	setSingleStep (1);
 
-	_dial_pixmap = QPixmap (QSize (9_screen_mm, 9_screen_mm));
-	_disabled_dial_pixmap = QPixmap (QSize (9_screen_mm, 9_screen_mm));
+	_dial_pixmap = QPixmap (QSize (round_to_even (9_screen_mm), round_to_even (9_screen_mm)));
+	_disabled_dial_pixmap = QPixmap (QSize (round_to_even (9_screen_mm), round_to_even (9_screen_mm)));
 
 	// Render SVG into dial pixmaps:
 	QSvgRenderer _dial_renderer (QString ("share/images/dial.svg"));
@@ -101,11 +104,11 @@ DialControl::paintEvent (QPaintEvent* paint_event)
 		{
 			float center_angle = renormalize (_center_value, minimum(), maximum(), -152, +152);
 			float span_angle = center_angle - curr_angle;
-			auto adj = 0.2_screen_mm;
+			auto adj = 0.4_screen_mm;
 			QRect r = rect().adjusted (adj, adj, -adj, -adj);
-			b.setPen (QPen (path2_color, 0.4_screen_mm));
+			b.setPen (QPen (path2_color, 0.5_screen_mm));
 			b.drawArc (r, (152 + 90) * 16, -2 * 152 * 16);
-			b.setPen (QPen (path1_color, 0.4_screen_mm));
+			b.setPen (QPen (path1_color, 0.5_screen_mm));
 			b.drawArc (r, (-center_angle + 90) * 16, span_angle * 16);
 		}
 
@@ -190,6 +193,13 @@ DialControl::sliderChange (SliderChange change)
 	update();
 	if (change == SliderValueChange)
 		emit valueChanged (value());
+}
+
+
+int
+DialControl::round_to_even (float value)
+{
+	return static_cast<int> (value) / 2 * 2;
 }
 
 } // namespace Haruhi

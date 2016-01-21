@@ -100,7 +100,7 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 	_tabs = new TabWidget (this);
 	_tabs->setMovable (true);
 	_tabs->setCornerWidget (buttons_widget, Qt::TopRightCorner);
-	_tabs->setIconSize (QSize (32, 22));
+	_tabs->setIconSize (Resources::Icons16::haruhi().size() * 1.25);
 	QObject::connect (_tabs->tabBar(), SIGNAL (tabMoved (int, int)), this, SLOT (tab_moved (int, int)));
 
 	_placeholder = new Placeholder (this);

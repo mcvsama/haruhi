@@ -35,6 +35,9 @@
 
 namespace Haruhi {
 
+using namespace ScreenLiterals;
+
+
 LevelMeter::LevelMeter (QWidget* parent, LevelMetersGroup* group, float lower_db, float upper_db):
 	QWidget (parent),
 	_group (group),
@@ -256,7 +259,7 @@ LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper
 {
 	_peak_button = new QPushButton ("-inf dB", this);
 	_peak_button->setFont (Resources::small_font());
-	_peak_button->setFixedHeight (2 * Resources::small_font().pixelSize());
+	_peak_button->setFixedHeight (2.0 * Resources::small_font().pixelSize());
 	_peak_button->setFixedWidth (10_screen_mm);
 	_peak_button->setToolTip ("C-r to reset");
 	_peak_button_bg = _peak_button->palette().color (QPalette::Button);

@@ -275,6 +275,8 @@ PluginTab::update_widgets()
 
 namespace Private = PatchPrivate;
 
+using namespace ScreenLiterals;
+
 
 Patch::Patch (Session* session, std::string const& title, QWidget* parent):
 	UnitBay ("", title, 0x20000, parent),
@@ -296,7 +298,7 @@ Patch::Patch (Session* session, std::string const& title, QWidget* parent):
 	_tabs = new QTabWidget (this);
 	_tabs->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_tabs->setTabPosition (QTabWidget::North);
-	_tabs->setIconSize (QSize (6_screen_mm, 6_screen_mm));
+	_tabs->setIconSize (QSize (7_screen_mm, 7_screen_mm));
 	_tabs->setMovable (true);
 	_tabs->setCornerWidget (add_plugin_frame, Qt::BottomRightCorner);
 

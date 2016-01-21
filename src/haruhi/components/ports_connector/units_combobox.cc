@@ -37,7 +37,7 @@ UnitsCombobox::UnitsCombobox (PortsConnector* ports_connector, Port::Direction t
 	_type (type)
 {
 	read_units();
-	setIconSize (Resources::Icons16::port_group().size());
+	setIconSize (Resources::Icons16::haruhi().size());
 }
 
 

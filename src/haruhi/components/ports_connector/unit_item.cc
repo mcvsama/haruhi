@@ -35,6 +35,9 @@ namespace Haruhi {
 
 namespace PortsConnectorPrivate {
 
+using namespace ScreenLiterals;
+
+
 UnitItem::UnitItem (Port::Direction type, Unit* unit, QTreeWidget* parent, QString const& label):
 	QTreeWidgetItem (parent, QStringList (label)),
 	_filtered_out (false),
@@ -42,9 +45,9 @@ UnitItem::UnitItem (Port::Direction type, Unit* unit, QTreeWidget* parent, QStri
 	_unit (unit)
 {
 	QSize s = sizeHint (0);
-	if (s.height() < 5_screen_mm)
+	if (s.height() < 6_screen_mm)
 	{
-		s.setHeight (5_screen_mm);
+		s.setHeight (6_screen_mm);
 		setSizeHint (0, s);
 	}
 

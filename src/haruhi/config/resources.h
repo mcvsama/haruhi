@@ -27,15 +27,6 @@
 
 namespace Config {
 
-// TODO remove
-enum {
-	Spacing			= 3,
-	Margin			= 2,
-	SmallSpacing	= 2,
-	WindowMargin	= 4,
-	DialogMargin	= 6
-};
-
 extern int spacing();
 
 extern int margin();
