@@ -130,12 +130,12 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 	// Layout:
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
-	layout->setMargin (Config::DialogMargin);
-	layout->setSpacing (Config::Spacing);
+	layout->setMargin (Config::dialog_margin());
+	layout->setSpacing (Config::spacing());
 	layout->setSizeConstraint (QLayout::SetNoConstraint);
 
 	QHBoxLayout* name_layout = new QHBoxLayout();
-	name_layout->setSpacing (Config::Spacing);
+	name_layout->setSpacing (Config::spacing());
 	name_layout->addWidget (name_label);
 	name_layout->addWidget (_name);
 
@@ -162,14 +162,14 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 	filters_layout->addWidget (_smoothing, 7, 2);
 
 	QHBoxLayout* buttons_layout = new QHBoxLayout();
-	buttons_layout->setSpacing (Config::Spacing);
+	buttons_layout->setSpacing (Config::spacing());
 	buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 	buttons_layout->addWidget (_save_button);
 
 	layout->addLayout (name_layout);
 	layout->addWidget (filters);
 	layout->addLayout (buttons_layout);
-	layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
+	layout->addItem (new QSpacerItem (0, Config::spacing(), QSizePolicy::Fixed, QSizePolicy::Fixed));
 
 	update_widgets();
 

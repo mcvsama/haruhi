@@ -87,12 +87,12 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	_stack->setCurrentWidget (_device_dialog);
 
 	QLabel* info = new QLabel ("Devices used in current session. Each device corresponds to external MIDI port.", this);
-	info->setMargin (Config::Margin);
+	info->setMargin (Config::margin());
 
 	// Layouts:
 
 	QHBoxLayout* input_buttons_layout = new QHBoxLayout();
-	input_buttons_layout->setSpacing (Config::Spacing);
+	input_buttons_layout->setSpacing (Config::spacing());
 	input_buttons_layout->addWidget (_insert_template_button);
 	input_buttons_layout->addWidget (_create_device_button);
 	input_buttons_layout->addWidget (_create_controller_button);
@@ -100,13 +100,13 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 
 	QHBoxLayout* panels_layout = new QHBoxLayout();
-	panels_layout->setSpacing (Config::Spacing);
+	panels_layout->setSpacing (Config::spacing());
 	panels_layout->addWidget (_tree);
 	panels_layout->addWidget (_stack);
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
-	layout->setMargin (Config::Margin);
-	layout->setSpacing (Config::Spacing);
+	layout->setMargin (Config::margin());
+	layout->setSpacing (Config::spacing());
 	layout->addLayout (input_buttons_layout);
 	layout->addLayout (panels_layout);
 	layout->addWidget (info);

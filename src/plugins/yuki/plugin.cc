@@ -40,7 +40,7 @@ Plugin::Plugin (std::string const& urn, std::string const& title, int id, QWidge
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (0);
-	layout->setSpacing (Config::Spacing);
+	layout->setSpacing (Config::spacing());
 	layout->addWidget (_part_manager_widget);
 	layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }

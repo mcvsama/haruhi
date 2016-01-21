@@ -36,7 +36,7 @@ Program::Program (Session* session, QWidget* parent):
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (0);
-	layout->setSpacing (Config::Spacing);
+	layout->setSpacing (Config::spacing());
 	layout->addWidget (_patch);
 }
 

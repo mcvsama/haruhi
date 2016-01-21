@@ -54,19 +54,19 @@ OutputDialog::OutputDialog (QWidget* parent, Backend* backend):
 	// Layout:
 
 	QHBoxLayout* name_layout = new QHBoxLayout();
-	name_layout->setSpacing (Config::Spacing);
+	name_layout->setSpacing (Config::spacing());
 	name_layout->addWidget (name_label);
 	name_layout->addWidget (_name);
 
 	QHBoxLayout* buttons_layout = new QHBoxLayout();
-	buttons_layout->setSpacing (Config::Spacing);
+	buttons_layout->setSpacing (Config::spacing());
 	buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 	buttons_layout->addWidget (_accept_button);
 	buttons_layout->addWidget (_reject_button);
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
-	layout->setMargin (Config::DialogMargin);
-	layout->setSpacing (Config::Spacing);
+	layout->setMargin (Config::dialog_margin());
+	layout->setSpacing (Config::spacing());
 	layout->setSizeConstraint (QLayout::SetNoConstraint);
 	layout->addLayout (name_layout);
 	layout->addLayout (buttons_layout);

@@ -100,12 +100,12 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 	// Layouts:
 
 	QVBoxLayout* v1 = new QVBoxLayout();
-	v1->setSpacing (Config::Spacing);
+	v1->setSpacing (Config::spacing());
 	v1->addWidget (_only_favs_button);
 	v1->addWidget (_tree);
 
 	QHBoxLayout* h2 = new QHBoxLayout();
-	h2->setSpacing (Config::Spacing);
+	h2->setSpacing (Config::spacing());
 	h2->addWidget (_load_button);
 	h2->addWidget (_save_button);
 	h2->addWidget (_create_button);
@@ -113,14 +113,14 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 
 	QVBoxLayout* v2 = new QVBoxLayout();
 	v2->setMargin (0);
-	v2->setSpacing (Config::Spacing);
+	v2->setSpacing (Config::spacing());
 	v2->setSizeConstraint (QLayout::SetFixedSize);
 	v2->addLayout (h2);
 	v2->addWidget (_editor);
 
 	QHBoxLayout* h1 = new QHBoxLayout (this);
 	h1->setMargin (0);
-	h1->setSpacing (Config::Spacing);
+	h1->setSpacing (Config::spacing());
 	h1->addLayout (v1);
 	h1->addLayout (v2);
 

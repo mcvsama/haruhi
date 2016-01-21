@@ -109,19 +109,19 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 
 	QGridLayout* buttons_layout = new QGridLayout (buttons_widget);
 	buttons_layout->setMargin (0);
-	buttons_layout->setSpacing (Config::Spacing);
+	buttons_layout->setSpacing (Config::spacing());
 	buttons_layout->addWidget (_add_part_button, 0, 0);
 	buttons_layout->addWidget (_remove_part_button, 0, 1);
-	buttons_layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed), 1, 0, 1, 2);
+	buttons_layout->addItem (new QSpacerItem (0, Config::spacing(), QSizePolicy::Fixed, QSizePolicy::Fixed), 1, 0, 1, 2);
 
 	QVBoxLayout* main_layout = new QVBoxLayout();
 	main_layout->setMargin (0);
-	main_layout->setSpacing (Config::Spacing);
+	main_layout->setSpacing (Config::spacing());
 	main_layout->addWidget (_knob_volume);
 	main_layout->addWidget (_knob_panorama);
 	main_layout->addWidget (_knob_detune);
 	main_layout->addWidget (_knob_stereo_width);
-	main_layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
+	main_layout->addItem (new QSpacerItem (0, Config::spacing(), QSizePolicy::Fixed, QSizePolicy::Fixed));
 	main_layout->addWidget (new QLabel ("Max voices:", this));
 	main_layout->addWidget (_polyphony);
 	main_layout->addWidget (new QLabel ("Ovrsmpling:", this));
@@ -130,7 +130,7 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 
 	QHBoxLayout* layout = new QHBoxLayout (this);
 	layout->setMargin (0);
-	layout->setSpacing (Config::Spacing);
+	layout->setSpacing (Config::spacing());
 	layout->addLayout (main_layout);
 	layout->addWidget (_tabs);
 

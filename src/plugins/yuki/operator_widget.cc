@@ -75,8 +75,8 @@ OperatorWidget::OperatorWidget (QWidget* parent, unsigned int operator_no, Param
 
 	QGroupBox* group = new QGroupBox (this);
 	QGridLayout* group_layout = new QGridLayout (group);
-	group_layout->setMargin (Config::Margin);
-	group_layout->setSpacing (Config::Spacing);
+	group_layout->setMargin (Config::margin());
+	group_layout->setSpacing (Config::spacing());
 	group_layout->addWidget (new StyledBackground (label, this, 2), 0, 0, 1, 4);
 	QLabel* f = new QLabel ("Frequency: ", this);
 	f->setToolTip ("Relative frequency");
@@ -90,7 +90,7 @@ OperatorWidget::OperatorWidget (QWidget* parent, unsigned int operator_no, Param
 
 	QGridLayout* layout = new QGridLayout (this);
 	layout->setMargin (0);
-	layout->setSpacing (Config::Spacing);
+	layout->setSpacing (Config::spacing());
 	layout->addWidget (group, 0, 0);
 	layout->addWidget (_knob_detune, 0, 1);
 

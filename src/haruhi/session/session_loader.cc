@@ -70,9 +70,9 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	QObject::connect (_recent_listview, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (open_recent (QTreeWidgetItem*, int)));
 
 	QVBoxLayout* open_layout = new QVBoxLayout (_open_tab);
-	open_layout->setSpacing (Config::Spacing);
-	open_layout->setMargin (2 * Config::Margin);
-	open_layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Fixed));
+	open_layout->setSpacing (Config::spacing());
+	open_layout->setMargin (2 * Config::margin());
+	open_layout->addItem (new QSpacerItem (0, Config::spacing(), QSizePolicy::Fixed, QSizePolicy::Fixed));
 	open_layout->addWidget (new QLabel ("Recent sessions:", _open_tab));
 	open_layout->addWidget (_recent_listview);
 
@@ -122,12 +122,12 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	_devices_list = new QListWidget (audio_box);
 
 	QGridLayout* new_grid = new QGridLayout (name_box);
-	new_grid->setSpacing (Config::Spacing);
+	new_grid->setSpacing (Config::spacing());
 	new_grid->addWidget (_new_session_name, 0, 0);
 
 	QGridLayout* audio_grid = new QGridLayout (audio_box);
-	audio_grid->setSpacing (Config::Spacing);
-	audio_grid->setMargin (3 * Config::Margin);
+	audio_grid->setSpacing (Config::spacing());
+	audio_grid->setMargin (3 * Config::margin());
 	audio_grid->setHorizontalSpacing (100);
 	audio_grid->addWidget (new QLabel ("Audio inputs:", _new_tab), 0, 0);
 	audio_grid->addWidget (_new_session_audio_inputs, 0, 1);
@@ -135,16 +135,16 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	audio_grid->addWidget (_new_session_audio_outputs, 1, 1);
 
 	QGridLayout* event_grid = new QGridLayout (event_box);
-	event_grid->setSpacing (Config::Spacing);
-	event_grid->setMargin (2 * Config::Margin);
+	event_grid->setSpacing (Config::spacing());
+	event_grid->setMargin (2 * Config::margin());
 	event_grid->addWidget (_devices_combobox, 0, 0);
 	event_grid->addWidget (_devices_add, 0, 1);
 	event_grid->addWidget (_devices_del, 0, 2);
 	event_grid->addWidget (_devices_list, 1, 0, 1, 3);
 
 	QVBoxLayout* new_layout = new QVBoxLayout (_new_tab);
-	new_layout->setSpacing (Config::Spacing);
-	new_layout->setMargin (3 * Config::Margin);
+	new_layout->setSpacing (Config::spacing());
+	new_layout->setMargin (3 * Config::margin());
 	new_layout->addWidget (name_box);
 	new_layout->addWidget (audio_box);
 	new_layout->addWidget (event_box);
@@ -191,15 +191,15 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	//
 
 	QHBoxLayout* buttons_layout = new QHBoxLayout();
-	buttons_layout->setSpacing (Config::Spacing);
+	buttons_layout->setSpacing (Config::spacing());
 	buttons_layout->addWidget (_load_from_file_button);
 	buttons_layout->addItem (new QSpacerItem (0, 1, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 	buttons_layout->addWidget (_open_button);
 	buttons_layout->addWidget (_quit_button);
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
-	layout->setMargin (Config::DialogMargin);
-	layout->setSpacing (Config::Spacing);
+	layout->setMargin (Config::dialog_margin());
+	layout->setSpacing (Config::spacing());
 	layout->addWidget (_tabs);
 	layout->addLayout (buttons_layout);
 

@@ -94,41 +94,41 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	// Layouts:
 
 	QHBoxLayout* input_buttons_layout = new QHBoxLayout();
-	input_buttons_layout->setSpacing (Config::Spacing);
+	input_buttons_layout->setSpacing (Config::spacing());
 	input_buttons_layout->addWidget (_create_input_button);
 	input_buttons_layout->addWidget (_destroy_input_button);
 	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 
 	QVBoxLayout* inputs_layout = new QVBoxLayout();
-	inputs_layout->setSpacing (Config::Spacing);
+	inputs_layout->setSpacing (Config::spacing());
 	inputs_layout->addWidget (_inputs_list);
 	inputs_layout->addLayout (input_buttons_layout);
 
 	QHBoxLayout* output_buttons_layout = new QHBoxLayout();
-	output_buttons_layout->setSpacing (Config::Spacing);
+	output_buttons_layout->setSpacing (Config::spacing());
 	output_buttons_layout->addWidget (_create_output_button);
 	output_buttons_layout->addWidget (_destroy_output_button);
 	output_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 
 	QVBoxLayout* outputs_layout = new QVBoxLayout();
-	outputs_layout->setSpacing (Config::Spacing);
+	outputs_layout->setSpacing (Config::spacing());
 	outputs_layout->addWidget (_outputs_list);
 	outputs_layout->addLayout (output_buttons_layout);
 
 	QHBoxLayout* top_layout = new QHBoxLayout();
-	top_layout->setSpacing (Config::Spacing);
+	top_layout->setSpacing (Config::spacing());
 	top_layout->addWidget (_disconnect_button);
 	top_layout->addWidget (_reconnect_button);
 	top_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
 	QHBoxLayout* lists_layout = new QHBoxLayout();
-	lists_layout->setSpacing (Config::Spacing);
+	lists_layout->setSpacing (Config::spacing());
 	lists_layout->addLayout (inputs_layout);
 	lists_layout->addLayout (outputs_layout);
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
-	layout->setMargin (Config::Margin);
-	layout->setSpacing (Config::Spacing);
+	layout->setMargin (Config::margin());
+	layout->setSpacing (Config::spacing());
 	layout->addLayout (top_layout);
 	layout->addLayout (lists_layout);
 

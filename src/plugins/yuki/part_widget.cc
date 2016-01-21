@@ -402,14 +402,14 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	QHBoxLayout* pitchbend_range_layout = new QHBoxLayout();
 	pitchbend_range_layout->setMargin (0);
-	pitchbend_range_layout->setSpacing (Config::Spacing);
+	pitchbend_range_layout->setSpacing (Config::spacing());
 	pitchbend_range_layout->addWidget (_pitchbend_down_semitones);
 	pitchbend_range_layout->addWidget (_pitchbend_up_semitones);
 
 	QGroupBox* group1 = new QGroupBox (this);
 	QGridLayout* group1_layout = new QGridLayout (group1);
-	group1_layout->setMargin (2 * Config::Margin);
-	group1_layout->setSpacing (Config::Spacing);
+	group1_layout->setMargin (2 * Config::margin());
+	group1_layout->setSpacing (Config::spacing());
 	group1_layout->addWidget (new QLabel ("Filters:", this), 0, 0);
 	group1_layout->addWidget (_filter_configuration, 0, 1);
 	group1_layout->addWidget (new QLabel ("Pitchbend range:", this), 1, 0);
@@ -422,7 +422,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QWidget* group2 = new QWidget (this);
 	QVBoxLayout* group2_layout = new QVBoxLayout (group2);
 	group2_layout->setMargin (0);
-	group2_layout->setSpacing (Config::Spacing);
+	group2_layout->setSpacing (Config::spacing());
 	group2_layout->addWidget (_auto_center);
 	group2_layout->addItem (new QSpacerItem (0, 10, QSizePolicy::Fixed, QSizePolicy::Fixed));
 	group2_layout->addWidget (_const_portamento_time);
@@ -434,7 +434,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	QGridLayout* panel_layout = new QGridLayout();
 	panel_layout->setMargin (0);
-	panel_layout->setSpacing (Config::Spacing);
+	panel_layout->setSpacing (Config::spacing());
 	panel_layout->addWidget (_wave_type, 0, 0, 1, 2);
 	panel_layout->addWidget (_modulator_wave_type, 0, 2, 1, 2);
 	panel_layout->addWidget (_modulator_type, 0, 4, 1, 2);
@@ -480,7 +480,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	QGridLayout* modulator_layout = new QGridLayout (_modulator_panel);
 	modulator_layout->setMargin (0);
-	modulator_layout->setSpacing (Config::Spacing);
+	modulator_layout->setSpacing (Config::spacing());
 	modulator_layout->addWidget (_modulator_enabled, 0, 0);
 	modulator_layout->addWidget (_operator_1, 1, 0);
 	modulator_layout->addWidget (_operator_2, 2, 0);
@@ -488,9 +488,9 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	modulator_layout->addWidget (create_modulator_label ("→"), 1, 1, 1, 1, Qt::AlignCenter);
 	modulator_layout->addWidget (create_modulator_label ("→"), 2, 1, 1, 1, Qt::AlignCenter);
 	modulator_layout->addWidget (create_modulator_label ("→"), 3, 1, 1, 1, Qt::AlignCenter);
-	modulator_layout->addItem (new QSpacerItem (Config::Spacing * 4, 0, QSizePolicy::Fixed, QSizePolicy::Fixed), 0, 1);
+	modulator_layout->addItem (new QSpacerItem (Config::spacing() * 4, 0, QSizePolicy::Fixed, QSizePolicy::Fixed), 0, 1);
 	modulator_layout->addWidget (fm_modulation_matrix_label, 0, 2, 1, 4, Qt::AlignLeft);
-	modulator_layout->addItem (new QSpacerItem (Config::Spacing * 4, 0, QSizePolicy::Fixed, QSizePolicy::Fixed), 0, 6);
+	modulator_layout->addItem (new QSpacerItem (Config::spacing() * 4, 0, QSizePolicy::Fixed, QSizePolicy::Fixed), 0, 6);
 	modulator_layout->addWidget (am_modulation_matrix_label, 0, 7, 1, 4, Qt::AlignLeft);
 	for (unsigned int o = 0; o < Params::Part::OperatorsNumber + 1; ++o)
 		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
@@ -514,13 +514,13 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	QHBoxLayout* top_checkboxes_layout = new QHBoxLayout (top_checkboxes);
 	top_checkboxes_layout->setMargin (0);
-	top_checkboxes_layout->setSpacing (2 * Config::Spacing);
+	top_checkboxes_layout->setSpacing (2 * Config::spacing());
 	top_checkboxes_layout->addWidget (_part_enabled);
 	top_checkboxes_layout->addWidget (_show_modulator);
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
-	layout->setMargin (Config::Margin);
-	layout->setSpacing (Config::Spacing);
+	layout->setMargin (Config::margin());
+	layout->setSpacing (Config::spacing());
 	layout->addWidget (new StyledBackground (top_checkboxes, this));
 	layout->addWidget (_stack);
 
@@ -533,14 +533,14 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	QHBoxLayout* harmonics_window_buttons_layout = new QHBoxLayout();
 	harmonics_window_buttons_layout->setMargin (0);
-	harmonics_window_buttons_layout->setSpacing (Config::Spacing);
+	harmonics_window_buttons_layout->setSpacing (Config::spacing());
 	harmonics_window_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 	harmonics_window_buttons_layout->addWidget (close_harmonics_button);
 	harmonics_window_buttons_layout->addWidget (_harmonics_reset_button);
 
 	QVBoxLayout* harmonics_window_layout = new QVBoxLayout (_harmonics_window);
-	harmonics_window_layout->setMargin (Config::WindowMargin);
-	harmonics_window_layout->setSpacing (Config::Spacing);
+	harmonics_window_layout->setMargin (Config::window_margin());
+	harmonics_window_layout->setSpacing (Config::spacing());
 	harmonics_window_layout->addWidget (new StyledBackground (harmonics_label, _harmonics_window, 2));
 	harmonics_window_layout->addWidget (_harmonics_widget);
 	harmonics_window_layout->addWidget (new StyledBackground (harmonic_phases_label, _harmonics_window, 2));

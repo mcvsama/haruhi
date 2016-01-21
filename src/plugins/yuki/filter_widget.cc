@@ -78,7 +78,7 @@ FilterWidget::FilterWidget (QWidget* parent, unsigned int filter_no, Params::Fil
 	_response_plot = new Haruhi::FrequencyResponsePlot (plot_frame);
 	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame);
 	plot_frame_layout->setMargin (0);
-	plot_frame_layout->setSpacing (Config::Spacing);
+	plot_frame_layout->setSpacing (Config::spacing());
 	plot_frame_layout->addWidget (_response_plot);
 
 	// Filter type combo box:
@@ -114,32 +114,32 @@ FilterWidget::FilterWidget (QWidget* parent, unsigned int filter_no, Params::Fil
 
 	// Layouts:
 	QHBoxLayout* hor2_layout = new QHBoxLayout();
-	hor2_layout->setSpacing (Config::Spacing);
+	hor2_layout->setSpacing (Config::spacing());
 	hor2_layout->addWidget (_filter_type);
 	hor2_layout->addWidget (_stages);
 	hor2_layout->addWidget (_limiter_enabled);
 
 	QHBoxLayout* params_layout = new QHBoxLayout();
-	params_layout->setSpacing (Config::Spacing);
+	params_layout->setSpacing (Config::spacing());
 	params_layout->addWidget (_knob_frequency);
 	params_layout->addWidget (_knob_resonance);
 	params_layout->addWidget (_knob_gain);
 	params_layout->addWidget (_knob_attenuation);
 
 	QHBoxLayout* hor3_layout = new QHBoxLayout();
-	hor3_layout->setSpacing (Config::Spacing);
+	hor3_layout->setSpacing (Config::spacing());
 	hor3_layout->addLayout (params_layout);
 
 	QVBoxLayout* ver1_layout = new QVBoxLayout (_panel);
 	ver1_layout->setMargin (0);
-	ver1_layout->setSpacing (Config::Spacing);
+	ver1_layout->setSpacing (Config::spacing());
 	ver1_layout->addWidget (plot_frame);
 	ver1_layout->addLayout (hor2_layout);
 	ver1_layout->addLayout (hor3_layout);
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (0);
-	layout->setSpacing (Config::Spacing);
+	layout->setSpacing (Config::spacing());
 	layout->addWidget (new StyledBackground (_enabled_widget, this));
 	layout->addWidget (_panel);
 

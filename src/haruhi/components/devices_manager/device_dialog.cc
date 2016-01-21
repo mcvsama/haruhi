@@ -54,19 +54,19 @@ DeviceDialog::DeviceDialog (QWidget* parent, Flags flags):
 	QObject::connect (_save_button, SIGNAL (clicked()), this, SLOT (validate_and_save()));
 
 	QGridLayout* grid_layout = new QGridLayout();
-	grid_layout->setSpacing (Config::Spacing);
+	grid_layout->setSpacing (Config::spacing());
 	grid_layout->addWidget (name_label, 0, 0);
 	grid_layout->addWidget (_name, 0, 1);
 	grid_layout->addWidget (_auto_add_checkbox, 1, 1);
 
 	QHBoxLayout* buttons_layout = new QHBoxLayout();
-	buttons_layout->setSpacing (Config::Spacing);
+	buttons_layout->setSpacing (Config::spacing());
 	buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 	buttons_layout->addWidget (_save_button);
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
-	layout->setMargin (Config::DialogMargin);
-	layout->setSpacing (Config::Spacing);
+	layout->setMargin (Config::dialog_margin());
+	layout->setSpacing (Config::spacing());
 	layout->setSizeConstraint (QLayout::SetNoConstraint);
 	layout->addLayout (grid_layout);
 	layout->addLayout (buttons_layout);

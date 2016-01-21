@@ -44,7 +44,7 @@ Panel::Panel (Port::Direction type, PortsConnector* ports_connector, QWidget* pa
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (0);
-	layout->setSpacing (Config::Spacing);
+	layout->setSpacing (Config::spacing());
 	layout->addWidget (_filter);
 	layout->addWidget (_list);
 }

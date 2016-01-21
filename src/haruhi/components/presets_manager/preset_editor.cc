@@ -80,13 +80,13 @@ PresetEditor::PresetEditor (PresetsManager* presets_manager, QWidget* parent):
 	QObject::connect (_update_details_button, SIGNAL (clicked()), this, SLOT (update_details()));
 
 	QHBoxLayout* hor_layout = new QHBoxLayout();
-	hor_layout->setSpacing (Config::Spacing);
+	hor_layout->setSpacing (Config::spacing());
 	hor_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 	hor_layout->addWidget (_update_details_button);
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (0);
-	layout->setSpacing (Config::Spacing);
+	layout->setSpacing (Config::spacing());
 	layout->addWidget (grid);
 	layout->addLayout (hor_layout);
 	layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));

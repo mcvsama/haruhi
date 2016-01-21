@@ -77,19 +77,19 @@ Private::SettingsDialog::SettingsDialog (QWidget* parent, Session* session):
 	// Layouts:
 
 	QHBoxLayout* name_layout = new QHBoxLayout();
-	name_layout->setSpacing (Config::Spacing);
+	name_layout->setSpacing (Config::spacing());
 	name_layout->addWidget (name_label);
 	name_layout->addWidget (_name);
 
 	QHBoxLayout* buttons_layout = new QHBoxLayout();
-	buttons_layout->setSpacing (Config::Spacing);
+	buttons_layout->setSpacing (Config::spacing());
 	buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 	buttons_layout->addWidget (_accept_button);
 	buttons_layout->addWidget (_reject_button);
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
-	layout->setMargin (Config::DialogMargin);
-	layout->setSpacing (Config::Spacing);
+	layout->setMargin (Config::dialog_margin());
+	layout->setSpacing (Config::spacing());
 	layout->addLayout (name_layout);
 	layout->addLayout (buttons_layout);
 
@@ -336,8 +336,8 @@ Session::MeterPanel::MeterPanel (Session* session, QWidget* parent):
 	QObject::connect (_master_volume, SIGNAL (valueChanged (int)), _session, SLOT (master_volume_changed (int)));
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
-	layout->setMargin (Config::Margin);
-	layout->setSpacing (Config::Spacing);
+	layout->setMargin (Config::margin());
+	layout->setSpacing (Config::spacing());
 	layout->addWidget (_level_meters_group);
 	layout->addWidget (_master_volume);
 }
@@ -428,28 +428,28 @@ Session::Session (QWidget* parent):
 	// Layouts:
 
 	QHBoxLayout* header_layout = new QHBoxLayout (header);
-	header_layout->setMargin (Config::Margin);
+	header_layout->setMargin (Config::margin());
 	header_layout->addWidget (inner_header);
 
 	QHBoxLayout* inner_header_layout = new QHBoxLayout (inner_header);
 	inner_header_layout->setMargin (0);
-	inner_header_layout->setSpacing (Config::Spacing);
+	inner_header_layout->setSpacing (Config::spacing());
 	inner_header_layout->addWidget (_session_name);
 	inner_header_layout->addItem (new QSpacerItem (0, 0));
 	inner_header_layout->addWidget (tempo_note);
 	inner_header_layout->addWidget (_tempo_spinbox);
-	inner_header_layout->addItem (new QSpacerItem (2 * Config::Spacing, 0, QSizePolicy::Maximum, QSizePolicy::Minimum));
+	inner_header_layout->addItem (new QSpacerItem (2 * Config::spacing(), 0, QSizePolicy::Maximum, QSizePolicy::Minimum));
 	inner_header_layout->addWidget (_panic_button);
 	inner_header_layout->addWidget (_main_menu_button);
 
 	QHBoxLayout* bottom_layout = new QHBoxLayout();
-	bottom_layout->setSpacing (Config::Spacing + 1);
+	bottom_layout->setSpacing (Config::spacing() + 1);
 	bottom_layout->addWidget (_meter_panel);
 	bottom_layout->addWidget (_stack);
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
-	layout->setMargin (Config::WindowMargin);
-	layout->setSpacing (Config::Spacing);
+	layout->setMargin (Config::window_margin());
+	layout->setSpacing (Config::spacing());
 	layout->addWidget (header);
 	layout->addLayout (bottom_layout);
 

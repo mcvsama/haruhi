@@ -32,7 +32,7 @@ PlotFrame::PlotFrame (QWidget* parent):
 
 	_layout = new QVBoxLayout (this);
 	_layout->setMargin (0);
-	_layout->setSpacing (Config::Spacing);
+	_layout->setSpacing (Config::spacing());
 }
 
 

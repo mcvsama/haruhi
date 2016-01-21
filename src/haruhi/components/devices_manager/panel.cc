@@ -80,17 +80,17 @@ Panel::Panel (QWidget* parent, Settings* settings):
 	_stack->setCurrentWidget (_device_dialog);
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
-	layout->setMargin (Config::Margin);
-	layout->setSpacing (Config::Spacing);
+	layout->setMargin (Config::margin());
+	layout->setSpacing (Config::spacing());
 
 	QHBoxLayout* input_buttons_layout = new QHBoxLayout();
-	input_buttons_layout->setSpacing (Config::Spacing);
+	input_buttons_layout->setSpacing (Config::spacing());
 
 	QHBoxLayout* panels_layout = new QHBoxLayout();
-	panels_layout->setSpacing (Config::Spacing);
+	panels_layout->setSpacing (Config::spacing());
 
 	QLabel* info = new QLabel ("Device templates.", this);
-	info->setMargin (Config::Margin);
+	info->setMargin (Config::margin());
 
 	layout->addLayout (input_buttons_layout);
 	layout->addLayout (panels_layout);

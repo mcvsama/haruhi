@@ -49,7 +49,7 @@ VanHalen::VanHalen (std::string const& urn, std::string const& title, int id, QW
 	_knob_comb_index = new Haruhi::Knob (this, 0, &_comb_index, "Index", 0, 1000, 1, 0);
 	_knob_comb_alpha = new Haruhi::Knob (this, 0, &_comb_alpha, "Alpha", -1.0, 1.0, 10, 2);
 
-	QHBoxLayout* layout = new QHBoxLayout (this, Config::Spacing);
+	QHBoxLayout* layout = new QHBoxLayout (this, Config::spacing());
 	layout->addWidget (_knob_comb_index);
 	layout->addWidget (_knob_comb_alpha);
 }

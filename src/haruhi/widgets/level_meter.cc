@@ -284,7 +284,7 @@ LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (0);
-	layout->setSpacing (Config::Spacing);
+	layout->setSpacing (Config::spacing());
 	layout->addWidget (_peak_button);
 	layout->addLayout (meters_layout);
 

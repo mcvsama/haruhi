@@ -47,7 +47,7 @@ ConnectionsTab::ConnectionsTab (Patch* patch, QWidget* parent):
 	_patch (patch)
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	setContentsMargins (Config::Margin, Config::Margin, Config::Margin, Config::Margin);
+	setContentsMargins (Config::margin(), Config::margin(), Config::margin(), Config::margin());
 
 	_ports_connector = new PortsConnector (_patch, this);
 	_ports_connector->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
@@ -55,12 +55,12 @@ ConnectionsTab::ConnectionsTab (Patch* patch, QWidget* parent):
 	_ports_connector->add_external_unit (_patch->session()->graph()->event_backend());
 
 	QHBoxLayout* top_layout = new QHBoxLayout();
-	top_layout->setSpacing (Config::Spacing);
+	top_layout->setSpacing (Config::spacing());
 	top_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (0);
-	layout->setSpacing (Config::Spacing);
+	layout->setSpacing (Config::spacing());
 	layout->addLayout (top_layout);
 	layout->addWidget (_ports_connector);
 }
@@ -169,7 +169,7 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 
 	QHBoxLayout* bar_layout = new QHBoxLayout (bar);
 	bar_layout->setMargin (0);
-	bar_layout->setSpacing (Config::Spacing);
+	bar_layout->setSpacing (Config::spacing());
 	bar_layout->addWidget (title_button);
 	if (plugin_is_has_presets)
 	{
@@ -184,8 +184,8 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 		bar_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
-	layout->setMargin (Config::Margin);
-	layout->setSpacing (Config::Spacing);
+	layout->setMargin (Config::margin());
+	layout->setSpacing (Config::spacing());
 	layout->addWidget (bar);
 	layout->addWidget (_stack);
 
@@ -310,11 +310,11 @@ Patch::Patch (Session* session, std::string const& title, QWidget* parent):
 	add_plugin_layout->setMargin (0);
 	add_plugin_layout->setSpacing (0);
 	add_plugin_layout->addWidget (add_plugin_button);
-	add_plugin_layout->addItem (new QSpacerItem (0, Config::Spacing, QSizePolicy::Fixed, QSizePolicy::Expanding));
+	add_plugin_layout->addItem (new QSpacerItem (0, Config::spacing(), QSizePolicy::Fixed, QSizePolicy::Expanding));
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (0);
-	layout->setSpacing (Config::Spacing);
+	layout->setSpacing (Config::spacing());
 	layout->addWidget (_tabs);
 }
 
