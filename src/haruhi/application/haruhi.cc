@@ -22,6 +22,7 @@
 #include <QtGui/QMainWindow>
 #include <QtGui/QMessageBox>
 #include <QtGui/QLayout>
+#include <QtGui/QPixmapCache>
 
 // Haruhi:
 #include <haruhi/config/all.h>

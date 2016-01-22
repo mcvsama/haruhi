@@ -19,6 +19,7 @@
 #include <QtGui/QLayout>
 #include <QtGui/QPainter>
 #include <QtGui/QPaintEvent>
+#include <QtGui/QPixmapCache>
 #include <QtSvg/QSvgRenderer>
 
 // Haruhi:
@@ -54,29 +55,33 @@ DialControl::DialControl (QWidget* parent, Range<int> value_range, int value):
 	setPageStep (1);
 	setSingleStep (1);
 
-	_dial_pixmap = QPixmap (QSize (round_to_even (9_screen_mm), round_to_even (9_screen_mm)));
-	_disabled_dial_pixmap = QPixmap (QSize (round_to_even (9_screen_mm), round_to_even (9_screen_mm)));
-
 	// Render SVG into dial pixmaps:
 	QSvgRenderer _dial_renderer (QString ("share/images/dial.svg"));
 
-	// Normal:
+	// Enabled widget:
+	QString enabled_key = "share/images/dial.svg:enabled";
+	if (!QPixmapCache::find (enabled_key, _enabled_dial_pixmap))
 	{
+		_enabled_dial_pixmap = QPixmap (QSize (round_to_even (9_screen_mm), round_to_even (9_screen_mm)));
 		QColor background = palette().color (QPalette::Window);
-		QPainter painter (&_dial_pixmap);
-		painter.fillRect (_dial_pixmap.rect(), background);
+		QPainter painter (&_enabled_dial_pixmap);
+		painter.fillRect (_enabled_dial_pixmap.rect(), background);
 		_dial_renderer.render (&painter);
+		QPixmapCache::insert (enabled_key, _enabled_dial_pixmap);
 	}
 
-	// Disabled:
+	// Disabled widget:
+	QString disabled_key = "share/images/dial.svg:disabled";
+	if (!QPixmapCache::find (disabled_key, _disabled_dial_pixmap))
 	{
-
+		_disabled_dial_pixmap = QPixmap (QSize (round_to_even (9_screen_mm), round_to_even (9_screen_mm)));
 		QColor background = palette().color (QPalette::Window);
 		QPainter painter (&_disabled_dial_pixmap);
 		painter.fillRect (_disabled_dial_pixmap.rect(), background);
 		_dial_renderer.render (&painter);
 		background.setAlphaF (0.75);
 		painter.fillRect (_disabled_dial_pixmap.rect(), background);
+		QPixmapCache::insert (disabled_key, _disabled_dial_pixmap);
 	}
 }
 
@@ -95,9 +100,9 @@ DialControl::paintEvent (QPaintEvent* paint_event)
 		b.setRenderHint (QPainter::Antialiasing, true);
 		b.fillRect (rect(), palette().color (QPalette::Window));
 
-		float pos_x = (width() - _dial_pixmap.width()) / 2.0f;
-		float pos_y = (height() - _dial_pixmap.height()) / 2.0f;
-		b.drawPixmap (pos_x, pos_y, isEnabled() ? _dial_pixmap : _disabled_dial_pixmap);
+		float pos_x = (width() - _enabled_dial_pixmap.width()) / 2.0f;
+		float pos_y = (height() - _enabled_dial_pixmap.height()) / 2.0f;
+		b.drawPixmap (pos_x, pos_y, isEnabled() ? _enabled_dial_pixmap : _disabled_dial_pixmap);
 
 		float curr_angle = renormalize (value(), minimum(), maximum(), -152, +152);
 		if (_ring_visible)

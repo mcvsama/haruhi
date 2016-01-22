@@ -19,7 +19,6 @@
 // Qt:
 #include <QtGui/QFont>
 #include <QtGui/QPixmap>
-#include <QtGui/QPixmapCache>
 
 // Haruhi:
 #include <haruhi/config/all.h>

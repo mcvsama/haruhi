@@ -89,7 +89,7 @@ class DialControl: public QAbstractSlider
 	round_to_even (float value);
 
   private:
-	QPixmap		_dial_pixmap;
+	QPixmap		_enabled_dial_pixmap;
 	QPixmap		_disabled_dial_pixmap;
 	QPixmap		_double_buffer;
 	QPoint		_mouse_press_position;

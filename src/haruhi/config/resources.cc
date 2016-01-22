@@ -17,6 +17,7 @@
 // Qt:
 #include <QtGui/QFont>
 #include <QtGui/QApplication>
+#include <QtGui/QPixmapCache>
 
 // Haruhi:
 #include <haruhi/application/services.h>
@@ -77,7 +78,7 @@ QPixmap
 get_icon (QString const& file) noexcept
 {
 	QPixmap p;
-	if (!QPixmapCache::find (file, p))
+	if (!QPixmapCache::find ("icon16." + file, p))
 	{
 		p = QPixmap (file).scaled (QSize (5_screen_mm, 5_screen_mm), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 		QPixmapCache::insert (file, p);
