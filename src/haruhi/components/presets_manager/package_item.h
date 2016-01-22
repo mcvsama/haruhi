@@ -59,10 +59,6 @@ class PackageItem: public QTreeWidgetItem
 	remove_category_item (CategoryItem* category_item);
 
   private:
-	void
-	setup();
-
-  private:
 	PresetsManager*	_presets_manager;
 	Package*		_package;
 };

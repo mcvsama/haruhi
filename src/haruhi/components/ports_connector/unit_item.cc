@@ -24,6 +24,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/session/unit_bay.h>
+#include <haruhi/widgets/generic_item.h>
 
 // Local:
 #include "unit_item.h"
@@ -44,12 +45,7 @@ UnitItem::UnitItem (Port::Direction type, Unit* unit, QTreeWidget* parent, QStri
 	_type (type),
 	_unit (unit)
 {
-	QSize s = sizeHint (0);
-	if (s.height() < 6_screen_mm)
-	{
-		s.setHeight (6_screen_mm);
-		setSizeHint (0, s);
-	}
+	make_standard_height (this);
 
 	if (dynamic_cast<UnitBay const*> (_unit))
 	{

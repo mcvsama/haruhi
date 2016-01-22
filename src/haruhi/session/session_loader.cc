@@ -29,6 +29,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/application/services.h>
 #include <haruhi/session/session.h>
 #include <haruhi/settings/session_loader_settings.h>
 
@@ -37,6 +38,9 @@
 
 
 namespace Haruhi {
+
+using namespace ScreenLiterals;
+
 
 SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button, QWidget* parent):
 	QDialog (parent),
@@ -60,7 +64,7 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	_recent_listview->header()->hide();
 	_recent_listview->header()->setResizeMode (QHeaderView::Stretch);
 	_recent_listview->setAllColumnsShowFocus (true);
-	_recent_listview->setMinimumSize (300, 300);
+	_recent_listview->setMinimumSize (90_screen_mm, 90_screen_mm);
 	_recent_listview->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_recent_listview->setHeaderLabel ("Session name");
 	_recent_listview->setSelectionMode (QTreeWidget::SingleSelection);

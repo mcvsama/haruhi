@@ -27,16 +27,19 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/application/services.h>
+#include <haruhi/widgets/styled_background.h>
 
 // Local:
 #include "operator_widget.h"
 #include "params.h"
 #include "part.h"
 #include "part_manager.h"
-#include "widgets.h"
 
 
 namespace Yuki {
+
+using namespace Haruhi::ScreenLiterals;
+
 
 OperatorWidget::OperatorWidget (QWidget* parent, unsigned int operator_no, Params::Operator* params, Part* part):
 	QWidget (parent),
@@ -77,7 +80,7 @@ OperatorWidget::OperatorWidget (QWidget* parent, unsigned int operator_no, Param
 	QGridLayout* group_layout = new QGridLayout (group);
 	group_layout->setMargin (Config::margin());
 	group_layout->setSpacing (Config::spacing());
-	group_layout->addWidget (new StyledBackground (label, this, 2), 0, 0, 1, 4);
+	group_layout->addWidget (new Haruhi::StyledBackground (label, this, 0.4_screen_mm), 0, 0, 1, 4);
 	QLabel* f = new QLabel ("Frequency: ", this);
 	f->setToolTip ("Relative frequency");
 	group_layout->addWidget (f, 1, 0);

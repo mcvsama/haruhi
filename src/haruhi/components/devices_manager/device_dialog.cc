@@ -26,6 +26,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/config/resources.h>
+#include <haruhi/widgets/styled_background.h>
 
 // Local:
 #include "device_dialog.h"

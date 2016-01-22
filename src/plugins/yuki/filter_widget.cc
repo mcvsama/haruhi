@@ -25,13 +25,13 @@
 #include <haruhi/config/all.h>
 #include <haruhi/application/services.h>
 #include <haruhi/widgets/knob.h>
+#include <haruhi/widgets/styled_background.h>
 
 // Local:
 #include "filter_widget.h"
 #include "filter_ir.h"
 #include "part.h"
 #include "part_manager.h"
-#include "widgets.h"
 
 
 namespace Yuki {
@@ -143,7 +143,7 @@ FilterWidget::FilterWidget (QWidget* parent, unsigned int filter_no, Params::Fil
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (0);
 	layout->setSpacing (Config::spacing());
-	layout->addWidget (new StyledBackground (_enabled_widget, this));
+	layout->addWidget (new Haruhi::StyledBackground (_enabled_widget, this));
 	layout->addWidget (_panel);
 
 	_response_plot->assign_impulse_response (&_impulse_response);

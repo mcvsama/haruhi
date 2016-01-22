@@ -405,9 +405,11 @@ SRC_HEADERS += haruhi/widgets/clickable_label.h
 SRC_HEADERS += haruhi/widgets/dial_control.h
 SRC_HEADERS += haruhi/widgets/envelope_plot.h
 SRC_HEADERS += haruhi/widgets/frequency_response_plot.h
+SRC_HEADERS += haruhi/widgets/generic_item.h
 SRC_HEADERS += haruhi/widgets/knob.h
 SRC_HEADERS += haruhi/widgets/level_meter.h
 SRC_HEADERS += haruhi/widgets/plot_frame.h
+SRC_HEADERS += haruhi/widgets/styled_background.h
 SRC_HEADERS += haruhi/widgets/texture_widget.h
 SRC_HEADERS += haruhi/widgets/wave_plot.h
 
@@ -415,9 +417,11 @@ SRC_SOURCES += haruhi/widgets/clickable_label.cc
 SRC_SOURCES += haruhi/widgets/dial_control.cc
 SRC_SOURCES += haruhi/widgets/envelope_plot.cc
 SRC_SOURCES += haruhi/widgets/frequency_response_plot.cc
+SRC_SOURCES += haruhi/widgets/generic_item.cc
 SRC_SOURCES += haruhi/widgets/knob.cc
 SRC_SOURCES += haruhi/widgets/level_meter.cc
 SRC_SOURCES += haruhi/widgets/plot_frame.cc
+SRC_SOURCES += haruhi/widgets/styled_background.cc
 SRC_SOURCES += haruhi/widgets/texture_widget.cc
 SRC_SOURCES += haruhi/widgets/wave_plot.cc
 
@@ -447,7 +451,6 @@ SRC_HEADERS += plugins/yuki/voice_manager.h
 SRC_HEADERS += plugins/yuki/voice_modulator.h
 SRC_HEADERS += plugins/yuki/voice_operator.h
 SRC_HEADERS += plugins/yuki/voice_oscillator.h
-SRC_HEADERS += plugins/yuki/widgets.h
 SRC_HEADERS += plugins/yuki/yuki.h
 
 SRC_SOURCES += plugins/yuki/dual_filter.cc
@@ -465,7 +468,6 @@ SRC_SOURCES += plugins/yuki/voice_manager.cc
 SRC_SOURCES += plugins/yuki/voice_modulator.cc
 SRC_SOURCES += plugins/yuki/voice_operator.cc
 SRC_SOURCES += plugins/yuki/voice_oscillator.cc
-SRC_SOURCES += plugins/yuki/widgets.cc
 SRC_SOURCES += plugins/yuki/yuki.cc
 
 SRC_MOCHDRS += plugins/yuki/filter_widget.h

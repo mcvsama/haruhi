@@ -52,10 +52,6 @@ class PresetItem: public QTreeWidgetItem
 	read();
 
   private:
-	void
-	setup();
-
-  private:
 	Preset*	_preset;
 };
 

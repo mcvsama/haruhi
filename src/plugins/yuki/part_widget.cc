@@ -26,6 +26,7 @@
 #include <haruhi/application/services.h>
 #include <haruhi/widgets/knob.h>
 #include <haruhi/widgets/plot_frame.h>
+#include <haruhi/widgets/styled_background.h>
 #include <haruhi/dsp/modulated_wave.h>
 #include <haruhi/dsp/translated_wave.h>
 #include <haruhi/dsp/scaled_wave.h>
@@ -36,10 +37,12 @@
 #include "part_manager.h"
 #include "part.h"
 #include "filter_widget.h"
-#include "widgets.h"
 
 
 namespace Yuki {
+
+using namespace Haruhi::ScreenLiterals;
+
 
 PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QWidget (part_manager_widget),
@@ -521,7 +524,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (Config::margin());
 	layout->setSpacing (Config::spacing());
-	layout->addWidget (new StyledBackground (top_checkboxes, this));
+	layout->addWidget (new Haruhi::StyledBackground (top_checkboxes, this));
 	layout->addWidget (_stack);
 
 	QLabel* harmonics_label = new QLabel ("Harmonics", _harmonics_window);
@@ -541,9 +544,9 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QVBoxLayout* harmonics_window_layout = new QVBoxLayout (_harmonics_window);
 	harmonics_window_layout->setMargin (Config::window_margin());
 	harmonics_window_layout->setSpacing (Config::spacing());
-	harmonics_window_layout->addWidget (new StyledBackground (harmonics_label, _harmonics_window, 2));
+	harmonics_window_layout->addWidget (new Haruhi::StyledBackground (harmonics_label, _harmonics_window, 0.4_screen_mm));
 	harmonics_window_layout->addWidget (_harmonics_widget);
-	harmonics_window_layout->addWidget (new StyledBackground (harmonic_phases_label, _harmonics_window, 2));
+	harmonics_window_layout->addWidget (new Haruhi::StyledBackground (harmonic_phases_label, _harmonics_window, 0.4_screen_mm));
 	harmonics_window_layout->addWidget (_harmonic_phases_widget);
 	harmonics_window_layout->addLayout (harmonics_window_buttons_layout);
 

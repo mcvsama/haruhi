@@ -16,6 +16,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/widgets/generic_item.h>
 
 // Local:
 #include "helpers.h"
@@ -36,7 +37,8 @@ PackageItem::PackageItem (PresetsTree* parent, Package* package):
 	_presets_manager (parent->presets_manager()),
 	_package (package)
 {
-	setup();
+	make_standard_height (this);
+	setIcon (0, Resources::Icons16::presets_package());
 	read();
 }
 
@@ -101,19 +103,6 @@ PackageItem::remove_category_item (CategoryItem* category_item)
 {
 	removeChild (category_item);
 	delete category_item;
-}
-
-
-void
-PackageItem::setup()
-{
-	setIcon (0, Resources::Icons16::presets_package());
-	QSize s = sizeHint (0);
-	if (s.height() < 18)
-	{
-		s.setHeight (18);
-		setSizeHint (0, s);
-	}
 }
 
 } // namespace PresetsManagerPrivate

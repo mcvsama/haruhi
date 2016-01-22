@@ -54,6 +54,7 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	// Widgets
 
 	_tree = new Tree (this, this, &_model);
+	_tree->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
 	QObject::connect (_tree, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_items (const QPoint&)));
 	QObject::connect (_tree, SIGNAL (itemSelectionChanged()), this, SLOT (selection_changed()));
 
@@ -65,28 +66,29 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	_create_controller_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_create_controller_button->setToolTip ("Add new controller and internal output port");
 
-	_destroy_input_button = new QPushButton (Resources::Icons16::remove(), "Destroy device", this);
+	_destroy_input_button = new QPushButton (Resources::Icons16::remove(), "Destroy", this);
 	_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_destroy_input_button->setToolTip ("Destroy selected device or controller");
 
 	_insert_template_button = new QPushButton (Resources::Icons16::insert(), "Insert template", this);
 	_insert_template_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	_insert_template_button->setToolTip ("Insert device previously saved in Devices manager");
+	_insert_template_button->setToolTip ("Insert device previously saved in 'Device templates'");
 
 	QObject::connect (_create_device_button, SIGNAL (clicked()), _tree, SLOT (create_device()));
 	QObject::connect (_create_controller_button, SIGNAL (clicked()), _tree, SLOT (create_controller()));
 	QObject::connect (_destroy_input_button, SIGNAL (clicked()), _tree, SLOT (destroy_selected_item()));
 
-	// Right panel (stack):
+	// Configuration panel (stack):
 
 	_stack = new QStackedWidget (this);
+	_stack->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Maximum);
 	_device_dialog = new DeviceWithPortDialog (this);
 	_controller_dialog = new ControllerWithPortDialog (this);
 	_stack->addWidget (_device_dialog);
 	_stack->addWidget (_controller_dialog);
 	_stack->setCurrentWidget (_device_dialog);
 
-	QLabel* info = new QLabel ("Devices used in current session. Each device corresponds to external MIDI port.", this);
+	QLabel* info = new QLabel ("Each device corresponds to externally visible MIDI port.", this);
 	info->setMargin (Config::margin());
 
 	// Layouts:
@@ -99,13 +101,13 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	input_buttons_layout->addWidget (_destroy_input_button);
 	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 
-	QHBoxLayout* panels_layout = new QHBoxLayout();
+	QVBoxLayout* panels_layout = new QVBoxLayout();
 	panels_layout->setSpacing (Config::spacing());
 	panels_layout->addWidget (_tree);
 	panels_layout->addWidget (_stack);
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
-	layout->setMargin (Config::margin());
+	layout->setMargin (0);
 	layout->setSpacing (Config::spacing());
 	layout->addLayout (input_buttons_layout);
 	layout->addLayout (panels_layout);
@@ -262,17 +264,6 @@ Backend::update_widgets()
 	QTreeWidgetItem* sel = _tree->selected_item();
 	_create_controller_button->setEnabled (sel != 0);
 	_destroy_input_button->setEnabled (sel != 0);
-
-	// "Destroy device" or "Destroy controller":
-	if (sel)
-	{
-		if (dynamic_cast<DeviceItem*> (sel))
-			_destroy_input_button->setText ("Destroy device");
-		else if (dynamic_cast<ControllerItem*> (sel))
-			_destroy_input_button->setText ("Destroy controller");
-		else
-			_destroy_input_button->setText ("Destroy");
-	}
 }
 
 
@@ -448,7 +439,9 @@ Backend::learn_from_midi()
 				item->learn();
 		}
 		else
-			QMessageBox::information (this, "Connect input device", "First, connect an input device to any of Haruhi external ports.");
+			QMessageBox::information (this,
+									  "Connect input device", "First, connect a real input device to any of Haruhi external ports.\n\n"
+									  "You can use QJackCtl to do this.");
 	}
 }
 

@@ -298,7 +298,7 @@ Patch::Patch (Session* session, std::string const& title, QWidget* parent):
 	_tabs = new QTabWidget (this);
 	_tabs->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_tabs->setTabPosition (QTabWidget::North);
-	_tabs->setIconSize (QSize (7_screen_mm, 7_screen_mm));
+	_tabs->setIconSize (Resources::Icons16::haruhi().size() * 1.25);
 	_tabs->setMovable (true);
 	_tabs->setCornerWidget (add_plugin_frame, Qt::BottomRightCorner);
 

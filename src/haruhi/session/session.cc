@@ -41,6 +41,7 @@
 #include <haruhi/settings/haruhi_settings.h>
 #include <haruhi/settings/session_loader_settings.h>
 #include <haruhi/widgets/clickable_label.h>
+#include <haruhi/widgets/styled_background.h>
 #include <haruhi/utility/numeric.h>
 #include <haruhi/utility/qdom.h>
 
@@ -412,16 +413,24 @@ Session::Session (QWidget* parent):
 
 	_session_settings = new QTabWidget (this);
 	_session_settings->setTabPosition (QTabWidget::South);
-	_session_settings->setIconSize (Resources::Icons16::haruhi().size());
+	_session_settings->setIconSize (Resources::Icons16::haruhi().size() * 1.25);
 
 	_haruhi_settings = new QTabWidget (this);
 	_haruhi_settings->setTabPosition (QTabWidget::South);
-	_haruhi_settings->setIconSize (Resources::Icons16::haruhi().size());
+	_haruhi_settings->setIconSize (Resources::Icons16::haruhi().size() * 1.25);
 
 	_session_global = new Private::SessionGlobal (this, _session_settings);
 	_haruhi_global = new Private::HaruhiGlobal (this, _session_settings);
-	_audio_tab = create_container (this);
-	_event_tab = create_container (this);
+	_audio_widget = create_container (new QLabel ("Audio ports"), this);
+	_event_widget = create_container (new QLabel ("Event ports"), this);
+
+	// Contains audio & event widgets:
+	QWidget* ports_tab = new QWidget (this);
+	QHBoxLayout* ports_tab_layout = new QHBoxLayout (ports_tab);
+	ports_tab_layout->setMargin (Config::margin());
+	ports_tab_layout->setSpacing (Config::spacing());
+	ports_tab_layout->addWidget (_audio_widget);
+	ports_tab_layout->addWidget (_event_widget);
 
 	_devices_manager = new DevicesManager::Panel (this, Haruhi::haruhi()->devices_manager_settings());
 
@@ -455,11 +464,10 @@ Session::Session (QWidget* parent):
 
 	// Add tabs:
 	_session_settings->addTab (_session_global, Resources::Icons22::configure(), "Session settings");
-	_session_settings->addTab (_audio_tab, Resources::Icons22::show_audio(), "Audio backend");
-	_session_settings->addTab (_event_tab, Resources::Icons22::show_event(), "Input devices");
+	_session_settings->addTab (ports_tab, Resources::Icons22::show_audio(), "Audio && event ports");
 
 	_haruhi_settings->addTab (_haruhi_global, Resources::Icons22::configure(), "Haruhi settings");
-	_haruhi_settings->addTab (_devices_manager, Resources::Icons22::show_event(), "Devices manager");
+	_haruhi_settings->addTab (_devices_manager, Resources::Icons22::show_event(), "Device templates");
 
 	// Start engine and backends before program is loaded:
 	_engine = new Engine (this);
@@ -847,8 +855,8 @@ void
 Session::start_audio_backend()
 {
 	try {
-		AudioBackendImpl::Backend* audio_backend = new AudioBackendImpl::Backend ("Haruhi", _audio_tab);
-		_audio_tab->layout()->addWidget (audio_backend);
+		AudioBackendImpl::Backend* audio_backend = new AudioBackendImpl::Backend ("Haruhi", _audio_widget);
+		_audio_widget->layout()->addWidget (audio_backend);
 		_audio_backend = audio_backend;
 		audio_backend->on_state_change.connect (this, &Session::audio_backend_state_change);
 		audio_backend->show();
@@ -867,8 +875,8 @@ void
 Session::start_event_backend()
 {
 	try {
-		EventBackendImpl::Backend* event_backend = new EventBackendImpl::Backend ("Haruhi", _event_tab);
-		_event_tab->layout()->addWidget (event_backend);
+		EventBackendImpl::Backend* event_backend = new EventBackendImpl::Backend ("Haruhi", _event_widget);
+		_event_widget->layout()->addWidget (event_backend);
 		_event_backend = event_backend;
 		event_backend->show();
 		_graph->register_event_backend (_event_backend);
@@ -934,14 +942,17 @@ Session::customEvent (QEvent* e)
 
 
 QWidget*
-Session::create_container (QWidget* parent)
+Session::create_container (QWidget* label, QWidget* parent)
 {
 	// Configure layouts for audio and event tabs:
-	QWidget* w = new QWidget (parent);
+	QFrame* w = new QFrame (parent);
+	w->setFrameShadow (QFrame::Raised);
+	w->setFrameShape (QFrame::StyledPanel);
 	w->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	QHBoxLayout* layout = new QHBoxLayout (w);
-	layout->setMargin (0);
-	layout->setSpacing (0);
+	QVBoxLayout* layout = new QVBoxLayout (w);
+	layout->setMargin (Config::margin());
+	layout->setSpacing (Config::spacing());
+	layout->addWidget (new StyledBackground (label, w));
 	return w;
 }
 

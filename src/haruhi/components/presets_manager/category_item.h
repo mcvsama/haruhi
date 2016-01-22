@@ -60,10 +60,6 @@ class CategoryItem: public QTreeWidgetItem
 	remove_preset_item (PresetItem* preset_item);
 
   private:
-	void
-	setup();
-
-  private:
 	Category*	_category;
 };
 

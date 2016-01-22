@@ -37,12 +37,12 @@ int spacing()
 
 int margin()
 {
-	return 0.6_screen_mm;
+	return 1.0_screen_mm;
 }
 
 int window_margin()
 {
-	return 0.8_screen_mm;
+	return 1.2_screen_mm;
 }
 
 int dialog_margin()

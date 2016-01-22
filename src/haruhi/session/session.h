@@ -347,7 +347,7 @@ class Session:
 
   private:
 	QWidget*
-	create_container (QWidget* parent);
+	create_container (QWidget* label, QWidget* parent);
 
   private:
 	QString							_name;
@@ -367,8 +367,8 @@ class Session:
 
 	SessionPrivate::SessionGlobal*	_session_global;
 	SessionPrivate::HaruhiGlobal*	_haruhi_global;
-	QWidget*						_audio_tab;
-	QWidget*						_event_tab;
+	QWidget*						_audio_widget;
+	QWidget*						_event_widget;
 
 	// Links to main session components:
 	AudioBackend*					_audio_backend;

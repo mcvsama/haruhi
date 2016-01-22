@@ -33,6 +33,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/components/devices_manager/device.h>
 #include <haruhi/settings/session_loader_settings.h>
+#include <haruhi/widgets/generic_item.h>
 
 
 namespace Haruhi {
@@ -167,12 +168,7 @@ SessionLoader::RecentSessionItem::RecentSessionItem (QTreeWidget* parent, Sessio
 inline void
 SessionLoader::RecentSessionItem::setup()
 {
-	QSize s = sizeHint (0);
-	if (s.height() < 18)
-	{
-		s.setHeight (18);
-		setSizeHint (0, s);
-	}
+	make_standard_height (this);
 }
 
 
@@ -188,12 +184,7 @@ SessionLoader::DeviceItem::DeviceItem (QListWidget* parent, DevicesManager::Devi
 inline void
 SessionLoader::DeviceItem::setup()
 {
-	QSize s = sizeHint();
-	if (s.height() < 18)
-	{
-		s.setHeight (18);
-		setSizeHint (s);
-	}
+	make_standard_height (this);
 }
 
 } // namespace Haruhi

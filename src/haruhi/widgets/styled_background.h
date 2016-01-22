@@ -11,32 +11,28 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
+#ifndef HARUHI__WIDGETS__STYLED_BACKGROUND__INCLUDED
+#define HARUHI__WIDGETS__STYLED_BACKGROUND__INCLUDED
+
 // Standard:
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QMessageBox>
-#include <QtGui/QHeaderView>
-#include <QtGui/QTreeWidgetItem>
+#include <QtGui/QWidget>
 
 // Haruhi:
-#include <haruhi/widgets/tree_widget_item.h>
-
-// Local:
-#include "item.h"
+#include <haruhi/config/all.h>
 
 
 namespace Haruhi {
 
-namespace DevicesManager {
-
-void
-Item::update_minimum_size()
+class StyledBackground: public QWidget
 {
-	make_standard_height (this);
-}
-
-} // namespace DevicesManager
+  public:
+	StyledBackground (QWidget* child, QWidget* parent, int margin = 0);
+};
 
 } // namespace Haruhi
+
+#endif
 

@@ -61,7 +61,7 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	_reconnect_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QObject::connect (_reconnect_button, SIGNAL (clicked()), this, SLOT (connect()));
 
-	_inputs_list = new Tree (this, this, "Audio inputs");
+	_inputs_list = new Tree (this, this, "Inputs");
 	QObject::connect (_inputs_list, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_inputs (const QPoint&)));
 	QObject::connect (_inputs_list, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (double_click_on_inputs (QTreeWidgetItem*, int)));
 	QObject::connect (_inputs_list, SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
@@ -76,7 +76,7 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	_destroy_input_button->setToolTip ("Destroy selected port");
 	QObject::connect (_destroy_input_button, SIGNAL (clicked()), this, SLOT (destroy_selected_input()));
 
-	_outputs_list = new Tree (this, this, "Audio outputs");
+	_outputs_list = new Tree (this, this, "Outputs");
 	QObject::connect (_outputs_list, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_outputs (const QPoint&)));
 	QObject::connect (_outputs_list, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (double_click_on_outputs (QTreeWidgetItem*, int)));
 	QObject::connect (_outputs_list, SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
@@ -121,13 +121,14 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	top_layout->addWidget (_reconnect_button);
 	top_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
-	QHBoxLayout* lists_layout = new QHBoxLayout();
+	QVBoxLayout* lists_layout = new QVBoxLayout();
 	lists_layout->setSpacing (Config::spacing());
 	lists_layout->addLayout (inputs_layout);
+	lists_layout->addItem (new QSpacerItem (0, 2 * Config::spacing(), QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 	lists_layout->addLayout (outputs_layout);
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
-	layout->setMargin (Config::margin());
+	layout->setMargin (0);
 	layout->setSpacing (Config::spacing());
 	layout->addLayout (top_layout);
 	layout->addLayout (lists_layout);

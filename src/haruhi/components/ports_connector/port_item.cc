@@ -24,6 +24,7 @@
 #include <haruhi/graph/audio_port.h>
 #include <haruhi/graph/event_port.h>
 #include <haruhi/application/services.h>
+#include <haruhi/widgets/generic_item.h>
 
 // Local:
 #include "port_item.h"
@@ -43,12 +44,7 @@ PortItem::PortItem (Port::Direction type, Port* port, QTreeWidgetItem* parent, Q
 	_type (type),
 	_port (port)
 {
-	QSize s = sizeHint (0);
-	if (s.height() < 6_screen_mm)
-	{
-		s.setHeight (6_screen_mm);
-		setSizeHint (0, s);
-	}
+	make_standard_height (this);
 
 	if (dynamic_cast<AudioPort*> (port))
 	{

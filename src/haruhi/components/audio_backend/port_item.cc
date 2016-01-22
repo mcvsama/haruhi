@@ -19,6 +19,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/widgets/generic_item.h>
 
 // Local:
 #include "port_item.h"
@@ -37,12 +38,7 @@ PortItem::PortItem (Tree* parent, QString const& name):
 	_transport_port (0),
 	_ready (false)
 {
-	QSize s = sizeHint (0);
-	if (s.height() < 18)
-	{
-		s.setHeight (18);
-		setSizeHint (0, s);
-	}
+	make_standard_height (this);
 }
 
 

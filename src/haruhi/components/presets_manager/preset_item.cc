@@ -19,6 +19,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/widgets/generic_item.h>
 
 // Local:
 #include "helpers.h"
@@ -36,7 +37,8 @@ PresetItem::PresetItem (CategoryItem* parent, Preset* preset):
 	QTreeWidgetItem (parent, QStringList(), Qt::ItemIsDragEnabled),
 	_preset (preset)
 {
-	setup();
+	make_standard_height (this);
+	setIcon (0, Resources::Icons16::preset());
 	read();
 }
 
@@ -66,19 +68,6 @@ void
 PresetItem::read()
 {
 	reload();
-}
-
-
-void
-PresetItem::setup()
-{
-	setIcon (0, Resources::Icons16::preset());
-	QSize s = sizeHint (0);
-	if (s.height() < 18)
-	{
-		s.setHeight (18);
-		setSizeHint (0, s);
-	}
 }
 
 } // namespace PresetsManagerPrivate

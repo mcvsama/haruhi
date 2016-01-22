@@ -11,28 +11,26 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__PLUGINS__YUKI__WIDGETS_H__INCLUDED
-#define HARUHI__PLUGINS__YUKI__WIDGETS_H__INCLUDED
+#ifndef HARUHI__WIDGETS__TREE_WIDGET_ITEM_H__INCLUDED
+#define HARUHI__WIDGETS__TREE_WIDGET_ITEM_H__INCLUDED
 
 // Standard:
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QWidget>
-
-// Haruhi:
-#include <haruhi/config/all.h>
+#include <QtGui/QTreeWidgetItem>
+#include <QtGui/QListWidgetItem>
 
 
-namespace Yuki {
+namespace Haruhi {
 
-class StyledBackground: public QWidget
-{
-  public:
-	StyledBackground (QWidget* child, QWidget* parent, int margin = 0);
-};
+extern void
+make_standard_height (QTreeWidgetItem* item);
 
-} // namespace Yuki
+extern void
+make_standard_height (QListWidgetItem* item);
+
+} // namespace Haruhi
 
 #endif
 

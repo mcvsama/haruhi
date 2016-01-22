@@ -14,29 +14,43 @@
 // Standard:
 #include <cstddef>
 
-// Qt:
-#include <QtGui/QMessageBox>
-#include <QtGui/QHeaderView>
-#include <QtGui/QTreeWidgetItem>
-
 // Haruhi:
-#include <haruhi/widgets/tree_widget_item.h>
+#include <haruhi/config/all.h>
+#include <haruhi/application/services.h>
 
 // Local:
-#include "item.h"
+#include "generic_item.h"
 
 
 namespace Haruhi {
 
-namespace DevicesManager {
+using namespace Haruhi::ScreenLiterals;
+
 
 void
-Item::update_minimum_size()
+make_standard_height (QTreeWidgetItem* item)
 {
-	make_standard_height (this);
+	QSize s = item->sizeHint (0);
+
+	if (s.height() < 6_screen_mm)
+	{
+		s.setHeight (6_screen_mm);
+		item->setSizeHint (0, s);
+	}
 }
 
-} // namespace DevicesManager
+
+void
+make_standard_height (QListWidgetItem* item)
+{
+	QSize s = item->sizeHint();
+
+	if (s.height() < 6_screen_mm)
+	{
+		s.setHeight (6_screen_mm);
+		item->setSizeHint (s);
+	}
+}
 
 } // namespace Haruhi
 

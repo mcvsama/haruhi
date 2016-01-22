@@ -169,7 +169,6 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 	layout->addLayout (name_layout);
 	layout->addWidget (filters);
 	layout->addLayout (buttons_layout);
-	layout->addItem (new QSpacerItem (0, Config::spacing(), QSizePolicy::Fixed, QSizePolicy::Fixed));
 
 	update_widgets();
 
