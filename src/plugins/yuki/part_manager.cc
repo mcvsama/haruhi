@@ -128,6 +128,7 @@ PartManager::remove_part (Part* part)
 	_parts_mutex.synchronize ([&] {
 		_parts.remove (part);
 	});
+
 	part_removed (part);
 	_id_alloc.free_id (part->id());
 	delete part;
@@ -289,8 +290,6 @@ PartManager::panic()
 void
 PartManager::graph_updated()
 {
-	Mutex::Lock lock (_parts_mutex);
-
 	float const samples = 5_ms * graph()->sample_rate();
 	_volume_smoother[0].set_samples (samples);
 	_volume_smoother[1].set_samples (samples);
@@ -298,7 +297,12 @@ PartManager::graph_updated()
 	_panorama_smoother[1].set_samples (samples);
 	_stereo_width_smoother.set_samples (samples);
 
-	for (Part* p: _parts)
+	Parts parts_copy;
+	_parts_mutex.synchronize ([&] {
+		parts_copy = _parts;
+	});
+
+	for (Part* p: parts_copy)
 		p->graph_updated();
 }
 
@@ -336,8 +340,6 @@ PartManager::save_state (QDomElement& element) const
 void
 PartManager::load_state (QDomElement const& element)
 {
-	Mutex::Lock lock (_parts_mutex);
-
 	remove_all_parts();
 
 	for (QDomElement& e: element)

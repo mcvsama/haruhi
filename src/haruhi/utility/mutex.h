@@ -145,6 +145,12 @@ class Mutex: private Noncopyable
 	unlock() const;
 
 	/**
+	 * Returns RAII Lock.
+	 */
+	Lock
+	get_lock() const;
+
+	/**
 	 * Unlocks and locks mutex again.
 	 */
 	void
@@ -279,6 +285,13 @@ Mutex::unlock() const
 		case EPERM:
 			throw MutexPermissionException ("the calling thread does not own the mutex", __func__);
 	}
+}
+
+
+inline Mutex::Lock
+Mutex::get_lock() const
+{
+	return Lock (*this);
 }
 
 
