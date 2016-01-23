@@ -17,7 +17,10 @@
 // Qt:
 #include <QtGui/QFont>
 #include <QtGui/QApplication>
+#include <QtGui/QPixmap>
 #include <QtGui/QPixmapCache>
+#include <QtGui/QPainter>
+#include <QtSvg/QSvgRenderer>
 
 // Haruhi:
 #include <haruhi/application/services.h>
@@ -75,15 +78,38 @@ small_font()
 
 
 QPixmap
-get_icon (QString const& file) noexcept
+get_png_icon (QString const& png_file) noexcept
 {
-	QPixmap p;
-	if (!QPixmapCache::find ("icon16." + file, p))
+	QPixmap pixmap;
+	QString key = "icon.png." + png_file;
+
+	if (!QPixmapCache::find (key, pixmap))
 	{
-		p = QPixmap (file).scaled (QSize (5_screen_mm, 5_screen_mm), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-		QPixmapCache::insert (file, p);
+		pixmap = QPixmap (png_file);
+		QPixmapCache::insert (key, pixmap);
 	}
-	return p;
+
+	return pixmap;
+}
+
+
+QPixmap
+get_svg_icon (QString const& svg_file) noexcept
+{
+	QPixmap pixmap;
+	QString key = "icon.svg." + svg_file;
+
+	if (!QPixmapCache::find (key, pixmap))
+	{
+		QSvgRenderer svg (svg_file);
+		pixmap = QPixmap (QSize (5_screen_mm, 5_screen_mm));
+		pixmap.fill (Qt::transparent);
+		QPainter painter (&pixmap);
+		svg.render (&painter);
+		QPixmapCache::insert (key, pixmap);
+	}
+
+	return pixmap;
 }
 
 } // namespace Resources

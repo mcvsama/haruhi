@@ -95,9 +95,9 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	PlotFrame* plot_frame = new PlotFrame (this);
 	plot_frame->set_widget (_curve_plot);
 
-	QPushButton* accept_button = new QPushButton ("&Ok", this);
+	QPushButton* accept_button = new QPushButton (Resources::Icons16::dialog_ok(), "&Ok", this);
 	accept_button->setDefault (true);
-	QPushButton* reject_button = new QPushButton ("&Cancel", this);
+	QPushButton* reject_button = new QPushButton (Resources::Icons16::dialog_cancel(), "&Cancel", this);
 
 	QObject::connect (accept_button, SIGNAL (clicked()), this, SLOT (accept()));
 	QObject::connect (reject_button, SIGNAL (clicked()), this, SLOT (reject()));

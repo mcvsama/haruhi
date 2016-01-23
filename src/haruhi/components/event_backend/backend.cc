@@ -28,6 +28,7 @@
 #include <haruhi/lib/midi.h>
 #include <haruhi/graph/event_buffer.h>
 #include <haruhi/utility/qdom.h>
+#include <haruhi/widgets/styled_background.h>
 
 // Local:
 #include "transports/alsa_transport.h"
@@ -98,8 +99,8 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	input_buttons_layout->addWidget (_insert_template_button);
 	input_buttons_layout->addWidget (_create_device_button);
 	input_buttons_layout->addWidget (_create_controller_button);
-	input_buttons_layout->addWidget (_destroy_input_button);
 	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	input_buttons_layout->addWidget (_destroy_input_button);
 
 	QVBoxLayout* panels_layout = new QVBoxLayout();
 	panels_layout->setSpacing (Config::spacing());
@@ -108,6 +109,7 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (0);
+	layout->addWidget (new StyledBackground (new QLabel ("ALSA MIDI ports"), this));
 	layout->setSpacing (Config::spacing());
 	layout->addLayout (input_buttons_layout);
 	layout->addLayout (panels_layout);

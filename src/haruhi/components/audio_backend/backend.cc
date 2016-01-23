@@ -30,6 +30,7 @@
 #include <haruhi/application/haruhi.h>
 #include <haruhi/utility/numeric.h>
 #include <haruhi/utility/qdom.h>
+#include <haruhi/widgets/styled_background.h>
 
 // Local:
 #include "transports/jack_transport.h"
@@ -96,42 +97,40 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	QHBoxLayout* input_buttons_layout = new QHBoxLayout();
 	input_buttons_layout->setSpacing (Config::spacing());
 	input_buttons_layout->addWidget (_create_input_button);
-	input_buttons_layout->addWidget (_destroy_input_button);
 	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	input_buttons_layout->addWidget (_destroy_input_button);
 
 	QVBoxLayout* inputs_layout = new QVBoxLayout();
 	inputs_layout->setSpacing (Config::spacing());
-	inputs_layout->addWidget (_inputs_list);
 	inputs_layout->addLayout (input_buttons_layout);
+	inputs_layout->addWidget (_inputs_list);
 
 	QHBoxLayout* output_buttons_layout = new QHBoxLayout();
 	output_buttons_layout->setSpacing (Config::spacing());
 	output_buttons_layout->addWidget (_create_output_button);
-	output_buttons_layout->addWidget (_destroy_output_button);
 	output_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	output_buttons_layout->addWidget (_destroy_output_button);
 
 	QVBoxLayout* outputs_layout = new QVBoxLayout();
 	outputs_layout->setSpacing (Config::spacing());
-	outputs_layout->addWidget (_outputs_list);
 	outputs_layout->addLayout (output_buttons_layout);
+	outputs_layout->addWidget (_outputs_list);
 
-	QHBoxLayout* top_layout = new QHBoxLayout();
-	top_layout->setSpacing (Config::spacing());
-	top_layout->addWidget (_disconnect_button);
-	top_layout->addWidget (_reconnect_button);
-	top_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-
-	QVBoxLayout* lists_layout = new QVBoxLayout();
-	lists_layout->setSpacing (Config::spacing());
-	lists_layout->addLayout (inputs_layout);
-	lists_layout->addItem (new QSpacerItem (0, 2 * Config::spacing(), QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
-	lists_layout->addLayout (outputs_layout);
+	QHBoxLayout* jack_layout = new QHBoxLayout();
+	jack_layout->setSpacing (Config::spacing());
+	jack_layout->addWidget (_disconnect_button);
+	jack_layout->addWidget (_reconnect_button);
+	jack_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (0);
 	layout->setSpacing (Config::spacing());
-	layout->addLayout (top_layout);
-	layout->addLayout (lists_layout);
+	layout->addWidget (new StyledBackground (new QLabel ("Audio inputs"), this));
+	layout->addLayout (inputs_layout);
+	layout->addWidget (new StyledBackground (new QLabel ("Audio outputs"), this));
+	layout->addLayout (outputs_layout);
+	layout->addWidget (new StyledBackground (new QLabel ("JACK control"), this));
+	layout->addLayout (jack_layout);
 
 	update_widgets();
 	Unit::enable();

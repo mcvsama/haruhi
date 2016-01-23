@@ -94,6 +94,7 @@ FilterWidget::FilterWidget (QWidget* parent, unsigned int filter_no, Params::Fil
 	_filter_type->addItem (Resources::Icons16::filter_peaking(), "Peaking", FilterImpulseResponse::Peaking);
 	_filter_type->addItem (Resources::Icons16::filter_lowshelf(), "Low shelf", FilterImpulseResponse::LowShelf);
 	_filter_type->addItem (Resources::Icons16::filter_highshelf(), "High shelf", FilterImpulseResponse::HighShelf);
+	_filter_type->setIconSize (Resources::Icons16::haruhi().size());
 	_filter_type->setCurrentIndex (_params->type);
 	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (widgets_to_params()));
 	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_widgets()));

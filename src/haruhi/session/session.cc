@@ -41,7 +41,6 @@
 #include <haruhi/settings/haruhi_settings.h>
 #include <haruhi/settings/session_loader_settings.h>
 #include <haruhi/widgets/clickable_label.h>
-#include <haruhi/widgets/styled_background.h>
 #include <haruhi/utility/numeric.h>
 #include <haruhi/utility/qdom.h>
 
@@ -407,6 +406,7 @@ Session::Session (QWidget* parent):
 	_main_menu_button = new QPushButton ("Menu", inner_header);
 	_main_menu_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_main_menu_button->setMenu (_main_menu);
+	_main_menu_button->setIcon (Resources::Icons16::menu());
 
 	_meter_panel = new MeterPanel (this, this);
 	_stack = new QStackedWidget (this);
@@ -952,7 +952,6 @@ Session::create_container (QWidget* label, QWidget* parent)
 	QVBoxLayout* layout = new QVBoxLayout (w);
 	layout->setMargin (Config::margin());
 	layout->setSpacing (Config::spacing());
-	layout->addWidget (new StyledBackground (label, w));
 	return w;
 }
 

@@ -20,7 +20,7 @@
 #include <QtGui/QTreeWidgetItem>
 
 // Haruhi:
-#include <haruhi/widgets/tree_widget_item.h>
+#include <haruhi/widgets/generic_item.h>
 
 // Local:
 #include "item.h"

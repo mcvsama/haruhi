@@ -183,6 +183,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_wave_type->insertItem (6, Resources::Icons16::wave_gauss(), "Gauss");
 	_wave_type->insertItem (7, Resources::Icons16::wave_diode(), "Diode");
 	_wave_type->insertItem (8, Resources::Icons16::wave_chirp(), "Chirp");
+	_wave_type->setIconSize (Resources::Icons16::haruhi().size());
 	_wave_type->setCurrentIndex (pp->wave_type);
 	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (widgets_to_wave_params()));
 
@@ -194,6 +195,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_modulator_wave_type->insertItem (3, Resources::Icons16::wave_sawtooth(), "Sawtooth");
 	_modulator_wave_type->setCurrentIndex (pp->modulator_wave_type);
 	_modulator_wave_type->setToolTip ("Modulator wave");
+	_modulator_wave_type->setIconSize (Resources::Icons16::haruhi().size());
 	QObject::connect (_modulator_wave_type, SIGNAL (activated (int)), this, SLOT (widgets_to_wave_params()));
 
 	// Modulator type:
@@ -202,12 +204,14 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_modulator_type->insertItem (DSP::ModulatedWave::Frequency, Resources::Icons16::modulator_fm(), "FM mod.");
 	_modulator_type->setCurrentIndex (pp->modulator_type);
 	_modulator_type->setToolTip ("Modulator type");
+	_modulator_type->setIconSize (Resources::Icons16::haruhi().size());
 	QObject::connect (_modulator_type, SIGNAL (activated (int)), this, SLOT (widgets_to_wave_params()));
 
 	// Harmonics+phases window:
 	_harmonics_window = new QDialog (this);
 	_harmonics_window->hide();
 	_harmonics_window->setWindowTitle (QString ("Part %1: Harmonics & Phases").arg (_part->id()));
+	_harmonics_window->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
 
 	// Reset all harmonics:
 	_harmonics_reset_button = new QPushButton (Resources::Icons16::clear_list(), "Clear all harmonics and phases", _harmonics_window);
@@ -218,6 +222,9 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	close_harmonics_button->setDefault (true);
 	QObject::connect (close_harmonics_button, SIGNAL (clicked()), _harmonics_window, SLOT (accept()));
 
+	// Harmonics & Phases:
+	int const kHarmonicsButtonWidth = 5_screen_mm;
+	int const kHarmonicsButtonHeight = 4_screen_mm;
 	// Harmonics:
 	_harmonics_widget = new QWidget (_harmonics_window);
 	_harmonics_widget->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
@@ -237,13 +244,13 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 		QLabel* label = new QLabel (QString ("%1").arg (i + 1), harmonics_grid);
 		label->setAlignment (Qt::AlignCenter);
-		label->setFixedWidth (23);
+		label->setFixedWidth (kHarmonicsButtonWidth);
 		label->setTextFormat (Qt::PlainText);
 		harmonics_layout->addWidget (label, 1, i);
 
 		QPushButton* reset = new QPushButton ("R", harmonics_grid);
-		reset->setFixedWidth (23);
-		reset->setFixedHeight (18);
+		reset->setFixedWidth (kHarmonicsButtonWidth);
+		reset->setFixedHeight (kHarmonicsButtonHeight);
 		reset->setToolTip ("Reset");
 		QObject::connect (reset, SIGNAL (clicked()), slider, SLOT (reset()));
 		harmonics_layout->addWidget (reset, 2, i);
@@ -274,13 +281,13 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 		QLabel* label = new QLabel (QString ("%1").arg (i + 1), phases_grid);
 		label->setAlignment (Qt::AlignCenter);
-		label->setFixedWidth (23);
+		label->setFixedWidth (kHarmonicsButtonWidth);
 		label->setTextFormat (Qt::PlainText);
 		phases_layout->addWidget (label, 1, i);
 
 		QPushButton* reset = new QPushButton ("R", phases_grid);
-		reset->setFixedWidth (23);
-		reset->setFixedHeight (18);
+		reset->setFixedWidth (kHarmonicsButtonWidth);
+		reset->setFixedHeight (kHarmonicsButtonHeight);
 		reset->setToolTip ("Reset");
 		phases_layout->addWidget (reset, 2, i);
 
@@ -386,6 +393,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_filter_configuration->insertItem (DualFilter::Serial, "Filters: Serial");
 	_filter_configuration->insertItem (DualFilter::Parallel, "Filters: Parallel");
 	_filter_configuration->setCurrentIndex (pp->filter_configuration);
+	_filter_configuration->setIconSize (Resources::Icons16::haruhi().size());
 	QObject::connect (_filter_configuration, SIGNAL (activated (int)), this, SLOT (widgets_to_oscillator_params()));
 
 	// Modulator top widget:

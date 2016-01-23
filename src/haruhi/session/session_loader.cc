@@ -114,6 +114,7 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	_new_session_audio_outputs->setValue (2);
 
 	_devices_combobox = new QComboBox (event_box);
+	_devices_combobox->setIconSize (Resources::Icons16::haruhi().size());
 
 	_devices_add = new QPushButton (Resources::Icons16::add(), "", audio_box);
 	_devices_add->setFixedWidth (_devices_add->height());
