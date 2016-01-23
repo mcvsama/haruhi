@@ -70,11 +70,13 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	_create_input_button = new QPushButton (Resources::Icons16::add(), "New input", this);
 	_create_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_create_input_button->setToolTip ("Create new input port");
+	_create_input_button->setFlat (true);
 	QObject::connect (_create_input_button, SIGNAL (clicked()), this, SLOT (create_input()));
 
 	_destroy_input_button = new QPushButton (Resources::Icons16::remove(), "Destroy", this);
 	_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_destroy_input_button->setToolTip ("Destroy selected port");
+	_destroy_input_button->setFlat (true);
 	QObject::connect (_destroy_input_button, SIGNAL (clicked()), this, SLOT (destroy_selected_input()));
 
 	_outputs_list = new Tree (this, this, "Outputs");
@@ -85,11 +87,13 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	_create_output_button = new QPushButton (Resources::Icons16::add(), "New output", this);
 	_create_output_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_create_output_button->setToolTip ("Create new output port");
+	_create_output_button->setFlat (true);
 	QObject::connect (_create_output_button, SIGNAL (clicked()), this, SLOT (create_output()));
 
 	_destroy_output_button = new QPushButton (Resources::Icons16::remove(), "Destroy", this);
 	_destroy_output_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_destroy_output_button->setToolTip ("Destroy selected port");
+	_destroy_output_button->setFlat (true);
 	QObject::connect (_destroy_output_button, SIGNAL (clicked()), this, SLOT (destroy_selected_output()));
 
 	// Layouts:
