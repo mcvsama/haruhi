@@ -50,6 +50,7 @@ Tree::Tree (QWidget* parent, Model* model):
 	setVerticalScrollMode (QAbstractItemView::ScrollPerPixel);
 	setContextMenuPolicy (Qt::CustomContextMenu);
 	setHeaderLabel ("Device templates");
+	setIconSize (Resources::Icons16::haruhi().size());
 	_model->on_change.connect (this, &Tree::read_model);
 }
 

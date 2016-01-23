@@ -16,9 +16,10 @@
 
 // Qt:
 #include <QtGui/QWidget>
-#include <QtGui/QLayout>
 #include <QtGui/QLabel>
 #include <QtGui/QMenu>
+#include <QtGui/QLayout>
+#include <QtGui/QGridLayout>
 #include <QtGui/QMessageBox>
 
 // Haruhi:
@@ -68,44 +69,30 @@ Panel::Panel (QWidget* parent, Settings* settings):
 	QObject::connect (_create_controller_button, SIGNAL (clicked()), _tree, SLOT (create_controller()));
 	QObject::connect (_destroy_input_button, SIGNAL (clicked()), _tree, SLOT (destroy_selected_item()));
 
-	// Right panel (stack):
-
-	_stack = new QStackedWidget (this);
-
 	_device_dialog = new DeviceDialog (this, DeviceDialog::DisplayAutoAdd);
 	QObject::connect (_device_dialog, SIGNAL (item_configured (DeviceItem*)), this, SLOT (save_settings()));
 
 	_controller_dialog = new ControllerDialog (this);
 	QObject::connect (_controller_dialog, SIGNAL (item_configured (ControllerItem*)), this, SLOT (save_settings()));
 
+	_stack = new QStackedWidget (this);
 	_stack->addWidget (_device_dialog);
 	_stack->addWidget (_controller_dialog);
 	_stack->setCurrentWidget (_device_dialog);
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	QHBoxLayout* buttons_layout = new QHBoxLayout();
+	buttons_layout->setSpacing (Config::spacing());
+	buttons_layout->addWidget (_create_device_button);
+	buttons_layout->addWidget (_create_controller_button);
+	buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	buttons_layout->addWidget (_destroy_input_button);
+
+	QGridLayout* layout = new QGridLayout (this);
 	layout->setMargin (Config::margin());
 	layout->setSpacing (Config::spacing());
-
-	QHBoxLayout* input_buttons_layout = new QHBoxLayout();
-	input_buttons_layout->setSpacing (Config::spacing());
-
-	QHBoxLayout* panels_layout = new QHBoxLayout();
-	panels_layout->setSpacing (Config::spacing());
-
-	QLabel* info = new QLabel ("Device templates.", this);
-	info->setMargin (Config::margin());
-
-	layout->addLayout (input_buttons_layout);
-	layout->addLayout (panels_layout);
-	layout->addWidget (info);
-
-	panels_layout->addWidget (_tree);
-	panels_layout->addWidget (_stack);
-
-	input_buttons_layout->addWidget (_create_device_button);
-	input_buttons_layout->addWidget (_create_controller_button);
-	input_buttons_layout->addWidget (_destroy_input_button);
-	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
+	layout->addLayout (buttons_layout, 0, 0);
+	layout->addWidget (_tree, 1, 0);
+	layout->addWidget (_stack, 1, 1);
 
 	selection_changed();
 	update_widgets();
@@ -214,7 +201,11 @@ Panel::learn_from_midi()
 			}
 		}
 		else
-			QMessageBox::information (this, "Connect input device", "First, connect an input device to any of Haruhi external ports.");
+		{
+			QMessageBox::information (this,
+									  "Connect input device", "First, connect a real input device to any of Haruhi external ports.\n\n"
+									  "You can use QJackCtl to do this.");
+		}
 	}
 }
 

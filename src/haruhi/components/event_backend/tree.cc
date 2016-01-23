@@ -20,6 +20,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/config/resources.h>
 
 // Local:
 #include "tree.h"
@@ -46,6 +47,7 @@ Tree::Tree (QWidget* parent, Backend* backend, DevicesManager::Model* model):
 	setVerticalScrollMode (QAbstractItemView::ScrollPerPixel);
 	setContextMenuPolicy (Qt::CustomContextMenu);
 	setHeaderLabel ("Session devices");
+	setIconSize (Resources::Icons16::haruhi().size());
 }
 
 

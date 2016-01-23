@@ -20,6 +20,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
+#include <haruhi/config/resources.h>
 #include <haruhi/utility/qdom.h>
 
 // Local:
@@ -48,6 +49,7 @@ Tree::Tree (QWidget* parent, Backend* backend, const char* header_title):
 	setVerticalScrollMode (QAbstractItemView::ScrollPerPixel);
 	setContextMenuPolicy (Qt::CustomContextMenu);
 	setHeaderLabel (header_title);
+	setIconSize (Resources::Icons16::haruhi().size());
 }
 
 
