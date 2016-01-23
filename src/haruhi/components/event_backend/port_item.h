@@ -18,9 +18,6 @@
 #include <cstddef>
 #include <set>
 
-// Qt:
-#include <QtGui/QTreeWidgetItem>
-
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/atomic.h>

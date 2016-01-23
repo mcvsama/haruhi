@@ -22,12 +22,8 @@
 
 // Qt:
 #include <QtCore/QTimer>
-#include <QtGui/QLayout>
 #include <QtGui/QPushButton>
-#include <QtGui/QWhatsThis>
-#include <QtGui/QDialog>
 #include <QtGui/QTreeWidgetItem>
-#include <QtXml/QDomNode>
 
 // Haruhi:
 #include <haruhi/config/all.h>

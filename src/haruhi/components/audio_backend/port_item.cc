@@ -14,9 +14,6 @@
 // Standard:
 #include <cstddef>
 
-// Qt:
-#include <QtGui/QMessageBox>
-
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/widgets/generic_item.h>

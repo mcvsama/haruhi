@@ -21,15 +21,9 @@
 
 // Qt:
 #include <QtCore/QSignalMapper>
-#include <QtGui/QLayout>
-#include <QtGui/QLineEdit>
 #include <QtGui/QPushButton>
-#include <QtGui/QCheckBox>
-#include <QtGui/QComboBox>
-#include <QtGui/QSpinBox>
 #include <QtGui/QStackedWidget>
 #include <QtGui/QMenu>
-#include <QtXml/QDomNode>
 
 // Haruhi:
 #include <haruhi/config/all.h>

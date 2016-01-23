@@ -27,13 +27,10 @@
 #include <unistd.h>
 
 // Qt:
-#include <QtCore/QDir>
 #include <QtGui/QLayout>
-#include <QtGui/QTabWidget>
 #include <QtGui/QPushButton>
 #include <QtGui/QMessageBox>
 #include <QtGui/QTextDocument>
-#include <QtGui/QMessageBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>

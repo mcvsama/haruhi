@@ -14,11 +14,6 @@
 // Standard:
 #include <cstddef>
 
-// Qt:
-#include <QtCore/QFile>
-#include <QtXml/QDomNode>
-#include <QtGui/QTextDocument>
-
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/filesystem.h>

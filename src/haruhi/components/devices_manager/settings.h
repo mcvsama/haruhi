@@ -18,9 +18,6 @@
 #include <cstddef>
 #include <list>
 
-// Qt:
-#include <QtCore/QString>
-
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/settings/settings.h>

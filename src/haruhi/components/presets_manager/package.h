@@ -18,9 +18,6 @@
 #include <cstddef>
 #include <list>
 
-// Qt:
-#include <QtXml/QDomNode>
-
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/saveable_state.h>

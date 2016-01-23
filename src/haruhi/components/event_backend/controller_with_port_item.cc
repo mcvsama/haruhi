@@ -14,9 +14,6 @@
 // Standard:
 #include <cstddef>
 
-// Qt:
-#include <QtGui/QTreeWidgetItem>
-
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/lib/midi.h>

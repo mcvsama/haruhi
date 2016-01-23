@@ -18,7 +18,6 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QTreeWidget>
 #include <QtGui/QTreeWidgetItem>
 
 // Haruhi:

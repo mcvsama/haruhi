@@ -21,9 +21,9 @@
 
 // Qt:
 #include <QtGui/QApplication>
-#include <QtGui/QMessageBox>
+#include <QtGui/QLayout>
 #include <QtGui/QMenu>
-#include <QtGui/QTextDocument>
+#include <QtGui/QLabel>
 
 // Haruhi:
 #include <haruhi/config/all.h>

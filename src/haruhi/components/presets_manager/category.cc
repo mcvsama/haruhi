@@ -14,9 +14,6 @@
 // Standard:
 #include <cstddef>
 
-// Qt:
-#include <QtCore/QFile>
-
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/predicates.h>

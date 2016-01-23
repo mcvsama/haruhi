@@ -14,9 +14,6 @@
 // Standard:
 #include <cstddef>
 
-// Qt:
-#include <QtXml/QDomNode>
-
 // Local:
 #include "helpers.h"
 

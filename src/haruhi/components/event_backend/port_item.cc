@@ -14,11 +14,6 @@
 // Standard:
 #include <cstddef>
 
-// Qt:
-#include <QtGui/QMessageBox>
-#include <QtGui/QHeaderView>
-#include <QtGui/QTreeWidgetItem>
-
 // Local:
 #include "port_item.h"
 #include "backend.h"

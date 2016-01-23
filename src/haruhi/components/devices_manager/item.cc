@@ -14,11 +14,6 @@
 // Standard:
 #include <cstddef>
 
-// Qt:
-#include <QtGui/QMessageBox>
-#include <QtGui/QHeaderView>
-#include <QtGui/QTreeWidgetItem>
-
 // Haruhi:
 #include <haruhi/widgets/generic_item.h>
 

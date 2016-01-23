@@ -17,9 +17,6 @@
 // System:
 #include <uuid/uuid.h>
 
-// Qt:
-#include <QtCore/QFile>
-
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/saveable_state.h>

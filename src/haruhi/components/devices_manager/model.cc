@@ -14,10 +14,6 @@
 // Standard:
 #include <cstddef>
 
-// Qt:
-#include <QtGui/QTreeWidget>
-#include <QtGui/QHeaderView>
-
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/qdom.h>

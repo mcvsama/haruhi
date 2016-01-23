@@ -22,7 +22,6 @@
 #include <QtGui/QTreeWidgetItem>
 #include <QtGui/QHeaderView>
 #include <QtGui/QMenu>
-#include <QtGui/QDragEnterEvent>
 
 // Haruhi:
 #include <haruhi/config/all.h>

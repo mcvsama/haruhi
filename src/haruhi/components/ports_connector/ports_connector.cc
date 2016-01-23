@@ -25,20 +25,13 @@
 #include <map>
 
 // Qt:
-#include <QtGui/QApplication>
-#include <QtGui/QPainter>
 #include <QtGui/QPushButton>
-#include <QtGui/QLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QDialog>
-#include <QtGui/QRadioButton>
-#include <QtGui/QMessageBox>
-#include <QtGui/QTreeWidget>
 #include <QtGui/QTreeWidgetItem>
-#include <QtGui/QHeaderView>
 #include <QtGui/QSplitter>
+#include <QtGui/QScrollBar>
 #include <QtGui/QMenu>
-#include <Qt3Support/Q3ListView> // Required due to Qt4 bug in which normally QScrollBar is not QWidget.
+#include <QtGui/QHeaderView>
+#include <QtGui/QLayout>
 
 // Lib:
 #include <boost/bind/bind.hpp>
@@ -83,7 +76,7 @@ PortsConnector::PortsConnector (UnitBay* unit_bay, QWidget* parent):
 	_disconnect_button = new QPushButton (Resources::Icons16::disconnect(), "&Disconnect", this);
 	_disconnect_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
 
-	QObject::connect (_ipanel->list()->verticalScrollBar(), SIGNAL (valueChanged (int)), static_cast<QWidget*> (this), SLOT (list_view_moved()));
+	QObject::connect (_ipanel->list()->verticalScrollBar(), SIGNAL (sliderMoved (int)), static_cast<QWidget*> (this), SLOT (list_view_moved()));
 	QObject::connect (_ipanel->list()->header(), SIGNAL (sectionClicked (int)), this, SLOT (list_view_moved()));
 	QObject::connect (_ipanel->list(), SIGNAL (itemExpanded (QTreeWidgetItem*)), this, SLOT (list_view_changed()));
 	QObject::connect (_ipanel->list(), SIGNAL (itemCollapsed (QTreeWidgetItem*)), this, SLOT (list_view_changed()));

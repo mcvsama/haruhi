@@ -25,8 +25,6 @@
 // Qt:
 #include <QtCore/QDir>
 #include <QtCore/QTextStream>
-#include <QtGui/QMessageBox>
-#include <QtGui/QTextDocument>
 
 // Haruhi:
 #include <haruhi/config/all.h>

@@ -16,7 +16,6 @@
 #include <set>
 
 // Qt:
-#include <QtGui/QLayout>
 #include <QtGui/QPushButton>
 #include <QtGui/QLabel>
 #include <QtGui/QMessageBox>

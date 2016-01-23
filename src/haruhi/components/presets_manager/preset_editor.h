@@ -19,8 +19,6 @@
 
 // Qt:
 #include <QtGui/QLineEdit>
-#include <QtGui/QComboBox>
-#include <QtGui/QLabel>
 #include <QtGui/QPushButton>
 #include <QtGui/QCheckBox>
 

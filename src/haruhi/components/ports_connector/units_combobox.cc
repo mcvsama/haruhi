@@ -16,7 +16,6 @@
 #include <algorithm>
 
 // Qt:
-#include <QtGui/QLayout>
 #include <QtGui/QComboBox>
 
 // Haruhi:

@@ -20,7 +20,6 @@
 // Qt:
 #include <QtGui/QDialog>
 #include <QtGui/QCheckBox>
-#include <QtGui/QComboBox>
 #include <QtGui/QSpinBox>
 #include <QtGui/QPushButton>
 #include <QtGui/QLabel>

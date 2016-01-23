@@ -27,11 +27,6 @@
 #include <QtGui/QWidget>
 #include <QtGui/QSplitter>
 #include <QtGui/QPushButton>
-#include <QtGui/QDialog>
-#include <QtGui/QLineEdit>
-#include <QtGui/QRadioButton>
-#include <QtGui/QPixmap>
-#include <QtGui/QTreeWidget>
 #include <QtGui/QTreeWidgetItem>
 #include <QtGui/QMenu>
 

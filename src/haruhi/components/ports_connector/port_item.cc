@@ -17,7 +17,6 @@
 // Qt:
 #include <QtGui/QTreeWidget>
 #include <QtGui/QTreeWidgetItem>
-#include <QtGui/QPixmap>
 
 // Haruhi:
 #include <haruhi/config/all.h>
