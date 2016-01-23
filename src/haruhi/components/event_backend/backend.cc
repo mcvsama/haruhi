@@ -18,6 +18,7 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QMessageBox>
 #include <QtGui/QTreeWidgetItem>
+#include <QtGui/QLayout>
 #include <QtGui/QMenu>
 #include <QtGui/QTextDocument>
 
@@ -445,9 +446,11 @@ Backend::learn_from_midi()
 				item->learn();
 		}
 		else
+		{
 			QMessageBox::information (this,
 									  "Connect input device", "First, connect a real input device to any of Haruhi external ports.\n\n"
 									  "You can use QJackCtl to do this.");
+		}
 	}
 }
 
