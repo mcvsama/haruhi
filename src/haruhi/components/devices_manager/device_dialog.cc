@@ -47,6 +47,7 @@ DeviceDialog::DeviceDialog (QWidget* parent, Flags flags):
 	QLabel* name_label = new QLabel ("Device name:", this);
 	_name = new QLineEdit (this);
 	_save_button = new QPushButton (Resources::Icons16::ok(), "&Apply", this);
+	_save_button->setIconSize (Resources::Icons16::haruhi().size());
 	_auto_add_checkbox = new QCheckBox ("Auto add this device to new sessions", this);
 	if ((flags & DisplayAutoAdd) == 0)
 		_auto_add_checkbox->hide();

@@ -120,13 +120,10 @@ get_svg_icon (QString const& svg_file) noexcept;
 		HARUHI_CONFIG_HAS_ICON (output_unit, "output-unit.svg");
 		HARUHI_CONFIG_HAS_ICON (input_unit_bay, "input-unit-bay.svg");
 		HARUHI_CONFIG_HAS_ICON (output_unit_bay, "output-unit-bay.svg");
-		HARUHI_CONFIG_HAS_ICON (show_program, "show-program.svg");
-		HARUHI_CONFIG_HAS_ICON (show_audio, "show-audio.svg");
-		HARUHI_CONFIG_HAS_ICON (show_event, "show-event.svg");
-		HARUHI_CONFIG_HAS_ICON (show_backends, "show-backends.svg");
 		HARUHI_CONFIG_HAS_ICON (presets_package, "presets-package.svg");
 		HARUHI_CONFIG_HAS_ICON (presets_category, "presets-category.svg");
 		HARUHI_CONFIG_HAS_ICON (preset, "preset.svg");
+		HARUHI_CONFIG_HAS_ICON (preset_favorite, "preset-favorite.svg");
 		HARUHI_CONFIG_HAS_ICON (wave_sine, "wave-sine.svg");
 		HARUHI_CONFIG_HAS_ICON (wave_triangle, "wave-triangle.svg");
 		HARUHI_CONFIG_HAS_ICON (wave_square, "wave-square.svg");
@@ -163,23 +160,17 @@ get_svg_icon (QString const& svg_file) noexcept;
 		HARUHI_CONFIG_HAS_ICON (dialog_ok_apply, "dialog-ok-apply.svg");
 		HARUHI_CONFIG_HAS_ICON (dialog_cancel, "dialog-cancel.svg");
 		HARUHI_CONFIG_HAS_ICON (clear_list, "clear-list.svg");
+		HARUHI_CONFIG_HAS_ICON (panic, "panic.svg");
+		HARUHI_CONFIG_HAS_ICON (unit_type_effect, "unit-type-effect.svg");
+		HARUHI_CONFIG_HAS_ICON (unit_type_eg, "unit-type-eg.svg");
+		HARUHI_CONFIG_HAS_ICON (unit_type_arp, "unit-type-arp.svg");
+		HARUHI_CONFIG_HAS_ICON (unit_type_synth, "unit-type-synth.svg");
+		HARUHI_CONFIG_HAS_ICON (connections, "connections.svg");
+		HARUHI_CONFIG_HAS_ICON (audio, "audio.svg");
+		HARUHI_CONFIG_HAS_ICON (event, "event.svg");
 
 #undef HARUHI_CONFIG_HAS_ICON
 	} // namespace Icons16
-
-	namespace Icons22
-	{
-#define HARUHI_CONFIG_HAS_ICON_22(key, file) \
-		HARUHI_CONFIG_HAS_PNG_ICON(key, HARUHI_SHARED_DIRECTORY "/images/22/" file)
-
-		HARUHI_CONFIG_HAS_ICON_22 (spacer, "spacer.png");
-		HARUHI_CONFIG_HAS_ICON_22 (show_audio, "show-audio.png");
-		HARUHI_CONFIG_HAS_ICON_22 (show_event, "show-event.png");
-		HARUHI_CONFIG_HAS_ICON_22 (connections, "connections.png");
-		HARUHI_CONFIG_HAS_ICON_22 (configure, "configure.png");
-
-#undef HARUHI_CONFIG_HAS_ICON_22
-	} // namespace Icons22
 
 	namespace NoteIcons
 	{

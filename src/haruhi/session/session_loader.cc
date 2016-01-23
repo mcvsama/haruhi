@@ -115,13 +115,16 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 
 	_devices_combobox = new QComboBox (event_box);
 	_devices_combobox->setIconSize (Resources::Icons16::haruhi().size());
+	_devices_combobox->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	_devices_add = new QPushButton (Resources::Icons16::add(), "", audio_box);
-	_devices_add->setFixedWidth (_devices_add->height());
+	_devices_add->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	_devices_add->setIconSize (Resources::Icons16::haruhi().size());
 	QObject::connect (_devices_add, SIGNAL (clicked()), this, SLOT (add_selected_device()));
 
 	_devices_del = new QPushButton (Resources::Icons16::remove(), "", audio_box);
-	_devices_del->setFixedWidth (_devices_del->height());
+	_devices_del->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	_devices_del->setIconSize (Resources::Icons16::haruhi().size());
 	QObject::connect (_devices_del, SIGNAL (clicked()), this, SLOT (del_selected_device()));
 
 	_devices_list = new QListWidget (audio_box);
@@ -153,20 +156,22 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	new_layout->addWidget (name_box);
 	new_layout->addWidget (audio_box);
 	new_layout->addWidget (event_box);
-	new_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
 	//
 	// Buttons
 	//
 
 	_load_from_file_button = new QPushButton (Resources::Icons16::open(), "&Load from file…", this);
+	_load_from_file_button->setIconSize (Resources::Icons16::haruhi().size());
 	QObject::connect (_load_from_file_button, SIGNAL (clicked()), this, SLOT (browse_file()));
 
 	_open_button = new QPushButton (Resources::Icons16::new_(), "Open", this);
+	_open_button->setIconSize (Resources::Icons16::haruhi().size());
 	_open_button->setDefault (true);
 	QObject::connect (_open_button, SIGNAL (clicked()), this, SLOT (validate_and_accept()));
 
 	_quit_button = new QPushButton (Resources::Icons16::exit(), reject_button == CancelButton ? "Cancel" : "Quit", this);
+	_quit_button->setIconSize (Resources::Icons16::haruhi().size());
 	QObject::connect (_quit_button, SIGNAL (clicked()), this, SLOT (reject()));
 
 	QObject::connect (_tabs, SIGNAL (currentChanged (QWidget*)), this, SLOT (update_widgets()));
@@ -255,7 +260,16 @@ SessionLoader::apply (Session* session)
 void
 SessionLoader::update_widgets()
 {
-	_open_button->setText (_tabs->currentWidget() == _new_tab ? "New" : "Open");
+	if (_tabs->currentWidget() == _new_tab)
+	{
+		_open_button->setText ("New");
+		_open_button->setIcon (Resources::Icons16::new_());
+	}
+	else
+	{
+		_open_button->setText ("Open");
+		_open_button->setIcon (Resources::Icons16::open());
+	}
 }
 
 

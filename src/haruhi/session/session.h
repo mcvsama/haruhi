@@ -347,7 +347,7 @@ class Session:
 
   private:
 	QWidget*
-	create_container (QWidget* label, QWidget* parent);
+	create_container (QWidget* parent);
 
   private:
 	QString							_name;

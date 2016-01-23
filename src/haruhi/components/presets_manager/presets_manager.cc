@@ -79,19 +79,24 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 	_editor = new Private::PresetEditor (this, this);
 
 	_only_favs_button = new QPushButton (Resources::Icons16::favorite(), "Show favorites only");
+	_only_favs_button->setIconSize (Resources::Icons16::haruhi().size());
 	_only_favs_button->setCheckable (true);
 	QObject::connect (_only_favs_button, SIGNAL (toggled (bool)), this, SLOT (show_favorites()));
 
 	_load_button = new QPushButton (Resources::Icons16::load(), "Load", this);
+	_load_button->setIconSize (Resources::Icons16::haruhi().size());
 	QObject::connect (_load_button, SIGNAL (clicked()), this, SLOT (load_preset()));
 
 	_save_button = new QPushButton (Resources::Icons16::save(), "Save patch", this);
+	_save_button->setIconSize (Resources::Icons16::haruhi().size());
 	QObject::connect (_save_button, SIGNAL (clicked()), this, SLOT (save_preset()));
 
-	_create_button = new QPushButton (Resources::Icons16::save_as(), "Create", this);
+	_create_button = new QPushButton (Resources::Icons16::new_(), "Create", this);
+	_create_button->setIconSize (Resources::Icons16::haruhi().size());
 	_create_button->setMenu (_create_menu);
 
 	_destroy_button = new QPushButton (Resources::Icons16::remove(), "Destroy…", this);
+	_destroy_button->setIconSize (Resources::Icons16::haruhi().size());
 	QObject::connect (_destroy_button, SIGNAL (clicked()), this, SLOT (destroy()));
 
 	// Layouts:

@@ -71,9 +71,11 @@ PortsConnector::PortsConnector (UnitBay* unit_bay, QWidget* parent):
 	_splitter->setStretchFactor (2, 4);
 
 	_connect_button = new QPushButton (Resources::Icons16::connect(), "&Connect", this);
+	_connect_button->setIconSize (Resources::Icons16::haruhi().size());
 	_connect_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
 
 	_disconnect_button = new QPushButton (Resources::Icons16::disconnect(), "&Disconnect", this);
+	_disconnect_button->setIconSize (Resources::Icons16::haruhi().size());
 	_disconnect_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
 
 	QObject::connect (_ipanel->list()->verticalScrollBar(), SIGNAL (sliderMoved (int)), static_cast<QWidget*> (this), SLOT (list_view_moved()));

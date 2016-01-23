@@ -51,16 +51,19 @@ Panel::Panel (QWidget* parent, Settings* settings):
 	QObject::connect (_tree, SIGNAL (itemSelectionChanged()), this, SLOT (selection_changed()));
 
 	_create_device_button = new QPushButton (Resources::Icons16::add(), "Add device", this);
+	_create_device_button->setIconSize (Resources::Icons16::haruhi().size());
 	_create_device_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_create_device_button->setToolTip ("Add new device and external input port");
 	_create_device_button->setFlat (true);
 
 	_create_controller_button = new QPushButton (Resources::Icons16::add(), "Add controller", this);
+	_create_controller_button->setIconSize (Resources::Icons16::haruhi().size());
 	_create_controller_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_create_controller_button->setToolTip ("Add new controller and internal output port");
 	_create_controller_button->setFlat (true);
 
 	_destroy_input_button = new QPushButton (Resources::Icons16::remove(), "Destroy device", this);
+	_destroy_input_button->setIconSize (Resources::Icons16::haruhi().size());
 	_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_destroy_input_button->setToolTip ("Destroy selected device or controller");
 	_destroy_input_button->setFlat (true);

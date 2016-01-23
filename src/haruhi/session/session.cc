@@ -68,10 +68,12 @@ Private::SettingsDialog::SettingsDialog (QWidget* parent, Session* session):
 	QObject::connect (_name, SIGNAL (textChanged (const QString&)), this, SLOT (state_changed()));
 
 	_accept_button = new QPushButton ("&Ok", this);
+	_accept_button->setIconSize (Resources::Icons16::haruhi().size());
 	_accept_button->setDefault (true);
 	QObject::connect (_accept_button, SIGNAL (clicked()), this, SLOT (validate_and_accept()));
 
 	_reject_button = new QPushButton ("&Cancel", this);
+	_reject_button->setIconSize (Resources::Icons16::haruhi().size());
 	QObject::connect (_reject_button, SIGNAL (clicked()), this, SLOT (reject()));
 
 	// Layouts:
@@ -395,7 +397,8 @@ Session::Session (QWidget* parent):
 	_tempo_spinbox->setToolTip ("Master tempo");
 	QObject::connect (_tempo_spinbox, SIGNAL (valueChanged (double)), this, SLOT (tempo_value_changed (double)));
 
-	_panic_button = new QPushButton ("Panic!", inner_header);
+	_panic_button = new QPushButton (Resources::Icons16::panic(), "Panic!", inner_header);
+	_panic_button->setIconSize (Resources::Icons16::haruhi().size());
 	_panic_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_panic_button->setToolTip ("Stops all sound processing (F10)");
 	QObject::connect (_panic_button, SIGNAL (clicked()), this, SLOT (panic_button_clicked()));
@@ -403,7 +406,8 @@ Session::Session (QWidget* parent):
 	new QShortcut (Qt::ControlModifier + Qt::Key_PageUp, this, SLOT (show_prev_plugin()));
 	new QShortcut (Qt::ControlModifier + Qt::Key_PageDown, this, SLOT (show_next_plugin()));
 
-	_main_menu_button = new QPushButton ("Menu", inner_header);
+	_main_menu_button = new QPushButton ("Menu ", inner_header);
+	_main_menu_button->setIconSize (Resources::Icons16::haruhi().size());
 	_main_menu_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_main_menu_button->setMenu (_main_menu);
 	_main_menu_button->setIcon (Resources::Icons16::menu());
@@ -421,8 +425,8 @@ Session::Session (QWidget* parent):
 
 	_session_global = new Private::SessionGlobal (this, _session_settings);
 	_haruhi_global = new Private::HaruhiGlobal (this, _session_settings);
-	_audio_widget = create_container (new QLabel ("Audio ports"), this);
-	_event_widget = create_container (new QLabel ("Event ports"), this);
+	_audio_widget = create_container (this);
+	_event_widget = create_container (this);
 
 	// Contains audio & event widgets:
 	QWidget* ports_tab = new QWidget (this);
@@ -463,11 +467,11 @@ Session::Session (QWidget* parent):
 	layout->addLayout (bottom_layout);
 
 	// Add tabs:
-	_session_settings->addTab (_session_global, Resources::Icons22::configure(), "Session settings");
-	_session_settings->addTab (ports_tab, Resources::Icons22::show_audio(), "Audio && event ports");
+	_session_settings->addTab (_session_global, Resources::Icons16::configure(), "Session settings");
+	_session_settings->addTab (ports_tab, Resources::Icons16::audio(), "Audio && event ports");
 
-	_haruhi_settings->addTab (_haruhi_global, Resources::Icons22::configure(), "Haruhi settings");
-	_haruhi_settings->addTab (_devices_manager, Resources::Icons22::show_event(), "Device templates");
+	_haruhi_settings->addTab (_haruhi_global, Resources::Icons16::configure(), "Haruhi settings");
+	_haruhi_settings->addTab (_devices_manager, Resources::Icons16::keyboard(), "Device templates");
 
 	// Start engine and backends before program is loaded:
 	_engine = new Engine (this);
@@ -801,8 +805,8 @@ Session::create_main_menu()
 {
 	_main_menu = new QMenu (this);
 
-	_main_menu->addAction (Resources::Icons16::show_program(), "Program", this, SLOT (show_program()), Qt::Key_F1);
-	_main_menu->addAction (Resources::Icons16::show_backends(), "Session settings", this, SLOT (show_session_settings()), Qt::Key_F2);
+	_main_menu->addAction ("Program", this, SLOT (show_program()), Qt::Key_F1);
+	_main_menu->addAction ("Session settings", this, SLOT (show_session_settings()), Qt::Key_F2);
 	_main_menu->addAction (Resources::Icons16::haruhi(), "Haruhi settings", this, SLOT (show_haruhi_settings()), Qt::Key_F3);
 	_main_menu->addSeparator();
 	_main_menu->addAction (Resources::Icons16::session_manager(), "Session &manager…", this, SLOT (session_loader()), Qt::CTRL + Qt::Key_M);
@@ -942,7 +946,7 @@ Session::customEvent (QEvent* e)
 
 
 QWidget*
-Session::create_container (QWidget* label, QWidget* parent)
+Session::create_container (QWidget* parent)
 {
 	// Configure layouts for audio and event tabs:
 	QFrame* w = new QFrame (parent);

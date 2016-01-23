@@ -89,6 +89,7 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 
 	// Title/menu button:
 	QPushButton* title_button = new QPushButton (QString::fromStdString (_plugin->title()), bar);
+	title_button->setIconSize (Resources::Icons16::haruhi().size());
 	title_button->clearFocus();
 	title_button->setFlat (true);
 	title_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -118,6 +119,7 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 
 		// Presets button:
 		_presets_button = new QPushButton ("Presets", bar);
+		_presets_button->setIconSize (Resources::Icons16::haruhi().size());
 		_presets_button->clearFocus();
 		_presets_button->setFlat (true);
 		_presets_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -130,6 +132,7 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 		// Presets manager/favoriting:
 
 		_favorite_button = new QPushButton ("Favorite", bar);
+		_favorite_button->setIconSize (Resources::Icons16::haruhi().size());
 		_favorite_button->clearFocus();
 		_favorite_button->setFlat (true);
 		_favorite_button->setCheckable (true);
@@ -291,6 +294,7 @@ Patch::Patch (Session* session, std::string const& title, QWidget* parent):
 	QWidget* add_plugin_frame = new QWidget (this);
 
 	QPushButton* add_plugin_button = new QPushButton (Resources::Icons16::add(), "Load plugin", add_plugin_frame);
+	add_plugin_button->setIconSize (Resources::Icons16::haruhi().size());
 	add_plugin_button->setFlat (true);
 	add_plugin_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
 	add_plugin_button->setMenu (_plugins_menu);
@@ -298,13 +302,14 @@ Patch::Patch (Session* session, std::string const& title, QWidget* parent):
 	_tabs = new QTabWidget (this);
 	_tabs->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_tabs->setTabPosition (QTabWidget::North);
-	_tabs->setIconSize (Resources::Icons16::haruhi().size() * 1.25);
+	_tabs->setIconSize (Resources::Icons16::haruhi().size() * 1.5);
 	_tabs->setMovable (true);
 	_tabs->setCornerWidget (add_plugin_frame, Qt::BottomRightCorner);
 
 	_connections_tab = new Private::ConnectionsTab (this, _tabs);
 
-	_tabs->addTab (_connections_tab, Resources::Icons22::connections(), "Wires");
+	_tabs->addTab (_connections_tab, Resources::Icons16::connections(), "Wires");
+	_tabs->setIconSize (Resources::Icons16::haruhi().size() * 1.5);
 
 	// Layouts:
 
@@ -362,7 +367,7 @@ Patch::load_plugin (QString const& urn)
 
 		// Create unit frame:
 		Private::PluginTab* plugin_tab = new Private::PluginTab (this, _tabs, plugin);
-		_tabs->addTab (plugin_tab, Resources::Icons22::spacer(), "<>");
+		_tabs->addTab (plugin_tab, Resources::Icons16::unit_type_synth(), "<>"); // TODO Icon should depend on plugin's declared type
 		_plugins_to_frames_map[plugin] = plugin_tab;
 		update_tab_title (plugin);
 		_session->graph()->register_unit (plugin);

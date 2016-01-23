@@ -88,11 +88,13 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 	QWidget* buttons_widget = new QWidget (this);
 
 	_add_part_button = new QPushButton (Resources::Icons16::add(), "Add part", this);
+	_add_part_button->setIconSize (Resources::Icons16::haruhi().size());
 	_add_part_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
 	_add_part_button->setFlat (true);
 	QObject::connect (_add_part_button, SIGNAL (clicked()), this, SLOT (add_part()));
 
 	_remove_part_button = new QPushButton (Resources::Icons16::remove(), "", this);
+	_remove_part_button->setIconSize (Resources::Icons16::haruhi().size());
 	_remove_part_button->setToolTip ("Remove current part");
 	_remove_part_button->setFlat (true);
 	QObject::connect (_remove_part_button, SIGNAL (clicked()), this, SLOT (remove_current_part()));

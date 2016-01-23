@@ -125,6 +125,7 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 	// Buttons:
 
 	_save_button = new QPushButton (Resources::Icons16::ok(), "&Apply", this);
+	_save_button->setIconSize (Resources::Icons16::haruhi().size());
 	QObject::connect (_save_button, SIGNAL (clicked()), this, SLOT (validate_and_save()));
 
 	// Layout:

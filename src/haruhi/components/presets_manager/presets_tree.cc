@@ -58,6 +58,7 @@ PresetsTree::PresetsTree (PresetsManager* presets_manager, QWidget* parent):
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	setVerticalScrollMode (QAbstractItemView::ScrollPerPixel);
 	setContextMenuPolicy (Qt::CustomContextMenu);
+	setIconSize (Resources::Icons16::haruhi().size());
 	setHeaderLabel ("Presets");
 
 	_auto_open_timer = new QTimer (this);

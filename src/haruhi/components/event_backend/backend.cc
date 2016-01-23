@@ -61,21 +61,25 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	QObject::connect (_tree, SIGNAL (itemSelectionChanged()), this, SLOT (selection_changed()));
 
 	_create_device_button = new QPushButton (Resources::Icons16::add(), "Add device", this);
+	_create_device_button->setIconSize (Resources::Icons16::haruhi().size());
 	_create_device_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_create_device_button->setToolTip ("Add new device and external input port");
 	_create_device_button->setFlat (true);
 
 	_create_controller_button = new QPushButton (Resources::Icons16::add(), "Add controller", this);
+	_create_controller_button->setIconSize (Resources::Icons16::haruhi().size());
 	_create_controller_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_create_controller_button->setToolTip ("Add new controller and internal output port");
 	_create_controller_button->setFlat (true);
 
 	_destroy_input_button = new QPushButton (Resources::Icons16::remove(), "Destroy", this);
+	_destroy_input_button->setIconSize (Resources::Icons16::haruhi().size());
 	_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_destroy_input_button->setToolTip ("Destroy selected device or controller");
 	_destroy_input_button->setFlat (true);
 
 	_insert_template_button = new QPushButton (Resources::Icons16::insert(), "Insert template", this);
+	_insert_template_button->setIconSize (Resources::Icons16::haruhi().size());
 	_insert_template_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_insert_template_button->setToolTip ("Insert device previously saved in 'Device templates'");
 	_insert_template_button->setFlat (true);
@@ -348,7 +352,7 @@ Backend::update_templates_menu()
 	for (DevicesManager::Device& d: dm_model.devices())
 	{
 		action_id += 1;
-		QAction* a = _templates_menu->addAction (Resources::Icons16::template_(), d.name(), _insert_template_signal_mapper, SLOT (map()));
+		QAction* a = _templates_menu->addAction (Resources::Icons16::keyboard(), d.name(), _insert_template_signal_mapper, SLOT (map()));
 		_insert_template_signal_mapper->setMapping (a, action_id);
 		_templates.insert (std::make_pair (action_id, d));
 	}
