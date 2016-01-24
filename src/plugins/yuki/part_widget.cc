@@ -34,7 +34,7 @@
 // Local:
 #include "part_widget.h"
 #include "params.h"
-#include "part_harmonics.h"
+#include "part_harmonics_widget.h"
 #include "part_manager_widget.h"
 #include "part_manager.h"
 #include "part.h"

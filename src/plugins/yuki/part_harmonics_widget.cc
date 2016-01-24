@@ -32,7 +32,7 @@
 #include <haruhi/dsp/scaled_wave.h>
 
 // Local:
-#include "part_harmonics.h"
+#include "part_harmonics_widget.h"
 #include "part_widget.h"
 #include "part.h"
 

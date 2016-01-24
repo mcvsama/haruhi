@@ -38,7 +38,7 @@
 
 // Local:
 #include "part.h"
-#include "part_harmonics.h"
+#include "part_harmonics_widget.h"
 #include "filter_widget.h"
 #include "operator_widget.h"
 

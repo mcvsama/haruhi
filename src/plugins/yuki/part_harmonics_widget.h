@@ -37,7 +37,6 @@
 #include <haruhi/utility/signal.h>
 
 // Local:
-#include "part_harmonics.h"
 #include "params.h"
 
 
