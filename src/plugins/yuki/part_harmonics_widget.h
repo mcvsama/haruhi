@@ -40,6 +40,26 @@ class Part;
 class PartWidget;
 
 
+/**
+ * Slider that implements slot reset() which
+ * sets slider value to 0.
+ */
+class Slider: public QSlider
+{
+	Q_OBJECT
+
+  public:
+	Slider (int min_value, int max_value, int page_step, int value, Qt::Orientation orientation, QWidget* parent);
+
+  public slots:
+	/**
+	 * Set slider value to 0.
+	 */
+	void
+	reset();
+};
+
+
 class PartHarmonicsWidget: public QWidget
 {
 	Q_OBJECT
@@ -99,54 +119,6 @@ class PartHarmonicsWidget: public QWidget
 	QColor		_std_button_bg;
 	QColor		_std_button_fg;
 };
-
-
-/**
- * Slider that implements slot reset() which
- * sets slider value to 0.
- */
-class Slider: public QSlider
-{
-	Q_OBJECT
-
-  public:
-	Slider (int min_value, int max_value, int page_step, int value, Qt::Orientation orientation, QWidget* parent);
-
-  public slots:
-	/**
-	 * Set slider value to 0.
-	 */
-	void
-	reset();
-};
-
-
-inline void
-PartHarmonicsWidget::set_button_highlighted (QPushButton* button, bool highlight)
-{
-	QPalette p = button->palette();
-	p.setColor (QPalette::Button, highlight ? QColor (0x00, 0xff, 0x00) : _std_button_bg);
-	p.setColor (QPalette::ButtonText, highlight ? QColor (0x00, 0x00, 0x00) : _std_button_fg);
-	button->setPalette (p);
-}
-
-
-inline
-Slider::Slider (int min_value, int max_value, int page_step, int value, Qt::Orientation orientation, QWidget* parent):
-	QSlider (orientation, parent)
-{
-	setMinimum (min_value);
-	setMaximum (max_value);
-	setPageStep (page_step);
-	setValue (value);
-}
-
-
-inline void
-Slider::reset()
-{
-	setValue (0);
-}
 
 } // namespace Yuki
 

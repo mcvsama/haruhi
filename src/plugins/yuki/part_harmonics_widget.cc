@@ -33,6 +33,23 @@ namespace Yuki {
 using namespace Haruhi::ScreenLiterals;
 
 
+Slider::Slider (int min_value, int max_value, int page_step, int value, Qt::Orientation orientation, QWidget* parent):
+	QSlider (orientation, parent)
+{
+	setMinimum (min_value);
+	setMaximum (max_value);
+	setPageStep (page_step);
+	setValue (value);
+}
+
+
+void
+Slider::reset()
+{
+	setValue (0);
+}
+
+
 PartHarmonicsWidget::PartHarmonicsWidget (QWidget* parent, PartWidget* part_widget, Part* part):
 	QWidget (parent),
 	_part_widget (part_widget),
@@ -195,6 +212,16 @@ PartHarmonicsWidget::params_to_widgets()
 		_harmonics_sliders[i]->setValue (pp->harmonics[i]);
 	for (std::size_t i = 0; i < countof (pp->harmonic_phases); ++i)
 		_harmonic_phases_sliders[i]->setValue (pp->harmonic_phases[i]);
+}
+
+
+void
+PartHarmonicsWidget::set_button_highlighted (QPushButton* button, bool highlight)
+{
+	QPalette p = button->palette();
+	p.setColor (QPalette::Button, highlight ? QColor (0x00, 0xff, 0x00) : _std_button_bg);
+	p.setColor (QPalette::ButtonText, highlight ? QColor (0x00, 0x00, 0x00) : _std_button_fg);
+	button->setPalette (p);
 }
 
 } // namespace Yuki
