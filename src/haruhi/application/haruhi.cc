@@ -102,6 +102,8 @@ void
 Haruhi::run_ui()
 {
 	_app = new QApplication (_argc, _argv);
+	// Fix "disabled" color for some styles to be gray instead of black:
+	_app->setPalette (fix_palette (_app->palette()));
 	// Qt preparations:
 	QTextCodec::setCodecForCStrings (QTextCodec::codecForName ("UTF-8"));
 	// Now casting QString to std::string|const char* will yield UTF-8 encoded strings.
@@ -148,6 +150,21 @@ Haruhi::quit_if_ok()
 {
 	if (_ok_to_quit)
 		_app->quit();
+}
+
+
+QPalette
+Haruhi::fix_palette (QPalette palette)
+{
+	auto blend = [](QColor input) {
+		input.setAlpha (0x7f);
+		return input;
+	};
+
+	palette.setColor (QPalette::Disabled, QPalette::WindowText, blend (palette.color (QPalette::Normal, QPalette::WindowText)));
+	palette.setColor (QPalette::Disabled, QPalette::Text, blend (palette.color (QPalette::Normal, QPalette::Text)));
+	palette.setColor (QPalette::Disabled, QPalette::ButtonText, blend (palette.color (QPalette::Normal, QPalette::ButtonText)));
+	return palette;
 }
 
 } // namespace Haruhi

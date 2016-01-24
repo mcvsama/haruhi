@@ -119,6 +119,10 @@ class Haruhi:
 	quit_if_ok();
 
   private:
+	static QPalette
+	fix_palette (QPalette);
+
+  private:
 	// Haruhi pointer:
 	static Haruhi*				_haruhi;
 
