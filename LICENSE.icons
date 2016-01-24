@@ -1,9 +1,11 @@
-Icons used in this program are mostly taken from Oxygen Icons project.
-Both Oxygen and new icons are dual licensed, under:
+Some of icons were made by me and are dual-licensed:
 
  • Creative Common Attribution-ShareAlike 3.0 License
      http://creativecommons.org/licenses/by-sa/3.0/
 
  • or the GNU Library General Public License
      http://www.gnu.org/licenses/lgpl.html
+
+The rest was taken from Breeze icon theme <https://github.com/NitruxSA/breeze-icon-theme> made for Plasma 5
+and they're licensed under LGPLv3: <http://opensource.org/licenses/lgpl-3.0.html>
 
