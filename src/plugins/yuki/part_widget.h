@@ -38,6 +38,7 @@
 
 // Local:
 #include "part.h"
+#include "part_harmonics.h"
 #include "filter_widget.h"
 #include "operator_widget.h"
 
@@ -56,8 +57,8 @@ class PartWidget:
 {
 	Q_OBJECT
 
-	typedef std::vector<QSlider*>						Sliders;
-	typedef std::vector<QPushButton*>					Buttons;
+	friend class PartHarmonicsWidget;
+
 	// Modulation matrix knobs [0..3][0..2]:
 	typedef std::vector<std::vector<Haruhi::Knob*> >	MatrixKnobs;
 
@@ -94,14 +95,7 @@ class PartWidget:
 	update_phase_marker();
 
 	/**
-	 * Reset all harmonics to default values.
-	 */
-	void
-	reset_all_harmonics();
-
-	/**
 	 * Update widgets deps (enable/disable, etc.)
-	 *
 	 */
 	void
 	update_widgets();
@@ -109,16 +103,10 @@ class PartWidget:
   private:
 	/**
 	 * Updates widgets' states from params.
-	 * \entry	UI thread only
+	 * \entry   UI thread only
 	 */
 	void
 	params_to_widgets();
-
-	/**
-	 * Highlights selected button.
-	 */
-	void
-	set_button_highlighted (QPushButton* button, bool highlight);
 
 	/**
 	 * Connected to part's waves_updated signal.
@@ -190,13 +178,6 @@ class PartWidget:
 	QComboBox*			_wave_type;
 	QComboBox*			_modulator_type;
 	QComboBox*			_modulator_wave_type;
-	Sliders				_harmonics_sliders;
-	Buttons				_harmonics_resets;
-	Sliders				_harmonic_phases_sliders;
-	Buttons				_harmonic_phases_resets;
-	QWidget*			_harmonics_widget;
-	QWidget*			_harmonic_phases_widget;
-	QPushButton*		_harmonics_reset_button;
 
 	// Pitchbend/transposition:
 	QPushButton*		_const_portamento_time;
@@ -207,46 +188,24 @@ class PartWidget:
 	QSpinBox*			_frequency_modulation_range;
 
 	// Other:
-	QTabWidget*			_tabs;
-	QWidget*			_oscillator_panel;
-	QWidget*			_modulator_panel;
-	QWidget*			_harmonics_panel;
-	QPushButton*		_auto_center;
-	QPushButton*		_unison_stereo;
-	QPushButton*		_pseudo_stereo;
-	QCheckBox*			_part_enabled;
-	QCheckBox*			_modulator_enabled;
-	QPushButton*		_wave_enabled;
-	QPushButton*		_noise_enabled;
-	QColor				_std_button_bg;
-	QColor				_std_button_fg;
-	FilterWidget*		_filter_1;
-	FilterWidget*		_filter_2;
-	QComboBox*			_filter_configuration;
-	OperatorWidget*		_operator_1;
-	OperatorWidget*		_operator_2;
-	OperatorWidget*		_operator_3;
-	std::list<QWidget*>	_modulator_labels;
-};
-
-
-/**
- * Slider that implements slot reset() which
- * sets slider value to 0.
- */
-class Slider: public QSlider
-{
-	Q_OBJECT
-
-  public:
-	Slider (int min_value, int max_value, int page_step, int value, Qt::Orientation orientation, QWidget* parent);
-
-  public slots:
-	/**
-	 * Set slider value to 0.
-	 */
-	void
-	reset();
+	QTabWidget*				_tabs;
+	QWidget*				_oscillator_panel;
+	QWidget*				_modulator_panel;
+	PartHarmonicsWidget*	_harmonics_panel;
+	QPushButton*			_auto_center;
+	QPushButton*			_unison_stereo;
+	QPushButton*			_pseudo_stereo;
+	QCheckBox*				_part_enabled;
+	QCheckBox*				_modulator_enabled;
+	QPushButton*			_wave_enabled;
+	QPushButton*			_noise_enabled;
+	FilterWidget*			_filter_1;
+	FilterWidget*			_filter_2;
+	QComboBox*				_filter_configuration;
+	OperatorWidget*			_operator_1;
+	OperatorWidget*			_operator_2;
+	OperatorWidget*			_operator_3;
+	std::list<QWidget*>		_modulator_labels;
 };
 
 
@@ -254,34 +213,6 @@ inline Part*
 PartWidget::part() const
 {
 	return _part;
-}
-
-
-inline void
-PartWidget::set_button_highlighted (QPushButton* button, bool highlight)
-{
-	QPalette p = button->palette();
-	p.setColor (QPalette::Button, highlight ? QColor (0x00, 0xff, 0x00) : _std_button_bg);
-	p.setColor (QPalette::ButtonText, highlight ? QColor (0x00, 0x00, 0x00) : _std_button_fg);
-	button->setPalette (p);
-}
-
-
-inline
-Slider::Slider (int min_value, int max_value, int page_step, int value, Qt::Orientation orientation, QWidget* parent):
-	QSlider (orientation, parent)
-{
-	setMinimum (min_value);
-	setMaximum (max_value);
-	setPageStep (page_step);
-	setValue (value);
-}
-
-
-inline void
-Slider::reset()
-{
-	setValue (0);
 }
 
 } // namespace Yuki
