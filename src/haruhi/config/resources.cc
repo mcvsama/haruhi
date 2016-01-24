@@ -35,22 +35,22 @@ using namespace Haruhi::ScreenLiterals;
 
 int spacing()
 {
-	return 0.8_screen_mm;
+	return 0.7_screen_mm;
 }
 
 int margin()
 {
-	return 0.8_screen_mm;
+	return 0.7_screen_mm;
 }
 
 int window_margin()
 {
-	return 0.9_screen_mm;
+	return 0.85_screen_mm;
 }
 
 int dialog_margin()
 {
-	return 0.9_screen_mm;
+	return 0.85_screen_mm;
 }
 
 } // namespace Config
