@@ -124,6 +124,7 @@ get_svg_icon (QString const& svg_file) noexcept;
 		HARUHI_CONFIG_HAS_ICON (presets_category, "presets-category.svg");
 		HARUHI_CONFIG_HAS_ICON (preset, "preset.svg");
 		HARUHI_CONFIG_HAS_ICON (preset_favorite, "preset-favorite.svg");
+		HARUHI_CONFIG_HAS_ICON (wave, "wave.svg");
 		HARUHI_CONFIG_HAS_ICON (wave_sine, "wave-sine.svg");
 		HARUHI_CONFIG_HAS_ICON (wave_triangle, "wave-triangle.svg");
 		HARUHI_CONFIG_HAS_ICON (wave_square, "wave-square.svg");
