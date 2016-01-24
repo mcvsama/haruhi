@@ -267,7 +267,7 @@ class Backend:
 
 	// Device templates menu and helper storage:
 	Templates					_templates;
-	QMenu*						_templates_menu;
+	Unique<QMenu>				_templates_menu;
 };
 
 

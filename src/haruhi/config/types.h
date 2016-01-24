@@ -16,6 +16,7 @@
 
 // Standard:
 #include <stdint.h>
+#include <memory>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -24,6 +25,10 @@
 namespace Haruhi {
 
 typedef float Sample;
+
+
+template<class X>
+	using Unique = std::unique_ptr<X>;
 
 } // namespace Haruhi
 

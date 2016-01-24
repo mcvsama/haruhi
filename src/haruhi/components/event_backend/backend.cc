@@ -13,6 +13,7 @@
 
 // Standard:
 #include <cstddef>
+#include <memory>
 
 // Qt:
 #include <QtGui/QPushButton>
@@ -48,8 +49,7 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	QWidget (parent),
 	EventBackend ("╸Devices╺"),
 	_client_name (client_name),
-	_insert_template_signal_mapper (0),
-	_templates_menu (0)
+	_insert_template_signal_mapper (0)
 {
 	_transport = new AlsaTransport (this);
 
@@ -132,8 +132,6 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 
 Backend::~Backend()
 {
-	delete _templates_menu;
-
 	_tree->disconnect();
 	_create_device_button->disconnect();
 	_create_controller_button->disconnect();
@@ -294,7 +292,7 @@ Backend::save_selected_item_as_template()
 void
 Backend::context_menu_for_items (QPoint const& pos)
 {
-	QMenu* menu = new QMenu (this);
+	auto menu = std::make_unique<QMenu> (this);
 	QTreeWidgetItem* item = _tree->itemAt (pos);
 	QAction* a;
 
@@ -328,19 +326,16 @@ Backend::context_menu_for_items (QPoint const& pos)
 		a->setEnabled (false);
 	}
 	menu->addSeparator();
-	menu->addMenu (_templates_menu);
+	menu->addMenu (_templates_menu.get());
 
 	menu->exec (QCursor::pos());
-	delete menu;
 }
 
 
 void
 Backend::update_templates_menu()
 {
-	delete _templates_menu;
-
-	_templates_menu = new QMenu();
+	_templates_menu = std::make_unique<QMenu>();
 	if (_insert_template_signal_mapper)
 		delete _insert_template_signal_mapper;
 	_insert_template_signal_mapper = new QSignalMapper (this);
@@ -361,7 +356,7 @@ Backend::update_templates_menu()
 	_templates_menu->setIcon (Resources::Icons16::insert());
 	_templates_menu->setEnabled (!dm_model.devices().empty());
 
-	_insert_template_button->setMenu (_templates_menu);
+	_insert_template_button->setMenu (_templates_menu.get());
 	_insert_template_button->setEnabled (!dm_model.devices().empty());
 }
 
