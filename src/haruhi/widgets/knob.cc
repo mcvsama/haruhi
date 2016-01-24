@@ -379,7 +379,7 @@ Knob::initialize (QString const& label, Range<float> shown_range, int step, int 
 	dial_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
-	layout->setMargin (Config::margin());
+	layout->setMargin (0.5 * Config::margin());
 	layout->setSpacing (1.0_screen_mm);
 	layout->addLayout (label_layout);
 	layout->addLayout (dial_layout);
