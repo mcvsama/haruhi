@@ -60,9 +60,9 @@ Part::UpdateWavetableWorkUnit::reset (DSP::Wavetable* wavetable, unsigned int se
 void
 Part::UpdateWavetableWorkUnit::execute()
 {
-	DSP::Wave* wave = _part->final_wave();
+	Unique<DSP::Wave> wave = _part->final_wave();
 
-	DSP::FFTFiller filler (wave, true, 0.000001f);
+	DSP::FFTFiller filler (wave.get(), true, 0.000001f);
 	filler.set_cancel_predicate (boost::bind (&UpdateWavetableWorkUnit::is_cancelled, this));
 	filler.fill (_wavetable, 4096);
 
@@ -72,8 +72,6 @@ Part::UpdateWavetableWorkUnit::execute()
 		// because Part will wait for us in its destructor.
 		_part->wavetable_computed (_serial);
 	}
-
-	delete wave;
 }
 
 
@@ -637,7 +635,7 @@ Part::voices_number() const
 }
 
 
-DSP::Wave*
+Unique<DSP::Wave>
 Part::final_wave() const
 {
 	DSP::ParametricWave* bw = base_wave()->clone();
@@ -657,14 +655,14 @@ Part::final_wave() const
 		hw->set_harmonic (i, h, p);
 	}
 
-	DSP::Wave* final = new DSP::ModulatedWave (hw, mw, static_cast<DSP::ModulatedWave::Type> (_part_params.modulator_type.get()),
-											   _part_params.modulator_amplitude.to_f(), _part_params.modulator_index.get(), true, true);
+	Unique<DSP::Wave> final = std::make_unique<DSP::ModulatedWave> (hw, mw, static_cast<DSP::ModulatedWave::Type> (_part_params.modulator_type.get()),
+																	_part_params.modulator_amplitude.to_f(), _part_params.modulator_index.get(), true, true);
 
 	if (_part_params.auto_center)
 	{
 		std::pair<Sample, Sample> min_max = final->compute_min_max();
 		Sample translation = -0.5f * (min_max.second + min_max.first);
-		final = new DSP::TranslatedWave (translation, final, true);
+		final = std::make_unique<DSP::TranslatedWave> (translation, final.release(), true);
 	}
 
 	return final;

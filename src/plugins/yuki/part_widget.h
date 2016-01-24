@@ -65,8 +65,6 @@ class PartWidget:
   public:
 	PartWidget (PartManagerWidget*, Part*);
 
-	~PartWidget();
-
 	/**
 	 * Link to associated Part object.
 	 */
@@ -136,56 +134,56 @@ class PartWidget:
 	create_modulator_label (QString const& text);
 
   private:
-	PartManagerWidget*	_part_manager_widget;
-	Part*				_part;
-	DSP::Wave*			_cached_final_wave;
-	bool				_stop_widgets_to_params;
-	bool				_stop_params_to_widgets;
+	PartManagerWidget*		_part_manager_widget;
+	Part*					_part;
+	Unique<DSP::Wave>		_cached_final_wave;
+	bool					_stop_widgets_to_params;
+	bool					_stop_params_to_widgets;
 
 	// Waveform knobs:
-	Haruhi::Knob*		_knob_wave_shape;
-	Haruhi::Knob*		_knob_modulator_amplitude;
-	Haruhi::Knob*		_knob_modulator_index;
-	Haruhi::Knob*		_knob_modulator_shape;
+	Unique<Haruhi::Knob>	_knob_wave_shape;
+	Unique<Haruhi::Knob>	_knob_modulator_amplitude;
+	Unique<Haruhi::Knob>	_knob_modulator_index;
+	Unique<Haruhi::Knob>	_knob_modulator_shape;
 
 	// Volume knobs:
-	Haruhi::Knob*		_knob_volume;
-	Haruhi::Knob*		_knob_panorama;
-	Haruhi::Knob*		_knob_detune;
-	Haruhi::Knob*		_knob_pitchbend;
-	Haruhi::Knob*		_knob_velocity_sens;
+	Unique<Haruhi::Knob>	_knob_volume;
+	Unique<Haruhi::Knob>	_knob_panorama;
+	Unique<Haruhi::Knob>	_knob_detune;
+	Unique<Haruhi::Knob>	_knob_pitchbend;
+	Unique<Haruhi::Knob>	_knob_velocity_sens;
 
 	// Unison knobs:
-	Haruhi::Knob*		_knob_unison_index;
-	Haruhi::Knob*		_knob_unison_spread;
-	Haruhi::Knob*		_knob_unison_init;
-	Haruhi::Knob*		_knob_unison_noise;
-	Haruhi::Knob*		_knob_unison_vibrato_level;
-	Haruhi::Knob*		_knob_unison_vibrato_frequency;
+	Unique<Haruhi::Knob>	_knob_unison_index;
+	Unique<Haruhi::Knob>	_knob_unison_spread;
+	Unique<Haruhi::Knob>	_knob_unison_init;
+	Unique<Haruhi::Knob>	_knob_unison_noise;
+	Unique<Haruhi::Knob>	_knob_unison_vibrato_level;
+	Unique<Haruhi::Knob>	_knob_unison_vibrato_frequency;
 
 	// Other knobs:
-	Haruhi::Knob*		_knob_portamento_time;
-	Haruhi::Knob*		_knob_phase;
-	Haruhi::Knob*		_knob_noise_level;
+	Unique<Haruhi::Knob>	_knob_portamento_time;
+	Unique<Haruhi::Knob>	_knob_phase;
+	Unique<Haruhi::Knob>	_knob_noise_level;
 
 	// Modulation matrix knobs:
-	MatrixKnobs			_fm_matrix_knobs;
-	MatrixKnobs			_am_matrix_knobs;
+	MatrixKnobs				_fm_matrix_knobs;
+	MatrixKnobs				_am_matrix_knobs;
 
 	// Waveform-related:
-	Haruhi::WavePlot*	_base_wave_plot;
-	Haruhi::WavePlot*	_final_wave_plot;
-	QComboBox*			_wave_type;
-	QComboBox*			_modulator_type;
-	QComboBox*			_modulator_wave_type;
+	Haruhi::WavePlot*		_base_wave_plot;
+	Haruhi::WavePlot*		_final_wave_plot;
+	QComboBox*				_wave_type;
+	QComboBox*				_modulator_type;
+	QComboBox*				_modulator_wave_type;
 
 	// Pitchbend/transposition:
-	QPushButton*		_const_portamento_time;
-	QPushButton*		_pitchbend_enabled;
-	QSpinBox*			_pitchbend_up_semitones;
-	QSpinBox*			_pitchbend_down_semitones;
-	QSpinBox*			_transposition_semitones;
-	QSpinBox*			_frequency_modulation_range;
+	QPushButton*			_const_portamento_time;
+	QPushButton*			_pitchbend_enabled;
+	QSpinBox*				_pitchbend_up_semitones;
+	QSpinBox*				_pitchbend_down_semitones;
+	QSpinBox*				_transposition_semitones;
+	QSpinBox*				_frequency_modulation_range;
 
 	// Other:
 	QTabWidget*				_tabs;

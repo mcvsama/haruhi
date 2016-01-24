@@ -50,7 +50,6 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QWidget (part_manager_widget),
 	_part_manager_widget (part_manager_widget),
 	_part (part),
-	_cached_final_wave (0),
 	_stop_widgets_to_params (false),
 	_stop_params_to_widgets (false)
 {
@@ -58,24 +57,24 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	Part::PartControllerProxies* proxies = _part->proxies();
 
-	_knob_wave_shape				= new Haruhi::Knob (this, &proxies->wave_shape, "Shape");
-	_knob_modulator_amplitude		= new Haruhi::Knob (this, &proxies->modulator_amplitude, "Mod.amp.");
-	_knob_modulator_index			= new Haruhi::Knob (this, &proxies->modulator_index, "Mod.index");
-	_knob_modulator_shape			= new Haruhi::Knob (this, &proxies->modulator_shape, "Mod.shape");
-	_knob_volume					= new Haruhi::Knob (this, &proxies->volume, "Volume dB");
-	_knob_panorama					= new Haruhi::Knob (this, &proxies->panorama, "Panorama");
-	_knob_detune					= new Haruhi::Knob (this, &proxies->detune, "Detune");
-	_knob_pitchbend					= new Haruhi::Knob (this, &proxies->pitchbend, "Pitch");
-	_knob_unison_index				= new Haruhi::Knob (this, &proxies->unison_index, "Unison");
-	_knob_unison_spread				= new Haruhi::Knob (this, &proxies->unison_spread, "U.spread");
-	_knob_unison_init				= new Haruhi::Knob (this, &proxies->unison_init, "U.init.φ");
-	_knob_unison_noise				= new Haruhi::Knob (this, &proxies->unison_noise, "U.noise");
-	_knob_unison_vibrato_level		= new Haruhi::Knob (this, &proxies->unison_vibrato_level, "U.V.lev");
-	_knob_unison_vibrato_frequency	= new Haruhi::Knob (this, &proxies->unison_vibrato_frequency, "U.V.freq");
-	_knob_velocity_sens				= new Haruhi::Knob (this, &proxies->velocity_sens, "Vel.sens.");
-	_knob_portamento_time			= new Haruhi::Knob (this, &proxies->portamento_time, "Glide");
-	_knob_phase						= new Haruhi::Knob (this, &proxies->phase, "Phase");
-	_knob_noise_level				= new Haruhi::Knob (this, &proxies->noise_level, "Noise lvl");
+	_knob_wave_shape				= std::make_unique<Haruhi::Knob> (this, &proxies->wave_shape, "Shape");
+	_knob_modulator_amplitude		= std::make_unique<Haruhi::Knob> (this, &proxies->modulator_amplitude, "Mod.amp.");
+	_knob_modulator_index			= std::make_unique<Haruhi::Knob> (this, &proxies->modulator_index, "Mod.index");
+	_knob_modulator_shape			= std::make_unique<Haruhi::Knob> (this, &proxies->modulator_shape, "Mod.shape");
+	_knob_volume					= std::make_unique<Haruhi::Knob> (this, &proxies->volume, "Volume dB");
+	_knob_panorama					= std::make_unique<Haruhi::Knob> (this, &proxies->panorama, "Panorama");
+	_knob_detune					= std::make_unique<Haruhi::Knob> (this, &proxies->detune, "Detune");
+	_knob_pitchbend					= std::make_unique<Haruhi::Knob> (this, &proxies->pitchbend, "Pitch");
+	_knob_unison_index				= std::make_unique<Haruhi::Knob> (this, &proxies->unison_index, "Unison");
+	_knob_unison_spread				= std::make_unique<Haruhi::Knob> (this, &proxies->unison_spread, "U.spread");
+	_knob_unison_init				= std::make_unique<Haruhi::Knob> (this, &proxies->unison_init, "U.init.φ");
+	_knob_unison_noise				= std::make_unique<Haruhi::Knob> (this, &proxies->unison_noise, "U.noise");
+	_knob_unison_vibrato_level		= std::make_unique<Haruhi::Knob> (this, &proxies->unison_vibrato_level, "U.V.lev");
+	_knob_unison_vibrato_frequency	= std::make_unique<Haruhi::Knob> (this, &proxies->unison_vibrato_frequency, "U.V.freq");
+	_knob_velocity_sens				= std::make_unique<Haruhi::Knob> (this, &proxies->velocity_sens, "Vel.sens.");
+	_knob_portamento_time			= std::make_unique<Haruhi::Knob> (this, &proxies->portamento_time, "Glide");
+	_knob_phase						= std::make_unique<Haruhi::Knob> (this, &proxies->phase, "Phase");
+	_knob_noise_level				= std::make_unique<Haruhi::Knob> (this, &proxies->noise_level, "Noise lvl");
 
 	// "+ 1" is for output to main oscillator:
 	_fm_matrix_knobs.resize (Params::Part::OperatorsNumber + 1);
@@ -96,17 +95,17 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 		}
 	}
 
-	QObject::connect (_knob_phase, SIGNAL (changed (int)), this, SLOT (update_phase_marker()));
+	QObject::connect (_knob_phase.get(), SIGNAL (changed (int)), this, SLOT (update_phase_marker()));
 
 	_knob_volume->set_volume_scale (true, M_E);
 
 	// Set unit bay on all knobs:
 
 	for (auto* k: {
-		_knob_wave_shape, _knob_modulator_amplitude, _knob_modulator_index, _knob_modulator_shape,
-		_knob_volume, _knob_panorama, _knob_detune, _knob_pitchbend, _knob_unison_index, _knob_unison_spread,
-		_knob_unison_init, _knob_unison_noise, _knob_unison_vibrato_level, _knob_unison_vibrato_frequency,
-		_knob_velocity_sens, _knob_portamento_time, _knob_phase, _knob_noise_level })
+		_knob_wave_shape.get(), _knob_modulator_amplitude.get(), _knob_modulator_index.get(), _knob_modulator_shape.get(),
+		_knob_volume.get(), _knob_panorama.get(), _knob_detune.get(), _knob_pitchbend.get(), _knob_unison_index.get(), _knob_unison_spread.get(),
+		_knob_unison_init.get(), _knob_unison_noise.get(), _knob_unison_vibrato_level.get(), _knob_unison_vibrato_frequency.get(),
+		_knob_velocity_sens.get(), _knob_portamento_time.get(), _knob_phase.get(), _knob_noise_level.get() })
 	{
 		k->set_unit_bay (_part->part_manager()->plugin()->unit_bay());
 	}
@@ -197,8 +196,8 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	// Modulator type:
 	_modulator_type = new QComboBox (this);
-	_modulator_type->insertItem (DSP::ModulatedWave::Ring, Resources::Icons16::modulator_ring(), "Ring mod.");
-	_modulator_type->insertItem (DSP::ModulatedWave::Frequency, Resources::Icons16::modulator_fm(), "FM mod.");
+	_modulator_type->insertItem (DSP::ModulatedWave::Ring, Resources::Icons16::modulator_ring(), "Ring pseudo-mod.");
+	_modulator_type->insertItem (DSP::ModulatedWave::Frequency, Resources::Icons16::modulator_fm(), "FM pseudo-mod.");
 	_modulator_type->setCurrentIndex (pp->modulator_type);
 	_modulator_type->setToolTip ("Modulator type");
 	_modulator_type->setIconSize (Resources::Icons16::haruhi().size());
@@ -361,26 +360,26 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	oscillator_panel_layout->addWidget (group2, 1, 10, 3, 1);
 	oscillator_panel_layout->addWidget (base_plot_frame, 1, 0, 1, 2);
 	oscillator_panel_layout->addWidget (final_plot_frame, 1, 2, 1, 2);
-	oscillator_panel_layout->addWidget (_knob_volume, 1, 4);
-	oscillator_panel_layout->addWidget (_knob_panorama, 1, 5);
-	oscillator_panel_layout->addWidget (_knob_velocity_sens, 1, 6);
-	oscillator_panel_layout->addWidget (_knob_noise_level, 1, 7);
-	oscillator_panel_layout->addWidget (_knob_detune, 1, 8);
-	oscillator_panel_layout->addWidget (_knob_pitchbend, 1, 9);
-	oscillator_panel_layout->addWidget (_knob_unison_vibrato_level, 2, 8);
-	oscillator_panel_layout->addWidget (_knob_unison_vibrato_frequency, 2, 9);
-	oscillator_panel_layout->addWidget (_knob_wave_shape, 2, 0);
-	oscillator_panel_layout->addWidget (_knob_modulator_amplitude, 2, 1);
-	oscillator_panel_layout->addWidget (_knob_modulator_index, 2, 2);
-	oscillator_panel_layout->addWidget (_knob_modulator_shape, 2, 3);
-	oscillator_panel_layout->addWidget (_knob_unison_index, 2, 4);
-	oscillator_panel_layout->addWidget (_knob_unison_spread, 2, 5);
-	oscillator_panel_layout->addWidget (_knob_unison_init, 2, 6);
-	oscillator_panel_layout->addWidget (_knob_unison_noise, 2, 7);
+	oscillator_panel_layout->addWidget (_knob_volume.get(), 1, 4);
+	oscillator_panel_layout->addWidget (_knob_panorama.get(), 1, 5);
+	oscillator_panel_layout->addWidget (_knob_velocity_sens.get(), 1, 6);
+	oscillator_panel_layout->addWidget (_knob_noise_level.get(), 1, 7);
+	oscillator_panel_layout->addWidget (_knob_detune.get(), 1, 8);
+	oscillator_panel_layout->addWidget (_knob_pitchbend.get(), 1, 9);
+	oscillator_panel_layout->addWidget (_knob_unison_vibrato_level.get(), 2, 8);
+	oscillator_panel_layout->addWidget (_knob_unison_vibrato_frequency.get(), 2, 9);
+	oscillator_panel_layout->addWidget (_knob_wave_shape.get(), 2, 0);
+	oscillator_panel_layout->addWidget (_knob_modulator_amplitude.get(), 2, 1);
+	oscillator_panel_layout->addWidget (_knob_modulator_index.get(), 2, 2);
+	oscillator_panel_layout->addWidget (_knob_modulator_shape.get(), 2, 3);
+	oscillator_panel_layout->addWidget (_knob_unison_index.get(), 2, 4);
+	oscillator_panel_layout->addWidget (_knob_unison_spread.get(), 2, 5);
+	oscillator_panel_layout->addWidget (_knob_unison_init.get(), 2, 6);
+	oscillator_panel_layout->addWidget (_knob_unison_noise.get(), 2, 7);
 	oscillator_panel_layout->addWidget (_filter_1, 3, 0, 2, 4);
 	oscillator_panel_layout->addWidget (_filter_2, 3, 4, 2, 4);
-	oscillator_panel_layout->addWidget (_knob_portamento_time, 3, 8);
-	oscillator_panel_layout->addWidget (_knob_phase, 3, 9);
+	oscillator_panel_layout->addWidget (_knob_portamento_time.get(), 3, 8);
+	oscillator_panel_layout->addWidget (_knob_phase.get(), 3, 9);
 	oscillator_panel_layout->addWidget (group1, 4, 8, 1, 3);
 
 	QLabel* fm_modulation_matrix_label = create_modulator_label ("FM modulation matrix:");
@@ -460,31 +459,6 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	pp->modulator_wave_type.on_change.connect (this, &PartWidget::post_params_to_widgets);
 	pp->auto_center.on_change.connect (this, &PartWidget::post_params_to_widgets);
 	pp->filter_configuration.on_change.connect (this, &PartWidget::post_params_to_widgets);
-}
-
-
-PartWidget::~PartWidget()
-{
-	delete _knob_wave_shape;
-	delete _knob_modulator_amplitude;
-	delete _knob_modulator_index;
-	delete _knob_modulator_shape;
-	delete _knob_volume;
-	delete _knob_panorama;
-	delete _knob_detune;
-	delete _knob_pitchbend;
-	delete _knob_velocity_sens;
-	delete _knob_unison_index;
-	delete _knob_unison_spread;
-	delete _knob_unison_init;
-	delete _knob_unison_noise;
-	delete _knob_unison_vibrato_level;
-	delete _knob_unison_vibrato_frequency;
-	delete _knob_portamento_time;
-	delete _knob_phase;
-	delete _knob_noise_level;
-
-	delete _cached_final_wave;
 }
 
 
@@ -629,21 +603,19 @@ PartWidget::params_to_widgets()
 void
 PartWidget::update_wave_plots()
 {
-	DSP::Wave* previous_final_wave = _cached_final_wave;
+	Unique<DSP::Wave> previous_final_wave = std::move (_cached_final_wave);
 
 	_cached_final_wave = _part->final_wave();
 
-	DSP::Wave* base_wave = _cached_final_wave;
+	DSP::Wave* base_wave = _cached_final_wave.get();
 	while (base_wave->inner_wave())
 		base_wave = base_wave->inner_wave();
 
 	_base_wave_plot->assign_wave (base_wave, false, true, false);
-	_final_wave_plot->assign_wave (_cached_final_wave, false, true, false);
+	_final_wave_plot->assign_wave (_cached_final_wave.get(), false, true, false);
 
 	// This will also call plot_shape() on plots:
 	update_phase_marker();
-
-	delete previous_final_wave;
 }
 
 

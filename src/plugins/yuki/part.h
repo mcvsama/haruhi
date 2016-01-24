@@ -45,6 +45,7 @@
 namespace Yuki {
 
 namespace DSP = Haruhi::DSP;
+using Haruhi::Unique;
 
 class PartWidget;
 class PartManager;
@@ -453,7 +454,7 @@ class Part:
 	 * Must be deleted after use.
 	 * \threadsafe
 	 */
-	DSP::Wave*
+	Unique<DSP::Wave>
 	final_wave() const;
 
 	/*
