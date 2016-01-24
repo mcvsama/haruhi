@@ -169,6 +169,8 @@ get_svg_icon (QString const& svg_file) noexcept;
 		HARUHI_CONFIG_HAS_ICON (connections, "connections.svg");
 		HARUHI_CONFIG_HAS_ICON (audio, "audio.svg");
 		HARUHI_CONFIG_HAS_ICON (event, "event.svg");
+		HARUHI_CONFIG_HAS_ICON (oscillator, "oscillator.svg");
+		HARUHI_CONFIG_HAS_ICON (harmonics, "harmonics.svg");
 
 #undef HARUHI_CONFIG_HAS_ICON
 	} // namespace Icons16

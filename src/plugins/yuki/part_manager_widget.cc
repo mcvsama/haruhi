@@ -51,7 +51,7 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 	_stop_widgets_to_params (false),
 	_stop_params_to_widgets (false)
 {
-	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	Params::Main* main_params = _part_manager->main_params();
 
 	// Knobs:
@@ -168,7 +168,7 @@ PartManagerWidget::add_part (Part* part)
 {
 	PartWidget* pw = new PartWidget (this, part);
 	part->set_widget (pw);
-	_tabs->addTab (pw, Resources::Icons16::wave_sine(), "Part %1"_qstr.arg (part->id()));
+	_tabs->addTab (pw, Resources::Icons16::parts(), "Part %1"_qstr.arg (part->id()));
 	_tabs->setCurrentWidget (pw);
 	update_widgets();
 }

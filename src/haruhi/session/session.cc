@@ -50,7 +50,9 @@
 
 namespace Haruhi {
 
+using namespace ScreenLiterals;
 namespace Private = SessionPrivate;
+
 
 Private::SettingsDialog::SettingsDialog (QWidget* parent, Session* session):
 	QDialog (parent),
@@ -98,8 +100,7 @@ Private::SettingsDialog::SettingsDialog (QWidget* parent, Session* session):
 	state_changed();
 
 	adjustSize();
-	setMinimumHeight (height());
-	setMaximumHeight (height());
+	setFixedHeight (height());
 }
 
 
@@ -374,7 +375,7 @@ Session::Session (QWidget* parent):
 
 	_session_name = new ClickableLabel (_name, inner_header);
 	QFont f (QApplication::font());
-	f.setPointSize (15);
+	f.setPixelSize (4_screen_mm);
 	f.setWeight (QFont::Normal);
 	_session_name->setFont (f);
 	_session_name->setCursor (QCursor (Qt::PointingHandCursor));
@@ -383,7 +384,7 @@ Session::Session (QWidget* parent):
 	QObject::connect (_session_name, SIGNAL (clicked()), this, SLOT (rename_session()));
 
 	QLabel* tempo_note = new QLabel (QString::fromUtf8 ("♩ = "), inner_header);
-	f.setPointSize (16);
+	f.setPixelSize (4_screen_mm);
 	f.setWeight (QFont::Normal);
 	tempo_note->setFont (f);
 	tempo_note->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);

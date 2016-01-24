@@ -87,13 +87,6 @@ class PartWidget:
 	widgets_to_oscillator_params();
 
 	/**
-	 * Called when 'Harmonics' button is clicked.
-	 * \entry	UI thread
-	 */
-	void
-	show_harmonics();
-
-	/**
 	 * Update phase marker on wave plots.
 	 * \entry	UI thread
 	 */
@@ -204,7 +197,6 @@ class PartWidget:
 	QWidget*			_harmonics_widget;
 	QWidget*			_harmonic_phases_widget;
 	QPushButton*		_harmonics_reset_button;
-	QDialog*			_harmonics_window;
 
 	// Pitchbend/transposition:
 	QPushButton*		_const_portamento_time;
@@ -215,15 +207,15 @@ class PartWidget:
 	QSpinBox*			_frequency_modulation_range;
 
 	// Other:
-	QStackedWidget*		_stack;
-	QWidget*			_main_panel;
+	QTabWidget*			_tabs;
+	QWidget*			_oscillator_panel;
 	QWidget*			_modulator_panel;
+	QWidget*			_harmonics_panel;
 	QPushButton*		_auto_center;
 	QPushButton*		_unison_stereo;
 	QPushButton*		_pseudo_stereo;
 	QCheckBox*			_part_enabled;
 	QCheckBox*			_modulator_enabled;
-	QCheckBox*			_show_modulator;
 	QPushButton*		_wave_enabled;
 	QPushButton*		_noise_enabled;
 	QColor				_std_button_bg;

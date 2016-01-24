@@ -163,14 +163,9 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QObject::connect (_modulator_enabled, SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
 	QObject::connect (_modulator_enabled, SIGNAL (toggled (bool)), this, SLOT (update_widgets()));
 
-	// Show modulator checkbox:
-	_show_modulator = new QCheckBox ("Show modulator", this);
-	_show_modulator->setChecked (false);
-	QObject::connect (_show_modulator, SIGNAL (toggled (bool)), this, SLOT (update_widgets()));
-
 	// Top widget, can be disabled with all child widgets:
-	_main_panel = new QWidget (this);
-	_main_panel->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
+	_oscillator_panel = new QWidget (this);
+	_oscillator_panel->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	// Wave type:
 	_wave_type = new QComboBox (this);
@@ -207,28 +202,22 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_modulator_type->setIconSize (Resources::Icons16::haruhi().size());
 	QObject::connect (_modulator_type, SIGNAL (activated (int)), this, SLOT (widgets_to_wave_params()));
 
-	// Harmonics+phases window:
-	_harmonics_window = new QDialog (this);
-	_harmonics_window->hide();
-	_harmonics_window->setWindowTitle (QString ("Part %1: Harmonics & Phases").arg (_part->id()));
-	_harmonics_window->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
+	// Harmonics+phases panel:
+	_harmonics_panel = new QWidget (this);
+	_harmonics_panel->hide();
+	_harmonics_panel->setWindowTitle (QString ("Part %1: Harmonics & Phases").arg (_part->id()));
+	_harmonics_panel->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
 
 	// Reset all harmonics:
-	_harmonics_reset_button = new QPushButton (Resources::Icons16::clear_list(), "Clear all harmonics and phases", _harmonics_window);
+	_harmonics_reset_button = new QPushButton (Resources::Icons16::clear_list(), "Clear all harmonics and phases", _harmonics_panel);
 	_harmonics_reset_button->setIconSize (Resources::Icons16::haruhi().size());
 	QObject::connect (_harmonics_reset_button, SIGNAL (clicked()), this, SLOT (reset_all_harmonics()));
-
-	// Close harmonics button:
-	QPushButton* close_harmonics_button = new QPushButton (Resources::Icons16::dialog_ok(), "Close", _harmonics_window);
-	close_harmonics_button->setIconSize (Resources::Icons16::haruhi().size());
-	close_harmonics_button->setDefault (true);
-	QObject::connect (close_harmonics_button, SIGNAL (clicked()), _harmonics_window, SLOT (accept()));
 
 	// Harmonics & Phases:
 	int const kHarmonicsButtonWidth = 4_screen_mm;
 	int const kHarmonicsButtonHeight = 3_screen_mm;
 	// Harmonics:
-	_harmonics_widget = new QWidget (_harmonics_window);
+	_harmonics_widget = new QWidget (_harmonics_panel);
 	_harmonics_widget->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	QWidget* harmonics_grid = new QWidget (_harmonics_widget);
 	QGridLayout* harmonics_layout = new QGridLayout (harmonics_grid);
@@ -266,7 +255,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	harmonics_tab_layout->addWidget (harmonics_grid);
 
 	// Phases:
-	_harmonic_phases_widget = new QWidget (_harmonics_window);
+	_harmonic_phases_widget = new QWidget (_harmonics_panel);
 	_harmonic_phases_widget->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	QWidget* phases_grid = new QWidget (_harmonic_phases_widget);
 	QGridLayout* phases_layout = new QGridLayout (phases_grid);
@@ -381,11 +370,6 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_noise_enabled->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Fixed);
 	QObject::connect (_noise_enabled, SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
 
-	// Show harmonics button:
-	QPushButton* show_harmonics = new QPushButton ("Harmonics…", this);
-	show_harmonics->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Fixed);
-	QObject::connect (show_harmonics, SIGNAL (clicked()), this, SLOT (show_harmonics()));
-
 	// Filters:
 	_filter_1 = new FilterWidget (this, 0, &_part->part_params()->voice.filters[0], _part);
 	_filter_2 = new FilterWidget (this, 1, &_part->part_params()->voice.filters[1], _part);
@@ -406,10 +390,13 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_operator_2 = new OperatorWidget (this, 1, &_part->part_params()->operators[1], _part);
 	_operator_3 = new OperatorWidget (this, 2, &_part->part_params()->operators[2], _part);
 
-	// Stack:
-	_stack = new QStackedWidget (this);
-	_stack->addWidget (_main_panel);
-	_stack->addWidget (_modulator_panel);
+	// Tabs:
+	_tabs = new QTabWidget (this);
+	_tabs->setIconSize (Resources::Icons16::haruhi().size() * 1.25);
+	_tabs->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+	_tabs->addTab (_oscillator_panel, Resources::Icons16::oscillator(), "Oscillator");
+	_tabs->addTab (_modulator_panel, Resources::Icons16::modulator(), "Modulator");
+	_tabs->addTab (_harmonics_panel, Resources::Icons16::harmonics(), "Harmonics && phases");
 
 	// Layouts:
 
@@ -445,46 +432,38 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	group2_layout->addWidget (_pitchbend_enabled);
 	group2_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
-	QGridLayout* panel_layout = new QGridLayout();
-	panel_layout->setMargin (0);
-	panel_layout->setSpacing (Config::spacing());
-	panel_layout->addWidget (_wave_type, 0, 0, 1, 2);
-	panel_layout->addWidget (_modulator_wave_type, 0, 2, 1, 2);
-	panel_layout->addWidget (_modulator_type, 0, 4, 1, 2);
-	panel_layout->addWidget (_wave_enabled, 0, 6);
-	panel_layout->addWidget (_noise_enabled, 0, 7);
-	panel_layout->addWidget (show_harmonics, 0, 8, 1, 2);
-	panel_layout->addWidget (group2, 1, 10, 3, 1);
-	panel_layout->addWidget (base_plot_frame, 1, 0, 1, 2);
-	panel_layout->addWidget (final_plot_frame, 1, 2, 1, 2);
-	panel_layout->addWidget (_knob_volume, 1, 4);
-	panel_layout->addWidget (_knob_panorama, 1, 5);
-	panel_layout->addWidget (_knob_velocity_sens, 1, 6);
-	panel_layout->addWidget (_knob_noise_level, 1, 7);
-	panel_layout->addWidget (_knob_detune, 1, 8);
-	panel_layout->addWidget (_knob_pitchbend, 1, 9);
-	panel_layout->addWidget (_knob_unison_vibrato_level, 2, 8);
-	panel_layout->addWidget (_knob_unison_vibrato_frequency, 2, 9);
-	panel_layout->addWidget (_knob_wave_shape, 2, 0);
-	panel_layout->addWidget (_knob_modulator_amplitude, 2, 1);
-	panel_layout->addWidget (_knob_modulator_index, 2, 2);
-	panel_layout->addWidget (_knob_modulator_shape, 2, 3);
-	panel_layout->addWidget (_knob_unison_index, 2, 4);
-	panel_layout->addWidget (_knob_unison_spread, 2, 5);
-	panel_layout->addWidget (_knob_unison_init, 2, 6);
-	panel_layout->addWidget (_knob_unison_noise, 2, 7);
-	panel_layout->addWidget (_filter_1, 3, 0, 2, 4);
-	panel_layout->addWidget (_filter_2, 3, 4, 2, 4);
-	panel_layout->addWidget (_knob_portamento_time, 3, 8);
-	panel_layout->addWidget (_knob_phase, 3, 9);
-	panel_layout->addWidget (group1, 4, 8, 1, 3);
-
-	QGridLayout* resizeable_main_layout = new QGridLayout (_main_panel);
-	resizeable_main_layout->setMargin (0);
-	resizeable_main_layout->setSpacing (0);
-	resizeable_main_layout->addLayout (panel_layout, 0, 0);
-	resizeable_main_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed), 0, 1);
-	resizeable_main_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 1, 0);
+	QGridLayout* oscillator_panel_layout = new QGridLayout(_oscillator_panel);
+	oscillator_panel_layout->setMargin (Config::margin());
+	oscillator_panel_layout->setSpacing (Config::spacing());
+	oscillator_panel_layout->addWidget (_wave_type, 0, 0, 1, 2);
+	oscillator_panel_layout->addWidget (_modulator_wave_type, 0, 2, 1, 2);
+	oscillator_panel_layout->addWidget (_modulator_type, 0, 4, 1, 2);
+	oscillator_panel_layout->addWidget (_wave_enabled, 0, 6);
+	oscillator_panel_layout->addWidget (_noise_enabled, 0, 7);
+	oscillator_panel_layout->addWidget (group2, 1, 10, 3, 1);
+	oscillator_panel_layout->addWidget (base_plot_frame, 1, 0, 1, 2);
+	oscillator_panel_layout->addWidget (final_plot_frame, 1, 2, 1, 2);
+	oscillator_panel_layout->addWidget (_knob_volume, 1, 4);
+	oscillator_panel_layout->addWidget (_knob_panorama, 1, 5);
+	oscillator_panel_layout->addWidget (_knob_velocity_sens, 1, 6);
+	oscillator_panel_layout->addWidget (_knob_noise_level, 1, 7);
+	oscillator_panel_layout->addWidget (_knob_detune, 1, 8);
+	oscillator_panel_layout->addWidget (_knob_pitchbend, 1, 9);
+	oscillator_panel_layout->addWidget (_knob_unison_vibrato_level, 2, 8);
+	oscillator_panel_layout->addWidget (_knob_unison_vibrato_frequency, 2, 9);
+	oscillator_panel_layout->addWidget (_knob_wave_shape, 2, 0);
+	oscillator_panel_layout->addWidget (_knob_modulator_amplitude, 2, 1);
+	oscillator_panel_layout->addWidget (_knob_modulator_index, 2, 2);
+	oscillator_panel_layout->addWidget (_knob_modulator_shape, 2, 3);
+	oscillator_panel_layout->addWidget (_knob_unison_index, 2, 4);
+	oscillator_panel_layout->addWidget (_knob_unison_spread, 2, 5);
+	oscillator_panel_layout->addWidget (_knob_unison_init, 2, 6);
+	oscillator_panel_layout->addWidget (_knob_unison_noise, 2, 7);
+	oscillator_panel_layout->addWidget (_filter_1, 3, 0, 2, 4);
+	oscillator_panel_layout->addWidget (_filter_2, 3, 4, 2, 4);
+	oscillator_panel_layout->addWidget (_knob_portamento_time, 3, 8);
+	oscillator_panel_layout->addWidget (_knob_phase, 3, 9);
+	oscillator_panel_layout->addWidget (group1, 4, 8, 1, 3);
 
 	QLabel* fm_modulation_matrix_label = create_modulator_label ("FM modulation matrix:");
 	QLabel* am_modulation_matrix_label = create_modulator_label ("AM modulation matrix:");
@@ -492,7 +471,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	am_modulation_matrix_label->setFixedHeight (2.2f * Haruhi::Services::y_pixels_per_point() * fm_modulation_matrix_label->font().pointSize());
 
 	QGridLayout* modulator_layout = new QGridLayout (_modulator_panel);
-	modulator_layout->setMargin (0);
+	modulator_layout->setMargin (Config::margin());
 	modulator_layout->setSpacing (Config::spacing());
 	modulator_layout->addWidget (_modulator_enabled, 0, 0);
 	modulator_layout->addWidget (_operator_1, 1, 0);
@@ -529,18 +508,18 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	top_checkboxes_layout->setMargin (0);
 	top_checkboxes_layout->setSpacing (2 * Config::spacing());
 	top_checkboxes_layout->addWidget (_part_enabled);
-	top_checkboxes_layout->addWidget (_show_modulator);
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (Config::margin());
 	layout->setSpacing (Config::spacing());
 	layout->addWidget (new Haruhi::StyledBackground (top_checkboxes, this));
-	layout->addWidget (_stack);
+	layout->addWidget (_tabs);
+	layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
-	QLabel* harmonics_label = new QLabel ("Harmonics", _harmonics_window);
+	QLabel* harmonics_label = new QLabel ("Harmonics", _harmonics_panel);
 	// Force normal text color. For some reason Qt uses white color on light-gray background.
 	harmonics_label->setForegroundRole (QPalette::Text);
-	QLabel* harmonic_phases_label = new QLabel ("Phases", _harmonics_window);
+	QLabel* harmonic_phases_label = new QLabel ("Phases", _harmonics_panel);
 	// Force normal text color. For some reason Qt uses white color on light-gray background.
 	harmonic_phases_label->setForegroundRole (QPalette::Text);
 
@@ -548,15 +527,14 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	harmonics_window_buttons_layout->setMargin (0);
 	harmonics_window_buttons_layout->setSpacing (Config::spacing());
 	harmonics_window_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-	harmonics_window_buttons_layout->addWidget (close_harmonics_button);
 	harmonics_window_buttons_layout->addWidget (_harmonics_reset_button);
 
-	QVBoxLayout* harmonics_window_layout = new QVBoxLayout (_harmonics_window);
-	harmonics_window_layout->setMargin (Config::window_margin());
+	QVBoxLayout* harmonics_window_layout = new QVBoxLayout (_harmonics_panel);
+	harmonics_window_layout->setMargin (Config::margin());
 	harmonics_window_layout->setSpacing (Config::spacing());
-	harmonics_window_layout->addWidget (new Haruhi::StyledBackground (harmonics_label, _harmonics_window, 0.3_screen_mm));
+	harmonics_window_layout->addWidget (new Haruhi::StyledBackground (harmonics_label, _harmonics_panel, 0.3_screen_mm));
 	harmonics_window_layout->addWidget (_harmonics_widget);
-	harmonics_window_layout->addWidget (new Haruhi::StyledBackground (harmonic_phases_label, _harmonics_window, 0.3_screen_mm));
+	harmonics_window_layout->addWidget (new Haruhi::StyledBackground (harmonic_phases_label, _harmonics_panel, 0.3_screen_mm));
 	harmonics_window_layout->addWidget (_harmonic_phases_widget);
 	harmonics_window_layout->addLayout (harmonics_window_buttons_layout);
 
@@ -671,14 +649,6 @@ PartWidget::widgets_to_oscillator_params()
 
 
 void
-PartWidget::show_harmonics()
-{
-	_harmonics_window->show();
-	_harmonics_window->activateWindow();
-}
-
-
-void
 PartWidget::update_phase_marker()
 {
 	float pos = 0.5f * (1.0f + _part->part_params()->phase.to_f());
@@ -702,8 +672,10 @@ PartWidget::reset_all_harmonics()
 void
 PartWidget::update_widgets()
 {
-	_main_panel->setEnabled (_part->part_params()->part_enabled.get());
-	_modulator_panel->setEnabled (_part->part_params()->part_enabled.get());
+	bool enabled = _part->part_params()->part_enabled.get();
+	_oscillator_panel->setEnabled (enabled);
+	_modulator_panel->setEnabled (enabled);
+	_harmonics_panel->setEnabled (enabled);
 
 	const bool wave_enabled = _wave_enabled->isChecked();
 	_base_wave_plot->setEnabled (wave_enabled);
@@ -724,11 +696,6 @@ PartWidget::update_widgets()
 		set_button_highlighted (_harmonics_resets[i], _harmonics_sliders[i]->value() != 0);
 		set_button_highlighted (_harmonic_phases_resets[i], _harmonic_phases_sliders[i]->value() != 0);
 	}
-
-	if (_show_modulator->isChecked())
-		_stack->setCurrentWidget (_modulator_panel);
-	else
-		_stack->setCurrentWidget (_main_panel);
 
 	const bool mod_enabled = _modulator_enabled->isChecked();
 	_operator_1->setEnabled (mod_enabled);

@@ -48,6 +48,9 @@ class PartManagerWidget:
 		Placeholder (QWidget* parent);
 	};
 
+	/**
+	 * Make QTabWidget::tabBar() method publicly accessible.
+	 */
 	class TabWidget: public QTabWidget
 	{
 	  public:
