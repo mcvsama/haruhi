@@ -57,8 +57,6 @@ class PartWidget:
 {
 	Q_OBJECT
 
-	friend class PartHarmonicsWidget;
-
 	// Modulation matrix knobs [0..3][0..2]:
 	typedef std::vector<std::vector<Haruhi::Knob*> >	MatrixKnobs;
 

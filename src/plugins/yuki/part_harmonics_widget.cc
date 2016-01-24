@@ -16,20 +16,11 @@
 
 // Qt:
 #include <QtGui/QLayout>
-#include <QtGui/QGroupBox>
-
-// Lib:
-#include <boost/bind.hpp>
 
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/application/services.h>
-#include <haruhi/widgets/knob.h>
-#include <haruhi/widgets/plot_frame.h>
 #include <haruhi/widgets/styled_background.h>
-#include <haruhi/dsp/modulated_wave.h>
-#include <haruhi/dsp/translated_wave.h>
-#include <haruhi/dsp/scaled_wave.h>
 
 // Local:
 #include "part_harmonics_widget.h"

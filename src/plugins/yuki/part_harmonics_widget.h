@@ -21,20 +21,12 @@
 
 // Qt:
 #include <QtGui/QWidget>
-#include <QtGui/QDialog>
-#include <QtGui/QComboBox>
+#include <QtGui/QSlider>
 #include <QtGui/QPushButton>
-#include <QtGui/QSpinBox>
-#include <QtGui/QCheckBox>
-#include <QtGui/QStackedWidget>
 
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/config/resources.h>
-#include <haruhi/widgets/knob.h>
-#include <haruhi/widgets/wave_plot.h>
-#include <haruhi/dsp/wave.h>
-#include <haruhi/utility/signal.h>
 
 // Local:
 #include "params.h"
