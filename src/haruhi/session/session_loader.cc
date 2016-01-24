@@ -64,7 +64,7 @@ SessionLoader::SessionLoader (DefaultTab default_tab, RejectButton reject_button
 	_recent_listview->header()->hide();
 	_recent_listview->header()->setResizeMode (QHeaderView::Stretch);
 	_recent_listview->setAllColumnsShowFocus (true);
-	_recent_listview->setMinimumSize (90_screen_mm, 90_screen_mm);
+	_recent_listview->setMinimumSize (70_screen_mm, 70_screen_mm);
 	_recent_listview->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_recent_listview->setHeaderLabel ("Session name");
 	_recent_listview->setSelectionMode (QTreeWidget::SingleSelection);

@@ -32,9 +32,9 @@ make_standard_height (QTreeWidgetItem* item)
 {
 	QSize s = item->sizeHint (0);
 
-	if (s.height() < 6_screen_mm)
+	if (s.height() < 4.5_screen_mm)
 	{
-		s.setHeight (6_screen_mm);
+		s.setHeight (4.5_screen_mm);
 		item->setSizeHint (0, s);
 	}
 }
@@ -45,9 +45,9 @@ make_standard_height (QListWidgetItem* item)
 {
 	QSize s = item->sizeHint();
 
-	if (s.height() < 6_screen_mm)
+	if (s.height() < 4.5_screen_mm)
 	{
-		s.setHeight (6_screen_mm);
+		s.setHeight (4.5_screen_mm);
 		item->setSizeHint (s);
 	}
 }

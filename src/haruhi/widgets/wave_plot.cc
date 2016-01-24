@@ -141,7 +141,7 @@ WavePlot::paintEvent (QPaintEvent* paint_event)
 			painter.drawLine (w / 2, 0, w / 2, h);
 			painter.drawLine (0, h / 2, w, h / 2);
 			// Half value:
-			painter.setPen (QPen (grid_color, 0.2_screen_mm, Qt::DotLine));
+			painter.setPen (QPen (grid_color, 0.15_screen_mm, Qt::DotLine));
 			painter.drawLine (w / 4, 0, w / 4, h);
 			painter.drawLine (3 * w / 4, 0, 3 * w / 4, h);
 			painter.drawLine (0, h / 2 - (h / 4 / grid_denominator), w, h / 2 - (h / 4 / grid_denominator));
@@ -149,7 +149,7 @@ WavePlot::paintEvent (QPaintEvent* paint_event)
 			// 0dB lines if scaled:
 			if (grid_denominator > 1.01)
 			{
-				painter.setPen (QPen (grid_color, 0.2_screen_mm, Qt::SolidLine));
+				painter.setPen (QPen (grid_color, 0.15_screen_mm, Qt::SolidLine));
 				painter.drawLine (0, h / 2 - (h / 2 / grid_denominator), w, h / 2 - (h / 2 / grid_denominator));
 				painter.drawLine (0, h / 2 + (h / 2 / grid_denominator), w, h / 2 + (h / 2 / grid_denominator));
 			}
@@ -166,7 +166,7 @@ WavePlot::paintEvent (QPaintEvent* paint_event)
 			}
 
 			// Draw shape line:
-			painter.setPen (QPen (isEnabled() ? QColor (0, 0, 0) : QColor (0xca, 0xca, 0xca), 0.2_screen_mm, Qt::SolidLine));
+			painter.setPen (QPen (isEnabled() ? QColor (0, 0, 0) : QColor (0xca, 0xca, 0xca), 0.15_screen_mm, Qt::SolidLine));
 			painter.setBrush (Qt::NoBrush);
 			painter.drawPolyline (shape_line);
 		}
@@ -180,7 +180,7 @@ WavePlot::paintEvent (QPaintEvent* paint_event)
 			{
 				QColor color = isEnabled() ? QColor (0x00, 0x00, 0xdd) : QColor (0xc0, 0xc0, 0xc0);
 				painter.setRenderHint (QPainter::Antialiasing, false);
-				painter.setPen (QPen (color, 0.2_screen_mm, Qt::DotLine));
+				painter.setPen (QPen (color, 0.15_screen_mm, Qt::DotLine));
 				painter.setBrush (Qt::NoBrush);
 				int xpos = std::min (static_cast<int> (_phase_position * w), w - 1);
 				painter.drawLine (xpos, 0, xpos, h);

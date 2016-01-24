@@ -86,7 +86,7 @@ Connector::draw_connections()
 
 		// Rotate color:
 		color += 1;
-		painter.setPen (QPen (QColor (rgb[color % 3], rgb[(color / 3) % 3], rgb[(color / 9) % 3]), 0.2_screen_mm));
+		painter.setPen (QPen (QColor (rgb[color % 3], rgb[(color / 3) % 3], rgb[(color / 9) % 3]), 0.15_screen_mm));
 
 		for (QTreeWidgetItem* iitem: Connector::get_all_items_from (_ports_connector->_ipanel->list()))
 		{

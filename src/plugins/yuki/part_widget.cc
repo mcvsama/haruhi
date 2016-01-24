@@ -225,8 +225,8 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QObject::connect (close_harmonics_button, SIGNAL (clicked()), _harmonics_window, SLOT (accept()));
 
 	// Harmonics & Phases:
-	int const kHarmonicsButtonWidth = 5_screen_mm;
-	int const kHarmonicsButtonHeight = 4_screen_mm;
+	int const kHarmonicsButtonWidth = 4_screen_mm;
+	int const kHarmonicsButtonHeight = 3_screen_mm;
 	// Harmonics:
 	_harmonics_widget = new QWidget (_harmonics_window);
 	_harmonics_widget->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
@@ -554,9 +554,9 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	QVBoxLayout* harmonics_window_layout = new QVBoxLayout (_harmonics_window);
 	harmonics_window_layout->setMargin (Config::window_margin());
 	harmonics_window_layout->setSpacing (Config::spacing());
-	harmonics_window_layout->addWidget (new Haruhi::StyledBackground (harmonics_label, _harmonics_window, 0.4_screen_mm));
+	harmonics_window_layout->addWidget (new Haruhi::StyledBackground (harmonics_label, _harmonics_window, 0.3_screen_mm));
 	harmonics_window_layout->addWidget (_harmonics_widget);
-	harmonics_window_layout->addWidget (new Haruhi::StyledBackground (harmonic_phases_label, _harmonics_window, 0.4_screen_mm));
+	harmonics_window_layout->addWidget (new Haruhi::StyledBackground (harmonic_phases_label, _harmonics_window, 0.3_screen_mm));
 	harmonics_window_layout->addWidget (_harmonic_phases_widget);
 	harmonics_window_layout->addLayout (harmonics_window_buttons_layout);
 

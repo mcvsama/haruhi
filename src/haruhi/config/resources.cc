@@ -35,22 +35,22 @@ using namespace Haruhi::ScreenLiterals;
 
 int spacing()
 {
-	return 1.0_screen_mm;
+	return 0.8_screen_mm;
 }
 
 int margin()
 {
-	return 1.0_screen_mm;
+	return 0.8_screen_mm;
 }
 
 int window_margin()
 {
-	return 1.2_screen_mm;
+	return 0.9_screen_mm;
 }
 
 int dialog_margin()
 {
-	return 1.2_screen_mm;
+	return 0.9_screen_mm;
 }
 
 } // namespace Config
@@ -70,7 +70,7 @@ small_font()
 	if (!sf_initialized)
 	{
 		sf = QApplication::font();
-		sf.setPixelSize (2.5_screen_mm);
+		sf.setPixelSize (1.9_screen_mm);
 	}
 
 	return sf;
@@ -102,7 +102,7 @@ get_svg_icon (QString const& svg_file) noexcept
 	if (!QPixmapCache::find (key, pixmap))
 	{
 		QSvgRenderer svg (svg_file);
-		pixmap = QPixmap (QSize (5_screen_mm, 5_screen_mm));
+		pixmap = QPixmap (QSize (4_screen_mm, 4_screen_mm));
 		pixmap.fill (Qt::transparent);
 		QPainter painter (&pixmap);
 		svg.render (&painter);
