@@ -275,7 +275,7 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_tabs->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_tabs->addTab (_oscillator_panel, Resources::Icons16::oscillator(), "Oscillator");
 	_tabs->addTab (_modulator_panel, Resources::Icons16::modulator(), "Modulator");
-	_tabs->addTab (_harmonics_panel, Resources::Icons16::harmonics(), "Harmonics && phases");
+	_tabs->addTab (_harmonics_panel, Resources::Icons16::harmonics(), "Harmonics");
 
 	// Layouts:
 
