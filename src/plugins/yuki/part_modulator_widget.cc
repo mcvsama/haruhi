@@ -124,12 +124,6 @@ PartModulatorWidget::PartModulatorWidget (QWidget* parent, PartWidget* part_widg
 
 
 void
-PartModulatorWidget::widgets_to_wave_params()
-{
-}
-
-
-void
 PartModulatorWidget::widgets_to_oscillator_params()
 {
 	Params::Part* pp = _part->part_params();

@@ -54,12 +54,6 @@ class PartModulatorWidget: public QWidget
 	 * Called by PartWidget.
 	 */
 	void
-	widgets_to_wave_params();
-
-	/**
-	 * Called by PartWidget.
-	 */
-	void
 	widgets_to_oscillator_params();
 
 	/**
