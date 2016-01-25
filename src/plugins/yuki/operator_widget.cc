@@ -63,7 +63,7 @@ OperatorWidget::OperatorWidget (QWidget* parent, unsigned int operator_no, Param
 	QObject::connect (_frequency_denominator, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_params()));
 
 	Part::PartControllerProxies* proxies = part->proxies();
-	_knob_detune = new Haruhi::Knob (this, proxies->operator_detune[operator_no], "Detune");
+	_knob_detune = new Haruhi::Knob (this, proxies->operator_detune[operator_no].get(), "Detune");
 	_knob_detune->set_unit_bay (_part->part_manager()->plugin()->unit_bay());
 
 	_octave = new QSpinBox (this);

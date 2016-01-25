@@ -36,7 +36,7 @@ class EventBuffer: public Buffer
 	USES_POOL_ALLOCATOR (EventBuffer)
 
   public:
-	typedef std::vector<Shared<Event> > Events;
+	typedef std::vector<Shared<Event>> Events;
 
 	static TypeID TYPE;
 

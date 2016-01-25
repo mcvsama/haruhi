@@ -51,10 +51,10 @@ FilterWidget::FilterWidget (QWidget* parent, unsigned int filter_no, Params::Fil
 	// Knobs:
 
 	Part::PartControllerProxies* proxies = part->proxies();
-	_knob_frequency		= new Haruhi::Knob (this, proxies->filter_frequency[filter_no], "Freq.");
-	_knob_resonance		= new Haruhi::Knob (this, proxies->filter_resonance[filter_no], "Q");
-	_knob_gain			= new Haruhi::Knob (this, proxies->filter_gain[filter_no], "Gain");
-	_knob_attenuation	= new Haruhi::Knob (this, proxies->filter_attenuation[filter_no], "Attenuate");
+	_knob_frequency		= new Haruhi::Knob (this, proxies->filter_frequency[filter_no].get(), "Freq.");
+	_knob_resonance		= new Haruhi::Knob (this, proxies->filter_resonance[filter_no].get(), "Q");
+	_knob_gain			= new Haruhi::Knob (this, proxies->filter_gain[filter_no].get(), "Gain");
+	_knob_attenuation	= new Haruhi::Knob (this, proxies->filter_attenuation[filter_no].get(), "Attenuate");
 
 	_knob_attenuation->set_volume_scale (true, _params->stages);
 

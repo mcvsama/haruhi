@@ -169,55 +169,53 @@ class Part:
 	{
 	  public:
 		// [0..3][0..2] -- [controlled][controlling]:
-		typedef std::vector<std::vector<Haruhi::EventPort*> > MatrixPorts;
+		typedef std::vector<std::vector<Unique<Haruhi::EventPort>>> MatrixPorts;
 
 	  public:
 		PartPorts (Plugin*, unsigned int part_id);
 
-		~PartPorts();
-
 	  public:
+		// Port group:
+		Unique<Haruhi::PortGroup>	port_group;
+
 		// Waveform ports:
-		Haruhi::EventPort* wave_shape;
-		Haruhi::EventPort* modulator_amplitude;
-		Haruhi::EventPort* modulator_index;
-		Haruhi::EventPort* modulator_shape;
+		Unique<Haruhi::EventPort>	wave_shape;
+		Unique<Haruhi::EventPort>	modulator_amplitude;
+		Unique<Haruhi::EventPort>	modulator_index;
+		Unique<Haruhi::EventPort>	modulator_shape;
 
 		// Part ports:
-		Haruhi::EventPort* volume;
-		Haruhi::EventPort* portamento_time;
-		Haruhi::EventPort* phase;
+		Unique<Haruhi::EventPort>	volume;
+		Unique<Haruhi::EventPort>	portamento_time;
+		Unique<Haruhi::EventPort>	phase;
 
 		// Polyphonic-input ports:
-		Haruhi::EventPort* amplitude;
-		Haruhi::EventPort* frequency;
-		Haruhi::EventPort* panorama;
-		Haruhi::EventPort* detune;
-		Haruhi::EventPort* pitchbend;
-		Haruhi::EventPort* velocity_sens;
-		Haruhi::EventPort* unison_index;
-		Haruhi::EventPort* unison_spread;
-		Haruhi::EventPort* unison_init;
-		Haruhi::EventPort* unison_noise;
-		Haruhi::EventPort* unison_vibrato_level;
-		Haruhi::EventPort* unison_vibrato_frequency;
-		Haruhi::EventPort* noise_level;
+		Unique<Haruhi::EventPort>	amplitude;
+		Unique<Haruhi::EventPort>	frequency;
+		Unique<Haruhi::EventPort>	panorama;
+		Unique<Haruhi::EventPort>	detune;
+		Unique<Haruhi::EventPort>	pitchbend;
+		Unique<Haruhi::EventPort>	velocity_sens;
+		Unique<Haruhi::EventPort>	unison_index;
+		Unique<Haruhi::EventPort>	unison_spread;
+		Unique<Haruhi::EventPort>	unison_init;
+		Unique<Haruhi::EventPort>	unison_noise;
+		Unique<Haruhi::EventPort>	unison_vibrato_level;
+		Unique<Haruhi::EventPort>	unison_vibrato_frequency;
+		Unique<Haruhi::EventPort>	noise_level;
 
 		// Filter ports:
-		Haruhi::EventPort* filter_frequency[Params::Voice::FiltersNumber];
-		Haruhi::EventPort* filter_resonance[Params::Voice::FiltersNumber];
-		Haruhi::EventPort* filter_gain[Params::Voice::FiltersNumber];
-		Haruhi::EventPort* filter_attenuation[Params::Voice::FiltersNumber];
+		Unique<Haruhi::EventPort>	filter_frequency[Params::Voice::FiltersNumber];
+		Unique<Haruhi::EventPort>	filter_resonance[Params::Voice::FiltersNumber];
+		Unique<Haruhi::EventPort>	filter_gain[Params::Voice::FiltersNumber];
+		Unique<Haruhi::EventPort>	filter_attenuation[Params::Voice::FiltersNumber];
 
 		// Operator ports:
-		Haruhi::EventPort* operator_detune[Params::Part::OperatorsNumber];
+		Unique<Haruhi::EventPort>	operator_detune[Params::Part::OperatorsNumber];
 
 		// Modulator matrix:
-		MatrixPorts	fm_matrix;
-		MatrixPorts	am_matrix;
-
-		// Port group:
-		Haruhi::PortGroup* port_group;
+		MatrixPorts					fm_matrix;
+		MatrixPorts					am_matrix;
 	};
 
 	/**
@@ -226,12 +224,10 @@ class Part:
 	class PartControllerProxies: private Noncopyable
 	{
 	  public:
-		typedef std::vector<std::vector<Haruhi::ControllerProxy*> > MatrixControllerProxies;
+		typedef std::vector<std::vector<Unique<Haruhi::ControllerProxy>>> MatrixControllerProxies;
 
 	  public:
 		PartControllerProxies (PartManager*, PartPorts*, Params::Part*);
-
-		~PartControllerProxies();
 
 		/**
 		 * Call process_events() on each proxy.
@@ -251,41 +247,41 @@ class Part:
 
 	  public:
 		// Part:
-		Haruhi::ControllerProxy volume;
-		Haruhi::ControllerProxy portamento_time;
-		Haruhi::ControllerProxy phase;
-		Haruhi::ControllerProxy noise_level;
-		Haruhi::ControllerProxy wave_shape;
-		Haruhi::ControllerProxy modulator_amplitude;
-		Haruhi::ControllerProxy modulator_index;
-		Haruhi::ControllerProxy modulator_shape;
+		Haruhi::ControllerProxy			volume;
+		Haruhi::ControllerProxy			portamento_time;
+		Haruhi::ControllerProxy			phase;
+		Haruhi::ControllerProxy			noise_level;
+		Haruhi::ControllerProxy			wave_shape;
+		Haruhi::ControllerProxy			modulator_amplitude;
+		Haruhi::ControllerProxy			modulator_index;
+		Haruhi::ControllerProxy			modulator_shape;
 
 		// Voice:
-		Haruhi::ControllerProxy amplitude;
-		Haruhi::ControllerProxy frequency;
-		Haruhi::ControllerProxy panorama;
-		Haruhi::ControllerProxy detune;
-		Haruhi::ControllerProxy pitchbend;
-		Haruhi::ControllerProxy velocity_sens;
-		Haruhi::ControllerProxy unison_index;
-		Haruhi::ControllerProxy unison_spread;
-		Haruhi::ControllerProxy unison_init;
-		Haruhi::ControllerProxy unison_noise;
-		Haruhi::ControllerProxy unison_vibrato_level;
-		Haruhi::ControllerProxy unison_vibrato_frequency;
+		Haruhi::ControllerProxy			amplitude;
+		Haruhi::ControllerProxy			frequency;
+		Haruhi::ControllerProxy			panorama;
+		Haruhi::ControllerProxy			detune;
+		Haruhi::ControllerProxy			pitchbend;
+		Haruhi::ControllerProxy			velocity_sens;
+		Haruhi::ControllerProxy			unison_index;
+		Haruhi::ControllerProxy			unison_spread;
+		Haruhi::ControllerProxy			unison_init;
+		Haruhi::ControllerProxy			unison_noise;
+		Haruhi::ControllerProxy			unison_vibrato_level;
+		Haruhi::ControllerProxy			unison_vibrato_frequency;
 
 		// Filters:
-		Haruhi::ControllerProxy* filter_frequency[Params::Voice::FiltersNumber];
-		Haruhi::ControllerProxy* filter_resonance[Params::Voice::FiltersNumber];
-		Haruhi::ControllerProxy* filter_gain[Params::Voice::FiltersNumber];
-		Haruhi::ControllerProxy* filter_attenuation[Params::Voice::FiltersNumber];
+		Unique<Haruhi::ControllerProxy>	filter_frequency[Params::Voice::FiltersNumber];
+		Unique<Haruhi::ControllerProxy>	filter_resonance[Params::Voice::FiltersNumber];
+		Unique<Haruhi::ControllerProxy>	filter_gain[Params::Voice::FiltersNumber];
+		Unique<Haruhi::ControllerProxy>	filter_attenuation[Params::Voice::FiltersNumber];
 
 		// Operators:
-		Haruhi::ControllerProxy* operator_detune[Params::Part::OperatorsNumber];
+		Unique<Haruhi::ControllerProxy>	operator_detune[Params::Part::OperatorsNumber];
 
 		// Modulator matrix:
-		MatrixControllerProxies fm_matrix;
-		MatrixControllerProxies am_matrix;
+		MatrixControllerProxies			fm_matrix;
+		MatrixControllerProxies			am_matrix;
 
 	  private:
 		PartManager* _part_manager;
@@ -301,32 +297,30 @@ class Part:
 	  public:
 		ParamUpdaters (VoiceManager*);
 
-		~ParamUpdaters();
-
 	  public:
 		// Voice params updaters:
-		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	amplitude;
-		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	frequency;
-		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	panorama;
-		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	detune;
-		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	pitchbend;
-		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	velocity_sens;
-		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	unison_index;
-		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	unison_spread;
-		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	unison_init;
-		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	unison_noise;
-		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	unison_vibrato_level;
-		VoiceParamUpdater<Params::Voice::ControllerParamPtr>	unison_vibrato_frequency;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>			amplitude;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>			frequency;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>			panorama;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>			detune;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>			pitchbend;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>			velocity_sens;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>			unison_index;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>			unison_spread;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>			unison_init;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>			unison_noise;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>			unison_vibrato_level;
+		VoiceParamUpdater<Params::Voice::ControllerParamPtr>			unison_vibrato_frequency;
 
 		// Filter params updaters:
-		FilterParamUpdater<Params::Filter::ControllerParamPtr>*	filter_frequency[Params::Voice::FiltersNumber];
-		FilterParamUpdater<Params::Filter::ControllerParamPtr>*	filter_resonance[Params::Voice::FiltersNumber];
-		FilterParamUpdater<Params::Filter::ControllerParamPtr>*	filter_gain[Params::Voice::FiltersNumber];
-		FilterParamUpdater<Params::Filter::ControllerParamPtr>*	filter_attenuation[Params::Voice::FiltersNumber];
-		FilterParamUpdater<Params::Filter::IntParamPtr>*		filter_enabled[Params::Voice::FiltersNumber];
-		FilterParamUpdater<Params::Filter::IntParamPtr>*		filter_type[Params::Voice::FiltersNumber];
-		FilterParamUpdater<Params::Filter::IntParamPtr>*		filter_stages[Params::Voice::FiltersNumber];
-		FilterParamUpdater<Params::Filter::IntParamPtr>*		filter_limiter_enabled[Params::Voice::FiltersNumber];
+		Unique<FilterParamUpdater<Params::Filter::ControllerParamPtr>>	filter_frequency[Params::Voice::FiltersNumber];
+		Unique<FilterParamUpdater<Params::Filter::ControllerParamPtr>>	filter_resonance[Params::Voice::FiltersNumber];
+		Unique<FilterParamUpdater<Params::Filter::ControllerParamPtr>>	filter_gain[Params::Voice::FiltersNumber];
+		Unique<FilterParamUpdater<Params::Filter::ControllerParamPtr>>	filter_attenuation[Params::Voice::FiltersNumber];
+		Unique<FilterParamUpdater<Params::Filter::IntParamPtr>>			filter_enabled[Params::Voice::FiltersNumber];
+		Unique<FilterParamUpdater<Params::Filter::IntParamPtr>>			filter_type[Params::Voice::FiltersNumber];
+		Unique<FilterParamUpdater<Params::Filter::IntParamPtr>>			filter_stages[Params::Voice::FiltersNumber];
+		Unique<FilterParamUpdater<Params::Filter::IntParamPtr>>			filter_limiter_enabled[Params::Voice::FiltersNumber];
 	};
 
   public:
@@ -491,20 +485,20 @@ class Part:
 	wavetable_computed (unsigned int serial);
 
   private:
-	PartManager*				_part_manager;
-	VoiceManager*				_voice_manager;
-	Params::Part				_part_params;
-	DSP::ParametricWave*		_base_waves[9];
-	DSP::ParametricWave*		_modulator_waves[4];
-	DSP::Wavetable*				_wavetables[2];
-	Atomic<bool>				_switch_wavetables;
-	Atomic<unsigned int>		_wt_update_request;
-	Atomic<unsigned int>		_wt_serial;
-	UpdateWavetableWorkUnit*	_wt_wu;
-	bool						_wt_wu_ever_started;
-	PartPorts					_ports;
-	PartControllerProxies		_proxies;
-	ParamUpdaters				_updaters;
+	PartManager*					_part_manager;
+	Unique<VoiceManager>			_voice_manager;
+	Params::Part					_part_params;
+	Unique<DSP::Wavetable>			_wavetables[2];
+	Unique<DSP::ParametricWave>		_modulator_waves[4];
+	Unique<DSP::ParametricWave>		_base_waves[9];
+	Atomic<bool>					_switch_wavetables;
+	Atomic<unsigned int>			_wt_update_request;
+	Atomic<unsigned int>			_wt_serial;
+	Unique<UpdateWavetableWorkUnit>	_wt_wu;
+	bool							_wt_wu_ever_started;
+	PartPorts						_ports;
+	PartControllerProxies			_proxies;
+	ParamUpdaters					_updaters;
 };
 
 
@@ -612,14 +606,14 @@ Part::proxies() noexcept
 inline DSP::ParametricWave*
 Part::base_wave() const noexcept
 {
-	return _base_waves[bound (_part_params.wave_type.get(), 0u, static_cast<unsigned int> (countof (_base_waves) - 1))];
+	return _base_waves[bound (_part_params.wave_type.get(), 0u, static_cast<unsigned int> (countof (_base_waves) - 1))].get();
 }
 
 
 inline DSP::ParametricWave*
 Part::modulator_wave() const noexcept
 {
-	return _modulator_waves[bound (_part_params.modulator_wave_type.get(), 0u, static_cast<unsigned int> (countof (_modulator_waves) - 1))];
+	return _modulator_waves[bound (_part_params.modulator_wave_type.get(), 0u, static_cast<unsigned int> (countof (_modulator_waves) - 1))].get();
 }
 
 } // namespace Yuki

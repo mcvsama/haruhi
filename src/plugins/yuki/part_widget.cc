@@ -88,8 +88,8 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 			QString t = QString ("%1").arg (o + 1);
 			if (o == 3)
 				t = "M";
-			_fm_matrix_knobs[o][i] = new Haruhi::Knob (this, proxies->fm_matrix[o][i], QString ("%1 → %2").arg (i + 1).arg (t));
-			_am_matrix_knobs[o][i] = new Haruhi::Knob (this, proxies->am_matrix[o][i], QString ("%1 → %2").arg (i + 1).arg (t));
+			_fm_matrix_knobs[o][i] = new Haruhi::Knob (this, proxies->fm_matrix[o][i].get(), QString ("%1 → %2").arg (i + 1).arg (t));
+			_am_matrix_knobs[o][i] = new Haruhi::Knob (this, proxies->am_matrix[o][i].get(), QString ("%1 → %2").arg (i + 1).arg (t));
 			_fm_matrix_knobs[o][i]->set_narrow (true);
 			_am_matrix_knobs[o][i]->set_narrow (true);
 		}
