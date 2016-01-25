@@ -39,7 +39,7 @@ EGFactory::destroy_plugin (Haruhi::Plugin* plugin)
 const char**
 EGFactory::author_contacts() const
 {
-	static const char* table[] = { "mailto:michal@gawron.name", "xmpp:mcv@jabber.org", 0 };
+	static const char* table[] = { "mailto:michal@gawron.name", 0 };
 	return table;
 }
 

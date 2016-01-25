@@ -39,7 +39,7 @@ YukiFactory::destroy_plugin (Haruhi::Plugin* plugin)
 const char**
 YukiFactory::author_contacts() const
 {
-	static const char* tab[] = { "mailto:michal@gawron.name", "xmpp:mcv@jabber.org", 0 };
+	static const char* tab[] = { "mailto:michal@gawron.name", 0 };
 	return tab;
 }
 
