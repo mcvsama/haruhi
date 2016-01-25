@@ -26,6 +26,7 @@
 #include <haruhi/application/services.h>
 #include <haruhi/widgets/knob.h>
 #include <haruhi/widgets/plot_frame.h>
+#include <haruhi/widgets/wave_plot.h>
 #include <haruhi/widgets/styled_background.h>
 #include <haruhi/dsp/modulated_wave.h>
 #include <haruhi/dsp/translated_wave.h>
@@ -445,6 +446,8 @@ PartWidget::update_phase_marker()
 	_base_wave_plot->plot_shape();
 	_final_wave_plot->set_phase_marker_position (pos);
 	_final_wave_plot->plot_shape();
+
+	_harmonics_panel->update_phase_marker (pos);
 }
 
 
@@ -466,7 +469,8 @@ PartWidget::update_widgets()
 	_knob_modulator_shape->setEnabled (immutable);
 	_modulator_type->setEnabled (immutable);
 	_modulator_wave_type->setEnabled (immutable);
-	_harmonics_panel->setEnabled (enabled && immutable);
+
+	_harmonics_panel->setEnabled (enabled && wave_enabled && immutable);
 
 	_harmonics_panel->update_widgets();
 	_modulator_panel->update_widgets();
@@ -522,6 +526,8 @@ PartWidget::update_wave_plots()
 
 	_base_wave_plot->assign_wave (base_wave, false, true, false);
 	_final_wave_plot->assign_wave (_cached_final_wave.get(), false, true, false);
+
+	_harmonics_panel->update_wave_plots (base_wave, _cached_final_wave.get());
 
 	// This will also call plot_shape() on plots:
 	update_phase_marker();

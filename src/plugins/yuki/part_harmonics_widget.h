@@ -27,12 +27,17 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/config/resources.h>
+#include <haruhi/widgets/plot_frame.h>
+#include <haruhi/widgets/wave_plot.h>
 
 // Local:
 #include "params.h"
 
 
 namespace Yuki {
+
+namespace DSP = Haruhi::DSP;
+using Haruhi::Unique;
 
 class Part;
 class PartWidget;
@@ -87,6 +92,18 @@ class PartHarmonicsWidget: public QWidget
 	void
 	params_to_widgets();
 
+	/**
+	 * Called by PartWidget.
+	 */
+	void
+	update_phase_marker (float pos);
+
+	/**
+	 * Called by PartWidget.
+	 */
+	void
+	update_wave_plots (DSP::Wave* base_wave, DSP::Wave* final_wave);
+
   private slots:
 	/**
 	 * Reset all harmonics to default values.
@@ -102,16 +119,18 @@ class PartHarmonicsWidget: public QWidget
 	set_button_highlighted (QPushButton* button, bool highlight);
 
   private:
-	PartWidget*	_part_widget;
-	Part*		_part;
+	PartWidget*					_part_widget;
+	Part*						_part;
 
-	Sliders		_harmonics_sliders;
-	Buttons		_harmonics_resets;
-	Sliders		_harmonic_phases_sliders;
-	Buttons		_harmonic_phases_resets;
+	Sliders						_harmonics_sliders;
+	Buttons						_harmonics_resets;
+	Sliders						_harmonic_phases_sliders;
+	Buttons						_harmonic_phases_resets;
 
-	QColor		_std_button_bg;
-	QColor		_std_button_fg;
+	QColor						_std_button_bg;
+	QColor						_std_button_fg;
+	Unique<Haruhi::WavePlot>	_base_wave_plot;
+	Unique<Haruhi::WavePlot>	_final_wave_plot;
 };
 
 } // namespace Yuki
