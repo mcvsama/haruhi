@@ -64,7 +64,7 @@ PartHarmonicsWidget::PartHarmonicsWidget (QWidget* parent, PartWidget* part_widg
 	QObject::connect (harmonics_reset_button, SIGNAL (clicked()), this, SLOT (reset_all_harmonics()));
 
 	int const kHarmonicsButtonWidth = 4_screen_mm;
-	int const kHarmonicsButtonHeight = 3_screen_mm;
+	int const kHarmonicsButtonHeight = 4_screen_mm;
 
 	// Harmonic sliders:
 	QWidget* harmonics_widget = new QWidget (this);
