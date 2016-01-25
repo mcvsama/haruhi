@@ -39,8 +39,8 @@
 // Local:
 #include "part.h"
 #include "part_harmonics_widget.h"
+#include "part_modulator_widget.h"
 #include "filter_widget.h"
-#include "operator_widget.h"
 
 
 namespace Yuki {
@@ -56,9 +56,6 @@ class PartWidget:
 	public Signal::Receiver
 {
 	Q_OBJECT
-
-	// Modulation matrix knobs [0..3][0..2]:
-	typedef std::vector<std::vector<Haruhi::Knob*> >	MatrixKnobs;
 
   public:
 	PartWidget (PartManagerWidget*, Part*);
@@ -125,12 +122,6 @@ class PartWidget:
 	void
 	post_params_to_widgets();
 
-	/**
-	 * Create new label and add it to _modulator_labels.
-	 */
-	QLabel*
-	create_modulator_label (QString const& text);
-
   private:
 	PartManagerWidget*		_part_manager_widget;
 	Part*					_part;
@@ -164,10 +155,6 @@ class PartWidget:
 	Unique<Haruhi::Knob>	_knob_phase;
 	Unique<Haruhi::Knob>	_knob_noise_level;
 
-	// Modulation matrix knobs:
-	MatrixKnobs				_fm_matrix_knobs;
-	MatrixKnobs				_am_matrix_knobs;
-
 	// Waveform-related:
 	Haruhi::WavePlot*		_base_wave_plot;
 	Haruhi::WavePlot*		_final_wave_plot;
@@ -186,22 +173,17 @@ class PartWidget:
 	// Other:
 	QTabWidget*				_tabs;
 	QWidget*				_oscillator_panel;
-	QWidget*				_modulator_panel;
+	PartModulatorWidget*	_modulator_panel;
 	PartHarmonicsWidget*	_harmonics_panel;
 	QPushButton*			_auto_center;
 	QPushButton*			_unison_stereo;
 	QPushButton*			_pseudo_stereo;
 	QCheckBox*				_part_enabled;
-	QCheckBox*				_modulator_enabled;
 	QPushButton*			_wave_enabled;
 	QPushButton*			_noise_enabled;
 	FilterWidget*			_filter_1;
 	FilterWidget*			_filter_2;
 	QComboBox*				_filter_configuration;
-	OperatorWidget*			_operator_1;
-	OperatorWidget*			_operator_2;
-	OperatorWidget*			_operator_3;
-	std::list<QWidget*>		_modulator_labels;
 };
 
 
