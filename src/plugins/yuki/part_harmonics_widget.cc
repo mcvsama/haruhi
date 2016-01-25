@@ -59,7 +59,7 @@ PartHarmonicsWidget::PartHarmonicsWidget (QWidget* parent, PartWidget* part_widg
 	_part (part)
 {
 	// Reset all harmonics:
-	QPushButton* harmonics_reset_button = new QPushButton (Resources::Icons16::clear_list(), "Reset all harmonics and phases to zero", this);
+	auto harmonics_reset_button = new QPushButton (Resources::Icons16::clear_list(), "Reset all harmonics and phases to zero", this);
 	harmonics_reset_button->setIconSize (Resources::Icons16::haruhi().size());
 	QObject::connect (harmonics_reset_button, SIGNAL (clicked()), this, SLOT (reset_all_harmonics()));
 
@@ -67,29 +67,29 @@ PartHarmonicsWidget::PartHarmonicsWidget (QWidget* parent, PartWidget* part_widg
 	int const kHarmonicsButtonHeight = 4_screen_mm;
 
 	// Harmonic sliders:
-	QWidget* harmonics_widget = new QWidget (this);
+	auto harmonics_widget = new QWidget (this);
 	harmonics_widget->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	QWidget* harmonics_grid = new QWidget (harmonics_widget);
-	QGridLayout* harmonics_layout = new QGridLayout (harmonics_grid);
+	auto harmonics_grid = new QWidget (harmonics_widget);
+	auto harmonics_layout = new QGridLayout (harmonics_grid);
 	harmonics_layout->setSpacing (0);
 	for (Sliders::size_type i = 0; i < Params::Part::HarmonicsNumber; ++i)
 	{
 		harmonics_layout->setColumnMinimumWidth (i, 0);
 
 		int def = i == 0 ? Params::Part::HarmonicMax : Params::Part::HarmonicDefault;
-		Slider* slider = new Slider (Params::Part::HarmonicMin, Params::Part::HarmonicMax, Params::Part::HarmonicMax / 20, def, Qt::Vertical, harmonics_grid);
+		auto slider = new Slider (Params::Part::HarmonicMin, Params::Part::HarmonicMax, Params::Part::HarmonicMax / 20, def, Qt::Vertical, harmonics_grid);
 		slider->setTracking (true);
 		QObject::connect (slider, SIGNAL (valueChanged (int)), _part_widget, SLOT (widgets_to_wave_params()));
 		QObject::connect (slider, SIGNAL (valueChanged (int)), _part_widget, SLOT (update_widgets()));
 		harmonics_layout->addWidget (slider, 0, i);
 
-		QLabel* label = new QLabel (QString ("%1").arg (i + 1), harmonics_grid);
+		auto label = new QLabel (QString ("%1").arg (i + 1), harmonics_grid);
 		label->setAlignment (Qt::AlignCenter);
 		label->setFixedWidth (kHarmonicsButtonWidth);
 		label->setTextFormat (Qt::PlainText);
 		harmonics_layout->addWidget (label, 1, i);
 
-		QPushButton* reset = new QPushButton ("∅", harmonics_grid);
+		auto reset = new QPushButton ("∅", harmonics_grid);
 		reset->setFixedWidth (kHarmonicsButtonWidth);
 		reset->setFixedHeight (kHarmonicsButtonHeight);
 		reset->setToolTip ("Reset to zero");
@@ -99,34 +99,34 @@ PartHarmonicsWidget::PartHarmonicsWidget (QWidget* parent, PartWidget* part_widg
 		_harmonics_sliders.push_back (slider);
 		_harmonics_resets.push_back (reset);
 	}
-	QHBoxLayout* harmonics_tab_layout = new QHBoxLayout (harmonics_widget);
+	auto harmonics_tab_layout = new QHBoxLayout (harmonics_widget);
 	harmonics_tab_layout->setMargin (0);
 	harmonics_tab_layout->setSpacing (0);
 	harmonics_tab_layout->addWidget (harmonics_grid);
 
 	// Phase sliders:
-	QWidget* harmonic_phases_widget = new QWidget (this);
+	auto harmonic_phases_widget = new QWidget (this);
 	harmonic_phases_widget->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	QWidget* phases_grid = new QWidget (harmonic_phases_widget);
-	QGridLayout* phases_layout = new QGridLayout (phases_grid);
+	auto phases_grid = new QWidget (harmonic_phases_widget);
+	auto phases_layout = new QGridLayout (phases_grid);
 	phases_layout->setSpacing (0);
 	for (Sliders::size_type i = 0; i < Params::Part::HarmonicsNumber; ++i)
 	{
 		harmonics_layout->setColumnMinimumWidth (i, 0);
 
-		Slider* slider = new Slider (Params::Part::PhaseMin, Params::Part::PhaseMax, Params::Part::PhaseMax / 20, Params::Part::PhaseDefault, Qt::Vertical, phases_grid);
+		auto slider = new Slider (Params::Part::PhaseMin, Params::Part::PhaseMax, Params::Part::PhaseMax / 20, Params::Part::PhaseDefault, Qt::Vertical, phases_grid);
 		slider->setTracking (true);
 		QObject::connect (slider, SIGNAL (valueChanged (int)), _part_widget, SLOT (widgets_to_wave_params()));
 		QObject::connect (slider, SIGNAL (valueChanged (int)), _part_widget, SLOT (update_widgets()));
 		phases_layout->addWidget (slider, 0, i);
 
-		QLabel* label = new QLabel (QString ("%1").arg (i + 1), phases_grid);
+		auto label = new QLabel (QString ("%1").arg (i + 1), phases_grid);
 		label->setAlignment (Qt::AlignCenter);
 		label->setFixedWidth (kHarmonicsButtonWidth);
 		label->setTextFormat (Qt::PlainText);
 		phases_layout->addWidget (label, 1, i);
 
-		QPushButton* reset = new QPushButton ("∅", phases_grid);
+		auto reset = new QPushButton ("∅", phases_grid);
 		reset->setFixedWidth (kHarmonicsButtonWidth);
 		reset->setFixedHeight (kHarmonicsButtonHeight);
 		reset->setToolTip ("Reset to zero");
@@ -137,7 +137,7 @@ PartHarmonicsWidget::PartHarmonicsWidget (QWidget* parent, PartWidget* part_widg
 		_harmonic_phases_sliders.push_back (slider);
 		_harmonic_phases_resets.push_back (reset);
 	}
-	QHBoxLayout* phases_tab_layout = new QHBoxLayout (harmonic_phases_widget);
+	auto phases_tab_layout = new QHBoxLayout (harmonic_phases_widget);
 	phases_tab_layout->setMargin (0);
 	phases_tab_layout->setSpacing (0);
 	phases_tab_layout->addWidget (phases_grid);
@@ -155,7 +155,7 @@ PartHarmonicsWidget::PartHarmonicsWidget (QWidget* parent, PartWidget* part_widg
 	_base_wave_plot->set_closed_ring (true);
 	_base_wave_plot->set_filled_wave (true);
 
-	Haruhi::PlotFrame* base_plot_frame = new Haruhi::PlotFrame (this);
+	auto base_plot_frame = new Haruhi::PlotFrame (this);
 	base_plot_frame->set_widget (_base_wave_plot.get());
 	base_plot_frame->setToolTip ("Base wave");
 	base_plot_frame->setFixedSize (30_screen_mm, 20_screen_mm);
@@ -165,27 +165,27 @@ PartHarmonicsWidget::PartHarmonicsWidget (QWidget* parent, PartWidget* part_widg
 	_final_wave_plot->set_closed_ring (true);
 	_final_wave_plot->set_filled_wave (true);
 
-	Haruhi::PlotFrame* final_plot_frame = new Haruhi::PlotFrame (this);
+	auto final_plot_frame = new Haruhi::PlotFrame (this);
 	final_plot_frame->set_widget (_final_wave_plot.get());
 	final_plot_frame->setToolTip ("Output wave (with harmonics, modulation, auto-scaled, etc.)");
 	final_plot_frame->setFixedSize (30_screen_mm, 20_screen_mm);
 
 	// Layouts:
 
-	QLabel* harmonics_label = new QLabel ("Harmonics", this);
+	auto harmonics_label = new QLabel ("Harmonics", this);
 	// Force normal text color. For some reason Qt uses white color on light-gray background.
 	harmonics_label->setForegroundRole (QPalette::Text);
-	QLabel* harmonic_phases_label = new QLabel ("Phases", this);
+	auto harmonic_phases_label = new QLabel ("Phases", this);
 	// Force normal text color. For some reason Qt uses white color on light-gray background.
 	harmonic_phases_label->setForegroundRole (QPalette::Text);
 
-	QHBoxLayout* harmonics_panel_buttons_layout = new QHBoxLayout();
+	auto harmonics_panel_buttons_layout = new QHBoxLayout();
 	harmonics_panel_buttons_layout->setMargin (0);
 	harmonics_panel_buttons_layout->setSpacing (Config::spacing());
 	harmonics_panel_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 	harmonics_panel_buttons_layout->addWidget (harmonics_reset_button);
 
-	QVBoxLayout* harmonics_panel_layout = new QVBoxLayout();
+	auto harmonics_panel_layout = new QVBoxLayout();
 	harmonics_panel_layout->setMargin (0);
 	harmonics_panel_layout->setSpacing (Config::spacing());
 	harmonics_panel_layout->addWidget (new Haruhi::StyledBackground (harmonics_label, this, 0.3_screen_mm));
@@ -194,7 +194,7 @@ PartHarmonicsWidget::PartHarmonicsWidget (QWidget* parent, PartWidget* part_widg
 	harmonics_panel_layout->addWidget (harmonic_phases_widget);
 	harmonics_panel_layout->addLayout (harmonics_panel_buttons_layout);
 
-	QGridLayout* layout = new QGridLayout (this);
+	auto layout = new QGridLayout (this);
 	layout->setMargin (Config::margin());
 	layout->setSpacing (Config::spacing());
 	layout->addWidget (waves_label_background, 0, 0);
@@ -212,7 +212,7 @@ PartHarmonicsWidget::PartHarmonicsWidget (QWidget* parent, PartWidget* part_widg
 void
 PartHarmonicsWidget::widgets_to_wave_params()
 {
-	Params::Part* pp = _part->part_params();
+	auto pp = _part->part_params();
 
 	// Update params that are not controller by knobs:
 	for (std::size_t i = 0; i < countof (pp->harmonics); ++i)
@@ -236,7 +236,7 @@ PartHarmonicsWidget::update_widgets()
 void
 PartHarmonicsWidget::params_to_widgets()
 {
-	Params::Part* pp = _part->part_params();
+	auto pp = _part->part_params();
 
 	for (std::size_t i = 0; i < countof (pp->harmonics); ++i)
 		_harmonics_sliders[i]->setValue (pp->harmonics[i]);
