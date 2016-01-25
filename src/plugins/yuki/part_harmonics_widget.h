@@ -70,21 +70,19 @@ class PartHarmonicsWidget: public QWidget
 
   public slots:
 	/**
-	 * Called when wave-related widgets are manipulated.
-	 * \entry	UI thread
+	 * Called by PartWidget.
 	 */
 	void
 	widgets_to_wave_params();
 
 	/**
-	 * Update widgets deps (enable/disable, etc.)
+	 * Called by PartWidget.
 	 */
 	void
 	update_widgets();
 
 	/**
-	 * Updates widgets' states from params.
-	 * \entry   UI thread only
+	 * Called by PartWidget.
 	 */
 	void
 	params_to_widgets();
