@@ -222,6 +222,12 @@ class PartManager:
 	void
 	set_oversampling (unsigned int oversampling);
 
+	/**
+	 * Return graph lock if graph is available (unit is registered).
+	 */
+	Mutex::Lock
+	get_graph_lock() const;
+
   public:
 	Signal::Emiter1<Part*>	part_added;
 	Signal::Emiter1<Part*>	part_removed;

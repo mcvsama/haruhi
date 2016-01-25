@@ -114,6 +114,7 @@ Part*
 PartManager::add_part()
 {
 	Part* p = new Part (this, Haruhi::Services::hi_priority_work_performer(), &_main_params, _id_alloc.allocate_id());
+	auto graph_lock = get_graph_lock();
 	_parts_mutex.synchronize ([&] {
 		_parts.push_back (p);
 	});
@@ -125,11 +126,15 @@ PartManager::add_part()
 void
 PartManager::remove_part (Part* part)
 {
-	_parts_mutex.synchronize ([&] {
-		_parts.remove (part);
-	});
+	{
+		auto graph_lock = get_graph_lock();
 
-	part_removed (part);
+		_parts_mutex.synchronize ([&] {
+			_parts.remove (part);
+		});
+		part_removed (part);
+	}
+
 	_id_alloc.free_id (part->id());
 	delete part;
 }
@@ -290,6 +295,8 @@ PartManager::panic()
 void
 PartManager::graph_updated()
 {
+	// Graph lock not needed, this method is called from Graph when it's already locked.
+
 	float const samples = 5_ms * graph()->sample_rate();
 	_volume_smoother[0].set_samples (samples);
 	_volume_smoother[1].set_samples (samples);
@@ -321,7 +328,8 @@ PartManager::voices_number() const
 void
 PartManager::save_state (QDomElement& element) const
 {
-	Mutex::Lock lock (_parts_mutex);
+	auto graph_lock = get_graph_lock();
+	auto lock = _parts_mutex.get_lock();
 
 	QDomElement e = element.ownerDocument().createElement ("main");
 	_main_params.save_state (e);
@@ -340,6 +348,9 @@ PartManager::save_state (QDomElement& element) const
 void
 PartManager::load_state (QDomElement const& element)
 {
+	auto graph_lock = get_graph_lock();
+	auto parts_lock = _parts_mutex.get_lock();
+
 	remove_all_parts();
 
 	for (QDomElement& e: element)
@@ -373,10 +384,19 @@ PartManager::oversampling_updated()
 void
 PartManager::set_oversampling (unsigned int oversampling)
 {
-	graph()->synchronize ([&] {
-		for (Part* p: _parts)
-			p->set_oversampling (oversampling);
-	});
+	auto graph_lock = get_graph_lock();
+
+	for (Part* p: _parts)
+		p->set_oversampling (oversampling);
+}
+
+
+Mutex::Lock
+PartManager::get_graph_lock() const
+{
+	if (graph())
+		return graph()->get_lock();
+	return Mutex::Lock();
 }
 
 } // namespace Yuki

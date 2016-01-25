@@ -68,6 +68,8 @@ class Mutex: private Noncopyable
 	class Lock: public Noncopyable
 	{
 	  public:
+		Lock();
+
 		// Ctor. Acquire lock.
 		explicit
 		Lock (Mutex const& mutex);
@@ -79,8 +81,8 @@ class Mutex: private Noncopyable
 		~Lock();
 
 	  private:
-		Mutex const&	_mutex;
-		bool			_owns_lock;
+		Mutex const*	_mutex		= nullptr;
+		bool			_owns_lock	= false;
 	};
 
 	/**
@@ -198,11 +200,16 @@ class RecursiveMutex: public Mutex
 
 
 inline
+Mutex::Lock::Lock()
+{ }
+
+
+inline
 Mutex::Lock::Lock (Mutex const& mutex):
-	_mutex (mutex),
+	_mutex (&mutex),
 	_owns_lock (true)
 {
-	_mutex.lock();
+	_mutex->lock();
 }
 
 
@@ -219,7 +226,7 @@ inline
 Mutex::Lock::~Lock()
 {
 	if (_owns_lock)
-		_mutex.unlock();
+		_mutex->unlock();
 }
 
 
