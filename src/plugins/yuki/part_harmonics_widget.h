@@ -34,8 +34,6 @@
 
 namespace Yuki {
 
-namespace DSP = Haruhi::DSP;
-
 class Part;
 class PartWidget;
 
@@ -64,15 +62,13 @@ class PartHarmonicsWidget: public QWidget
 {
 	Q_OBJECT
 
-	friend class PartWidget;
-
 	typedef std::vector<QSlider*>		Sliders;
 	typedef std::vector<QPushButton*>	Buttons;
 
   public:
 	PartHarmonicsWidget (QWidget* parent, PartWidget* part_widget, Part* part);
 
-  private slots:
+  public slots:
 	/**
 	 * Called when wave-related widgets are manipulated.
 	 * \entry	UI thread
@@ -81,24 +77,24 @@ class PartHarmonicsWidget: public QWidget
 	widgets_to_wave_params();
 
 	/**
-	 * Reset all harmonics to default values.
-	 */
-	void
-	reset_all_harmonics();
-
-	/**
 	 * Update widgets deps (enable/disable, etc.)
 	 */
 	void
 	update_widgets();
 
-  private:
 	/**
 	 * Updates widgets' states from params.
 	 * \entry   UI thread only
 	 */
 	void
 	params_to_widgets();
+
+  private slots:
+	/**
+	 * Reset all harmonics to default values.
+	 */
+	void
+	reset_all_harmonics();
 
   private:
 	/**

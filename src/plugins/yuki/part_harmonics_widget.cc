@@ -183,16 +183,6 @@ PartHarmonicsWidget::widgets_to_wave_params()
 
 
 void
-PartHarmonicsWidget::reset_all_harmonics()
-{
-	for (QSlider* s: _harmonics_sliders)
-		static_cast<Slider*> (s)->reset();
-	for (QSlider* s: _harmonic_phases_sliders)
-		static_cast<Slider*> (s)->reset();
-}
-
-
-void
 PartHarmonicsWidget::update_widgets()
 {
 	for (Sliders::size_type i = 0; i < Params::Part::HarmonicsNumber; ++i)
@@ -212,6 +202,16 @@ PartHarmonicsWidget::params_to_widgets()
 		_harmonics_sliders[i]->setValue (pp->harmonics[i]);
 	for (std::size_t i = 0; i < countof (pp->harmonic_phases); ++i)
 		_harmonic_phases_sliders[i]->setValue (pp->harmonic_phases[i]);
+}
+
+
+void
+PartHarmonicsWidget::reset_all_harmonics()
+{
+	for (QSlider* s: _harmonics_sliders)
+		static_cast<Slider*> (s)->reset();
+	for (QSlider* s: _harmonic_phases_sliders)
+		static_cast<Slider*> (s)->reset();
 }
 
 
