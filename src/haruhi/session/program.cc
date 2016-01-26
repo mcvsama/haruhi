@@ -19,7 +19,7 @@
 #include <haruhi/utility/qdom.h>
 
 // Qt:
-#include <QtGui/QLayout>
+#include <QLayout>
 
 // Local:
 #include "program.h"

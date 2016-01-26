@@ -21,10 +21,10 @@
 #include <boost/function.hpp>
 
 // Qt:
-#include <QtCore/QObject>
-#include <QtCore/QEvent>
-#include <QtGui/QApplication>
-#include <QtGui/QX11Info>
+#include <QObject>
+#include <QEvent>
+#include <QApplication>
+#include <QX11Info>
 
 // Haruhi:
 #include <haruhi/config/all.h>

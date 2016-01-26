@@ -16,7 +16,7 @@
 #include <set>
 
 // Qt:
-#include <QtCore/QTimer>
+#include <QTimer>
 
 // Haruhi:
 #include <haruhi/utility/atomic.h>

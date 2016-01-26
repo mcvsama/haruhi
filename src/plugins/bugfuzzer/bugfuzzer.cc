@@ -16,9 +16,9 @@
 #include <cstdlib>
 
 // Qt:
-#include <QtCore/QTimer>
-#include <QtGui/QWidget>
-#include <QtGui/QLayout>
+#include <QTimer>
+#include <QWidget>
+#include <QLayout>
 
 // Local:
 #include <haruhi/config/all.h>

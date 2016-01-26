@@ -18,8 +18,8 @@
 #include <cstddef>
 
 // Qt:
-#include <QtCore/QEvent>
-#include <QtGui/QTreeWidget>
+#include <QEvent>
+#include <QTreeWidget>
 
 // Haruhi:
 #include <haruhi/config/all.h>

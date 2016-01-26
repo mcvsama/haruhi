@@ -16,12 +16,12 @@
 #include <memory>
 
 // Qt:
-#include <QtGui/QPushButton>
-#include <QtGui/QMessageBox>
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QLayout>
-#include <QtGui/QMenu>
-#include <QtGui/QTextDocument>
+#include <QPushButton>
+#include <QMessageBox>
+#include <QTreeWidgetItem>
+#include <QLayout>
+#include <QMenu>
+#include <QTextDocument>
 
 // Haruhi:
 #include <haruhi/config/all.h>

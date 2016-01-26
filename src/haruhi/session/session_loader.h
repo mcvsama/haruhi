@@ -18,16 +18,16 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QWidget>
-#include <QtGui/QDialog>
-#include <QtGui/QTabWidget>
-#include <QtGui/QPushButton>
-#include <QtGui/QLineEdit>
-#include <QtGui/QSpinBox>
-#include <QtGui/QTreeWidget>
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QComboBox>
-#include <QtGui/QListWidget>
+#include <QWidget>
+#include <QDialog>
+#include <QTabWidget>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QSpinBox>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QComboBox>
+#include <QListWidget>
 
 // Haruhi:
 #include <haruhi/config/all.h>

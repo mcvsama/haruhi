@@ -15,14 +15,14 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/QPushButton>
-#include <QtGui/QMessageBox>
-#include <QtGui/QGridLayout>
-#include <QtGui/QGroupBox>
-#include <QtGui/QKeyEvent>
+#include <QLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QMessageBox>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QKeyEvent>
 
 // Haruhi:
 #include <haruhi/config/all.h>

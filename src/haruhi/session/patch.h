@@ -20,14 +20,14 @@
 #include <map>
 
 // Qt:
-#include <QtCore/QSignalMapper>
-#include <QtGui/QWidget>
-#include <QtGui/QTabWidget>
-#include <QtGui/QStackedWidget>
-#include <QtGui/QFrame>
-#include <QtGui/QLabel>
-#include <QtGui/QCheckBox>
-#include <QtGui/QMenu>
+#include <QSignalMapper>
+#include <QWidget>
+#include <QTabWidget>
+#include <QStackedWidget>
+#include <QFrame>
+#include <QLabel>
+#include <QCheckBox>
+#include <QMenu>
 
 // Haruhi:
 #include <haruhi/config/all.h>

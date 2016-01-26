@@ -18,8 +18,8 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QWidget>
-#include <QtGui/QSpinBox>
+#include <QWidget>
+#include <QSpinBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>

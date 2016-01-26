@@ -17,10 +17,10 @@
 #include <cmath>
 
 // Qt:
-#include <QtGui/QApplication>
-#include <QtGui/QPainter>
-#include <QtGui/QPaintEvent>
-#include <QtGui/QPolygonF>
+#include <QApplication>
+#include <QPainter>
+#include <QPaintEvent>
+#include <QPolygonF>
 
 // Haruhi:
 #include <haruhi/config/all.h>

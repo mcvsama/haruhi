@@ -26,10 +26,10 @@
 #include <errno.h>
 
 // Qt:
-#include <QtCore/QFile>
-#include <QtCore/QTextStream>
-#include <QtGui/QApplication>
-#include <QtGui/QPixmapCache>
+#include <QFile>
+#include <QTextStream>
+#include <QApplication>
+#include <QPixmapCache>
 
 // Haruhi:
 #include <haruhi/config/all.h>

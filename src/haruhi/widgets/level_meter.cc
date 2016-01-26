@@ -17,9 +17,9 @@
 #include <limits>
 
 // Qt:
-#include <QtGui/QApplication>
-#include <QtGui/QShortcut>
-#include <QtGui/QPainter>
+#include <QApplication>
+#include <QShortcut>
+#include <QPainter>
 
 // Haruhi:
 #include <haruhi/config/all.h>

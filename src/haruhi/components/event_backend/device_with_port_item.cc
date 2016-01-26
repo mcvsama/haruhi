@@ -15,7 +15,7 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QTreeWidgetItem>
+#include <QTreeWidgetItem>
 
 // Local:
 #include "device_with_port_item.h"

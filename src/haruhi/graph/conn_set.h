@@ -14,14 +14,14 @@
 #ifndef HARUHI__GRAPH__CONN_SET_H__INCLUDED
 #define HARUHI__GRAPH__CONN_SET_H__INCLUDED
 
-// Qt:
-#include <QtXml/QDomElement>
-
 // Standard:
 #include <cstddef>
 #include <string>
 #include <list>
 #include <set>
+
+// Qt:
+#include <QDomElement>
 
 // Haruhi:
 #include <haruhi/config/all.h>

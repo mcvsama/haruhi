@@ -21,7 +21,7 @@
 #include <haruhi/config/all.h>
 
 // Qt:
-#include <QtXml/QDomElement>
+#include <QDomElement>
 
 
 namespace Haruhi {

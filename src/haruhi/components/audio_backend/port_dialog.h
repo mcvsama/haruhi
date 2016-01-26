@@ -18,7 +18,7 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QDialog>
+#include <QDialog>
 
 // Haruhi:
 #include <haruhi/config/all.h>

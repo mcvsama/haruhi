@@ -15,17 +15,17 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QWidget>
-#include <QtGui/QDialog>
-#include <QtGui/QLayout>
-#include <QtGui/QTabWidget>
-#include <QtGui/QListWidget>
-#include <QtGui/QLabel>
-#include <QtGui/QPushButton>
-#include <QtGui/QFileDialog>
-#include <QtGui/QTreeWidget>
-#include <QtGui/QHeaderView>
-#include <QtGui/QGroupBox>
+#include <QWidget>
+#include <QDialog>
+#include <QLayout>
+#include <QTabWidget>
+#include <QListWidget>
+#include <QLabel>
+#include <QPushButton>
+#include <QFileDialog>
+#include <QTreeWidget>
+#include <QHeaderView>
+#include <QGroupBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>

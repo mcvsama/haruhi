@@ -17,8 +17,8 @@
 #include <set>
 
 // Qt:
-#include <QtGui/QTreeWidget>
-#include <QtGui/QHeaderView>
+#include <QTreeWidget>
+#include <QHeaderView>
 
 // Haruhi:
 #include <haruhi/application/haruhi.h>

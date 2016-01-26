@@ -17,12 +17,12 @@
 #include <map>
 
 // Qt:
-#include <QtCore/QSignalMapper>
-#include <QtGui/QApplication>
-#include <QtGui/QPushButton>
-#include <QtGui/QCheckBox>
-#include <QtGui/QMenu>
-#include <QtGui/QLayout>
+#include <QSignalMapper>
+#include <QApplication>
+#include <QPushButton>
+#include <QCheckBox>
+#include <QMenu>
+#include <QLayout>
 
 // Haruhi:
 #include <haruhi/config/all.h>

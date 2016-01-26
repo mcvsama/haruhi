@@ -22,8 +22,8 @@
 #include <unistd.h>
 
 // Qt:
-#include <QtCore/QObject>
-#include <QtGui/QApplication>
+#include <QObject>
+#include <QApplication>
 
 // Haruhi:
 #include <haruhi/config/all.h>

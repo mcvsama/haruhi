@@ -19,8 +19,8 @@
 #include <vector>
 
 // Qt:
-#include <QtGui/QWidget>
-#include <QtGui/QComboBox>
+#include <QWidget>
+#include <QComboBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>

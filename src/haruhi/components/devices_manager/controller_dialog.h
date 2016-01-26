@@ -18,11 +18,11 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QDialog>
-#include <QtGui/QCheckBox>
-#include <QtGui/QSpinBox>
-#include <QtGui/QPushButton>
-#include <QtGui/QLabel>
+#include <QDialog>
+#include <QCheckBox>
+#include <QSpinBox>
+#include <QPushButton>
+#include <QLabel>
 
 // Haruhi:
 #include <haruhi/config/all.h>

@@ -16,13 +16,13 @@
 #include <set>
 
 // Qt:
-#include <QtGui/QPushButton>
-#include <QtGui/QLabel>
-#include <QtGui/QMessageBox>
-#include <QtGui/QGroupBox>
-#include <QtGui/QGridLayout>
-#include <QtGui/QTextDocument>
-#include <QtGui/QApplication>
+#include <QPushButton>
+#include <QLabel>
+#include <QMessageBox>
+#include <QGroupBox>
+#include <QGridLayout>
+#include <QTextDocument>
+#include <QApplication>
 
 // Haruhi:
 #include <haruhi/config/all.h>

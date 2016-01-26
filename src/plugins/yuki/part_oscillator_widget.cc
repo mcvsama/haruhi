@@ -15,8 +15,8 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QLayout>
-#include <QtGui/QGroupBox>
+#include <QLayout>
+#include <QGroupBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>

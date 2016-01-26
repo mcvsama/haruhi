@@ -20,10 +20,10 @@
 #include <set>
 
 // Qt:
-#include <QtCore/QSignalMapper>
-#include <QtGui/QPushButton>
-#include <QtGui/QStackedWidget>
-#include <QtGui/QMenu>
+#include <QSignalMapper>
+#include <QPushButton>
+#include <QStackedWidget>
+#include <QMenu>
 
 // Haruhi:
 #include <haruhi/config/all.h>

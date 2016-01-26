@@ -15,11 +15,11 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QWidget>
-#include <QtGui/QSpinBox>
-#include <QtGui/QLabel>
-#include <QtGui/QGridLayout>
-#include <QtGui/QGroupBox>
+#include <QWidget>
+#include <QSpinBox>
+#include <QLabel>
+#include <QGridLayout>
+#include <QGroupBox>
 
 // Lib:
 #include <boost/bind.hpp>

@@ -18,16 +18,16 @@
 #include <set>
 
 // Qt:
-#include <QtCore/QEvent>
-#include <QtGui/QApplication>
-#include <QtGui/QLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QValidator>
-#include <QtGui/QCursor>
-#include <QtGui/QPushButton>
-#include <QtGui/QMouseEvent>
-#include <QtGui/QSpinBox>
-#include <QtGui/QMenu>
+#include <QEvent>
+#include <QApplication>
+#include <QLayout>
+#include <QLabel>
+#include <QValidator>
+#include <QCursor>
+#include <QPushButton>
+#include <QMouseEvent>
+#include <QSpinBox>
+#include <QMenu>
 
 // Haruhi:
 #include <haruhi/config/all.h>

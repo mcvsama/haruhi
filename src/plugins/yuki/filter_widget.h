@@ -18,9 +18,9 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QComboBox>
-#include <QtGui/QSpinBox>
-#include <QtGui/QCheckBox>
+#include <QComboBox>
+#include <QSpinBox>
+#include <QCheckBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>

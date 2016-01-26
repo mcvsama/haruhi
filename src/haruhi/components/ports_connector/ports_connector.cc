@@ -25,13 +25,13 @@
 #include <map>
 
 // Qt:
-#include <QtGui/QPushButton>
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QSplitter>
-#include <QtGui/QScrollBar>
-#include <QtGui/QMenu>
-#include <QtGui/QHeaderView>
-#include <QtGui/QLayout>
+#include <QPushButton>
+#include <QTreeWidgetItem>
+#include <QSplitter>
+#include <QScrollBar>
+#include <QMenu>
+#include <QHeaderView>
+#include <QLayout>
 
 // Lib:
 #include <boost/bind/bind.hpp>

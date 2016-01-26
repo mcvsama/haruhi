@@ -18,7 +18,7 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QLabel>
+#include <QLabel>
 
 // Haruhi:
 #include <haruhi/config/all.h>

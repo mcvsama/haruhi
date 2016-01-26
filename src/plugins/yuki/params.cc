@@ -16,15 +16,15 @@
 #include <algorithm>
 #include <limits>
 
+// Qt:
+#include <QDomElement>
+
 // Haruhi:
 #include <haruhi/utility/numeric.h>
 #include <haruhi/dsp/modulated_wave.h>
 
 // Local:
 #include "params.h"
-
-// Qt:
-#include <QtXml/QDomElement>
 
 
 namespace Yuki {

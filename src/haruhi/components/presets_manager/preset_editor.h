@@ -18,9 +18,9 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QLineEdit>
-#include <QtGui/QPushButton>
-#include <QtGui/QCheckBox>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QCheckBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>

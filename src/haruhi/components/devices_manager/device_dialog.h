@@ -19,11 +19,11 @@
 #include <stdint.h>
 
 // Qt:
-#include <QtGui/QDialog>
-#include <QtGui/QPushButton>
-#include <QtGui/QLineEdit>
-#include <QtGui/QCheckBox>
-#include <QtGui/QKeyEvent>
+#include <QDialog>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QCheckBox>
+#include <QKeyEvent>
 
 // Haruhi:
 #include <haruhi/config/all.h>

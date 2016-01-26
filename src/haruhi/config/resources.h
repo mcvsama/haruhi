@@ -17,8 +17,8 @@
 #define HARUHI__CONFIG__RESOURCES_H__INCLUDED
 
 // Qt:
-#include <QtGui/QFont>
-#include <QtGui/QPixmap>
+#include <QFont>
+#include <QPixmap>
 
 // Haruhi:
 #include <haruhi/config/all.h>

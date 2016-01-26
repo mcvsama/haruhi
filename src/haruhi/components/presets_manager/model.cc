@@ -23,8 +23,8 @@
 #include <libgen.h>
 
 // Qt:
-#include <QtCore/QDir>
-#include <QtCore/QTextStream>
+#include <QDir>
+#include <QTextStream>
 
 // Haruhi:
 #include <haruhi/config/all.h>

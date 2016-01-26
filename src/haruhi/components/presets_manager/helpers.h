@@ -18,7 +18,7 @@
 #include <cstddef>
 
 // Qt:
-#include <QtXml/QDomElement>
+#include <QDomElement>
 
 // Haruhi:
 #include <haruhi/config/all.h>

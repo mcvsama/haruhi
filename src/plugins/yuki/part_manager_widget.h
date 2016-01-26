@@ -18,12 +18,12 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QWidget>
-#include <QtGui/QStackedWidget>
-#include <QtGui/QPushButton>
-#include <QtGui/QTabWidget>
-#include <QtGui/QSpinBox>
-#include <QtGui/QTabBar>
+#include <QWidget>
+#include <QStackedWidget>
+#include <QPushButton>
+#include <QTabWidget>
+#include <QSpinBox>
+#include <QTabBar>
 
 // Haruhi:
 #include <haruhi/config/all.h>

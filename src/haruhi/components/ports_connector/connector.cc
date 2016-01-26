@@ -15,10 +15,10 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QPainter>
-#include <QtGui/QPainterPath>
-#include <QtGui/QPolygon>
-#include <QtGui/QHeaderView>
+#include <QPainter>
+#include <QPainterPath>
+#include <QPolygon>
+#include <QHeaderView>
 
 // Haruhi:
 #include <haruhi/config/all.h>

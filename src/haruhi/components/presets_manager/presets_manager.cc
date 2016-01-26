@@ -27,10 +27,10 @@
 #include <unistd.h>
 
 // Qt:
-#include <QtGui/QLayout>
-#include <QtGui/QPushButton>
-#include <QtGui/QMessageBox>
-#include <QtGui/QTextDocument>
+#include <QLayout>
+#include <QPushButton>
+#include <QMessageBox>
+#include <QTextDocument>
 
 // Haruhi:
 #include <haruhi/config/all.h>

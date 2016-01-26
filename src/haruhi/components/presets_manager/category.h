@@ -18,12 +18,12 @@
 #include <cstddef>
 #include <list>
 
+// Qt:
+#include <QString>
+
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/utility/saveable_state.h>
-
-// Qt:
-#include <QtCore/QString>
 
 // Local:
 #include "preset.h"

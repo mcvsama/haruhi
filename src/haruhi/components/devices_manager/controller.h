@@ -19,7 +19,7 @@
 #include <array>
 
 // Qt:
-#include <QtCore/QString>
+#include <QString>
 
 // Haruhi:
 #include <haruhi/config/all.h>

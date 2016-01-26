@@ -15,8 +15,8 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QWidget>
-#include <QtGui/QLayout>
+#include <QWidget>
+#include <QLayout>
 
 // Haruhi:
 #include <haruhi/application/services.h>

@@ -18,7 +18,7 @@
 #include <cstddef>
 
 // Qt:
-#include <QtCore/QPointF>
+#include <QPointF>
 
 // Local:
 #include "constants.h"

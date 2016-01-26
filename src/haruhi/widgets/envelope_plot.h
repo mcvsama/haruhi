@@ -19,9 +19,9 @@
 #include <vector>
 
 // Qt:
-#include <QtCore/QEvent>
-#include <QtGui/QWidget>
-#include <QtGui/QPixmap>
+#include <QEvent>
+#include <QWidget>
+#include <QPixmap>
 
 // Haruhi:
 #include <haruhi/config/all.h>

@@ -16,12 +16,14 @@
 #include <map>
 
 // Qt:
-#include <QtGui/QApplication>
-#include <QtGui/QDragEnterEvent>
-#include <QtGui/QTreeWidget>
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QHeaderView>
-#include <QtGui/QMenu>
+#include <QApplication>
+#include <QDragEnterEvent>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QHeaderView>
+#include <QMenu>
+#include <QMimeData>
+#include <QDrag>
 
 // Haruhi:
 #include <haruhi/config/all.h>

@@ -15,7 +15,7 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QTransform>
+#include <QTransform>
 
 // Local:
 #include "lonlat.h"

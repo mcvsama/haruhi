@@ -20,10 +20,10 @@
 #include <vector>
 
 // Qt:
-#include <QtGui/QWidget>
-#include <QtGui/QSlider>
-#include <QtGui/QPushButton>
-#include <QtGui/QComboBox>
+#include <QWidget>
+#include <QSlider>
+#include <QPushButton>
+#include <QComboBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>

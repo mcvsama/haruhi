@@ -15,9 +15,9 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QSizePolicy>
-#include <QtGui/QPainter>
-#include <QtGui/QPaintEvent>
+#include <QSizePolicy>
+#include <QPainter>
+#include <QPaintEvent>
 
 // Haruhi:
 #include <haruhi/config/all.h>

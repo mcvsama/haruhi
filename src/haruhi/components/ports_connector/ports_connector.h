@@ -24,11 +24,11 @@
 #include <boost/function.hpp>
 
 // Qt:
-#include <QtGui/QWidget>
-#include <QtGui/QSplitter>
-#include <QtGui/QPushButton>
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QMenu>
+#include <QWidget>
+#include <QSplitter>
+#include <QPushButton>
+#include <QTreeWidgetItem>
+#include <QMenu>
 
 // Haruhi:
 #include <haruhi/config/all.h>

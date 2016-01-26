@@ -16,20 +16,20 @@
 #include <typeinfo>
 
 // Qt:
-#include <QtCore/QFile>
-#include <QtCore/QObjectList>
-#include <QtCore/QTextStream>
-#include <QtGui/QApplication>
-#include <QtGui/QShortcut>
-#include <QtGui/QCursor>
-#include <QtGui/QMessageBox>
-#include <QtGui/QWhatsThis>
-#include <QtGui/QSlider>
-#include <QtGui/QFileDialog>
-#include <QtGui/QCloseEvent>
-#include <QtGui/QGridLayout>
-#include <QtGui/QLayout>
-#include <QtGui/QTextDocument>
+#include <QFile>
+#include <QObjectList>
+#include <QTextStream>
+#include <QApplication>
+#include <QShortcut>
+#include <QCursor>
+#include <QMessageBox>
+#include <QWhatsThis>
+#include <QSlider>
+#include <QFileDialog>
+#include <QCloseEvent>
+#include <QGridLayout>
+#include <QLayout>
+#include <QTextDocument>
 
 // Haruhi:
 #include <haruhi/config/all.h>

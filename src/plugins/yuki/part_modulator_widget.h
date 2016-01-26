@@ -20,8 +20,8 @@
 #include <vector>
 
 // Qt:
-#include <QtGui/QWidget>
-#include <QtGui/QCheckBox>
+#include <QWidget>
+#include <QCheckBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>

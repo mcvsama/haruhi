@@ -18,8 +18,8 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QAbstractSlider>
-#include <QtGui/QPixmap>
+#include <QAbstractSlider>
+#include <QPixmap>
 
 // Haruhi:
 #include <haruhi/config/all.h>

@@ -18,8 +18,8 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QLineEdit>
-#include <QtGui/QPushButton>
+#include <QLineEdit>
+#include <QPushButton>
 
 // Haruhi:
 #include <haruhi/config/all.h>

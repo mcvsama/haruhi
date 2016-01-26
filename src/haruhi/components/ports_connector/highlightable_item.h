@@ -18,8 +18,8 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QBrush>
+#include <QTreeWidgetItem>
+#include <QBrush>
 
 // Haruhi:
 #include <haruhi/config/all.h>

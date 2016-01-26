@@ -15,8 +15,8 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QMessageBox>
-#include <QtGui/QTextDocument>
+#include <QMessageBox>
+#include <QTextDocument>
 
 // Haruhi:
 #include <haruhi/config/all.h>

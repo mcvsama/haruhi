@@ -21,9 +21,9 @@
 #include <utility>
 
 // Qt:
-#include <QtCore/QTimer>
-#include <QtGui/QPushButton>
-#include <QtGui/QTreeWidgetItem>
+#include <QTimer>
+#include <QPushButton>
+#include <QTreeWidgetItem>
 
 // Haruhi:
 #include <haruhi/config/all.h>

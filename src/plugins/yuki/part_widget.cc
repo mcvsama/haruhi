@@ -15,7 +15,7 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QLayout>
+#include <QLayout>
 
 // Lib:
 #include <boost/bind.hpp>

@@ -15,7 +15,7 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QLayout>
+#include <QLayout>
 
 // Haruhi:
 #include <haruhi/config/all.h>

@@ -20,13 +20,13 @@
 #include <vector>
 
 // Qt:
-#include <QtGui/QWidget>
-#include <QtGui/QDialog>
-#include <QtGui/QPushButton>
-#include <QtGui/QSpinBox>
-#include <QtGui/QCheckBox>
-#include <QtGui/QStackedWidget>
-#include <QtGui/QTabWidget>
+#include <QWidget>
+#include <QDialog>
+#include <QPushButton>
+#include <QSpinBox>
+#include <QCheckBox>
+#include <QStackedWidget>
+#include <QTabWidget>
 
 // Haruhi:
 #include <haruhi/config/all.h>

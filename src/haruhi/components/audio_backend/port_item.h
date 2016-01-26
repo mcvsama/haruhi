@@ -21,7 +21,7 @@
 #include <jack/jack.h>
 
 // Qt:
-#include <QtGui/QTreeWidgetItem>
+#include <QTreeWidgetItem>
 
 // Haruhi:
 #include <haruhi/config/all.h>

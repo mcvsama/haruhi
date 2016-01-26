@@ -15,7 +15,7 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QMouseEvent>
+#include <QMouseEvent>
 
 // Local:
 #include "clickable_label.h"

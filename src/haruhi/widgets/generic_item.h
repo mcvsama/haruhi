@@ -18,8 +18,8 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QListWidgetItem>
+#include <QTreeWidgetItem>
+#include <QListWidgetItem>
 
 
 namespace Haruhi {

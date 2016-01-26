@@ -19,8 +19,8 @@
 #include <set>
 
 // Qt:
-#include <QtCore/QTimer>
-#include <QtCore/QObject>
+#include <QTimer>
+#include <QObject>
 
 // Haruhi:
 #include <haruhi/config/all.h>

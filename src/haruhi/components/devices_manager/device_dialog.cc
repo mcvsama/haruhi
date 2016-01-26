@@ -15,13 +15,13 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/QPushButton>
-#include <QtGui/QMessageBox>
-#include <QtGui/QGridLayout>
-#include <QtGui/QCheckBox>
+#include <QLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QMessageBox>
+#include <QGridLayout>
+#include <QCheckBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>

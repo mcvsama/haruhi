@@ -20,10 +20,10 @@
 #include <vector>
 
 // Qt:
-#include <QtCore/QTimer>
-#include <QtGui/QLabel>
-#include <QtGui/QLayout>
-#include <QtGui/QPushButton>
+#include <QTimer>
+#include <QLabel>
+#include <QLayout>
+#include <QPushButton>
 
 // Haruhi:
 #include <haruhi/config/all.h>

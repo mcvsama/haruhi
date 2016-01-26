@@ -19,9 +19,9 @@
 #include <set>
 
 // Qt:
-#include <QtGui/QWidget>
-#include <QtGui/QStackedWidget>
-#include <QtGui/QPushButton>
+#include <QWidget>
+#include <QStackedWidget>
+#include <QPushButton>
 
 // Haruhi:
 #include <haruhi/config/all.h>

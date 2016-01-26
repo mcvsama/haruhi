@@ -16,13 +16,13 @@
 #include <string>
 
 // Qt:
-#include <QtCore/QTextCodec>
-#include <QtGui/QApplication>
-#include <QtGui/QStackedWidget>
-#include <QtGui/QMainWindow>
-#include <QtGui/QMessageBox>
-#include <QtGui/QLayout>
-#include <QtGui/QPixmapCache>
+#include <QTextCodec>
+#include <QApplication>
+#include <QStackedWidget>
+#include <QMainWindow>
+#include <QMessageBox>
+#include <QLayout>
+#include <QPixmapCache>
 
 // Haruhi:
 #include <haruhi/config/all.h>

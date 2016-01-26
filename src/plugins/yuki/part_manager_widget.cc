@@ -15,8 +15,8 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QStackedWidget>
-#include <QtGui/QLayout>
+#include <QStackedWidget>
+#include <QLayout>
 
 // Lib:
 #include <boost/bind.hpp>

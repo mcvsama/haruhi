@@ -16,7 +16,7 @@
 #include <algorithm>
 
 // Qt:
-#include <QtGui/QComboBox>
+#include <QComboBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>

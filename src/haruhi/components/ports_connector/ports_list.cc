@@ -18,11 +18,13 @@
 #include <set>
 
 // Qt:
-#include <QtGui/QApplication>
-#include <QtGui/QTreeWidget>
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QHeaderView>
-#include <QtGui/QDragEnterEvent>
+#include <QApplication>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QHeaderView>
+#include <QDragEnterEvent>
+#include <QMimeData>
+#include <QDrag>
 
 // Haruhi:
 #include <haruhi/config/all.h>

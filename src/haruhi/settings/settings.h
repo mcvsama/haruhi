@@ -35,8 +35,8 @@
 #include <iostream>
 
 // Qt:
-#include <QtCore/QFile>
-#include <QtXml/QDomNode>
+#include <QFile>
+#include <QDomNode>
 
 // Haruhi:
 #include <haruhi/config/all.h>

@@ -15,12 +15,12 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QAbstractSlider>
-#include <QtGui/QLayout>
-#include <QtGui/QPainter>
-#include <QtGui/QPaintEvent>
-#include <QtGui/QPixmapCache>
-#include <QtSvg/QSvgRenderer>
+#include <QAbstractSlider>
+#include <QLayout>
+#include <QPainter>
+#include <QPaintEvent>
+#include <QPixmapCache>
+#include <QSvgRenderer>
 
 // Haruhi:
 #include <haruhi/config/all.h>

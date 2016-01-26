@@ -20,9 +20,9 @@
 #include <list>
 
 // Qt:
-#include <QtGui/QPushButton>
-#include <QtGui/QMenu>
-#include <QtGui/QTreeWidgetItem>
+#include <QPushButton>
+#include <QMenu>
+#include <QTreeWidgetItem>
 
 // Haruhi:
 #include <haruhi/config/all.h>

@@ -16,8 +16,8 @@
 #include <memory>
 
 // Qt:
-#include <QtGui/QWidget>
-#include <QtGui/QLayout>
+#include <QWidget>
+#include <QLayout>
 
 // Local:
 #include <haruhi/config/system.h>

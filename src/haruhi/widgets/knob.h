@@ -18,12 +18,12 @@
 #include <cstddef>
 
 // Qt:
-#include <QtCore/QSignalMapper>
-#include <QtGui/QFrame>
-#include <QtGui/QLabel>
-#include <QtGui/QSpinBox>
-#include <QtGui/QMenu>
-#include <QtGui/QDialog>
+#include <QSignalMapper>
+#include <QFrame>
+#include <QLabel>
+#include <QSpinBox>
+#include <QMenu>
+#include <QDialog>
 
 // Haruhi:
 #include <haruhi/config/all.h>

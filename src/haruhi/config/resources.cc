@@ -15,12 +15,12 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QFont>
-#include <QtGui/QApplication>
-#include <QtGui/QPixmap>
-#include <QtGui/QPixmapCache>
-#include <QtGui/QPainter>
-#include <QtSvg/QSvgRenderer>
+#include <QFont>
+#include <QApplication>
+#include <QPixmap>
+#include <QPixmapCache>
+#include <QPainter>
+#include <QSvgRenderer>
 
 // Haruhi:
 #include <haruhi/application/services.h>

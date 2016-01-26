@@ -15,12 +15,12 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QWidget>
-#include <QtGui/QLabel>
-#include <QtGui/QMenu>
-#include <QtGui/QLayout>
-#include <QtGui/QGridLayout>
-#include <QtGui/QMessageBox>
+#include <QWidget>
+#include <QLabel>
+#include <QMenu>
+#include <QLayout>
+#include <QGridLayout>
+#include <QMessageBox>
 
 // Haruhi:
 #include <haruhi/config/all.h>

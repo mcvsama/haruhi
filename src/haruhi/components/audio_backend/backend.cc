@@ -20,10 +20,10 @@
 #include <cmath>
 
 // Qt:
-#include <QtGui/QApplication>
-#include <QtGui/QLayout>
-#include <QtGui/QMenu>
-#include <QtGui/QLabel>
+#include <QApplication>
+#include <QLayout>
+#include <QMenu>
+#include <QLabel>
 
 // Haruhi:
 #include <haruhi/config/all.h>

@@ -18,7 +18,7 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QWidget>
+#include <QWidget>
 
 // Local:
 #include <haruhi/config/all.h>

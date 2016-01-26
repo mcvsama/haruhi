@@ -18,8 +18,8 @@
 #include <cstddef>
 
 // Qt:
-#include <QtCore/QString>
-#include <QtXml/QDomNode>
+#include <QString>
+#include <QDomNode>
 
 // Haruhi:
 #include <haruhi/config/all.h>

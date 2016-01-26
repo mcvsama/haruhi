@@ -15,7 +15,7 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QWidget>
+#include <QWidget>
 
 // Local:
 #include "plugin_factory.h"

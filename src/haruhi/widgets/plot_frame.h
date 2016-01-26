@@ -18,8 +18,8 @@
 #include <cstddef>
 
 // Qt:
-#include <QtGui/QFrame>
-#include <QtGui/QLayout>
+#include <QFrame>
+#include <QLayout>
 
 // Haruhi:
 #include <haruhi/config/all.h>
