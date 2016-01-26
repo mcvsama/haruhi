@@ -23,6 +23,7 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QTabWidget>
 #include <QtGui/QSpinBox>
+#include <QtGui/QTabBar>
 
 // Haruhi:
 #include <haruhi/config/all.h>
