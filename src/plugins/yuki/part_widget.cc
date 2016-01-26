@@ -164,8 +164,8 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 
 	// Modulator type:
 	_modulator_type = new QComboBox (this);
-	_modulator_type->insertItem (DSP::ModulatedWave::Ring, Resources::Icons16::modulator_ring(), "Ring pseudo-mod.");
-	_modulator_type->insertItem (DSP::ModulatedWave::Frequency, Resources::Icons16::modulator_fm(), "FM pseudo-mod.");
+	_modulator_type->insertItem (DSP::ModulatedWave::Ring, Resources::Icons16::modulator_ring(), "Ring pseudo-modulation");
+	_modulator_type->insertItem (DSP::ModulatedWave::Frequency, Resources::Icons16::modulator_fm(), "FM pseudo-modulation");
 	_modulator_type->setCurrentIndex (pp->modulator_type);
 	_modulator_type->setToolTip ("Modulator type");
 	_modulator_type->setIconSize (Resources::Icons16::haruhi().size());
@@ -316,9 +316,9 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	oscillator_panel_layout->setSpacing (Config::spacing());
 	oscillator_panel_layout->addWidget (_wave_type, 0, 0, 1, 2);
 	oscillator_panel_layout->addWidget (_modulator_wave_type, 0, 2, 1, 2);
-	oscillator_panel_layout->addWidget (_modulator_type, 0, 4, 1, 2);
-	oscillator_panel_layout->addWidget (_wave_enabled, 0, 6);
-	oscillator_panel_layout->addWidget (_noise_enabled, 0, 7);
+	oscillator_panel_layout->addWidget (_modulator_type, 0, 4, 1, 3);
+	oscillator_panel_layout->addWidget (_wave_enabled, 0, 7);
+	oscillator_panel_layout->addWidget (_noise_enabled, 0, 8);
 	oscillator_panel_layout->addWidget (group2, 1, 10, 3, 1);
 	oscillator_panel_layout->addWidget (base_plot_frame, 1, 0, 1, 2);
 	oscillator_panel_layout->addWidget (final_plot_frame, 1, 2, 1, 2);
