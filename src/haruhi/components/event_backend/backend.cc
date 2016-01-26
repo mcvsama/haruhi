@@ -253,7 +253,7 @@ Backend::connect()
 	}
 	catch (Exception const& e)
 	{
-		QMessageBox::warning (this, "Event backend", "Can't connect to event backend: " + Qt::escape (e.what()));
+		QMessageBox::warning (this, "Event backend", "Can't connect to event backend: " + QString (e.what()).toHtmlEscaped());
 	}
 }
 

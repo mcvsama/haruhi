@@ -18,6 +18,9 @@
 #include <string>
 #include <vector>
 
+// Qt:
+#include <QDesktopWidget>
+
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/application/haruhi.h>
@@ -122,6 +125,22 @@ float
 Services::master_ui_scaling_factor()
 {
 	return 1.0;
+}
+
+
+float
+Services::x_pixels_per_point()
+{
+	// 1 point is 1/72 of an inch:
+	return QApplication::desktop()->physicalDpiX() / 72.0f * master_ui_scaling_factor();
+}
+
+
+float
+Services::y_pixels_per_point()
+{
+	// 1 point is 1/72 of an inch:
+	return QApplication::desktop()->physicalDpiY() / 72.0f * master_ui_scaling_factor();
 }
 
 } // namespace Haruhi

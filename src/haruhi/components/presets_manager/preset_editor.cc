@@ -245,7 +245,7 @@ PresetEditor::update_details()
 	}
 	catch (Exception const& e)
 	{
-		QMessageBox::warning (this, "Error", Qt::escape (e.what()));
+		QMessageBox::warning (this, "Error", QString (e.what()).toHtmlEscaped());
 	}
 	if (focused)
 		focused->setFocus();

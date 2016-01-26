@@ -104,8 +104,6 @@ Haruhi::run_ui()
 	_app = new QApplication (_argc, _argv);
 	// Fix "disabled" color for some styles to be gray instead of black:
 	_app->setPalette (fix_palette (_app->palette()));
-	// Qt preparations:
-	QTextCodec::setCodecForCStrings (QTextCodec::codecForName ("UTF-8"));
 	// Now casting QString to std::string|const char* will yield UTF-8 encoded strings.
 	// Also std::strings and const chars* are expected to be encoded in UTF-8.
 

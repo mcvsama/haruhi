@@ -548,7 +548,7 @@ Session::load_session (QString const& file_name)
 	}
 	catch (Exception const& e)
 	{
-		QMessageBox::warning (this, "Error while loading session", Qt::escape (e.what()));
+		QMessageBox::warning (this, "Error while loading session", QString (e.what()).toHtmlEscaped());
 	}
 }
 
@@ -579,7 +579,7 @@ Session::save_session (QString const& file_name)
 	}
 	catch (Exception const& e)
 	{
-		QMessageBox::warning (this, "Error while loading session", Qt::escape (e.what()));
+		QMessageBox::warning (this, "Error while loading session", QString (e.what()).toHtmlEscaped());
 	}
 }
 
@@ -871,7 +871,7 @@ Session::start_audio_backend()
 	}
 	catch (Exception const& e)
 	{
-		QMessageBox::warning (this, "Could not create audio backend", "Could not start audio backend: " + Qt::escape (e.what()));
+		QMessageBox::warning (this, "Could not create audio backend", "Could not start audio backend: " + QString (e.what()).toHtmlEscaped());
 	}
 }
 
@@ -896,7 +896,7 @@ Session::start_event_backend()
 	}
 	catch (Exception const& e)
 	{
-		QMessageBox::warning (this, "Could not create event backend", "Could not start event backend: " + Qt::escape (e.what()));
+		QMessageBox::warning (this, "Could not create event backend", "Could not start event backend: " + QString (e.what()).toHtmlEscaped());
 	}
 }
 

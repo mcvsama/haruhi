@@ -38,8 +38,8 @@ Tree::Tree (QWidget* parent, Model* model):
 	QTreeWidget (parent),
 	_model (model)
 {
-	header()->setClickable (false);
-	header()->setResizeMode (QHeaderView::Stretch);
+	header()->setSectionsClickable (false);
+	header()->setSectionResizeMode (QHeaderView::Stretch);
 	setMinimumWidth (160);
 	setSortingEnabled (true);
 	sortByColumn (0, Qt::AscendingOrder);

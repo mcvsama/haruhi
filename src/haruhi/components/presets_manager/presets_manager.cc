@@ -288,7 +288,7 @@ PresetsManager::destroy()
 	Private::PackageItem* package_item = _tree->current_package_item();
 	if (package_item)
 	{
-		if (QMessageBox::question (this, "Delete package", "Really delete package " + Qt::escape (package_item->package()->name()) + "?",
+		if (QMessageBox::question (this, "Delete package", "Really delete package " + package_item->package()->name().toHtmlEscaped() + "?",
 								   QMessageBox::Yes | QMessageBox::Default, QMessageBox::Cancel | QMessageBox::Escape) == QMessageBox::Yes)
 		{
 			Private::Package* package = package_item->package();
@@ -301,7 +301,7 @@ PresetsManager::destroy()
 	Private::CategoryItem* category_item = _tree->current_category_item();
 	if (category_item)
 	{
-		if (QMessageBox::question (this, "Delete category", "Really delete category " + Qt::escape (category_item->category()->name()) + "?",
+		if (QMessageBox::question (this, "Delete category", "Really delete category " + category_item->category()->name().toHtmlEscaped() + "?",
 								   QMessageBox::Yes | QMessageBox::Default, QMessageBox::Cancel | QMessageBox::Escape) == QMessageBox::Yes)
 		{
 			try {
@@ -315,7 +315,7 @@ PresetsManager::destroy()
 			}
 			catch (Exception const& e)
 			{
-				QMessageBox::warning (this, "Error", Qt::escape (e.what()));
+				QMessageBox::warning (this, "Error", QString (e.what()).toHtmlEscaped());
 			}
 		}
 	}
@@ -323,7 +323,7 @@ PresetsManager::destroy()
 	Private::PresetItem* preset_item = _tree->current_preset_item();
 	if (preset_item)
 	{
-		if (QMessageBox::question (this, "Delete preset", "Really delete preset " + Qt::escape (preset_item->preset()->name()) + "?",
+		if (QMessageBox::question (this, "Delete preset", "Really delete preset " + preset_item->preset()->name().toHtmlEscaped() + "?",
 								   QMessageBox::Yes | QMessageBox::Default, QMessageBox::Cancel | QMessageBox::Escape) == QMessageBox::Yes)
 		{
 			try {
@@ -337,7 +337,7 @@ PresetsManager::destroy()
 			}
 			catch (Exception const& e)
 			{
-				QMessageBox::warning (this, "Error", Qt::escape (e.what()));
+				QMessageBox::warning (this, "Error", QString (e.what()).toHtmlEscaped());
 			}
 		}
 	}
@@ -483,7 +483,7 @@ PresetsManager::save_preset (Private::PresetItem* preset_item, bool with_patch)
 		}
 		catch (Exception const& e)
 		{
-			QMessageBox::warning (this, "Error", Qt::escape (e.what()));
+			QMessageBox::warning (this, "Error", QString (e.what()).toHtmlEscaped());
 		}
 	}
 }

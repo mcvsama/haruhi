@@ -35,8 +35,8 @@ Tree::Tree (QWidget* parent, Backend* backend, DevicesManager::Model* model):
 	DevicesManager::Tree (parent, model),
 	_backend (backend)
 {
-	header()->setClickable (false);
-	header()->setResizeMode (QHeaderView::Stretch);
+	header()->setSectionsClickable (false);
+	header()->setSectionResizeMode (QHeaderView::Stretch);
 	setMinimumWidth (160);
 	setSortingEnabled (true);
 	sortByColumn (0, Qt::AscendingOrder);

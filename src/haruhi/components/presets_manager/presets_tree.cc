@@ -46,8 +46,8 @@ PresetsTree::PresetsTree (PresetsManager* presets_manager, QWidget* parent):
 	_dragged_item (0),
 	_dropped_on_item (0)
 {
-	header()->setClickable (false);
-	header()->setResizeMode (QHeaderView::Stretch);
+	header()->setSectionsClickable (false);
+	header()->setSectionResizeMode (QHeaderView::Stretch);
 	header()->hide();
 	sortByColumn (0, Qt::AscendingOrder);
 	setMinimumWidth (160);

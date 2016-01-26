@@ -48,8 +48,8 @@ PortsList::PortsList (Port::Direction type, PortsConnector::Panel* panel, PortsC
 	_filter (0),
 	_dragged_item (0)
 {
-	header()->setClickable (false);
-	header()->setResizeMode (QHeaderView::Stretch);
+	header()->setSectionsClickable (false);
+	header()->setSectionResizeMode (QHeaderView::Stretch);
 	sortByColumn (0, Qt::AscendingOrder);
 	setMinimumWidth (160);
 	setSortingEnabled (true);

@@ -73,7 +73,7 @@ Settings::add_device (Device const& p_device)
 	_model.devices().push_back (device);
 	_model.changed();
 
-	QMessageBox::information (0, "Template saved", QString ("Device template saved as: <b>%1</b>").arg (Qt::escape (device.name())));
+	QMessageBox::information (0, "Template saved", QString ("Device template saved as: <b>%1</b>").arg (device.name().toHtmlEscaped()));
 }
 
 } // namespace DevicesManager

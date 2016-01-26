@@ -13,7 +13,9 @@ PROFILING		:= 0
 # Debugging enabled?
 DEBUG			:= 0
 # Where Qt is installed?
-QT_PREFIX		:= /usr/lib/qt4
+QT_PREFIX		:= /usr
+QT_INCLUDE_PATH	:= $(QT_PREFIX)/include/qt
+QT_MOC_PATH		:= $(QT_PREFIX)/bin/moc
 # Profile name:
 PROFILE			:=
 # Version:
@@ -31,17 +33,18 @@ HARUHI_FEATURES	:= HARUHI_IEEE754
 
 CXX				:= g++
 DEPCC			:= $(CXX)
-CXXFLAGS		+= -fPIE -O4 -g -c -std=c++14 -Wall -Wall -Wextra -Wunused  -Wunused-function -Wunused-label -Wnoexcept -fstrict-aliasing -Wstrict-aliasing=3 -fnothrow-opt
+CXXFLAGS		+= -fPIC -O4 -g -c -std=c++14 -Wall -Wall -Wextra -Wunused  -Wunused-function -Wunused-label -Wnoexcept -fstrict-aliasing -Wstrict-aliasing=3 -fnothrow-opt
 CXXFLAGS		+= -pthread -rdynamic -I.
 CXXFLAGS		+= -finline -march=native -mtune=native -falign-functions=4 -mpreferred-stack-boundary=4 -funroll-loops -mfpmath=sse,387 -msse4.1 -fomit-frame-pointer
+CXXFLAGS		+= -I$(QT_INCLUDE_PATH)
 SO				:= $(CXX) -shared
 SOFLAGS			:=
 LD				:= $(CXX)
 LDFLAGS			:= -rdynamic
 AR				:= ar
-MOC				:= $(QT_PREFIX)/bin/moc
+MOC				:= $(QT_MOC_PATH)
 LIBS			+= m dl pthread boost_system
-PKGCONFIGS		+= jack alsa fftw3 uuid QtCore QtGui QtXml QtSvg
+PKGCONFIGS		+= jack alsa fftw3 uuid Qt5Core Qt5Gui Qt5Xml Qt5Svg
 CXXFLAGS_s		:= $(CXXFLAGS)
 ifeq ($(OPTIMIZE),debug)
 HARUHI_FEATURES	+= HARUHI_ASSERTS

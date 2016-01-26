@@ -24,7 +24,6 @@
 #include <QObject>
 #include <QEvent>
 #include <QApplication>
-#include <QX11Info>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -192,22 +191,6 @@ inline WorkPerformer*
 Services::lo_priority_work_performer()
 {
 	return _lo_priority_work_performer;
-}
-
-
-inline float
-Services::x_pixels_per_point()
-{
-	// 1 point is 1/72 of an inch:
-	return QX11Info::appDpiX() / 72.0f * master_ui_scaling_factor();
-}
-
-
-inline float
-Services::y_pixels_per_point()
-{
-	// 1 point is 1/72 of an inch:
-	return QX11Info::appDpiY() / 72.0f * master_ui_scaling_factor();
 }
 
 
