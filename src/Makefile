@@ -31,18 +31,18 @@ HARUHI_FEATURES	:= HARUHI_IEEE754
 #   HARUHI_ASSERTS			- enables dynamic assertions
 #   HARUHI_ASSERTS_FATAL	- makes assertion failures fatal (self kill).
 
-CXX				:= g++
-DEPCC			:= $(CXX)
+CXX				= g++
+DEPCC			= $(CXX)
 CXXFLAGS		+= -fPIC -O4 -g -c -std=c++14 -Wall -Wall -Wextra -Wunused  -Wunused-function -Wunused-label -Wnoexcept -fstrict-aliasing -Wstrict-aliasing=3 -fnothrow-opt
 CXXFLAGS		+= -pthread -rdynamic -I.
 CXXFLAGS		+= -finline -march=native -mtune=native -falign-functions=4 -mpreferred-stack-boundary=4 -funroll-loops -mfpmath=sse,387 -msse4.1 -fomit-frame-pointer
 CXXFLAGS		+= -I$(QT_INCLUDE_PATH)
-SO				:= $(CXX) -shared
-SOFLAGS			:=
-LD				:= $(CXX)
-LDFLAGS			:= -rdynamic
-AR				:= ar
-MOC				:= $(QT_MOC_PATH)
+SO				= $(CXX) -shared
+SOFLAGS			=
+LD				= $(CXX)
+LDFLAGS			= -rdynamic
+AR				= ar
+MOC				= $(QT_MOC_PATH)
 LIBS			+= m dl pthread boost_system
 PKGCONFIGS		+= jack alsa fftw3 uuid Qt5Core Qt5Gui Qt5Xml Qt5Svg
 CXXFLAGS_s		:= $(CXXFLAGS)
