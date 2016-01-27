@@ -45,6 +45,10 @@ Plugin::Plugin (std::string const& urn, std::string const& title, int id, QWidge
 }
 
 
+Plugin::~Plugin()
+{ }
+
+
 void
 Plugin::registered()
 {

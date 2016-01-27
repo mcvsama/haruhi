@@ -36,11 +36,13 @@
 #include "params.h"
 #include "part.h"
 #include "part_widget.h"
+#include "part_manager_widget.h"
 
 
 namespace Yuki {
 
 class Plugin;
+class PartManagerWidget;
 
 class PartManager:
 	public HasWidget<PartManagerWidget>,

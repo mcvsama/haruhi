@@ -43,6 +43,7 @@
 namespace Yuki {
 
 namespace DSP = Haruhi::DSP;
+using Haruhi::Unique;
 
 class Part;
 class PartManagerWidget;

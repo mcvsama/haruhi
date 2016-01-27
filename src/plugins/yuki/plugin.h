@@ -32,6 +32,7 @@ using Haruhi::Unique;
 class PartManager;
 class PartManagerWidget;
 
+
 class Plugin:
 	public Haruhi::Plugin,
 	public Haruhi::UnitBayAware,
@@ -42,6 +43,8 @@ class Plugin:
 
   public:
 	Plugin (std::string const& urn, std::string const& title, int id, QWidget* parent);
+
+	~Plugin();
 
 	/*
 	 * Plugin implementation.
