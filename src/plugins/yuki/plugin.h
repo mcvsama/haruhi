@@ -27,6 +27,8 @@
 
 namespace Yuki {
 
+using Haruhi::Unique;
+
 class PartManager;
 class PartManagerWidget;
 
@@ -40,8 +42,6 @@ class Plugin:
 
   public:
 	Plugin (std::string const& urn, std::string const& title, int id, QWidget* parent);
-
-	virtual ~Plugin();
 
 	/*
 	 * Plugin implementation.
@@ -89,8 +89,8 @@ class Plugin:
 	load_preset (QDomElement const& element) override;
 
   private:
-	PartManager*		_part_manager;
-	PartManagerWidget*	_part_manager_widget;
+	Unique<PartManager>			_part_manager;
+	Unique<PartManagerWidget>	_part_manager_widget;
 };
 
 

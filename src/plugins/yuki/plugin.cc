@@ -34,21 +34,14 @@ Plugin::Plugin (std::string const& urn, std::string const& title, int id, QWidge
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-	_part_manager = new PartManager (this);
-	_part_manager_widget = new PartManagerWidget (this, _part_manager);
-	_part_manager->set_widget (_part_manager_widget);
+	_part_manager = std::make_unique<PartManager> (this);
+	_part_manager_widget = std::make_unique<PartManagerWidget> (this, _part_manager.get());
+	_part_manager->set_widget (_part_manager_widget.get());
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	auto layout = new QVBoxLayout (this);
 	layout->setMargin (0);
 	layout->setSpacing (Config::spacing());
-	layout->addWidget (_part_manager_widget);
-}
-
-
-Plugin::~Plugin()
-{
-	delete _part_manager_widget;
-	delete _part_manager;
+	layout->addWidget (_part_manager_widget.get());
 }
 
 
