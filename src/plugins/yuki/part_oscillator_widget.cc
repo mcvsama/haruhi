@@ -67,7 +67,7 @@ PartOscillatorWidget::PartOscillatorWidget (QWidget* parent, PartWidget* part_wi
 	_knob_phase						= std::make_unique<Haruhi::Knob> (this, &proxies->phase, "Phase");
 	_knob_noise_level				= std::make_unique<Haruhi::Knob> (this, &proxies->noise_level, "Noise lvl");
 
-	QObject::connect (_knob_phase.get(), SIGNAL (changed (int)), this, SLOT (update_phase_marker()));
+	QObject::connect (_knob_phase.get(), SIGNAL (changed (int)), _part_widget, SLOT (update_phase_marker()));
 
 	_knob_volume->set_volume_scale (true, M_E);
 
