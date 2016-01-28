@@ -335,8 +335,7 @@ Patch::~Patch()
 	while (!units().empty())
 	{
 		Units::iterator u = units().begin();
-		Plugin* plugin = dynamic_cast<Plugin*> (*u);
-		if (plugin)
+		if (auto plugin = dynamic_cast<Plugin*> (*u))
 			unload_plugin (plugin);
 	}
 	units().clear();
@@ -361,8 +360,7 @@ Patch::load_plugin (QString const& urn)
 		}
 
 		// If plugin is UnitBayAware, setup self as UnitBay:
-		UnitBayAware* unit_bay_aware_plugin = dynamic_cast<UnitBayAware*> (plugin);
-		if (unit_bay_aware_plugin)
+		if (auto unit_bay_aware_plugin = dynamic_cast<UnitBayAware*> (plugin))
 			unit_bay_aware_plugin->set_unit_bay (this);
 
 		// Create unit frame:
@@ -456,8 +454,7 @@ Patch::save_state (QDomElement& element) const
 	std::multimap<int, QDomElement> sorted_plugins;
 	for (Unit* u: units())
 	{
-		Plugin* p = dynamic_cast<Plugin*> (u);
-		if (p)
+		if (auto p = dynamic_cast<Plugin*> (u))
 		{
 			QDomElement plugin = element.ownerDocument().createElement ("plugin");
 			// Plugin attributes:
@@ -479,6 +476,7 @@ Patch::save_state (QDomElement& element) const
 			sorted_plugins.insert (std::make_pair (plugin_tab_position (p), plugin));
 		}
 	}
+
 	for (auto u: sorted_plugins)
 		plugins.appendChild (u.second);
 
@@ -509,17 +507,16 @@ Patch::load_state (QDomElement const& element)
 			{
 				if (e2.tagName() == "plugin")
 				{
-					Plugin* plugin = load_plugin (e2.attribute ("urn"));
-					if (plugin)
+					if (auto plugin = load_plugin (e2.attribute ("urn")))
 					{
 						plugin->set_id (e2.attribute ("id").toInt());
 						// ID has changed, so update tab title to reflect correct ID:
 						update_tab_title (plugin);
-						HasPresets* has_presets = dynamic_cast<HasPresets*> (plugin);
-						if (has_presets)
+
+						if (dynamic_cast<HasPresets*> (plugin))
 							_plugins_to_frames_map[plugin]->set_preset (e2.attribute ("preset-uuid"), e2.attribute ("preset-name"));
-						SaveableState* saveable_state = dynamic_cast<SaveableState*> (plugin);
-						if (saveable_state)
+
+						if (auto saveable_state = dynamic_cast<SaveableState*> (plugin))
 							saveable_state->load_state (e2);
 					}
 				}

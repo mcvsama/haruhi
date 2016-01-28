@@ -79,7 +79,7 @@ class Transport
 	/**
 	 * Connects to transport.
 	 * \param	client_name is client name for transports
-	 * 			that support it. May be ignored.
+	 *			that support it. May be ignored.
 	 * \throws	Exception when problem arises.
 	 */
 	virtual void

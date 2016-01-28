@@ -40,11 +40,6 @@ UnitsCombobox::UnitsCombobox (PortsConnector* ports_connector, Port::Direction t
 }
 
 
-UnitsCombobox::~UnitsCombobox()
-{
-}
-
-
 void
 UnitsCombobox::read_units()
 {

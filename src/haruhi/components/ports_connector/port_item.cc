@@ -80,14 +80,12 @@ PortItem::~PortItem()
 	// Call forget_item on ports_connector() so it will remove PortItem
 	// from cache and prevent crashing while trying to unhighlight connected
 	// but nonexistent port.
-	QTreeWidget* tree = treeWidget();
+	auto tree = treeWidget();
 	if (tree)
 	{
-		PortsList* ports_list = dynamic_cast<PortsList*> (tree);
+		auto ports_list = dynamic_cast<PortsList*> (tree);
 		if (ports_list)
-		{
 			ports_list->ports_connector()->forget_item (this);
-		}
 	}
 }
 
@@ -104,7 +102,7 @@ PortItem::update()
 {
 	setText (0, QString::fromStdString (_port->name()));
 	// Update parent if it is GroupItem: FIXME causes multiple updates on GroupItem if there is many ports in that group:
-	GroupItem* g = dynamic_cast<GroupItem*> (parent());
+	auto g = dynamic_cast<GroupItem*> (parent());
 	if (g)
 		g->update();
 }

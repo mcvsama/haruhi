@@ -54,23 +54,23 @@ class Panel: public QWidget
 	filter_updated();
 
   private:
-	PortsConnector*	_ports_connector;
-	PortsList*		_list;
-	UnitsCombobox*	_filter;
+	PortsConnector*			_ports_connector;
+	Unique<PortsList>		_list;
+	Unique<UnitsCombobox>	_filter;
 };
 
 
 inline PortsList*
 Panel::list() const
 {
-	return _list;
+	return _list.get();
 }
 
 
 inline UnitsCombobox*
 Panel::filter() const
 {
-	return _filter;
+	return _filter.get();
 }
 
 } // namespace PortsConnectorPrivate

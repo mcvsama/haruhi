@@ -94,8 +94,7 @@ VanHalen::process()
 	// Keyboard events:
 	for (Haruhi::EventBuffer::EventsMultiset::iterator e = buffer->events().begin(); e != buffer->events().end(); ++e)
 	{
-		Haruhi::VoiceEvent const* voice_event = dynamic_cast<Haruhi::VoiceEvent const*> (*e);
-		if (voice_event)
+		if (auto const* voice_event = dynamic_cast<Haruhi::VoiceEvent const*> (*e))
 		{
 			if (voice_event->type() == Haruhi::VoiceEvent::Create)
 			{

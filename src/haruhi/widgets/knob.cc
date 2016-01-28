@@ -489,8 +489,7 @@ Knob::create_connect_menu (QMenu* unit_menu, Unit* unit, QPixmap const& pixmap_f
 	// Collect ports and groups:
 	for (Port* p: unit->outputs())
 	{
-		EventPort* ep = dynamic_cast<EventPort*> (p);
-		if (ep)
+		if (auto ep = dynamic_cast<EventPort*> (p))
 		{
 			if (ep->group())
 				groups[ep->group()].push_back (ep);

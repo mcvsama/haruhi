@@ -84,9 +84,8 @@ UnitBay::unregistered()
 void
 UnitBay::unit_unregistered (Unit* core_unit)
 {
-	Unit* unit = dynamic_cast<Unit*> (core_unit);
 	// Remove from UnitBay, if it is owned unit:
-	if (unit)
+	if (auto unit = dynamic_cast<Unit*> (core_unit))
 		_units.erase (unit);
 }
 

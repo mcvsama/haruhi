@@ -50,7 +50,7 @@ Model::get (QString const& directory, QString const& unit_urn)
 {
 	Mutex::Lock lock (_models_by_dir_mutex);
 
-	Model* res = 0;
+	Model* res = nullptr;
 	ModelsByDir::iterator m;
 
 	for (m = _models_by_dir.begin(); m != _models_by_dir.end(); ++m)

@@ -138,21 +138,21 @@ class PresetsManager:
 	sanitize_urn (std::string urn) const;
 
   private:
-	PresetsManagerPrivate::Model*			_model;
-	Unit*									_unit;
-	SaveableState*							_saveable_unit;
-	PresetsManagerPrivate::PresetsTree*		_tree;
-	PresetsManagerPrivate::PresetEditor*	_editor;
-	HasPresetsSettings*						_has_presets_settings;
-	QPushButton*							_only_favs_button;
-	QPushButton*							_load_button;
-	QPushButton*							_save_button;
-	QPushButton*							_create_button;
-	QPushButton*							_destroy_button;
-	QMenu*									_create_menu;
-	QAction*								_create_package_action;
-	QAction*								_create_category_action;
-	QAction*								_create_preset_action;
+	PresetsManagerPrivate::Model*				_model;
+	Unit*										_unit;
+	SaveableState*								_saveable_unit;
+	HasPresetsSettings*							_has_presets_settings;
+	Unique<PresetsManagerPrivate::PresetsTree>	_tree;
+	Unique<PresetsManagerPrivate::PresetEditor>	_editor;
+	Unique<QPushButton>							_only_favs_button;
+	Unique<QPushButton>							_load_button;
+	Unique<QPushButton>							_save_button;
+	Unique<QPushButton>							_create_button;
+	Unique<QPushButton>							_destroy_button;
+	Unique<QMenu>								_create_menu;
+	QAction*									_create_package_action;
+	QAction*									_create_category_action;
+	QAction*									_create_preset_action;
 };
 
 

@@ -179,8 +179,8 @@ PartManagerWidget::remove_part (Part* part)
 {
 	for (int i = 0, n = _tabs->count(); i < n; ++i)
 	{
-		PartWidget* pw = dynamic_cast<PartWidget*> (_tabs->widget (i));
-		assert (pw != 0);
+		auto pw = dynamic_cast<PartWidget*> (_tabs->widget (i));
+		assert (pw);
 		if (pw->part() == part)
 		{
 			_tabs->removeTab (i);
@@ -197,9 +197,9 @@ PartManagerWidget::update_part (Part* part)
 {
 	for (int i = 0, n = _tabs->count(); i < n; ++i)
 	{
-		PartWidget* pw = dynamic_cast<PartWidget*> (_tabs->widget (i));
-		assert (pw != 0);
-		if (pw && pw->part() == part)
+		auto pw = dynamic_cast<PartWidget*> (_tabs->widget (i));
+		assert (pw);
+		if (pw->part() == part)
 			_tabs->setTabText (i, QString ("Part %1").arg (part->id()));
 	}
 }
@@ -217,10 +217,9 @@ PartManagerWidget::remove_current_part()
 {
 	if (_tabs->count() > 0)
 	{
-		PartWidget* pw = dynamic_cast<PartWidget*> (_tabs->currentWidget());
-		assert (pw != 0);
-		if (pw)
-			_part_manager->remove_part (pw->part());
+		auto pw = dynamic_cast<PartWidget*> (_tabs->currentWidget());
+		assert (pw);
+		_part_manager->remove_part (pw->part());
 	}
 }
 
@@ -282,8 +281,7 @@ PartManagerWidget::update_widgets()
 	{
 		for (int i = 0, n = _tabs->count(); i < n; ++i)
 		{
-			Placeholder* ph = dynamic_cast<Placeholder*> (_tabs->widget (i));
-			if (ph)
+			if (dynamic_cast<Placeholder*> (_tabs->widget (i)))
 				_tabs->removeTab (i--);
 		}
 	}

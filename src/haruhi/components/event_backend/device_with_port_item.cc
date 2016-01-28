@@ -35,7 +35,7 @@ DeviceWithPortItem::DeviceWithPortItem (Backend* p_backend, Tree* parent, Device
 	backend()->_inputs[_transport_port] = this;
 	// Allocate port group:
 	backend()->graph()->synchronize ([&] {
-		_port_group = new PortGroup (backend()->graph(), device->name().toStdString());
+		_port_group = std::make_unique<PortGroup> (backend()->graph(), device->name().toStdString());
 	});
 	// Ready for handling events:
 	set_ready (true);
@@ -45,14 +45,14 @@ DeviceWithPortItem::DeviceWithPortItem (Backend* p_backend, Tree* parent, Device
 DeviceWithPortItem::~DeviceWithPortItem()
 {
 	// Delete children:
-	QList<QTreeWidgetItem*> children = takeChildren();
+	auto children = takeChildren();
 	while (!children.isEmpty())
 		delete children.takeFirst();
 	// TODO lock for _inputs map:
 	backend()->_inputs.erase (_transport_port);
 	backend()->transport()->destroy_port (_transport_port);
 	backend()->graph()->synchronize ([&]() noexcept {
-		delete _port_group;
+		_port_group.reset();
 	});
 }
 

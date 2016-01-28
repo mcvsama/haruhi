@@ -74,16 +74,15 @@ class ControllerWithPortItem:
 	generate_smoothing_events();
 
   private:
-	EventPort*			_port;
-	// Link to DeviceItem:
 	DeviceWithPortItem*	_device_item;
+	Unique<EventPort>	_port;
 };
 
 
 inline EventPort*
 ControllerWithPortItem::port() const
 {
-	return _port;
+	return _port.get();
 }
 
 } // namespace EventBackendImpl

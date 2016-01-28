@@ -33,7 +33,7 @@ void
 DeviceWithPortDialog::apply (DeviceItem* item) const
 {
 	DeviceDialog::apply (item);
-	DeviceWithPortItem* device_item = dynamic_cast<DeviceWithPortItem*> (item);
+	auto device_item = dynamic_cast<DeviceWithPortItem*> (item);
 	if (device_item)
 		device_item->update_name();
 }

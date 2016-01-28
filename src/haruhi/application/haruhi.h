@@ -124,18 +124,20 @@ class Haruhi:
 
   private:
 	// Haruhi pointer:
-	static Haruhi*				_haruhi;
+	static Haruhi*	_haruhi;
 
 	// Links to main application components:
-	QApplication*				_app;
-	PeriodicUpdater*			_periodic_updater;
-	Session*					_session;
-	Settings*					_settings;
-	HaruhiSettings*				_haruhi_settings;
-	DevicesManager::Settings*	_devices_manager_settings;
-	HasPresetsSettings*			_has_presets_settings;
-	SessionLoaderSettings*		_session_loader_settings;
-	bool						_ok_to_quit;
+	Unique<QApplication>				_app;
+	Unique<PeriodicUpdater>				_periodic_updater;
+	Unique<Session>						_session;
+
+	// In this order:
+	Unique<Settings>					_settings;
+	Unique<HaruhiSettings>				_haruhi_settings;
+	Unique<DevicesManager::Settings>	_devices_manager_settings;
+	Unique<HasPresetsSettings>			_has_presets_settings;
+	Unique<SessionLoaderSettings>		_session_loader_settings;
+	bool								_ok_to_quit;
 
 	// Other:
 	int		_argc;
@@ -154,7 +156,7 @@ g_haruhi()
 inline QApplication*
 Haruhi::application()
 {
-	return _app;
+	return _app.get();
 }
 
 
@@ -168,42 +170,42 @@ Haruhi::haruhi()
 inline Session*
 Haruhi::session()
 {
-	return _session;
+	return _session.get();
 }
 
 
 inline Settings*
 Haruhi::settings() const
 {
-	return _settings;
+	return _settings.get();
 }
 
 
 inline HaruhiSettings*
 Haruhi::haruhi_settings() const
 {
-	return _haruhi_settings;
+	return _haruhi_settings.get();
 }
 
 
 inline DevicesManager::Settings*
 Haruhi::devices_manager_settings() const
 {
-	return _devices_manager_settings;
+	return _devices_manager_settings.get();
 }
 
 
 inline HasPresetsSettings*
 Haruhi::has_presets_settings() const
 {
-	return _has_presets_settings;
+	return _has_presets_settings.get();
 }
 
 
 inline SessionLoaderSettings*
 Haruhi::session_loader_settings() const
 {
-	return _session_loader_settings;
+	return _session_loader_settings.get();
 }
 
 } // namespace Haruhi

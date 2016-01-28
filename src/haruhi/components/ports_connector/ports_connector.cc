@@ -56,25 +56,24 @@ PortsConnector::PortsConnector (UnitBay* unit_bay, QWidget* parent):
 	QWidget (parent),
 	_unit_bay (unit_bay),
 	_context_item (0),
-	_context_menu (0),
 	_highlight_connected (false)
 {
-	_splitter = new QSplitter (Qt::Horizontal, this);
+	_splitter = std::make_unique<QSplitter> (Qt::Horizontal, this);
 	_splitter->setChildrenCollapsible (false);
 
-	_opanel = new Panel (Port::Output, this, _splitter);
-	_connector = new Connector (this, _splitter);
-	_ipanel = new Panel (Port::Input, this, _splitter);
+	_opanel = std::make_unique<Panel> (Port::Output, this, _splitter.get());
+	_connector = std::make_unique<Connector> (this, _splitter.get());
+	_ipanel = std::make_unique<Panel> (Port::Input, this, _splitter.get());
 
 	_splitter->setStretchFactor (0, 4);
 	_splitter->setStretchFactor (1, 3);
 	_splitter->setStretchFactor (2, 4);
 
-	_connect_button = new QPushButton (Resources::Icons16::connect(), "&Connect", this);
+	_connect_button = std::make_unique<QPushButton> (Resources::Icons16::connect(), "&Connect", this);
 	_connect_button->setIconSize (Resources::Icons16::haruhi().size());
 	_connect_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
 
-	_disconnect_button = new QPushButton (Resources::Icons16::disconnect(), "&Disconnect", this);
+	_disconnect_button = std::make_unique<QPushButton> (Resources::Icons16::disconnect(), "&Disconnect", this);
 	_disconnect_button->setIconSize (Resources::Icons16::haruhi().size());
 	_disconnect_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
 
@@ -96,8 +95,8 @@ PortsConnector::PortsConnector (UnitBay* unit_bay, QWidget* parent):
 	QObject::connect (_opanel->list(), SIGNAL (itemExpanded (QTreeWidgetItem*)), this, SLOT (item_expanded_or_collapsed (QTreeWidgetItem*)));
 	QObject::connect (_opanel->list(), SIGNAL (itemCollapsed (QTreeWidgetItem*)), this, SLOT (item_expanded_or_collapsed (QTreeWidgetItem*)));
 
-	QObject::connect (_connect_button, SIGNAL (clicked()), this, SLOT (connect_selected()));
-	QObject::connect (_disconnect_button, SIGNAL (clicked()), this, SLOT (disconnect_selected()));
+	QObject::connect (_connect_button.get(), SIGNAL (clicked()), this, SLOT (connect_selected()));
+	QObject::connect (_disconnect_button.get(), SIGNAL (clicked()), this, SLOT (disconnect_selected()));
 
 	// Layouts:
 
@@ -105,14 +104,14 @@ PortsConnector::PortsConnector (UnitBay* unit_bay, QWidget* parent):
 
 	QHBoxLayout* buttons_layout = new QHBoxLayout();
 	buttons_layout->setSpacing (Config::spacing());
-	buttons_layout->addWidget (_connect_button);
-	buttons_layout->addWidget (_disconnect_button);
+	buttons_layout->addWidget (_connect_button.get());
+	buttons_layout->addWidget (_disconnect_button.get());
 	buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (0);
 	layout->setSpacing (Config::spacing());
-	layout->addWidget (_splitter);
+	layout->addWidget (_splitter.get());
 	layout->addLayout (buttons_layout);
 
 	_unit_bay->graph()->unit_registered.connect (this, &PortsConnector::unit_registered);
@@ -174,28 +173,22 @@ PortsConnector::context_menu (QTreeWidgetItem* item, QPoint const& pos)
 	if (!item)
 		return;
 
-	PortItem* port_item = dynamic_cast<PortItem*> (item);
+	auto port_item = dynamic_cast<PortItem*> (item);
+	auto menu = std::make_unique<QMenu> (this);
 
-	if (!_context_menu)
-		_context_menu = new QMenu (this);
-	else
-		_context_menu->clear();
+	auto a = menu->addAction (Resources::Icons16::connect(), "&Connect", this, SLOT (connect_selected()));
+	a->setEnabled (can_connect_selected());
 
-	QAction* connect_action = _context_menu->addAction (Resources::Icons16::connect(), "&Connect", this, SLOT (connect_selected()));
-	connect_action->setEnabled (can_connect_selected());
+	a = menu->addAction (Resources::Icons16::disconnect(), "&Disconnect", this, SLOT (disconnect_selected()));
+	a->setEnabled (can_disconnect_selected());
 
-	QAction* disconnect_action = _context_menu->addAction (Resources::Icons16::disconnect(), "&Disconnect", this, SLOT (disconnect_selected()));
-	disconnect_action->setEnabled (can_disconnect_selected());
-
-	QAction* disconnect_all_action = _context_menu->addAction (Resources::Icons16::disconnect(), "Disconnect all", this, SLOT (disconnect_all_from_selected()));
-	disconnect_all_action->setEnabled (port_item &&
-									   ((port_item->treeWidget() == _ipanel->list() && !port_item->port()->back_connections().empty()) ||
-									    (port_item->treeWidget() == _opanel->list() && !port_item->port()->forward_connections().empty())));
-
-	_context_menu->addSeparator();
+	a = menu->addAction (Resources::Icons16::disconnect(), "Disconnect all", this, SLOT (disconnect_all_from_selected()));
+	a->setEnabled (port_item &&
+				   ((port_item->treeWidget() == _ipanel->list() && !port_item->port()->back_connections().empty()) ||
+					(port_item->treeWidget() == _opanel->list() && !port_item->port()->forward_connections().empty())));
 
 	_context_item = item;
-	_context_menu->exec (pos);
+	menu->exec (pos);
 }
 
 
@@ -218,7 +211,7 @@ PortsConnector::item_expanded_or_collapsed (QTreeWidgetItem* item)
 {
 	if (item)
 	{
-		PortsConnectorPrivate::HighlightableItem* hitem = dynamic_cast<PortsConnectorPrivate::HighlightableItem*> (item);
+		auto hitem = dynamic_cast<PortsConnectorPrivate::HighlightableItem*> (item);
 		if (hitem)
 			hitem->update_highlight();
 	}
@@ -253,7 +246,7 @@ PortsConnector::disconnect_all_from_selected()
 {
 	if (_context_item)
 	{
-		PortItem* port_item = dynamic_cast<PortItem*> (_context_item);
+		auto port_item = dynamic_cast<PortItem*> (_context_item);
 		if (port_item)
 		{
 			Mutex::Lock lock (*_unit_bay->graph());
@@ -377,7 +370,7 @@ PortsConnector::graph_changed()
 void
 PortsConnector::remove_call_outs()
 {
-	for (Services::CallOutEvent* ce: _call_outs)
+	for (auto* ce: _call_outs)
 		ce->cancel();
 	_call_outs.clear();
 }
@@ -403,20 +396,22 @@ template<class Port>
 void
 PortsConnector::operate_on_selected (Operation operation)
 {
-	QTreeWidgetItem* oitem = _opanel->list()->selected_item();
-	QTreeWidgetItem* iitem = _ipanel->list()->selected_item();
+	auto oitem = _opanel->list()->selected_item();
+	auto iitem = _ipanel->list()->selected_item();
 
 	bool (PortsConnector::*can_do_operation)(QTreeWidgetItem*, QTreeWidgetItem*) const;
 
-	if (operation == Private::Connect)	can_do_operation = &PortsConnector::can_connect;
-	else								can_do_operation = &PortsConnector::can_disconnect;
+	if (operation == Private::Connect)
+		can_do_operation = &PortsConnector::can_connect;
+	else
+		can_do_operation = &PortsConnector::can_disconnect;
 
 	if (oitem && iitem && (this->*can_do_operation)(oitem, iitem))
 	{
-		PortItem* po = dynamic_cast<PortItem*> (oitem);
-		PortItem* pi = dynamic_cast<PortItem*> (iitem);
-		UnitItem* uo = dynamic_cast<UnitItem*> (oitem);
-		UnitItem* ui = dynamic_cast<UnitItem*> (iitem);
+		auto po = dynamic_cast<PortItem*> (oitem);
+		auto pi = dynamic_cast<PortItem*> (iitem);
+		auto uo = dynamic_cast<UnitItem*> (oitem);
+		auto ui = dynamic_cast<UnitItem*> (iitem);
 
 		// Port -> Port?
 		if (po && pi)
@@ -477,8 +472,8 @@ PortsConnector::operate_on_selected (Operation operation)
 bool
 PortsConnector::can_operate_on_selected (Operation operation) const
 {
-	QTreeWidgetItem* oitem = _opanel->list()->selected_item();
-	QTreeWidgetItem* iitem = _ipanel->list()->selected_item();
+	auto oitem = _opanel->list()->selected_item();
+	auto iitem = _ipanel->list()->selected_item();
 	return oitem && iitem && can_operate_on (operation, oitem, iitem);
 }
 
@@ -486,25 +481,25 @@ PortsConnector::can_operate_on_selected (Operation operation) const
 bool
 PortsConnector::can_operate_on (Operation operation, QTreeWidgetItem* oitem, QTreeWidgetItem* iitem) const
 {
-	PortItem* po = dynamic_cast<PortItem*> (oitem);
-	PortItem* pi = dynamic_cast<PortItem*> (iitem);
-	UnitItem* uo = dynamic_cast<UnitItem*> (oitem);
-	UnitItem* ui = dynamic_cast<UnitItem*> (iitem);
+	auto po = dynamic_cast<PortItem*> (oitem);
+	auto pi = dynamic_cast<PortItem*> (iitem);
+	auto uo = dynamic_cast<UnitItem*> (oitem);
+	auto ui = dynamic_cast<UnitItem*> (iitem);
 
 	if (po && pi && typeid (*po->port()) != typeid (*pi->port()))
 		return false;
 
-	// TODO obsługa GroupItemów. Również w operate_on(…)
+	// TODO handle GroupItems. Also in operate_on(…)
 	if (operation == Private::Connect)
 		return (po && pi && !po->port()->connected_to (pi->port()))
 			|| (po && ui && ui->count_inputs_if (std::not1 (GraphDetail::connected_from (po->port()))) > 0)
 			|| (uo && pi && uo->count_outputs_if (std::not1 (GraphDetail::connected_to (pi->port()))) > 0)
-			|| (uo && ui); // TODO: && istnieją takie, które nie są połączone, a były by po połączeniu:
+			|| (uo && ui); // TODO: && exist such ports which are not connected, but would be connected after… connecting.
 	else
 		return (po && pi && po->port()->connected_to (pi->port()))
 			|| (po && ui && ui->count_inputs_if (GraphDetail::connected_from (po->port())) > 0)
 			|| (uo && pi && uo->count_outputs_if (GraphDetail::connected_to (pi->port())) > 0)
-			|| (uo && ui); // TODO: && istnieją połączenia, które były by stworzone po połączeniu uo+ui
+			|| (uo && ui); // TODO: && there are connections that could be created after connecting uo + ui
 }
 
 
@@ -547,19 +542,19 @@ PortsConnector::highlight_connected()
 		pi->set_highlighted (false);
 	_highlighted_items.clear();
 
-	QTreeWidgetItem* oitem = _opanel->list()->selected_item();
-	QTreeWidgetItem* iitem = _ipanel->list()->selected_item();
+	auto oitem = _opanel->list()->selected_item();
+	auto iitem = _ipanel->list()->selected_item();
 
 	if (oitem)
 	{
 		// Highlight items in ipanel:
-		PortItem* oportitem = dynamic_cast<PortItem*> (oitem);
+		auto oportitem = dynamic_cast<PortItem*> (oitem);
 		if (oportitem)
 		{
 			Mutex::Lock lock (*_unit_bay->graph());
 			for (Port* p: oportitem->port()->forward_connections())
 			{
-				PortItem* pi = find_port_item (p);
+				auto pi = find_port_item (p);
 				if (pi)
 				{
 					pi->set_highlighted (true);
@@ -572,13 +567,13 @@ PortsConnector::highlight_connected()
 	if (iitem)
 	{
 		// Highlight items in opanel:
-		PortItem* iportitem = dynamic_cast<PortItem*> (iitem);
+		auto iportitem = dynamic_cast<PortItem*> (iitem);
 		if (iportitem)
 		{
 			Mutex::Lock lock (*_unit_bay->graph());
 			for (Port* p: iportitem->port()->back_connections())
 			{
-				PortItem* pi = find_port_item (p);
+				auto pi = find_port_item (p);
 				if (pi)
 				{
 					pi->set_highlighted (true);
@@ -593,10 +588,10 @@ PortsConnector::highlight_connected()
 Private::UnitItem*
 PortsConnector::find_unit_item (Port::Direction direction, Unit* core_unit) const
 {
-	Unit* unit = dynamic_cast<Unit*> (core_unit);
+	auto unit = dynamic_cast<Unit*> (core_unit);
 	if (unit)
 	{
-		PortsList::UnitsToItemsMap const* units_list = 0;
+		PortsList::UnitsToItemsMap const* units_list = nullptr;
 		switch (direction)
 		{
 			case Port::Input:	units_list = _ipanel->list()->units(); break;

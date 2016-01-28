@@ -259,26 +259,24 @@ class Backend:
 
   private:
 	QString					_client_name;
-	Transport*				_transport;
+	Unique<Transport>		_transport;
 	// Lock for _inputs and _outputs:
 	RecursiveMutex			_ports_lock;
-	QTimer*					_connect_retry_timer;
+	Unique<QTimer>			_connect_retry_timer;
 
-	// Views:
-	QPushButton*			_disconnect_button;
-	QPushButton*			_reconnect_button;
-	QPushButton*			_create_input_button;
-	QPushButton*			_destroy_input_button;
-	QPushButton*			_create_output_button;
-	QPushButton*			_destroy_output_button;
-
-	// Ports lists:
-	Tree*					_inputs_list;
-	Tree*					_outputs_list;
+	// Widgets:
+	Unique<QPushButton>		_disconnect_button;
+	Unique<QPushButton>		_reconnect_button;
+	Unique<QPushButton>		_create_input_button;
+	Unique<QPushButton>		_destroy_input_button;
+	Unique<QPushButton>		_create_output_button;
+	Unique<QPushButton>		_destroy_output_button;
+	Unique<Tree>			_inputs_list;
+	Unique<Tree>			_outputs_list;
 
 	// Master volume control port:
-	EventPort*				_master_volume_port;
-	EventPort*				_panic_port;
+	Unique<EventPort>		_master_volume_port;
+	Unique<EventPort>		_panic_port;
 
 	// Ports sets:
 	InputsMap				_inputs;
@@ -301,21 +299,21 @@ Backend::StateChange::StateChange (bool online, bool from_backend):
 inline Transport*
 Backend::transport() const
 {
-	return _transport;
+	return _transport.get();
 }
 
 
 inline EventPort*
 Backend::master_volume_port() const
 {
-	return _master_volume_port;
+	return _master_volume_port.get();
 }
 
 
 inline EventPort*
 Backend::panic_port() const
 {
-	return _panic_port;
+	return _panic_port.get();
 }
 
 } // namespace AudioBackendImpl

@@ -658,17 +658,11 @@ Session::load_state (QDomElement const& element)
 		// Components must be restored in given order (backends must get their
 		// IDs before program and connections between units are restored):
 
-		try {
-			dynamic_cast<SaveableState&> (*_audio_backend).load_state (audio_backend_element);
-		}
-		catch (std::bad_cast const&)
-		{ }
+		if (auto sst = dynamic_cast<SaveableState*> (_audio_backend))
+			sst->load_state (audio_backend_element);
 
-		try {
-			dynamic_cast<SaveableState&> (*_event_backend).load_state (event_backend_element);
-		}
-		catch (std::bad_cast const&)
-		{ }
+		if (auto sst = dynamic_cast<SaveableState*> (_event_backend))
+			sst->load_state (event_backend_element);
 
 		_engine = new Engine (this);
 		_program->load_state (program_element);
@@ -701,21 +695,19 @@ Session::save_state (QDomElement& element) const
 
 	// Save audio-backend:
 	QDomElement audio_backend = element.ownerDocument().createElement ("audio-backend");
-	try {
-		dynamic_cast<SaveableState&> (*_audio_backend).save_state (audio_backend);
+	if (auto sst = dynamic_cast<SaveableState*> (_audio_backend))
+	{
+		sst->save_state (audio_backend);
 		audio_backend.setAttribute ("id", _audio_backend->id());
 	}
-	catch (std::bad_cast const&)
-	{ }
 
 	// Save event-backend:
 	QDomElement event_backend = element.ownerDocument().createElement ("event-backend");
-	try {
-		dynamic_cast<SaveableState&> (*_event_backend).save_state (event_backend);
+	if (auto sst = dynamic_cast<SaveableState*> (_event_backend))
+	{
+		sst->save_state (event_backend);
 		event_backend.setAttribute ("id", _event_backend->id());
 	}
-	catch (std::bad_cast const&)
-	{ }
 
 	// Save programs:
 	QDomElement program = element.ownerDocument().createElement ("program");
@@ -825,11 +817,9 @@ Session::stop_audio_backend()
 {
 	if (_audio_backend)
 	{
-		try {
-			dynamic_cast<QWidget&> (*_audio_backend).hide();
-		}
-		catch (std::bad_cast const&)
-		{ }
+		if (auto w = dynamic_cast<QWidget*> (_audio_backend))
+			w->hide();
+
 		_graph->unregister_audio_backend();
 		delete _audio_backend;
 	}
@@ -842,13 +832,12 @@ Session::stop_event_backend()
 {
 	if (_event_backend)
 	{
-		try {
-			dynamic_cast<QWidget&> (*_event_backend).hide();
-		}
-		catch (std::bad_cast const&)
-		{ }
+		if (auto w = dynamic_cast<QWidget*> (_event_backend))
+			w->hide();
+
 		if (_devices_manager)
 			_devices_manager->set_event_backend (0);
+
 		_graph->unregister_event_backend();
 		delete _event_backend;
 	}
@@ -937,7 +926,7 @@ Session::closeEvent (QCloseEvent* e)
 void
 Session::customEvent (QEvent* e)
 {
-	UpdateMasterVolume* ue = dynamic_cast<UpdateMasterVolume*> (e);
+	auto ue = dynamic_cast<UpdateMasterVolume*> (e);
 	if (!ue)
 		return;
 	e->accept();

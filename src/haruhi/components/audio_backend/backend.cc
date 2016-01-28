@@ -46,90 +46,90 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 	AudioBackend ("╸Audio╺"),
 	_client_name (client_name)
 {
-	_master_volume_port = new EventPort (this, "Master Volume", Port::Input);
-	_panic_port = new EventPort (this, "Panic", Port::Input);
+	_master_volume_port = std::make_unique<EventPort> (this, "Master Volume", Port::Input);
+	_panic_port = std::make_unique<EventPort> (this, "Panic", Port::Input);
 
-	_transport = new JackTransport (this);
+	_transport = std::make_unique<JackTransport> (this);
 
-	_connect_retry_timer = new QTimer (this);
-	QObject::connect (_connect_retry_timer, SIGNAL (timeout()), this, SLOT (connect()));
+	_connect_retry_timer = std::make_unique<QTimer> (this);
+	QObject::connect (_connect_retry_timer.get(), SIGNAL (timeout()), this, SLOT (connect()));
 
-	_disconnect_button = new QPushButton (Resources::Icons16::disconnect(), "Disconnect from JACK", this);
+	_disconnect_button = std::make_unique<QPushButton> (Resources::Icons16::disconnect(), "Disconnect from JACK", this);
 	_disconnect_button->setIconSize (Resources::Icons16::haruhi().size());
 	_disconnect_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	QObject::connect (_disconnect_button, SIGNAL (clicked()), this, SLOT (disconnect()));
+	QObject::connect (_disconnect_button.get(), SIGNAL (clicked()), this, SLOT (disconnect()));
 
-	_reconnect_button = new QPushButton (Resources::Icons16::connect(), "Reconnect to JACK", this);
+	_reconnect_button = std::make_unique<QPushButton> (Resources::Icons16::connect(), "Reconnect to JACK", this);
 	_reconnect_button->setIconSize (Resources::Icons16::haruhi().size());
 	_reconnect_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	QObject::connect (_reconnect_button, SIGNAL (clicked()), this, SLOT (connect()));
+	QObject::connect (_reconnect_button.get(), SIGNAL (clicked()), this, SLOT (connect()));
 
-	_inputs_list = new Tree (this, this, "Inputs");
-	QObject::connect (_inputs_list, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_inputs (const QPoint&)));
-	QObject::connect (_inputs_list, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (double_click_on_inputs (QTreeWidgetItem*, int)));
-	QObject::connect (_inputs_list, SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
-
-	_create_input_button = new QPushButton (Resources::Icons16::add(), "New input", this);
+	_create_input_button = std::make_unique<QPushButton> (Resources::Icons16::add(), "New input", this);
 	_create_input_button->setIconSize (Resources::Icons16::haruhi().size());
 	_create_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_create_input_button->setToolTip ("Create new input port");
 	_create_input_button->setFlat (true);
-	QObject::connect (_create_input_button, SIGNAL (clicked()), this, SLOT (create_input()));
+	QObject::connect (_create_input_button.get(), SIGNAL (clicked()), this, SLOT (create_input()));
 
-	_destroy_input_button = new QPushButton (Resources::Icons16::remove(), "Destroy", this);
+	_destroy_input_button = std::make_unique<QPushButton> (Resources::Icons16::remove(), "Destroy", this);
 	_destroy_input_button->setIconSize (Resources::Icons16::haruhi().size());
 	_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_destroy_input_button->setToolTip ("Destroy selected port");
 	_destroy_input_button->setFlat (true);
-	QObject::connect (_destroy_input_button, SIGNAL (clicked()), this, SLOT (destroy_selected_input()));
+	QObject::connect (_destroy_input_button.get(), SIGNAL (clicked()), this, SLOT (destroy_selected_input()));
 
-	_outputs_list = new Tree (this, this, "Outputs");
-	QObject::connect (_outputs_list, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_outputs (const QPoint&)));
-	QObject::connect (_outputs_list, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (double_click_on_outputs (QTreeWidgetItem*, int)));
-	QObject::connect (_outputs_list, SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
-
-	_create_output_button = new QPushButton (Resources::Icons16::add(), "New output", this);
+	_create_output_button = std::make_unique<QPushButton> (Resources::Icons16::add(), "New output", this);
 	_create_output_button->setIconSize (Resources::Icons16::haruhi().size());
 	_create_output_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_create_output_button->setToolTip ("Create new output port");
 	_create_output_button->setFlat (true);
-	QObject::connect (_create_output_button, SIGNAL (clicked()), this, SLOT (create_output()));
+	QObject::connect (_create_output_button.get(), SIGNAL (clicked()), this, SLOT (create_output()));
 
-	_destroy_output_button = new QPushButton (Resources::Icons16::remove(), "Destroy", this);
+	_destroy_output_button = std::make_unique<QPushButton> (Resources::Icons16::remove(), "Destroy", this);
 	_destroy_output_button->setIconSize (Resources::Icons16::haruhi().size());
 	_destroy_output_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_destroy_output_button->setToolTip ("Destroy selected port");
 	_destroy_output_button->setFlat (true);
-	QObject::connect (_destroy_output_button, SIGNAL (clicked()), this, SLOT (destroy_selected_output()));
+	QObject::connect (_destroy_output_button.get(), SIGNAL (clicked()), this, SLOT (destroy_selected_output()));
+
+	_inputs_list = std::make_unique<Tree> (this, this, "Inputs");
+	QObject::connect (_inputs_list.get(), SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_inputs (const QPoint&)));
+	QObject::connect (_inputs_list.get(), SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (double_click_on_inputs (QTreeWidgetItem*, int)));
+	QObject::connect (_inputs_list.get(), SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
+
+	_outputs_list = std::make_unique<Tree> (this, this, "Outputs");
+	QObject::connect (_outputs_list.get(), SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_outputs (const QPoint&)));
+	QObject::connect (_outputs_list.get(), SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (double_click_on_outputs (QTreeWidgetItem*, int)));
+	QObject::connect (_outputs_list.get(), SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
 
 	// Layouts:
 
 	QHBoxLayout* input_buttons_layout = new QHBoxLayout();
 	input_buttons_layout->setSpacing (Config::spacing());
-	input_buttons_layout->addWidget (_create_input_button);
+	input_buttons_layout->addWidget (_create_input_button.get());
 	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
-	input_buttons_layout->addWidget (_destroy_input_button);
+	input_buttons_layout->addWidget (_destroy_input_button.get());
 
 	QVBoxLayout* inputs_layout = new QVBoxLayout();
 	inputs_layout->setSpacing (Config::spacing());
 	inputs_layout->addLayout (input_buttons_layout);
-	inputs_layout->addWidget (_inputs_list);
+	inputs_layout->addWidget (_inputs_list.get());
 
 	QHBoxLayout* output_buttons_layout = new QHBoxLayout();
 	output_buttons_layout->setSpacing (Config::spacing());
-	output_buttons_layout->addWidget (_create_output_button);
+	output_buttons_layout->addWidget (_create_output_button.get());
 	output_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
-	output_buttons_layout->addWidget (_destroy_output_button);
+	output_buttons_layout->addWidget (_destroy_output_button.get());
 
 	QVBoxLayout* outputs_layout = new QVBoxLayout();
 	outputs_layout->setSpacing (Config::spacing());
 	outputs_layout->addLayout (output_buttons_layout);
-	outputs_layout->addWidget (_outputs_list);
+	outputs_layout->addWidget (_outputs_list.get());
 
 	QHBoxLayout* jack_layout = new QHBoxLayout();
 	jack_layout->setSpacing (Config::spacing());
-	jack_layout->addWidget (_disconnect_button);
-	jack_layout->addWidget (_reconnect_button);
+	jack_layout->addWidget (_disconnect_button.get());
+	jack_layout->addWidget (_reconnect_button.get());
 	jack_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
@@ -149,9 +149,6 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 
 Backend::~Backend()
 {
-	delete _master_volume_port;
-	delete _panic_port;
-	delete _transport;
 }
 
 
@@ -347,7 +344,7 @@ Backend::update_widgets()
 	_disconnect_button->setEnabled (connected());
 	_reconnect_button->setEnabled (!connected());
 
-	QTreeWidgetItem* sel = _inputs_list->selected_item();
+	auto sel = _inputs_list->selected_item();
 	_destroy_input_button->setEnabled (sel != 0);
 
 	sel = _outputs_list->selected_item();
@@ -358,10 +355,10 @@ Backend::update_widgets()
 void
 Backend::create_input()
 {
-	InputDialog* dialog = new InputDialog (this, this);
+	auto dialog = new InputDialog (this, this);
 	if (dialog->exec() == InputDialog::Accepted)
 	{
-		InputItem* item = new InputItem (_inputs_list, dialog->name());
+		auto item = new InputItem (_inputs_list.get(), dialog->name());
 		dialog->apply (item);
 		_inputs_list->setCurrentItem (item);
 	}
@@ -371,7 +368,7 @@ Backend::create_input()
 void
 Backend::create_input (QString const& name)
 {
-	InputItem* item = new InputItem (_inputs_list, name);
+	auto item = new InputItem (_inputs_list.get(), name);
 	_inputs_list->setCurrentItem (item);
 }
 
@@ -379,10 +376,10 @@ Backend::create_input (QString const& name)
 void
 Backend::create_output()
 {
-	OutputDialog* dialog = new OutputDialog (this, this);
+	auto dialog = new OutputDialog (this, this);
 	if (dialog->exec() == OutputDialog::Accepted)
 	{
-		OutputItem* item = new OutputItem (_outputs_list, dialog->name());
+		auto item = new OutputItem (_outputs_list.get(), dialog->name());
 		dialog->apply (item);
 		_outputs_list->setCurrentItem (item);
 	}
@@ -392,7 +389,7 @@ Backend::create_output()
 void
 Backend::create_output (QString const& name)
 {
-	OutputItem* item = new OutputItem (_outputs_list, name);
+	auto item = new OutputItem (_outputs_list.get(), name);
 	_outputs_list->setCurrentItem (item);
 }
 
@@ -400,9 +397,8 @@ Backend::create_output (QString const& name)
 void
 Backend::context_menu_for_inputs (QPoint const& pos)
 {
-	QTreeWidgetItem* item = _inputs_list->itemAt (pos);
-	QMenu* menu = new QMenu (this);
-	QAction* a;
+	auto item = _inputs_list->itemAt (pos);
+	auto menu = std::make_unique<QMenu> (this);
 
 	if (item != 0)
 	{
@@ -410,7 +406,7 @@ Backend::context_menu_for_inputs (QPoint const& pos)
 		{
 			menu->addAction (Resources::Icons16::rename(), "&Rename", this, SLOT (rename_selected_input()));
 			menu->addSeparator();
-			a = menu->addAction (Resources::Icons16::add(), "&New port", this, SLOT (create_input()));
+			auto a = menu->addAction (Resources::Icons16::add(), "&New port", this, SLOT (create_input()));
 			a->setEnabled (false);
 			menu->addAction (Resources::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_input()));
 		}
@@ -418,21 +414,19 @@ Backend::context_menu_for_inputs (QPoint const& pos)
 	else
 	{
 		menu->addAction (Resources::Icons16::add(), "&New port", this, SLOT (create_input()));
-		a = menu->addAction (Resources::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_input()));
+		auto a = menu->addAction (Resources::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_input()));
 		a->setEnabled (false);
 	}
 
 	menu->exec (QCursor::pos());
-	delete menu;
 }
 
 
 void
 Backend::context_menu_for_outputs (QPoint const& pos)
 {
-	QTreeWidgetItem* item = _outputs_list->itemAt (pos);
-	QMenu* menu = new QMenu (this);
-	QAction* a;
+	auto item = _outputs_list->itemAt (pos);
+	auto menu = std::make_unique<QMenu> (this);
 
 	if (item != 0)
 	{
@@ -440,7 +434,7 @@ Backend::context_menu_for_outputs (QPoint const& pos)
 		{
 			menu->addAction (Resources::Icons16::rename(), "&Rename", this, SLOT (rename_selected_output()));
 			menu->addSeparator();
-			a = menu->addAction (Resources::Icons16::add(), "&New port", this, SLOT (create_output()));
+			auto a = menu->addAction (Resources::Icons16::add(), "&New port", this, SLOT (create_output()));
 			a->setEnabled (false);
 			menu->addAction (Resources::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_output()));
 		}
@@ -448,12 +442,11 @@ Backend::context_menu_for_outputs (QPoint const& pos)
 	else
 	{
 		menu->addAction (Resources::Icons16::add(), "&New port", this, SLOT (create_output()));
-		a = menu->addAction (Resources::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_output()));
+		auto a = menu->addAction (Resources::Icons16::remove(), "&Destroy port", this, SLOT (destroy_selected_output()));
 		a->setEnabled (false);
 	}
 
 	menu->exec (QCursor::pos());
-	delete menu;
 }
 
 
@@ -484,7 +477,7 @@ Backend::configure_selected_input()
 {
 	if (_inputs_list->selected_item())
 	{
-		PortItem* item = dynamic_cast<PortItem*> (_inputs_list->selected_item());
+		auto item = dynamic_cast<PortItem*> (_inputs_list->selected_item());
 		if (item)
 			item->configure();
 	}
@@ -496,7 +489,7 @@ Backend::configure_selected_output()
 {
 	if (_outputs_list->selected_item())
 	{
-		PortItem* item = dynamic_cast<PortItem*> (_outputs_list->selected_item());
+		auto item = dynamic_cast<PortItem*> (_outputs_list->selected_item());
 		if (item)
 			item->configure();
 	}
@@ -506,7 +499,7 @@ Backend::configure_selected_output()
 void
 Backend::rename_selected_input()
 {
-	QTreeWidgetItem* sel = _inputs_list->selected_item();
+	auto sel = _inputs_list->selected_item();
 	if (sel != 0)
 		configure_selected_input();
 }
@@ -515,7 +508,7 @@ Backend::rename_selected_input()
 void
 Backend::rename_selected_output()
 {
-	QTreeWidgetItem* sel = _outputs_list->selected_item();
+	auto sel = _outputs_list->selected_item();
 	if (sel != 0)
 		configure_selected_output();
 }
@@ -526,7 +519,7 @@ Backend::destroy_selected_input()
 {
 	if (_inputs_list->selected_item())
 	{
-		QTreeWidgetItem* item = _inputs_list->selected_item();
+		auto item = _inputs_list->selected_item();
 		_inputs_list->invisibleRootItem()->removeChild (item);
 		delete item;
 	}
@@ -538,7 +531,7 @@ Backend::destroy_selected_output()
 {
 	if (_outputs_list->selected_item())
 	{
-		QTreeWidgetItem* item = _outputs_list->selected_item();
+		auto item = _outputs_list->selected_item();
 		_outputs_list->invisibleRootItem()->removeChild (item);
 		delete item;
 	}
@@ -548,7 +541,7 @@ Backend::destroy_selected_output()
 void
 Backend::customEvent (QEvent* event)
 {
-	StateChange* state_change = dynamic_cast<StateChange*> (event);
+	auto state_change = dynamic_cast<StateChange*> (event);
 	if (state_change)
 	{
 		if (state_change->from_backend)

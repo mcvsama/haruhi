@@ -33,7 +33,7 @@ void
 ControllerWithPortDialog::apply (ControllerItem* item) const
 {
 	ControllerDialog::apply (item);
-	ControllerWithPortItem* controller_item = dynamic_cast<ControllerWithPortItem*> (item);
+	auto controller_item = dynamic_cast<ControllerWithPortItem*> (item);
 	if (controller_item)
 		controller_item->update_name();
 }

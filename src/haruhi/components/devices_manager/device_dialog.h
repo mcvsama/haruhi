@@ -85,11 +85,12 @@ class DeviceDialog: public QDialog
 	validate_and_save();
 
   private:
-	Flags			_flags;
-	DeviceItem*		_item;
-	QLineEdit*		_name;
-	QPushButton*	_save_button;
-	QCheckBox*		_auto_add_checkbox;
+	Flags				_flags;
+	DeviceItem*			_item;
+
+	Unique<QLineEdit>	_name;
+	Unique<QPushButton>	_save_button;
+	Unique<QCheckBox>	_auto_add_checkbox;
 };
 
 } // namespace DevicesManager

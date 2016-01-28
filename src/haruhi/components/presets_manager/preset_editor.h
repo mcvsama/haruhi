@@ -89,18 +89,18 @@ class PresetEditor: public QWidget
 	details_updated();
 
   private:
-	QLineEdit*		_package;
-	QLineEdit*		_category;
-	QLineEdit*		_name;
-	QLineEdit*		_version;
-	QCheckBox*		_favorite;
-	QPushButton*	_update_details_button;
+	Unique<QLineEdit>	_package;
+	Unique<QLineEdit>	_category;
+	Unique<QLineEdit>	_name;
+	Unique<QLineEdit>	_version;
+	Unique<QCheckBox>	_favorite;
+	Unique<QPushButton>	_update_details_button;
 
-	PackageItem*	_package_item;
-	CategoryItem*	_category_item;
-	PresetItem*		_preset_item;
+	PackageItem*		_package_item	= nullptr;
+	CategoryItem*		_category_item	= nullptr;
+	PresetItem*			_preset_item	= nullptr;
 
-	PresetsManager*	_presets_manager;
+	PresetsManager*		_presets_manager;
 };
 
 } // namespace PresetsManagerPrivate

@@ -87,8 +87,8 @@ class PortItem:
 
   protected:
 	Backend*			_backend;
-	AudioPort*			_port;
 	Transport::Port*	_transport_port;
+	Unique<AudioPort>	_port;
 
   private:
 	// Set when port is fully constructed:
@@ -106,7 +106,7 @@ PortItem::transport_port() const
 inline AudioPort*
 PortItem::port() const
 {
-	return _port;
+	return _port.get();
 }
 
 

@@ -32,17 +32,16 @@
 
 namespace Haruhi {
 
-WorkPerformer*		Services::_hi_priority_work_performer;
-WorkPerformer*		Services::_lo_priority_work_performer;
-signed int			Services::_detected_cores = -1;
-CallOutDispatcher*	Services::_call_out_dispatcher;
+Unique<WorkPerformer>		Services::_hi_priority_work_performer;
+Unique<WorkPerformer>		Services::_lo_priority_work_performer;
+signed int					Services::_detected_cores = -1;
+Unique<CallOutDispatcher>	Services::_call_out_dispatcher;
 
 
 void
 CallOutDispatcher::customEvent (QEvent* event)
 {
-	Services::CallOutEvent* coe = dynamic_cast<Services::CallOutEvent*> (event);
-	if (coe)
+	if (auto coe = dynamic_cast<Services::CallOutEvent*> (event))
 	{
 		coe->accept();
 		coe->call_out();
@@ -53,18 +52,18 @@ CallOutDispatcher::customEvent (QEvent* event)
 void
 Services::initialize()
 {
-	_hi_priority_work_performer = new WorkPerformer (detected_cores());
-	_lo_priority_work_performer = new WorkPerformer (detected_cores());
-	_call_out_dispatcher = new CallOutDispatcher();
+	_hi_priority_work_performer = std::make_unique<WorkPerformer> (detected_cores());
+	_lo_priority_work_performer = std::make_unique<WorkPerformer> (detected_cores());
+	_call_out_dispatcher = std::make_unique<CallOutDispatcher>();
 }
 
 
 void
 Services::deinitialize()
 {
-	delete _hi_priority_work_performer;
-	delete _lo_priority_work_performer;
-	delete _call_out_dispatcher;
+	_hi_priority_work_performer.reset();
+	_lo_priority_work_performer.reset();
+	_call_out_dispatcher.reset();
 }
 
 
@@ -116,7 +115,7 @@ Services::CallOutEvent*
 Services::call_out (boost::function<void()> callback)
 {
 	CallOutEvent* e = new CallOutEvent (callback);
-	QApplication::postEvent (_call_out_dispatcher, e);
+	QApplication::postEvent (_call_out_dispatcher.get(), e);
 	return e;
 }
 

@@ -52,7 +52,7 @@ HighlightableItem::set_highlighted (bool set)
 	{
 		if (parent())
 		{
-			HighlightableItem* ci = dynamic_cast<HighlightableItem*> (parent());
+			auto ci = dynamic_cast<HighlightableItem*> (parent());
 			if (ci)
 			{
 				ci->_highlighted_subitems += set ? +1 : -1;

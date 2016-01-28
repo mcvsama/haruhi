@@ -72,11 +72,11 @@ Tree::read_model()
 	int dn = invisibleRootItem()->childCount();
 	for (int di = 0; di < dn; ++di)
 	{
-		DeviceItem* device_item = dynamic_cast<DeviceItem*> (invisibleRootItem()->child (di));
+		auto device_item = dynamic_cast<DeviceItem*> (invisibleRootItem()->child (di));
 		if (!device_item)
 			continue;
 
-		Device* device = device_item->device();
+		auto device = device_item->device();
 		device_ptrs.erase (device);
 		if (!_model->has_device (device))
 		{
@@ -94,11 +94,11 @@ Tree::read_model()
 			int cn = device_item->childCount();
 			for (int ci = 0; ci < cn; ++ci)
 			{
-				ControllerItem* controller_item = dynamic_cast<ControllerItem*> (device_item->child (ci));
+				auto controller_item = dynamic_cast<ControllerItem*> (device_item->child (ci));
 				if (!controller_item)
 					continue;
 
-				Controller* controller = controller_item->controller();
+				auto controller = controller_item->controller();
 				controller_ptrs.erase (controller);
 				if (!device->has_controller (controller))
 				{
@@ -138,15 +138,15 @@ Tree::create_device()
 void
 Tree::create_controller()
 {
-	QTreeWidgetItem* sel = selected_item();
+	auto sel = selected_item();
 	if (sel != 0)
 	{
-		DeviceItem* device_item = dynamic_cast<DeviceItem*> (sel);
+		auto device_item = dynamic_cast<DeviceItem*> (sel);
 		if (device_item == 0)
 			device_item = dynamic_cast<DeviceItem*> (sel->parent());
 		if (device_item != 0)
 		{
-			Device* device = device_item->device();
+			auto device = device_item->device();
 			Controller contr ("<unnamed controller>");
 			device->controllers().push_back (contr);
 			_model->changed();
@@ -158,7 +158,7 @@ Tree::create_controller()
 void
 Tree::destroy_selected_item()
 {
-	QTreeWidgetItem* item = selected_item();
+	auto item = selected_item();
 	if (item)
 	{
 		DeviceItem* device_item;
@@ -178,8 +178,8 @@ Tree::destroy_selected_item()
 		{
 			device_item = dynamic_cast<DeviceItem*> (controller_item->parent());
 			assert (device_item != 0);
-			Device* device = device_item->device();
-			Device::Controllers::iterator it = device->find_controller (controller_item->controller());
+			auto device = device_item->device();
+			auto it = device->find_controller (controller_item->controller());
 			assert (it != device->controllers().end());
 			device->controllers().erase (it);
 			device_item->removeChild (controller_item);
@@ -193,7 +193,7 @@ Tree::destroy_selected_item()
 QTreeWidgetItem*
 Tree::selected_item() const
 {
-	QList<QTreeWidgetItem*> list = selectedItems();
+	auto list = selectedItems();
 	return list.empty() ? 0 : list.front();
 }
 
@@ -208,7 +208,7 @@ Tree::create_device_item (Device* device)
 void
 Tree::create_controller_items (DeviceItem* device_item)
 {
-	Device::Controllers& controllers = device_item->device()->controllers();
+	auto& controllers = device_item->device()->controllers();
 	for (Controller& c: controllers)
 		device_item->create_controller_item (&c);
 }
@@ -217,7 +217,7 @@ Tree::create_controller_items (DeviceItem* device_item)
 void
 Tree::customEvent (QEvent* event)
 {
-	LearnedParams* lp = dynamic_cast<LearnedParams*> (event);
+	auto lp = dynamic_cast<LearnedParams*> (event);
 	if (lp)
 	{
 		lp->item->treeWidget()->clearSelection();

@@ -249,25 +249,25 @@ class Backend:
 	customEvent (QEvent* event) override;
 
   private:
-	QString						_client_name;
-	Transport*					_transport;
-	InputsMap					_inputs;
-	QSignalMapper*				_insert_template_signal_mapper;
-	DevicesManager::Model		_model;
+	QString								_client_name;
+	Unique<Transport>					_transport;
+	InputsMap							_inputs;
+	Unique<QSignalMapper>				_insert_template_signal_mapper;
+	DevicesManager::Model				_model;
 
 	// Widgets:
-	QStackedWidget*				_stack;
-	Tree*						_tree;
-	QPushButton*				_create_device_button;
-	QPushButton*				_create_controller_button;
-	QPushButton*				_destroy_input_button;
-	QPushButton*				_insert_template_button;
-	DeviceWithPortDialog*		_device_dialog;
-	ControllerWithPortDialog*	_controller_dialog;
+	Unique<QStackedWidget>				_stack;
+	Unique<Tree>						_tree;
+	Unique<QPushButton>					_create_device_button;
+	Unique<QPushButton>					_create_controller_button;
+	Unique<QPushButton>					_destroy_input_button;
+	Unique<QPushButton>					_insert_template_button;
+	Unique<DeviceWithPortDialog>		_device_dialog;
+	Unique<ControllerWithPortDialog>	_controller_dialog;
 
 	// Device templates menu and helper storage:
-	Templates					_templates;
-	Unique<QMenu>				_templates_menu;
+	Templates							_templates;
+	Unique<QMenu>						_templates_menu;
 };
 
 
@@ -300,7 +300,7 @@ class PortException: public Exception
 inline Transport*
 Backend::transport() const
 {
-	return _transport;
+	return _transport.get();
 }
 
 } // namespace EventBackendImpl

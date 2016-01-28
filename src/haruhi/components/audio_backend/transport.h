@@ -76,7 +76,7 @@ class Transport
 	/**
 	 * Connects to transport.
 	 * \param	client_name is client name for transports
-	 * 			that support it. May be ignored.
+	 *			that support it. May be ignored.
 	 * \throws	AudioBackendException when problem arises.
 	 */
 	virtual void
@@ -159,8 +159,7 @@ class Transport
 
 inline
 Transport::Port::Port (Transport* transport):
-	_transport (transport),
-	_buffer()
+	_transport (transport)
 { }
 
 

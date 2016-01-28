@@ -47,8 +47,6 @@ class UnitsCombobox: public QComboBox
 	 */
 	UnitsCombobox (PortsConnector* ports_connector, Port::Direction type, QWidget* parent);
 
-	~UnitsCombobox();
-
 	/**
 	 * Reads list of units registered in unit_bay
 	 * and updates list.

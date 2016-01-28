@@ -45,78 +45,78 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 
 	// Port name:
 
-	QLabel* name_label = new QLabel ("Controller name:", this);
-	_name = new QLineEdit (this);
-	QObject::connect (_name, SIGNAL (textChanged (const QString&)), this, SLOT (update_widgets()));
+	auto name_label = new QLabel ("Controller name:", this);
+	_name = std::make_unique<QLineEdit> (this);
+	QObject::connect (_name.get(), SIGNAL (textChanged (const QString&)), this, SLOT (update_widgets()));
 
 	// Filters:
 
-	QGroupBox* filters = new QGroupBox ("Accepted events", this);
+	auto filters = new QGroupBox ("Accepted events", this);
 
 	// Note filters:
 
-	_note_checkbox = new QCheckBox ("Note on/off", filters);
-	QObject::connect (_note_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
+	_note_checkbox = std::make_unique<QCheckBox> ("Note on/off", filters);
+	QObject::connect (_note_checkbox.get(), SIGNAL (clicked()), this, SLOT (update_widgets()));
 
 	_note_channel = create_channel_spinbox (filters);
 
-	_note_velocity_checkbox = new QCheckBox ("Note velocity", filters);
-	QObject::connect (_note_velocity_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
+	_note_velocity_checkbox = std::make_unique<QCheckBox> ("Note velocity", filters);
+	QObject::connect (_note_velocity_checkbox.get(), SIGNAL (clicked()), this, SLOT (update_widgets()));
 
 	_note_velocity_channel = create_channel_spinbox (filters);
 
-	_note_pitch_checkbox = new QCheckBox ("Note pitch", filters);
-	QObject::connect (_note_pitch_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
+	_note_pitch_checkbox = std::make_unique<QCheckBox> ("Note pitch", filters);
+	QObject::connect (_note_pitch_checkbox.get(), SIGNAL (clicked()), this, SLOT (update_widgets()));
 
 	_note_pitch_channel = create_channel_spinbox (filters);
 
 	// Controller filters:
 
-	_controller_checkbox = new QCheckBox ("Controller", filters);
-	QObject::connect (_controller_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
+	_controller_checkbox = std::make_unique<QCheckBox> ("Controller", filters);
+	QObject::connect (_controller_checkbox.get(), SIGNAL (clicked()), this, SLOT (update_widgets()));
 
 	_controller_channel = create_channel_spinbox (filters);
 
-	_controller_number = new QSpinBox (filters);
+	_controller_number = std::make_unique<QSpinBox> (filters);
 	_controller_number->setRange (0, 127);
 	_controller_number->setPrefix ("CC #");
 	_controller_number->setToolTip ("MIDI controller number");
 
-	_controller_invert = new QCheckBox ("Invert", filters);
+	_controller_invert = std::make_unique<QCheckBox> ("Invert", filters);
 	_controller_invert->setToolTip ("Invert values");
 
 	// Channel pressure filters:
 
-	_channel_pressure_checkbox = new QCheckBox ("Channel pressure", filters);
-	QObject::connect (_channel_pressure_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
+	_channel_pressure_checkbox = std::make_unique<QCheckBox> ("Channel pressure", filters);
+	QObject::connect (_channel_pressure_checkbox.get(), SIGNAL (clicked()), this, SLOT (update_widgets()));
 
 	_channel_pressure_channel = create_channel_spinbox (filters);
 
-	_channel_pressure_invert = new QCheckBox ("Invert", filters);
+	_channel_pressure_invert = std::make_unique<QCheckBox> ("Invert", filters);
 	_channel_pressure_invert->setToolTip ("Invert values");
 
 	// Key pressure filters:
 
-	_key_pressure_checkbox = new QCheckBox ("Key pressure", filters);
-	QObject::connect (_key_pressure_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
+	_key_pressure_checkbox = std::make_unique<QCheckBox> ("Key pressure", filters);
+	QObject::connect (_key_pressure_checkbox.get(), SIGNAL (clicked()), this, SLOT (update_widgets()));
 
 	_key_pressure_channel = create_channel_spinbox (filters);
 
-	_key_pressure_invert = new QCheckBox ("Invert", filters);
+	_key_pressure_invert = std::make_unique<QCheckBox> ("Invert", filters);
 	_key_pressure_invert->setToolTip ("Invert values");
 
 	// Pitchbend filters:
 
-	_pitchbend_checkbox = new QCheckBox ("Pitchbend", filters);
-	QObject::connect (_pitchbend_checkbox, SIGNAL (clicked()), this, SLOT (update_widgets()));
+	_pitchbend_checkbox = std::make_unique<QCheckBox> ("Pitchbend", filters);
+	QObject::connect (_pitchbend_checkbox.get(), SIGNAL (clicked()), this, SLOT (update_widgets()));
 
 	_pitchbend_channel = create_channel_spinbox (filters);
 
 	// Smoothing:
 
-	_smoothing_label = new QLabel ("Smoothing:", filters);
+	_smoothing_label = std::make_unique<QLabel> ("Smoothing:", filters);
 
-	_smoothing = new QSpinBox (filters);
+	_smoothing = std::make_unique<QSpinBox> (filters);
 	_smoothing->setRange (0, 1000);
 	_smoothing->setSingleStep (50);
 	_smoothing->setSuffix (" ms");
@@ -124,48 +124,48 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 
 	// Buttons:
 
-	_save_button = new QPushButton (Resources::Icons16::ok(), "&Apply", this);
+	_save_button = std::make_unique<QPushButton> (Resources::Icons16::ok(), "&Apply", this);
 	_save_button->setIconSize (Resources::Icons16::haruhi().size());
-	QObject::connect (_save_button, SIGNAL (clicked()), this, SLOT (validate_and_save()));
+	QObject::connect (_save_button.get(), SIGNAL (clicked()), this, SLOT (validate_and_save()));
 
 	// Layout:
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	auto layout = new QVBoxLayout (this);
 	layout->setMargin (Config::dialog_margin());
 	layout->setSpacing (Config::spacing());
 	layout->setSizeConstraint (QLayout::SetNoConstraint);
 
-	QHBoxLayout* name_layout = new QHBoxLayout();
+	auto name_layout = new QHBoxLayout();
 	name_layout->setSpacing (Config::spacing());
 	name_layout->addWidget (name_label);
-	name_layout->addWidget (_name);
+	name_layout->addWidget (_name.get());
 
-	QGridLayout* filters_layout = new QGridLayout (filters);
-	filters_layout->addWidget (_note_checkbox, 0, 0);
-	filters_layout->addWidget (_note_channel, 0, 2);
-	filters_layout->addWidget (_note_velocity_checkbox, 1, 0);
-	filters_layout->addWidget (_note_velocity_channel, 1, 2);
-	filters_layout->addWidget (_note_pitch_checkbox, 2, 0);
-	filters_layout->addWidget (_note_pitch_channel, 2, 2);
-	filters_layout->addWidget (_controller_checkbox, 3, 0);
-	filters_layout->addWidget (_controller_number, 3, 1);
-	filters_layout->addWidget (_controller_channel, 3, 2);
-	filters_layout->addWidget (_controller_invert, 3, 3);
-	filters_layout->addWidget (_channel_pressure_checkbox, 4, 0);
-	filters_layout->addWidget (_channel_pressure_channel, 4, 2);
-	filters_layout->addWidget (_channel_pressure_invert, 4, 3);
-	filters_layout->addWidget (_key_pressure_checkbox, 5, 0);
-	filters_layout->addWidget (_key_pressure_channel, 5, 2);
-	filters_layout->addWidget (_key_pressure_invert, 5, 3);
-	filters_layout->addWidget (_pitchbend_checkbox, 6, 0);
-	filters_layout->addWidget (_pitchbend_channel, 6, 2);
-	filters_layout->addWidget (_smoothing_label, 7, 0);
-	filters_layout->addWidget (_smoothing, 7, 2);
+	auto filters_layout = new QGridLayout (filters);
+	filters_layout->addWidget (_note_checkbox.get(), 0, 0);
+	filters_layout->addWidget (_note_channel.get(), 0, 2);
+	filters_layout->addWidget (_note_velocity_checkbox.get(), 1, 0);
+	filters_layout->addWidget (_note_velocity_channel.get(), 1, 2);
+	filters_layout->addWidget (_note_pitch_checkbox.get(), 2, 0);
+	filters_layout->addWidget (_note_pitch_channel.get(), 2, 2);
+	filters_layout->addWidget (_controller_checkbox.get(), 3, 0);
+	filters_layout->addWidget (_controller_number.get(), 3, 1);
+	filters_layout->addWidget (_controller_channel.get(), 3, 2);
+	filters_layout->addWidget (_controller_invert.get(), 3, 3);
+	filters_layout->addWidget (_channel_pressure_checkbox.get(), 4, 0);
+	filters_layout->addWidget (_channel_pressure_channel.get(), 4, 2);
+	filters_layout->addWidget (_channel_pressure_invert.get(), 4, 3);
+	filters_layout->addWidget (_key_pressure_checkbox.get(), 5, 0);
+	filters_layout->addWidget (_key_pressure_channel.get(), 5, 2);
+	filters_layout->addWidget (_key_pressure_invert.get(), 5, 3);
+	filters_layout->addWidget (_pitchbend_checkbox.get(), 6, 0);
+	filters_layout->addWidget (_pitchbend_channel.get(), 6, 2);
+	filters_layout->addWidget (_smoothing_label.get(), 7, 0);
+	filters_layout->addWidget (_smoothing.get(), 7, 2);
 
-	QHBoxLayout* buttons_layout = new QHBoxLayout();
+	auto buttons_layout = new QHBoxLayout();
 	buttons_layout->setSpacing (Config::spacing());
 	buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
-	buttons_layout->addWidget (_save_button);
+	buttons_layout->addWidget (_save_button.get());
 
 	layout->addLayout (name_layout);
 	layout->addWidget (filters);
@@ -179,6 +179,10 @@ ControllerDialog::ControllerDialog (QWidget* parent):
 }
 
 
+ControllerDialog::~ControllerDialog()
+{ }
+
+
 void
 ControllerDialog::clear()
 {
@@ -190,7 +194,7 @@ ControllerDialog::clear()
 void
 ControllerDialog::from (ControllerItem* item)
 {
-	Controller* controller = item->controller();
+	auto controller = item->controller();
 	setEnabled (true);
 	_item = item;
 	_name->setText (controller->name());
@@ -222,7 +226,7 @@ ControllerDialog::from (ControllerItem* item)
 void
 ControllerDialog::apply (ControllerItem* item) const
 {
-	Controller* controller = item->controller();
+	auto controller = item->controller();
 	controller->note_filter = _note_checkbox->isChecked();
 	controller->note_channel = _note_channel->value();
 	controller->note_velocity_filter = _note_velocity_checkbox->isChecked();
@@ -305,10 +309,10 @@ ControllerDialog::validate_and_save()
 }
 
 
-QSpinBox*
+Unique<QSpinBox>
 ControllerDialog::create_channel_spinbox (QWidget* parent)
 {
-	QSpinBox* spinbox = new QSpinBox (parent);
+	auto spinbox = std::make_unique<QSpinBox> (parent);
 	spinbox->setRange (0, 16);
 	spinbox->setPrefix ("Channel ");
 	spinbox->setSpecialValueText ("All channels");

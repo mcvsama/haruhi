@@ -66,9 +66,9 @@ Tree::save_state (QDomElement& element) const
 {
 	for (int i = 0; i < invisibleRootItem()->childCount(); ++i)
 	{
-		QTreeWidgetItem* item = invisibleRootItem()->child (i);
-		InputItem* input_item = dynamic_cast<InputItem*> (item);
-		OutputItem* output_item = dynamic_cast<OutputItem*> (item);
+		auto item = invisibleRootItem()->child (i);
+		auto input_item = dynamic_cast<InputItem*> (item);
+		auto output_item = dynamic_cast<OutputItem*> (item);
 		PortItem* port_item = 0;
 		QDomElement e;
 
@@ -99,12 +99,12 @@ Tree::load_state (QDomElement const& element)
 	{
 		if (e.tagName() == "input")
 		{
-			InputItem* port = new InputItem (this, e.attribute ("name"));
+			auto port = new InputItem (this, e.attribute ("name"));
 			port->load_state (e);
 		}
 		else if (e.tagName() == "output")
 		{
-			OutputItem* port = new OutputItem (this, e.attribute ("name"));
+			auto port = new OutputItem (this, e.attribute ("name"));
 			port->load_state (e);
 		}
 	}

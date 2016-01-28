@@ -48,75 +48,74 @@ namespace EventBackendImpl {
 Backend::Backend (QString const& client_name, QWidget* parent):
 	QWidget (parent),
 	EventBackend ("╸Devices╺"),
-	_client_name (client_name),
-	_insert_template_signal_mapper (0)
+	_client_name (client_name)
 {
-	_transport = new AlsaTransport (this);
+	_transport = std::make_unique<AlsaTransport> (this);
 
 	// Widgets
 
-	_tree = new Tree (this, this, &_model);
+	_tree = std::make_unique<Tree> (this, this, &_model);
 	_tree->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
-	QObject::connect (_tree, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_items (const QPoint&)));
-	QObject::connect (_tree, SIGNAL (itemSelectionChanged()), this, SLOT (selection_changed()));
+	QObject::connect (_tree.get(), SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu_for_items (const QPoint&)));
+	QObject::connect (_tree.get(), SIGNAL (itemSelectionChanged()), this, SLOT (selection_changed()));
 
-	_create_device_button = new QPushButton (Resources::Icons16::add(), "Add device", this);
+	_create_device_button = std::make_unique<QPushButton> (Resources::Icons16::add(), "Add device", this);
 	_create_device_button->setIconSize (Resources::Icons16::haruhi().size());
 	_create_device_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_create_device_button->setToolTip ("Add new device and external input port");
 	_create_device_button->setFlat (true);
 
-	_create_controller_button = new QPushButton (Resources::Icons16::add(), "Add controller", this);
+	_create_controller_button = std::make_unique<QPushButton> (Resources::Icons16::add(), "Add controller", this);
 	_create_controller_button->setIconSize (Resources::Icons16::haruhi().size());
 	_create_controller_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_create_controller_button->setToolTip ("Add new controller and internal output port");
 	_create_controller_button->setFlat (true);
 
-	_destroy_input_button = new QPushButton (Resources::Icons16::remove(), "Destroy", this);
+	_destroy_input_button = std::make_unique<QPushButton> (Resources::Icons16::remove(), "Destroy", this);
 	_destroy_input_button->setIconSize (Resources::Icons16::haruhi().size());
 	_destroy_input_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_destroy_input_button->setToolTip ("Destroy selected device or controller");
 	_destroy_input_button->setFlat (true);
 
-	_insert_template_button = new QPushButton (Resources::Icons16::insert(), "Insert template", this);
+	_insert_template_button = std::make_unique<QPushButton> (Resources::Icons16::insert(), "Insert template", this);
 	_insert_template_button->setIconSize (Resources::Icons16::haruhi().size());
 	_insert_template_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_insert_template_button->setToolTip ("Insert device previously saved in 'Device templates'");
 	_insert_template_button->setFlat (true);
 
-	QObject::connect (_create_device_button, SIGNAL (clicked()), _tree, SLOT (create_device()));
-	QObject::connect (_create_controller_button, SIGNAL (clicked()), _tree, SLOT (create_controller()));
-	QObject::connect (_destroy_input_button, SIGNAL (clicked()), _tree, SLOT (destroy_selected_item()));
+	QObject::connect (_create_device_button.get(), SIGNAL (clicked()), _tree.get(), SLOT (create_device()));
+	QObject::connect (_create_controller_button.get(), SIGNAL (clicked()), _tree.get(), SLOT (create_controller()));
+	QObject::connect (_destroy_input_button.get(), SIGNAL (clicked()), _tree.get(), SLOT (destroy_selected_item()));
 
 	// Configuration panel (stack):
 
-	_stack = new QStackedWidget (this);
+	_stack = std::make_unique<QStackedWidget> (this);
 	_stack->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Maximum);
-	_device_dialog = new DeviceWithPortDialog (this);
-	_controller_dialog = new ControllerWithPortDialog (this);
-	_stack->addWidget (_device_dialog);
-	_stack->addWidget (_controller_dialog);
-	_stack->setCurrentWidget (_device_dialog);
+	_device_dialog = std::make_unique<DeviceWithPortDialog> (this);
+	_controller_dialog = std::make_unique<ControllerWithPortDialog> (this);
+	_stack->addWidget (_device_dialog.get());
+	_stack->addWidget (_controller_dialog.get());
+	_stack->setCurrentWidget (_device_dialog.get());
 
-	QLabel* info = new QLabel ("Each device corresponds to externally visible MIDI port.", this);
+	auto info = new QLabel ("Each device corresponds to externally visible MIDI port.", this);
 	info->setMargin (Config::margin());
 
 	// Layouts:
 
-	QHBoxLayout* input_buttons_layout = new QHBoxLayout();
+	auto input_buttons_layout = new QHBoxLayout();
 	input_buttons_layout->setSpacing (Config::spacing());
-	input_buttons_layout->addWidget (_insert_template_button);
-	input_buttons_layout->addWidget (_create_device_button);
-	input_buttons_layout->addWidget (_create_controller_button);
+	input_buttons_layout->addWidget (_insert_template_button.get());
+	input_buttons_layout->addWidget (_create_device_button.get());
+	input_buttons_layout->addWidget (_create_controller_button.get());
 	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
-	input_buttons_layout->addWidget (_destroy_input_button);
+	input_buttons_layout->addWidget (_destroy_input_button.get());
 
-	QVBoxLayout* panels_layout = new QVBoxLayout();
+	auto panels_layout = new QVBoxLayout();
 	panels_layout->setSpacing (Config::spacing());
-	panels_layout->addWidget (_tree);
-	panels_layout->addWidget (_stack);
+	panels_layout->addWidget (_tree.get());
+	panels_layout->addWidget (_stack.get());
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	auto layout = new QVBoxLayout (this);
 	layout->setMargin (0);
 	layout->addWidget (new StyledBackground (new QLabel ("ALSA MIDI ports"), this));
 	layout->setSpacing (Config::spacing());
@@ -136,8 +135,6 @@ Backend::~Backend()
 	_create_device_button->disconnect();
 	_create_controller_button->disconnect();
 	_destroy_input_button->disconnect();
-
-	delete _transport;
 }
 
 
@@ -193,14 +190,14 @@ Backend::process()
 	// For each Device:
 	for (auto& h: _inputs)
 	{
-		Transport::Port* transport_port = h.first;
-		DeviceWithPortItem* device_item = h.second;
+		auto transport_port = h.first;
+		auto device_item = h.second;
 
 		// For each event that comes from transport:
 		for (MIDI::Event& m: transport_port->buffer())
 		{
 			// For each Controller:
-			for (ControllerWithPortItem* c: *device_item->controllers())
+			for (auto* c: *device_item->controllers())
 			{
 				if (c->ready())
 				{
@@ -212,7 +209,7 @@ Backend::process()
 		}
 
 		// For each Controller:
-		for (ControllerWithPortItem* c: *device_item->controllers())
+		for (auto* c: *device_item->controllers())
 			c->generate_smoothing_events();
 	}
 }
@@ -270,7 +267,7 @@ Backend::disconnect()
 void
 Backend::update_widgets()
 {
-	QTreeWidgetItem* sel = _tree->selected_item();
+	auto sel = _tree->selected_item();
 	_create_controller_button->setEnabled (sel != 0);
 	_destroy_input_button->setEnabled (sel != 0);
 }
@@ -279,10 +276,10 @@ Backend::update_widgets()
 void
 Backend::save_selected_item_as_template()
 {
-	QTreeWidgetItem* item = _tree->selected_item();
+	auto item = _tree->selected_item();
 	if (item)
 	{
-		DeviceWithPortItem* device_item = dynamic_cast<DeviceWithPortItem*> (item);
+		auto device_item = dynamic_cast<DeviceWithPortItem*> (item);
 		if (device_item)
 			device_saved_as_template (*device_item->device());
 	}
@@ -293,36 +290,35 @@ void
 Backend::context_menu_for_items (QPoint const& pos)
 {
 	auto menu = std::make_unique<QMenu> (this);
-	QTreeWidgetItem* item = _tree->itemAt (pos);
-	QAction* a;
+	auto item = _tree->itemAt (pos);
 
 	if (item != 0)
 	{
-		ControllerWithPortItem* cwp_item = dynamic_cast<ControllerWithPortItem*> (item);
+		auto cwp_item = dynamic_cast<ControllerWithPortItem*> (item);
 		if (cwp_item != 0)
 		{
 			menu->addAction (Resources::Icons16::colorpicker(), cwp_item->learning() ? "Stop &learning" : "&Learn", this, SLOT (learn_from_midi()));
 			menu->addSeparator();
-			menu->addAction (Resources::Icons16::add(), "Add &controller", _tree, SLOT (create_controller()));
-			menu->addAction (Resources::Icons16::remove(), "&Destroy", _tree, SLOT (destroy_selected_item()));
+			menu->addAction (Resources::Icons16::add(), "Add &controller", _tree.get(), SLOT (create_controller()));
+			menu->addAction (Resources::Icons16::remove(), "&Destroy", _tree.get(), SLOT (destroy_selected_item()));
 		}
 		else if (dynamic_cast<DeviceItem*> (item) != 0)
 		{
-			menu->addAction (Resources::Icons16::add(), "Add &controller", _tree, SLOT (create_controller()));
+			menu->addAction (Resources::Icons16::add(), "Add &controller", _tree.get(), SLOT (create_controller()));
 			menu->addSeparator();
 			if (device_saved_as_template.connections_number() > 0)
 			{
 				menu->addAction (Resources::Icons16::save(), "&Save as template", this, SLOT (save_selected_item_as_template()));
 				menu->addSeparator();
 			}
-			menu->addAction (Resources::Icons16::add(), "&Add device", _tree, SLOT (create_device()));
-			menu->addAction (Resources::Icons16::remove(), "&Destroy", _tree, SLOT (destroy_selected_item()));
+			menu->addAction (Resources::Icons16::add(), "&Add device", _tree.get(), SLOT (create_device()));
+			menu->addAction (Resources::Icons16::remove(), "&Destroy", _tree.get(), SLOT (destroy_selected_item()));
 		}
 	}
 	else
 	{
-		menu->addAction (Resources::Icons16::add(), "&Add device", _tree, SLOT (create_device()));
-		a = menu->addAction (Resources::Icons16::remove(), "&Destroy", _tree, SLOT (destroy_selected_item()));
+		menu->addAction (Resources::Icons16::add(), "&Add device", _tree.get(), SLOT (create_device()));
+		auto a = menu->addAction (Resources::Icons16::remove(), "&Destroy", _tree.get(), SLOT (destroy_selected_item()));
 		a->setEnabled (false);
 	}
 	menu->addSeparator();
@@ -336,10 +332,8 @@ void
 Backend::update_templates_menu()
 {
 	_templates_menu = std::make_unique<QMenu>();
-	if (_insert_template_signal_mapper)
-		delete _insert_template_signal_mapper;
-	_insert_template_signal_mapper = new QSignalMapper (this);
-	QObject::connect (_insert_template_signal_mapper, SIGNAL (mapped (int)), this, SLOT (add_template (int)));
+	_insert_template_signal_mapper = std::make_unique<QSignalMapper> (this);
+	QObject::connect (_insert_template_signal_mapper.get(), SIGNAL (mapped (int)), this, SLOT (add_template (int)));
 
 	int action_id = 0;
 	_templates.clear();
@@ -347,7 +341,7 @@ Backend::update_templates_menu()
 	for (DevicesManager::Device& d: dm_model.devices())
 	{
 		action_id += 1;
-		QAction* a = _templates_menu->addAction (Resources::Icons16::keyboard(), d.name(), _insert_template_signal_mapper, SLOT (map()));
+		auto a = _templates_menu->addAction (Resources::Icons16::keyboard(), d.name(), _insert_template_signal_mapper.get(), SLOT (map()));
 		_insert_template_signal_mapper->setMapping (a, action_id);
 		_templates.insert (std::make_pair (action_id, d));
 	}
@@ -398,7 +392,7 @@ void
 Backend::configure_item (DeviceItem* item)
 {
 	_device_dialog->from (item);
-	_stack->setCurrentWidget (_device_dialog);
+	_stack->setCurrentWidget (_device_dialog.get());
 }
 
 
@@ -406,7 +400,7 @@ void
 Backend::configure_item (ControllerItem* item)
 {
 	_controller_dialog->from (item);
-	_stack->setCurrentWidget (_controller_dialog);
+	_stack->setCurrentWidget (_controller_dialog.get());
 }
 
 
@@ -415,12 +409,12 @@ Backend::configure_selected_item()
 {
 	if (_tree->selected_item())
 	{
-		DeviceItem* device_item = dynamic_cast<DeviceItem*> (_tree->selected_item());
+		auto device_item = dynamic_cast<DeviceItem*> (_tree->selected_item());
 		if (device_item)
 			configure_item (device_item);
 		else
 		{
-			ControllerItem* controller_item = dynamic_cast<ControllerItem*> (_tree->selected_item());
+			auto controller_item = dynamic_cast<ControllerItem*> (_tree->selected_item());
 			if (controller_item)
 				configure_item (controller_item);
 		}
@@ -440,7 +434,7 @@ Backend::learn_from_midi()
 	{
 		if (_transport->learning_possible())
 		{
-			ControllerWithPortItem* item = dynamic_cast<ControllerWithPortItem*> (_tree->selected_item());
+			auto item = dynamic_cast<ControllerWithPortItem*> (_tree->selected_item());
 			if (item)
 				item->learn();
 		}
@@ -466,7 +460,7 @@ Backend::add_template (int menu_item_id)
 void
 Backend::customEvent (QEvent* event)
 {
-	StateChange* state_change = dynamic_cast<StateChange*> (event);
+	auto state_change = dynamic_cast<StateChange*> (event);
 	if (state_change)
 		on_state_change (state_change->online);
 }

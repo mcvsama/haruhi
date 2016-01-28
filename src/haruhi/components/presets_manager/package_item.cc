@@ -67,7 +67,7 @@ PackageItem::read()
 
 	for (int i = 0; i < childCount(); ++i)
 	{
-		CategoryItem* ci = dynamic_cast<CategoryItem*> (child (i));
+		auto ci = dynamic_cast<CategoryItem*> (child (i));
 		if (!ci)
 			continue;
 		ci_by_c[ci->category()] = ci;

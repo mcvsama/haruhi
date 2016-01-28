@@ -102,9 +102,9 @@ class PresetsTree: public QTreeWidget
   private:
 	PresetsManager*		_presets_manager;
 	QPoint				_drag_pos;			// Drag init point.
-	QTreeWidgetItem*	_dragged_item;
-	QTreeWidgetItem*	_dropped_on_item;
-	QTimer*				_auto_open_timer;
+	QTreeWidgetItem*	_dragged_item		= nullptr;
+	QTreeWidgetItem*	_dropped_on_item	= nullptr;
+	Unique<QTimer>		_auto_open_timer;
 };
 
 

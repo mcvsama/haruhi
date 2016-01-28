@@ -43,10 +43,7 @@ PortsList::PortsList (Port::Direction type, PortsConnector::Panel* panel, PortsC
 	QTreeWidget (parent),
 	_type (type),
 	_panel (panel),
-	_ports_connector (ports_connector),
-	_drag_drop_item (0),
-	_filter (0),
-	_dragged_item (0)
+	_ports_connector (ports_connector)
 {
 	header()->setSectionsClickable (false);
 	header()->setSectionResizeMode (QHeaderView::Stretch);
@@ -69,9 +66,9 @@ PortsList::PortsList (Port::Direction type, PortsConnector::Panel* panel, PortsC
 		case Port::Output:	setHeaderLabel ("Output ports"); break;
 	}
 
-	_auto_open_timer = new QTimer (this);
+	_auto_open_timer = std::make_unique<QTimer> (this);
 	_auto_open_timer->setSingleShot (true);
-	QObject::connect (_auto_open_timer, SIGNAL (timeout()), this, SLOT (auto_open_selected()));
+	QObject::connect (_auto_open_timer.get(), SIGNAL (timeout()), this, SLOT (auto_open_selected()));
 	QObject::connect (this, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu (const QPoint&)));
 }
 
@@ -85,7 +82,7 @@ PortsList::~PortsList()
 QTreeWidgetItem*
 PortsList::selected_item() const
 {
-	QList<QTreeWidgetItem*> list = selectedItems();
+	auto list = selectedItems();
 	return list.empty() ? 0 : list.front();
 }
 
@@ -99,7 +96,7 @@ PortsList::read_units()
 
 	Units g_units; // Graph units
 	Units l_units; // List units
-	for (Unit* u: graph->units())
+	for (auto u: graph->units())
 		g_units.insert (u);
 	for (auto u: _units)
 		l_units.insert (u.first);
@@ -128,7 +125,7 @@ PortsList::insert_unit (Unit* unit)
 {
 	if (!unit_exist (unit))
 	{
-		UnitItem* unit_item = new UnitItem (_type, unit, this, QString::fromStdString (unit->title()));
+		auto unit_item = new UnitItem (_type, unit, this, QString::fromStdString (unit->title()));
 		invisibleRootItem()->addChild (unit_item);
 		unit_item->setExpanded (true);
 		_units[unit] = unit_item;
@@ -141,7 +138,7 @@ PortsList::remove_unit (Unit* unit)
 {
 	if (unit_exist (unit))
 	{
-		QTreeWidgetItem* li = _units[unit];
+		auto li = _units[unit];
 		if (li->parent())
 			li->parent()->removeChild (li);
 		else
@@ -178,7 +175,7 @@ PortsList::unit_exist (Unit* unit) const
 void
 PortsList::auto_open_selected()
 {
-	QTreeWidgetItem* item = selected_item();
+	auto item = selected_item();
 	if (item)
 		item->setExpanded (true);
 }
@@ -204,8 +201,9 @@ PortsList::dragMoveEvent (QDragMoveEvent* event)
 	PortsList* source;
 	if (event->source() && (source = dynamic_cast<PortsList*> (event->source())) && source != this && event->mimeData()->hasText())
 	{
-		QTreeWidgetItem* oitem = source->selectedItems().empty() ? 0 : source->selectedItems().front();
-		QTreeWidgetItem* iitem = drag_drop_item (event->pos());
+		auto oitem = source->selectedItems().empty() ? 0 : source->selectedItems().front();
+		auto iitem = drag_drop_item (event->pos());
+
 		if (oitem->treeWidget() != _ports_connector->_opanel->list())
 			std::swap (oitem, iitem);
 
@@ -222,7 +220,7 @@ PortsList::dragMoveEvent (QDragMoveEvent* event)
 void
 PortsList::dragLeaveEvent (QDragLeaveEvent*)
 {
-	_drag_drop_item = 0;
+	_drag_drop_item = nullptr;
 }
 
 
@@ -259,15 +257,15 @@ PortsList::mouseMoveEvent (QMouseEvent* mouse_event)
 
 	if ((mouse_event->buttons() & Qt::LeftButton) && _dragged_item && ((mouse_event->pos() - _drag_pos).manhattanLength() >= QApplication::startDragDistance()))
 	{
-		QMimeData* mime_data = new QMimeData();
+		auto mime_data = new QMimeData();
 		mime_data->setText (_dragged_item->text (0));
-		QDrag* drag = new QDrag (this);
+		auto drag = new QDrag (this);
 		drag->setMimeData (mime_data);
 		drag->setPixmap (_dragged_item->icon (0).pixmap (16));
 		drag->setHotSpot (QPoint (-4, -12));
 		drag->start (Qt::LinkAction);
 		// We've dragged and maybe dropped it by now...
-		_dragged_item = 0;
+		_dragged_item = nullptr;
 	}
 }
 
@@ -275,7 +273,7 @@ PortsList::mouseMoveEvent (QMouseEvent* mouse_event)
 QTreeWidgetItem*
 PortsList::drag_drop_item (QPoint const& epos)
 {
-	QTreeWidgetItem* item = itemAt (epos);
+	auto item = itemAt (epos);
 	if (item)
 	{
 		if (item != _drag_drop_item)
@@ -288,7 +286,7 @@ PortsList::drag_drop_item (QPoint const& epos)
 	}
 	else
 	{
-		_drag_drop_item = 0;
+		_drag_drop_item = nullptr;
 		_auto_open_timer->stop();
 	}
 	return item;
@@ -298,10 +296,9 @@ PortsList::drag_drop_item (QPoint const& epos)
 void
 PortsList::update_filter()
 {
-	UnitItem* unit_item;
 	for (int i = 0; i < invisibleRootItem()->childCount(); ++i)
 	{
-		unit_item = dynamic_cast<UnitItem*> (invisibleRootItem()->child (i));
+		auto unit_item = dynamic_cast<UnitItem*> (invisibleRootItem()->child (i));
 		if (unit_item)
 			unit_item->set_filtered_out (!(_filter == 0 || unit_item->unit() == _filter));
 	}
@@ -311,7 +308,7 @@ PortsList::update_filter()
 void
 PortsList::context_menu (QPoint const& pos)
 {
-	QTreeWidgetItem* item = itemAt (pos);
+	auto item = itemAt (pos);
 	if (!item)
 		return;
 	emit context_menu (item, QCursor::pos());

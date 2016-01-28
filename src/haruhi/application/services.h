@@ -150,10 +150,10 @@ class Services
 	master_ui_scaling_factor();
 
   private:
-	static WorkPerformer*		_hi_priority_work_performer;
-	static WorkPerformer*		_lo_priority_work_performer;
-	static signed int			_detected_cores;
-	static CallOutDispatcher*	_call_out_dispatcher;
+	static Unique<WorkPerformer>		_hi_priority_work_performer;
+	static Unique<WorkPerformer>		_lo_priority_work_performer;
+	static signed int					_detected_cores;
+	static Unique<CallOutDispatcher>	_call_out_dispatcher;
 };
 
 
@@ -183,14 +183,14 @@ Services::CallOutEvent::call_out()
 inline WorkPerformer*
 Services::hi_priority_work_performer()
 {
-	return _hi_priority_work_performer;
+	return _hi_priority_work_performer.get();
 }
 
 
 inline WorkPerformer*
 Services::lo_priority_work_performer()
 {
-	return _lo_priority_work_performer;
+	return _lo_priority_work_performer.get();
 }
 
 

@@ -31,8 +31,6 @@ namespace AudioBackendImpl {
 PortItem::PortItem (Tree* parent, QString const& name):
 	QTreeWidgetItem (parent, QStringList (name)),
 	_backend (parent->backend()),
-	_port (0),
-	_transport_port (0),
 	_ready (false)
 {
 	make_standard_height (this);
@@ -58,7 +56,7 @@ void
 PortItem::update_name()
 {
 	_transport_port->rename (name().toStdString());
-	Mutex::Lock lock (*_backend->graph());
+	auto lock = _backend->graph()->get_lock();
 	_port->set_name (name().toStdString());
 }
 

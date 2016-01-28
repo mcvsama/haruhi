@@ -76,25 +76,25 @@ Connector::draw_connections()
 
 	painter.fillRect (rect(), palette().color (QPalette::Window));
 
-	for (QTreeWidgetItem* oitem: Connector::get_all_items_from (_ports_connector->_opanel->list()))
+	for (auto* oitem: Connector::get_all_items_from (_ports_connector->_opanel->list()))
 	{
 		if (!item_visible (oitem))
 			continue;
 
-		PortItem* oaudio_item = dynamic_cast<PortItem*> (oitem);
-		PortItem* oevent_item = dynamic_cast<PortItem*> (oitem);
+		auto oaudio_item = dynamic_cast<PortItem*> (oitem);
+		auto oevent_item = dynamic_cast<PortItem*> (oitem);
 
 		// Rotate color:
 		color += 1;
 		painter.setPen (QPen (QColor (rgb[color % 3], rgb[(color / 3) % 3], rgb[(color / 9) % 3]), 0.15_screen_mm));
 
-		for (QTreeWidgetItem* iitem: Connector::get_all_items_from (_ports_connector->_ipanel->list()))
+		for (auto* iitem: Connector::get_all_items_from (_ports_connector->_ipanel->list()))
 		{
 			if (!item_visible (iitem))
 				continue;
 
-			PortItem* iaudio_item = dynamic_cast<PortItem*> (iitem);
-			PortItem* ievent_item = dynamic_cast<PortItem*> (iitem);
+			auto iaudio_item = dynamic_cast<PortItem*> (iitem);
+			auto ievent_item = dynamic_cast<PortItem*> (iitem);
 
 			if (oaudio_item && iaudio_item && oaudio_item->port()->connected_to (iaudio_item->port()))
 			{
@@ -159,10 +159,10 @@ Connector::item_visible (QTreeWidgetItem* item)
 int
 Connector::item_y (QTreeWidgetItem* item)
 {
-	QTreeWidget* list_view = item->treeWidget();
+	auto list_view = item->treeWidget();
 	// f: first closed item counting from root item:
-	QTreeWidgetItem* i = item;
-	QTreeWidgetItem* f = item;
+	auto i = item;
+	auto f = item;
 	do {
 		if (!i->isExpanded())
 			f = i;
@@ -180,9 +180,9 @@ Connector::get_all_items_from (QTreeWidget* parent)
 	QTreeWidgetItemsList result;
 	for (int i = 0; i < parent->invisibleRootItem()->childCount(); ++i)
 	{
-		QTreeWidgetItem* item = parent->invisibleRootItem()->child (i);
+		auto item = parent->invisibleRootItem()->child (i);
 		result.push_back (item);
-		QTreeWidgetItemsList aux = Connector::get_all_items_from (item);
+		auto aux = Connector::get_all_items_from (item);
 		std::copy (aux.begin(), aux.end(), std::back_inserter (result));
 	}
 	return result;
@@ -195,9 +195,9 @@ Connector::get_all_items_from (QTreeWidgetItem* parent)
 	QTreeWidgetItemsList result;
 	for (int i = 0; i < parent->childCount(); ++i)
 	{
-		QTreeWidgetItem* item = parent->child (i);
+		auto item = parent->child (i);
 		result.push_back (item);
-		QTreeWidgetItemsList aux = Connector::get_all_items_from (item);
+		auto aux = Connector::get_all_items_from (item);
 		std::copy (aux.begin(), aux.end(), std::back_inserter (result));
 	}
 	return result;

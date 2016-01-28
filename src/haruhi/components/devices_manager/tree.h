@@ -119,7 +119,7 @@ class Tree:
 	 * Use create_controller_items() to also allocate ControllerItems.
 	 *
 	 * \param	device Device object associated with newly created item.
-	 * 			Item will not take ownership of the object.
+	 *			Item will not take ownership of the object.
 	 */
 	virtual DeviceItem*
 	create_device_item (Device* device);

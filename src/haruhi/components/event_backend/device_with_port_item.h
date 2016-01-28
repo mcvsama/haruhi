@@ -80,8 +80,8 @@ class DeviceWithPortItem:
 	Controllers _controllers;
 
   private:
-	PortGroup*			_port_group;
 	Transport::Port*	_transport_port;
+	Unique<PortGroup>	_port_group;
 };
 
 
@@ -102,7 +102,7 @@ DeviceWithPortItem::transport_port() const
 inline PortGroup*
 DeviceWithPortItem::port_group() const
 {
-	return _port_group;
+	return _port_group.get();
 }
 
 } // namespace EventBackendImpl

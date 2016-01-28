@@ -44,29 +44,29 @@ DeviceDialog::DeviceDialog (QWidget* parent, Flags flags):
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	setMinimumWidth (300);
 
-	QLabel* name_label = new QLabel ("Device name:", this);
-	_name = new QLineEdit (this);
-	_save_button = new QPushButton (Resources::Icons16::ok(), "&Apply", this);
+	auto name_label = new QLabel ("Device name:", this);
+	_name = std::make_unique<QLineEdit> (this);
+	_save_button = std::make_unique<QPushButton> (Resources::Icons16::ok(), "&Apply", this);
 	_save_button->setIconSize (Resources::Icons16::haruhi().size());
-	_auto_add_checkbox = new QCheckBox ("Auto add this device to new sessions", this);
+	_auto_add_checkbox = std::make_unique<QCheckBox> ("Auto add this device to new sessions", this);
 	if ((flags & DisplayAutoAdd) == 0)
 		_auto_add_checkbox->hide();
 
-	QObject::connect (_name, SIGNAL (textChanged (const QString&)), this, SLOT (update_widgets()));
-	QObject::connect (_save_button, SIGNAL (clicked()), this, SLOT (validate_and_save()));
+	QObject::connect (_name.get(), SIGNAL (textChanged (const QString&)), this, SLOT (update_widgets()));
+	QObject::connect (_save_button.get(), SIGNAL (clicked()), this, SLOT (validate_and_save()));
 
-	QGridLayout* grid_layout = new QGridLayout();
+	auto grid_layout = new QGridLayout();
 	grid_layout->setSpacing (Config::spacing());
 	grid_layout->addWidget (name_label, 0, 0);
-	grid_layout->addWidget (_name, 0, 1);
-	grid_layout->addWidget (_auto_add_checkbox, 1, 1);
+	grid_layout->addWidget (_name.get(), 0, 1);
+	grid_layout->addWidget (_auto_add_checkbox.get(), 1, 1);
 
-	QHBoxLayout* buttons_layout = new QHBoxLayout();
+	auto buttons_layout = new QHBoxLayout();
 	buttons_layout->setSpacing (Config::spacing());
 	buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
-	buttons_layout->addWidget (_save_button);
+	buttons_layout->addWidget (_save_button.get());
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	auto layout = new QVBoxLayout (this);
 	layout->setMargin (Config::dialog_margin());
 	layout->setSpacing (Config::spacing());
 	layout->setSizeConstraint (QLayout::SetNoConstraint);

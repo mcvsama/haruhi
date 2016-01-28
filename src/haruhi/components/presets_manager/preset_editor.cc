@@ -41,9 +41,6 @@ namespace PresetsManagerPrivate {
 
 PresetEditor::PresetEditor (PresetsManager* presets_manager, QWidget* parent):
 	QWidget (parent),
-	_package_item (0),
-	_category_item (0),
-	_preset_item (0),
 	_presets_manager (presets_manager)
 {
 	setSizePolicy (QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
@@ -51,38 +48,38 @@ PresetEditor::PresetEditor (PresetsManager* presets_manager, QWidget* parent):
 	QGroupBox* grid = new QGroupBox (this);
 	grid->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-	_package = new QLineEdit (grid);
-	_category = new QLineEdit (grid);
-	_name = new QLineEdit (grid);
-	_version = new QLineEdit (grid);
-	_favorite = new QCheckBox ("Favorite preset", grid);
+	_package = std::make_unique<QLineEdit> (grid);
+	_category = std::make_unique<QLineEdit> (grid);
+	_name = std::make_unique<QLineEdit> (grid);
+	_version = std::make_unique<QLineEdit> (grid);
+	_favorite = std::make_unique<QCheckBox> ("Favorite preset", grid);
 
-	connect (_package, SIGNAL (returnPressed()), SLOT (update_details()));
-	connect (_category, SIGNAL (returnPressed()), SLOT (update_details()));
-	connect (_name, SIGNAL (returnPressed()), SLOT (update_details()));
-	connect (_version, SIGNAL (returnPressed()), SLOT (update_details()));
+	connect (_package.get(), SIGNAL (returnPressed()), SLOT (update_details()));
+	connect (_category.get(), SIGNAL (returnPressed()), SLOT (update_details()));
+	connect (_name.get(), SIGNAL (returnPressed()), SLOT (update_details()));
+	connect (_version.get(), SIGNAL (returnPressed()), SLOT (update_details()));
 
-	QGridLayout* grid_layout = new QGridLayout (grid);
+	auto grid_layout = new QGridLayout (grid);
 	grid_layout->addWidget (new QLabel ("Package:", grid), 0, 0);
-	grid_layout->addWidget (_package, 0, 1);
+	grid_layout->addWidget (_package.get(), 0, 1);
 	grid_layout->addWidget (new QLabel ("Category:", grid), 1, 0);
-	grid_layout->addWidget (_category, 1, 1);
+	grid_layout->addWidget (_category.get(), 1, 1);
 	grid_layout->addWidget (new QLabel ("Preset name:", grid), 2, 0);
-	grid_layout->addWidget (_name, 2, 1);
+	grid_layout->addWidget (_name.get(), 2, 1);
 	grid_layout->addWidget (new QLabel ("Version:", grid), 3, 0);
-	grid_layout->addWidget (_version, 3, 1);
-	grid_layout->addWidget (_favorite, 4, 0, 1, 2);
+	grid_layout->addWidget (_version.get(), 3, 1);
+	grid_layout->addWidget (_favorite.get(), 4, 0, 1, 2);
 
-	_update_details_button = new QPushButton (Resources::Icons16::save(), "Save de&tails", this);
+	_update_details_button = std::make_unique<QPushButton> (Resources::Icons16::save(), "Save de&tails", this);
 	_update_details_button->setIconSize (Resources::Icons16::haruhi().size());
 	_update_details_button->setShortcut (Qt::CTRL + Qt::Key_T);
 	_update_details_button->setToolTip ("Saves metadata without current patch");
-	QObject::connect (_update_details_button, SIGNAL (clicked()), this, SLOT (update_details()));
+	QObject::connect (_update_details_button.get(), SIGNAL (clicked()), this, SLOT (update_details()));
 
 	QHBoxLayout* hor_layout = new QHBoxLayout();
 	hor_layout->setSpacing (Config::spacing());
 	hor_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-	hor_layout->addWidget (_update_details_button);
+	hor_layout->addWidget (_update_details_button.get());
 
 	QVBoxLayout* layout = new QVBoxLayout (this);
 	layout->setMargin (0);
@@ -111,8 +108,8 @@ void
 PresetEditor::load_package (PackageItem* package_item)
 {
 	_package_item = package_item;
-	_category_item = 0;
-	_preset_item = 0;
+	_category_item = nullptr;
+	_preset_item = nullptr;
 
 	_package->setText (package_item->package()->name());
 	_package->setEnabled (true);
@@ -141,9 +138,9 @@ PresetEditor::save_package (PackageItem* package_item)
 void
 PresetEditor::load_category (CategoryItem* category_item)
 {
-	_package_item = 0;
+	_package_item = nullptr;
 	_category_item = category_item;
-	_preset_item = 0;
+	_preset_item = nullptr;
 
 	_package->setText (category_item->package_item()->package()->name());
 	_package->setEnabled (false);
@@ -170,8 +167,8 @@ PresetEditor::save_category (CategoryItem* category_item)
 void
 PresetEditor::load_preset (PresetItem* preset_item)
 {
-	_package_item = 0;
-	_category_item = 0;
+	_package_item = nullptr;
+	_category_item = nullptr;
 	_preset_item = preset_item;
 
 	_package->setText (preset_item->category_item()->package_item()->package()->name());

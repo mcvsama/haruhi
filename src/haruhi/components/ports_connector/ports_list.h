@@ -132,12 +132,12 @@ class PortsList: public QTreeWidget
 	Port::Direction					_type;
 	PortsConnectorPrivate::Panel*	_panel;
 	PortsConnector*					_ports_connector;
-	QTreeWidgetItem*				_drag_drop_item;
+	QTreeWidgetItem*				_drag_drop_item = nullptr;
 	UnitsToItemsMap					_units;
-	QTimer*							_auto_open_timer;
-	Unit*							_filter;			// If not 0, show only items belonging to _filter.
-	QPoint							_drag_pos;			// Drag init point.
-	QTreeWidgetItem*				_dragged_item;
+	Unique<QTimer>					_auto_open_timer;
+	Unit*							_filter			= nullptr;	// If not 0, show only items belonging to _filter.
+	QPoint							_drag_pos;					// Drag init point.
+	QTreeWidgetItem*				_dragged_item	= nullptr;
 };
 
 

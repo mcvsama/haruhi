@@ -402,10 +402,9 @@ EMITER_TEMPLATE_SIGNATURE
 			void
 			disconnect (Receiver* receiver, void (Receiver::*method)(EMITER_PARAMETER_TYPES_LIST)) noexcept
 			{
-				Connection<Receiver>* connection;
 				for (ConnectionBase* c: _connections)
 				{
-					if ((connection = dynamic_cast<Connection<Receiver>*> (c)))
+					if (auto connection = dynamic_cast<Connection<Receiver>*> (c))
 					{
 						if (connection->is (receiver, method))
 						{

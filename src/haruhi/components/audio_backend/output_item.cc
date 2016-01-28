@@ -33,7 +33,7 @@ OutputItem::OutputItem (Tree* parent, QString const& name):
 	_transport_port = _backend->transport()->create_output (name.toStdString());
 	// Allocate new port:
 	_backend->graph()->synchronize ([&] {
-		_port = new AudioPort (_backend, name.toStdString(), Port::Input);
+		_port = std::make_unique<AudioPort> (_backend, name.toStdString(), Port::Input);
 	});
 	_backend->_ports_lock.synchronize ([&] {
 		_backend->_outputs[_transport_port] = this;
@@ -52,7 +52,7 @@ OutputItem::~OutputItem()
 	});
 	_backend->transport()->destroy_port (_transport_port);
 	_backend->graph()->synchronize ([&]() noexcept {
-		delete _port;
+		_port.reset();
 	});
 	// Remove itself from External ports list view:
 	if (treeWidget())
@@ -63,7 +63,7 @@ OutputItem::~OutputItem()
 void
 OutputItem::configure()
 {
-	OutputDialog* dialog = new OutputDialog (_backend, _backend);
+	auto dialog = new OutputDialog (_backend, _backend);
 	dialog->from (this);
 	if (dialog->exec() == OutputDialog::Accepted)
 		dialog->apply (this);

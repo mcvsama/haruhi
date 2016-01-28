@@ -33,7 +33,7 @@ InputItem::InputItem (Tree* parent, QString const& name):
 	_transport_port = _backend->transport()->create_input (name.toStdString());
 	// Allocate new port:
 	_backend->graph()->synchronize ([&] {
-		_port = new AudioPort (_backend, name.toStdString(), Port::Output);
+		_port = std::make_unique<AudioPort> (_backend, name.toStdString(), Port::Output);
 	});
 	_backend->_ports_lock.synchronize ([&] {
 		_backend->_inputs[_transport_port] = this;
@@ -52,7 +52,7 @@ InputItem::~InputItem()
 	});
 	_backend->transport()->destroy_port (_transport_port);
 	_backend->graph()->synchronize ([&]() noexcept {
-		delete _port;
+		_port.reset();
 	});
 	// Remove itself from External ports list view:
 	if (treeWidget())
@@ -63,7 +63,7 @@ InputItem::~InputItem()
 void
 InputItem::configure()
 {
-	InputDialog* dialog = new InputDialog (_backend, _backend);
+	auto dialog = new InputDialog (_backend, _backend);
 	dialog->from (this);
 	if (dialog->exec() == InputDialog::Accepted)
 		dialog->apply (this);

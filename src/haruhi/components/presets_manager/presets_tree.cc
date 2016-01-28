@@ -42,9 +42,7 @@ namespace PresetsManagerPrivate {
 
 PresetsTree::PresetsTree (PresetsManager* presets_manager, QWidget* parent):
 	QTreeWidget (parent),
-	_presets_manager (presets_manager),
-	_dragged_item (0),
-	_dropped_on_item (0)
+	_presets_manager (presets_manager)
 {
 	header()->setSectionsClickable (false);
 	header()->setSectionResizeMode (QHeaderView::Stretch);
@@ -63,9 +61,9 @@ PresetsTree::PresetsTree (PresetsManager* presets_manager, QWidget* parent):
 	setIconSize (Resources::Icons16::haruhi().size());
 	setHeaderLabel ("Presets");
 
-	_auto_open_timer = new QTimer (this);
+	_auto_open_timer = std::make_unique<QTimer> (this);
 	_auto_open_timer->setSingleShot (true);
-	QObject::connect (_auto_open_timer, SIGNAL (timeout()), this, SLOT (auto_open_selected()));
+	QObject::connect (_auto_open_timer.get(), SIGNAL (timeout()), this, SLOT (auto_open_selected()));
 	QObject::connect (this, SIGNAL (customContextMenuRequested (const QPoint&)), this, SLOT (context_menu (const QPoint&)));
 }
 
@@ -79,7 +77,7 @@ PresetsTree::~PresetsTree()
 QTreeWidgetItem*
 PresetsTree::selected_item() const
 {
-	QList<QTreeWidgetItem*> list = selectedItems();
+	auto list = selectedItems();
 	return list.empty() ? 0 : list.front();
 }
 
@@ -87,38 +85,34 @@ PresetsTree::selected_item() const
 PackageItem*
 PresetsTree::current_package_item() const
 {
-	QTreeWidgetItem* item = selected_item();
-	if (item)
+	if (auto item = selected_item())
 		return dynamic_cast<PackageItem*> (item);
-	return 0;
+	return nullptr;
 }
 
 
 CategoryItem*
 PresetsTree::current_category_item() const
 {
-	QTreeWidgetItem* item = selected_item();
-	if (item)
+	if (auto item = selected_item())
 		return dynamic_cast<CategoryItem*> (item);
-	return 0;
+	return nullptr;
 }
 
 
 PresetItem*
 PresetsTree::current_preset_item() const
 {
-	QTreeWidgetItem* item = selected_item();
-	if (item)
+	if (auto item = selected_item())
 		return dynamic_cast<PresetItem*> (item);
-	return 0;
+	return nullptr;
 }
 
 
 void
 PresetsTree::auto_open_selected()
 {
-	QTreeWidgetItem* item = selected_item();
-	if (item)
+	if (auto item = selected_item())
 		item->setExpanded (true);
 }
 
@@ -126,45 +120,43 @@ PresetsTree::auto_open_selected()
 void
 PresetsTree::context_menu (QPoint const& pos)
 {
-	QTreeWidgetItem* item = itemAt (pos);
+	auto item = itemAt (pos);
+	auto menu = std::make_unique<QMenu> (this);
+
 	if (!item)
-		return;
+		menu->addAction (Resources::Icons16::presets_package(), "New pac&kage", _presets_manager, SLOT (create_package()));
+	else
+	{
+		item->setSelected (true);
 
-	QMenu* menu = new QMenu (this);
-	item->setSelected (true);
-
-	if (item == 0)
-	{
-		menu->addAction (Resources::Icons16::presets_package(), "New pac&kage", _presets_manager, SLOT (create_package()));
-	}
-	else if (dynamic_cast<PackageItem*> (item))
-	{
-		menu->addAction (Resources::Icons16::presets_category(), "New &category", _presets_manager, SLOT (create_category()));
-		menu->addAction (Resources::Icons16::presets_package(), "New pac&kage", _presets_manager, SLOT (create_package()));
-		menu->addSeparator();
-		menu->addAction (Resources::Icons16::remove(), "Destroy package", _presets_manager, SLOT (destroy()));
-	}
-	else if (dynamic_cast<CategoryItem*> (item))
-	{
-		menu->addAction (Resources::Icons16::preset(), "New &preset", _presets_manager, SLOT (create_preset()));
-		menu->addAction (Resources::Icons16::presets_category(), "New &category", _presets_manager, SLOT (create_category()));
-		menu->addAction (Resources::Icons16::presets_package(), "New pac&kage", _presets_manager, SLOT (create_package()));
-		menu->addSeparator();
-		menu->addAction (Resources::Icons16::remove(), "Destroy category", _presets_manager, SLOT (destroy()));
-	}
-	else if (dynamic_cast<PresetItem*> (item))
-	{
-		menu->addAction (Resources::Icons16::load(), "&Load preset", _presets_manager, SLOT (load_preset()));
-		menu->addSeparator();
-		menu->addAction (Resources::Icons16::preset(), "New &preset", _presets_manager, SLOT (create_preset()));
-		menu->addAction (Resources::Icons16::presets_category(), "New &category", _presets_manager, SLOT (create_category()));
-		menu->addAction (Resources::Icons16::presets_package(), "New pac&kage", _presets_manager, SLOT (create_package()));
-		menu->addSeparator();
-		menu->addAction (Resources::Icons16::remove(), "Destroy preset", _presets_manager, SLOT (destroy()));
+		if (dynamic_cast<PackageItem*> (item))
+		{
+			menu->addAction (Resources::Icons16::presets_category(), "New &category", _presets_manager, SLOT (create_category()));
+			menu->addAction (Resources::Icons16::presets_package(), "New pac&kage", _presets_manager, SLOT (create_package()));
+			menu->addSeparator();
+			menu->addAction (Resources::Icons16::remove(), "Destroy package", _presets_manager, SLOT (destroy()));
+		}
+		else if (dynamic_cast<CategoryItem*> (item))
+		{
+			menu->addAction (Resources::Icons16::preset(), "New &preset", _presets_manager, SLOT (create_preset()));
+			menu->addAction (Resources::Icons16::presets_category(), "New &category", _presets_manager, SLOT (create_category()));
+			menu->addAction (Resources::Icons16::presets_package(), "New pac&kage", _presets_manager, SLOT (create_package()));
+			menu->addSeparator();
+			menu->addAction (Resources::Icons16::remove(), "Destroy category", _presets_manager, SLOT (destroy()));
+		}
+		else if (dynamic_cast<PresetItem*> (item))
+		{
+			menu->addAction (Resources::Icons16::load(), "&Load preset", _presets_manager, SLOT (load_preset()));
+			menu->addSeparator();
+			menu->addAction (Resources::Icons16::preset(), "New &preset", _presets_manager, SLOT (create_preset()));
+			menu->addAction (Resources::Icons16::presets_category(), "New &category", _presets_manager, SLOT (create_category()));
+			menu->addAction (Resources::Icons16::presets_package(), "New pac&kage", _presets_manager, SLOT (create_package()));
+			menu->addSeparator();
+			menu->addAction (Resources::Icons16::remove(), "Destroy preset", _presets_manager, SLOT (destroy()));
+		}
 	}
 
 	menu->exec (QCursor::pos());
-	delete menu;
 }
 
 
@@ -189,7 +181,7 @@ PresetsTree::dragMoveEvent (QDragMoveEvent* event)
 	if (event->source() && (source = dynamic_cast<PresetsTree*> (event->source())) &&
 		source == this && event->mimeData()->hasText())
 	{
-		QTreeWidgetItem* to = drag_drop_item (event->pos());
+		auto to = drag_drop_item (event->pos());
 		if (to && can_drop (_dragged_item, to))
 			event->accept();
 		else
@@ -203,7 +195,7 @@ PresetsTree::dragMoveEvent (QDragMoveEvent* event)
 void
 PresetsTree::dragLeaveEvent (QDragLeaveEvent*)
 {
-	_dropped_on_item = 0;
+	_dropped_on_item = nullptr;
 }
 
 
@@ -214,7 +206,7 @@ PresetsTree::dropEvent (QDropEvent* event)
 	if (event->source() && (source = dynamic_cast<PresetsTree*> (event->source())) &&
 		source == this && event->mimeData()->hasText())
 	{
-		QTreeWidgetItem* to = drag_drop_item (event->pos());
+		auto to = drag_drop_item (event->pos());
 		if (_dragged_item && to)
 		{
 			PackageItem* package_item;
@@ -224,8 +216,8 @@ PresetsTree::dropEvent (QDropEvent* event)
 			// Move Preset to Category:
 			if ((preset_item = dynamic_cast<PresetItem*> (_dragged_item)) && (category_item = dynamic_cast<CategoryItem*> (to)))
 			{
-				CategoryItem* old_category_item = preset_item->category_item();
-				CategoryItem* new_category_item = category_item;
+				auto old_category_item = preset_item->category_item();
+				auto new_category_item = category_item;
 				old_category_item->removeChild (preset_item);
 				new_category_item->addChild (preset_item);
 				new_category_item->setExpanded (true);
@@ -236,8 +228,8 @@ PresetsTree::dropEvent (QDropEvent* event)
 			// Move Category to Package:
 			else if ((category_item = dynamic_cast<CategoryItem*> (_dragged_item)) && (package_item = dynamic_cast<PackageItem*> (to)))
 			{
-				PackageItem* old_package_item = category_item->package_item();
-				PackageItem* new_package_item = package_item;
+				auto old_package_item = category_item->package_item();
+				auto new_package_item = package_item;
 				old_package_item->removeChild (category_item);
 				new_package_item->addChild (category_item);
 				new_package_item->setExpanded (true);
@@ -260,7 +252,7 @@ PresetsTree::mousePressEvent (QMouseEvent* mouse_event)
 	if (mouse_event->button() == Qt::LeftButton)
 	{
 		_drag_pos = mouse_event->pos();
-		QTreeWidgetItem* item = itemAt (_drag_pos);
+		auto item = itemAt (_drag_pos);
 		if (item && item->flags() & Qt::ItemIsDragEnabled)
 			_dragged_item = itemAt (_drag_pos);
 	}
@@ -275,9 +267,9 @@ PresetsTree::mouseMoveEvent (QMouseEvent* mouse_event)
 	if ((mouse_event->buttons() & Qt::LeftButton) && _dragged_item &&
 		((mouse_event->pos() - _drag_pos).manhattanLength() >= QApplication::startDragDistance()))
 	{
-		QMimeData* mime_data = new QMimeData();
+		auto mime_data = new QMimeData();
 		mime_data->setText (_dragged_item->text (0));
-		QDrag* drag = new QDrag (this);
+		auto drag = new QDrag (this);
 		drag->setMimeData (mime_data);
 		drag->setPixmap (_dragged_item->icon (0).pixmap (16));
 		drag->setHotSpot (QPoint (-4, -12));
@@ -299,7 +291,7 @@ PresetsTree::can_drop (QTreeWidgetItem* from, QTreeWidgetItem* to)
 QTreeWidgetItem*
 PresetsTree::drag_drop_item (QPoint const& epos)
 {
-	QTreeWidgetItem* item = itemAt (epos);
+	auto item = itemAt (epos);
 	if (item)
 	{
 		if (item != _dropped_on_item)

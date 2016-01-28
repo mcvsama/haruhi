@@ -45,14 +45,13 @@ CategoryItem::CategoryItem (QTreeWidgetItem* parent, Category* category):
 PackageItem*
 CategoryItem::package_item() const
 {
-	QTreeWidgetItem* p = parent();
-	if (p)
+	if (auto p = parent())
 	{
-		PackageItem* c = dynamic_cast<PackageItem*> (p);
-		if (c)
+		if (auto c = dynamic_cast<PackageItem*> (p))
 			return c;
 	}
-	return 0;
+
+	return nullptr;
 }
 
 
@@ -80,7 +79,7 @@ CategoryItem::read()
 
 	for (int i = 0; i < childCount(); ++i)
 	{
-		PresetItem* pi = dynamic_cast<PresetItem*> (child (i));
+		auto pi = dynamic_cast<PresetItem*> (child (i));
 		if (!pi)
 			continue;
 		pi_by_p[pi->preset()] = pi;

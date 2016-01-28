@@ -237,20 +237,19 @@ class PortsConnector:
 	validate_unit_and_port (Unit*, Port*);
 
   private:
-	UnitsSet							_external_units;		// External Units to UnitBay that are included in lists.
-	UnitBay*							_unit_bay;
-	PortsConnectorPrivate::Panel*		_opanel;
-	PortsConnectorPrivate::Panel*		_ipanel;
-	QSplitter*							_splitter;
-	PortsConnectorPrivate::Connector*	_connector;
-	QPushButton*						_connect_button;
-	QPushButton*						_disconnect_button;
-	QTreeWidgetItem*					_context_item;
-	QMenu*								_context_menu;
-	PortsToItemsMap						_ports_to_items;		// Maps ports to items in lists.
-	PortItems							_highlighted_items;		// Currently highlighted items set.
-	bool								_highlight_connected;	// Perform highlighting?
-	CallOutEvents						_call_outs;
+	UnitsSet									_external_units;		// External Units to UnitBay that are included in lists.
+	UnitBay*									_unit_bay;
+	Unique<QSplitter>							_splitter;
+	Unique<PortsConnectorPrivate::Panel>		_opanel;
+	Unique<PortsConnectorPrivate::Panel>		_ipanel;
+	Unique<PortsConnectorPrivate::Connector>	_connector;
+	Unique<QPushButton>							_connect_button;
+	Unique<QPushButton>							_disconnect_button;
+	QTreeWidgetItem*							_context_item;
+	PortsToItemsMap								_ports_to_items;		// Maps ports to items in lists.
+	PortItems									_highlighted_items;		// Currently highlighted items set.
+	bool										_highlight_connected;	// Perform highlighting?
+	CallOutEvents								_call_outs;
 };
 
 
@@ -264,7 +263,7 @@ PortsConnector::unit_bay() const
 inline PortsConnectorPrivate::Connector*
 PortsConnector::connector() const
 {
-	return _connector;
+	return _connector.get();
 }
 
 } // namespace Haruhi

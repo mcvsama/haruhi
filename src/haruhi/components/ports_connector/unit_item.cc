@@ -121,7 +121,7 @@ UnitItem::insert_port (Port* port)
 	if (!port_exist (port))
 	{
 		QTreeWidgetItem* parent = port->group() ? static_cast<QTreeWidgetItem*> (find_or_create_group_item_for (port->group())) : static_cast<QTreeWidgetItem*> (this);
-		PortItem* item = new PortItem (_type, port, parent, QString::fromStdString (port->name()));
+		auto item = new PortItem (_type, port, parent, QString::fromStdString (port->name()));
 		parent->addChild (item);
 		_ports[port] = item;
 		update_visibility();
@@ -129,7 +129,8 @@ UnitItem::insert_port (Port* port)
 		ports_connector()->_ports_to_items[port] = item;
 		return item;
 	}
-	return 0;
+
+	return nullptr;
 }
 
 
@@ -144,8 +145,8 @@ UnitItem::remove_port (Port* port)
 		PortsToItemsMap::iterator k = _ports.find (port);
 		if (k != _ports.end())
 		{
-			PortItem* port_item = k->second;
-			GroupItem* group_item = 0;
+			auto port_item = k->second;
+			GroupItem* group_item = nullptr;
 			if (port_item->parent())
 				group_item = dynamic_cast<GroupItem*> (port_item->parent());
 
@@ -164,8 +165,8 @@ UnitItem::remove_port (Port* port)
 void
 UnitItem::update_port (Port* port)
 {
-	PortItem* port_item = _ports[port];
-	GroupItem* group_item = dynamic_cast<GroupItem*> (port_item->parent());
+	auto port_item = _ports[port];
+	auto group_item = dynamic_cast<GroupItem*> (port_item->parent());
 	bool changed = false;
 
 	// If unit changed or gained its group, take it out of current parent:
@@ -222,11 +223,11 @@ UnitItem::set_filtered_out (bool set)
 GroupItem*
 UnitItem::find_group_item_for (PortGroup* group)
 {
-	GroupItem* item = 0;
+	GroupItem* item = nullptr;
 	for (int i = 0; i < childCount(); ++i)
 	{
-		QTreeWidgetItem* c = child (i);
-		if ((item = dynamic_cast<GroupItem*> (c)) != 0 && item->group() == group)
+		auto c = child (i);
+		if ((item = dynamic_cast<GroupItem*> (c)) && item->group() == group)
 			return item;
 	}
 	return 0;
@@ -236,7 +237,7 @@ UnitItem::find_group_item_for (PortGroup* group)
 GroupItem*
 UnitItem::find_or_create_group_item_for (PortGroup* group)
 {
-	GroupItem* item = find_group_item_for (group);
+	auto item = find_group_item_for (group);
 	if (item)
 		return item;
 	// If group item not found, create new:
@@ -249,7 +250,7 @@ UnitItem::find_or_create_group_item_for (PortGroup* group)
 void
 UnitItem::cleanup_group (PortGroup* group)
 {
-	GroupItem* item = find_group_item_for (group);
+	auto item = find_group_item_for (group);
 	if (item)
 	   cleanup_group_item (item);
 }
@@ -276,7 +277,7 @@ UnitItem::update_visibility()
 PortsConnector*
 UnitItem::ports_connector() const
 {
-	PortsList* pl = dynamic_cast<PortsList*> (treeWidget());
+	auto pl = dynamic_cast<PortsList*> (treeWidget());
 	if (pl)
 		return pl->ports_connector();
 	return 0;

@@ -59,10 +59,9 @@ class InputDialog: public PortDialog
 	validate_and_accept();
 
   private:
-	InputItem*		_item;
-	QLineEdit*		_name;
-	QPushButton*	_accept_button;
-	QPushButton*	_reject_button;
+	Unique<QLineEdit>	_name;
+	Unique<QPushButton>	_accept_button;
+	Unique<QPushButton>	_reject_button;
 };
 
 } // namespace AudioBackendImpl

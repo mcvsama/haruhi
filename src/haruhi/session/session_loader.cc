@@ -237,12 +237,11 @@ SessionLoader::apply (Session* session)
 			for (int i = 0, n = _new_session_audio_outputs->value(); i < n; ++i)
 				session->graph()->audio_backend()->create_output (QString ("out %1").arg (i + 1));
 			// Add event devices:
-			EventBackendImpl::Backend* backend = dynamic_cast<EventBackendImpl::Backend*> (session->graph()->event_backend());
-			if (backend)
+			if (auto backend = dynamic_cast<EventBackendImpl::Backend*> (session->graph()->event_backend()))
 			{
 				for (int i = 0; i < _devices_list->count(); ++i)
 				{
-					DeviceItem* device_item = dynamic_cast<DeviceItem*> (_devices_list->item (i));
+					auto device_item = dynamic_cast<DeviceItem*> (_devices_list->item (i));
 					assert (device_item);
 					backend->add_device (device_item->device);
 				}
@@ -309,8 +308,7 @@ SessionLoader::browse_file()
 void
 SessionLoader::open_recent (QTreeWidgetItem* item, int)
 {
-	RecentSessionItem* recent_session_item = dynamic_cast<RecentSessionItem*> (item);
-	if (recent_session_item)
+	if (auto recent_session_item = dynamic_cast<RecentSessionItem*> (item))
 	{
 		_result = OpenSession;
 		_file_name = recent_session_item->recent_session.file_name;
@@ -333,17 +331,19 @@ SessionLoader::populate_devices_combo()
 		bool already_added = false;
 		for (int i = 0; i < _devices_list->count(); ++i)
 		{
-			DeviceItem* ld = dynamic_cast<DeviceItem*> (_devices_list->item (i));
-			if (!ld)
-				continue;
-			if (d == ld->device)
+			if (auto ld = dynamic_cast<DeviceItem*> (_devices_list->item (i)))
 			{
-				already_added = true;
-				break;
+				if (d == ld->device)
+				{
+					already_added = true;
+					break;
+				}
 			}
 		}
+
 		if (already_added)
 			continue;
+
 		_devices_combobox->addItem (Resources::Icons16::keyboard(), d.name(), qVariantFromValue (reinterpret_cast<void*> (&d)));
 	}
 

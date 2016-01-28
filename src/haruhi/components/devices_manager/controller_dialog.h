@@ -42,7 +42,7 @@ class ControllerDialog: public QDialog
   public:
 	ControllerDialog (QWidget* parent);
 
-	virtual ~ControllerDialog() = default;
+	~ControllerDialog();
 
 	ControllerItem*
 	item() const;
@@ -79,33 +79,34 @@ class ControllerDialog: public QDialog
 	validate_and_save();
 
   private:
-	QSpinBox*
+	Unique<QSpinBox>
 	create_channel_spinbox (QWidget* parent);
 
   private:
 	ControllerItem*		_item;
-	QLineEdit*			_name;
-	QPushButton*		_save_button;
-	QCheckBox*			_note_checkbox;
-	QSpinBox*			_note_channel;
-	QCheckBox*			_note_velocity_checkbox;
-	QSpinBox*			_note_velocity_channel;
-	QCheckBox*			_note_pitch_checkbox;
-	QSpinBox*			_note_pitch_channel;
-	QCheckBox*			_controller_checkbox;
-	QSpinBox*			_controller_channel;
-	QSpinBox*			_controller_number;
-	QCheckBox*			_controller_invert;
-	QCheckBox*			_pitchbend_checkbox;
-	QSpinBox*			_pitchbend_channel;
-	QCheckBox*			_channel_pressure_checkbox;
-	QSpinBox*			_channel_pressure_channel;
-	QCheckBox*			_channel_pressure_invert;
-	QCheckBox*			_key_pressure_checkbox;
-	QSpinBox*			_key_pressure_channel;
-	QCheckBox*			_key_pressure_invert;
-	QLabel*				_smoothing_label;
-	QSpinBox*			_smoothing;
+
+	Unique<QLineEdit>	_name;
+	Unique<QPushButton>	_save_button;
+	Unique<QCheckBox>	_note_checkbox;
+	Unique<QSpinBox>	_note_channel;
+	Unique<QCheckBox>	_note_velocity_checkbox;
+	Unique<QSpinBox>	_note_velocity_channel;
+	Unique<QCheckBox>	_note_pitch_checkbox;
+	Unique<QSpinBox>	_note_pitch_channel;
+	Unique<QCheckBox>	_controller_checkbox;
+	Unique<QSpinBox>	_controller_channel;
+	Unique<QSpinBox>	_controller_number;
+	Unique<QCheckBox>	_controller_invert;
+	Unique<QCheckBox>	_pitchbend_checkbox;
+	Unique<QSpinBox>	_pitchbend_channel;
+	Unique<QCheckBox>	_channel_pressure_checkbox;
+	Unique<QSpinBox>	_channel_pressure_channel;
+	Unique<QCheckBox>	_channel_pressure_invert;
+	Unique<QCheckBox>	_key_pressure_checkbox;
+	Unique<QSpinBox>	_key_pressure_channel;
+	Unique<QCheckBox>	_key_pressure_invert;
+	Unique<QLabel>		_smoothing_label;
+	Unique<QSpinBox>	_smoothing;
 };
 
 } // namespace DevicesManager

@@ -66,61 +66,61 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-	_create_menu = new QMenu (this);
+	_create_menu = std::make_unique<QMenu> (this);
 	_create_package_action = _create_menu->addAction (Resources::Icons16::presets_package(), "Package", this, SLOT (create_package()));
 	_create_category_action = _create_menu->addAction (Resources::Icons16::presets_category(), "Category", this, SLOT (create_category()));
 	_create_preset_action = _create_menu->addAction (Resources::Icons16::preset(), "Preset", this, SLOT (create_preset()));
 
-	_tree = new Private::PresetsTree (this, this);
+	_tree = std::make_unique<Private::PresetsTree> (this, this);
 	_tree->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding);
-	QObject::connect (_tree, SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
-	QObject::connect (_tree, SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (load_preset (QTreeWidgetItem*)));
+	QObject::connect (_tree.get(), SIGNAL (itemSelectionChanged()), this, SLOT (update_widgets()));
+	QObject::connect (_tree.get(), SIGNAL (itemDoubleClicked (QTreeWidgetItem*, int)), this, SLOT (load_preset (QTreeWidgetItem*)));
 
-	_editor = new Private::PresetEditor (this, this);
+	_editor = std::make_unique<Private::PresetEditor> (this, this);
 
-	_only_favs_button = new QPushButton (Resources::Icons16::favorite(), "Show favorites only");
+	_only_favs_button = std::make_unique<QPushButton> (Resources::Icons16::favorite(), "Show favorites only");
 	_only_favs_button->setIconSize (Resources::Icons16::haruhi().size());
 	_only_favs_button->setCheckable (true);
-	QObject::connect (_only_favs_button, SIGNAL (toggled (bool)), this, SLOT (show_favorites()));
+	QObject::connect (_only_favs_button.get(), SIGNAL (toggled (bool)), this, SLOT (show_favorites()));
 
-	_load_button = new QPushButton (Resources::Icons16::load(), "Load", this);
+	_load_button = std::make_unique<QPushButton> (Resources::Icons16::load(), "Load", this);
 	_load_button->setIconSize (Resources::Icons16::haruhi().size());
-	QObject::connect (_load_button, SIGNAL (clicked()), this, SLOT (load_preset()));
+	QObject::connect (_load_button.get(), SIGNAL (clicked()), this, SLOT (load_preset()));
 
-	_save_button = new QPushButton (Resources::Icons16::save(), "Save patch", this);
+	_save_button = std::make_unique<QPushButton> (Resources::Icons16::save(), "Save patch", this);
 	_save_button->setIconSize (Resources::Icons16::haruhi().size());
-	QObject::connect (_save_button, SIGNAL (clicked()), this, SLOT (save_preset()));
+	QObject::connect (_save_button.get(), SIGNAL (clicked()), this, SLOT (save_preset()));
 
-	_create_button = new QPushButton (Resources::Icons16::new_(), "Create", this);
+	_create_button = std::make_unique<QPushButton> (Resources::Icons16::new_(), "Create", this);
 	_create_button->setIconSize (Resources::Icons16::haruhi().size());
-	_create_button->setMenu (_create_menu);
+	_create_button->setMenu (_create_menu.get());
 
-	_destroy_button = new QPushButton (Resources::Icons16::remove(), "Destroy…", this);
+	_destroy_button = std::make_unique<QPushButton> (Resources::Icons16::remove(), "Destroy…", this);
 	_destroy_button->setIconSize (Resources::Icons16::haruhi().size());
-	QObject::connect (_destroy_button, SIGNAL (clicked()), this, SLOT (destroy()));
+	QObject::connect (_destroy_button.get(), SIGNAL (clicked()), this, SLOT (destroy()));
 
 	// Layouts:
 
-	QVBoxLayout* v1 = new QVBoxLayout();
+	auto v1 = new QVBoxLayout();
 	v1->setSpacing (Config::spacing());
-	v1->addWidget (_only_favs_button);
-	v1->addWidget (_tree);
+	v1->addWidget (_only_favs_button.get());
+	v1->addWidget (_tree.get());
 
-	QHBoxLayout* h2 = new QHBoxLayout();
+	auto h2 = new QHBoxLayout();
 	h2->setSpacing (Config::spacing());
-	h2->addWidget (_load_button);
-	h2->addWidget (_save_button);
-	h2->addWidget (_create_button);
-	h2->addWidget (_destroy_button);
+	h2->addWidget (_load_button.get());
+	h2->addWidget (_save_button.get());
+	h2->addWidget (_create_button.get());
+	h2->addWidget (_destroy_button.get());
 
-	QVBoxLayout* v2 = new QVBoxLayout();
+	auto v2 = new QVBoxLayout();
 	v2->setMargin (0);
 	v2->setSpacing (Config::spacing());
 	v2->setSizeConstraint (QLayout::SetFixedSize);
 	v2->addLayout (h2);
-	v2->addWidget (_editor);
+	v2->addWidget (_editor.get());
 
-	QHBoxLayout* h1 = new QHBoxLayout (this);
+	auto h1 = new QHBoxLayout (this);
 	h1->setMargin (0);
 	h1->setSpacing (Config::spacing());
 	h1->addLayout (v1);
@@ -137,7 +137,7 @@ PresetsManager::PresetsManager (Unit* unit, QWidget* parent):
 	}
 	catch (Exception const& e)
 	{
-		_model = 0;
+		_model = nullptr;
 		QString message =
 			"Another instance of Haruhi has locked the presets directory.\n"
 			"Presets manager will be disabled for this session.\n\nError message: %1\nDetail: %2";
@@ -175,8 +175,7 @@ PresetsManager::load_preset()
 {
 	if (_saveable_unit)
 	{
-		Private::PresetItem* preset_item = _tree->current_preset_item();
-		if (preset_item)
+		if (auto preset_item = _tree->current_preset_item())
 		{
 			_saveable_unit->load_state (preset_item->preset()->patch());
 			emit preset_selected (preset_item->preset()->uuid(), preset_item->preset()->name());
@@ -197,8 +196,7 @@ PresetsManager::load_preset (QTreeWidgetItem* item)
 void
 PresetsManager::save_preset()
 {
-	Private::PresetItem* preset_item = _tree->current_preset_item();
-	if (preset_item)
+	if (auto preset_item = _tree->current_preset_item())
 	{
 		save_preset (preset_item, true);
 		emit preset_selected (preset_item->preset()->uuid(), preset_item->preset()->name());
@@ -209,9 +207,9 @@ PresetsManager::save_preset()
 void
 PresetsManager::create_package()
 {
-	Private::Package* package = _model->create_package();
+	auto package = _model->create_package();
 	model()->save_state();
-	Private::PackageItem* package_item = create_package_item (package);
+	auto package_item = create_package_item (package);
 	// changed() should be called after adding the item, so read() won't add additional second item:
 	_model->save_state();
 	_model->changed();
@@ -224,15 +222,15 @@ PresetsManager::create_package()
 void
 PresetsManager::create_category()
 {
-	Private::PackageItem* package_item = _tree->current_package_item();
+	auto package_item = _tree->current_package_item();
 	if (!package_item)
 	{
-		Private::CategoryItem* category_item = _tree->current_category_item();
+		auto category_item = _tree->current_category_item();
 		if (category_item)
 			package_item = category_item->package_item();
 		else
 		{
-			Private::PresetItem* preset_item = _tree->current_preset_item();
+			auto preset_item = _tree->current_preset_item();
 			if (preset_item)
 				package_item = preset_item->category_item()->package_item();
 		}
@@ -240,8 +238,8 @@ PresetsManager::create_category()
 
 	if (package_item)
 	{
-		Private::Category* category = package_item->package()->create_category();
-		Private::CategoryItem* category_item = new Private::CategoryItem (package_item, category);
+		auto category = package_item->package()->create_category();
+		auto category_item = new Private::CategoryItem (package_item, category);
 		// changed() should be called after adding the item, so read() won't add additional second item:
 		_model->save_state();
 		_model->changed();
@@ -256,18 +254,19 @@ PresetsManager::create_category()
 void
 PresetsManager::create_preset()
 {
-	Private::CategoryItem* category_item = _tree->current_category_item();
+	auto category_item = _tree->current_category_item();
+
 	if (!category_item)
 	{
-		Private::PresetItem* preset_item = _tree->current_preset_item();
+		auto preset_item = _tree->current_preset_item();
 		if (preset_item)
 			category_item = preset_item->category_item();
 	}
 
 	if (category_item)
 	{
-		Private::Preset* preset = category_item->category()->create_preset();
-		Private::PresetItem* preset_item = new Private::PresetItem (category_item, preset);
+		auto preset = category_item->category()->create_preset();
+		auto preset_item = new Private::PresetItem (category_item, preset);
 		_editor->load_preset (preset_item);
 		save_preset (preset_item, true);
 		// changed() should be called after adding the item, so read() won't add additional second item:
@@ -285,8 +284,7 @@ PresetsManager::create_preset()
 void
 PresetsManager::destroy()
 {
-	Private::PackageItem* package_item = _tree->current_package_item();
-	if (package_item)
+	if (auto package_item = _tree->current_package_item())
 	{
 		if (QMessageBox::question (this, "Delete package", "Really delete package " + package_item->package()->name().toHtmlEscaped() + "?",
 								   QMessageBox::Yes | QMessageBox::Default, QMessageBox::Cancel | QMessageBox::Escape) == QMessageBox::Yes)
@@ -298,15 +296,16 @@ PresetsManager::destroy()
 		}
 	}
 
-	Private::CategoryItem* category_item = _tree->current_category_item();
+	auto category_item = _tree->current_category_item();
+
 	if (category_item)
 	{
 		if (QMessageBox::question (this, "Delete category", "Really delete category " + category_item->category()->name().toHtmlEscaped() + "?",
 								   QMessageBox::Yes | QMessageBox::Default, QMessageBox::Cancel | QMessageBox::Escape) == QMessageBox::Yes)
 		{
 			try {
-				Private::Category* category = category_item->category();
-				Private::PackageItem* package_item = category_item->package_item();
+				auto category = category_item->category();
+				auto package_item = category_item->package_item();
 				package_item->removeChild (category_item);
 				delete category_item;
 				package_item->package()->remove_category (category);
@@ -327,8 +326,8 @@ PresetsManager::destroy()
 								   QMessageBox::Yes | QMessageBox::Default, QMessageBox::Cancel | QMessageBox::Escape) == QMessageBox::Yes)
 		{
 			try {
-				Private::Preset* preset = preset_item->preset();
-				Private::CategoryItem* category_item = preset_item->category_item();
+				auto preset = preset_item->preset();
+				auto category_item = preset_item->category_item();
 				category_item->removeChild (preset_item);
 				delete preset_item;
 				category_item->category()->remove_preset (preset);
@@ -352,9 +351,9 @@ PresetsManager::update_widgets()
 	_create_button->setEnabled (_saveable_unit);
 	_destroy_button->setEnabled (_saveable_unit);
 
-	Private::PackageItem* package_item = _tree->current_package_item();
-	Private::CategoryItem* category_item = _tree->current_category_item();
-	Private::PresetItem* preset_item = _tree->current_preset_item();
+	auto package_item = _tree->current_package_item();
+	auto category_item = _tree->current_category_item();
+	auto preset_item = _tree->current_preset_item();
 
 	_editor->setEnabled (true);
 
@@ -396,9 +395,9 @@ PresetsManager::show_favorites()
 	bool only_favs = _only_favs_button->isChecked();
 	// Iterate through items and show/hide them according to _only_favs_button
 	// state and preset marked as favorite:
-	for (QTreeWidgetItemIterator item (_tree); *item; ++item)
+	for (QTreeWidgetItemIterator item (_tree.get()); *item; ++item)
 	{
-		Private::PresetItem* preset_item = dynamic_cast<Private::PresetItem*> (*item);
+		auto preset_item = dynamic_cast<Private::PresetItem*> (*item);
 		// If PresetItem, show/hide it.
 		if (preset_item)
 		{
@@ -437,7 +436,7 @@ PresetsManager::read()
 
 	for (int i = 0; i < _tree->invisibleRootItem()->childCount(); ++i)
 	{
-		Private::PackageItem* pi = dynamic_cast<Private::PackageItem*> (_tree->invisibleRootItem()->child (i));
+		auto pi = dynamic_cast<Private::PackageItem*> (_tree->invisibleRootItem()->child (i));
 		if (!pi)
 			continue;
 		pi_by_p[pi->package()] = pi;
@@ -461,8 +460,7 @@ PresetsManager::read()
 
 	// Reselect selected item to update presets editor in case the selected item has been changed
 	// in another PresetsManager instance:
-	QTreeWidgetItem* selected_item = _tree->selected_item();
-	if (selected_item)
+	if (auto selected_item = _tree->selected_item())
 	{
 		_tree->clearSelection();
 		selected_item->setSelected (true);
@@ -492,7 +490,7 @@ PresetsManager::save_preset (Private::PresetItem* preset_item, bool with_patch)
 Private::PackageItem*
 PresetsManager::create_package_item (Private::Package* package)
 {
-	return new Private::PackageItem (_tree, package);
+	return new Private::PackageItem (_tree.get(), package);
 }
 
 

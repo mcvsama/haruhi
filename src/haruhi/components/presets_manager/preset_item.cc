@@ -46,14 +46,13 @@ PresetItem::PresetItem (CategoryItem* parent, Preset* preset):
 CategoryItem*
 PresetItem::category_item() const
 {
-	QTreeWidgetItem* p = parent();
-	if (p)
+	if (auto p = parent())
 	{
-		CategoryItem* c = dynamic_cast<CategoryItem*> (p);
-		if (c)
+		if (auto c = dynamic_cast<CategoryItem*> (p))
 			return c;
 	}
-	return 0;
+
+	return nullptr;
 }
 
 
