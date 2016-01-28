@@ -49,26 +49,20 @@ ConnectionsTab::ConnectionsTab (Patch* patch, QWidget* parent):
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	setContentsMargins (Config::margin(), Config::margin(), Config::margin(), Config::margin());
 
-	_ports_connector = new PortsConnector (_patch, this);
+	_ports_connector = std::make_unique<PortsConnector> (_patch, this);
 	_ports_connector->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_ports_connector->add_external_unit (_patch->session()->graph()->audio_backend());
 	_ports_connector->add_external_unit (_patch->session()->graph()->event_backend());
 
-	QHBoxLayout* top_layout = new QHBoxLayout();
+	auto top_layout = new QHBoxLayout();
 	top_layout->setSpacing (Config::spacing());
 	top_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	auto layout = new QVBoxLayout (this);
 	layout->setMargin (0);
 	layout->setSpacing (Config::spacing());
 	layout->addLayout (top_layout);
-	layout->addWidget (_ports_connector);
-}
-
-
-ConnectionsTab::~ConnectionsTab()
-{
-	delete _ports_connector;
+	layout->addWidget (_ports_connector.get());
 }
 
 
@@ -81,19 +75,19 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 
 	bool plugin_is_has_presets = dynamic_cast<HasPresets*> (_plugin);
 
-	QWidget* bar = new QWidget (this);
-	_stack = new QStackedWidget (this);
+	auto bar = new QWidget (this);
+	_stack = std::make_unique<QStackedWidget> (this);
 
-	_menu = new QMenu (this);
+	_menu = std::make_unique<QMenu> (this);
 	_menu->addAction (Resources::Icons16::remove(), "Unload", this, SLOT (unload()));
 
 	// Title/menu button:
-	QPushButton* title_button = new QPushButton (QString::fromStdString (_plugin->title()), bar);
+	auto title_button = new QPushButton (QString::fromStdString (_plugin->title()), bar);
 	title_button->setIconSize (Resources::Icons16::haruhi().size());
 	title_button->clearFocus();
 	title_button->setFlat (true);
 	title_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	title_button->setMenu (_menu);
+	title_button->setMenu (_menu.get());
 	QPalette p = title_button->palette();
 	p.setColor (QPalette::Button, QColor (0x00, 0x2A, 0x5B));
 	p.setColor (QPalette::ButtonText, QColor (0xff, 0xff, 0xff));
@@ -105,20 +99,20 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	// HasPresets?
 	if (plugin_is_has_presets)
 	{
-		_presets_manager = new PresetsManager (_plugin, this);
+		_presets_manager = std::make_unique<PresetsManager> (_plugin, this);
 		_presets_manager->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-		QObject::connect (_presets_manager, SIGNAL (preset_selected (const QString&, const QString&)),
+		QObject::connect (_presets_manager.get(), SIGNAL (preset_selected (const QString&, const QString&)),
 						  this, SLOT (set_preset (const QString&, const QString&)));
 
 		// Preset label:
-		_preset_name = new QLabel ("", bar);
+		_preset_name = std::make_unique<QLabel> ("", bar);
 		QFont font (QApplication::font());
 		font.setWeight (QFont::Black);
 		_preset_name->setFont (font);
 		_preset_name->setTextFormat (Qt::PlainText);
 
 		// Presets button:
-		_presets_button = new QPushButton ("Presets", bar);
+		_presets_button = std::make_unique<QPushButton> ("Presets", bar);
 		_presets_button->setIconSize (Resources::Icons16::haruhi().size());
 		_presets_button->clearFocus();
 		_presets_button->setFlat (true);
@@ -127,17 +121,17 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 		p.setColor (QPalette::Button, QColor (0x00, 0x2A, 0x5B));
 		p.setColor (QPalette::ButtonText, QColor (0xff, 0xff, 0xff));
 		_presets_button->setPalette (p);
-		QObject::connect (_presets_button, SIGNAL (clicked()), this, SLOT (presets()));
+		QObject::connect (_presets_button.get(), SIGNAL (clicked()), this, SLOT (presets()));
 
 		// Presets manager/favoriting:
 
-		_favorite_button = new QPushButton ("Favorite", bar);
+		_favorite_button = std::make_unique<QPushButton> ("Favorite", bar);
 		_favorite_button->setIconSize (Resources::Icons16::haruhi().size());
 		_favorite_button->clearFocus();
 		_favorite_button->setFlat (true);
 		_favorite_button->setCheckable (true);
 		_favorite_button->setEnabled (false);
-		QObject::connect (_favorite_button, SIGNAL (toggled (bool)), this, SLOT (favorited (bool)));
+		QObject::connect (_favorite_button.get(), SIGNAL (toggled (bool)), this, SLOT (favorited (bool)));
 	}
 
 	p = bar->palette();
@@ -146,16 +140,16 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	bar->setPalette (p);
 	bar->setAutoFillBackground (true);
 
-	_plugin_container = new QWidget (this);
-	QWidget* plugin_with_background = new TextureWidget (TextureWidget::Filling::Solid, this);
+	_plugin_container = std::make_unique<QWidget> (this);
+	auto plugin_with_background = new TextureWidget (TextureWidget::Filling::Solid, this);
 	plugin_with_background->setSizePolicy (_plugin->sizePolicy());
 
-	QGridLayout* plugin_with_background_layout = new QGridLayout (plugin_with_background);
+	auto plugin_with_background_layout = new QGridLayout (plugin_with_background);
 	plugin_with_background_layout->setMargin (0);
 	plugin_with_background_layout->setSpacing (0);
 	plugin_with_background_layout->addWidget (_plugin, 0, 0);
 
-	QGridLayout* plugin_container_layout = new QGridLayout (_plugin_container);
+	auto plugin_container_layout = new QGridLayout (_plugin_container.get());
 	plugin_container_layout->setMargin (0);
 	plugin_container_layout->setSpacing (0);
 	plugin_container_layout->addWidget (new TextureWidget (TextureWidget::Filling::Dotted, this), 0, 0, 2, 2);
@@ -164,41 +158,40 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	_plugin->setParent (plugin_with_background);
 	_plugin->show();
 	if (plugin_is_has_presets)
-		_stack->addWidget (_presets_manager);
-	_stack->addWidget (_plugin_container);
-	_stack->setCurrentWidget (_plugin_container);
+		_stack->addWidget (_presets_manager.get());
+	_stack->addWidget (_plugin_container.get());
+	_stack->setCurrentWidget (_plugin_container.get());
 
 	// Layouts:
 
-	QHBoxLayout* bar_layout = new QHBoxLayout (bar);
+	auto bar_layout = new QHBoxLayout (bar);
 	bar_layout->setMargin (0);
 	bar_layout->setSpacing (Config::spacing());
 	bar_layout->addWidget (title_button);
 	if (plugin_is_has_presets)
 	{
 		bar_layout->addItem (new QSpacerItem (5, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
-		bar_layout->addWidget (_preset_name);
+		bar_layout->addWidget (_preset_name.get());
 		bar_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
-		bar_layout->addWidget (_favorite_button);
+		bar_layout->addWidget (_favorite_button.get());
 		bar_layout->addItem (new QSpacerItem (10, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
-		bar_layout->addWidget (_presets_button);
+		bar_layout->addWidget (_presets_button.get());
 	}
 	else
 		bar_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	auto layout = new QVBoxLayout (this);
 	layout->setMargin (Config::margin());
 	layout->setSpacing (Config::spacing());
 	layout->addWidget (bar);
-	layout->addWidget (_stack);
+	layout->addWidget (_stack.get());
 
 	update_widgets();
 }
 
 
 PluginTab::~PluginTab()
-{
-}
+{ }
 
 
 void
@@ -214,9 +207,9 @@ PluginTab::unload()
 void
 PluginTab::presets()
 {
-	if (_stack->currentWidget() == _presets_manager)
+	if (_stack->currentWidget() == _presets_manager.get())
 	{
-		_stack->setCurrentWidget (_plugin_container);
+		_stack->setCurrentWidget (_plugin_container.get());
 		QPalette p = _presets_button->palette();
 		p.setColor (QPalette::Button, QColor (0x00, 0x2A, 0x5B));
 		p.setColor (QPalette::ButtonText, QColor (0xff, 0xff, 0xff));
@@ -224,7 +217,7 @@ PluginTab::presets()
 	}
 	else
 	{
-		_stack->setCurrentWidget (_presets_manager);
+		_stack->setCurrentWidget (_presets_manager.get());
 		QPalette p = _presets_button->palette();
 		p.setColor (QPalette::Button, QColor (0x0c, 0x62, 0xf8));
 		p.setColor (QPalette::ButtonText, QColor (0xff, 0xff, 0xff));
@@ -291,46 +284,45 @@ Patch::Patch (Session* session, std::string const& title, QWidget* parent):
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	create_plugins_menu();
 
-	QWidget* add_plugin_frame = new QWidget (this);
+	auto add_plugin_frame = new QWidget (this);
 
-	QPushButton* add_plugin_button = new QPushButton (Resources::Icons16::add(), "Load plugin", add_plugin_frame);
+	auto add_plugin_button = new QPushButton (Resources::Icons16::add(), "Load plugin", add_plugin_frame);
 	add_plugin_button->setIconSize (Resources::Icons16::haruhi().size());
 	add_plugin_button->setFlat (true);
 	add_plugin_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
-	add_plugin_button->setMenu (_plugins_menu);
+	add_plugin_button->setMenu (_plugins_menu.get());
 
-	_tabs = new QTabWidget (this);
+	_tabs = std::make_unique<QTabWidget> (this);
 	_tabs->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	_tabs->setTabPosition (QTabWidget::North);
 	_tabs->setIconSize (Resources::Icons16::haruhi().size() * 1.5);
 	_tabs->setMovable (true);
 	_tabs->setCornerWidget (add_plugin_frame, Qt::BottomRightCorner);
 
-	_connections_tab = new Private::ConnectionsTab (this, _tabs);
+	_connections_tab = std::make_unique<Private::ConnectionsTab> (this, _tabs.get());
 
-	_tabs->addTab (_connections_tab, Resources::Icons16::connections(), "Wires");
+	_tabs->addTab (_connections_tab.get(), Resources::Icons16::connections(), "Wires");
 	_tabs->setIconSize (Resources::Icons16::haruhi().size() * 1.5);
 
 	// Layouts:
 
-	QVBoxLayout* add_plugin_layout = new QVBoxLayout (add_plugin_frame);
+	auto add_plugin_layout = new QVBoxLayout (add_plugin_frame);
 	add_plugin_layout->setMargin (0);
 	add_plugin_layout->setSpacing (0);
 	add_plugin_layout->addWidget (add_plugin_button);
 	add_plugin_layout->addItem (new QSpacerItem (0, Config::spacing(), QSizePolicy::Fixed, QSizePolicy::Expanding));
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	auto layout = new QVBoxLayout (this);
 	layout->setMargin (0);
 	layout->setSpacing (Config::spacing());
-	layout->addWidget (_tabs);
+	layout->addWidget (_tabs.get());
 }
 
 
 Patch::~Patch()
 {
-	// Delete _connections_tab manually, to early delete PortsConnector:
-	delete _connections_tab;
-	delete _plugins_menu;
+	// Need to early delete ConnectionsTab along with PortsConnector:
+	_connections_tab.reset();
 
 	while (!units().empty())
 	{
@@ -349,7 +341,8 @@ Patch::~Patch()
 Plugin*
 Patch::load_plugin (QString const& urn)
 {
-	Plugin* plugin = session()->plugin_loader()->load (urn.toStdString());
+	auto plugin = session()->plugin_loader()->load (urn.toStdString());
+
 	if (plugin)
 	{
 		// If plugin isn't already in plugins list, insert it:
@@ -364,12 +357,13 @@ Patch::load_plugin (QString const& urn)
 			unit_bay_aware_plugin->set_unit_bay (this);
 
 		// Create unit frame:
-		Private::PluginTab* plugin_tab = new Private::PluginTab (this, _tabs, plugin);
-		_tabs->addTab (plugin_tab, Resources::Icons16::unit_type_synth(), "<>"); // TODO Icon should depend on plugin's declared type
-		_plugins_to_frames_map[plugin] = plugin_tab;
+		auto plugin_tab = std::make_unique<Private::PluginTab> (this, _tabs.get(), plugin);
+		_tabs->addTab (plugin_tab.get(), Resources::Icons16::unit_type_synth(), "<>"); // TODO Icon should depend on plugin's declared type
+		_plugins_to_frames_map[plugin] = std::move (plugin_tab);
 		update_tab_title (plugin);
 		_session->graph()->register_unit (plugin);
 	}
+
 	return plugin;
 }
 
@@ -381,15 +375,14 @@ Patch::unload_plugin (Plugin* plugin)
 	_session->graph()->unregister_unit (plugin);
 
 	PluginsToFramesMap::iterator u = _plugins_to_frames_map.find (plugin);
+
 	if (u != _plugins_to_frames_map.end())
 	{
-		Private::PluginTab* plugin_tab = u->second;
 		// Remove plugin from plugin bay:
 		units().erase (plugin);
 		// Unload plugin:
 		session()->plugin_loader()->unload (plugin);
 		// Dispose of tab:
-		delete plugin_tab;
 		_plugins_to_frames_map.erase (u);
 	}
 }
@@ -414,7 +407,7 @@ Patch::plugin_tab_position (Plugin* plugin) const
 	int tab_position = -1;
 	PluginsToFramesMap::const_iterator f = _plugins_to_frames_map.find (plugin);
 	if (f != _plugins_to_frames_map.end())
-		tab_position = _tabs->indexOf (f->second);
+		tab_position = _tabs->indexOf (f->second.get());
 	return tab_position;
 }
 
@@ -540,24 +533,23 @@ Patch::load_state (QDomElement const& element)
 void
 Patch::create_plugins_menu()
 {
-	QAction* action;
-	int action_id = 0;
-
-	_plugins_menu = new QMenu (this);
-	_plugins_mapper = new QSignalMapper (this);
+	_plugins_menu = std::make_unique<QMenu> (this);
+	_plugins_mapper = std::make_unique<QSignalMapper> (this);
 
 	_urns.clear();
 
-	PluginLoader::PluginFactories const& list = session()->plugin_loader()->plugin_factories();
-	for (PluginFactory* pf: list)
+	auto const& list = session()->plugin_loader()->plugin_factories();
+	int action_id = 0;
+
+	for (auto& pf: list)
 	{
 		action_id += 1;
-		action = _plugins_menu->addAction (QString::fromStdString (pf->title()), _plugins_mapper, SLOT (map()));
+		auto action = _plugins_menu->addAction (QString::fromStdString (pf->title()), _plugins_mapper.get(), SLOT (map()));
 		_plugins_mapper->setMapping (action, action_id);
 		_urns[action_id] = QString::fromStdString (pf->urn());
 	}
 
-	QObject::connect (_plugins_mapper, SIGNAL (mapped (int)), this, SLOT (load_plugin_request (int)));
+	QObject::connect (_plugins_mapper.get(), SIGNAL (mapped (int)), this, SLOT (load_plugin_request (int)));
 }
 
 
@@ -565,7 +557,7 @@ void
 Patch::load_plugin_request (int i)
 {
 	Plugin* plugin = load_plugin (_urns[i]);
-	_tabs->setCurrentWidget (_plugins_to_frames_map[plugin]);
+	_tabs->setCurrentWidget (_plugins_to_frames_map[plugin].get());
 }
 
 } // namespace Haruhi

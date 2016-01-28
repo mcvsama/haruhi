@@ -30,6 +30,10 @@ typedef float Sample;
 template<class X>
 	using Unique = std::unique_ptr<X>;
 
+
+template<class X>
+	using owner = X;
+
 } // namespace Haruhi
 
 #endif

@@ -164,7 +164,7 @@ class WorkPerformer: private Noncopyable
   private:
 	/**
 	 * Take unit from the queue. If there are no units ready, wait
-	 * until new unit arrives. Return 0 if thread should exit.
+	 * until new unit arrives. Return nullptr if thread should exit.
 	 * \threadsafe
 	 */
 	Unit*
@@ -172,10 +172,10 @@ class WorkPerformer: private Noncopyable
 
   private:
 	// Current queue. Points either to _queues[1] or _queues[2]:
-	Units					_queue;
-	Mutex					_queue_mutex;
-	Semaphore				_queue_semaphore;
-	std::vector<Performer*>	_performers;
+	Units									_queue;
+	Mutex									_queue_mutex;
+	Semaphore								_queue_semaphore;
+	std::vector<Haruhi::Unique<Performer>>	_performers;
 };
 
 

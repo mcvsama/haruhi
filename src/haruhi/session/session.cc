@@ -62,36 +62,36 @@ Private::SettingsDialog::SettingsDialog (QWidget* parent, Session* session):
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	setMinimumWidth (300);
 
-	QLabel* name_label = new QLabel ("Session name:", this);
+	auto name_label = new QLabel ("Session name:", this);
 
-	_name = new QLineEdit (_session->_name, this);
+	_name = std::make_unique<QLineEdit> (_session->_name, this);
 	_name->selectAll();
 	_name->setFocus();
-	QObject::connect (_name, SIGNAL (textChanged (const QString&)), this, SLOT (state_changed()));
+	QObject::connect (_name.get(), SIGNAL (textChanged (const QString&)), this, SLOT (state_changed()));
 
-	_accept_button = new QPushButton ("&Ok", this);
+	_accept_button = std::make_unique<QPushButton> ("&Ok", this);
 	_accept_button->setIconSize (Resources::Icons16::haruhi().size());
 	_accept_button->setDefault (true);
-	QObject::connect (_accept_button, SIGNAL (clicked()), this, SLOT (validate_and_accept()));
+	QObject::connect (_accept_button.get(), SIGNAL (clicked()), this, SLOT (validate_and_accept()));
 
-	_reject_button = new QPushButton ("&Cancel", this);
+	_reject_button = std::make_unique<QPushButton> ("&Cancel", this);
 	_reject_button->setIconSize (Resources::Icons16::haruhi().size());
-	QObject::connect (_reject_button, SIGNAL (clicked()), this, SLOT (reject()));
+	QObject::connect (_reject_button.get(), SIGNAL (clicked()), this, SLOT (reject()));
 
 	// Layouts:
 
-	QHBoxLayout* name_layout = new QHBoxLayout();
+	auto name_layout = new QHBoxLayout();
 	name_layout->setSpacing (Config::spacing());
 	name_layout->addWidget (name_label);
-	name_layout->addWidget (_name);
+	name_layout->addWidget (_name.get());
 
-	QHBoxLayout* buttons_layout = new QHBoxLayout();
+	auto buttons_layout = new QHBoxLayout();
 	buttons_layout->setSpacing (Config::spacing());
 	buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
-	buttons_layout->addWidget (_accept_button);
-	buttons_layout->addWidget (_reject_button);
+	buttons_layout->addWidget (_accept_button.get());
+	buttons_layout->addWidget (_reject_button.get());
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	auto layout = new QVBoxLayout (this);
 	layout->setMargin (Config::dialog_margin());
 	layout->setSpacing (Config::spacing());
 	layout->addLayout (name_layout);
@@ -142,26 +142,26 @@ Private::SessionGlobal::SessionGlobal (Session* session, QWidget* parent):
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-	_tuning_hz = new QLabel (this);
+	_tuning_hz = std::make_unique<QLabel> (this);
 
-	_tuning = new QSpinBox (this);
+	_tuning = std::make_unique<QSpinBox> (this);
 	_tuning->setRange (-50, +50);
 	_tuning->setSuffix (" cents");
 	_tuning->setValue (0);
-	QObject::connect (_tuning, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
+	QObject::connect (_tuning.get(), SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 
-	_transpose = new QSpinBox (this);
+	_transpose = std::make_unique<QSpinBox> (this);
 	_transpose->setRange (-60, 60);
 	_transpose->setSuffix (" semitones");
 	_transpose->setValue (0);
-	QObject::connect (_transpose, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
+	QObject::connect (_transpose.get(), SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 
-	QGridLayout* group_layout = new QGridLayout (this);
+	auto group_layout = new QGridLayout (this);
 	group_layout->addWidget (new QLabel ("Master tuning:", this), 0, 0);
-	group_layout->addWidget (_tuning, 0, 1);
-	group_layout->addWidget (_tuning_hz, 0, 2);
+	group_layout->addWidget (_tuning.get(), 0, 1);
+	group_layout->addWidget (_tuning_hz.get(), 0, 2);
 	group_layout->addWidget (new QLabel ("Transpose:", this), 1, 0);
-	group_layout->addWidget (_transpose, 1, 1);
+	group_layout->addWidget (_transpose.get(), 1, 1);
 	group_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed), 0, 3);
 	group_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 2, 0);
 
@@ -206,22 +206,22 @@ Private::HaruhiGlobal::HaruhiGlobal (Session* session, QWidget* parent):
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-	_engine_thread_priority = new QSpinBox (this);
+	_engine_thread_priority = std::make_unique<QSpinBox> (this);
 	_engine_thread_priority->setRange (1, 99);
 	_engine_thread_priority->setValue (50);
 	_engine_thread_priority->setToolTip ("Higher values mean higher priority");
-	QObject::connect (_engine_thread_priority, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
+	QObject::connect (_engine_thread_priority.get(), SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 
-	_level_meter_fps = new QSpinBox (this);
+	_level_meter_fps = std::make_unique<QSpinBox> (this);
 	_level_meter_fps->setRange (10, 50);
 	_level_meter_fps->setValue (30);
-	QObject::connect (_level_meter_fps, SIGNAL (valueChanged (int)), this, SLOT (update_params()));
+	QObject::connect (_level_meter_fps.get(), SIGNAL (valueChanged (int)), this, SLOT (update_params()));
 
-	QGridLayout* group_layout = new QGridLayout (this);
+	auto group_layout = new QGridLayout (this);
 	group_layout->addWidget (new QLabel ("Engine thread priority:", this), 0, 0);
-	group_layout->addWidget (_engine_thread_priority, 0, 1);
+	group_layout->addWidget (_engine_thread_priority.get(), 0, 1);
 	group_layout->addWidget (new QLabel ("Level Meter FPS:", this), 1, 0);
-	group_layout->addWidget (_level_meter_fps, 1, 1);
+	group_layout->addWidget (_level_meter_fps.get(), 1, 1);
 	group_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed), 0, 2);
 	group_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 2, 0);
 
@@ -232,12 +232,13 @@ Private::HaruhiGlobal::HaruhiGlobal (Session* session, QWidget* parent):
 void
 Private::HaruhiGlobal::load_params()
 {
-	HaruhiSettings* haruhi_settings = Haruhi::haruhi()->haruhi_settings();
+	auto haruhi_settings = Haruhi::haruhi()->haruhi_settings();
 
 	_loading_params = true;
 	_engine_thread_priority->setValue (haruhi_settings->engine_thread_priority());
 	_level_meter_fps->setValue (haruhi_settings->level_meter_fps());
 	_loading_params = false;
+
 	update_widgets();
 }
 
@@ -248,7 +249,7 @@ Private::HaruhiGlobal::update_params()
 	if (_loading_params)
 		return;
 
-	HaruhiSettings* haruhi_settings = Haruhi::haruhi()->haruhi_settings();
+	auto haruhi_settings = Haruhi::haruhi()->haruhi_settings();
 
 	haruhi_settings->set_engine_thread_priority (_engine_thread_priority->value());
 	haruhi_settings->set_level_meter_fps (_level_meter_fps->value());
@@ -264,11 +265,7 @@ Private::HaruhiGlobal::update_widgets()
 }
 
 
-Session::Parameters::Parameters():
-	tuning (0),
-	transpose (0),
-	tempo (120.0),
-	master_volume (0)
+Session::Parameters::Parameters()
 {
 	limit_values();
 }
@@ -295,16 +292,16 @@ Session::Parameters::load_state (QDomElement const& element)
 void
 Session::Parameters::save_state (QDomElement& element) const
 {
-	QDomElement par_tuning = element.ownerDocument().createElement ("tuning");
+	auto par_tuning = element.ownerDocument().createElement ("tuning");
 	par_tuning.appendChild (element.ownerDocument().createTextNode (QString::number (tuning)));
 
-	QDomElement par_transpose = element.ownerDocument().createElement ("transpose");
+	auto par_transpose = element.ownerDocument().createElement ("transpose");
 	par_transpose.appendChild (element.ownerDocument().createTextNode (QString::number (transpose)));
 
-	QDomElement par_tempo = element.ownerDocument().createElement ("tempo");
+	auto par_tempo = element.ownerDocument().createElement ("tempo");
 	par_tempo.appendChild (element.ownerDocument().createTextNode (QString::number (tempo)));
 
-	QDomElement par_master_volume = element.ownerDocument().createElement ("master-volume");
+	auto par_master_volume = element.ownerDocument().createElement ("master-volume");
 	par_master_volume.appendChild (element.ownerDocument().createTextNode (QString::number (master_volume)));
 
 	element.appendChild (par_tuning);
@@ -331,29 +328,23 @@ Session::MeterPanel::MeterPanel (Session* session, QWidget* parent):
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
 	setFrameStyle (QFrame::StyledPanel | QFrame::Raised);
 
-	_level_meters_group = new LevelMetersGroup (this);
-	_master_volume = new DialControl (this,
-									  { MinVolume, MaxVolume },
-									  ZeroVolume * std::pow (attenuate_db (-3.0f), 1.0f / M_E));
+	_level_meters_group = std::make_unique<LevelMetersGroup> (this);
+	_master_volume = std::make_unique<DialControl> (this, Range<int> { MinVolume, MaxVolume }, ZeroVolume * std::pow (attenuate_db (-3.0f), 1.0f / M_E));
 	_master_volume->setToolTip ("Master Volume");
-	QObject::connect (_master_volume, SIGNAL (valueChanged (int)), _session, SLOT (master_volume_changed (int)));
+	QObject::connect (_master_volume.get(), SIGNAL (valueChanged (int)), _session, SLOT (master_volume_changed (int)));
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	auto layout = new QVBoxLayout (this);
 	layout->setMargin (Config::margin());
 	layout->setSpacing (Config::spacing());
-	layout->addWidget (_level_meters_group);
-	layout->addWidget (_master_volume);
+	layout->addWidget (_level_meters_group.get());
+	layout->addWidget (_master_volume.get());
 }
 
 
 Session::Session (QWidget* parent):
 	QWidget (parent),
-	_graph (new Graph()),
-	_audio_backend (0),
-	_event_backend (0),
-	_engine (0),
-	_plugin_loader (new PluginLoader()),
-	_devices_manager (0)
+	_graph (std::make_unique<Graph>()),
+	_plugin_loader (std::make_unique<PluginLoader>())
 {
 	_name = "";
 
@@ -362,7 +353,7 @@ Session::Session (QWidget* parent):
 
 	create_main_menu();
 
-	QFrame* header = new QFrame (this);
+	auto header = new QFrame (this);
 	header->setAutoFillBackground (true);
 	QPalette p = header->palette();
 	p.setColor (QPalette::Window, QColor (0xda, 0xe1, 0xe9));
@@ -370,10 +361,10 @@ Session::Session (QWidget* parent):
 	header->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	header->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
-	QWidget* inner_header = new QWidget (header);
+	auto inner_header = new QWidget (header);
 	inner_header->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
-	_session_name = new ClickableLabel (_name, inner_header);
+	_session_name = std::make_unique<ClickableLabel> (_name, inner_header);
 	QFont f (QApplication::font());
 	f.setPixelSize (4_screen_mm);
 	f.setWeight (QFont::Normal);
@@ -381,112 +372,112 @@ Session::Session (QWidget* parent):
 	_session_name->setCursor (QCursor (Qt::PointingHandCursor));
 	_session_name->setTextFormat (Qt::PlainText);
 	_session_name->setToolTip ("Click to rename session");
-	QObject::connect (_session_name, SIGNAL (clicked()), this, SLOT (rename_session()));
+	QObject::connect (_session_name.get(), SIGNAL (clicked()), this, SLOT (rename_session()));
 
-	QLabel* tempo_note = new QLabel (QString::fromUtf8 ("♩ = "), inner_header);
+	auto tempo_note = new QLabel (QString::fromUtf8 ("♩ = "), inner_header);
 	f.setPixelSize (4_screen_mm);
 	f.setWeight (QFont::Normal);
 	tempo_note->setFont (f);
 	tempo_note->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-	_tempo_spinbox = new QDoubleSpinBox (inner_header);
+	_tempo_spinbox = std::make_unique<QDoubleSpinBox> (inner_header);
 	_tempo_spinbox->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_tempo_spinbox->setRange (20.0, 400.0);
 	_tempo_spinbox->setDecimals (2);
 	_tempo_spinbox->setWrapping (true);
 	_tempo_spinbox->setValue (120.0);
 	_tempo_spinbox->setToolTip ("Master tempo");
-	QObject::connect (_tempo_spinbox, SIGNAL (valueChanged (double)), this, SLOT (tempo_value_changed (double)));
+	QObject::connect (_tempo_spinbox.get(), SIGNAL (valueChanged (double)), this, SLOT (tempo_value_changed (double)));
 
-	_panic_button = new QPushButton (Resources::Icons16::panic(), "Panic!", inner_header);
+	_panic_button = std::make_unique<QPushButton> (Resources::Icons16::panic(), "Panic!", inner_header);
 	_panic_button->setIconSize (Resources::Icons16::haruhi().size());
 	_panic_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	_panic_button->setToolTip ("Stops all sound processing (F10)");
-	QObject::connect (_panic_button, SIGNAL (clicked()), this, SLOT (panic_button_clicked()));
+	QObject::connect (_panic_button.get(), SIGNAL (clicked()), this, SLOT (panic_button_clicked()));
 	new QShortcut (Qt::Key_F10, this, SLOT (panic_button_clicked()));
 	new QShortcut (Qt::ControlModifier + Qt::Key_PageUp, this, SLOT (show_prev_plugin()));
 	new QShortcut (Qt::ControlModifier + Qt::Key_PageDown, this, SLOT (show_next_plugin()));
 
-	_main_menu_button = new QPushButton ("Menu ", inner_header);
+	_main_menu_button = std::make_unique<QPushButton> ("Menu ", inner_header);
 	_main_menu_button->setIconSize (Resources::Icons16::haruhi().size());
 	_main_menu_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	_main_menu_button->setMenu (_main_menu);
+	_main_menu_button->setMenu (_main_menu.get());
 	_main_menu_button->setIcon (Resources::Icons16::menu());
 
-	_meter_panel = new MeterPanel (this, this);
-	_stack = new QStackedWidget (this);
+	_meter_panel = std::make_unique<MeterPanel> (this, this);
+	_stack = std::make_unique<QStackedWidget> (this);
 
-	_session_settings = new QTabWidget (this);
+	_session_settings = std::make_unique<QTabWidget> (this);
 	_session_settings->setTabPosition (QTabWidget::South);
 	_session_settings->setIconSize (Resources::Icons16::haruhi().size() * 1.25);
 
-	_haruhi_settings = new QTabWidget (this);
+	_haruhi_settings = std::make_unique<QTabWidget> (this);
 	_haruhi_settings->setTabPosition (QTabWidget::South);
 	_haruhi_settings->setIconSize (Resources::Icons16::haruhi().size() * 1.25);
 
-	_session_global = new Private::SessionGlobal (this, _session_settings);
-	_haruhi_global = new Private::HaruhiGlobal (this, _session_settings);
+	_session_global = std::make_unique<Private::SessionGlobal> (this, _session_settings.get());
+	_haruhi_global = std::make_unique<Private::HaruhiGlobal> (this, _session_settings.get());
 	_audio_widget = create_container (this);
 	_event_widget = create_container (this);
 
 	// Contains audio & event widgets:
-	QWidget* ports_tab = new QWidget (this);
+	auto ports_tab = new QWidget (this);
 	QHBoxLayout* ports_tab_layout = new QHBoxLayout (ports_tab);
 	ports_tab_layout->setMargin (Config::margin());
 	ports_tab_layout->setSpacing (Config::spacing());
-	ports_tab_layout->addWidget (_audio_widget);
-	ports_tab_layout->addWidget (_event_widget);
+	ports_tab_layout->addWidget (_audio_widget.get());
+	ports_tab_layout->addWidget (_event_widget.get());
 
-	_devices_manager = new DevicesManager::Panel (this, Haruhi::haruhi()->devices_manager_settings());
+	_devices_manager = std::make_unique<DevicesManager::Panel> (this, Haruhi::haruhi()->devices_manager_settings());
 
 	// Layouts:
 
-	QHBoxLayout* header_layout = new QHBoxLayout (header);
+	auto header_layout = new QHBoxLayout (header);
 	header_layout->setMargin (Config::margin());
 	header_layout->addWidget (inner_header);
 
-	QHBoxLayout* inner_header_layout = new QHBoxLayout (inner_header);
+	auto inner_header_layout = new QHBoxLayout (inner_header);
 	inner_header_layout->setMargin (0);
 	inner_header_layout->setSpacing (Config::spacing());
-	inner_header_layout->addWidget (_session_name);
+	inner_header_layout->addWidget (_session_name.get());
 	inner_header_layout->addItem (new QSpacerItem (0, 0));
 	inner_header_layout->addWidget (tempo_note);
-	inner_header_layout->addWidget (_tempo_spinbox);
+	inner_header_layout->addWidget (_tempo_spinbox.get());
 	inner_header_layout->addItem (new QSpacerItem (2 * Config::spacing(), 0, QSizePolicy::Maximum, QSizePolicy::Minimum));
-	inner_header_layout->addWidget (_panic_button);
-	inner_header_layout->addWidget (_main_menu_button);
+	inner_header_layout->addWidget (_panic_button.get());
+	inner_header_layout->addWidget (_main_menu_button.get());
 
-	QHBoxLayout* bottom_layout = new QHBoxLayout();
+	auto bottom_layout = new QHBoxLayout();
 	bottom_layout->setSpacing (Config::spacing() + 1);
-	bottom_layout->addWidget (_meter_panel);
-	bottom_layout->addWidget (_stack);
+	bottom_layout->addWidget (_meter_panel.get());
+	bottom_layout->addWidget (_stack.get());
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	auto layout = new QVBoxLayout (this);
 	layout->setMargin (Config::window_margin());
 	layout->setSpacing (Config::spacing());
 	layout->addWidget (header);
 	layout->addLayout (bottom_layout);
 
 	// Add tabs:
-	_session_settings->addTab (_session_global, Resources::Icons16::configure(), "Session settings");
+	_session_settings->addTab (_session_global.get(), Resources::Icons16::configure(), "Session settings");
 	_session_settings->addTab (ports_tab, Resources::Icons16::audio(), "Audio && event ports");
 
-	_haruhi_settings->addTab (_haruhi_global, Resources::Icons16::configure(), "Haruhi settings");
-	_haruhi_settings->addTab (_devices_manager, Resources::Icons16::keyboard(), "Device templates");
+	_haruhi_settings->addTab (_haruhi_global.get(), Resources::Icons16::configure(), "Haruhi settings");
+	_haruhi_settings->addTab (_devices_manager.get(), Resources::Icons16::keyboard(), "Device templates");
 
 	// Start engine and backends before program is loaded:
-	_engine = new Engine (this);
+	_engine = std::make_unique<Engine> (this);
 	start_event_backend();
 	start_audio_backend();
 	_engine->start();
 
-	_program = new Program (this, _stack);
+	_program = std::make_unique<Program> (this, _stack.get());
 
-	_stack->addWidget (_program);
-	_stack->addWidget (_session_settings);
-	_stack->addWidget (_haruhi_settings);
+	_stack->addWidget (_program.get());
+	_stack->addWidget (_session_settings.get());
+	_stack->addWidget (_haruhi_settings.get());
 
-	_stack->setCurrentWidget (_program);
+	_stack->setCurrentWidget (_program.get());
 
 	update_window_title();
 }
@@ -495,13 +486,13 @@ Session::Session (QWidget* parent):
 Session::~Session()
 {
 	// In this order:
-	delete _program;
-	delete _plugin_loader;
+	_program.reset();
+	_plugin_loader.reset();
 
-	delete _engine;
+	_engine.reset();
 	stop_audio_backend();
 	stop_event_backend();
-	delete _graph;
+	_graph.reset();
 }
 
 
@@ -631,8 +622,7 @@ void
 Session::load_state (QDomElement const& element)
 {
 	// Stop processing, if any runs:
-	delete _engine;
-	_engine = 0;
+	_engine.reset();
 
 	set_name (element.attribute ("name", "").toUtf8().data());
 
@@ -658,13 +648,13 @@ Session::load_state (QDomElement const& element)
 		// Components must be restored in given order (backends must get their
 		// IDs before program and connections between units are restored):
 
-		if (auto sst = dynamic_cast<SaveableState*> (_audio_backend))
+		if (auto sst = dynamic_cast<SaveableState*> (_audio_backend.get()))
 			sst->load_state (audio_backend_element);
 
-		if (auto sst = dynamic_cast<SaveableState*> (_event_backend))
+		if (auto sst = dynamic_cast<SaveableState*> (_event_backend.get()))
 			sst->load_state (event_backend_element);
 
-		_engine = new Engine (this);
+		_engine = std::make_unique<Engine> (this);
 		_program->load_state (program_element);
 
 		// Restore connections, parameters, etc. before starting engine:
@@ -695,7 +685,7 @@ Session::save_state (QDomElement& element) const
 
 	// Save audio-backend:
 	QDomElement audio_backend = element.ownerDocument().createElement ("audio-backend");
-	if (auto sst = dynamic_cast<SaveableState*> (_audio_backend))
+	if (auto sst = dynamic_cast<SaveableState*> (_audio_backend.get()))
 	{
 		sst->save_state (audio_backend);
 		audio_backend.setAttribute ("id", _audio_backend->id());
@@ -703,7 +693,7 @@ Session::save_state (QDomElement& element) const
 
 	// Save event-backend:
 	QDomElement event_backend = element.ownerDocument().createElement ("event-backend");
-	if (auto sst = dynamic_cast<SaveableState*> (_event_backend))
+	if (auto sst = dynamic_cast<SaveableState*> (_event_backend.get()))
 	{
 		sst->save_state (event_backend);
 		event_backend.setAttribute ("id", _event_backend->id());
@@ -723,7 +713,7 @@ Session::save_state (QDomElement& element) const
 void
 Session::session_loader()
 {
-	Haruhi::haruhi()->session_loader();	
+	Haruhi::haruhi()->session_loader();
 }
 
 
@@ -740,7 +730,7 @@ Session::save_session()
 void
 Session::save_session_as()
 {
-	QFileDialog* file_dialog = new QFileDialog (this, "Save session", ".", QString());
+	auto file_dialog = new QFileDialog (this, "Save session", ".", QString());
 	file_dialog->setNameFilter ("All Haruhi session files (*.haruhi-session)");
 	file_dialog->setFileMode (QFileDialog::AnyFile);
 	file_dialog->setAcceptMode (QFileDialog::AcceptSave);
@@ -757,7 +747,7 @@ Session::save_session_as()
 void
 Session::rename_session()
 {
-	Private::SettingsDialog* dialog = new Private::SettingsDialog (this, this);
+	auto dialog = new Private::SettingsDialog (this, this);
 	if (dialog->exec() == Private::SettingsDialog::Accepted)
 		dialog->apply();
 }
@@ -796,7 +786,7 @@ Session::show_next_plugin()
 void
 Session::create_main_menu()
 {
-	_main_menu = new QMenu (this);
+	_main_menu = std::make_unique<QMenu> (this);
 
 	_main_menu->addAction ("Program", this, SLOT (show_program()), Qt::Key_F1);
 	_main_menu->addAction ("Session settings", this, SLOT (show_session_settings()), Qt::Key_F2);
@@ -817,13 +807,12 @@ Session::stop_audio_backend()
 {
 	if (_audio_backend)
 	{
-		if (auto w = dynamic_cast<QWidget*> (_audio_backend))
+		if (auto w = dynamic_cast<QWidget*> (_audio_backend.get()))
 			w->hide();
 
 		_graph->unregister_audio_backend();
-		delete _audio_backend;
+		_audio_backend.reset();
 	}
-	_audio_backend = 0;
 }
 
 
@@ -832,16 +821,15 @@ Session::stop_event_backend()
 {
 	if (_event_backend)
 	{
-		if (auto w = dynamic_cast<QWidget*> (_event_backend))
+		if (auto w = dynamic_cast<QWidget*> (_event_backend.get()))
 			w->hide();
 
 		if (_devices_manager)
-			_devices_manager->set_event_backend (0);
+			_devices_manager->set_event_backend (nullptr);
 
 		_graph->unregister_event_backend();
-		delete _event_backend;
+		_event_backend.reset();
 	}
-	_event_backend = 0;
 }
 
 
@@ -849,12 +837,12 @@ void
 Session::start_audio_backend()
 {
 	try {
-		AudioBackendImpl::Backend* audio_backend = new AudioBackendImpl::Backend ("Haruhi", _audio_widget);
-		_audio_widget->layout()->addWidget (audio_backend);
-		_audio_backend = audio_backend;
+		auto audio_backend = std::make_unique<AudioBackendImpl::Backend> ("Haruhi", _audio_widget.get());
+		_audio_widget->layout()->addWidget (audio_backend.get());
 		audio_backend->on_state_change.connect (this, &Session::audio_backend_state_change);
 		audio_backend->show();
-		_graph->register_audio_backend (_audio_backend);
+		_audio_backend = std::move (audio_backend);
+		_graph->register_audio_backend (_audio_backend.get());
 		// Initially set master volume:
 		master_volume_changed (meter_panel()->master_volume()->value());
 	}
@@ -869,19 +857,19 @@ void
 Session::start_event_backend()
 {
 	try {
-		EventBackendImpl::Backend* event_backend = new EventBackendImpl::Backend ("Haruhi", _event_widget);
-		_event_widget->layout()->addWidget (event_backend);
-		_event_backend = event_backend;
+		auto event_backend = std::make_unique<EventBackendImpl::Backend> ("Haruhi", _event_widget.get());
+		_event_widget->layout()->addWidget (event_backend.get());
 		event_backend->show();
-		_graph->register_event_backend (_event_backend);
+		_graph->register_event_backend (event_backend.get());
 		// Reload DevicesManager list when EventBackend creates new template:
 		if (!_devices_manager)
 			throw Exception ("DevicesManager must be created before EventBackend");
 		// Connect EventBackend and DevicesManager:
 		event_backend->device_saved_as_template.connect (_devices_manager->settings(), &DevicesManager::Settings::add_device);
-		event_backend->on_event.connect (_devices_manager, &DevicesManager::Panel::on_event);
-		_devices_manager->set_event_backend (event_backend);
-		_devices_manager->settings()->model().on_change.connect (event_backend, &EventBackendImpl::Backend::devices_manager_updated);
+		event_backend->on_event.connect (_devices_manager.get(), &DevicesManager::Panel::on_event);
+		_devices_manager->set_event_backend (event_backend.get());
+		_devices_manager->settings()->model().on_change.connect (event_backend.get(), &EventBackendImpl::Backend::devices_manager_updated);
+		_event_backend = std::move (event_backend);
 	}
 	catch (Exception const& e)
 	{
@@ -926,26 +914,28 @@ Session::closeEvent (QCloseEvent* e)
 void
 Session::customEvent (QEvent* e)
 {
-	auto ue = dynamic_cast<UpdateMasterVolume*> (e);
-	if (!ue)
-		return;
-	e->accept();
-	if (_audio_backend)
-		meter_panel()->master_volume()->setValue (renormalize (ue->value, 0.0f, 1.0f, Session::MeterPanel::MinVolume, Session::MeterPanel::MaxVolume));
+	if (auto ue = dynamic_cast<UpdateMasterVolume*> (e))
+	{
+		e->accept();
+		if (_audio_backend)
+			meter_panel()->master_volume()->setValue (renormalize (ue->value, 0.0f, 1.0f, Session::MeterPanel::MinVolume, Session::MeterPanel::MaxVolume));
+	}
 }
 
 
-QWidget*
+Unique<QWidget>
 Session::create_container (QWidget* parent)
 {
 	// Configure layouts for audio and event tabs:
-	QFrame* w = new QFrame (parent);
+	auto w = std::make_unique<QFrame> (parent);
 	w->setFrameShadow (QFrame::Raised);
 	w->setFrameShape (QFrame::StyledPanel);
 	w->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	QVBoxLayout* layout = new QVBoxLayout (w);
+
+	auto layout = new QVBoxLayout (w.get());
 	layout->setMargin (Config::margin());
 	layout->setSpacing (Config::spacing());
+
 	return w;
 }
 

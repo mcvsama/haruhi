@@ -63,8 +63,8 @@ Engine::run()
 void
 Engine::adjust_master_volume()
 {
-	EventBuffer* buffer = _session->graph()->audio_backend()->master_volume_port()->event_buffer();
-	EventBuffer::Events const& events = buffer->events();
+	auto buffer = _session->graph()->audio_backend()->master_volume_port()->event_buffer();
+	auto const& events = buffer->events();
 	for (auto& e: events)
 	{
 		if (e->event_type() == Event::ControllerEventType)
@@ -79,8 +79,8 @@ Engine::adjust_master_volume()
 void
 Engine::check_panic_button()
 {
-	EventBuffer* buffer = _session->graph()->audio_backend()->panic_port()->event_buffer();
-	EventBuffer::Events const& events = buffer->events();
+	auto buffer = _session->graph()->audio_backend()->panic_port()->event_buffer();
+	auto const& events = buffer->events();
 	for (auto e: events)
 	{
 		if (e->event_type() == Event::ControllerEventType)

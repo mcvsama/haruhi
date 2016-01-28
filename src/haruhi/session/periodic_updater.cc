@@ -28,7 +28,7 @@
 
 namespace Haruhi {
 
-PeriodicUpdater* PeriodicUpdater::_singleton = 0;
+PeriodicUpdater* PeriodicUpdater::_singleton = nullptr;
 
 
 void
@@ -47,12 +47,12 @@ PeriodicUpdater::Receiver::forget_about_update()
 
 PeriodicUpdater::PeriodicUpdater (int period_ms)
 {
-	if (PeriodicUpdater::_singleton != 0)
+	if (PeriodicUpdater::_singleton)
 		throw Exception ("PeriodicUpdater is a signleton, and can be instantiated only once");
 	PeriodicUpdater::_singleton = this;
 
-	_timer = new QTimer (this);
-	QObject::connect (_timer, SIGNAL (timeout()), this, SLOT (timeout()));
+	_timer = std::make_unique<QTimer> (this);
+	QObject::connect (_timer.get(), SIGNAL (timeout()), this, SLOT (timeout()));
 	_timer->start (period_ms);
 }
 
@@ -60,7 +60,7 @@ PeriodicUpdater::PeriodicUpdater (int period_ms)
 PeriodicUpdater::~PeriodicUpdater()
 {
 	_timer->stop();
-	PeriodicUpdater::_singleton = 0;
+	PeriodicUpdater::_singleton = nullptr;
 }
 
 

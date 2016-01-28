@@ -36,39 +36,37 @@ namespace Haruhi {
 
 PluginLoader::PluginLoader()
 {
-	_plugin_factories.push_back (new BugFuzzerFactory());
-	_plugin_factories.push_back (new EGFactory());
-	_plugin_factories.push_back (new YukiFactory());
+	_plugin_factories.push_back (std::make_unique<BugFuzzerFactory>());
+	_plugin_factories.push_back (std::make_unique<EGFactory>());
+	_plugin_factories.push_back (std::make_unique<YukiFactory>());
 }
 
 
 PluginLoader::~PluginLoader()
-{
-	std::for_each (_plugin_factories.begin(), _plugin_factories.end(), delete_operator<PluginFactories::value_type>);
-}
+{ }
 
 
 Plugin*
 PluginLoader::load (std::string const& urn, int id)
 {
-	PluginFactory* factory = find_factory (urn);
-	if (factory)
+	if (auto factory = find_factory (urn))
 	{
-		Plugin* plugin = factory->create_plugin (id, 0);
+		auto plugin = factory->create_plugin (id, nullptr);
 		plugin->hide();
 		return plugin;
 	}
-	return 0;
+	else
+		return nullptr;
 }
 
 
 void
 PluginLoader::unload (Plugin* plugin)
 {
-	PluginFactory* factory = find_factory (plugin->urn());
-	if (!factory)
+	if (auto factory = find_factory (plugin->urn()))
+		factory->destroy_plugin (plugin);
+	else
 		throw Exception ("couldn't find factory to unload plugin");
-	factory->destroy_plugin (plugin);
 }
 
 
@@ -82,10 +80,10 @@ PluginLoader::plugin_factories() const
 PluginFactory*
 PluginLoader::find_factory (std::string const& urn) const
 {
-	for (PluginFactory* pf: _plugin_factories)
+	for (auto& pf: _plugin_factories)
 		if (pf->urn() == urn)
-			return pf;
-	return 0;
+			return pf.get();
+	return nullptr;
 }
 
 } // namespace Haruhi

@@ -82,6 +82,9 @@ class SessionLoader: public QDialog
 	 */
 	SessionLoader (DefaultTab default_tab, RejectButton reject_button, QWidget* parent);
 
+	// Dtor
+	~SessionLoader();
+
 	/**
 	 * Applies configuration to the Session (creates audio ports,
 	 * inserts event devices, sets name for the session, etc.)
@@ -137,22 +140,22 @@ class SessionLoader: public QDialog
 	del_selected_device();
 
   private:
-	QTabWidget*		_tabs;
-	QWidget*		_new_tab;
-	QWidget*		_open_tab;
-	QPushButton*	_load_from_file_button;
-	QPushButton*	_open_button;
-	QPushButton*	_quit_button;
-	QLineEdit*		_new_session_name;
-	QSpinBox*		_new_session_audio_inputs;
-	QSpinBox*		_new_session_audio_outputs;
-	QPushButton*	_devices_add;
-	QPushButton*	_devices_del;
-	QComboBox*		_devices_combobox;
-	QListWidget*	_devices_list;
-	QTreeWidget*	_recent_listview;
-	Result			_result;
-	QString			_file_name;
+	Unique<QTabWidget>		_tabs;
+	Unique<QWidget>			_new_tab;
+	Unique<QWidget>			_open_tab;
+	Unique<QPushButton>		_load_from_file_button;
+	Unique<QPushButton>		_open_button;
+	Unique<QPushButton>		_quit_button;
+	Unique<QLineEdit>		_new_session_name;
+	Unique<QSpinBox>		_new_session_audio_inputs;
+	Unique<QSpinBox>		_new_session_audio_outputs;
+	Unique<QPushButton>		_devices_add;
+	Unique<QPushButton>		_devices_del;
+	Unique<QComboBox>		_devices_combobox;
+	Unique<QListWidget>		_devices_list;
+	Unique<QTreeWidget>		_recent_listview;
+	Result					_result;
+	QString					_file_name;
 };
 
 

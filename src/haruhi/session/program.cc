@@ -32,17 +32,12 @@ Program::Program (Session* session, QWidget* parent):
 {
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-	_patch = new Patch (session, "Patch", this);
+	_patch = std::make_unique<Patch> (session, "Patch", this);
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	auto layout = new QVBoxLayout (this);
 	layout->setMargin (0);
 	layout->setSpacing (Config::spacing());
-	layout->addWidget (_patch);
-}
-
-
-Program::~Program()
-{
+	layout->addWidget (_patch.get());
 }
 
 

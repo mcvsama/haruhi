@@ -54,14 +54,14 @@ ControllerProxy::process_events()
 			{
 				case Event::ControllerEventType:
 				{
-					ControllerEvent const* ce = static_cast<ControllerEvent const*> (event.get());
+					auto ce = static_cast<ControllerEvent const*> (event.get());
 					process_event (ce);
 					break;
 				}
 
 				case Event::VoiceControllerEventType:
 				{
-					VoiceControllerEvent const* vce = static_cast<VoiceControllerEvent const*> (event.get());
+					auto vce = static_cast<VoiceControllerEvent const*> (event.get());
 					on_voice_controller_event (vce, param()->adapter()->forward_normalized (vce->value()));
 					break;
 				}

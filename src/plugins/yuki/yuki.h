@@ -39,7 +39,7 @@ class YukiFactory: public Haruhi::PluginFactory
 	title() const override { return "Yuki"; }
 
 	Type
-	type() const override { return Synthesizer; }
+	type() const override { return Type::Synthesizer; }
 
 	const char*
 	author() const override { return "Michał <mcv> Gawron"; }

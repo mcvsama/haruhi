@@ -44,7 +44,6 @@
 namespace Haruhi {
 
 Settings::Module::Module (QString const& name):
-	_host (0),
 	_name (name)
 {
 }
@@ -109,7 +108,7 @@ void
 Settings::unregister_module (Module* module)
 {
 	_modules.erase (module->name());
-	module->_host = 0;
+	module->_host = nullptr;
 }
 
 

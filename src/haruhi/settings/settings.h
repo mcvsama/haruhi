@@ -88,7 +88,7 @@ class Settings: public RecursiveMutex
 		host() const;
 
 	  private:
-		Settings*	_host;
+		Settings*	_host	= nullptr;
 		QString		_name;
 	};
 

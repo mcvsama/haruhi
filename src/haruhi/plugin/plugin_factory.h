@@ -30,7 +30,7 @@ class Plugin;
 class PluginFactory
 {
   public:
-	enum Type
+	enum class Type
 	{
 		Synthesizer	= 0,
 		Effect		= 1,

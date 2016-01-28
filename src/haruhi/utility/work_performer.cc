@@ -31,7 +31,7 @@ WorkPerformer::Performer::Performer (WorkPerformer* work_performer, unsigned int
 void
 WorkPerformer::Performer::run()
 {
-	Unit* unit = 0;
+	Unit* unit = nullptr;
 	while ((unit = _work_performer->take_unit()))
 	{
 		unit->_is_ready.store (false);
@@ -49,9 +49,8 @@ WorkPerformer::WorkPerformer (unsigned int threads_number)
 
 	for (unsigned int i = 0; i < threads_number; ++i)
 	{
-		Performer* p = new Performer (this, i);
-		_performers.push_back (p);
-		p->start();
+		_performers.push_back (std::make_unique<Performer> (this, i));
+		_performers.back()->start();
 	}
 }
 
@@ -60,10 +59,11 @@ WorkPerformer::~WorkPerformer()
 {
 	for (decltype (_performers.size()) i = 0; i < _performers.size(); ++i)
 		_queue_semaphore.post();
-	for (Performer* p: _performers)
+
+	for (auto& p: _performers)
 	{
 		p->wait();
-		delete p;
+		p.reset();
 	}
 }
 
@@ -82,7 +82,7 @@ WorkPerformer::add (Unit* unit)
 void
 WorkPerformer::set_sched (Thread::SchedType sched_type, int priority) noexcept
 {
-	for (Performer* p: _performers)
+	for (auto& p: _performers)
 		p->set_sched (sched_type, priority);
 }
 

@@ -98,10 +98,10 @@ class PeriodicUpdater: public QObject
 	timeout();
 
   private:
-	static PeriodicUpdater*	_singleton;
-	Set						_set;
-	Mutex					_set_mutex;
-	QTimer*					_timer;
+	static owner<PeriodicUpdater*>	_singleton;
+	Set								_set;
+	Mutex							_set_mutex;
+	Unique<QTimer>					_timer;
 };
 
 

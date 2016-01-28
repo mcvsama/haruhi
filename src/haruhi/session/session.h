@@ -75,10 +75,10 @@ namespace SessionPrivate {
 		validate_and_accept();
 
 	  private:
-		Session*		_session;
-		QLineEdit*		_name;
-		QPushButton*	_accept_button;
-		QPushButton*	_reject_button;
+		Session*			_session;
+		Unique<QLineEdit>	_name;
+		Unique<QPushButton>	_accept_button;
+		Unique<QPushButton>	_reject_button;
 	};
 
 	class SessionGlobal: public QWidget
@@ -101,12 +101,12 @@ namespace SessionPrivate {
 		update_widgets();
 
 	  private:
-		Session*	_session;
-		bool		_loading_params;
+		Session*			_session;
+		bool				_loading_params;
 
-		QSpinBox*	_tuning;
-		QLabel*		_tuning_hz;
-		QSpinBox*	_transpose;
+		Unique<QSpinBox>	_tuning;
+		Unique<QLabel>		_tuning_hz;
+		Unique<QSpinBox>	_transpose;
 	};
 
 	class HaruhiGlobal: public QWidget
@@ -129,11 +129,11 @@ namespace SessionPrivate {
 		update_widgets();
 
 	  private:
-		Session*	_session;
-		bool		_loading_params;
+		Session*			_session;
+		bool				_loading_params;
 
-		QSpinBox*	_engine_thread_priority;
-		QSpinBox*	_level_meter_fps;
+		Unique<QSpinBox>	_engine_thread_priority;
+		Unique<QSpinBox>	_level_meter_fps;
 	};
 
 } // namespace SessionPrivate
@@ -169,10 +169,10 @@ class Session:
 		limit_values();
 
 	  public:
-		int		tuning; // -50…50 cents
-		int		transpose;
-		float	tempo;
-		int		master_volume;
+		int		tuning			= 0; // -50…50 cents
+		int		transpose		= 0;
+		float	tempo			= 120.0;
+		int		master_volume	= 0;
 	};
 
 	class MeterPanel: public QFrame
@@ -197,9 +197,9 @@ class Session:
 		set_fps (int fps);
 
 	  private:
-		Session*			_session;
-		LevelMetersGroup*	_level_meters_group;
-		DialControl*		_master_volume;
+		Session*					_session;
+		Unique<LevelMetersGroup>	_level_meters_group;
+		Unique<DialControl>			_master_volume;
 	};
 
 	class UpdateMasterVolume: public QEvent
@@ -346,53 +346,53 @@ class Session:
 	customEvent (QEvent*) override;
 
   private:
-	QWidget*
+	Unique<QWidget>
 	create_container (QWidget* parent);
 
   private:
-	QString							_name;
-	QString							_file_name;
-	Parameters						_parameters;
-	Graph*							_graph;
+	QString									_name;
+	QString									_file_name;
+	Parameters								_parameters;
 
-	MeterPanel*						_meter_panel;
-	QStackedWidget*					_stack;
-	QLabel*							_session_name;
-	QPushButton*					_panic_button;
-	QPushButton*					_main_menu_button;
+	Unique<MeterPanel>						_meter_panel;
+	Unique<QStackedWidget>					_stack;
+	Unique<QLabel>							_session_name;
+	Unique<QPushButton>						_panic_button;
+	Unique<QPushButton>						_main_menu_button;
+	Unique<QDoubleSpinBox>					_tempo_spinbox;
+	Unique<QMenu>							_main_menu;
 
-	Program*						_program;
-	QTabWidget*						_session_settings;
-	QTabWidget*						_haruhi_settings;
+	// In this order:
+	Unique<Graph>							_graph;
+	Unique<Engine>							_engine;
+	Unique<PluginLoader>					_plugin_loader;
+	Unique<Program>							_program;
 
-	SessionPrivate::SessionGlobal*	_session_global;
-	SessionPrivate::HaruhiGlobal*	_haruhi_global;
-	QWidget*						_audio_widget;
-	QWidget*						_event_widget;
+	Unique<QTabWidget>						_session_settings;
+	Unique<QTabWidget>						_haruhi_settings;
+	Unique<SessionPrivate::SessionGlobal>	_session_global;
+	Unique<SessionPrivate::HaruhiGlobal>	_haruhi_global;
+	Unique<QWidget>							_audio_widget;
+	Unique<QWidget>							_event_widget;
 
 	// Links to main session components:
-	AudioBackend*					_audio_backend;
-	EventBackend*					_event_backend;
-	Engine*							_engine;
-	PluginLoader*					_plugin_loader;
-	DevicesManager::Panel*			_devices_manager;
-
-	QDoubleSpinBox*					_tempo_spinbox;
-	QMenu*							_main_menu;
+	Unique<AudioBackend>					_audio_backend;
+	Unique<EventBackend>					_event_backend;
+	Unique<DevicesManager::Panel>			_devices_manager;
 };
 
 
 inline LevelMetersGroup*
 Session::MeterPanel::level_meters_group() const
 {
-	return _level_meters_group;
+	return _level_meters_group.get();
 }
 
 
 inline DialControl*
 Session::MeterPanel::master_volume() const
 {
-	return _master_volume;
+	return _master_volume.get();
 }
 
 
@@ -406,7 +406,7 @@ Session::UpdateMasterVolume::UpdateMasterVolume (Sample value):
 inline Engine*
 Session::engine() const
 {
-	return _engine;
+	return _engine.get();
 }
 
 
@@ -442,21 +442,21 @@ Session::set_file_name (QString const& file_name)
 inline Graph*
 Session::graph() const
 {
-	return _graph;
+	return _graph.get();
 }
 
 
 inline PluginLoader*
 Session::plugin_loader() const
 {
-	return _plugin_loader;
+	return _plugin_loader.get();
 }
 
 
 inline Session::MeterPanel*
 Session::meter_panel() const
 {
-	return _meter_panel;
+	return _meter_panel.get();
 }
 
 
@@ -470,28 +470,28 @@ Session::parameters()
 inline DevicesManager::Panel*
 Session::devices_manager()
 {
-	return _devices_manager;
+	return _devices_manager.get();
 }
 
 
 inline void
 Session::show_program()
 {
-	_stack->setCurrentWidget (_program);
+	_stack->setCurrentWidget (_program.get());
 }
 
 
 inline void
 Session::show_session_settings()
 {
-	_stack->setCurrentWidget (_session_settings);
+	_stack->setCurrentWidget (_session_settings.get());
 }
 
 
 inline void
 Session::show_haruhi_settings()
 {
-	_stack->setCurrentWidget (_haruhi_settings);
+	_stack->setCurrentWidget (_haruhi_settings.get());
 }
 
 

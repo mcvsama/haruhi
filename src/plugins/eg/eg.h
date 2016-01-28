@@ -39,7 +39,7 @@ class EGFactory: public Haruhi::PluginFactory
 	title() const override { return "EG"; }
 
 	Type
-	type() const override { return Envelope; }
+	type() const override { return Type::Envelope; }
 
 	const char*
 	author() const override { return "Michał <mcv> Gawron"; }

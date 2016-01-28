@@ -52,14 +52,12 @@ namespace PatchPrivate {
 	  public:
 		ConnectionsTab (Patch* patch, QWidget* parent);
 
-		~ConnectionsTab();
-
 		PortsConnector*
 		ports_connector() const;
 
 	  private:
-		Patch*			_patch;
-		PortsConnector*	_ports_connector;
+		Patch*					_patch;
+		Unique<PortsConnector>	_ports_connector;
 	};
 
 
@@ -96,16 +94,19 @@ namespace PatchPrivate {
 		update_widgets();
 
 	  private:
-		Patch*			_patch;
-		Plugin*			_plugin;
-		QWidget*		_plugin_container;
-		QStackedWidget*	_stack;
-		QPushButton*	_favorite_button;
-		QString			_preset_uuid;
-		QLabel*			_preset_name;
-		QPushButton*	_presets_button;
-		PresetsManager*	_presets_manager;
-		QMenu*			_menu;
+		Patch*					_patch;
+		Plugin*					_plugin;
+
+		// In this order (_stack also owns _plugin_container and _presets_manager):
+		Unique<QStackedWidget>	_stack;
+		Unique<PresetsManager>	_presets_manager;
+		Unique<QWidget>			_plugin_container;
+
+		Unique<QPushButton>		_favorite_button;
+		QString					_preset_uuid;
+		Unique<QLabel>			_preset_name;
+		Unique<QPushButton>		_presets_button;
+		Unique<QMenu>			_menu;
 	};
 
 } // namespace PatchPrivate
@@ -129,7 +130,7 @@ class Patch:
 
 	friend class PatchPrivate::PluginTab;
 
-	typedef std::map<Plugin*, PatchPrivate::PluginTab*> PluginsToFramesMap;
+	typedef std::map<Plugin*, Unique<PatchPrivate::PluginTab>> PluginsToFramesMap;
 
   public:
 	// Ctor
@@ -196,21 +197,22 @@ class Patch:
 	load_plugin_request (int i);
 
   private:
-	std::shared_ptr<int>			_lifetime_tracker = std::make_shared<int> (0);
-	Session*						_session;
-	QTabWidget*						_tabs;
-	PatchPrivate::ConnectionsTab*	_connections_tab;
-	PluginsToFramesMap				_plugins_to_frames_map;
-	QMenu*							_plugins_menu;
-	QSignalMapper*					_plugins_mapper;
-	std::map<int, QString>			_urns;
+	std::shared_ptr<int>					_lifetime_tracker = std::make_shared<int> (0);
+	Session*								_session;
+	PluginsToFramesMap						_plugins_to_frames_map;
+	std::map<int, QString>					_urns;
+	// In this order:
+	Unique<QTabWidget>						_tabs;
+	Unique<QMenu>							_plugins_menu;
+	Unique<QSignalMapper>					_plugins_mapper;
+	Unique<PatchPrivate::ConnectionsTab>	_connections_tab;
 };
 
 
 inline PortsConnector*
 PatchPrivate::ConnectionsTab::ports_connector() const
 {
-	return _ports_connector;
+	return _ports_connector.get();
 }
 
 

@@ -385,7 +385,7 @@ EMITER_TEMPLATE_SIGNATURE
 			void
 			connect (Receiver* receiver, void (Receiver::*method)(EMITER_PARAMETER_TYPES_LIST))
 			{
-				Connection<Receiver>* connection = new Connection<Receiver> (this, receiver, method);
+				auto connection = new Connection<Receiver> (this, receiver, method);
 				_connections.push_back (connection);
 				receiver->_connections.push_back (connection);
 			}
@@ -394,7 +394,7 @@ EMITER_TEMPLATE_SIGNATURE
 			void
 			connect (boost::function<void (EMITER_PARAMETER_TYPES_LIST)> const& function)
 			{
-				Connection<Receiver>* connection = new BoostFunctionConnection<Receiver> (this, function);
+				auto connection = new BoostFunctionConnection<Receiver> (this, function);
 				_connections.push_back (connection);
 			}
 

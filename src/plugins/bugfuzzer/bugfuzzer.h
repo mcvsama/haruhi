@@ -86,7 +86,7 @@ class BugFuzzerFactory: public Haruhi::PluginFactory
 	title() const override { return "BugFuzzer"; }
 
 	Type
-	type() const override { return Other; }
+	type() const override { return Type::Other; }
 
 	const char*
 	author() const override { return "Michał <mcv> Gawron"; }

@@ -38,8 +38,6 @@ class Program:
   public:
 	Program (Session*, QWidget* parent = 0);
 
-	virtual ~Program();
-
 	void
 	show_prev_plugin();
 
@@ -57,7 +55,7 @@ class Program:
 	load_state (QDomElement const&) override;
 
   private:
-	Patch* _patch;
+	Unique<Patch> _patch;
 };
 
 } // namespace Haruhi

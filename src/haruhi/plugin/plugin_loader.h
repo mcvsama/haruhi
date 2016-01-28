@@ -34,7 +34,7 @@ class PluginFactory;
 class PluginLoader
 {
   public:
-	typedef std::list<PluginFactory*> PluginFactories;
+	typedef std::list<Unique<PluginFactory>> PluginFactories;
 
   public:
 	PluginLoader();
