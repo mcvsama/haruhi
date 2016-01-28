@@ -128,7 +128,7 @@ PartOscillatorWidget::PartOscillatorWidget (QWidget* parent, PartWidget* part_wi
 	_wave_type->insertItem (8, Resources::Icons16::wave_chirp(), "Chirp");
 	_wave_type->setIconSize (Resources::Icons16::haruhi().size());
 	_wave_type->setCurrentIndex (pp->wave_type);
-	QObject::connect (_wave_type, SIGNAL (activated (int)), this, SLOT (widgets_to_wave_params()));
+	QObject::connect (_wave_type, SIGNAL (activated (int)), _part_widget, SLOT (widgets_to_wave_params()));
 
 	// Modulator wave type:
 	_modulator_wave_type = new QComboBox (this);
@@ -139,7 +139,7 @@ PartOscillatorWidget::PartOscillatorWidget (QWidget* parent, PartWidget* part_wi
 	_modulator_wave_type->setCurrentIndex (pp->modulator_wave_type);
 	_modulator_wave_type->setToolTip ("Modulator wave");
 	_modulator_wave_type->setIconSize (Resources::Icons16::haruhi().size());
-	QObject::connect (_modulator_wave_type, SIGNAL (activated (int)), this, SLOT (widgets_to_wave_params()));
+	QObject::connect (_modulator_wave_type, SIGNAL (activated (int)), _part_widget, SLOT (widgets_to_wave_params()));
 
 	// Modulator type:
 	_modulator_type = new QComboBox (this);
@@ -148,21 +148,21 @@ PartOscillatorWidget::PartOscillatorWidget (QWidget* parent, PartWidget* part_wi
 	_modulator_type->setCurrentIndex (pp->modulator_type);
 	_modulator_type->setToolTip ("Modulator type");
 	_modulator_type->setIconSize (Resources::Icons16::haruhi().size());
-	QObject::connect (_modulator_type, SIGNAL (activated (int)), this, SLOT (widgets_to_wave_params()));
+	QObject::connect (_modulator_type, SIGNAL (activated (int)), _part_widget, SLOT (widgets_to_wave_params()));
 
 	// Unison stereo:
 	_unison_stereo = new QPushButton ("Unison stereo", this);
 	_unison_stereo->setCheckable (true);
 	_unison_stereo->setChecked (pp->unison_stereo);
 	_unison_stereo->setToolTip ("Spreads unison voices across stereo channels.");
-	QObject::connect (_unison_stereo, SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_unison_stereo, SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Pseudo stereo:
 	_pseudo_stereo = new QPushButton ("Pseudo stereo", this);
 	_pseudo_stereo->setCheckable (true);
 	_pseudo_stereo->setChecked (pp->pseudo_stereo);
 	_pseudo_stereo->setToolTip ("Inverts right channel to give pseudo-stereo effect for monophonic voices.");
-	QObject::connect (_pseudo_stereo, SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_pseudo_stereo, SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Transposition:
 	_transposition_semitones = new QSpinBox (this);
@@ -170,40 +170,40 @@ PartOscillatorWidget::PartOscillatorWidget (QWidget* parent, PartWidget* part_wi
 	_transposition_semitones->setMaximum (60);
 	_transposition_semitones->setSuffix (" semitones");
 	_transposition_semitones->setValue (pp->transposition_semitones);
-	QObject::connect (_transposition_semitones, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_transposition_semitones, SIGNAL (valueChanged (int)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Auto-center wave:
 	_auto_center = new QPushButton ("Auto center", this);
 	_auto_center->setCheckable (true);
 	_auto_center->setChecked (pp->auto_center);
 	_auto_center->setToolTip ("Auto center wave around 0 level. Takes more CPU power to update wavetables.");
-	QObject::connect (_auto_center, SIGNAL (toggled (bool)), this, SLOT (widgets_to_wave_params()));
+	QObject::connect (_auto_center, SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_wave_params()));
 
 	// Const. glide:
 	_const_portamento_time = new QPushButton ("Const. glide", this);
 	_const_portamento_time->setCheckable (true);
 	_const_portamento_time->setChecked (pp->const_portamento_time);
-	QObject::connect (_const_portamento_time, SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_const_portamento_time, SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Pitchbend down:
 	_pitchbend_down_semitones = new QSpinBox (this);
 	_pitchbend_down_semitones->setMinimum (-60);
 	_pitchbend_down_semitones->setMaximum (0);
 	_pitchbend_down_semitones->setValue (-pp->pitchbend_down_semitones);
-	QObject::connect (_pitchbend_down_semitones, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_pitchbend_down_semitones, SIGNAL (valueChanged (int)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Pitchbend up:
 	_pitchbend_up_semitones = new QSpinBox (this);
 	_pitchbend_up_semitones->setMinimum (0);
 	_pitchbend_up_semitones->setMaximum (60);
 	_pitchbend_up_semitones->setValue (pp->pitchbend_up_semitones);
-	QObject::connect (_pitchbend_up_semitones, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_pitchbend_up_semitones, SIGNAL (valueChanged (int)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Pitchbend enabled:
 	_pitchbend_enabled = new QPushButton ("Pitchbend", this);
 	_pitchbend_enabled->setCheckable (true);
 	_pitchbend_enabled->setChecked (pp->pitchbend_enabled);
-	QObject::connect (_pitchbend_enabled, SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_pitchbend_enabled, SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Frequency modulation range:
 	_frequency_modulation_range = new QSpinBox (this);
@@ -211,22 +211,22 @@ PartOscillatorWidget::PartOscillatorWidget (QWidget* parent, PartWidget* part_wi
 	_frequency_modulation_range->setMaximum (60);
 	_frequency_modulation_range->setSuffix (" semitones");
 	_frequency_modulation_range->setValue (pp->frequency_mod_range);
-	QObject::connect (_frequency_modulation_range, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_frequency_modulation_range, SIGNAL (valueChanged (int)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Wave enabled:
 	_wave_enabled = new QPushButton ("Wave", this);
 	_wave_enabled->setCheckable (true);
 	_wave_enabled->setChecked (pp->wave_enabled);
 	_wave_enabled->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Fixed);
-	QObject::connect (_wave_enabled, SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
-	QObject::connect (_wave_enabled, SIGNAL (toggled (bool)), this, SLOT (update_widgets()));
+	QObject::connect (_wave_enabled, SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_wave_enabled, SIGNAL (toggled (bool)), _part_widget, SLOT (update_widgets()));
 
 	// Noise enabled:
 	_noise_enabled = new QPushButton ("Noise", this);
 	_noise_enabled->setCheckable (true);
 	_noise_enabled->setChecked (pp->noise_enabled);
 	_noise_enabled->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Fixed);
-	QObject::connect (_noise_enabled, SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_noise_enabled, SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Filters:
 	_filter_1 = new FilterWidget (this, 0, &_part->part_params()->voice.filters[0], _part);
@@ -238,7 +238,7 @@ PartOscillatorWidget::PartOscillatorWidget (QWidget* parent, PartWidget* part_wi
 	_filter_configuration->insertItem (DualFilter::Parallel, "Filters: Parallel");
 	_filter_configuration->setCurrentIndex (pp->filter_configuration);
 	_filter_configuration->setIconSize (Resources::Icons16::haruhi().size());
-	QObject::connect (_filter_configuration, SIGNAL (activated (int)), this, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_filter_configuration, SIGNAL (activated (int)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Layouts:
 
@@ -350,7 +350,6 @@ PartOscillatorWidget::widgets_to_wave_params()
 	pp->modulator_type = _modulator_type->currentIndex();
 	pp->modulator_wave_type = _modulator_wave_type->currentIndex();
 	pp->auto_center = _auto_center->isChecked();
-
 }
 
 
@@ -387,7 +386,6 @@ PartOscillatorWidget::update_widgets()
 	_knob_modulator_shape->setEnabled (immutable);
 	_modulator_type->setEnabled (immutable);
 	_modulator_wave_type->setEnabled (immutable);
-
 }
 
 

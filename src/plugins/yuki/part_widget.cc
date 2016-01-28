@@ -123,6 +123,7 @@ PartWidget::widgets_to_oscillator_params()
 
 	_part->part_params()->part_enabled = _part_enabled->isChecked();
 
+	_oscillator_panel->widgets_to_oscillator_params();
 	_modulator_panel->widgets_to_oscillator_params();
 
 	_stop_params_to_widgets = false;
