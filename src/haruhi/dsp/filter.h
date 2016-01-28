@@ -85,7 +85,7 @@ template<unsigned int tOrder, int tResponseType>
 		mixed_advance_iir (Sample* x, Sample* y, int position) noexcept;
 
 	  private:
-		ImpulseResponseType*					_impulse_response	= 0;
+		ImpulseResponseType*					_impulse_response	= nullptr;
 		typename ImpulseResponseType::Serial	_last_serial		= 0;
 		// Previous samples buffer, stored in reverse order (index 0 contains last sample, 1 one before last, etc):
 		Sample	_px[Order];
@@ -95,9 +95,7 @@ template<unsigned int tOrder, int tResponseType>
 
 template<unsigned int O, int R>
 	inline
-	Filter<O, R>::Filter (ImpulseResponseType* impulse_response) noexcept:
-		_impulse_response (0),
-		_last_serial (0)
+	Filter<O, R>::Filter (ImpulseResponseType* impulse_response) noexcept
 	{
 		assign_impulse_response (impulse_response);
 	}

@@ -69,7 +69,7 @@ Engine::adjust_master_volume()
 	{
 		if (e->event_type() == Event::ControllerEventType)
 		{
-			ControllerEvent const* controller_event = static_cast<ControllerEvent const*> (e.get());
+			auto controller_event = static_cast<ControllerEvent const*> (e.get());
 			_session->set_master_volume (controller_event->value());
 		}
 	}
@@ -85,7 +85,7 @@ Engine::check_panic_button()
 	{
 		if (e->event_type() == Event::ControllerEventType)
 		{
-			ControllerEvent const* controller_event = static_cast<ControllerEvent const*> (e.get());
+			auto controller_event = static_cast<ControllerEvent const*> (e.get());
 			if (controller_event->value() >= 0.5 && _panic_pressed == false)
 			{
 				_panic_pressed = true;

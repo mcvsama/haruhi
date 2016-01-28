@@ -50,7 +50,7 @@ Controller::~Controller()
 	Signal::Receiver::disconnect_all_signals();
 	// Ensure that ControllerProxy will not request periodic-update
 	// on this widget anymore:
-	_controller_proxy->set_widget (0);
+	_controller_proxy->set_widget (nullptr);
 	// Forget current periodic-update request:
 	forget_about_update();
 	// If controller proxy was owned by us, delete it:

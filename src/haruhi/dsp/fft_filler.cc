@@ -45,12 +45,10 @@ FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 
 	_was_interrupted = false;
 
-	typedef std::map<float, Sample*> Tables;
-
 	if (samples < 4096)
 		throw Exception ("samples number must be at least 4096");
 
-	Tables tables;
+	Wavetable::Tables tables;
 
 	wavetable->drop_tables();
 	wavetable->set_wavetables_size (samples);
@@ -59,14 +57,7 @@ FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 	unsigned int const tables_num = 36; // New table about every 4 semitones
 	float const expand_coeff = 1.25; // Min max frequency: ~19kHz
 	for (unsigned int i = 0; i < tables_num; ++i)
-		tables[0.5f - 0.5f * (std::pow (expand_coeff, i) - 1) / std::pow (expand_coeff, i)] = new Sample[samples];
-
-	// Create wavetables:
-	for (auto& t: tables)
-	{
-		CHECK_INTERRUPT;
-		wavetable->add_table (t.second, t.first);
-	}
+		tables[0.5f - 0.5f * (std::pow (expand_coeff, i) - 1) / std::pow (expand_coeff, i)].resize (samples);
 
 	FFT::Vector source (samples);
 	FFT::Vector target (samples);
@@ -111,6 +102,13 @@ FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 		// Copy result into wavetable:
 		for (unsigned int i = 0; i < samples; ++i)
 			t.second[i] = target[i].real();
+	}
+
+	// Create wavetables:
+	for (auto& t: tables)
+	{
+		CHECK_INTERRUPT;
+		wavetable->add_table (std::move (t.second), t.first);
 	}
 
 #undef CHECK_INTERRUPT

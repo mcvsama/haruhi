@@ -178,7 +178,7 @@ class Graph: public RecursiveMutex
 	 * and then deletes it.
 	 */
 	void
-	notify (Notification* notification);
+	notify (Unique<Notification>);
 
 	/**
 	 * Returns timestamp of last entering into processing round.
@@ -228,22 +228,22 @@ class Graph: public RecursiveMutex
 	Units			_units;
 
 	// True between calls of start_/finish_processing_round:
-	bool			_inside_processing_round;
-	bool			_dummy_syncing;
+	bool			_inside_processing_round	= false;
+	bool			_dummy_syncing				= false;
 
 	// Timestamp of last enter_processing_round:
 	Time			_timestamp;
-	unsigned int	_next_tempo_tick;
+	unsigned int	_next_tempo_tick			= 0;
 
 	// Graph parameters:
-	std::size_t		_buffer_size;
-	Frequency		_sample_rate;
-	Frequency		_tempo;
-	Frequency		_master_tune;
+	std::size_t		_buffer_size				= 0;
+	Frequency		_sample_rate				= 0_Hz;
+	Frequency		_tempo						= 120_Hz / 60;
+	Frequency		_master_tune				= 440_Hz;
 
 	// Registered backends:
-	AudioBackend*	_audio_backend;
-	EventBackend*	_event_backend;
+	AudioBackend*	_audio_backend				= nullptr;
+	EventBackend*	_event_backend				= nullptr;
 };
 
 

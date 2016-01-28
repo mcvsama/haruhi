@@ -27,16 +27,7 @@
 
 namespace Haruhi {
 
-Graph::Graph():
-	RecursiveMutex(),
-	_inside_processing_round (false),
-	_next_tempo_tick (0),
-	_buffer_size (0),
-	_sample_rate (0_Hz),
-	_tempo (120.0_Hz),
-	_master_tune (440.0_Hz),
-	_audio_backend (0),
-	_event_backend (0)
+Graph::Graph()
 {
 	set_buffer_size (1);
 }
@@ -200,11 +191,10 @@ Graph::set_master_tune (Frequency master_tune)
 
 
 void
-Graph::notify (Notification* notification)
+Graph::notify (Unique<Notification> notification)
 {
 	for (Unit* u: _units)
-		u->notify (notification);
-	delete notification;
+		u->notify (notification.get());
 }
 
 

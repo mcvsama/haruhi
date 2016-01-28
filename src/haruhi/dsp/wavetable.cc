@@ -25,35 +25,16 @@ namespace Haruhi {
 
 namespace DSP {
 
-Wavetable::Wavetable():
-	_tables(),
-	_size (0)
-{
-}
-
-
-Wavetable::~Wavetable()
-{
-	drop_tables();
-}
-
-
 void
-Wavetable::add_table (Sample* samples, float max_frequency)
+Wavetable::add_table (std::vector<Sample>&& samples, float max_frequency)
 {
-	Tables::iterator t = _tables.find (max_frequency);
-	// Delete old array, if we're overwriting table:
-	if (t != _tables.end())
-		delete[] t->second;
-	_tables[max_frequency] = samples;
+	_tables[max_frequency] = std::move (samples);
 }
 
 
 void
 Wavetable::drop_tables() noexcept
 {
-	for (auto& t: _tables)
-		delete[] t.second;
 	_tables.clear();
 }
 

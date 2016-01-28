@@ -188,9 +188,9 @@ inline void
 AudioBuffer::fill (Buffer const* other) noexcept
 {
 	assert (other->type() == AudioBuffer::TYPE);
-	AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
-	assert (begin() != 0);
-	assert (buf->begin() != 0);
+	auto buf = static_cast<AudioBuffer const*> (other);
+	assert (begin() != nullptr);
+	assert (buf->begin() != nullptr);
 	assert (buf->size() == size());
 	SIMD::copy_buffer (begin(), buf->begin(), size());
 }
@@ -221,9 +221,9 @@ inline void
 AudioBuffer::add (Buffer const* other) noexcept
 {
 	assert (other->type() == AudioBuffer::TYPE);
-	AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
-	assert (begin() != 0);
-	assert (buf->begin() != 0);
+	auto buf = static_cast<AudioBuffer const*> (other);
+	assert (begin() != nullptr);
+	assert (buf->begin() != nullptr);
 	assert (buf->size() == size());
 	SIMD::add_buffers (begin(), buf->begin(), size());
 }
@@ -233,9 +233,9 @@ inline void
 AudioBuffer::add (Buffer const* other, Sample attenuate_other) noexcept
 {
 	assert (other->type() == AudioBuffer::TYPE);
-	AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
-	assert (begin() != 0);
-	assert (buf->begin() != 0);
+	auto buf = static_cast<AudioBuffer const*> (other);
+	assert (begin() != nullptr);
+	assert (buf->begin() != nullptr);
 	assert (buf->size() == size());
 	SIMD::add_buffers (begin(), buf->begin(), attenuate_other, size());
 }
@@ -245,9 +245,9 @@ inline void
 AudioBuffer::sub (Buffer const* other) noexcept
 {
 	assert (other->type() == AudioBuffer::TYPE);
-	AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
-	assert (begin() != 0);
-	assert (buf->begin() != 0);
+	auto buf = static_cast<AudioBuffer const*> (other);
+	assert (begin() != nullptr);
+	assert (buf->begin() != nullptr);
 	assert (buf->size() == size());
 	SIMD::sub_buffers (begin(), buf->begin(), size());
 }
@@ -257,9 +257,9 @@ inline void
 AudioBuffer::attenuate (Buffer const* other) noexcept
 {
 	assert (other->type() == AudioBuffer::TYPE);
-	AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
-	assert (begin() != 0);
-	assert (buf->begin() != 0);
+	auto buf = static_cast<AudioBuffer const*> (other);
+	assert (begin() != nullptr);
+	assert (buf->begin() != nullptr);
 	assert (buf->size() == size());
 	SIMD::multiply_buffers (begin(), buf->begin(), size());
 }
@@ -276,9 +276,9 @@ inline void
 AudioBuffer::attenuate (Buffer const* other, Sample value) noexcept
 {
 	assert (other->type() == AudioBuffer::TYPE);
-	AudioBuffer const* buf = static_cast<AudioBuffer const*> (other);
-	assert (begin() != 0);
-	assert (buf->begin() != 0);
+	auto buf = static_cast<AudioBuffer const*> (other);
+	assert (begin() != nullptr);
+	assert (buf->begin() != nullptr);
 	assert (buf->size() == size());
 	SIMD::multiply_buffers_and_by_scalar (begin(), buf->begin(), size(), value);
 }
@@ -330,10 +330,10 @@ inline Sample*
 AudioBuffer::allocate (std::size_t samples)
 {
 	if (samples == 0)
-		return 0;
+		return nullptr;
 	void* ret;
 	if (posix_memalign (&ret, 32, sizeof (Sample) * samples) != 0)
-		return 0;
+		return nullptr;
 	return static_cast<Sample*> (ret);
 }
 

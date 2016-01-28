@@ -52,7 +52,7 @@ class HarmonicsWave: public Wave
 	/**
 	 * Create wave that adds harmonics to inner wave.
 	 */
-	HarmonicsWave (Wave* inner_wave = 0, bool auto_delete = false) noexcept;
+	HarmonicsWave (Wave* inner_wave = nullptr, bool auto_delete = false) noexcept;
 
 	/**
 	 * Returns sample from base function with added harmonics.

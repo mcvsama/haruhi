@@ -42,7 +42,7 @@ void
 EventBuffer::mixin (Buffer const* other)
 {
 	assert (other->type() == EventBuffer::TYPE);
-	EventBuffer const* other_buffer = static_cast<EventBuffer const*> (other);
+	auto other_buffer = static_cast<EventBuffer const*> (other);
 	_events.insert (_events.end(), other_buffer->_events.begin(), other_buffer->_events.end());
 }
 

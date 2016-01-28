@@ -462,15 +462,13 @@ Patch::save_state (QDomElement& element) const
 			plugin.setAttribute ("title", QString::fromStdString (p->title()));
 			plugin.setAttribute ("id", QString ("%1").arg (p->id()));
 			// HasPresets?
-			HasPresets* has_presets = dynamic_cast<HasPresets*> (p);
-			if (has_presets)
+			if (dynamic_cast<HasPresets*> (p))
 			{
 				plugin.setAttribute ("preset-name", _plugins_to_frames_map.find (p)->second->preset_name());
 				plugin.setAttribute ("preset-uuid", _plugins_to_frames_map.find (p)->second->preset_uuid());
 			}
 			// SaveableState?
-			SaveableState* saveable_state = dynamic_cast<SaveableState*> (p);
-			if (saveable_state)
+			if (auto saveable_state = dynamic_cast<SaveableState*> (p))
 				saveable_state->save_state (plugin);
 			// Tab position:
 			sorted_plugins.insert (std::make_pair (plugin_tab_position (p), plugin));

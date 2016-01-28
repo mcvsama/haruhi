@@ -46,7 +46,7 @@ class ModulatedWave: public Wave
 	/**
 	 * \param	mod_index indicates number of times modulator frequency is greater than wave's.
 	 */
-	ModulatedWave (Wave* inner_wave = 0, Wave* modulator = 0, Type mod_type = Ring, float mod_amplitude = 0.0f, unsigned int mod_index = 1, bool auto_delete_wave = false, bool auto_delete_modulator = false) noexcept;
+	ModulatedWave (Wave* inner_wave = nullptr, Wave* modulator = nullptr, Type mod_type = Ring, float mod_amplitude = 0.0f, unsigned int mod_index = 1, bool auto_delete_wave = false, bool auto_delete_modulator = false) noexcept;
 
 	/**
 	 * Dtor

@@ -36,7 +36,7 @@ class Wavetable
   public:
 	// Maps frequency to array of samples. Frequency is max frequency for which
 	// given table can be used. Use lower_bound method to find correct table.
-	typedef std::map<float, Sample*>  Tables;
+	typedef std::map<float, std::vector<Sample>> Tables;
 
 	/**
 	 * All filler classes (that is classes that fill wavetables with samples)
@@ -63,17 +63,13 @@ class Wavetable
 	};
 
   public:
-	Wavetable();
-
-	~Wavetable();
-
 	/**
 	 * Adds wavetable.
 	 * \param	table Array of samples. Wavetable takes ownership of the pointer.
 	 * \param	max_frequency Maximum frequency for which this array can be used.
 	 */
 	void
-	add_table (Sample* samples, float max_frequency);
+	add_table (std::vector<Sample>&& samples, float max_frequency);
 
 	/**
 	 * Deletes previously allocated tables using delete operator.
@@ -100,13 +96,13 @@ class Wavetable
 	 * Returns wavetable index to use for given frequency.
 	 * There must be at least one table in set.
 	 */
-	Sample const*
+	std::vector<Sample> const&
 	table_for_frequency (float frequency) const noexcept;
 
   private:
 	Tables			_tables;
 	// Number of samples in each table:
-	std::size_t		_size;
+	std::size_t		_size = 0;
 };
 
 
@@ -134,7 +130,7 @@ Wavetable::set_wavetables_size (std::size_t size) noexcept
 inline Sample
 Wavetable::operator() (Sample phase, Sample frequency) const noexcept
 {
-	Sample const* table = table_for_frequency (frequency);
+	auto& table = table_for_frequency (frequency);
 	const float p = mod1 (phase) * _size;
 	const int k = static_cast<int> (p);
 	const Sample v1 = table[k];
@@ -144,7 +140,7 @@ Wavetable::operator() (Sample phase, Sample frequency) const noexcept
 }
 
 
-inline Sample const*
+inline std::vector<Sample> const&
 Wavetable::table_for_frequency (float frequency) const noexcept
 {
 	Tables::const_iterator t = _tables.lower_bound (frequency);

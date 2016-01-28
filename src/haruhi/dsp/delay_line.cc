@@ -53,8 +53,7 @@ DelayLine::set_max_delay (std::size_t max_delay) noexcept
 {
 	assert (max_delay > 0);
 
-	delete _data;
-	_data = new Sample[sizeof (Sample) * max_delay];
+	_data.resize (max_delay);
 	_max_delay = max_delay;
 
 	if (_delay > _max_delay)
@@ -70,14 +69,14 @@ DelayLine::write (Sample const* data) noexcept
 {
 	if (_wpos + _size < _max_delay)
 	{
-		std::copy (data, data + _size, _data + _wpos);
+		std::copy (data, data + _size, _data.begin() + _wpos);
 		_wpos = (_wpos + _size) % _max_delay;
 	}
 	else
 	{
 		const std::size_t n = _wpos + _size - _max_delay;
-		std::copy (data, data + n, _data + _wpos);
-		std::copy (data + n, data + _size, _data);
+		std::copy (data, data + n, _data.begin() + _wpos);
+		std::copy (data + n, data + _size, _data.begin());
 		_wpos = _size - n;
 	}
 }
@@ -94,18 +93,18 @@ DelayLine::read (Sample* data) noexcept
 	if (pos < _size)
 	{
 		const std::size_t n = _size - pos;
-		std::copy (_data + _max_delay - n, _data + _max_delay, data);
-		std::copy (_data, _data + pos, data + n);
+		std::copy (_data.begin() + _max_delay - n, _data.begin() + _max_delay, data);
+		std::copy (_data.begin(), _data.begin() + pos, data + n);
 	}
 	else
-		std::copy (_data + pos - _size, _data + pos, data);
+		std::copy (_data.begin() + pos - _size, _data.begin() + pos, data);
 }
 
 
 void
 DelayLine::clear() noexcept
 {
-	std::fill (_data, _data + _max_delay, 0.0f);
+	std::fill (_data.begin(), _data.begin() + _max_delay, 0.0);
 }
 
 } // namespace DSP

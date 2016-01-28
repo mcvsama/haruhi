@@ -101,7 +101,7 @@ class Wave: private Noncopyable
 
   private:
 	bool	_immutable		= true;
-	Wave*	_inner_wave		= 0;
+	Wave*	_inner_wave		= nullptr;
 	bool	_auto_delete	= false;
 };
 
