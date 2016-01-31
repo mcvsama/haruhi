@@ -30,7 +30,7 @@ PlotFrame::PlotFrame (QWidget* parent):
 	setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-	_layout = new QVBoxLayout (this);
+	_layout = std::make_unique<QVBoxLayout> (this);
 	_layout->setMargin (0);
 	_layout->setSpacing (Config::spacing());
 }

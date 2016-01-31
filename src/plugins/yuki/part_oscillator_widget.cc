@@ -116,7 +116,7 @@ PartOscillatorWidget::PartOscillatorWidget (QWidget* parent, PartWidget* part_wi
 	auto pp = _part->part_params();
 
 	// Wave type:
-	_wave_type = new QComboBox (this);
+	_wave_type = std::make_unique<QComboBox> (this);
 	_wave_type->insertItem (0, Resources::Icons16::wave_sine(), "Sine");
 	_wave_type->insertItem (1, Resources::Icons16::wave_triangle(), "Triangle");
 	_wave_type->insertItem (2, Resources::Icons16::wave_square(), "Square");
@@ -128,10 +128,10 @@ PartOscillatorWidget::PartOscillatorWidget (QWidget* parent, PartWidget* part_wi
 	_wave_type->insertItem (8, Resources::Icons16::wave_chirp(), "Chirp");
 	_wave_type->setIconSize (Resources::Icons16::haruhi().size());
 	_wave_type->setCurrentIndex (pp->wave_type);
-	QObject::connect (_wave_type, SIGNAL (activated (int)), _part_widget, SLOT (widgets_to_wave_params()));
+	QObject::connect (_wave_type.get(), SIGNAL (activated (int)), _part_widget, SLOT (widgets_to_wave_params()));
 
 	// Modulator wave type:
-	_modulator_wave_type = new QComboBox (this);
+	_modulator_wave_type = std::make_unique<QComboBox> (this);
 	_modulator_wave_type->insertItem (0, Resources::Icons16::wave_sine(), "Sine");
 	_modulator_wave_type->insertItem (1, Resources::Icons16::wave_triangle(), "Triangle");
 	_modulator_wave_type->insertItem (2, Resources::Icons16::wave_square(), "Square");
@@ -139,149 +139,149 @@ PartOscillatorWidget::PartOscillatorWidget (QWidget* parent, PartWidget* part_wi
 	_modulator_wave_type->setCurrentIndex (pp->modulator_wave_type);
 	_modulator_wave_type->setToolTip ("Modulator wave");
 	_modulator_wave_type->setIconSize (Resources::Icons16::haruhi().size());
-	QObject::connect (_modulator_wave_type, SIGNAL (activated (int)), _part_widget, SLOT (widgets_to_wave_params()));
+	QObject::connect (_modulator_wave_type.get(), SIGNAL (activated (int)), _part_widget, SLOT (widgets_to_wave_params()));
 
 	// Modulator type:
-	_modulator_type = new QComboBox (this);
+	_modulator_type = std::make_unique<QComboBox> (this);
 	_modulator_type->insertItem (DSP::ModulatedWave::Ring, Resources::Icons16::modulator_ring(), "Ring pseudo-modulation");
 	_modulator_type->insertItem (DSP::ModulatedWave::Frequency, Resources::Icons16::modulator_fm(), "FM pseudo-modulation");
 	_modulator_type->setCurrentIndex (pp->modulator_type);
 	_modulator_type->setToolTip ("Modulator type");
 	_modulator_type->setIconSize (Resources::Icons16::haruhi().size());
-	QObject::connect (_modulator_type, SIGNAL (activated (int)), _part_widget, SLOT (widgets_to_wave_params()));
+	QObject::connect (_modulator_type.get(), SIGNAL (activated (int)), _part_widget, SLOT (widgets_to_wave_params()));
 
 	// Unison stereo:
-	_unison_stereo = new QPushButton ("Unison stereo", this);
+	_unison_stereo = std::make_unique<QPushButton> ("Unison stereo", this);
 	_unison_stereo->setCheckable (true);
 	_unison_stereo->setChecked (pp->unison_stereo);
 	_unison_stereo->setToolTip ("Spreads unison voices across stereo channels.");
-	QObject::connect (_unison_stereo, SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_unison_stereo.get(), SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Pseudo stereo:
-	_pseudo_stereo = new QPushButton ("Pseudo stereo", this);
+	_pseudo_stereo = std::make_unique<QPushButton> ("Pseudo stereo", this);
 	_pseudo_stereo->setCheckable (true);
 	_pseudo_stereo->setChecked (pp->pseudo_stereo);
 	_pseudo_stereo->setToolTip ("Inverts right channel to give pseudo-stereo effect for monophonic voices.");
-	QObject::connect (_pseudo_stereo, SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_pseudo_stereo.get(), SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Transposition:
-	_transposition_semitones = new QSpinBox (this);
+	_transposition_semitones = std::make_unique<QSpinBox> (this);
 	_transposition_semitones->setMinimum (-60);
 	_transposition_semitones->setMaximum (60);
 	_transposition_semitones->setSuffix (" semitones");
 	_transposition_semitones->setValue (pp->transposition_semitones);
-	QObject::connect (_transposition_semitones, SIGNAL (valueChanged (int)), _part_widget, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_transposition_semitones.get(), SIGNAL (valueChanged (int)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Auto-center wave:
-	_auto_center = new QPushButton ("Auto center", this);
+	_auto_center = std::make_unique<QPushButton> ("Auto center", this);
 	_auto_center->setCheckable (true);
 	_auto_center->setChecked (pp->auto_center);
 	_auto_center->setToolTip ("Auto center wave around 0 level. Takes more CPU power to update wavetables.");
-	QObject::connect (_auto_center, SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_wave_params()));
+	QObject::connect (_auto_center.get(), SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_wave_params()));
 
 	// Const. glide:
-	_const_portamento_time = new QPushButton ("Const. glide", this);
+	_const_portamento_time = std::make_unique<QPushButton> ("Const. glide", this);
 	_const_portamento_time->setCheckable (true);
 	_const_portamento_time->setChecked (pp->const_portamento_time);
-	QObject::connect (_const_portamento_time, SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_const_portamento_time.get(), SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Pitchbend down:
-	_pitchbend_down_semitones = new QSpinBox (this);
+	_pitchbend_down_semitones = std::make_unique<QSpinBox> (this);
 	_pitchbend_down_semitones->setMinimum (-60);
 	_pitchbend_down_semitones->setMaximum (0);
 	_pitchbend_down_semitones->setValue (-pp->pitchbend_down_semitones);
-	QObject::connect (_pitchbend_down_semitones, SIGNAL (valueChanged (int)), _part_widget, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_pitchbend_down_semitones.get(), SIGNAL (valueChanged (int)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Pitchbend up:
-	_pitchbend_up_semitones = new QSpinBox (this);
+	_pitchbend_up_semitones = std::make_unique<QSpinBox> (this);
 	_pitchbend_up_semitones->setMinimum (0);
 	_pitchbend_up_semitones->setMaximum (60);
 	_pitchbend_up_semitones->setValue (pp->pitchbend_up_semitones);
-	QObject::connect (_pitchbend_up_semitones, SIGNAL (valueChanged (int)), _part_widget, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_pitchbend_up_semitones.get(), SIGNAL (valueChanged (int)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Pitchbend enabled:
-	_pitchbend_enabled = new QPushButton ("Pitchbend", this);
+	_pitchbend_enabled = std::make_unique<QPushButton> ("Pitchbend", this);
 	_pitchbend_enabled->setCheckable (true);
 	_pitchbend_enabled->setChecked (pp->pitchbend_enabled);
-	QObject::connect (_pitchbend_enabled, SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_pitchbend_enabled.get(), SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Frequency modulation range:
-	_frequency_modulation_range = new QSpinBox (this);
+	_frequency_modulation_range = std::make_unique<QSpinBox> (this);
 	_frequency_modulation_range->setMinimum (1);
 	_frequency_modulation_range->setMaximum (60);
 	_frequency_modulation_range->setSuffix (" semitones");
 	_frequency_modulation_range->setValue (pp->frequency_mod_range);
-	QObject::connect (_frequency_modulation_range, SIGNAL (valueChanged (int)), _part_widget, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_frequency_modulation_range.get(), SIGNAL (valueChanged (int)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Wave enabled:
-	_wave_enabled = new QPushButton ("Wave", this);
+	_wave_enabled = std::make_unique<QPushButton> ("Wave", this);
 	_wave_enabled->setCheckable (true);
 	_wave_enabled->setChecked (pp->wave_enabled);
 	_wave_enabled->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Fixed);
-	QObject::connect (_wave_enabled, SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
-	QObject::connect (_wave_enabled, SIGNAL (toggled (bool)), _part_widget, SLOT (update_widgets()));
+	QObject::connect (_wave_enabled.get(), SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_wave_enabled.get(), SIGNAL (toggled (bool)), _part_widget, SLOT (update_widgets()));
 
 	// Noise enabled:
-	_noise_enabled = new QPushButton ("Noise", this);
+	_noise_enabled = std::make_unique<QPushButton> ("Noise", this);
 	_noise_enabled->setCheckable (true);
 	_noise_enabled->setChecked (pp->noise_enabled);
 	_noise_enabled->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Fixed);
-	QObject::connect (_noise_enabled, SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_noise_enabled.get(), SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Filters:
-	_filter_1 = new FilterWidget (this, 0, &_part->part_params()->voice.filters[0], _part);
-	_filter_2 = new FilterWidget (this, 1, &_part->part_params()->voice.filters[1], _part);
+	_filter_1 = std::make_unique<FilterWidget> (this, 0, &_part->part_params()->voice.filters[0], _part);
+	_filter_2 = std::make_unique<FilterWidget> (this, 1, &_part->part_params()->voice.filters[1], _part);
 
 	// Filters configuration:
-	_filter_configuration = new QComboBox (this);
+	_filter_configuration = std::make_unique<QComboBox> (this);
 	_filter_configuration->insertItem (DualFilter::Serial, "Filters: Serial");
 	_filter_configuration->insertItem (DualFilter::Parallel, "Filters: Parallel");
 	_filter_configuration->setCurrentIndex (pp->filter_configuration);
 	_filter_configuration->setIconSize (Resources::Icons16::haruhi().size());
-	QObject::connect (_filter_configuration, SIGNAL (activated (int)), _part_widget, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_filter_configuration.get(), SIGNAL (activated (int)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Layouts:
 
 	auto pitchbend_range_layout = new QHBoxLayout();
 	pitchbend_range_layout->setMargin (0);
 	pitchbend_range_layout->setSpacing (Config::spacing());
-	pitchbend_range_layout->addWidget (_pitchbend_down_semitones);
-	pitchbend_range_layout->addWidget (_pitchbend_up_semitones);
+	pitchbend_range_layout->addWidget (_pitchbend_down_semitones.get());
+	pitchbend_range_layout->addWidget (_pitchbend_up_semitones.get());
 
 	auto group1 = new QGroupBox (this);
-	QGridLayout* group1_layout = new QGridLayout (group1);
+	auto group1_layout = new QGridLayout (group1);
 	group1_layout->setMargin (2 * Config::margin());
 	group1_layout->setSpacing (Config::spacing());
 	group1_layout->addWidget (new QLabel ("Filters:", this), 0, 0);
-	group1_layout->addWidget (_filter_configuration, 0, 1);
+	group1_layout->addWidget (_filter_configuration.get(), 0, 1);
 	group1_layout->addWidget (new QLabel ("Pitchbend range:", this), 1, 0);
 	group1_layout->addLayout (pitchbend_range_layout, 1, 1);
 	group1_layout->addWidget (new QLabel ("Freq. mod. range:", this), 2, 0);
-	group1_layout->addWidget (_frequency_modulation_range, 2, 1);
+	group1_layout->addWidget (_frequency_modulation_range.get(), 2, 1);
 	group1_layout->addWidget (new QLabel ("Transposition:", this), 3, 0);
-	group1_layout->addWidget (_transposition_semitones, 3, 1);
+	group1_layout->addWidget (_transposition_semitones.get(), 3, 1);
 
 	auto group2 = new QWidget (this);
-	QVBoxLayout* group2_layout = new QVBoxLayout (group2);
+	auto group2_layout = new QVBoxLayout (group2);
 	group2_layout->setMargin (0);
 	group2_layout->setSpacing (Config::spacing());
-	group2_layout->addWidget (_auto_center);
+	group2_layout->addWidget (_auto_center.get());
 	group2_layout->addItem (new QSpacerItem (0, 10, QSizePolicy::Fixed, QSizePolicy::Fixed));
-	group2_layout->addWidget (_const_portamento_time);
-	group2_layout->addWidget (_unison_stereo);
-	group2_layout->addWidget (_pseudo_stereo);
+	group2_layout->addWidget (_const_portamento_time.get());
+	group2_layout->addWidget (_unison_stereo.get());
+	group2_layout->addWidget (_pseudo_stereo.get());
 	group2_layout->addItem (new QSpacerItem (0, 10, QSizePolicy::Fixed, QSizePolicy::Fixed));
-	group2_layout->addWidget (_pitchbend_enabled);
+	group2_layout->addWidget (_pitchbend_enabled.get());
 	group2_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
 	auto oscillator_panel_layout = new QGridLayout (this);
 	oscillator_panel_layout->setMargin (Config::margin());
 	oscillator_panel_layout->setSpacing (Config::spacing());
-	oscillator_panel_layout->addWidget (_wave_type, 0, 0, 1, 2);
-	oscillator_panel_layout->addWidget (_modulator_wave_type, 0, 2, 1, 2);
-	oscillator_panel_layout->addWidget (_modulator_type, 0, 4, 1, 3);
-	oscillator_panel_layout->addWidget (_wave_enabled, 0, 7);
-	oscillator_panel_layout->addWidget (_noise_enabled, 0, 8);
+	oscillator_panel_layout->addWidget (_wave_type.get(), 0, 0, 1, 2);
+	oscillator_panel_layout->addWidget (_modulator_wave_type.get(), 0, 2, 1, 2);
+	oscillator_panel_layout->addWidget (_modulator_type.get(), 0, 4, 1, 3);
+	oscillator_panel_layout->addWidget (_wave_enabled.get(), 0, 7);
+	oscillator_panel_layout->addWidget (_noise_enabled.get(), 0, 8);
 	oscillator_panel_layout->addWidget (group2, 1, 10, 3, 1);
 	oscillator_panel_layout->addWidget (base_plot_frame, 1, 0, 1, 2);
 	oscillator_panel_layout->addWidget (final_plot_frame, 1, 2, 1, 2);
@@ -301,8 +301,8 @@ PartOscillatorWidget::PartOscillatorWidget (QWidget* parent, PartWidget* part_wi
 	oscillator_panel_layout->addWidget (_knob_unison_spread.get(), 2, 5);
 	oscillator_panel_layout->addWidget (_knob_unison_init.get(), 2, 6);
 	oscillator_panel_layout->addWidget (_knob_unison_noise.get(), 2, 7);
-	oscillator_panel_layout->addWidget (_filter_1, 3, 0, 2, 4);
-	oscillator_panel_layout->addWidget (_filter_2, 3, 4, 2, 4);
+	oscillator_panel_layout->addWidget (_filter_1.get(), 3, 0, 2, 4);
+	oscillator_panel_layout->addWidget (_filter_2.get(), 3, 4, 2, 4);
 	oscillator_panel_layout->addWidget (_knob_portamento_time.get(), 3, 8);
 	oscillator_panel_layout->addWidget (_knob_phase.get(), 3, 9);
 	oscillator_panel_layout->addWidget (group1, 4, 8, 1, 3);

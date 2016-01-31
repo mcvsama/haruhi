@@ -34,6 +34,7 @@
 namespace Yuki {
 
 using Haruhi::Unique;
+using Haruhi::owner;
 
 class Part;
 class PartWidget;
@@ -76,18 +77,19 @@ class PartModulatorWidget: public QWidget
 	create_modulator_label (QString const& text);
 
   private:
-	PartWidget*			_part_widget;
-	Part*				_part;
+	PartWidget*					_part_widget;
+	Part*						_part;
 
 	// Modulation matrix knobs:
-	MatrixKnobs			_fm_matrix_knobs;
-	MatrixKnobs			_am_matrix_knobs;
+	MatrixKnobs					_fm_matrix_knobs;
+	MatrixKnobs					_am_matrix_knobs;
 
-	OperatorWidget*		_operator_1;
-	OperatorWidget*		_operator_2;
-	OperatorWidget*		_operator_3;
-	QCheckBox*			_modulator_enabled;
-	std::list<QWidget*>	_modulator_labels;
+	Unique<QWidget>				_owning_widget;
+	Unique<OperatorWidget>		_operator_1;
+	Unique<OperatorWidget>		_operator_2;
+	Unique<OperatorWidget>		_operator_3;
+	Unique<QCheckBox>			_modulator_enabled;
+	std::list<owner<QWidget*>>	_modulator_labels;
 };
 
 } // namespace Yuki

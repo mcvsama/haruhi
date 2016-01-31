@@ -422,7 +422,7 @@ Session::Session (QWidget* parent):
 
 	// Contains audio & event widgets:
 	auto ports_tab = new QWidget (this);
-	QHBoxLayout* ports_tab_layout = new QHBoxLayout (ports_tab);
+	auto ports_tab_layout = new QHBoxLayout (ports_tab);
 	ports_tab_layout->setMargin (Config::margin());
 	ports_tab_layout->setSpacing (Config::spacing());
 	ports_tab_layout->addWidget (_audio_widget.get());

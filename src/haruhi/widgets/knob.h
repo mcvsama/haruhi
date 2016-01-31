@@ -36,56 +36,7 @@
 
 namespace Haruhi {
 
-class Knob;
-
-
-/**
- * Can't insert it into Knob namespace due to Qt's MOC restrictions.
- */
-class KnobProperties: public QDialog
-{
-	Q_OBJECT
-
-	class CurveWave: public DSP::Wave
-	{
-	  public:
-		CurveWave (Knob* knob);
-
-		Sample
-		operator() (Sample phase, Sample frequency) const noexcept override;
-
-	  private:
-		Knob* _knob;
-	};
-
-  public:
-	KnobProperties (Knob* knob, QWidget* parent);
-
-	void
-	apply();
-
-  public slots:
-	/**
-	 * Update plot depending on current knob state.
-	 */
-	void
-	update_plot();
-
-  private slots:
-	void
-	limit_min_updated();
-
-	void
-	limit_max_updated();
-
-  private:
-	Knob*		_knob;
-	QSpinBox*	_curve_spinbox;
-	QSpinBox*	_user_limit_min_spinbox;
-	QSpinBox*	_user_limit_max_spinbox;
-	WavePlot*	_curve_plot;
-	CurveWave	_curve_wave;
-};
+class KnobProperties;
 
 
 /**
@@ -158,13 +109,13 @@ class Knob:
 		float_to_int (float) const;
 
 	  private:
-		Knob*				_knob;
-		Range<float>		_shown_range;
-		int					_shown_decimals;
-		QDoubleValidator*	_validator;
-		bool				_detached;
-		bool				_volume_scale;
-		float				_volume_scale_exp;
+		Knob*						_knob;
+		Range<float>				_shown_range;
+		int							_shown_decimals;
+		Unique<QDoubleValidator>	_validator;
+		bool						_detached;
+		bool						_volume_scale;
+		float						_volume_scale_exp;
 	};
 
 	typedef std::map<int, Port*> ContextMenuPortMap;
@@ -299,7 +250,7 @@ class Knob:
 	/**
 	 * Creates menu for right-click.
 	 */
-	QMenu*
+	Unique<QMenu>
 	create_context_menu();
 
 	/**
@@ -346,38 +297,69 @@ class Knob:
 	changed (int);
 
   private:
-	bool				_prevent_recursion			= false;
-	QSignalMapper*		_connect_signal_mapper		= nullptr;
-	QSignalMapper*		_disconnect_signal_mapper	= nullptr;
-	ContextMenuPortMap	_context_menu_port_map;
-	int					_action_id; // Helper for generating new IDs for _signal_mapper.
-	QColor				_std_text_color;
+	bool					_prevent_recursion = false;
+	Unique<QSignalMapper>	_connect_signal_mapper;
+	Unique<QSignalMapper>	_disconnect_signal_mapper;
+	ContextMenuPortMap		_context_menu_port_map;
+	int						_action_id; // Helper for generating new IDs for _signal_mapper.
+	QColor					_std_text_color;
 
 	// Widgets:
-	KnobProperties*		_knob_properties			= nullptr;
-	QLabel*				_label						= nullptr;
-	DialControl*		_dial_control				= nullptr;
-	SpinBox*			_spin_box					= nullptr;
-	QMenu*				_context_menu				= nullptr;
-	QMenu*				_connect_menu				= nullptr;
-	QMenu*				_disconnect_menu			= nullptr;
+	Unique<KnobProperties>	_knob_properties;
+	Unique<QLabel>			_label;
+	Unique<DialControl>		_dial_control;
+	Unique<SpinBox>			_spin_box;
+	Unique<QMenu>			_context_menu;
 };
 
 
-inline
-KnobProperties::CurveWave::CurveWave (Knob* knob):
-	Wave (true),
-	_knob (knob)
+/**
+ * Can't insert it into Knob namespace due to Qt's MOC restrictions.
+ */
+class KnobProperties: public QDialog
 {
-}
+	Q_OBJECT
 
+	class CurveWave: public DSP::Wave
+	{
+	  public:
+		CurveWave (Knob* knob);
 
-inline Sample
-KnobProperties::CurveWave::operator() (Sample phase, Sample) const noexcept
-{
-	ControllerParam::Adapter const* adapter = _knob->param()->adapter();
-	return renormalize (adapter->forward_normalized (phase), adapter->hard_limit, Range<float> {-1.0f, 1.0f});
-}
+		Sample
+		operator() (Sample phase, Sample frequency) const noexcept override;
+
+	  private:
+		Knob* _knob;
+	};
+
+  public:
+	KnobProperties (Knob* knob, QWidget* parent);
+
+	void
+	apply();
+
+  public slots:
+	/**
+	 * Update plot depending on current knob state.
+	 */
+	void
+	update_plot();
+
+  private slots:
+	void
+	limit_min_updated();
+
+	void
+	limit_max_updated();
+
+  private:
+	Knob*					_knob;
+	Unique<Knob::SpinBox>	_curve_spinbox;
+	Unique<Knob::SpinBox>	_user_limit_min_spinbox;
+	Unique<Knob::SpinBox>	_user_limit_max_spinbox;
+	Unique<WavePlot>		_curve_plot;
+	CurveWave				_curve_wave;
+};
 
 
 inline Range<float>

@@ -76,12 +76,12 @@ PresetEditor::PresetEditor (PresetsManager* presets_manager, QWidget* parent):
 	_update_details_button->setToolTip ("Saves metadata without current patch");
 	QObject::connect (_update_details_button.get(), SIGNAL (clicked()), this, SLOT (update_details()));
 
-	QHBoxLayout* hor_layout = new QHBoxLayout();
+	auto hor_layout = new QHBoxLayout();
 	hor_layout->setSpacing (Config::spacing());
 	hor_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 	hor_layout->addWidget (_update_details_button.get());
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	auto layout = new QVBoxLayout (this);
 	layout->setMargin (0);
 	layout->setSpacing (Config::spacing());
 	layout->addWidget (grid);

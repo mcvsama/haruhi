@@ -39,7 +39,7 @@ StyledBackground::StyledBackground (QWidget* child, QWidget* parent, int margin)
 	setBackgroundRole (QPalette::Dark);
 	setContentsMargins (0, 1, 0, 0);
 
-	QHBoxLayout* layout = new QHBoxLayout (this);
+	auto layout = new QHBoxLayout (this);
 	layout->setMargin (margin + 0.3_screen_mm);
 	layout->setSpacing (0);
 	layout->addItem (new QSpacerItem (0.45_screen_mm, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));

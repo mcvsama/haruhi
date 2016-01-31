@@ -68,7 +68,7 @@ class FrequencyResponsePlot: public QWidget
 	/**
 	 * Assigns PlotableImpulseResponse to this plot.
 	 * FrequencyResponsePlot does not take ownership of PlotableImpulseResponse object.
-	 * Pass 0 to deassign.
+	 * Pass nullptr to deassign.
 	 */
 	void
 	assign_impulse_response (DSP::PlotableImpulseResponse* impulse_response);

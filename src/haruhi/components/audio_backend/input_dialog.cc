@@ -39,7 +39,7 @@ InputDialog::InputDialog (QWidget* parent, Backend* backend):
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 	setMinimumWidth (300);
 
-	QLabel* name_label = new QLabel ("Port name:", this);
+	auto name_label = new QLabel ("Port name:", this);
 
 	_name = std::make_unique<QLineEdit> (this);
 	QObject::connect (_name.get(), SIGNAL (textChanged (const QString&)), this, SLOT (update_widgets()));
@@ -53,18 +53,18 @@ InputDialog::InputDialog (QWidget* parent, Backend* backend):
 
 	// Layouts:
 
-	QHBoxLayout* name_layout = new QHBoxLayout();
+	auto name_layout = new QHBoxLayout();
 	name_layout->setSpacing (Config::spacing());
 	name_layout->addWidget (name_label);
 	name_layout->addWidget (_name.get());
 
-	QHBoxLayout* buttons_layout = new QHBoxLayout();
+	auto buttons_layout = new QHBoxLayout();
 	buttons_layout->setSpacing (Config::spacing());
 	buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 	buttons_layout->addWidget (_accept_button.get());
 	buttons_layout->addWidget (_reject_button.get());
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	auto layout = new QVBoxLayout (this);
 	layout->setMargin (Config::dialog_margin());
 	layout->setSpacing (Config::spacing());
 	layout->setSizeConstraint (QLayout::SetNoConstraint);

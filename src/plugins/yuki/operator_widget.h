@@ -42,8 +42,6 @@ class OperatorWidget:
   public:
 	OperatorWidget (QWidget* parent, unsigned int operator_no, Params::Operator*, Part*);
 
-	~OperatorWidget();
-
   private slots:
 	/**
 	 * Update params from widgets.
@@ -68,15 +66,15 @@ class OperatorWidget:
 	post_params_to_widgets();
 
   private:
-	Part*				_part;
-	Params::Operator*	_params;
-	bool				_stop_widgets_to_params;
-	bool				_stop_params_to_widgets;
+	Part*					_part;
+	Params::Operator*		_params;
+	bool					_stop_widgets_to_params;
+	bool					_stop_params_to_widgets;
 
-	QSpinBox*			_frequency_numerator;
-	QSpinBox*			_frequency_denominator;
-	Haruhi::Knob*		_knob_detune;
-	QSpinBox*			_octave;
+	Unique<QSpinBox>		_frequency_numerator;
+	Unique<QSpinBox>		_frequency_denominator;
+	Unique<Haruhi::Knob>	_knob_detune;
+	Unique<QSpinBox>		_octave;
 };
 
 } // namespace Yuki

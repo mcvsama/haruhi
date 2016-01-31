@@ -42,7 +42,6 @@ namespace Yuki {
 
 Part::UpdateWavetableWorkUnit::UpdateWavetableWorkUnit (Part* part) noexcept:
 	_part (part),
-	_wavetable (0),
 	_serial (0),
 	_is_cancelled (false)
 { }

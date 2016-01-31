@@ -37,7 +37,7 @@ namespace Yuki {
 PartManagerWidget::Placeholder::Placeholder (QWidget* parent):
 	QWidget (parent)
 {
-	QHBoxLayout* layout = new QHBoxLayout (this);
+	auto layout = new QHBoxLayout (this);
 	layout->setMargin (0);
 	layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 	layout->addWidget (new QLabel ("Add parts with buttons above", this));
@@ -58,85 +58,85 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 
 	PartManager::MainProxies* proxies = _part_manager->proxies();
 
-	_knob_volume		= new Haruhi::Knob (this, &proxies->volume, "Volume dB");
-	_knob_panorama		= new Haruhi::Knob (this, &proxies->panorama, "Panorama");
-	_knob_detune		= new Haruhi::Knob (this, &proxies->detune, "Detune");
-	_knob_stereo_width	= new Haruhi::Knob (this, &proxies->stereo_width, "Stereo");
+	_knob_volume		= std::make_unique<Haruhi::Knob> (this, &proxies->volume, "Volume dB");
+	_knob_panorama		= std::make_unique<Haruhi::Knob> (this, &proxies->panorama, "Panorama");
+	_knob_detune		= std::make_unique<Haruhi::Knob> (this, &proxies->detune, "Detune");
+	_knob_stereo_width	= std::make_unique<Haruhi::Knob> (this, &proxies->stereo_width, "Stereo");
 
 	_knob_volume->set_volume_scale (true, M_E);
 
 	// Polyphony:
 
-	_polyphony = new QSpinBox (this);
+	_polyphony = std::make_unique<QSpinBox> (this);
 	_polyphony->setMinimum (main_params->polyphony.minimum());
 	_polyphony->setMaximum (main_params->polyphony.maximum());
 	_polyphony->setValue (main_params->polyphony.get());
-	QObject::connect (_polyphony, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_params()));
+	QObject::connect (_polyphony.get(), SIGNAL (valueChanged (int)), this, SLOT (widgets_to_params()));
 
 	// Oversampling:
 
-	_oversampling = new QSpinBox (this);
+	_oversampling = std::make_unique<QSpinBox> (this);
 	_oversampling->setMinimum (main_params->oversampling.minimum());
 	_oversampling->setMaximum (main_params->oversampling.maximum());
 	_oversampling->setValue (_part_manager->main_params()->oversampling.get());
 	_oversampling->setSpecialValueText ("None");
 	_oversampling->setSuffix ("x");
-	QObject::connect (_oversampling, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_params()));
+	QObject::connect (_oversampling.get(), SIGNAL (valueChanged (int)), this, SLOT (widgets_to_params()));
 
 	// Top buttons:
 
-	QWidget* buttons_widget = new QWidget (this);
+	auto buttons_widget = new QWidget (this);
 
-	_add_part_button = new QPushButton (Resources::Icons16::add(), "Add part", this);
+	_add_part_button = std::make_unique<QPushButton> (Resources::Icons16::add(), "Add part", this);
 	_add_part_button->setIconSize (Resources::Icons16::haruhi().size());
 	_add_part_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
 	_add_part_button->setFlat (true);
-	QObject::connect (_add_part_button, SIGNAL (clicked()), this, SLOT (add_part()));
+	QObject::connect (_add_part_button.get(), SIGNAL (clicked()), this, SLOT (add_part()));
 
-	_remove_part_button = new QPushButton (Resources::Icons16::remove(), "", this);
+	_remove_part_button = std::make_unique<QPushButton> (Resources::Icons16::remove(), "", this);
 	_remove_part_button->setIconSize (Resources::Icons16::haruhi().size());
 	_remove_part_button->setToolTip ("Remove current part");
 	_remove_part_button->setFlat (true);
-	QObject::connect (_remove_part_button, SIGNAL (clicked()), this, SLOT (remove_current_part()));
+	QObject::connect (_remove_part_button.get(), SIGNAL (clicked()), this, SLOT (remove_current_part()));
 
 	// Part tabs:
 
-	_tabs = new TabWidget (this);
+	_tabs = std::make_unique<TabWidget> (this);
 	_tabs->setMovable (true);
 	_tabs->setCornerWidget (buttons_widget, Qt::TopRightCorner);
 	_tabs->setIconSize (Resources::Icons16::haruhi().size() * 1.25);
 	QObject::connect (_tabs->tabBar(), SIGNAL (tabMoved (int, int)), this, SLOT (tab_moved (int, int)));
 
-	_placeholder = new Placeholder (this);
+	_placeholder = std::make_unique<Placeholder> (this);
 
 	// Layouts:
 
-	QGridLayout* buttons_layout = new QGridLayout (buttons_widget);
+	auto buttons_layout = new QGridLayout (buttons_widget);
 	buttons_layout->setMargin (0);
 	buttons_layout->setSpacing (Config::spacing());
-	buttons_layout->addWidget (_add_part_button, 0, 0);
-	buttons_layout->addWidget (_remove_part_button, 0, 1);
+	buttons_layout->addWidget (_add_part_button.get(), 0, 0);
+	buttons_layout->addWidget (_remove_part_button.get(), 0, 1);
 	buttons_layout->addItem (new QSpacerItem (0, Config::spacing(), QSizePolicy::Fixed, QSizePolicy::Fixed), 1, 0, 1, 2);
 
-	QVBoxLayout* main_layout = new QVBoxLayout();
+	auto main_layout = new QVBoxLayout();
 	main_layout->setMargin (0);
 	main_layout->setSpacing (Config::spacing());
-	main_layout->addWidget (_knob_volume);
-	main_layout->addWidget (_knob_panorama);
-	main_layout->addWidget (_knob_detune);
-	main_layout->addWidget (_knob_stereo_width);
+	main_layout->addWidget (_knob_volume.get());
+	main_layout->addWidget (_knob_panorama.get());
+	main_layout->addWidget (_knob_detune.get());
+	main_layout->addWidget (_knob_stereo_width.get());
 	main_layout->addItem (new QSpacerItem (0, Config::spacing(), QSizePolicy::Fixed, QSizePolicy::Fixed));
 	main_layout->addWidget (new QLabel ("Max voices:", this));
-	main_layout->addWidget (_polyphony);
+	main_layout->addWidget (_polyphony.get());
 	main_layout->addWidget (new QLabel ("Ovrsmpling:", this));
-	main_layout->addWidget (_oversampling);
+	main_layout->addWidget (_oversampling.get());
 	main_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
-	QHBoxLayout* layout = new QHBoxLayout (this);
+	auto layout = new QHBoxLayout (this);
 	layout->setMargin (0);
 	layout->setSpacing (Config::spacing());
 	layout->addLayout (main_layout);
-	layout->addWidget (_tabs);
+	layout->addWidget (_tabs.get());
 
 	update_widgets();
 
@@ -158,7 +158,7 @@ PartManagerWidget::plugin() const
 void
 PartManagerWidget::unit_bay_assigned()
 {
-	for (auto* k: { _knob_volume, _knob_panorama, _knob_detune, _knob_stereo_width })
+	for (auto* k: { _knob_volume.get(), _knob_panorama.get(), _knob_detune.get(), _knob_stereo_width.get() })
 		k->set_unit_bay (plugin()->unit_bay());
 }
 
@@ -276,7 +276,7 @@ PartManagerWidget::update_widgets()
 	_remove_part_button->setEnabled (parts_number > 0);
 
 	if (_part_manager->parts_number() == 0)
-		_tabs->addTab (_placeholder, Resources::Icons16::add(), "→");
+		_tabs->addTab (_placeholder.get(), Resources::Icons16::add(), "→");
 	else
 	{
 		for (int i = 0, n = _tabs->count(); i < n; ++i)

@@ -104,35 +104,35 @@ Backend::Backend (QString const& client_name, QWidget* parent):
 
 	// Layouts:
 
-	QHBoxLayout* input_buttons_layout = new QHBoxLayout();
+	auto input_buttons_layout = new QHBoxLayout();
 	input_buttons_layout->setSpacing (Config::spacing());
 	input_buttons_layout->addWidget (_create_input_button.get());
 	input_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 	input_buttons_layout->addWidget (_destroy_input_button.get());
 
-	QVBoxLayout* inputs_layout = new QVBoxLayout();
+	auto inputs_layout = new QVBoxLayout();
 	inputs_layout->setSpacing (Config::spacing());
 	inputs_layout->addLayout (input_buttons_layout);
 	inputs_layout->addWidget (_inputs_list.get());
 
-	QHBoxLayout* output_buttons_layout = new QHBoxLayout();
+	auto output_buttons_layout = new QHBoxLayout();
 	output_buttons_layout->setSpacing (Config::spacing());
 	output_buttons_layout->addWidget (_create_output_button.get());
 	output_buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::Fixed));
 	output_buttons_layout->addWidget (_destroy_output_button.get());
 
-	QVBoxLayout* outputs_layout = new QVBoxLayout();
+	auto outputs_layout = new QVBoxLayout();
 	outputs_layout->setSpacing (Config::spacing());
 	outputs_layout->addLayout (output_buttons_layout);
 	outputs_layout->addWidget (_outputs_list.get());
 
-	QHBoxLayout* jack_layout = new QHBoxLayout();
+	auto jack_layout = new QHBoxLayout();
 	jack_layout->setSpacing (Config::spacing());
 	jack_layout->addWidget (_disconnect_button.get());
 	jack_layout->addWidget (_reconnect_button.get());
 	jack_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	auto layout = new QVBoxLayout (this);
 	layout->setMargin (0);
 	layout->setSpacing (Config::spacing());
 	layout->addWidget (new StyledBackground (new QLabel ("Audio inputs"), this));

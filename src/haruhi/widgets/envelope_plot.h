@@ -60,13 +60,13 @@ class EnvelopePlot: public QWidget
 	 * time bars.
 	 */
 	void
-	set_sample_rate (Frequency sample_rate) { _sample_rate = sample_rate; }
+	set_sample_rate (Frequency sample_rate) noexcept;
 
 	/**
 	 * Assigns Envelope object to this plot.
 	 * EnvelopePlot does not take ownership of Envelope object.
 	 *
-	 * \param	envelope is the envelope to use. 0 deassigns envelope.
+	 * \param	envelope is the envelope to use. nullptr deassigns envelope.
 	 * \entry	Any thread.
 	 * \threadsafe
 	 */
@@ -78,7 +78,7 @@ class EnvelopePlot: public QWidget
 	 * \entry	Any thread.
 	 */
 	DSP::Envelope*
-	envelope() const { return _envelope.load(); }
+	envelope() const noexcept;
 
 	/**
 	 * Sets editable mode of the plot.
@@ -86,14 +86,14 @@ class EnvelopePlot: public QWidget
 	 * \entry	Qt thread only.
 	 */
 	void
-	set_editable (bool editable, Time max_segment_time) { _editable = editable; _max_segment_time = max_segment_time; }
+	set_editable (bool editable, Time max_segment_time) noexcept;
 
 	/**
 	 * \returns	Currently edited point or -1 if no point is active.
 	 * \entry	Any thread.
 	 */
 	int
-	active_point() const { return _active_point_index; }
+	active_point() const noexcept;
 
 	/**
 	 * Sets current edited point.
@@ -176,6 +176,35 @@ class EnvelopePlot: public QWidget
 	bool					_dragging					= false;
 	QPoint					_drag_start_pos;
 };
+
+
+inline void
+EnvelopePlot::set_sample_rate (Frequency sample_rate) noexcept
+{
+	_sample_rate = sample_rate;
+}
+
+
+inline DSP::Envelope*
+EnvelopePlot::envelope() const noexcept
+{
+	return _envelope.load();
+}
+
+
+inline void
+EnvelopePlot::set_editable (bool editable, Time max_segment_time) noexcept
+{
+	_editable = editable;
+	_max_segment_time = max_segment_time;
+}
+
+
+inline int
+EnvelopePlot::active_point() const noexcept
+{
+	return _active_point_index;
+}
 
 } // namespace Haruhi
 

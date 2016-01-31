@@ -107,7 +107,7 @@ class Part:
 
 	  private:
 		Part*					_part;
-		DSP::Wavetable*			_wavetable;
+		DSP::Wavetable*			_wavetable		= nullptr;
 		unsigned int			_serial;
 		Atomic<bool>			_is_cancelled;
 	};

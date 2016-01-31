@@ -51,41 +51,42 @@ FilterWidget::FilterWidget (QWidget* parent, unsigned int filter_no, Params::Fil
 	// Knobs:
 
 	Part::PartControllerProxies* proxies = part->proxies();
-	_knob_frequency		= new Haruhi::Knob (this, proxies->filter_frequency[filter_no].get(), "Freq.");
-	_knob_resonance		= new Haruhi::Knob (this, proxies->filter_resonance[filter_no].get(), "Q");
-	_knob_gain			= new Haruhi::Knob (this, proxies->filter_gain[filter_no].get(), "Gain");
-	_knob_attenuation	= new Haruhi::Knob (this, proxies->filter_attenuation[filter_no].get(), "Attenuate");
+	_knob_frequency		= std::make_unique<Haruhi::Knob> (this, proxies->filter_frequency[filter_no].get(), "Freq.");
+	_knob_resonance		= std::make_unique<Haruhi::Knob> (this, proxies->filter_resonance[filter_no].get(), "Q");
+	_knob_gain			= std::make_unique<Haruhi::Knob> (this, proxies->filter_gain[filter_no].get(), "Gain");
+	_knob_attenuation	= std::make_unique<Haruhi::Knob> (this, proxies->filter_attenuation[filter_no].get(), "Attenuate");
 
 	_knob_attenuation->set_volume_scale (true, _params->stages);
 
 	// Set unit bay on all knobs:
 
-	for (auto* k: { _knob_frequency, _knob_resonance, _knob_gain, _knob_attenuation })
+	for (auto* k: { _knob_frequency.get(), _knob_resonance.get(), _knob_gain.get(), _knob_attenuation.get() })
 		k->set_unit_bay (_part->part_manager()->plugin()->unit_bay());
 
 	// Top widget, can be disabled with all child widgets:
-	_panel = new QWidget (this);
+	_panel = std::make_unique<QWidget> (this);
 	_panel->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	// Enabled checkbox:
-	_enabled_widget = new QCheckBox (QString ("Filter %1").arg (filter_no + 1), this);
+	_enabled_widget = std::make_unique<QCheckBox> (QString ("Filter %1").arg (filter_no + 1), this);
 	_enabled_widget->setChecked (_params->enabled);
-	QObject::connect (_enabled_widget, SIGNAL (clicked()), this, SLOT (widgets_to_params()));
-	QObject::connect (_enabled_widget, SIGNAL (clicked()), this, SLOT (update_widgets()));
+	QObject::connect (_enabled_widget.get(), SIGNAL (clicked()), this, SLOT (widgets_to_params()));
+	QObject::connect (_enabled_widget.get(), SIGNAL (clicked()), this, SLOT (update_widgets()));
 
 	// Plot:
-	QFrame* plot_frame = new QFrame (this);
+	auto plot_frame = new QFrame (this);
 	plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	plot_frame->setMinimumHeight (20_screen_mm);
-	_response_plot = new Haruhi::FrequencyResponsePlot (plot_frame);
-	QVBoxLayout* plot_frame_layout = new QVBoxLayout (plot_frame);
+	_response_plot = std::make_unique<Haruhi::FrequencyResponsePlot> (plot_frame);
+
+	auto plot_frame_layout = new QVBoxLayout (plot_frame);
 	plot_frame_layout->setMargin (0);
 	plot_frame_layout->setSpacing (Config::spacing());
-	plot_frame_layout->addWidget (_response_plot);
+	plot_frame_layout->addWidget (_response_plot.get());
 
 	// Filter type combo box:
-	_filter_type = new QComboBox (this);
+	_filter_type = std::make_unique<QComboBox> (this);
 	_filter_type->addItem (Resources::Icons16::filter_lpf(), "Low pass", FilterImpulseResponse::LowPass);
 	_filter_type->addItem (Resources::Icons16::filter_hpf(), "High pass", FilterImpulseResponse::HighPass);
 	_filter_type->addItem (Resources::Icons16::filter_bpf(), "Band pass", FilterImpulseResponse::BandPass);
@@ -96,56 +97,56 @@ FilterWidget::FilterWidget (QWidget* parent, unsigned int filter_no, Params::Fil
 	_filter_type->addItem (Resources::Icons16::filter_highshelf(), "High shelf", FilterImpulseResponse::HighShelf);
 	_filter_type->setIconSize (Resources::Icons16::haruhi().size());
 	_filter_type->setCurrentIndex (_params->type);
-	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (widgets_to_params()));
-	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_widgets()));
-	QObject::connect (_filter_type, SIGNAL (activated (int)), this, SLOT (update_impulse_response()));
+	QObject::connect (_filter_type.get(), SIGNAL (activated (int)), this, SLOT (widgets_to_params()));
+	QObject::connect (_filter_type.get(), SIGNAL (activated (int)), this, SLOT (update_widgets()));
+	QObject::connect (_filter_type.get(), SIGNAL (activated (int)), this, SLOT (update_impulse_response()));
 
 	// Stages:
-	_stages = new QSpinBox (this);
+	_stages = std::make_unique<QSpinBox> (this);
 	_stages->setSuffix (" stages");
 	_stages->setRange (1, 5);
 	_stages->setValue (_params->stages.get());
-	QObject::connect (_stages, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_params()));
-	QObject::connect (_stages, SIGNAL (valueChanged (int)), this, SLOT (update_widgets()));
-	QObject::connect (_stages, SIGNAL (valueChanged (int)), this, SLOT (update_impulse_response()));
+	QObject::connect (_stages.get(), SIGNAL (valueChanged (int)), this, SLOT (widgets_to_params()));
+	QObject::connect (_stages.get(), SIGNAL (valueChanged (int)), this, SLOT (update_widgets()));
+	QObject::connect (_stages.get(), SIGNAL (valueChanged (int)), this, SLOT (update_impulse_response()));
 
 	// Limiter:
-	_limiter_enabled = new QCheckBox ("Limit", this);
+	_limiter_enabled = std::make_unique<QCheckBox> ("Limit", this);
 	_limiter_enabled->setChecked (_params->limiter_enabled);
 	_limiter_enabled->setToolTip ("Automatic attenuation limit");
-	QObject::connect (_limiter_enabled, SIGNAL (toggled (bool)), this, SLOT (widgets_to_params()));
-	QObject::connect (_limiter_enabled, SIGNAL (toggled (bool)), this, SLOT (update_impulse_response()));
+	QObject::connect (_limiter_enabled.get(), SIGNAL (toggled (bool)), this, SLOT (widgets_to_params()));
+	QObject::connect (_limiter_enabled.get(), SIGNAL (toggled (bool)), this, SLOT (update_impulse_response()));
 
 	// Layouts:
-	QHBoxLayout* hor2_layout = new QHBoxLayout();
+	auto hor2_layout = new QHBoxLayout();
 	hor2_layout->setSpacing (Config::spacing());
-	hor2_layout->addWidget (_filter_type);
-	hor2_layout->addWidget (_stages);
-	hor2_layout->addWidget (_limiter_enabled);
+	hor2_layout->addWidget (_filter_type.get());
+	hor2_layout->addWidget (_stages.get());
+	hor2_layout->addWidget (_limiter_enabled.get());
 
-	QHBoxLayout* params_layout = new QHBoxLayout();
+	auto params_layout = new QHBoxLayout();
 	params_layout->setSpacing (Config::spacing());
-	params_layout->addWidget (_knob_frequency);
-	params_layout->addWidget (_knob_resonance);
-	params_layout->addWidget (_knob_gain);
-	params_layout->addWidget (_knob_attenuation);
+	params_layout->addWidget (_knob_frequency.get());
+	params_layout->addWidget (_knob_resonance.get());
+	params_layout->addWidget (_knob_gain.get());
+	params_layout->addWidget (_knob_attenuation.get());
 
-	QHBoxLayout* hor3_layout = new QHBoxLayout();
+	auto hor3_layout = new QHBoxLayout();
 	hor3_layout->setSpacing (Config::spacing());
 	hor3_layout->addLayout (params_layout);
 
-	QVBoxLayout* ver1_layout = new QVBoxLayout (_panel);
+	auto ver1_layout = new QVBoxLayout (_panel.get());
 	ver1_layout->setMargin (0);
 	ver1_layout->setSpacing (Config::spacing());
 	ver1_layout->addWidget (plot_frame);
 	ver1_layout->addLayout (hor2_layout);
 	ver1_layout->addLayout (hor3_layout);
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	auto layout = new QVBoxLayout (this);
 	layout->setMargin (0);
 	layout->setSpacing (Config::spacing());
-	layout->addWidget (new Haruhi::StyledBackground (_enabled_widget, this));
-	layout->addWidget (_panel);
+	layout->addWidget (new Haruhi::StyledBackground (_enabled_widget.get(), this));
+	layout->addWidget (_panel.get());
 
 	_response_plot->assign_impulse_response (&_impulse_response);
 
@@ -167,13 +168,8 @@ FilterWidget::FilterWidget (QWidget* parent, unsigned int filter_no, Params::Fil
 
 FilterWidget::~FilterWidget()
 {
-	// Deassign filter before deletion by Qt:
-	_response_plot->assign_impulse_response (0);
-
-	delete _knob_frequency;
-	delete _knob_resonance;
-	delete _knob_gain;
-	delete _knob_attenuation;
+	// Deassign filter before deletion:
+	_response_plot->assign_impulse_response (nullptr);
 }
 
 

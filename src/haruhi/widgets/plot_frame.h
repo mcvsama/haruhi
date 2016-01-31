@@ -36,7 +36,7 @@ class PlotFrame: public QFrame
 	set_widget (QWidget* widget);
 
   private:
-	QVBoxLayout* _layout;
+	Unique<QVBoxLayout>	_layout;
 };
 
 } // namespace Haruhi

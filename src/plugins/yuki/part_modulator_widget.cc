@@ -71,31 +71,31 @@ PartModulatorWidget::PartModulatorWidget (QWidget* parent, PartWidget* part_widg
 		}
 	}
 
-	// Operator widgets:
-	_operator_1 = new OperatorWidget (this, 0, &_part->part_params()->operators[0], _part);
-	_operator_2 = new OperatorWidget (this, 1, &_part->part_params()->operators[1], _part);
-	_operator_3 = new OperatorWidget (this, 2, &_part->part_params()->operators[2], _part);
-
 	// Modulator enabled:
-	_modulator_enabled = new QCheckBox ("Modulator enabled", this);
+	_modulator_enabled = std::make_unique<QCheckBox> ("Modulator enabled", this);
 	_modulator_enabled->setChecked (pp->modulator_enabled);
-	QObject::connect (_modulator_enabled, SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
-	QObject::connect (_modulator_enabled, SIGNAL (toggled (bool)), this, SLOT (update_widgets()));
+	QObject::connect (_modulator_enabled.get(), SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_modulator_enabled.get(), SIGNAL (toggled (bool)), this, SLOT (update_widgets()));
+
+	// Operator widgets:
+	_operator_1 = std::make_unique<OperatorWidget> (this, 0, &_part->part_params()->operators[0], _part);
+	_operator_2 = std::make_unique<OperatorWidget> (this, 1, &_part->part_params()->operators[1], _part);
+	_operator_3 = std::make_unique<OperatorWidget> (this, 2, &_part->part_params()->operators[2], _part);
 
 	// Layouts:
 
-	QLabel* fm_modulation_matrix_label = create_modulator_label ("FM modulation matrix:");
-	QLabel* am_modulation_matrix_label = create_modulator_label ("AM modulation matrix:");
+	auto fm_modulation_matrix_label = create_modulator_label ("FM modulation matrix:");
+	auto am_modulation_matrix_label = create_modulator_label ("AM modulation matrix:");
 	fm_modulation_matrix_label->setFixedHeight (2.2f * Haruhi::Services::y_pixels_per_point() * fm_modulation_matrix_label->font().pointSize());
 	am_modulation_matrix_label->setFixedHeight (2.2f * Haruhi::Services::y_pixels_per_point() * fm_modulation_matrix_label->font().pointSize());
 
-	QGridLayout* modulator_layout = new QGridLayout (this);
+	auto modulator_layout = new QGridLayout (this);
 	modulator_layout->setMargin (Config::margin());
 	modulator_layout->setSpacing (Config::spacing());
-	modulator_layout->addWidget (_modulator_enabled, 0, 0);
-	modulator_layout->addWidget (_operator_1, 1, 0);
-	modulator_layout->addWidget (_operator_2, 2, 0);
-	modulator_layout->addWidget (_operator_3, 3, 0);
+	modulator_layout->addWidget (_modulator_enabled.get(), 0, 0);
+	modulator_layout->addWidget (_operator_1.get(), 1, 0);
+	modulator_layout->addWidget (_operator_2.get(), 2, 0);
+	modulator_layout->addWidget (_operator_3.get(), 3, 0);
 	modulator_layout->addWidget (create_modulator_label ("→"), 1, 1, 1, 1, Qt::AlignCenter);
 	modulator_layout->addWidget (create_modulator_label ("→"), 2, 1, 1, 1, Qt::AlignCenter);
 	modulator_layout->addWidget (create_modulator_label ("→"), 3, 1, 1, 1, Qt::AlignCenter);
@@ -166,7 +166,7 @@ PartModulatorWidget::params_to_widgets()
 QLabel*
 PartModulatorWidget::create_modulator_label (QString const& text)
 {
-	QLabel* label = new QLabel (text, this);
+	auto label = new QLabel (text, this);
 	_modulator_labels.push_back (label);
 	return label;
 }

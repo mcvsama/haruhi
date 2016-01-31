@@ -37,6 +37,8 @@ namespace Haruhi {
 
 using namespace ScreenLiterals;
 
+constexpr int LevelMeter::kPeakDecounter;
+
 
 LevelMeter::LevelMeter (QWidget* parent, LevelMetersGroup* group, float lower_db, float upper_db):
 	QWidget (parent),
@@ -92,7 +94,7 @@ LevelMeter::process (Sample* begin, Sample* end)
 	if (_peak.load() < _sample || _peak_decounter < 0)
 	{
 		_peak.store (_sample);
-		_peak_decounter = LevelMeter::PEAK_DECOUNTER;
+		_peak_decounter = LevelMeter::kPeakDecounter;
 	}
 }
 
@@ -106,7 +108,7 @@ LevelMeter::set (Sample value)
 	if (_peak.load() < _sample || _peak_decounter < 0)
 	{
 		_peak.store (_sample);
-		_peak_decounter = LevelMeter::PEAK_DECOUNTER;
+		_peak_decounter = LevelMeter::kPeakDecounter;
 	}
 }
 
@@ -135,6 +137,20 @@ LevelMeter::reset_peak()
 {
 	_sample = 0.0f;
 	_peak.store (0.0f);
+}
+
+
+void
+LevelMeter::set_decay_speed (float speed)
+{
+	_decay_speed = speed;
+}
+
+
+void
+LevelMeter::set_fps (int fps)
+{
+	_fps = fps;
 }
 
 
@@ -221,6 +237,13 @@ LevelMeter::repaint_bar_buffer()
 }
 
 
+float
+LevelMeter::curve (float value)
+{
+	return 1.0f + 0.4f * std::sin (renormalize (value, 0.0f, 1.0f, 0.0f, M_PI));
+}
+
+
 LevelMetersGroup::Scale::Scale (QWidget* parent, float lower_db, float upper_db):
 	QWidget (parent),
 	_lower_db (lower_db),
@@ -254,13 +277,12 @@ LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper
 	QWidget (parent),
 	_lower_db (lower_db),
 	_upper_db (upper_db),
-	_peak_sample (0),
-	_timer (0)
+	_peak_sample (0)
 {
-	_peak_button = new QPushButton ("-inf dB", this);
+	_peak_button = std::make_unique<QPushButton> ("-inf dB", this);
 	_peak_button->setFont (Resources::small_font());
 	_peak_button->setFixedHeight (2.0 * Resources::small_font().pixelSize());
-	_peak_button->setFixedWidth (6_screen_mm);
+	//_peak_button->setFixedWidth (6_screen_mm);
 	_peak_button->setToolTip ("C-r to reset");
 	_peak_button_bg = _peak_button->palette().color (QPalette::Button);
 	_peak_button_fg = _peak_button->palette().color (QPalette::ButtonText);
@@ -268,27 +290,27 @@ LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper
 	_vector.push_back (new LevelMeter (this, this));
 	_vector.push_back (new LevelMeter (this, this));
 
-	_scale = new Scale (this, lower_db, upper_db);
+	_scale = std::make_unique<Scale> (this, lower_db, upper_db);
 
-	_timer = new QTimer (this);
+	_timer = std::make_unique<QTimer> (this);
 
-	QObject::connect (_peak_button, SIGNAL (clicked()), this, SLOT (reset_peak()));
-	QObject::connect (_timer, SIGNAL (timeout()), this, SLOT (update_meters()));
+	QObject::connect (_peak_button.get(), SIGNAL (clicked()), this, SLOT (reset_peak()));
+	QObject::connect (_timer.get(), SIGNAL (timeout()), this, SLOT (update_meters()));
 	new QShortcut (Qt::CTRL + Qt::Key_R, this, SLOT (reset_peak()));
 
 	// Layouts:
 
-	QHBoxLayout* meters_layout = new QHBoxLayout();
+	auto meters_layout = new QHBoxLayout();
 	meters_layout->setSpacing (0.3_screen_mm);
 	meters_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
 	for (LevelMeter* m: _vector)
 		meters_layout->addWidget (m);
-	meters_layout->addWidget (_scale);
+	meters_layout->addWidget (_scale.get());
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	auto layout = new QVBoxLayout (this);
 	layout->setMargin (0);
 	layout->setSpacing (Config::spacing());
-	layout->addWidget (_peak_button);
+	layout->addWidget (_peak_button.get());
 	layout->addLayout (meters_layout);
 
 	_timer->start (25); // 40 fps

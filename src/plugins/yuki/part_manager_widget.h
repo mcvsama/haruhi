@@ -33,6 +33,8 @@
 
 namespace Yuki {
 
+using Haruhi::Unique;
+
 class Plugin;
 class Part;
 class PartManager;
@@ -140,21 +142,21 @@ class PartManagerWidget:
 	update_widgets();
 
   private:
-	PartManager*	_part_manager;
-	bool			_stop_widgets_to_params;
-	bool			_stop_params_to_widgets;
+	PartManager*			_part_manager;
+	bool					_stop_widgets_to_params;
+	bool					_stop_params_to_widgets;
 
-	TabWidget*		_tabs;
-	QPushButton*	_add_part_button;
-	QPushButton*	_remove_part_button;
-	QWidget*		_placeholder;
-	QSpinBox*		_polyphony;
-	QSpinBox*		_oversampling;
+	Unique<TabWidget>		_tabs;
+	Unique<QPushButton>		_add_part_button;
+	Unique<QPushButton>		_remove_part_button;
+	Unique<QWidget>			_placeholder;
+	Unique<QSpinBox>		_polyphony;
+	Unique<QSpinBox>		_oversampling;
 
-	Haruhi::Knob*	_knob_volume;
-	Haruhi::Knob*	_knob_panorama;
-	Haruhi::Knob*	_knob_detune;
-	Haruhi::Knob*	_knob_stereo_width;
+	Unique<Haruhi::Knob>	_knob_volume;
+	Unique<Haruhi::Knob>	_knob_panorama;
+	Unique<Haruhi::Knob>	_knob_detune;
+	Unique<Haruhi::Knob>	_knob_stereo_width;
 };
 
 

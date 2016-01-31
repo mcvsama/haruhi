@@ -38,7 +38,8 @@ class LevelMetersGroup;
 
 class LevelMeter: public QWidget
 {
-	enum { PEAK_DECOUNTER = 100 };
+	// How quickly peak indicator should disappear:
+	static constexpr int kPeakDecounter = 100;
 
   public:
 	LevelMeter (QWidget* parent, LevelMetersGroup* group = 0, float lower_db = -70.0, float upper_db = 6.0);
@@ -65,14 +66,14 @@ class LevelMeter: public QWidget
 	 * \param	speed Decay speed: [0 (no decay)..1.0 (immediate decay)].
 	 */
 	void
-	set_decay_speed (float speed) { _decay_speed = speed; }
+	set_decay_speed (float speed);
 
 	/**
 	 * Tells LevelMeter at what fps it will be updated.
 	 * This information is used to decay meter at correct speed.
 	 */
 	void
-	set_fps (int fps) { _fps = fps; }
+	set_fps (int fps);
 
   protected:
 	void
@@ -89,10 +90,7 @@ class LevelMeter: public QWidget
 	repaint_bar_buffer();
 
 	static float
-	curve (float value)
-	{
-		return 1.0f + 0.4f * std::sin (renormalize (value, 0.0f, 1.0f, 0.0f, M_PI));
-	}
+	curve (float value);
 
   private:
 	LevelMetersGroup*	_group;
@@ -174,22 +172,22 @@ class LevelMetersGroup: public QWidget
 
   private:
 	// Meter configuration:
-	float			_lower_db;
-	float			_upper_db;
+	float				_lower_db;
+	float				_upper_db;
 
 	// Vector of meters:
-	Vector			_vector;
+	Vector				_vector;
 
 	// Widgets:
-	Sample			_peak_sample;
-	QPushButton*	_peak_button;
-	Scale*			_scale;
-	QColor			_peak_button_bg;
-	QColor			_peak_button_fg;
+	Sample				_peak_sample;
+	Unique<QPushButton>	_peak_button;
+	Unique<Scale>		_scale;
+	QColor				_peak_button_bg;
+	QColor				_peak_button_fg;
 
 	// Timer for decaying meters:
-	QTimer*			_timer;
-	float			_decay_speed;
+	Unique<QTimer>		_timer;
+	float				_decay_speed;
 };
 
 } // namespace Haruhi

@@ -36,6 +36,7 @@
 namespace Yuki {
 
 namespace DSP = Haruhi::DSP;
+using Haruhi::Unique;
 
 class Part;
 
@@ -86,24 +87,25 @@ class FilterWidget:
 	post_params_to_widgets();
 
   private:
-	Params::Filter*					_params;
-	FilterImpulseResponse			_impulse_response;
-	Part*							_part;
-	bool							_stop_widgets_to_params;
-	bool							_stop_params_to_widgets;
+	Params::Filter*							_params;
+	FilterImpulseResponse					_impulse_response;
+	Part*									_part;
+	bool									_stop_widgets_to_params;
+	bool									_stop_params_to_widgets;
+
+	// In this order:
+	Unique<QWidget>							_panel;
+	Unique<QCheckBox>						_enabled_widget;
+	Unique<Haruhi::FrequencyResponsePlot>	_response_plot;
+	Unique<QComboBox>						_filter_type;
+	Unique<QSpinBox>						_stages;
+	Unique<QCheckBox>						_limiter_enabled;
 
 	// Knobs:
-	Haruhi::Knob*					_knob_frequency;
-	Haruhi::Knob*					_knob_resonance;
-	Haruhi::Knob*					_knob_gain;
-	Haruhi::Knob*					_knob_attenuation;
-
-	QWidget*						_panel;
-	QCheckBox*						_enabled_widget;
-	Haruhi::FrequencyResponsePlot*	_response_plot;
-	QComboBox*						_filter_type;
-	QSpinBox*						_stages;
-	QCheckBox*						_limiter_enabled;
+	Unique<Haruhi::Knob>					_knob_frequency;
+	Unique<Haruhi::Knob>					_knob_resonance;
+	Unique<Haruhi::Knob>					_knob_gain;
+	Unique<Haruhi::Knob>					_knob_attenuation;
 };
 
 } // namespace Yuki

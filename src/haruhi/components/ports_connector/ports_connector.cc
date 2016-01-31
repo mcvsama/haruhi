@@ -102,13 +102,13 @@ PortsConnector::PortsConnector (UnitBay* unit_bay, QWidget* parent):
 
 	setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-	QHBoxLayout* buttons_layout = new QHBoxLayout();
+	auto buttons_layout = new QHBoxLayout();
 	buttons_layout->setSpacing (Config::spacing());
 	buttons_layout->addWidget (_connect_button.get());
 	buttons_layout->addWidget (_disconnect_button.get());
 	buttons_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
-	QVBoxLayout* layout = new QVBoxLayout (this);
+	auto layout = new QVBoxLayout (this);
 	layout->setMargin (0);
 	layout->setSpacing (Config::spacing());
 	layout->addWidget (_splitter.get());

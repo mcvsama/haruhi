@@ -50,63 +50,58 @@ OperatorWidget::OperatorWidget (QWidget* parent, unsigned int operator_no, Param
 {
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-	_frequency_numerator = new QSpinBox (this);
+	_frequency_numerator = std::make_unique<QSpinBox> (this);
 	_frequency_numerator->setMinimum (params->frequency_numerator.minimum());
 	_frequency_numerator->setMaximum (params->frequency_numerator.maximum());
 	_frequency_numerator->setValue (params->frequency_numerator.default_value());
-	QObject::connect (_frequency_numerator, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_params()));
+	QObject::connect (_frequency_numerator.get(), SIGNAL (valueChanged (int)), this, SLOT (widgets_to_params()));
 
-	_frequency_denominator = new QSpinBox (this);
+	_frequency_denominator = std::make_unique<QSpinBox> (this);
 	_frequency_denominator->setMinimum (params->frequency_denominator.minimum());
 	_frequency_denominator->setMaximum (params->frequency_denominator.maximum());
 	_frequency_denominator->setValue (params->frequency_denominator.default_value());
-	QObject::connect (_frequency_denominator, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_params()));
+	QObject::connect (_frequency_denominator.get(), SIGNAL (valueChanged (int)), this, SLOT (widgets_to_params()));
 
 	Part::PartControllerProxies* proxies = part->proxies();
-	_knob_detune = new Haruhi::Knob (this, proxies->operator_detune[operator_no].get(), "Detune");
+	_knob_detune = std::make_unique<Haruhi::Knob> (this, proxies->operator_detune[operator_no].get(), "Detune");
 	_knob_detune->set_unit_bay (_part->part_manager()->plugin()->unit_bay());
 
-	_octave = new QSpinBox (this);
+	_octave = std::make_unique<QSpinBox> (this);
 	_octave->setMinimum (params->octave.minimum());
 	_octave->setMaximum (params->octave.maximum());
 	_octave->setValue (params->octave.default_value());
-	QObject::connect (_octave, SIGNAL (valueChanged (int)), this, SLOT (widgets_to_params()));
+	QObject::connect (_octave.get(), SIGNAL (valueChanged (int)), this, SLOT (widgets_to_params()));
 
 	// Force normal text color. For some reason Qt uses white color on light-gray background.
-	QLabel* label = new QLabel (QString ("Operator %1").arg (operator_no + 1), this);
+	auto label = new QLabel (QString ("Operator %1").arg (operator_no + 1), this);
 	label->setForegroundRole (QPalette::Text);
 
-	QGroupBox* group = new QGroupBox (this);
-	QGridLayout* group_layout = new QGridLayout (group);
+	auto group = new QGroupBox (this);
+	auto group_layout = new QGridLayout (group);
 	group_layout->setMargin (Config::margin());
 	group_layout->setSpacing (Config::spacing());
 	group_layout->addWidget (new Haruhi::StyledBackground (label, this, 0.3_screen_mm), 0, 0, 1, 4);
-	QLabel* f = new QLabel ("Frequency: ", this);
+
+	auto f = new QLabel ("Frequency: ", this);
 	f->setToolTip ("Relative frequency");
 	group_layout->addWidget (f, 1, 0);
-	group_layout->addWidget (_frequency_numerator, 1, 1);
+	group_layout->addWidget (_frequency_numerator.get(), 1, 1);
 	group_layout->addWidget (new QLabel ("÷", this), 1, 2);
-	group_layout->addWidget (_frequency_denominator, 1, 3);
+	group_layout->addWidget (_frequency_denominator.get(), 1, 3);
 	group_layout->addWidget (new QLabel ("Octave:", this), 2, 0, 1, 2);
-	group_layout->addWidget (_octave, 2, 1, 1, 3, Qt::AlignRight);
+	group_layout->addWidget (_octave.get(), 2, 1, 1, 3, Qt::AlignRight);
 	group_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding), 3, 0);
 
-	QGridLayout* layout = new QGridLayout (this);
+	auto layout = new QGridLayout (this);
 	layout->setMargin (0);
 	layout->setSpacing (Config::spacing());
 	layout->addWidget (group, 0, 0);
-	layout->addWidget (_knob_detune, 0, 1);
+	layout->addWidget (_knob_detune.get(), 0, 1);
 
 	// Update widgets when params change:
 	_params->frequency_numerator.on_change.connect (this, &OperatorWidget::post_params_to_widgets);
 	_params->frequency_denominator.on_change.connect (this, &OperatorWidget::post_params_to_widgets);
 	_params->octave.on_change.connect (this, &OperatorWidget::post_params_to_widgets);
-}
-
-
-OperatorWidget::~OperatorWidget()
-{
-	delete _knob_detune;
 }
 
 

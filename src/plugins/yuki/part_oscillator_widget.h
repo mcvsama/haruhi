@@ -95,6 +95,26 @@ class PartOscillatorWidget: public QWidget
 	PartWidget*					_part_widget;
 	Part*						_part;
 
+	Unique<QComboBox>			_wave_type;
+	Unique<QComboBox>			_modulator_type;
+	Unique<QComboBox>			_modulator_wave_type;
+	Unique<Haruhi::WavePlot>	_base_wave_plot;
+	Unique<Haruhi::WavePlot>	_final_wave_plot;
+	Unique<QPushButton>			_const_portamento_time;
+	Unique<QPushButton>			_pitchbend_enabled;
+	Unique<QSpinBox>			_pitchbend_down_semitones;
+	Unique<QSpinBox>			_pitchbend_up_semitones;
+	Unique<QSpinBox>			_transposition_semitones;
+	Unique<QSpinBox>			_frequency_modulation_range;
+	Unique<QPushButton>			_unison_stereo;
+	Unique<QPushButton>			_pseudo_stereo;
+	Unique<QPushButton>			_auto_center;
+	Unique<QPushButton>			_wave_enabled;
+	Unique<QPushButton>			_noise_enabled;
+	Unique<FilterWidget>		_filter_1;
+	Unique<FilterWidget>		_filter_2;
+	Unique<QComboBox>			_filter_configuration;
+
 	// Waveform knobs:
 	Unique<Haruhi::Knob>		_knob_wave_shape;
 	Unique<Haruhi::Knob>		_knob_modulator_amplitude;
@@ -120,30 +140,6 @@ class PartOscillatorWidget: public QWidget
 	Unique<Haruhi::Knob>		_knob_portamento_time;
 	Unique<Haruhi::Knob>		_knob_phase;
 	Unique<Haruhi::Knob>		_knob_noise_level;
-
-	// Waveform-related:
-	QComboBox*					_wave_type;
-	QComboBox*					_modulator_type;
-	QComboBox*					_modulator_wave_type;
-	Unique<Haruhi::WavePlot>	_base_wave_plot;
-	Unique<Haruhi::WavePlot>	_final_wave_plot;
-
-	// Pitchbend/transposition:
-	QPushButton*				_const_portamento_time;
-	QPushButton*				_pitchbend_enabled;
-	QSpinBox*					_pitchbend_up_semitones;
-	QSpinBox*					_pitchbend_down_semitones;
-	QSpinBox*					_transposition_semitones;
-	QSpinBox*					_frequency_modulation_range;
-
-	QPushButton*				_unison_stereo;
-	QPushButton*				_pseudo_stereo;
-	QPushButton*				_auto_center;
-	QPushButton*				_wave_enabled;
-	QPushButton*				_noise_enabled;
-	FilterWidget*				_filter_1;
-	FilterWidget*				_filter_2;
-	QComboBox*					_filter_configuration;
 };
 
 } // namespace Yuki
