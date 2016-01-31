@@ -150,6 +150,21 @@ PartOscillatorWidget::PartOscillatorWidget (QWidget* parent, PartWidget* part_wi
 	_modulator_type->setIconSize (Resources::Icons16::haruhi().size());
 	QObject::connect (_modulator_type.get(), SIGNAL (activated (int)), _part_widget, SLOT (widgets_to_wave_params()));
 
+	// Wave enabled:
+	_wave_enabled = std::make_unique<QPushButton> ("Wave", this);
+	_wave_enabled->setCheckable (true);
+	_wave_enabled->setChecked (pp->wave_enabled);
+	_wave_enabled->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Fixed);
+	QObject::connect (_wave_enabled.get(), SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_wave_enabled.get(), SIGNAL (toggled (bool)), _part_widget, SLOT (update_widgets()));
+
+	// Noise enabled:
+	_noise_enabled = std::make_unique<QPushButton> ("Noise", this);
+	_noise_enabled->setCheckable (true);
+	_noise_enabled->setChecked (pp->noise_enabled);
+	_noise_enabled->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Fixed);
+	QObject::connect (_noise_enabled.get(), SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
+
 	// Unison stereo:
 	_unison_stereo = std::make_unique<QPushButton> ("Unison stereo", this);
 	_unison_stereo->setCheckable (true);
@@ -163,14 +178,6 @@ PartOscillatorWidget::PartOscillatorWidget (QWidget* parent, PartWidget* part_wi
 	_pseudo_stereo->setChecked (pp->pseudo_stereo);
 	_pseudo_stereo->setToolTip ("Inverts right channel to give pseudo-stereo effect for monophonic voices.");
 	QObject::connect (_pseudo_stereo.get(), SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
-
-	// Transposition:
-	_transposition_semitones = std::make_unique<QSpinBox> (this);
-	_transposition_semitones->setMinimum (-60);
-	_transposition_semitones->setMaximum (60);
-	_transposition_semitones->setSuffix (" semitones");
-	_transposition_semitones->setValue (pp->transposition_semitones);
-	QObject::connect (_transposition_semitones.get(), SIGNAL (valueChanged (int)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Auto-center wave:
 	_auto_center = std::make_unique<QPushButton> ("Auto center", this);
@@ -205,6 +212,14 @@ PartOscillatorWidget::PartOscillatorWidget (QWidget* parent, PartWidget* part_wi
 	_pitchbend_enabled->setChecked (pp->pitchbend_enabled);
 	QObject::connect (_pitchbend_enabled.get(), SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
+	// Transposition:
+	_transposition_semitones = std::make_unique<QSpinBox> (this);
+	_transposition_semitones->setMinimum (-60);
+	_transposition_semitones->setMaximum (60);
+	_transposition_semitones->setSuffix (" semitones");
+	_transposition_semitones->setValue (pp->transposition_semitones);
+	QObject::connect (_transposition_semitones.get(), SIGNAL (valueChanged (int)), _part_widget, SLOT (widgets_to_oscillator_params()));
+
 	// Frequency modulation range:
 	_frequency_modulation_range = std::make_unique<QSpinBox> (this);
 	_frequency_modulation_range->setMinimum (1);
@@ -212,21 +227,6 @@ PartOscillatorWidget::PartOscillatorWidget (QWidget* parent, PartWidget* part_wi
 	_frequency_modulation_range->setSuffix (" semitones");
 	_frequency_modulation_range->setValue (pp->frequency_mod_range);
 	QObject::connect (_frequency_modulation_range.get(), SIGNAL (valueChanged (int)), _part_widget, SLOT (widgets_to_oscillator_params()));
-
-	// Wave enabled:
-	_wave_enabled = std::make_unique<QPushButton> ("Wave", this);
-	_wave_enabled->setCheckable (true);
-	_wave_enabled->setChecked (pp->wave_enabled);
-	_wave_enabled->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Fixed);
-	QObject::connect (_wave_enabled.get(), SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
-	QObject::connect (_wave_enabled.get(), SIGNAL (toggled (bool)), _part_widget, SLOT (update_widgets()));
-
-	// Noise enabled:
-	_noise_enabled = std::make_unique<QPushButton> ("Noise", this);
-	_noise_enabled->setCheckable (true);
-	_noise_enabled->setChecked (pp->noise_enabled);
-	_noise_enabled->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Fixed);
-	QObject::connect (_noise_enabled.get(), SIGNAL (toggled (bool)), _part_widget, SLOT (widgets_to_oscillator_params()));
 
 	// Filters:
 	_filter_1 = std::make_unique<FilterWidget> (this, 0, &_part->part_params()->voice.filters[0], _part);

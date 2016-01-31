@@ -98,22 +98,22 @@ class PartOscillatorWidget: public QWidget
 	Unique<QComboBox>			_wave_type;
 	Unique<QComboBox>			_modulator_type;
 	Unique<QComboBox>			_modulator_wave_type;
-	Unique<Haruhi::WavePlot>	_base_wave_plot;
-	Unique<Haruhi::WavePlot>	_final_wave_plot;
-	Unique<QPushButton>			_const_portamento_time;
-	Unique<QPushButton>			_pitchbend_enabled;
-	Unique<QSpinBox>			_pitchbend_down_semitones;
-	Unique<QSpinBox>			_pitchbend_up_semitones;
-	Unique<QSpinBox>			_transposition_semitones;
-	Unique<QSpinBox>			_frequency_modulation_range;
+	Unique<QPushButton>			_wave_enabled;
+	Unique<QPushButton>			_noise_enabled;
 	Unique<QPushButton>			_unison_stereo;
 	Unique<QPushButton>			_pseudo_stereo;
 	Unique<QPushButton>			_auto_center;
-	Unique<QPushButton>			_wave_enabled;
-	Unique<QPushButton>			_noise_enabled;
+	Unique<QPushButton>			_const_portamento_time;
+	Unique<QSpinBox>			_pitchbend_down_semitones;
+	Unique<QSpinBox>			_pitchbend_up_semitones;
+	Unique<QPushButton>			_pitchbend_enabled;
+	Unique<QSpinBox>			_transposition_semitones;
+	Unique<QSpinBox>			_frequency_modulation_range;
 	Unique<FilterWidget>		_filter_1;
 	Unique<FilterWidget>		_filter_2;
+	Unique<Haruhi::WavePlot>	_base_wave_plot;
 	Unique<QComboBox>			_filter_configuration;
+	Unique<Haruhi::WavePlot>	_final_wave_plot;
 
 	// Waveform knobs:
 	Unique<Haruhi::Knob>		_knob_wave_shape;
