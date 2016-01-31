@@ -60,6 +60,8 @@ class PartWidget:
   public:
 	PartWidget (PartManagerWidget*, Part*);
 
+	~PartWidget();
+
 	/**
 	 * Link to associated Part object.
 	 */
@@ -123,18 +125,18 @@ class PartWidget:
 	post_params_to_widgets();
 
   private:
-	PartManagerWidget*		_part_manager_widget;
-	Part*					_part;
-	Unique<DSP::Wave>		_cached_final_wave;
-	bool					_stop_widgets_to_params;
-	bool					_stop_params_to_widgets;
+	PartManagerWidget*				_part_manager_widget;
+	Part*							_part;
+	Unique<DSP::Wave>				_cached_final_wave;
+	bool							_stop_widgets_to_params;
+	bool							_stop_params_to_widgets;
 
 	// Other:
-	QTabWidget*				_tabs;
-	PartOscillatorWidget*	_oscillator_panel;
-	PartModulatorWidget*	_modulator_panel;
-	PartHarmonicsWidget*	_harmonics_panel;
-	QCheckBox*				_part_enabled;
+	Unique<QCheckBox>				_part_enabled;
+	Unique<QTabWidget>				_tabs;
+	Unique<PartOscillatorWidget>	_oscillator_panel;
+	Unique<PartModulatorWidget>		_modulator_panel;
+	Unique<PartHarmonicsWidget>		_harmonics_panel;
 };
 
 

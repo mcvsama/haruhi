@@ -54,48 +54,52 @@ PartWidget::PartWidget (PartManagerWidget* part_manager_widget, Part* part):
 	_stop_params_to_widgets (false)
 {
 	// Part enabled:
-	_part_enabled = new QCheckBox ("Enabled", this);
+	_part_enabled = std::make_unique<QCheckBox> ("Enabled", this);
 	_part_enabled->setChecked (_part->part_params()->part_enabled);
-	QObject::connect (_part_enabled, SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
-	QObject::connect (_part_enabled, SIGNAL (toggled (bool)), this, SLOT (update_widgets()));
+	QObject::connect (_part_enabled.get(), SIGNAL (toggled (bool)), this, SLOT (widgets_to_oscillator_params()));
+	QObject::connect (_part_enabled.get(), SIGNAL (toggled (bool)), this, SLOT (update_widgets()));
 
 	// Oscillator tab:
-	_oscillator_panel = new PartOscillatorWidget (this, this, _part);
+	_oscillator_panel = std::make_unique<PartOscillatorWidget> (this, this, _part);
 	_oscillator_panel->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	// Modulator tab:
-	_modulator_panel = new PartModulatorWidget (this, this, _part);
+	_modulator_panel = std::make_unique<PartModulatorWidget> (this, this, _part);
 	_modulator_panel->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	// Harmonics+phases tab:
-	_harmonics_panel = new PartHarmonicsWidget (this, this, _part);
+	_harmonics_panel = std::make_unique<PartHarmonicsWidget> (this, this, _part);
 	_harmonics_panel->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
 
 	// Tabs:
-	_tabs = new QTabWidget (this);
+	_tabs = std::make_unique<QTabWidget> (this);
 	_tabs->setIconSize (Resources::Icons16::haruhi().size() * 1.25);
 	_tabs->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	_tabs->addTab (_oscillator_panel, Resources::Icons16::oscillator(), "Oscillator");
-	_tabs->addTab (_modulator_panel, Resources::Icons16::modulator(), "Modulator");
-	_tabs->addTab (_harmonics_panel, Resources::Icons16::harmonics(), "Harmonics");
+	_tabs->addTab (_oscillator_panel.get(), Resources::Icons16::oscillator(), "Oscillator");
+	_tabs->addTab (_modulator_panel.get(), Resources::Icons16::modulator(), "Modulator");
+	_tabs->addTab (_harmonics_panel.get(), Resources::Icons16::harmonics(), "Harmonics");
 
 	auto top_checkboxes = new QWidget (this);
 
 	auto top_checkboxes_layout = new QHBoxLayout (top_checkboxes);
 	top_checkboxes_layout->setMargin (0);
 	top_checkboxes_layout->setSpacing (2 * Config::spacing());
-	top_checkboxes_layout->addWidget (_part_enabled);
+	top_checkboxes_layout->addWidget (_part_enabled.get());
 
 	auto layout = new QVBoxLayout (this);
 	layout->setMargin (Config::margin());
 	layout->setSpacing (Config::spacing());
 	layout->addWidget (new Haruhi::StyledBackground (top_checkboxes, this));
-	layout->addWidget (_tabs);
+	layout->addWidget (_tabs.get());
 	layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
 	widgets_to_wave_params();
 	update_widgets();
 }
+
+
+PartWidget::~PartWidget()
+{ }
 
 
 void

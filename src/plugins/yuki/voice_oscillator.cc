@@ -25,20 +25,7 @@ using Haruhi::Sample;
 
 VoiceOscillator::VoiceOscillator (DSP::Wavetable* wavetable) noexcept:
 	_wavetable_enabled (true),
-	_wavetable (wavetable),
-	_frequency_source (0),
-	_amplitude_source (0),
-	_initial_phase_spread (0),
-	_unison_number (-1), // -1 to force update unison coefficients:
-	_unison_spread (1.0),
-	_unison_noise (0.0f),
-	_unison_stereo (false),
-	_unison_vibrato_level (0.0f),
-	_unison_vibrato_frequency (0.0f),
-	_noise(),
-	_noise_state (_noise.state()),
-	_noise_enabled (false),
-	_noise_amplitude (0.0f)
+	_wavetable (wavetable)
 {
 	set_unison_number (1);
 	set_phase (0);

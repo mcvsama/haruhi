@@ -192,9 +192,9 @@ void
 Part::PartControllerProxies::process_events()
 {
 	// Forward all messages from common ports to parts' ports:
-	forward_messages (_part_manager->ports()->amplitude, amplitude.event_port());
-	forward_messages (_part_manager->ports()->frequency, frequency.event_port());
-	forward_messages (_part_manager->ports()->pitchbend, pitchbend.event_port());
+	forward_messages (_part_manager->ports()->amplitude.get(), amplitude.event_port());
+	forward_messages (_part_manager->ports()->frequency.get(), frequency.event_port());
+	forward_messages (_part_manager->ports()->pitchbend.get(), pitchbend.event_port());
 
 #define PROXY_PROCESS_EVENTS(name) (name).process_events();
 	PROXY_PROCESS_EVENTS (volume);

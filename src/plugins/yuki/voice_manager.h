@@ -34,6 +34,9 @@
 
 namespace Yuki {
 
+using Haruhi::Unique;
+
+
 /**
  * Creates/destroys/mixes Voices upon incoming Core Events.
  */
@@ -41,10 +44,11 @@ class VoiceManager
 {
 	class RenderWorkUnit;
 
+	typedef std::set<Unique<Voice>> Voices;
 	typedef DSP::Filter<FilterImpulseResponse::Order, FilterImpulseResponse::ResponseType> AntialiasingFilter;
 	typedef std::map<Haruhi::VoiceID, Voices::iterator> ID2VoiceMap;
-	typedef std::vector<RenderWorkUnit*> WorkUnits;
-	typedef std::vector<Voice::SharedResources*> SharedResourcesVec;
+	typedef std::vector<Unique<RenderWorkUnit>> WorkUnits;
+	typedef std::vector<Unique<Voice::SharedResources>> SharedResourcesVec;
 
 	class RenderWorkUnit: public WorkPerformer::Unit
 	{
@@ -200,21 +204,21 @@ class VoiceManager
 	WorkUnits				_work_units;
 	ID2VoiceMap				_voices_by_id;
 	SharedResourcesVec		_shared_resources_vec;
-	Frequency				_sample_rate;
-	std::size_t				_buffer_size;
-	unsigned int			_oversampling;
+	Frequency				_sample_rate			= 0_Hz;
+	std::size_t				_buffer_size			= 0;
+	unsigned int			_oversampling			= 1;
 	FilterImpulseResponse	_antialiasing_filter_ir;
 	AntialiasingFilter		_antialiasing_filter_1[5]; // Multi-stage filtering, number must be odd.
 	AntialiasingFilter		_antialiasing_filter_2[5]; // Multi-stage filtering, number must be odd.
-	DSP::Wavetable*			_wavetable;
+	DSP::Wavetable*			_wavetable				= nullptr;
 	Haruhi::AudioBuffer		_output_1;
 	Haruhi::AudioBuffer		_output_2;
 	Haruhi::AudioBuffer		_output_1_oversampled;
 	Haruhi::AudioBuffer		_output_2_oversampled;
 	Haruhi::AudioBuffer		_output_1_filtered;
 	Haruhi::AudioBuffer		_output_2_filtered;
-	unsigned int			_active_voices_number;
-	Frequency				_last_voice_frequency;
+	unsigned int			_active_voices_number	= 0;
+	Frequency				_last_voice_frequency	= 440_Hz; // Concert A
 };
 
 
@@ -231,7 +235,7 @@ template<class PointerToParam>
 	{
 		if (voice_id == Haruhi::OmniVoice)
 		{
-			for (Voice* v: _voices)
+			for (auto& v: _voices)
 				(v->params()->filters[filter_no].*param_ptr).set (value);
 		}
 		else

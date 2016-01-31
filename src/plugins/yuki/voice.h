@@ -34,10 +34,6 @@
 
 namespace Yuki {
 
-class Voice;
-
-typedef std::set<Voice*> Voices;
-
 class Voice
 {
   public:

@@ -34,21 +34,21 @@ namespace Yuki {
 PartManager::MainPorts::MainPorts (Plugin* plugin):
 	HasPlugin (plugin)
 {
-	audio_out[0]	= new Haruhi::AudioPort (plugin, "Output 1", Haruhi::Port::Output, nullptr, Haruhi::Port::StandardAudio, { "audio-1" });
-	audio_out[1]	= new Haruhi::AudioPort (plugin, "Output 2", Haruhi::Port::Output, nullptr, Haruhi::Port::StandardAudio, { "audio-2" });
+	audio_out[0]	= std::make_unique<Haruhi::AudioPort> (plugin, "Output 1", Haruhi::Port::Output, nullptr, Haruhi::Port::StandardAudio, Haruhi::AudioPort::Tags { "audio-1" });
+	audio_out[1]	= std::make_unique<Haruhi::AudioPort> (plugin, "Output 2", Haruhi::Port::Output, nullptr, Haruhi::Port::StandardAudio, Haruhi::AudioPort::Tags { "audio-2" });
 
-	voice_in		= new Haruhi::EventPort (plugin, "Voice control", Haruhi::Port::Input, nullptr, 0, { "voice" });
-	voice_pitch		= new Haruhi::EventPort (plugin, "Voice pitch", Haruhi::Port::Input, nullptr, Haruhi::Port::Polyphonic, { "voice-pitch" });
-	voice_velocity	= new Haruhi::EventPort (plugin, "Voice velocity", Haruhi::Port::Input, nullptr, Haruhi::Port::Polyphonic, { "voice-velocity" });
+	voice_in		= std::make_unique<Haruhi::EventPort> (plugin, "Voice control", Haruhi::Port::Input, nullptr, 0, Haruhi::AudioPort::Tags { "voice" });
+	voice_pitch		= std::make_unique<Haruhi::EventPort> (plugin, "Voice pitch", Haruhi::Port::Input, nullptr, Haruhi::Port::Polyphonic, Haruhi::AudioPort::Tags { "voice-pitch" });
+	voice_velocity	= std::make_unique<Haruhi::EventPort> (plugin, "Voice velocity", Haruhi::Port::Input, nullptr, Haruhi::Port::Polyphonic, Haruhi::AudioPort::Tags { "voice-velocity" });
 
-	volume			= new Haruhi::EventPort (plugin, "Volume", Haruhi::Port::Input);
-	panorama		= new Haruhi::EventPort (plugin, "Panorama", Haruhi::Port::Input);
-	detune			= new Haruhi::EventPort (plugin, "Detune", Haruhi::Port::Input);
-	stereo_width	= new Haruhi::EventPort (plugin, "Stereo width", Haruhi::Port::Input);
+	volume			= std::make_unique<Haruhi::EventPort> (plugin, "Volume", Haruhi::Port::Input);
+	panorama		= std::make_unique<Haruhi::EventPort> (plugin, "Panorama", Haruhi::Port::Input);
+	detune			= std::make_unique<Haruhi::EventPort> (plugin, "Detune", Haruhi::Port::Input);
+	stereo_width	= std::make_unique<Haruhi::EventPort> (plugin, "Stereo width", Haruhi::Port::Input);
 
-	amplitude		= new Haruhi::EventPort (plugin, "Mod. amplitude", Haruhi::Port::Input, nullptr, Haruhi::Port::Polyphonic);
-	frequency		= new Haruhi::EventPort (plugin, "Mod. frequency", Haruhi::Port::Input, nullptr, Haruhi::Port::Polyphonic);
-	pitchbend		= new Haruhi::EventPort (plugin, "Mod. pitchbend", Haruhi::Port::Input, nullptr, Haruhi::Port::Polyphonic, { "pitchbend" });
+	amplitude		= std::make_unique<Haruhi::EventPort> (plugin, "Mod. amplitude", Haruhi::Port::Input, nullptr, Haruhi::Port::Polyphonic);
+	frequency		= std::make_unique<Haruhi::EventPort> (plugin, "Mod. frequency", Haruhi::Port::Input, nullptr, Haruhi::Port::Polyphonic);
+	pitchbend		= std::make_unique<Haruhi::EventPort> (plugin, "Mod. pitchbend", Haruhi::Port::Input, nullptr, Haruhi::Port::Polyphonic, Haruhi::AudioPort::Tags { "pitchbend" });
 
 	amplitude->set_default_value (1.0);
 	frequency->set_default_value (1.0);
@@ -56,25 +56,8 @@ PartManager::MainPorts::MainPorts (Plugin* plugin):
 }
 
 
-PartManager::MainPorts::~MainPorts()
-{
-	delete audio_out[0];
-	delete audio_out[1];
-	delete voice_in;
-	delete voice_pitch;
-	delete voice_velocity;
-	delete volume;
-	delete panorama;
-	delete detune;
-	delete stereo_width;
-	delete amplitude;
-	delete frequency;
-	delete pitchbend;
-}
-
-
 PartManager::MainProxies::MainProxies (MainPorts* main_ports, Params::Main* main_params):
-#define CONSTRUCT_CONTROLLER_PROXY(name) name (main_ports->name, &main_params->name)
+#define CONSTRUCT_CONTROLLER_PROXY(name) name (main_ports->name.get(), &main_params->name)
 	CONSTRUCT_CONTROLLER_PROXY (volume),
 	CONSTRUCT_CONTROLLER_PROXY (panorama),
 	CONSTRUCT_CONTROLLER_PROXY (detune),

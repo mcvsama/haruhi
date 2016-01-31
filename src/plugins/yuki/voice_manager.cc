@@ -39,7 +39,7 @@ VoiceManager::RenderWorkUnit::RenderWorkUnit (Voice* voice, SharedResourcesVec& 
 void
 VoiceManager::RenderWorkUnit::execute()
 {
-	_voice->render (_resources_vec[thread_id()]);
+	_voice->render (_resources_vec[thread_id()].get());
 }
 
 
@@ -53,16 +53,10 @@ VoiceManager::RenderWorkUnit::mix_result (Haruhi::AudioBuffer* output_1, Haruhi:
 VoiceManager::VoiceManager (Params::Main* main_params, Params::Part* part_params, WorkPerformer* work_performer):
 	_work_performer (work_performer),
 	_main_params (main_params),
-	_part_params (part_params),
-	_sample_rate (0_Hz),
-	_buffer_size (0),
-	_oversampling (1),
-	_wavetable (0),
-	_active_voices_number (0),
-	_last_voice_frequency (440_Hz) // Initially concert A.
+	_part_params (part_params)
 {
 	for (unsigned int i = 0; i < _work_performer->threads_number(); ++i)
-		_shared_resources_vec.push_back (new Voice::SharedResources());
+		_shared_resources_vec.push_back (std::make_unique<Voice::SharedResources>());
 
 	for (AntialiasingFilter& filter: _antialiasing_filter_1)
 		filter.assign_impulse_response (&_antialiasing_filter_ir);
@@ -75,9 +69,6 @@ VoiceManager::VoiceManager (Params::Main* main_params, Params::Part* part_params
 VoiceManager::~VoiceManager()
 {
 	kill_voices();
-
-	for (unsigned int i = 0; i < _work_performer->threads_number(); ++i)
-		delete _shared_resources_vec[i];
 }
 
 
@@ -95,10 +86,10 @@ VoiceManager::handle_voice_event (Haruhi::VoiceEvent const* event)
 			// voice pitch event we got:
 			NormalizedFrequency initial_frequency = _last_voice_frequency / _sample_rate;
 
-			Voice* v = new Voice (id, event->timestamp(), _main_params, _part_params, (0_dB).factor(), initial_frequency, _sample_rate, _buffer_size, _oversampling);
+			auto v = std::make_unique<Voice> (id, event->timestamp(), _main_params, _part_params, (0_dB).factor(), initial_frequency, _sample_rate, _buffer_size, _oversampling);
 			v->set_wavetable (_wavetable);
 
-			_voices_by_id[id] = _voices.insert (v).first;
+			_voices_by_id[id] = _voices.insert (std::move (v)).first;
 			_active_voices_number++;
 
 			check_polyphony_limit();
@@ -136,7 +127,7 @@ VoiceManager::handle_frequency_event (Haruhi::VoiceControllerEvent const* event)
 void
 VoiceManager::panic()
 {
-	for (Voice* v: _voices)
+	for (auto& v: _voices)
 		v->drop();
 }
 
@@ -149,10 +140,10 @@ VoiceManager::graph_updated (Frequency sample_rate, std::size_t buffer_size)
 
 	resize_buffers();
 
-	for (Voice::SharedResources* s: _shared_resources_vec)
+	for (auto& s: _shared_resources_vec)
 		s->graph_updated (sample_rate, buffer_size);
 
-	for (Voice* v: _voices)
+	for (auto& v: _voices)
 		v->graph_updated (sample_rate, buffer_size);
 }
 
@@ -166,10 +157,10 @@ VoiceManager::set_oversampling (unsigned int oversampling)
 
 	resize_buffers();
 
-	for (Voice::SharedResources* s: _shared_resources_vec)
+	for (auto& s: _shared_resources_vec)
 		s->set_oversampling (_oversampling);
 
-	for (Voice* v: _voices)
+	for (auto& v: _voices)
 		v->set_oversampling (_oversampling);
 
 	// TODO replace with proper 4 or more pole antialiasing filter:
@@ -187,7 +178,7 @@ VoiceManager::set_wavetable (DSP::Wavetable* wavetable)
 {
 	_wavetable = wavetable;
 
-	for (Voice* v: _voices)
+	for (auto& v: _voices)
 		v->set_wavetable (_wavetable);
 }
 
@@ -197,11 +188,11 @@ VoiceManager::render()
 {
 	assert (_work_units.empty());
 
-	for (Voice* v: _voices)
-		_work_units.push_back (new RenderWorkUnit (v, _shared_resources_vec));
+	for (auto& v: _voices)
+		_work_units.push_back (std::make_unique<RenderWorkUnit> (v.get(), _shared_resources_vec));
 
 	for (WorkUnits::size_type i = 0, n = _work_units.size(); i < n; ++i)
-		_work_performer->add (_work_units[i]);
+		_work_performer->add (_work_units[i].get());
 }
 
 
@@ -235,11 +226,13 @@ VoiceManager::wait_for_render()
 		Haruhi::AudioBuffer* t1 = &_output_1_filtered;
 		Haruhi::AudioBuffer* s2 = &_output_2_oversampled;
 		Haruhi::AudioBuffer* t2 = &_output_2_filtered;
+
 		for (std::size_t i = 0; i < countof (_antialiasing_filter_1); ++i)
 		{
 			_antialiasing_filter_1[i].transform (s1->begin(), s1->end(), t1->begin());
 			std::swap (s1, t1);
 		}
+
 		for (std::size_t i = 0; i < countof (_antialiasing_filter_1); ++i)
 		{
 			_antialiasing_filter_2[i].transform (s2->begin(), s2->end(), t2->begin());
@@ -249,11 +242,11 @@ VoiceManager::wait_for_render()
 		// Downsample:
 		for (Haruhi::AudioBuffer::size_type i = 0; i < _output_1.size(); ++i)
 			_output_1[i] = _output_1_filtered[i * _oversampling];
+
 		for (Haruhi::AudioBuffer::size_type i = 0; i < _output_2.size(); ++i)
 			_output_2[i] = _output_2_filtered[i * _oversampling];
 	}
 
-	std::for_each (_work_units.begin(), _work_units.end(), delete_operator<WorkPerformer::Unit*>);
 	_work_units.clear();
 }
 
@@ -274,7 +267,6 @@ VoiceManager::mix_rendering_result (Haruhi::AudioBuffer* b1, Haruhi::AudioBuffer
 		if ((*v)->state() == Voice::Finished)
 		{
 			_voices_by_id.erase ((*v)->id());
-			delete *v;
 			_voices.erase (v++);
 		}
 		else
@@ -288,7 +280,7 @@ VoiceManager::update_voice_parameter (Haruhi::VoiceID voice_id, Params::Voice::C
 {
 	if (voice_id == Haruhi::OmniVoice)
 	{
-		for (Voice* v: _voices)
+		for (auto& v: _voices)
 			(v->params()->*param_ptr).set (value);
 	}
 	else
@@ -320,14 +312,14 @@ VoiceManager::check_polyphony_limit()
 	while (_active_voices_number > max_polyphony)
 	{
 		// Select oldest Voice and drop it:
-		Voice* oldest = 0;
-		for (Voice* v: _voices)
+		Voice* oldest = nullptr;
+		for (auto& v: _voices)
 		{
 			if (v->state() == Voice::Dropped || v->state() == Voice::Finished)
 				continue;
 			oldest = oldest
-				? Voice::return_older (v, oldest)
-				: v;
+				? Voice::return_older (v.get(), oldest)
+				: v.get();
 		}
 		oldest->drop();
 		_active_voices_number--;
@@ -340,15 +332,14 @@ VoiceManager::find_voice_by_id (Haruhi::VoiceID id)
 {
 	ID2VoiceMap::iterator k = _voices_by_id.find (id);
 	if (k != _voices_by_id.end())
-		return *k->second;
-	return 0;
+		return k->second->get();
+	return nullptr;
 }
 
 
 void
 VoiceManager::kill_voices()
 {
-	std::for_each (_voices.begin(), _voices.end(), delete_operator<Voice*>);
 	_voices.clear();
 	_voices_by_id.clear();
 }

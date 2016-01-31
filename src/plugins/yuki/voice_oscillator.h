@@ -185,28 +185,28 @@ class VoiceOscillator
 
   private:
 	bool					_wavetable_enabled;
-	DSP::Wavetable*			_wavetable;
-	Haruhi::AudioBuffer*	_frequency_source;
-	Haruhi::AudioBuffer*	_amplitude_source;
-	Haruhi::AudioBuffer*	_fm_source;
+	DSP::Wavetable*			_wavetable					= nullptr;
+	Haruhi::AudioBuffer*	_frequency_source			= nullptr;
+	Haruhi::AudioBuffer*	_amplitude_source			= nullptr;
+	Haruhi::AudioBuffer*	_fm_source					= nullptr;
 	Sample					_vibrato[MaxUnison];
 	UnisonVoice				_unison[MaxUnison];
 
 	// Unison:
-	Sample					_initial_phase_spread;
-	int						_unison_number;
-	Sample					_unison_spread;				// Factor used to multiply input frequency: [1.0..2.0].
-	Sample					_unison_noise;
-	bool					_unison_stereo;
-	Sample					_unison_vibrato_level;
-	Sample					_unison_vibrato_frequency;
+	Sample					_initial_phase_spread		= 0;
+	int						_unison_number				= -1; 		// -1 to force update unison coefficients:
+	Sample					_unison_spread				= 1.0;		// Factor used to multiply input frequency: [1.0..2.0].
+	Sample					_unison_noise				= 0.0;
+	bool					_unison_stereo				= false;
+	Sample					_unison_vibrato_level		= 0.0;
+	Sample					_unison_vibrato_frequency	= 0.0;
 	Sample					_1_div_unison_number;		// Cached 1.0f / _unison_number.
 
 	// Used for both white noise and unison noise:
 	DSP::Noise				_noise;
-	DSP::Noise::State		_noise_state;
-	bool					_noise_enabled;
-	Amplitude				_noise_amplitude;
+	DSP::Noise::State		_noise_state				{ _noise.state() };
+	bool					_noise_enabled				= false;
+	Amplitude				_noise_amplitude			= 0.0;
 };
 
 

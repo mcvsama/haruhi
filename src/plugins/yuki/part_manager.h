@@ -41,6 +41,8 @@
 
 namespace Yuki {
 
+using Haruhi::Unique;
+
 class Plugin;
 class PartManagerWidget;
 
@@ -62,27 +64,25 @@ class PartManager:
 	  public:
 		MainPorts (Plugin*);
 
-		~MainPorts();
-
 	  public:
 		// Ports (0 = L, 1 = R):
-		Haruhi::AudioPort* audio_out[2];
+		Unique<Haruhi::AudioPort> audio_out[2];
 
 		// Voice inputs:
-		Haruhi::EventPort* voice_in;
-		Haruhi::EventPort* voice_pitch;
-		Haruhi::EventPort* voice_velocity;
+		Unique<Haruhi::EventPort> voice_in;
+		Unique<Haruhi::EventPort> voice_pitch;
+		Unique<Haruhi::EventPort> voice_velocity;
 
 		// Main controls:
-		Haruhi::EventPort* volume;
-		Haruhi::EventPort* panorama;
-		Haruhi::EventPort* detune;
-		Haruhi::EventPort* stereo_width;
+		Unique<Haruhi::EventPort> volume;
+		Unique<Haruhi::EventPort> panorama;
+		Unique<Haruhi::EventPort> detune;
+		Unique<Haruhi::EventPort> stereo_width;
 
 		// Common ports that forward messages to all parts:
-		Haruhi::EventPort* amplitude;
-		Haruhi::EventPort* frequency;
-		Haruhi::EventPort* pitchbend;
+		Unique<Haruhi::EventPort> amplitude;
+		Unique<Haruhi::EventPort> frequency;
+		Unique<Haruhi::EventPort> pitchbend;
 	};
 
 	/**
