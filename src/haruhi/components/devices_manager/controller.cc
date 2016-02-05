@@ -44,7 +44,8 @@ Controller::operator== (Controller const& other) const
 		note_channel == other.note_channel &&
 		note_pitch_filter == other.note_pitch_filter &&
 		note_pitch_channel == other.note_pitch_channel &&
-		note_velocity_filter == other.note_velocity_filter &&
+		note_on_velocity_filter == other.note_on_velocity_filter &&
+		note_off_velocity_filter == other.note_off_velocity_filter &&
 		note_velocity_channel == other.note_velocity_channel &&
 		controller_filter == other.controller_filter &&
 		controller_channel == other.controller_channel &&
@@ -140,7 +141,7 @@ Controller::handle_event (MIDI::Event const& midi_event, Device& device, EventBu
 				handled = true;
 			}
 
-			if (note_velocity_filter && (note_velocity_channel == 0 || note_velocity_channel == midi_event.note_on.channel + 1))
+			if (note_on_velocity_filter && (note_velocity_channel == 0 || note_velocity_channel == midi_event.note_on.channel + 1))
 			{
 				buffer.push (new VoiceControllerEvent (t, device._allocated_voice_id, velocity));
 				handled = true;
@@ -167,7 +168,7 @@ Controller::handle_event (MIDI::Event const& midi_event, Device& device, EventBu
 				handled = true;
 			}
 
-			if (note_velocity_filter && (note_velocity_channel == 0 || note_velocity_channel == midi_event.note_off.channel + 1))
+			if (note_off_velocity_filter && (note_velocity_channel == 0 || note_velocity_channel == midi_event.note_off.channel + 1))
 			{
 				buffer.push (new VoiceControllerEvent (t, device._allocated_voice_id, velocity));
 				handled = true;
@@ -282,77 +283,71 @@ Controller::generate_smoothing_events (EventBuffer& buffer, Graph* graph)
 void
 Controller::save_state (QDomElement& element) const
 {
-	std::function<QDomElement (const char*)> create_element = [&element](const char* name) -> QDomElement {
+	auto create_element = [&element](const char* name) -> QDomElement
+	{
 		return element.ownerDocument().createElement (name);
 	};
 
-	std::function<const char* (bool)> bool_to_str = [](bool value) noexcept -> const char* {
+	auto bool_to_str = [](bool value) noexcept -> const char*
+	{
 		return value ? "true" : "false";
 	};
 
-	std::function<QString (int)> channel_to_str = [](int channel) noexcept -> QString {
+	auto channel_to_str = [](int channel) noexcept -> QString
+	{
 		return channel == 0
 			? "all"
 			: QString ("%1").arg (channel);
 	};
 
+	// channel == -1 means: do not append the 'channel' attribute:
+	auto append = [&](const char* name, bool enabled, int channel = -1) -> QDomElement
+	{
+		QDomElement e = create_element (name);
+		e.setAttribute ("enabled", bool_to_str (enabled));
+		if (channel > -1)
+			e.setAttribute ("channel", channel_to_str (channel));
+		element.appendChild (e);
+		return e;
+	};
+
 	element.setAttribute ("name", _name);
 	element.setAttribute ("smoothing", smoothing.ms());
 
-	QDomElement note_filter_el = create_element ("note-filter");
-	note_filter_el.setAttribute ("enabled", bool_to_str (note_filter));
-	note_filter_el.setAttribute ("channel", channel_to_str (note_channel));
+	append ("note-filter", note_filter, note_channel);
+	append ("note-on-velocity", note_on_velocity_filter, note_velocity_channel);
+	append ("note-off-velocity", note_off_velocity_filter);
+	append ("note-pitch", note_pitch_filter, note_pitch_channel);
 
-	QDomElement note_velocity_el = create_element ("note-velocity");
-	note_velocity_el.setAttribute ("enabled", bool_to_str (note_velocity_filter));
-	note_velocity_el.setAttribute ("channel", channel_to_str (note_velocity_channel));
-
-	QDomElement note_pitch_el = create_element ("note-pitch");
-	note_pitch_el.setAttribute ("enabled", bool_to_str (note_pitch_filter));
-	note_pitch_el.setAttribute ("channel", channel_to_str (note_pitch_channel));
-
-	QDomElement controller_filter_el = create_element ("controller-filter");
-	controller_filter_el.setAttribute ("enabled", bool_to_str (controller_filter));
-	controller_filter_el.setAttribute ("channel", channel_to_str (controller_channel));
+	auto controller_filter_el = append ("controller-filter", controller_filter, controller_channel);
 	controller_filter_el.setAttribute ("controller-number", QString ("%1").arg (controller_number));
 	controller_filter_el.setAttribute ("controller-invert", bool_to_str (controller_invert));
 
-	QDomElement pitchbend_filter_el = create_element ("pitchbend-filter");
-	pitchbend_filter_el.setAttribute ("enabled", bool_to_str (pitchbend_filter));
-	pitchbend_filter_el.setAttribute ("channel", channel_to_str (pitchbend_channel));
+	append ("pitchbend-filter", pitchbend_filter, pitchbend_channel);
 
-	QDomElement channel_pressure_filter_el = create_element ("channel-pressure");
-	channel_pressure_filter_el.setAttribute ("enabled", bool_to_str (channel_pressure_filter));
-	channel_pressure_filter_el.setAttribute ("channel", channel_to_str (channel_pressure_channel));
+	auto channel_pressure_filter_el = append ("channel-pressure", channel_pressure_filter, channel_pressure_channel);
 	channel_pressure_filter_el.setAttribute ("invert", bool_to_str (channel_pressure_invert));
 
-	QDomElement key_pressure_filter_el = create_element ("key-pressure");
-	key_pressure_filter_el.setAttribute ("enabled", bool_to_str (key_pressure_filter));
-	key_pressure_filter_el.setAttribute ("channel", channel_to_str (key_pressure_channel));
+	auto key_pressure_filter_el = append ("key-pressure", key_pressure_filter, key_pressure_channel);
 	key_pressure_filter_el.setAttribute ("invert", bool_to_str (key_pressure_invert));
-
-	element.appendChild (note_filter_el);
-	element.appendChild (note_velocity_el);
-	element.appendChild (note_pitch_el);
-	element.appendChild (controller_filter_el);
-	element.appendChild (pitchbend_filter_el);
-	element.appendChild (channel_pressure_filter_el);
-	element.appendChild (key_pressure_filter_el);
 }
 
 
 void
 Controller::load_state (QDomElement const& element)
 {
-	std::function<bool (QDomElement&)> is_enabled = [](QDomElement& e) -> bool {
+	std::function<bool (QDomElement&)> is_enabled = [](QDomElement& e) -> bool
+	{
 		return e.attribute ("enabled") == "true";
 	};
 
-	std::function<bool (QDomElement&)> is_inverted = [](QDomElement& e) -> bool {
+	std::function<bool (QDomElement&)> is_inverted = [](QDomElement& e) -> bool
+	{
 		return e.attribute ("invert") == "true";
 	};
 
-	std::function<int (QDomElement&)> get_channel = [](QDomElement& e) -> int {
+	std::function<int (QDomElement&)> get_channel = [](QDomElement& e) -> int
+	{
 		QString ch = e.attribute ("channel");
 		return ch == "all" ? 0 : ch.toInt();
 	};
@@ -367,10 +362,14 @@ Controller::load_state (QDomElement const& element)
 			note_filter = is_enabled (e);
 			note_channel = get_channel (e);
 		}
-		else if (e.tagName() == "note-velocity")
+		else if (e.tagName() == "note-on-velocity")
 		{
-			note_velocity_filter = is_enabled (e);
+			note_on_velocity_filter = is_enabled (e);
 			note_velocity_channel = get_channel (e);
+		}
+		else if (e.tagName() == "note-off-velocity")
+		{
+			note_off_velocity_filter = is_enabled (e);
 		}
 		else if (e.tagName() == "note-pitch")
 		{
@@ -408,7 +407,7 @@ Controller::load_state (QDomElement const& element)
 void
 Controller::reset_filters()
 {
-	note_filter = note_pitch_filter = note_velocity_filter = controller_filter =
+	note_filter = note_pitch_filter = note_on_velocity_filter = note_off_velocity_filter = controller_filter =
 		pitchbend_filter = channel_pressure_filter = key_pressure_filter = false;
 }
 

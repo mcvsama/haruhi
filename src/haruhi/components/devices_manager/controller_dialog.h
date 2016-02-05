@@ -89,7 +89,8 @@ class ControllerDialog: public QDialog
 	Unique<QPushButton>	_save_button;
 	Unique<QCheckBox>	_note_checkbox;
 	Unique<QSpinBox>	_note_channel;
-	Unique<QCheckBox>	_note_velocity_checkbox;
+	Unique<QCheckBox>	_note_on_velocity_checkbox;
+	Unique<QCheckBox>	_note_off_velocity_checkbox;
 	Unique<QSpinBox>	_note_velocity_channel;
 	Unique<QCheckBox>	_note_pitch_checkbox;
 	Unique<QSpinBox>	_note_pitch_channel;

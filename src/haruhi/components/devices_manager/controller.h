@@ -123,7 +123,8 @@ class Controller: public SaveableState
 	// MIDI filters:
 	bool	note_filter					= false;
 	int		note_channel				= 0;		// 0 means 'all'
-	bool	note_velocity_filter		= false;
+	bool	note_on_velocity_filter		= false;
+	bool	note_off_velocity_filter	= false;
 	int		note_velocity_channel		= 0;		// 0 means 'all'
 	bool	note_pitch_filter			= false;
 	int		note_pitch_channel			= 0;		// 0 means 'all'
