@@ -282,7 +282,7 @@ LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper
 	_peak_button = std::make_unique<QPushButton> ("-inf dB", this);
 	_peak_button->setFont (Resources::small_font());
 	_peak_button->setFixedHeight (2.0 * Resources::small_font().pixelSize());
-	//_peak_button->setFixedWidth (6_screen_mm);
+	_peak_button->setFixedWidth (8_screen_mm);
 	_peak_button->setToolTip ("C-r to reset");
 	_peak_button_bg = _peak_button->palette().color (QPalette::Button);
 	_peak_button_fg = _peak_button->palette().color (QPalette::ButtonText);

@@ -81,11 +81,11 @@ Voice::Voice (Haruhi::VoiceID id, Time timestamp, Params::Main* main_params, Par
 	_first_pass (true)
 {
 	resize_buffers();
-	recompute_sampling_rate_dependents();
 
 	_vosc.set_phase (_part_params->phase.to_f());
 	_vosc.set_initial_phases_spread (_params.unison_init.to_f());
 
+	// This will call recompute_sampling_rate_dependents();
 	set_oversampling (_oversampling);
 
 	update_glide_parameters();
@@ -130,6 +130,7 @@ Voice::render (SharedResources* res)
 	// Smooth Attacking or dropping:
 	if (_attack_sample < _attack_samples)
 	{
+		// Voice phase in:
 		for (std::size_t i = 0; i < _buffer_size * _oversampling && _attack_sample < _attack_samples; ++i, ++_attack_sample)
 		{
 			float const k = 1.0f * _attack_sample / _attack_samples;
@@ -141,6 +142,7 @@ Voice::render (SharedResources* res)
 	{
 		if (_drop_sample < _drop_samples)
 		{
+			// Voice phase out:
 			std::size_t i;
 			for (i = 0; i < _buffer_size * _oversampling && _drop_sample < _drop_samples; ++i, ++_drop_sample)
 			{
