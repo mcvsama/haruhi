@@ -27,6 +27,7 @@
 #include <plugins/bugfuzzer/bugfuzzer.h>
 #include <plugins/eg/eg.h>
 #include <plugins/yuki/yuki.h>
+#include <plugins/freeverb/freeverb.h>
 
 // Local:
 #include "plugin_loader.h"
@@ -39,6 +40,7 @@ PluginLoader::PluginLoader()
 	_plugin_factories.push_back (std::make_unique<BugFuzzerFactory>());
 	_plugin_factories.push_back (std::make_unique<EGFactory>());
 	_plugin_factories.push_back (std::make_unique<YukiFactory>());
+	_plugin_factories.push_back (std::make_unique<FreeverbFactory>());
 }
 
 

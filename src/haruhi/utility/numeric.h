@@ -232,5 +232,42 @@ attenuate_db (float db) noexcept
 	return std::pow (10.0f, db / 20.0f);
 }
 
+
+/**
+ * Stop condition function for get_offset_array(). See below.
+ */
+template<class T, std::size_t N, std::size_t I>
+	inline constexpr std::array<T, N>
+	get_offset_array (std::array<T, N> input, T offset, std::false_type)
+	{
+		std::get<I> (input) += offset;
+
+		return input;
+	}
+
+
+/**
+ * Recursive modifier of array for get_offset_array(). See below.
+ */
+template<class T, std::size_t N, std::size_t I>
+	inline constexpr std::array<T, N>
+	get_offset_array (std::array<T, N> input, T offset, std::true_type)
+	{
+		std::get<I> (input) += offset;
+
+		return get_offset_array<T, N, I - 1> (input, offset, std::integral_constant<bool, I >= 2>());
+	}
+
+
+/**
+ * Return new array with all values modified by adding the offset argument.
+ */
+template<class T, std::size_t N>
+	inline constexpr std::array<T, N>
+	get_offset_array (std::array<T, N> input, T offset)
+	{
+		return get_offset_array<T, N, N - 1> (input, offset, std::integral_constant<bool, N - 1 >= 2>());
+	}
+
 #endif
 

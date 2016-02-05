@@ -503,6 +503,20 @@ SRC_SOURCES += plugins/eg/plugin.cc
 
 SRC_MOCHDRS += plugins/eg/plugin.h
 
+######### /plugins/freeverb ########
+
+SRC_HEADERS += plugins/freeverb/allpass_filter.h
+SRC_HEADERS += plugins/freeverb/comb_filter.h
+SRC_HEADERS += plugins/freeverb/freeverb.h
+SRC_HEADERS += plugins/freeverb/reverb_model.h
+SRC_HEADERS += plugins/freeverb/plugin.h
+
+SRC_SOURCES += plugins/freeverb/freeverb.cc
+SRC_SOURCES += plugins/freeverb/reverb_model.cc
+SRC_SOURCES += plugins/freeverb/plugin.cc
+
+SRC_MOCHDRS += plugins/freeverb/plugin.h
+
 ################
 
 VERSION_FILE := haruhi/config/version.cc
