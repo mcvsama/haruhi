@@ -291,10 +291,6 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 	HasPlugin (part_manager->plugin()),
 	_part_manager (part_manager),
 	_voice_manager (std::make_unique<VoiceManager> (main_params, &_part_params, work_performer)),
-	_switch_wavetables (false),
-	_wt_update_request (0),
-	_wt_serial (0),
-	_wt_wu_ever_started (false),
 	_ports (_part_manager->plugin(), this->id()),
 	_proxies (_part_manager, &_ports, &_part_params),
 	_updaters (_voice_manager.get())
@@ -314,10 +310,8 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 	_modulator_waves[2] = std::make_unique<DSP::ParametricWaves::Square>();
 	_modulator_waves[3] = std::make_unique<DSP::ParametricWaves::Sawtooth>();
 
-	// Double buffering of wavetables. The one with index 0 is always
-	// the one currently used.
-	_wavetables[0] = std::make_unique<DSP::Wavetable>();
-	_wavetables[1] = std::make_unique<DSP::Wavetable>();
+	_wave = &_wave_current;
+
 	_wt_wu = std::make_unique<UpdateWavetableWorkUnit> (this);
 
 	// Initially resize buffers:
@@ -406,6 +400,7 @@ Part::~Part()
 	// Disconnect listeners way before proxies and part are destroyed.
 	Signal::Receiver::disconnect_all_signals();
 
+	// Need to wait for _wt_wu, since it uses a pointer to our member.
 	// _wt_wu is never normally being waited on, so it's ok to wait here.
 	// Must wait since it can still use Waves. It also needs to be deleted.
 	_wt_wu->wait();
@@ -482,7 +477,7 @@ Part::check_wavetable_update_process()
 		if (!_wt_wu_ever_started || (_wt_wu->is_ready() && _wt_wu->serial() != update_request))
 		{
 			// Prepare work unit:
-			_wt_wu->reset (_wavetables[1].get(), update_request);
+			_wt_wu->reset (&_wavetable_rendered, update_request);
 			_wt_wu_ever_started = true;
 
 			Haruhi::Services::lo_priority_work_performer()->add (_wt_wu.get());
@@ -492,18 +487,66 @@ Part::check_wavetable_update_process()
 
 
 void
-Part::render()
+Part::async_render()
 {
-	if (_switch_wavetables.load())
+	using std::swap;
+
+	auto switch_next_to_current_wavetable = [&] {
+		swap (_wavetable_next, _wavetable_current);
+
+		if (_wavetable_current.computed())
+			_wave = &_wave_current;
+		else
+			_wave = nullptr;
+
+		_voice_manager->set_wave (_wave);
+	};
+
+	// If crossing-wave is not running, this has no effect.
+	// Otherwise it works like advancing on the next rendering round.
+	_crossing_wave.advance (_part_manager->graph()->buffer_size());
+
+	switch (_crossing_wave.state())
 	{
-		std::swap (_wavetables[0], _wavetables[1]);
-		_switch_wavetables.store (false);
-		_voice_manager->set_wavetable (_wavetables[0].get());
+		case DSP::CrossingWave::NotStarted:
+			if (_new_wavetable_ready.load())
+			{
+				_new_wavetable_ready.store (false);
+
+				swap (_wavetable_rendered, _wavetable_next);
+
+				// Ensure it's not the first computation of wavetable if crossing-wave is to be used:
+				if (_wavetable_current.computed() && _wavetable_next.computed())
+				{
+					// Time choosen by ear:
+					auto transition_time = 10_ms;
+					auto transition_samples = transition_time * _part_manager->graph()->sample_rate();
+					_crossing_wave = DSP::CrossingWave (&_wave_current, &_wave_next, transition_samples);
+					_crossing_wave.start();
+
+					_wave = &_crossing_wave;
+					_voice_manager->set_wave (_wave);
+				}
+				else
+					switch_next_to_current_wavetable();
+			}
+			break;
+
+		case DSP::CrossingWave::Running:
+			break;
+
+		case DSP::CrossingWave::Finished:
+			switch_next_to_current_wavetable();
+
+			// Switch state to NotStarted:
+			_crossing_wave.reset();
+			break;
 	}
 
-	check_wavetable_update_process();
+	if (_crossing_wave.state() == DSP::CrossingWave::NotStarted)
+		check_wavetable_update_process();
 
-	_voice_manager->render();
+	_voice_manager->async_render();
 }
 
 
@@ -626,7 +669,7 @@ void
 Part::wavetable_computed (unsigned int serial)
 {
 	_wt_serial.store (serial);
-	_switch_wavetables.store (true);
+	_new_wavetable_ready.store (true);
 }
 
 } // namespace Yuki

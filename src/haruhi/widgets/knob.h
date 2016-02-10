@@ -326,7 +326,7 @@ class KnobProperties: public QDialog
 		CurveWave (Knob* knob);
 
 		Sample
-		operator() (Sample phase, Sample frequency) const noexcept override;
+		operator() (Sample phase, Sample frequency, std::size_t sample) const noexcept override;
 
 	  private:
 		Knob* _knob;

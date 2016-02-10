@@ -112,10 +112,10 @@ class VoiceManager
 	set_oversampling (unsigned int oversampling);
 
 	/**
-	 * Make all current and future voices use given Wavetable.
+	 * Make all current and future voices use given Wave.
 	 */
 	void
-	set_wavetable (DSP::Wavetable*);
+	set_wave (DSP::Wave*);
 
 	/**
 	 * Return number of sounding voices.
@@ -136,7 +136,7 @@ class VoiceManager
 	 * Use mix_rendering_result() to mix rendered voices into given output buffers.
 	 */
 	void
-	render();
+	async_render();
 
 	/**
 	 * Block until rendering is done.
@@ -210,7 +210,7 @@ class VoiceManager
 	FilterImpulseResponse	_antialiasing_filter_ir;
 	AntialiasingFilter		_antialiasing_filter_1[5]; // Multi-stage filtering, number must be odd.
 	AntialiasingFilter		_antialiasing_filter_2[5]; // Multi-stage filtering, number must be odd.
-	DSP::Wavetable*			_wavetable				= nullptr;
+	DSP::Wave*				_wave					= nullptr;
 	Haruhi::AudioBuffer		_output_1;
 	Haruhi::AudioBuffer		_output_2;
 	Haruhi::AudioBuffer		_output_1_oversampled;

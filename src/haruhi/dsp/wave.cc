@@ -29,7 +29,7 @@ Wave::compute_average_energy (unsigned int samples) const noexcept
 	Sample delta = 1.0f / samples;
 	Sample energy = +0.0f;
 	for (Sample phase = 0.0f; phase <= 1.0f; phase += delta)
-		energy += delta * (*this)(phase, 0.0f);
+		energy += delta * (*this)(phase, 0.0f, 0);
 	return energy;
 }
 
@@ -42,7 +42,7 @@ Wave::compute_min_max (unsigned int samples) const noexcept
 	Sample max = -min;
 	for (Sample phase = 0.0f; phase <= 1.0f; phase += delta)
 	{
-		Sample v = (*this)(phase, 0.0f);
+		Sample v = (*this)(phase, 0.0f, 0);
 		if (v < min)
 			min = v;
 		if (v > max)

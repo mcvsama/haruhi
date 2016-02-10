@@ -76,7 +76,7 @@ namespace ParametricWaves {
 		{ }
 
 		Sample
-		operator() (Sample x, Sample) const noexcept override
+		operator() (Sample x, Sample, std::size_t) const noexcept override
 		{
 			x = x * 2.0f - 1.0f;
 			float a = pow2 (pow2 (1.0f + param())); // x^4
@@ -99,7 +99,7 @@ namespace ParametricWaves {
 		{ }
 
 		Sample
-		operator() (Sample x, Sample) const noexcept override
+		operator() (Sample x, Sample, std::size_t) const noexcept override
 		{
 			x = x * 2.0f - 1.0f;
 			float sgn = 1.0f;
@@ -131,7 +131,7 @@ namespace ParametricWaves {
 		{ }
 
 		Sample
-		operator() (Sample x, Sample) const noexcept override
+		operator() (Sample x, Sample, std::size_t) const noexcept override
 		{
 			x = x * 2.0f - 1.0f;
 			float sgn = 1.0f;
@@ -159,7 +159,7 @@ namespace ParametricWaves {
 		{ }
 
 		Sample
-		operator() (Sample x, Sample) const noexcept override
+		operator() (Sample x, Sample, std::size_t) const noexcept override
 		{
 			x = mod1 (x);
 			float a = param();
@@ -188,7 +188,7 @@ namespace ParametricWaves {
 		{ }
 
 		Sample
-		operator() (Sample x, Sample) const noexcept override
+		operator() (Sample x, Sample, std::size_t) const noexcept override
 		{
 			float a = param();
 			if (a < 0.005f)
@@ -213,7 +213,7 @@ namespace ParametricWaves {
 		{ }
 
 		Sample
-		operator() (Sample x, Sample) const noexcept override
+		operator() (Sample x, Sample, std::size_t) const noexcept override
 		{
 			x = x * 2.0f - 1.0f;
 			Sample sgn = x >= 0.0f ? 1.0f : -1.0f;
@@ -235,7 +235,7 @@ namespace ParametricWaves {
 		{ }
 
 		Sample
-		operator() (Sample x, Sample) const noexcept override
+		operator() (Sample x, Sample, std::size_t) const noexcept override
 		{
 			float a = param();
 			x = mod1 (x) * 2.0f - 1.0f;
@@ -259,7 +259,7 @@ namespace ParametricWaves {
 		{ }
 
 		Sample
-		operator() (Sample x, Sample) const noexcept override
+		operator() (Sample x, Sample, std::size_t) const noexcept override
 		{
 			float a = param();
 			if (a < 0.001f)
@@ -288,7 +288,7 @@ namespace ParametricWaves {
 		{ }
 
 		Sample
-		operator() (Sample x, Sample) const noexcept override
+		operator() (Sample x, Sample, std::size_t) const noexcept override
 		{
 			float a = renormalize (param(), 0.0f, 1.0f, 0.25f, 1.0f);
 			x = mod1 (x) * 2.0f * M_PI;

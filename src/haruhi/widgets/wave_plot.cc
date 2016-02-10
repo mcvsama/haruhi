@@ -220,13 +220,13 @@ WavePlot::resample_wave()
 			int const m = _closed_ring ? n - 1 : n;
 			for (int x = 0; x < m; ++x)
 			{
-				_samples[x] = inverter * (*_wave)(1.0f * x / n, 0);
+				_samples[x] = inverter * (*_wave)(1.0f * x / n, 0, 0);
 				_denominator = std::max (_denominator, std::abs (_samples[x]));
 			}
 			// Since wave(0.0) should be the same as wave(1.0), we'll use wave(0.0)
 			// for the last sample, but only if this feature is enabled (closed ring):
 			if (_closed_ring)
-				_samples[n - 1] = inverter * (*_wave)(0.0f, 0);
+				_samples[n - 1] = inverter * (*_wave)(0.0f, 0, 0);
 		}
 		_to_repaint_buffer = true;
 	}

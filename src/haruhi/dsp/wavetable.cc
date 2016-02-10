@@ -25,6 +25,14 @@ namespace Haruhi {
 
 namespace DSP {
 
+Wavetable::WaveAdapter&
+Wavetable::WaveAdapter::operator= (WaveAdapter const& other)
+{
+	_wavetable = other._wavetable;
+	return *this;
+}
+
+
 void
 Wavetable::add_table (std::vector<Sample>&& samples, float max_frequency)
 {

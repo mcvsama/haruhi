@@ -494,7 +494,7 @@ KnobProperties::CurveWave::CurveWave (Knob* knob):
 
 
 Sample
-KnobProperties::CurveWave::operator() (Sample phase, Sample) const noexcept
+KnobProperties::CurveWave::operator() (Sample phase, Sample, std::size_t) const noexcept
 {
 	ControllerParam::Adapter const* adapter = _knob->param()->adapter();
 	return renormalize (adapter->forward_normalized (phase), adapter->hard_limit, Range<float> {-1.0f, 1.0f});

@@ -22,7 +22,7 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 #include <haruhi/graph/audio_buffer.h>
-#include <haruhi/dsp/wavetable.h>
+#include <haruhi/dsp/wave.h>
 #include <haruhi/dsp/noise.h>
 #include <haruhi/dsp/functions.h>
 #include <haruhi/utility/amplitude.h>
@@ -43,28 +43,28 @@ class VoiceOscillator
 
   public:
 	/**
-	 * If oscillator has no assigned wavetable, it will
+	 * If oscillator has no assigned wave, it will
 	 * mixin/fill silence.
 	 */
-	VoiceOscillator (DSP::Wavetable* wavetable = 0) noexcept;
+	VoiceOscillator (DSP::Wave* wave = nullptr) noexcept;
 
 	/**
-	 * Enable/disable wavetable generator.
+	 * Enable/disable wave generator.
 	 */
 	void
-	set_wavetable_enabled (bool enabled) noexcept;
+	set_wave_enabled (bool enabled) noexcept;
 
 	/**
-	 * Set new wavetable. May be 0.
+	 * Set new wave. May be 0.
 	 */
 	void
-	set_wavetable (DSP::Wavetable* wavetable) noexcept;
+	set_wave (DSP::Wave* wave) noexcept;
 
 	/**
-	 * Return currently used wavetable.
+	 * Return currently used wave.
 	 */
-	DSP::Wavetable*
-	wavetable() const noexcept;
+	DSP::Wave*
+	wave() const noexcept;
 
 	/**
 	 * Set frequency source buffer.
@@ -80,7 +80,7 @@ class VoiceOscillator
 
 	/**
 	 * Set FM modulator source.
-	 * Changing frequency in this buffer doesn't cause wavetable jumping.
+	 * Changing frequency in this buffer doesn't cause wave jumping.
 	 */
 	void
 	set_fm_source (Haruhi::AudioBuffer* source) noexcept;
@@ -184,8 +184,8 @@ class VoiceOscillator
 	};
 
   private:
-	bool					_wavetable_enabled;
-	DSP::Wavetable*			_wavetable					= nullptr;
+	bool					_wave_enabled;
+	DSP::Wave*				_wave						= nullptr;
 	Haruhi::AudioBuffer*	_frequency_source			= nullptr;
 	Haruhi::AudioBuffer*	_amplitude_source			= nullptr;
 	Haruhi::AudioBuffer*	_fm_source					= nullptr;
@@ -211,23 +211,23 @@ class VoiceOscillator
 
 
 inline void
-VoiceOscillator::set_wavetable_enabled (bool enabled) noexcept
+VoiceOscillator::set_wave_enabled (bool enabled) noexcept
 {
-	_wavetable_enabled = enabled;
+	_wave_enabled = enabled;
 }
 
 
 inline void
-VoiceOscillator::set_wavetable (DSP::Wavetable* wavetable) noexcept
+VoiceOscillator::set_wave (DSP::Wave* wave) noexcept
 {
-	_wavetable = wavetable;
+	_wave = wave;
 }
 
 
-inline DSP::Wavetable*
-VoiceOscillator::wavetable() const noexcept
+inline DSP::Wave*
+VoiceOscillator::wave() const noexcept
 {
-	return _wavetable;
+	return _wave;
 }
 
 
@@ -332,7 +332,7 @@ VoiceOscillator::fill (Haruhi::AudioBuffer* output_1, Haruhi::AudioBuffer* outpu
 	bool mul = false;
 
 	// Synthesize wave:
-	if (_wavetable == 0 || !_wavetable_enabled)
+	if (!_wave || !_wave_enabled)
 	{
 		output_1->clear();
 		output_2->clear();
@@ -462,9 +462,9 @@ template<bool with_noise, bool unison_stereo>
 				else
 					_unison[u].phase = mod1 (_unison[u].phase + v + f);
 				// Don't take "noised f" as wave's frequency, because this might result in frequent jumping
-				// between two wavetables and unwanted audible noise on some notes. It's better to get
+				// between two waves and unwanted audible noise on some notes. It's better to get
 				// some (inaudible) aliasing than that:
-				tmpsum = (*_wavetable)(_unison[u].phase, g);
+				tmpsum = (*_wave)(_unison[u].phase, g, i);
 				// Stereo:
 				if (unison_stereo)
 				{

@@ -61,7 +61,7 @@ class HarmonicsWave: public Wave
 	 * 			be used in (this is for limiting bandwidth).
 	 */
 	Sample
-	operator() (Sample register phase, Sample frequency) const noexcept override;
+	operator() (Sample register phase, Sample frequency, std::size_t) const noexcept override;
 
 	/**
 	 * Gets given harmonic.
@@ -113,11 +113,11 @@ HarmonicsWave::HarmonicsWave (Wave* wave, bool auto_delete) noexcept:
 
 
 inline Sample
-HarmonicsWave::operator() (Sample phase, Sample frequency) const noexcept
+HarmonicsWave::operator() (Sample phase, Sample frequency, std::size_t sample) const noexcept
 {
 	Sample sum = 0;
 	for (Harmonics::size_type h = 0, n = _harmonics.size(); h < n; ++h)
-		sum += _harmonics[h].value * (*inner_wave())(mod1 (0.5f * _harmonics[h].phase + phase * (h + 1)), frequency);
+		sum += _harmonics[h].value * (*inner_wave())(mod1 (0.5f * _harmonics[h].phase + phase * (h + 1)), frequency, sample);
 	return sum;
 }
 

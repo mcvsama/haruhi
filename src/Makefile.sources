@@ -221,6 +221,7 @@ NODEP_SOURCES += $(VERSION_FILE)
 ######## /dsp ########
 
 SRC_HEADERS += haruhi/dsp/adsr.h
+SRC_HEADERS += haruhi/dsp/crossing_wave.h
 SRC_HEADERS += haruhi/dsp/delay_line.h
 SRC_HEADERS += haruhi/dsp/envelope.h
 SRC_HEADERS += haruhi/dsp/fft.h
@@ -241,6 +242,7 @@ SRC_HEADERS += haruhi/dsp/wave.h
 SRC_HEADERS += haruhi/dsp/utility.h
 
 SRC_SOURCES += haruhi/dsp/adsr.cc
+SRC_SOURCES += haruhi/dsp/crossing_wave.cc
 SRC_SOURCES += haruhi/dsp/delay_line.cc
 SRC_SOURCES += haruhi/dsp/envelope.cc
 SRC_SOURCES += haruhi/dsp/fft.cc

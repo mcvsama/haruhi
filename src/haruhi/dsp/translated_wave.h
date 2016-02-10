@@ -39,7 +39,7 @@ class TranslatedWave: public Wave
 	TranslatedWave (Sample delta, Wave* wave, bool auto_delete = false) noexcept;
 
 	Sample
-	operator() (Sample register phase, Sample frequency) const noexcept override;
+	operator() (Sample register phase, Sample frequency, std::size_t sample) const noexcept override;
 
   private:
 	Sample _delta;
@@ -54,9 +54,9 @@ TranslatedWave::TranslatedWave (Sample delta, Wave* wave, bool auto_delete) noex
 
 
 inline Sample
-TranslatedWave::operator() (Sample phase, Sample frequency) const noexcept
+TranslatedWave::operator() (Sample phase, Sample frequency, std::size_t sample) const noexcept
 {
-	return _delta + (*inner_wave())(phase, frequency);
+	return _delta + (*inner_wave())(phase, frequency, sample);
 }
 
 } // namespace DSP

@@ -56,7 +56,7 @@ class Noise: public Wave
 	 * Returns noise sample.
 	 */
 	virtual Sample
-	operator() (Sample, Sample) const noexcept override;
+	operator() (Sample, Sample, std::size_t) const noexcept override;
 
 	/**
 	 * Faster getter of noise value (not polymorphic).
@@ -88,7 +88,7 @@ Noise::Noise() noexcept:
 
 
 inline Sample
-Noise::operator() (Sample, Sample) const noexcept
+Noise::operator() (Sample, Sample, std::size_t) const noexcept
 {
 	return get();
 }

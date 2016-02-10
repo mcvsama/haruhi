@@ -22,6 +22,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/dsp/wavetable.h>
 #include <haruhi/dsp/parametric_wave.h>
+#include <haruhi/dsp/crossing_wave.h>
 #include <haruhi/graph/event.h>
 #include <haruhi/graph/event_port.h>
 #include <haruhi/graph/audio_buffer.h>
@@ -410,7 +411,7 @@ class Part:
 	 * Start voices rendering.
 	 */
 	void
-	render();
+	async_render();
 
 	/**
 	 * Wait until voice rendering is done.
@@ -488,14 +489,20 @@ class Part:
 	PartManager*					_part_manager;
 	Unique<VoiceManager>			_voice_manager;
 	Params::Part					_part_params;
-	Unique<DSP::Wavetable>			_wavetables[2];
+	DSP::Wavetable					_wavetable_current;
+	DSP::Wavetable::WaveAdapter		_wave_current			{ &_wavetable_current };
+	DSP::Wavetable					_wavetable_next;
+	DSP::Wavetable::WaveAdapter		_wave_next				{ &_wavetable_next };
+	DSP::Wavetable					_wavetable_rendered;
+	DSP::CrossingWave				_crossing_wave;
+	DSP::Wave*						_wave					= nullptr;
+	Atomic<bool>					_new_wavetable_ready	{ false };
+	Atomic<unsigned int>			_wt_update_request		{ 0 };
+	Atomic<unsigned int>			_wt_serial				{ 0 };
+	Unique<UpdateWavetableWorkUnit>	_wt_wu;
+	bool							_wt_wu_ever_started		= false;
 	Unique<DSP::ParametricWave>		_modulator_waves[4];
 	Unique<DSP::ParametricWave>		_base_waves[9];
-	Atomic<bool>					_switch_wavetables;
-	Atomic<unsigned int>			_wt_update_request;
-	Atomic<unsigned int>			_wt_serial;
-	Unique<UpdateWavetableWorkUnit>	_wt_wu;
-	bool							_wt_wu_ever_started;
 	PartPorts						_ports;
 	PartControllerProxies			_proxies;
 	ParamUpdaters					_updaters;

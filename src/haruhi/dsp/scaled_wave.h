@@ -39,7 +39,7 @@ class ScaledWave: public Wave
 	ScaledWave (Sample scale, Wave* wave, bool auto_delete = false) noexcept;
 
 	Sample
-	operator() (Sample register phase, Sample frequency) const noexcept override;
+	operator() (Sample register phase, Sample frequency, std::size_t) const noexcept override;
 
   private:
 	Sample _scale;
@@ -54,9 +54,9 @@ ScaledWave::ScaledWave (Sample scale, Wave* wave, bool auto_delete) noexcept:
 
 
 inline Sample
-ScaledWave::operator() (Sample phase, Sample frequency) const noexcept
+ScaledWave::operator() (Sample phase, Sample frequency, std::size_t sample) const noexcept
 {
-	return _scale * (*inner_wave())(phase, frequency);
+	return _scale * (*inner_wave())(phase, frequency, sample);
 }
 
 } // namespace DSP

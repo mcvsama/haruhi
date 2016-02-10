@@ -224,7 +224,7 @@ PartManager::process()
 	for (Part* p: _parts)
 	{
 		p->process_events();
-		p->render();
+		p->async_render();
 	}
 
 	for (Part* p: _parts)

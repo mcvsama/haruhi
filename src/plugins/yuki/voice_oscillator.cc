@@ -23,9 +23,9 @@ namespace Yuki {
 using Haruhi::Sample;
 
 
-VoiceOscillator::VoiceOscillator (DSP::Wavetable* wavetable) noexcept:
-	_wavetable_enabled (true),
-	_wavetable (wavetable)
+VoiceOscillator::VoiceOscillator (DSP::Wave* wave) noexcept:
+	_wave_enabled (true),
+	_wave (wave)
 {
 	set_unison_number (1);
 	set_phase (0);

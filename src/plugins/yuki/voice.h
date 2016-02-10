@@ -129,10 +129,10 @@ class Voice
 	set_oversampling (unsigned int oversampling);
 
 	/**
-	 * Make voice use given Wavetable.
+	 * Make voice use given Wave.
 	 */
 	void
-	set_wavetable (DSP::Wavetable*);
+	set_wave (DSP::Wave*);
 
 	/**
 	 * RW accessor to Voice params.
@@ -284,9 +284,9 @@ Voice::params() noexcept
 
 
 inline void
-Voice::set_wavetable (DSP::Wavetable* wavetable)
+Voice::set_wave (DSP::Wave* wave)
 {
-	_vosc.set_wavetable (wavetable);
+	_vosc.set_wave (wave);
 }
 
 

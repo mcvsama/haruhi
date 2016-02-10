@@ -33,6 +33,9 @@ namespace DSP {
 
 class Wavetable
 {
+	friend void
+	swap (Wavetable&, Wavetable&);
+
   public:
 	// Maps frequency to array of samples. Frequency is max frequency for which
 	// given table can be used. Use lower_bound method to find correct table.
@@ -53,10 +56,17 @@ class Wavetable
 	class WaveAdapter: public Wave
 	{
 	  public:
+		// Ctor
 		WaveAdapter (Wavetable* wavetable) noexcept;
 
+		// Ctor
+		WaveAdapter (WaveAdapter const&) = default;
+
+		WaveAdapter&
+		operator= (WaveAdapter const& other);
+
 		Sample
-		operator() (Sample register phase, Sample frequency) const noexcept override;
+		operator() (Sample register phase, Sample frequency, std::size_t sample) const noexcept override;
 
 	  private:
 		Wavetable* _wavetable;
@@ -85,6 +95,13 @@ class Wavetable
 	set_wavetables_size (std::size_t size) noexcept;
 
 	/**
+	 * Return true if wavetable has been computed and can be used.
+	 */
+	bool
+	computed() const noexcept;
+
+	/**
+	 * Before accessing samples, check if you can do that with computed().
 	 * There must be at least one table added and frequency must be between
 	 * 0 and 0.5. Otherwise behavior of this method is undefined.
 	 */
@@ -103,6 +120,8 @@ class Wavetable
 	Tables			_tables;
 	// Number of samples in each table:
 	std::size_t		_size = 0;
+
+	// NOTE: Remember about swap() when adding new fields!
 };
 
 
@@ -114,7 +133,7 @@ Wavetable::WaveAdapter::WaveAdapter (Wavetable* wavetable) noexcept:
 
 
 inline Sample
-Wavetable::WaveAdapter::operator() (Sample phase, Sample frequency) const noexcept
+Wavetable::WaveAdapter::operator() (Sample phase, Sample frequency, std::size_t) const noexcept
 {
 	return _wavetable->operator() (phase, frequency);
 }
@@ -124,6 +143,13 @@ inline void
 Wavetable::set_wavetables_size (std::size_t size) noexcept
 {
 	_size = size;
+}
+
+
+inline bool
+Wavetable::computed() const noexcept
+{
+	return !_tables.empty();
 }
 
 
@@ -147,6 +173,22 @@ Wavetable::table_for_frequency (float frequency) const noexcept
 	if (t == _tables.end())
 		return _tables.rbegin()->second;
 	return t->second;
+}
+
+
+/*
+ * Global functions
+ */
+
+
+/**
+ * Effectively swap two wavetables.
+ */
+inline void
+swap (Wavetable& w1, Wavetable& w2)
+{
+	std::swap (w1._tables, w2._tables);
+	std::swap (w1._size, w2._size);
 }
 
 } // namespace DSP

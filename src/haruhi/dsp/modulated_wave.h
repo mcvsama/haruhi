@@ -34,7 +34,7 @@ namespace DSP {
  */
 class ModulatedWave: public Wave
 {
-	typedef Sample (ModulatedWave::*ValueFunction)(Sample, Sample) const;
+	typedef Sample (ModulatedWave::*ValueFunction)(Sample, Sample, std::size_t) const;
 
   public:
 	enum Type {
@@ -70,16 +70,18 @@ class ModulatedWave: public Wave
 	 * \param	phase is the phase in range [-1, 1].
 	 * \param	frequency is the base frequency of the signal this sample will
 	 * 			be used in (this is for limiting bandwidth).
+	 * \param	sample
+	 *			Sample index when generating a run of samples.
 	 */
 	Sample
-	operator() (Sample register phase, Sample frequency) const noexcept override;
+	operator() (Sample register phase, Sample frequency, std::size_t sample) const noexcept override;
 
   private:
 	Sample
-	value_for_ring (Sample phase, Sample frequency) const noexcept;
+	value_for_ring (Sample phase, Sample frequency, std::size_t sample) const noexcept;
 
 	Sample
-	value_for_frequency (Sample phase, Sample frequency) const noexcept;
+	value_for_frequency (Sample phase, Sample frequency, std::size_t sample) const noexcept;
 
   private:
 	Wave*			_modulator;
@@ -136,27 +138,27 @@ ModulatedWave::set_modulator (Wave* modulator, bool auto_delete) noexcept
 
 
 inline Sample
-ModulatedWave::value_for_ring (Sample phase, Sample frequency) const noexcept
+ModulatedWave::value_for_ring (Sample phase, Sample frequency, std::size_t sample) const noexcept
 {
-	Sample const x = (*inner_wave()) (phase, frequency);
-	Sample const m = (*_modulator) (mod1 (phase * _mod_index), frequency * _mod_index);
+	Sample const x = (*inner_wave()) (phase, frequency, sample);
+	Sample const m = (*_modulator) (mod1 (phase * _mod_index), frequency * _mod_index, sample);
 	Sample const& a = _mod_amplitude;
 	return x * (1.0f - a + a * m); // Simplified: (1-a)x + a(xm)
 }
 
 
 inline Sample
-ModulatedWave::value_for_frequency (Sample phase, Sample frequency) const noexcept
+ModulatedWave::value_for_frequency (Sample phase, Sample frequency, std::size_t sample) const noexcept
 {
-	Sample const m = (*_modulator)(mod1 (phase * _mod_index), frequency * _mod_index);
-	return (*inner_wave())(mod1 (phase + phase * _mod_amplitude * m), frequency);
+	Sample const m = (*_modulator)(mod1 (phase * _mod_index), frequency * _mod_index, sample);
+	return (*inner_wave())(mod1 (phase + phase * _mod_amplitude * m), frequency, sample);
 }
 
 
 inline Sample
-ModulatedWave::operator() (Sample phase, Sample frequency) const noexcept
+ModulatedWave::operator() (Sample phase, Sample frequency, std::size_t sample) const noexcept
 {
-	return (this->*_value_function) (phase, frequency);
+	return (this->*_value_function) (phase, frequency, sample);
 }
 
 } // namespace DSP

@@ -87,7 +87,7 @@ VoiceManager::handle_voice_event (Haruhi::VoiceEvent const* event)
 			NormalizedFrequency initial_frequency = _last_voice_frequency / _sample_rate;
 
 			auto v = std::make_unique<Voice> (id, event->timestamp(), _main_params, _part_params, (0_dB).factor(), initial_frequency, _sample_rate, _buffer_size, _oversampling);
-			v->set_wavetable (_wavetable);
+			v->set_wave (_wave);
 
 			_voices_by_id[id] = _voices.insert (std::move (v)).first;
 			_active_voices_number++;
@@ -174,17 +174,17 @@ VoiceManager::set_oversampling (unsigned int oversampling)
 
 
 void
-VoiceManager::set_wavetable (DSP::Wavetable* wavetable)
+VoiceManager::set_wave (DSP::Wave* wave)
 {
-	_wavetable = wavetable;
+	_wave = wave;
 
 	for (auto& v: _voices)
-		v->set_wavetable (_wavetable);
+		v->set_wave (_wave);
 }
 
 
 void
-VoiceManager::render()
+VoiceManager::async_render()
 {
 	assert (_work_units.empty());
 

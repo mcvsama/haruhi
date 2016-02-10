@@ -69,7 +69,7 @@ FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 	Sample max = 0.0f, new_max;
 	for (unsigned int i = 0; i < samples; ++i)
 	{
-		source[i].real ((*_wave)(1.0f * i / (samples), 0));
+		source[i].real ((*_wave)(1.0f * i / (samples), 0, 0));
 		source[i].imag (0.0f);
 		if ((new_max = std::abs (source[i].real())) > max)
 			max = new_max;
