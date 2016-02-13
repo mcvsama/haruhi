@@ -77,7 +77,7 @@ PortsConnector::PortsConnector (UnitBay* unit_bay, QWidget* parent):
 	_disconnect_button->setIconSize (Resources::Icons16::haruhi().size());
 	_disconnect_button->setSizePolicy (QSizePolicy::Maximum, QSizePolicy::Fixed);
 
-	QObject::connect (_ipanel->list()->verticalScrollBar(), SIGNAL (sliderMoved (int)), static_cast<QWidget*> (this), SLOT (list_view_moved()));
+	QObject::connect (_ipanel->list()->verticalScrollBar(), SIGNAL (valueChanged (int)), static_cast<QWidget*> (this), SLOT (list_view_moved()));
 	QObject::connect (_ipanel->list()->header(), SIGNAL (sectionClicked (int)), this, SLOT (list_view_moved()));
 	QObject::connect (_ipanel->list(), SIGNAL (itemExpanded (QTreeWidgetItem*)), this, SLOT (list_view_changed()));
 	QObject::connect (_ipanel->list(), SIGNAL (itemCollapsed (QTreeWidgetItem*)), this, SLOT (list_view_changed()));
