@@ -58,7 +58,7 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 
 	PartManager::MainProxies* proxies = _part_manager->proxies();
 
-	_knob_volume		= std::make_unique<Haruhi::Knob> (this, &proxies->volume, "Volume dB");
+	_knob_volume		= std::make_unique<Haruhi::Knob> (this, &proxies->volume, "Level dB");
 	_knob_panorama		= std::make_unique<Haruhi::Knob> (this, &proxies->panorama, "Panorama");
 	_knob_detune		= std::make_unique<Haruhi::Knob> (this, &proxies->detune, "Detune");
 	_knob_stereo_width	= std::make_unique<Haruhi::Knob> (this, &proxies->stereo_width, "Stereo");

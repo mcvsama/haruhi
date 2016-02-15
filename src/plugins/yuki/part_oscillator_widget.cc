@@ -52,7 +52,7 @@ PartOscillatorWidget::PartOscillatorWidget (QWidget* parent, PartWidget* part_wi
 	_knob_modulator_amplitude		= std::make_unique<Haruhi::Knob> (this, &proxies->modulator_amplitude, "Mod.amp.");
 	_knob_modulator_index			= std::make_unique<Haruhi::Knob> (this, &proxies->modulator_index, "Mod.index");
 	_knob_modulator_shape			= std::make_unique<Haruhi::Knob> (this, &proxies->modulator_shape, "Mod.shape");
-	_knob_volume					= std::make_unique<Haruhi::Knob> (this, &proxies->volume, "Volume dB");
+	_knob_volume					= std::make_unique<Haruhi::Knob> (this, &proxies->volume, "Level dB");
 	_knob_panorama					= std::make_unique<Haruhi::Knob> (this, &proxies->panorama, "Panorama");
 	_knob_detune					= std::make_unique<Haruhi::Knob> (this, &proxies->detune, "Detune");
 	_knob_pitchbend					= std::make_unique<Haruhi::Knob> (this, &proxies->pitchbend, "Pitch");

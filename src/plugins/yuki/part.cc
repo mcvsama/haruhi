@@ -82,7 +82,7 @@ Part::PartPorts::PartPorts (Plugin* plugin, unsigned int part_id)
 	modulator_amplitude			= std::make_unique<Haruhi::EventPort> (plugin, "Operator M - Wave modulator amplitude", Haruhi::Port::Input, port_group.get());
 	modulator_index				= std::make_unique<Haruhi::EventPort> (plugin, "Operator M - Wave modulator index", Haruhi::Port::Input, port_group.get());
 	modulator_shape				= std::make_unique<Haruhi::EventPort> (plugin, "Operator M - Wave modulator shape", Haruhi::Port::Input, port_group.get());
-	volume						= std::make_unique<Haruhi::EventPort> (plugin, "Operator M - Volume", Haruhi::Port::Input, port_group.get());
+	volume						= std::make_unique<Haruhi::EventPort> (plugin, "Operator M - Level", Haruhi::Port::Input, port_group.get());
 	amplitude					= std::make_unique<Haruhi::EventPort> (plugin, "Operator M - Amplitude modulation", Haruhi::Port::Input, port_group.get(), Haruhi::Port::Polyphonic);
 	frequency					= std::make_unique<Haruhi::EventPort> (plugin, "Operator M - Frequency modulation", Haruhi::Port::Input, port_group.get(), Haruhi::Port::Polyphonic);
 	panorama					= std::make_unique<Haruhi::EventPort> (plugin, "Operator M - Panorama", Haruhi::Port::Input, port_group.get(), Haruhi::Port::Polyphonic);
