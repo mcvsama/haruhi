@@ -99,10 +99,10 @@ Plugin::process()
 	_reverb_model.set_damping (_param_damping->to_f());
 	_reverb_model.set_mode (ReverbModel::Mode::Normal); // TODO configurable
 
-	auto buf_i_0 = _in[0]->audio_buffer();
-	auto buf_i_1 = _in[1]->audio_buffer();
-	auto buf_o_0 = _out[0]->audio_buffer();
-	auto buf_o_1 = _out[1]->audio_buffer();
+	auto buf_i_0 = _in[0]->buffer();
+	auto buf_i_1 = _in[1]->buffer();
+	auto buf_o_0 = _out[0]->buffer();
+	auto buf_o_1 = _out[1]->buffer();
 
 	_reverb_model.process (buf_i_0->begin(), buf_i_1->begin(), buf_o_0->begin(), buf_o_1->begin(), buf_i_0->size());
 

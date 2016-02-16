@@ -216,7 +216,7 @@ Backend::data_ready()
 									  master_volume());
 		for (auto& p: _outputs)
 			if (p.second->ready())
-				p.second->port()->audio_buffer()->attenuate (&_master_volume_smoother_buffer);
+				p.second->port()->buffer()->attenuate (&_master_volume_smoother_buffer);
 
 		// Copy data from graph to transport (output):
 		_transport->lock_ports();
@@ -227,7 +227,7 @@ Backend::data_ready()
 			if (p.second->port()->back_connections().empty())
 				p.first->buffer()->clear();
 			else
-				p.first->buffer()->fill (p.second->port()->audio_buffer());
+				p.first->buffer()->fill (p.second->port()->buffer());
 		}
 		_transport->unlock_ports();
 	});
@@ -256,7 +256,7 @@ Backend::peak_levels (LevelsMap& levels)
 	{
 		Sample register max = 0.0f;
 		AudioPort* port = p.second->port();
-		AudioBuffer* buf = port->audio_buffer();
+		AudioBuffer* buf = port->buffer();
 
 		for (Sample s: *buf)
 			if (std::abs (s) > max)

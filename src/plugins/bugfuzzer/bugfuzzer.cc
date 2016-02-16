@@ -67,7 +67,7 @@ BugFuzzer::process()
 
 	// Generate garbage on output ports:
 	for (int i = 0; i < EventPortsNum; ++i)
-		_event_ports[i]->event_buffer()->push (get_random_event());
+		_event_ports[i]->buffer()->push (get_random_event());
 }
 
 

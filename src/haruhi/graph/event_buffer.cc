@@ -28,20 +28,16 @@ namespace Haruhi {
 
 POOL_ALLOCATOR_FOR (EventBuffer)
 
-Buffer::TypeID EventBuffer::TYPE = "Haruhi::EventBuffer";
-
 
 EventBuffer::EventBuffer() noexcept:
-	Buffer (EventBuffer::TYPE),
 	_sorted (true)
 {
 }
 
 
 void
-EventBuffer::mixin (Buffer const* other)
+EventBuffer::mixin (EventBuffer const* other)
 {
-	assert (other->type() == EventBuffer::TYPE);
 	auto other_buffer = static_cast<EventBuffer const*> (other);
 	_events.insert (_events.end(), other_buffer->_events.begin(), other_buffer->_events.end());
 }

@@ -178,7 +178,7 @@ PartManager::process()
 	bool const enabled = _main_params.enabled.get();
 
 	// VoiceEvents:
-	for (auto e: _ports.voice_in->event_buffer()->events())
+	for (auto e: _ports.voice_in->buffer()->events())
 	{
 		if (e->event_type() == Haruhi::Event::VoiceEventType)
 		{
@@ -193,7 +193,7 @@ PartManager::process()
 	{
 		// Pitch (frequency) events:
 		_ports.voice_pitch->sync();
-		for (auto e: _ports.voice_pitch->event_buffer()->events())
+		for (auto e: _ports.voice_pitch->buffer()->events())
 		{
 			if (e->event_type() == Haruhi::Event::VoiceControllerEventType)
 			{
@@ -205,7 +205,7 @@ PartManager::process()
 
 		// Velocity (amplitude) events:
 		_ports.voice_velocity->sync();
-		for (auto e: _ports.voice_velocity->event_buffer()->events())
+		for (auto e: _ports.voice_velocity->buffer()->events())
 		{
 			if (e->event_type() == Haruhi::Event::VoiceControllerEventType)
 			{
@@ -218,8 +218,8 @@ PartManager::process()
 
 	// Render output:
 
-	Haruhi::AudioBuffer* buf_0 = _ports.audio_out[0]->audio_buffer();
-	Haruhi::AudioBuffer* buf_1 = _ports.audio_out[1]->audio_buffer();
+	Haruhi::AudioBuffer* buf_0 = _ports.audio_out[0]->buffer();
+	Haruhi::AudioBuffer* buf_1 = _ports.audio_out[1]->buffer();
 
 	for (Part* p: _parts)
 	{

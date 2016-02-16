@@ -25,9 +25,10 @@
 namespace Haruhi {
 
 EventPort::EventPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group, Flags flags, Tags tags):
-	Port (unit, name, direction, new EventBuffer(), group, flags, tags),
+	Port (unit, name, direction, group, flags, tags),
 	_default_value_set (false),
-	_default_value()
+	_default_value(),
+	_buffer (std::make_unique<EventBuffer>())
 {
 	Graph* g = graph();
 	if (g)
@@ -50,10 +51,25 @@ EventPort::~EventPort()
 
 
 void
+EventPort::clear_buffer()
+{
+	buffer()->clear();
+}
+
+
+void
+EventPort::mixin (Port* other)
+{
+	if (auto other_event = dynamic_cast<EventPort*> (other))
+		buffer()->mixin (other_event->buffer());
+}
+
+
+void
 EventPort::no_input()
 {
 	if (_default_value_set)
-		event_buffer()->push (new ControllerEvent (Time::now(), _default_value));
+		buffer()->push (new ControllerEvent (Time::now(), _default_value));
 }
 
 } // namespace Haruhi

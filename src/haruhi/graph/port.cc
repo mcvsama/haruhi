@@ -19,7 +19,6 @@
 #include <haruhi/utility/exception.h>
 
 // Local:
-#include "buffer.h"
 #include "exception.h"
 #include "graph.h"
 #include "port.h"
@@ -30,11 +29,10 @@
 
 namespace Haruhi {
 
-Port::Port (Unit* unit, std::string const& name, Direction direction, Buffer* buffer, PortGroup* group, Flags flags, Tags tags) noexcept:
+Port::Port (Unit* unit, std::string const& name, Direction direction, PortGroup* group, Flags flags, Tags tags) noexcept:
 	_unit (unit),
 	_name (name),
 	_direction (direction),
-	_buffer (buffer),
 	_group (group),
 	_flags (flags),
 	_tags (tags)
@@ -91,7 +89,7 @@ Port::connect_to (Port* port)
 	// Skip if ports are already connected:
 	if (!connected_to (port))
 	{
-		if (buffer()->type() != port->buffer()->type())
+		if (typeid (*this) != typeid (*port))
 			throw PortIncompatible ("can't connect due to incompatible ports' buffers", __func__);
 		// Add connections to maps:
 		_forward_connections.insert (port);
@@ -135,7 +133,7 @@ Port::sync()
 			unit()->sync();
 		else if (_direction == Input)
 		{
-			buffer()->clear();
+			clear_buffer();
 			if (_back_connections.empty())
 				no_input();
 			else
@@ -143,13 +141,13 @@ Port::sync()
 				for (Port* p: _back_connections)
 				{
 					p->sync();
-					buffer()->mixin (p->buffer());
+					mixin (p);
 				}
 			}
 		}
 	}
 	else
-		buffer()->clear();
+		clear_buffer();
 }
 
 

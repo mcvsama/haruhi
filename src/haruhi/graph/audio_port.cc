@@ -26,7 +26,8 @@
 namespace Haruhi {
 
 AudioPort::AudioPort (Unit* unit, std::string const& name, Port::Direction direction, PortGroup* group, Flags flags, Tags tags):
-	Port (unit, name, direction, new AudioBuffer(), group, flags, tags)
+	Port (unit, name, direction, group, flags, tags),
+	_buffer (std::make_unique<AudioBuffer>())
 {
 	Graph* g = graph();
 	if (g)
@@ -52,9 +53,24 @@ AudioPort::~AudioPort()
 
 
 void
+AudioPort::clear_buffer()
+{
+	buffer()->clear();
+}
+
+
+void
+AudioPort::mixin (Port* other)
+{
+	if (auto other_audio = dynamic_cast<AudioPort*> (other))
+		buffer()->mixin (other_audio->buffer());
+}
+
+
+void
 AudioPort::graph_updated()
 {
-	audio_buffer()->resize (graph()->buffer_size());
+	buffer()->resize (graph()->buffer_size());
 }
 
 } // namespace Haruhi

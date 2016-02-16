@@ -244,9 +244,9 @@ Part::PartControllerProxies::forward_messages (Haruhi::EventPort* source, Haruhi
 	if (target->back_connections().empty())
 	{
 		if (source->back_connections().empty())
-			target->event_buffer()->push (new Haruhi::ControllerEvent (Time::now(), source->default_value()));
+			target->buffer()->push (new Haruhi::ControllerEvent (Time::now(), source->default_value()));
 		else
-			target->event_buffer()->mixin (source->event_buffer());
+			target->buffer()->mixin (source->buffer());
 	}
 }
 

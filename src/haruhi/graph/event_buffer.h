@@ -26,32 +26,29 @@
 
 // Local:
 #include "event.h"
-#include "buffer.h"
 
 
 namespace Haruhi {
 
-class EventBuffer: public Buffer
+class EventBuffer
 {
 	USES_POOL_ALLOCATOR (EventBuffer)
 
   public:
 	typedef std::vector<Shared<Event>> Events;
 
-	static TypeID TYPE;
-
   public:
 	EventBuffer() noexcept;
 
 	void
-	clear() noexcept override;
+	clear() noexcept;
 
 	/**
 	 * Mixes in other buffer into this one.
 	 * Other buffer must be static_castable to EventBuffer.
 	 */
 	void
-	mixin (Buffer const*) override;
+	mixin (EventBuffer const*);
 
 	void
 	push (Shared<Event> const& event);

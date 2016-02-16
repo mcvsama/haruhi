@@ -51,20 +51,30 @@ class AudioPort: public Port
 	 * Helper that casts Buffer to AudioBuffer.
 	 */
 	AudioBuffer*
-	audio_buffer() const noexcept;
+	buffer() const noexcept;
 
-	/**
-	 * Reimplemented from Port.
+	/*
+	 * Port implementation.
 	 */
+
+	void
+	clear_buffer() override;
+
+	void
+	mixin (Port*) override;
+
 	void
 	graph_updated() override;
+
+  private:
+	Unique<AudioBuffer>	_buffer;
 };
 
 
 inline AudioBuffer*
-AudioPort::audio_buffer() const noexcept
+AudioPort::buffer() const noexcept
 {
-	return static_cast<AudioBuffer*> (buffer());
+	return _buffer.get();
 }
 
 } // namespace Haruhi

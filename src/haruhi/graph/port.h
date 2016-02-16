@@ -34,7 +34,6 @@ namespace Haruhi {
 
 class Unit;
 class PortGroup;
-class Buffer;
 
 /**
  * Represents Port in Graph. Port is a data entry point for Units.
@@ -98,7 +97,7 @@ class Port:
 	typedef std::set<std::string>	Tags;
 
   public:
-	Port (Unit* unit, std::string const& name, Direction, Buffer* buffer, PortGroup* group = 0, Flags flags = 0, Tags tags = {}) noexcept;
+	Port (Unit* unit, std::string const& name, Direction, PortGroup* group = 0, Flags flags = 0, Tags tags = {}) noexcept;
 
 	/**
 	 * Disconnects from any connected ports and deletes parameters if not null.
@@ -176,12 +175,6 @@ class Port:
 	set_comment (std::string const& comment);
 
 	/**
-	 * \returns	buffer for port, either port's own or by cascade to nearest buffer.
-	 */
-	Buffer*
-	buffer() const noexcept;
-
-	/**
 	 * \returns	group for this port.
 	 */
 	PortGroup*
@@ -228,6 +221,18 @@ class Port:
 	 */
 	void
 	sync();
+
+	/**
+	 * Clear output buffer, if has any.
+	 */
+	virtual void
+	clear_buffer() = 0;
+
+	/**
+	 * Mixin other port into this (that is actually mixin its buffer to this port's buffer).
+	 */
+	virtual void
+	mixin (Port*) = 0;
 
 	/**
 	 * Puts port into 'learning' mode (as it is EventBackend::Learnable).
@@ -312,7 +317,6 @@ class Port:
 	std::string		_name;
 	std::string		_comment;
 	Direction		_direction;
-	Buffer*			_buffer;
 	PortGroup*		_group;
 	Flags			_flags;
 	Tags			_tags;
@@ -375,13 +379,6 @@ inline bool
 Port::has_tag (Tags::value_type tag) const noexcept
 {
 	return _tags.find (tag) != _tags.end();
-}
-
-
-inline Buffer*
-Port::buffer() const noexcept
-{
-	return _buffer;
 }
 
 

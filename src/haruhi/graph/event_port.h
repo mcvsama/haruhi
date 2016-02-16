@@ -52,7 +52,7 @@ class EventPort: public Port
 	 * Helper that casts Buffer to EventBuffer.
 	 */
 	EventBuffer*
-	event_buffer() const noexcept;
+	buffer() const noexcept;
 
 	/**
 	 * Return default value set for port.
@@ -78,6 +78,12 @@ class EventPort: public Port
 	 */
 
 	void
+	clear_buffer() override;
+
+	void
+	mixin (Port*) override;
+
+	void
 	graph_updated() override { }
 
   protected:
@@ -87,13 +93,14 @@ class EventPort: public Port
   private:
 	bool					_default_value_set;
 	ControllerEvent::Value	_default_value;
+	Unique<EventBuffer>		_buffer;
 };
 
 
 inline EventBuffer*
-EventPort::event_buffer() const noexcept
+EventPort::buffer() const noexcept
 {
-	return static_cast<EventBuffer*> (buffer());
+	return _buffer.get();
 }
 
 

@@ -44,7 +44,7 @@ ControllerProxy::~ControllerProxy()
 void
 ControllerProxy::process_events()
 {
-	EventBuffer* buffer = _event_port->event_buffer();
+	auto buffer = _event_port->buffer();
 
 	if (!buffer->events().empty())
 	{

@@ -62,14 +62,14 @@ ControllerWithPortItem::handle_event (MIDI::Event const& midi_event, DeviceWithP
 {
 	if (learning())
 		learn_from_event (midi_event);
-	return _controller->handle_event (midi_event, *device_item.device(), *_port->event_buffer(), _port->graph());
+	return _controller->handle_event (midi_event, *device_item.device(), *_port->buffer(), _port->graph());
 }
 
 
 void
 ControllerWithPortItem::generate_smoothing_events()
 {
-	_controller->generate_smoothing_events (*_port->event_buffer(), _port->graph());
+	_controller->generate_smoothing_events (*_port->buffer(), _port->graph());
 }
 
 } // namespace EventBackendImpl

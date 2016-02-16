@@ -258,7 +258,6 @@ SRC_HEADERS += haruhi/graph/audio_backend.h
 SRC_HEADERS += haruhi/graph/audio_buffer.h
 SRC_HEADERS += haruhi/graph/audio_port.h
 SRC_HEADERS += haruhi/graph/backend.h
-SRC_HEADERS += haruhi/graph/buffer.h
 SRC_HEADERS += haruhi/graph/conn_set.h
 SRC_HEADERS += haruhi/graph/event.h
 SRC_HEADERS += haruhi/graph/event_backend.h

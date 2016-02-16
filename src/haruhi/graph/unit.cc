@@ -139,7 +139,7 @@ void
 Unit::clear_outputs()
 {
 	for (Port* p: _outputs)
-		p->buffer()->clear();
+		p->clear_buffer();
 }
 
 

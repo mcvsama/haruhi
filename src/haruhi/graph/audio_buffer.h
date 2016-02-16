@@ -23,21 +23,16 @@
 #include <haruhi/utility/pool_allocator.h>
 #include <haruhi/utility/simd_ops.h>
 
-// Local:
-#include "buffer.h"
-
 
 namespace Haruhi {
 
-class AudioBuffer: public Buffer
+class AudioBuffer
 {
 	USES_POOL_ALLOCATOR (AudioBuffer)
 
   public:
 	typedef std::size_t		size_type;
 	typedef std::ptrdiff_t	difference_type;
-
-	static TypeID TYPE;
 
   public:
 	AudioBuffer (std::size_t size = 0);
@@ -48,14 +43,14 @@ class AudioBuffer: public Buffer
 	 * Clears (zeroes) buffer.
 	 */
 	void
-	clear() noexcept override;
+	clear() noexcept;
 
 	/**
 	 * Fills this buffer from other buffer.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	fill (Buffer const* other) noexcept;
+	fill (AudioBuffer const* other) noexcept;
 
 	/**
 	 * Fills this buffer with given scalar.
@@ -67,54 +62,54 @@ class AudioBuffer: public Buffer
 	 * Calls add().
 	 */
 	void
-	mixin (Buffer const* other) noexcept override;
+	mixin (AudioBuffer const* other) noexcept;
 
 	/**
 	 * Calls add().
 	 */
 	void
-	mixin (Buffer const* other, Sample attenuate_other) noexcept;
+	mixin (AudioBuffer const* other, Sample attenuate_other) noexcept;
 
 	/**
 	 * Calls add().
 	 */
 	void
-	mixin (Buffer const* other, Buffer const* attenuation_buffer) noexcept;
+	mixin (AudioBuffer const* other, AudioBuffer const* attenuation_buffer) noexcept;
 
 	/**
 	 * Adds (mixes) other buffer to this.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	add (Buffer const* other) noexcept;
+	add (AudioBuffer const* other) noexcept;
 
 	/**
 	 * Adds (mixes) attenuated other buffer to this.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	add (Buffer const* other, Sample attenuate_other) noexcept;
+	add (AudioBuffer const* other, Sample attenuate_other) noexcept;
 
 	/**
 	 * Add (mix) other buffer attenuated by attenuation_buffer, to this buffer.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	add (Buffer const* other, Buffer const* attenuation_buffer) noexcept;
+	add (AudioBuffer const* other, AudioBuffer const* attenuation_buffer) noexcept;
 
 	/**
 	 * Substracts other buffer from this.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	sub (Buffer const* other) noexcept;
+	sub (AudioBuffer const* other) noexcept;
 
 	/**
 	 * Attenuates this buffer by other buffer.
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	attenuate (Buffer const* other) noexcept;
+	attenuate (AudioBuffer const* other) noexcept;
 
 	/**
 	 * Attenuates this buffer by scalar.
@@ -127,7 +122,7 @@ class AudioBuffer: public Buffer
 	 * Other buffer must be static_castable to AudioBuffer.
 	 */
 	void
-	attenuate (Buffer const* other, Sample value) noexcept;
+	attenuate (AudioBuffer const* other, Sample value) noexcept;
 
 	/**
 	 * Negates this buffer.
@@ -171,7 +166,7 @@ class AudioBuffer: public Buffer
   public:
 	/**
 	 * Allocates buffer for given number of samples.
-	 * Buffer is aligned to 32-byte boundary so SIMD
+	 * AudioBuffer is aligned to 32-byte boundary so SIMD
 	 * instructions can be used on it.
 	 */
 	static Sample*
@@ -198,14 +193,12 @@ AudioBuffer::clear() noexcept
 
 
 inline void
-AudioBuffer::fill (Buffer const* other) noexcept
+AudioBuffer::fill (AudioBuffer const* other) noexcept
 {
-	assert (other->type() == AudioBuffer::TYPE);
-	auto buf = static_cast<AudioBuffer const*> (other);
 	assert (begin() != nullptr);
-	assert (buf->begin() != nullptr);
-	assert (buf->size() == size());
-	SIMD::copy_buffer (begin(), buf->begin(), size());
+	assert (other->begin() != nullptr);
+	assert (other->size() == size());
+	SIMD::copy_buffer (begin(), other->begin(), size());
 }
 
 
@@ -217,88 +210,77 @@ AudioBuffer::fill (Sample value) noexcept
 
 
 inline void
-AudioBuffer::mixin (Buffer const* other) noexcept
+AudioBuffer::mixin (AudioBuffer const* other) noexcept
 {
 	add (other);
 }
 
 
 inline void
-AudioBuffer::mixin (Buffer const* other, Sample attenuate_other) noexcept
+AudioBuffer::mixin (AudioBuffer const* other, Sample attenuate_other) noexcept
 {
 	add (other, attenuate_other);
 }
 
 
 inline void
-AudioBuffer::mixin (Buffer const* other, Buffer const* attenuation_buffer) noexcept
+AudioBuffer::mixin (AudioBuffer const* other, AudioBuffer const* attenuation_buffer) noexcept
 {
 	add (other, attenuation_buffer);
 }
 
 
 inline void
-AudioBuffer::add (Buffer const* other) noexcept
+AudioBuffer::add (AudioBuffer const* other) noexcept
 {
-	assert (other->type() == AudioBuffer::TYPE);
-	auto buf = static_cast<AudioBuffer const*> (other);
 	assert (begin() != nullptr);
-	assert (buf->begin() != nullptr);
-	assert (buf->size() == size());
-	SIMD::add_buffers (begin(), buf->begin(), size());
+	assert (other->begin() != nullptr);
+	assert (other->size() == size());
+	SIMD::add_buffers (begin(), other->begin(), size());
 }
 
 
 inline void
-AudioBuffer::add (Buffer const* other, Sample attenuate_other) noexcept
+AudioBuffer::add (AudioBuffer const* other, Sample attenuate_other) noexcept
 {
-	assert (other->type() == AudioBuffer::TYPE);
-	auto buf = static_cast<AudioBuffer const*> (other);
 	assert (begin() != nullptr);
-	assert (buf->begin() != nullptr);
-	assert (buf->size() == size());
-	SIMD::add_buffers (begin(), buf->begin(), attenuate_other, size());
+	assert (other->begin() != nullptr);
+	assert (other->size() == size());
+	SIMD::add_buffers (begin(), other->begin(), attenuate_other, size());
 }
 
 
 inline void
-AudioBuffer::add (Buffer const* other, Buffer const* attenuation_buffer) noexcept
+AudioBuffer::add (AudioBuffer const* other, AudioBuffer const* attenuation_buffer) noexcept
 {
-	assert (other->type() == AudioBuffer::TYPE);
-	auto buf = static_cast<AudioBuffer const*> (other);
-	auto att = static_cast<AudioBuffer const*> (attenuation_buffer);
 	assert (begin() != nullptr);
-	assert (buf->begin() != nullptr);
-	assert (buf->size() == size());
-	assert (att->begin() != nullptr);
-	assert (att->size() == size());
+	assert (other->begin() != nullptr);
+	assert (other->size() == size());
+	assert (attenuation_buffer->begin() != nullptr);
+	assert (attenuation_buffer->size() == size());
 
 	for (std::size_t i = 0; i < size(); ++i)
-		(*this)[i] += (*buf)[i] * (*att)[i];
+		(*this)[i] += (*other)[i] * (*attenuation_buffer)[i];
 }
 
 
 inline void
-AudioBuffer::sub (Buffer const* other) noexcept
+AudioBuffer::sub (AudioBuffer const* other) noexcept
 {
-	assert (other->type() == AudioBuffer::TYPE);
-	auto buf = static_cast<AudioBuffer const*> (other);
 	assert (begin() != nullptr);
-	assert (buf->begin() != nullptr);
-	assert (buf->size() == size());
-	SIMD::sub_buffers (begin(), buf->begin(), size());
+	assert (other->begin() != nullptr);
+	assert (other->size() == size());
+	SIMD::sub_buffers (begin(), other->begin(), size());
 }
 
 
 inline void
-AudioBuffer::attenuate (Buffer const* other) noexcept
+AudioBuffer::attenuate (AudioBuffer const* other) noexcept
 {
-	assert (other->type() == AudioBuffer::TYPE);
-	auto buf = static_cast<AudioBuffer const*> (other);
 	assert (begin() != nullptr);
-	assert (buf->begin() != nullptr);
-	assert (buf->size() == size());
-	SIMD::multiply_buffers (begin(), buf->begin(), size());
+	assert (other->begin() != nullptr);
+	assert (other->size() == size());
+	SIMD::multiply_buffers (begin(), other->begin(), size());
 }
 
 
@@ -310,14 +292,12 @@ AudioBuffer::attenuate (Sample value) noexcept
 
 
 inline void
-AudioBuffer::attenuate (Buffer const* other, Sample value) noexcept
+AudioBuffer::attenuate (AudioBuffer const* other, Sample value) noexcept
 {
-	assert (other->type() == AudioBuffer::TYPE);
-	auto buf = static_cast<AudioBuffer const*> (other);
 	assert (begin() != nullptr);
-	assert (buf->begin() != nullptr);
-	assert (buf->size() == size());
-	SIMD::multiply_buffers_and_by_scalar (begin(), buf->begin(), size(), value);
+	assert (other->begin() != nullptr);
+	assert (other->size() == size());
+	SIMD::multiply_buffers_and_by_scalar (begin(), other->begin(), size(), value);
 }
 
 
