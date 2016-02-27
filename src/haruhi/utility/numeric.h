@@ -57,7 +57,8 @@ cut (int value) noexcept
 inline void
 undenormalize (float& sample) noexcept
 {
-	union { float f; unsigned int i; } u = { f: sample };
+	union { float f; unsigned int i; } u;
+	u.f = sample;
 	if ((u.i & 0x7f800000) == 0)
 		sample = 0.0f;
 }
@@ -127,7 +128,8 @@ template<class Value>
 inline float
 ieee754_fractional_part (const float& v) noexcept
 {
-	union { float f; uint32_t i; } u = { f: v };
+	union { float f; uint32_t i; } u;
+	u.f = v;
 	// Sign:
 	const uint32_t s = u.i & (1 << 31);
 	// Get exponent:
@@ -159,7 +161,8 @@ sse3_fractional_part (const float& v) noexcept
 	union {
 		float f;
 		uint32_t i;
-	} u = { f: v };
+	} u;
+	u.f = v;
 	// Sign:
 	const uint32_t s = u.i & (1 << 31);
 	u.f = u.f - static_cast<int> (u.f);

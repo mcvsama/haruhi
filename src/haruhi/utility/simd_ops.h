@@ -75,7 +75,8 @@ negate_buffer (float* target, std::size_t size) noexcept
 {
 #ifdef HARUHI_SSE1
 # ifdef HARUHI_IEEE754
-	union { int i; float f; } u = { i: 1 << 31 };
+	union { int i; float f; } u;
+	u.i = 1 << 31;
 	__m128 st = _mm_set_ps1 (u.f);
 	__m128* xt = CAST_TO_MM128 (target);
 	for (std::size_t i = 0; i < size / VECSIZE; ++i)

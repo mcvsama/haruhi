@@ -88,7 +88,8 @@ pow_generic (const float power, const float ilog2) noexcept
 	const int it = (i & 0xFF800000) | $lookup_table[(i & 0x7FFFFF) >> (23 - FastPowLookupPrecision)];
 
 	// convert bits to float
-	union { float f; int i; } u = { i: it };
+	union { float f; int i; } u;
+	u.i = it;
 	return u.f;
 }
 

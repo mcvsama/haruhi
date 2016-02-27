@@ -155,9 +155,9 @@ void
 Port::start_learning (EventBackend::EventTypes)
 {
 	Graph* graph = this->graph();
-	assert (graph != nullptr, "port must be registered to graph before it can learn/stop learning connections");
+	assert (graph != nullptr);
 	EventBackend* event_backend = graph->event_backend();
-	assert (event_backend != nullptr, "graph must have event backend registered before port can learn/stop learning connections");
+	assert (event_backend != nullptr);
 	event_backend->start_learning (this, EventBackend::Controller | EventBackend::Pitchbend);
 }
 
@@ -166,7 +166,7 @@ void
 Port::stop_learning()
 {
 	Graph* graph = this->graph();
-	assert (graph != nullptr, "port must be registered to graph before it can learn/stop learning connections");
+	assert (graph != nullptr);
 	EventBackend* event_backend = graph->event_backend();
 	if (!event_backend)
 		return;

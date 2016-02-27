@@ -19,7 +19,6 @@
 #include <haruhi/config/all.h>
 
 // Local:
-#include "buffer.h"
 #include "graph.h"
 #include "port.h"
 #include "notification.h"
@@ -49,8 +48,8 @@ Unit::~Unit()
 	// Prevent processing:
 	Mutex::Lock lock (_processing_mutex);
 	// Check if unit is properly disabled when destroyed:
-	assert (!enabled(), "disable unit before deletion");
-	assert (!graph(), "unregister unit before deletion");
+	assert (!enabled());
+	assert (!graph());
 	// Check if all ports have been unregistered:
 	if (!_inputs.empty() || !_outputs.empty())
 	{
@@ -69,7 +68,7 @@ Unit::~Unit()
 			for (Ports::iterator p = _outputs.begin(); p != _outputs.end(); ++p)
 				ports += (p == _outputs.begin() ? "" : ", ") + (*p)->name();
 		}
-		assert (_inputs.empty() && _outputs.empty(), ("delete all ports before deleting unit (" + ports + ")").c_str());
+		assert (_inputs.empty() && _outputs.empty());
 	}
 }
 
@@ -78,7 +77,7 @@ void
 Unit::sync()
 {
 	// Prevent syncing when not in processing round:
-	assert (_graph->_inside_processing_round, "tried to bump Sync outside processing round");
+	assert (_graph->_inside_processing_round);
 
 	// Check if we can acquire processing lock. If not, unit
 	// is disabled - don't wait for it.

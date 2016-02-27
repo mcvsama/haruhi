@@ -67,7 +67,7 @@ assert_function (bool expression, const char* message = nullptr) noexcept
 /**
  * Prints debug output.
  */
-#define xdebug(x...) fprintf (stderr, x)
+#define xdebug(...) fprintf (stderr, ...)
 
 #endif
 
@@ -85,6 +85,6 @@ assert_function (bool expression, const char* message = nullptr) noexcept
 # define assert assert_function
 #else // HARUHI_ENABLE_ASSERT
 # undef assert
-# define assert(a, b...)
+# define assert(a)
 #endif // HARUHI_ENABLE_ASSERT
 
