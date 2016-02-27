@@ -75,7 +75,7 @@ deinitialize();
 static inline float
 pow_generic (const float power, const float ilog2) noexcept
 {
-	extern unsigned int* lookup_table;
+	extern unsigned int* $lookup_table;
 
 	// build float bits
 	int i = static_cast<int> ((power * (fast_pow_2p23 * ilog2)) + (127.0f * fast_pow_2p23));
@@ -85,7 +85,7 @@ pow_generic (const float power, const float ilog2) noexcept
 		i = 0;
 
 	// replace mantissa with lookup
-	const int it = (i & 0xFF800000) | lookup_table[(i & 0x7FFFFF) >> (23 - FastPowLookupPrecision)];
+	const int it = (i & 0xFF800000) | $lookup_table[(i & 0x7FFFFF) >> (23 - FastPowLookupPrecision)];
 
 	// convert bits to float
 	union { float f; int i; } u = { i: it };

@@ -40,7 +40,7 @@
 
 namespace LookupPow {
 
-unsigned int* lookup_table;
+unsigned int* $lookup_table;
 
 
 /**
@@ -69,15 +69,15 @@ generic_initialize (unsigned int* const pTable, const unsigned int precision) no
 void
 initialize()
 {
-	lookup_table = new unsigned int[1 << FastPowLookupPrecision];
-	generic_initialize (lookup_table, FastPowLookupPrecision);
+	$lookup_table = new unsigned int[1 << FastPowLookupPrecision];
+	generic_initialize ($lookup_table, FastPowLookupPrecision);
 }
 
 
 void
 deinitialize()
 {
-	delete[] lookup_table;
+	delete[] $lookup_table;
 }
 
 } // namespace LookupPow
