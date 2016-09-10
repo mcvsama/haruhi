@@ -80,7 +80,7 @@ OperatorWidget::OperatorWidget (QWidget* parent, unsigned int operator_no, Param
 	auto group_layout = new QGridLayout (group);
 	group_layout->setMargin (Config::margin());
 	group_layout->setSpacing (Config::spacing());
-	group_layout->addWidget (new Haruhi::StyledBackground (label, this, 0.3_screen_mm), 0, 0, 1, 4);
+	group_layout->addWidget (new Haruhi::StyledBackground (label, this, 0.12_em), 0, 0, 1, 4);
 
 	auto f = new QLabel ("Frequency: ", this);
 	f->setToolTip ("Relative frequency");

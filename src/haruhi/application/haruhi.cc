@@ -124,7 +124,7 @@ Haruhi::session_loader()
 		if (_session)
 			_session->deleteLater();
 		_session = std::make_unique<Session> (nullptr);
-		_session->resize (100_screen_mm, 80_screen_mm);
+		_session->resize (40_em, 32_em);
 		_session->show();
 		loader->apply (_session.get());
 	}

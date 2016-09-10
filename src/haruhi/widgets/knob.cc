@@ -248,7 +248,7 @@ Knob::initialize (QString const& label, Range<float> shown_range, int step, int 
 
 	auto layout = new QVBoxLayout (this);
 	layout->setMargin (0.5 * Config::margin());
-	layout->setSpacing (1.0_screen_mm);
+	layout->setSpacing (0.4_em);
 	layout->addLayout (label_layout);
 	layout->addLayout (dial_layout);
 	layout->addWidget (_spin_box.get(), 0, Qt::AlignCenter);

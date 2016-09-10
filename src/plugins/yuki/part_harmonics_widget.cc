@@ -63,8 +63,8 @@ PartHarmonicsWidget::PartHarmonicsWidget (QWidget* parent, PartWidget* part_widg
 	harmonics_reset_button->setIconSize (Resources::Icons16::haruhi().size());
 	QObject::connect (harmonics_reset_button, SIGNAL (clicked()), this, SLOT (reset_all_harmonics()));
 
-	int const kHarmonicsButtonWidth = 4_screen_mm;
-	int const kHarmonicsButtonHeight = 4_screen_mm;
+	int const kHarmonicsButtonWidth = 1.6_em;
+	int const kHarmonicsButtonHeight = 1.6_em;
 
 	// Harmonic sliders:
 	auto harmonics_widget = new QWidget (this);
@@ -146,9 +146,9 @@ PartHarmonicsWidget::PartHarmonicsWidget (QWidget* parent, PartWidget* part_widg
 	// Force normal text color. For some reason Qt uses white color on light-gray background.
 	waves_label->setForegroundRole (QPalette::Text);
 
-	auto waves_label_background = new Haruhi::StyledBackground (waves_label, this, 0.3_screen_mm);
+	auto waves_label_background = new Haruhi::StyledBackground (waves_label, this, 0.12_em);
 	waves_label_background->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-	waves_label_background->setFixedWidth (30_screen_mm); // Same width as wave plots
+	waves_label_background->setFixedWidth (12_em); // Same width as wave plots
 
 	_base_wave_plot = std::make_unique<Haruhi::WavePlot> (this);
 	_base_wave_plot->set_phase_marker_enabled (true);
@@ -158,7 +158,7 @@ PartHarmonicsWidget::PartHarmonicsWidget (QWidget* parent, PartWidget* part_widg
 	auto base_plot_frame = new Haruhi::PlotFrame (this);
 	base_plot_frame->set_widget (_base_wave_plot.get());
 	base_plot_frame->setToolTip ("Base wave");
-	base_plot_frame->setFixedSize (30_screen_mm, 20_screen_mm);
+	base_plot_frame->setFixedSize (12_em, 8_em);
 
 	_final_wave_plot = std::make_unique<Haruhi::WavePlot> (this);
 	_final_wave_plot->set_phase_marker_enabled (true);
@@ -168,7 +168,7 @@ PartHarmonicsWidget::PartHarmonicsWidget (QWidget* parent, PartWidget* part_widg
 	auto final_plot_frame = new Haruhi::PlotFrame (this);
 	final_plot_frame->set_widget (_final_wave_plot.get());
 	final_plot_frame->setToolTip ("Output wave (with harmonics, modulation, auto-scaled, etc.)");
-	final_plot_frame->setFixedSize (30_screen_mm, 20_screen_mm);
+	final_plot_frame->setFixedSize (12_em, 8_em);
 
 	// Layouts:
 
@@ -188,9 +188,9 @@ PartHarmonicsWidget::PartHarmonicsWidget (QWidget* parent, PartWidget* part_widg
 	auto harmonics_panel_layout = new QVBoxLayout();
 	harmonics_panel_layout->setMargin (0);
 	harmonics_panel_layout->setSpacing (Config::spacing());
-	harmonics_panel_layout->addWidget (new Haruhi::StyledBackground (harmonics_label, this, 0.3_screen_mm));
+	harmonics_panel_layout->addWidget (new Haruhi::StyledBackground (harmonics_label, this, 0.12_em));
 	harmonics_panel_layout->addWidget (harmonics_widget);
-	harmonics_panel_layout->addWidget (new Haruhi::StyledBackground (harmonic_phases_label, this, 0.3_screen_mm));
+	harmonics_panel_layout->addWidget (new Haruhi::StyledBackground (harmonic_phases_label, this, 0.12_em));
 	harmonics_panel_layout->addWidget (harmonic_phases_widget);
 	harmonics_panel_layout->addLayout (harmonics_panel_buttons_layout);
 

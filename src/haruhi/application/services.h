@@ -143,6 +143,13 @@ class Services
 	y_pixels_per_point();
 
 	/**
+	 * Return number of pixels per one em, that is one standard line of text
+	 * made with default font returned by QApplication.
+	 */
+	static float
+	y_pixels_per_em();
+
+	/**
 	 * Master UI scaling factor. Decides what x_pixels_per_point() and y_pixels_per_point()
 	 * will actually return.
 	 */
@@ -212,7 +219,7 @@ operator"" _screen_pt (long double pt)
 inline float
 operator"" _screen_pt (unsigned long long pt)
 {
-	return Services::x_pixels_per_point() * pt;
+	return (pt * 1.0_screen_pt);
 }
 
 
@@ -232,7 +239,27 @@ operator"" _screen_mm (long double mm)
 inline float
 operator"" _screen_mm (unsigned long long mm)
 {
-	return Services::x_pixels_per_point() * 72 / 25.4 * mm;
+	return (mm * 1.0_screen_mm);
+}
+
+
+/**
+ * Return value in pixels that give 1 em (1 line-height).
+ */
+inline float
+operator"" _em (long double em)
+{
+	return Services::y_pixels_per_em() * em;
+}
+
+
+/**
+ * Return value in pixels that give 1 em (1 line-height).
+ */
+inline float
+operator"" _em (unsigned long long em)
+{
+	return (em * 1.0_em);
 }
 
 } // namespace ScreenLiterals

@@ -77,7 +77,7 @@ FilterWidget::FilterWidget (QWidget* parent, unsigned int filter_no, Params::Fil
 	auto plot_frame = new QFrame (this);
 	plot_frame->setFrameStyle (QFrame::StyledPanel | QFrame::Sunken);
 	plot_frame->setSizePolicy (QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-	plot_frame->setMinimumHeight (20_screen_mm);
+	plot_frame->setMinimumHeight (8_em);
 	_response_plot = std::make_unique<Haruhi::FrequencyResponsePlot> (plot_frame);
 
 	auto plot_frame_layout = new QVBoxLayout (plot_frame);

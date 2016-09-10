@@ -17,6 +17,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <experimental/optional>
 
 // Qt:
 #include <QDesktopWidget>
@@ -140,6 +141,21 @@ Services::y_pixels_per_point()
 {
 	// 1 point is 1/72 of an inch:
 	return QApplication::desktop()->physicalDpiY() / 72.0f * master_ui_scaling_factor();
+}
+
+
+float
+Services::y_pixels_per_em()
+{
+	static std::experimental::optional<float> value;
+
+	if (!value)
+	{
+		auto f = QApplication::font();
+		value = f.pointSize() * y_pixels_per_point();
+	}
+
+	return *value;
 }
 
 } // namespace Haruhi

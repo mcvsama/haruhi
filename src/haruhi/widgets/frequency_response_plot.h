@@ -35,10 +35,8 @@ class FrequencyResponsePlot: public QWidget
 {
 	Q_OBJECT
 
-	enum {
-		MinFreq = 32,
-		MaxFreq = 24000,
-	};
+	static constexpr float MinFreq = 32.0; // Hz
+	static constexpr float MaxFreq = 24000.0; // Hz
 
 	/**
 	 * Used to request replot from other-than-UI thread.

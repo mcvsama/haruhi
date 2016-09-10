@@ -63,17 +63,17 @@ TextureWidget::paintEvent (QPaintEvent* paint_event)
 		case Filling::Dotted:
 		{
 			b.fillRect (rect(), palette().color (QPalette::Window));
-			const int xstep = 3_screen_mm;
-			const int ystep = 2.6_screen_mm;
+			const int xstep = 1.2_em;
+			const int ystep = 1.0_em;
 			for (int x = 0; x < _double_buffer.size().width(); x += xstep)
 			{
 				for (int y = 0; y < _double_buffer.size().height(); y += ystep)
 				{
 					QPoint p (((y % (2 * ystep) == ystep) ? x : x + xstep / 2) + 3, y + 3);
-					b.setPen (QPen (dark, 0.3_screen_mm));
+					b.setPen (QPen (dark, 0.12_em));
 					b.drawPoint (p);
-					b.setPen (QPen (light, 0.3_screen_mm));
-					b.drawPoint (p + QPoint (0.15_screen_mm, 0.15_screen_mm));
+					b.setPen (QPen (light, 0.12_em));
+					b.drawPoint (p + QPoint (0.06_em, 0.06_em));
 				}
 			}
 			break;

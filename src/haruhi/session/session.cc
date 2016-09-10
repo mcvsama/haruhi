@@ -366,7 +366,7 @@ Session::Session (QWidget* parent):
 
 	_session_name = std::make_unique<ClickableLabel> (_name, inner_header);
 	QFont f (QApplication::font());
-	f.setPixelSize (4_screen_mm);
+	f.setPixelSize (1.6_em);
 	f.setWeight (QFont::Normal);
 	_session_name->setFont (f);
 	_session_name->setCursor (QCursor (Qt::PointingHandCursor));
@@ -375,7 +375,7 @@ Session::Session (QWidget* parent):
 	QObject::connect (_session_name.get(), SIGNAL (clicked()), this, SLOT (rename_session()));
 
 	auto tempo_note = new QLabel (QString::fromUtf8 ("♩ = "), inner_header);
-	f.setPixelSize (4_screen_mm);
+	f.setPixelSize (1.6_em);
 	f.setWeight (QFont::Normal);
 	tempo_note->setFont (f);
 	tempo_note->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);

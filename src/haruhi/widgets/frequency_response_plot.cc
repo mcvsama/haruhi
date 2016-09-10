@@ -35,6 +35,9 @@ namespace Haruhi {
 
 using namespace ScreenLiterals;
 
+constexpr float FrequencyResponsePlot::MinFreq;
+constexpr float FrequencyResponsePlot::MaxFreq;
+
 
 FrequencyResponsePlot::FrequencyResponsePlot (QWidget* parent):
 	QWidget (parent),
@@ -166,7 +169,7 @@ FrequencyResponsePlot::paintEvent (QPaintEvent* paint_event)
 		painter.drawPolygon (response_polygon);
 
 		// Draw response line:
-		painter.setPen (QPen (isEnabled() ? QColor (0, 0, 0) : QColor (0xca, 0xca, 0xca), 0.15_screen_mm, Qt::SolidLine));
+		painter.setPen (QPen (isEnabled() ? QColor (0, 0, 0) : QColor (0xca, 0xca, 0xca), 0.06_em, Qt::SolidLine));
 		painter.setBrush (Qt::NoBrush);
 		painter.drawPolyline (response_line);
 	}
@@ -202,25 +205,25 @@ FrequencyResponsePlot::repaint_grid()
 	QColor grid_color = isEnabled() ? QColor (0xcc, 0xcc, 0xcc) : QColor (0xe0, 0xe0, 0xe0);
 
 	// Scale markers [dB]:
-	painter.setPen (QPen (grid_color, 0.15_screen_mm, Qt::DotLine));
+	painter.setPen (QPen (grid_color, 0.06_em, Qt::DotLine));
 	for (float db: { -60, -50, -40, -30, -20, -10, 0, +10, +20 })
 	{
 		float pos = log_meter (db, lower_db, upper_db) * h;
 		painter.drawLine (0, h - pos, w, h - pos);
 		float const scale = 1.0f;
 		if (db >= -40)
-			painter.drawText (0.8_screen_mm, h - pos - 0.3_screen_mm, QString::number (std::abs (scale * db)) + ((db == 0) ? " dB" : ""));
+			painter.drawText (0.32_em, h - pos - 0.12_em, QString::number (std::abs (scale * db)) + ((db == 0) ? " dB" : ""));
 	}
 
 	// 0dB line:
-	painter.setPen (QPen (grid_color, 0.15_screen_mm, Qt::SolidLine));
+	painter.setPen (QPen (grid_color, 0.06_em, Qt::SolidLine));
 	{
 		float pos = log_meter (0, lower_db, upper_db) * h;
 		painter.drawLine (0, h - pos, w, h - pos);
 	}
 
 	// Frequency markers:
-	painter.setPen (QPen (grid_color, 0.15_screen_mm, Qt::SolidLine));
+	painter.setPen (QPen (grid_color, 0.06_em, Qt::SolidLine));
 	bool drawn_first = false;
 	for (float f: { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 20000 })
 	{
@@ -231,13 +234,13 @@ FrequencyResponsePlot::repaint_grid()
 			// Draw first frequency, 100Hz, 1k and 10k:
 			if (!drawn_first)
 			{
-				painter.drawText (pos + 2, 2_screen_mm, QString::number (f));
+				painter.drawText (pos + 2, 0.8_em, QString::number (f));
 				drawn_first = true;
 			}
 			else if (f == 100)
-				painter.drawText (pos + 2, 2_screen_mm, QString::number (f));
+				painter.drawText (pos + 2, 0.8_em, QString::number (f));
 			else if (f == 1000 || f == 10000)
-				painter.drawText (pos + 2, 2_screen_mm, QString::number (f / 1000) + "k");
+				painter.drawText (pos + 2, 0.8_em, QString::number (f / 1000) + "k");
 		}
 	}
 }

@@ -57,7 +57,7 @@ LevelMeter::LevelMeter (QWidget* parent, LevelMetersGroup* group, float lower_db
 	_fps (30)
 {
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
-	setFixedWidth (1.15_screen_mm);
+	setFixedWidth (0.46_em);
 	setAutoFillBackground (false);
 	QPalette p = palette();
 	p.setColor (QPalette::Window, Qt::black);
@@ -250,7 +250,7 @@ LevelMetersGroup::Scale::Scale (QWidget* parent, float lower_db, float upper_db)
 	_upper_db (upper_db)
 {
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
-	setFixedWidth (4_screen_mm);
+	setFixedWidth (1.6_em);
 }
 
 
@@ -282,7 +282,7 @@ LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper
 	_peak_button = std::make_unique<QPushButton> ("-inf dB", this);
 	_peak_button->setFont (Resources::small_font());
 	_peak_button->setFixedHeight (2.0 * Resources::small_font().pixelSize());
-	_peak_button->setFixedWidth (8_screen_mm);
+	_peak_button->setFixedWidth (3.2_em);
 	_peak_button->setToolTip ("C-r to reset");
 	_peak_button_bg = _peak_button->palette().color (QPalette::Button);
 	_peak_button_fg = _peak_button->palette().color (QPalette::ButtonText);
@@ -301,7 +301,7 @@ LevelMetersGroup::LevelMetersGroup (QWidget* parent, float lower_db, float upper
 	// Layouts:
 
 	auto meters_layout = new QHBoxLayout();
-	meters_layout->setSpacing (0.3_screen_mm);
+	meters_layout->setSpacing (0.12_em);
 	meters_layout->addItem (new QSpacerItem (0, 0, QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
 	for (LevelMeter* m: _vector)
 		meters_layout->addWidget (m);
