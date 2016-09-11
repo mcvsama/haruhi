@@ -53,7 +53,14 @@ class DialControl: public QAbstractSlider
 	 * and user is to change dial's value.
 	 */
 	bool
-	mouse_pressed() { return _mouse_pressed; }
+	mouse_pressed() const;
+
+	/**
+	 * Set buddy object - when DialControl is clicked,
+	 * the buddy object will be focused.
+	 */
+	void
+	set_buddy (QWidget* buddy);
 
   signals:
 	void
@@ -99,6 +106,7 @@ class DialControl: public QAbstractSlider
 	bool		_mouse_pressed;
 	bool		_ring_visible;
 	int			_center_value;
+	QWidget*	_buddy = nullptr;
 };
 
 
@@ -113,6 +121,20 @@ inline void
 DialControl::set_center_value (int value)
 {
 	_center_value = value;
+}
+
+
+inline bool
+DialControl::mouse_pressed() const
+{
+	return _mouse_pressed;
+}
+
+
+inline void
+DialControl::set_buddy (QWidget* buddy)
+{
+	_buddy = buddy;
 }
 
 } // namespace Haruhi

@@ -148,6 +148,8 @@ DialControl::mousePressEvent (QMouseEvent* event)
 		_mouse_press_position = event->pos();
 		_mouse_press_value = value();
 		_mouse_pressed = true;
+		if (_buddy)
+			_buddy->setFocus (Qt::ShortcutFocusReason);
 	}
 	else
 		event->ignore();

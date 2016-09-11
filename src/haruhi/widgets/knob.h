@@ -192,6 +192,13 @@ class Knob:
 	set_volume_scale (bool setting, float exp = 1.0f);
 
 	/**
+	 * Set color hint for this widget. Useful for visual grouping
+	 * of several knobs.
+	 */
+	void
+	set_color_hint (QColor const&);
+
+	/**
 	 * Reads ControllerProxy::Config and updates widgets.
 	 * \entry	UI thread only.
 	 */
@@ -305,6 +312,7 @@ class Knob:
 	QColor					_std_text_color;
 
 	// Widgets:
+	Unique<QWidget>			_color_widget;
 	Unique<KnobProperties>	_knob_properties;
 	Unique<QLabel>			_label;
 	Unique<DialControl>		_dial_control;

@@ -64,6 +64,12 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 	_knob_stereo_width	= std::make_unique<Haruhi::Knob> (this, &proxies->stereo_width, "Stereo");
 
 	_knob_volume->set_volume_scale (true, M_E);
+	auto level_color = QColor (0x00, 0xbb, 0x00);
+	_knob_volume->set_color_hint (level_color);
+	_knob_panorama->set_color_hint (level_color);
+	_knob_stereo_width->set_color_hint (level_color);
+	auto pitch_color = QColor (0x00, 0x6e, 0xff);
+	_knob_detune->set_color_hint (pitch_color);
 
 	// Polyphony:
 
@@ -123,8 +129,8 @@ PartManagerWidget::PartManagerWidget (QWidget* parent, PartManager* part_manager
 	main_layout->setSpacing (Config::spacing());
 	main_layout->addWidget (_knob_volume.get());
 	main_layout->addWidget (_knob_panorama.get());
-	main_layout->addWidget (_knob_detune.get());
 	main_layout->addWidget (_knob_stereo_width.get());
+	main_layout->addWidget (_knob_detune.get());
 	main_layout->addItem (new QSpacerItem (0, Config::spacing(), QSizePolicy::Fixed, QSizePolicy::Fixed));
 	main_layout->addWidget (new QLabel ("Max voices:", this));
 	main_layout->addWidget (_polyphony.get());

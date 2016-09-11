@@ -161,6 +161,17 @@ Knob::Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& l
 
 
 void
+Knob::set_color_hint (QColor const& color)
+{
+	auto color_widget_palette = _color_widget->palette();
+	_color_widget->setAutoFillBackground (true);
+	color_widget_palette.setColor (QPalette::Background, color);
+	_color_widget->setPalette (color_widget_palette);
+	_color_widget->update();
+}
+
+
+void
 Knob::read_config()
 {
 	_spin_box->setMinimum (controller_proxy()->param()->adapter()->user_limit.min());
@@ -220,17 +231,24 @@ Knob::initialize (QString const& label, Range<float> shown_range, int step, int 
 	setFrameStyle (QFrame::StyledPanel | QFrame::Raised);
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
+	_spin_box = std::make_unique<SpinBox> (this, this, user_limit, shown_range, shown_decimals, step);
+
 	_dial_control = std::make_unique<DialControl> (this, hard_limit, controller_proxy()->param()->adapter()->reverse (controller_proxy()->param()->get()));
 	_dial_control->set_ring_visible (true);
 	_dial_control->set_center_value (controller_proxy()->param()->center_value());
-	_spin_box = std::make_unique<SpinBox> (this, this, user_limit, shown_range, shown_decimals, step);
+	_dial_control->set_buddy (_spin_box.get());
+
 	_label = std::make_unique<QLabel> (label, this);
 	_label->setBuddy (_spin_box.get());
 	_label->setTextFormat (Qt::PlainText);
+
 	_std_text_color = _label->palette().color (QPalette::WindowText);
 
 	QObject::connect (_dial_control.get(), SIGNAL (valueChanged (int)), this, SLOT (dial_changed (int)));
 	QObject::connect (_spin_box.get(), SIGNAL (valueChanged (int)), this, SLOT (spin_changed (int)));
+
+	_color_widget = std::make_unique<QWidget> (this);
+	_color_widget->setFixedHeight (0.3_em);
 
 	// Layouts:
 
@@ -248,9 +266,12 @@ Knob::initialize (QString const& label, Range<float> shown_range, int step, int 
 
 	auto layout = new QVBoxLayout (this);
 	layout->setMargin (0.5 * Config::margin());
-	layout->setSpacing (0.4_em);
+	layout->setSpacing (0);
+	layout->addWidget (_color_widget.get());
 	layout->addLayout (label_layout);
+	layout->addItem (new QSpacerItem (0, 0.4_em, QSizePolicy::Fixed, QSizePolicy::Fixed));
 	layout->addLayout (dial_layout);
+	layout->addItem (new QSpacerItem (0, 0.4_em, QSizePolicy::Fixed, QSizePolicy::Fixed));
 	layout->addWidget (_spin_box.get(), 0, Qt::AlignCenter);
 }
 
