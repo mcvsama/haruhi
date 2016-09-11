@@ -128,7 +128,7 @@ Knob::SpinBox::float_to_int (float y) const
 }
 
 
-Knob::Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param, QString const& label,
+Knob::Knob (QWidget* parent, EventPort* event_port, v06::ControllerParam* controller_param, QString const& label,
 			Range<float> shown_range, int step, int shown_decimals):
 	QFrame (parent),
 	Controller (event_port, controller_param)
@@ -137,14 +137,14 @@ Knob::Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_
 }
 
 
-Knob::Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param, QString const& label):
+Knob::Knob (QWidget* parent, EventPort* event_port, v06::ControllerParam* controller_param, QString const& label):
 	Knob (parent, event_port, controller_param, label,
 		  controller_param->shown_range(), controller_param->step(), controller_param->shown_decimals())
 {
 }
 
 
-Knob::Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& label,
+Knob::Knob (QWidget* parent, v06::ControllerProxy* controller_proxy, QString const& label,
 			Range<float> shown_range, int step, int shown_decimals):
 	QFrame (parent),
 	Controller (controller_proxy)
@@ -153,7 +153,7 @@ Knob::Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& l
 }
 
 
-Knob::Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& label):
+Knob::Knob (QWidget* parent, v06::ControllerProxy* controller_proxy, QString const& label):
 	Knob (parent, controller_proxy, label,
 		  controller_proxy->param()->shown_range(), controller_proxy->param()->step(), controller_proxy->param()->shown_decimals())
 {
@@ -517,7 +517,7 @@ KnobProperties::CurveWave::CurveWave (Knob* knob):
 Sample
 KnobProperties::CurveWave::operator() (Sample phase, Sample, std::size_t) const noexcept
 {
-	ControllerParam::Adapter const* adapter = _knob->param()->adapter();
+	v06::ControllerParam::Adapter const* adapter = _knob->param()->adapter();
 	return renormalize (adapter->forward_normalized (phase), adapter->hard_limit, Range<float> {-1.0f, 1.0f});
 }
 
@@ -531,7 +531,7 @@ KnobProperties::KnobProperties (Knob* knob, QWidget* parent):
 	setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 
 	Knob::SpinBox* s = knob->_spin_box.get();
-	ControllerParam::Adapter* a = _knob->controller_proxy()->param()->adapter();
+	v06::ControllerParam::Adapter* a = _knob->controller_proxy()->param()->adapter();
 
 	auto curve_label = new QLabel ("Response curve:", this);
 
@@ -630,7 +630,7 @@ void
 KnobProperties::update_plot()
 {
 	apply();
-	ControllerParam* param = _knob->controller_proxy()->param();
+	v06::ControllerParam* param = _knob->controller_proxy()->param();
 	_curve_plot->set_phase_marker_position (renormalize (param->adapter()->reverse (param->get()),
 														 param->range(), { 0.0f, 1.0f }));
 	_curve_plot->plot_shape();

@@ -26,14 +26,14 @@
 
 namespace Haruhi {
 
-Controller::Controller (EventPort* event_port, ControllerParam* controller_param):
-	Controller (new ControllerProxy (event_port, controller_param))
+Controller::Controller (EventPort* event_port, v06::ControllerParam* controller_param):
+	Controller (new v06::ControllerProxy (event_port, controller_param))
 {
 	_own_controller_proxy = true;
 }
 
 
-Controller::Controller (ControllerProxy* controller_proxy):
+Controller::Controller (v06::ControllerProxy* controller_proxy):
 	_controller_proxy (controller_proxy),
 	_learning (false),
 	on_voice_controller_event (_controller_proxy->on_voice_controller_event)

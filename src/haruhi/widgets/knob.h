@@ -132,7 +132,7 @@ class Knob:
 	 * \param	step: Change step.
 	 * \param	shown_decimals: How many decimal digits should be shown in spinbox.
 	 */
-	Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param, QString const& label,
+	Knob (QWidget* parent, EventPort* event_port, v06::ControllerParam* controller_param, QString const& label,
 		  Range<float> shown_range, int step, int shown_decimals);
 
 	/**
@@ -140,19 +140,19 @@ class Knob:
 	 * Similar to the previous constructor, but takes shown_min/max, step and decimals params
 	 * from the controller_param itself.
 	 */
-	Knob (QWidget* parent, EventPort* event_port, ControllerParam* controller_param, QString const& label);
+	Knob (QWidget* parent, EventPort* event_port, v06::ControllerParam* controller_param, QString const& label);
 
 	/**
 	 * Create Knob. Use external ControllerProxy instead of own one.
 	 */
-	Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& label,
+	Knob (QWidget* parent, v06::ControllerProxy* controller_proxy, QString const& label,
 		  Range<float> shown_range, int step, int shown_decimals);
 
 	/**
-	 * Create Knob. Use external ControllerProxy and min/max/step/decimals params taken from the
+	 * Create Knob. Use external v06::ControllerProxy and min/max/step/decimals params taken from the
 	 * controlled parameter itself.
 	 */
-	Knob (QWidget* parent, ControllerProxy* controller_proxy, QString const& label);
+	Knob (QWidget* parent, v06::ControllerProxy* controller_proxy, QString const& label);
 
 	/**
 	 * Returns true if volume scale has been enabled.

@@ -160,9 +160,9 @@ Params::Part::Part():
 	filter_configuration ({ 0, 1 }, 0, "filter_configuration")
 {
 	for (unsigned int i = 0; i < HarmonicsNumber; ++i)
-		harmonics[i] = Haruhi::ControllerParam ({ HarmonicMin, HarmonicMax }, HarmonicCenterValue, HarmonicDefault, HarmonicDenominator, QString ("harmonic[%1]").arg (i).toUtf8().data());
+		harmonics[i] = Haruhi::v06::ControllerParam ({ HarmonicMin, HarmonicMax }, HarmonicCenterValue, HarmonicDefault, HarmonicDenominator, QString ("harmonic[%1]").arg (i).toUtf8().data());
 	for (unsigned int i = 0; i < HarmonicsNumber; ++i)
-		harmonic_phases[i] = Haruhi::ControllerParam ({ HarmonicPhaseMin, HarmonicPhaseMax }, HarmonicPhaseCenterValue, HarmonicPhaseDefault, HarmonicPhaseDenominator, QString ("harmonic-phase[%1]").arg (i).toUtf8().data());
+		harmonic_phases[i] = Haruhi::v06::ControllerParam ({ HarmonicPhaseMin, HarmonicPhaseMax }, HarmonicPhaseCenterValue, HarmonicPhaseDefault, HarmonicPhaseDenominator, QString ("harmonic-phase[%1]").arg (i).toUtf8().data());
 	// First/base harmonic should be fully max:
 	harmonics[0].set (HarmonicMax);
 
@@ -171,10 +171,10 @@ Params::Part::Part():
 	{
 		for (unsigned int i = 0; i < 3; ++i)
 		{
-			fm_matrix[o][i] = Haruhi::ControllerParam ({ FrequencyModMin, FrequencyModMax }, FrequencyModCenterValue, FrequencyModDefault, FrequencyModDenominator,
-													   QString ("fm-matrix[%1][%2]").arg (o).arg (i).toUtf8().data(), HARUHI_CONTROLLER_PARAM_ADDITIONAL_ARGS (FrequencyMod, 2));
-			am_matrix[o][i] = Haruhi::ControllerParam ({ AmplitudeModMin, AmplitudeModMax }, AmplitudeModCenterValue, AmplitudeModDefault, AmplitudeModDenominator,
-													   QString ("am-matrix[%1][%2]").arg (o).arg (i).toUtf8().data(), HARUHI_CONTROLLER_PARAM_ADDITIONAL_ARGS (AmplitudeMod, 2));
+			fm_matrix[o][i] = Haruhi::v06::ControllerParam ({ FrequencyModMin, FrequencyModMax }, FrequencyModCenterValue, FrequencyModDefault, FrequencyModDenominator,
+															  QString ("fm-matrix[%1][%2]").arg (o).arg (i).toUtf8().data(), HARUHI_CONTROLLER_PARAM_ADDITIONAL_ARGS (FrequencyMod, 2));
+			am_matrix[o][i] = Haruhi::v06::ControllerParam ({ AmplitudeModMin, AmplitudeModMax }, AmplitudeModCenterValue, AmplitudeModDefault, AmplitudeModDenominator,
+															  QString ("am-matrix[%1][%2]").arg (o).arg (i).toUtf8().data(), HARUHI_CONTROLLER_PARAM_ADDITIONAL_ARGS (AmplitudeMod, 2));
 		}
 	}
 

@@ -115,10 +115,10 @@ class Plugin:
 	Unique<Haruhi::AudioPort>		_in[2];
 	Unique<Haruhi::AudioPort>		_out[2];
 
-	Unique<Haruhi::ControllerParam>	_param_drywet;
-	Unique<Haruhi::ControllerParam>	_param_room_size;
-	Unique<Haruhi::ControllerParam>	_param_width;
-	Unique<Haruhi::ControllerParam>	_param_damping;
+	Unique<Haruhi::v06::ControllerParam>	_param_drywet;
+	Unique<Haruhi::v06::ControllerParam>	_param_room_size;
+	Unique<Haruhi::v06::ControllerParam>	_param_width;
+	Unique<Haruhi::v06::ControllerParam>	_param_damping;
 
 	Unique<Haruhi::Knob>			_knob_drywet;
 	Unique<Haruhi::Knob>			_knob_room_size;
@@ -127,7 +127,7 @@ class Plugin:
 
 	DSP::RampSmoother				_param_drywet_smoother;
 	Haruhi::AudioBuffer				_drywet_mix_buffer;
-	std::map<std::string, Haruhi::ControllerParam*>
+	std::map<std::string, Haruhi::v06::ControllerParam*>
 									_param_names;
 };
 

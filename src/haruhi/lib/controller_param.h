@@ -25,13 +25,14 @@
 
 
 namespace Haruhi {
+namespace v06 {
 
 /**
  * Param that can be controlled by Haruhi::Controller.
  * Also contains useful information for some controller widgets,
  * eg. min/max shown value, number of decimal digits shown, etc.
  */
-class ControllerParam: public Param<int>
+class ControllerParam: public v06::Param<int>
 {
   public:
 	/**
@@ -317,6 +318,7 @@ ControllerParam::set_from_widget (int value)
 	set (_adapter.forward (value));
 }
 
+} // namespace v06
 } // namespace Haruhi
 
 #endif

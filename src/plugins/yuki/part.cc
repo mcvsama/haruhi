@@ -162,15 +162,15 @@ Part::PartControllerProxies::PartControllerProxies (PartManager* part_manager, P
 	// Filters:
 	for (unsigned int i = 0; i < 2; ++i)
 	{
-		filter_frequency[i] = std::make_unique<Haruhi::ControllerProxy> (part_ports->filter_frequency[i].get(), &part_params->voice.filters[i].frequency);
-		filter_resonance[i] = std::make_unique<Haruhi::ControllerProxy> (part_ports->filter_resonance[i].get(), &part_params->voice.filters[i].resonance);
-		filter_gain[i] = std::make_unique<Haruhi::ControllerProxy> (part_ports->filter_gain[i].get(), &part_params->voice.filters[i].gain);
-		filter_attenuation[i] = std::make_unique<Haruhi::ControllerProxy> (part_ports->filter_attenuation[i].get(), &part_params->voice.filters[i].attenuation);
+		filter_frequency[i] = std::make_unique<Haruhi::v06::ControllerProxy> (part_ports->filter_frequency[i].get(), &part_params->voice.filters[i].frequency);
+		filter_resonance[i] = std::make_unique<Haruhi::v06::ControllerProxy> (part_ports->filter_resonance[i].get(), &part_params->voice.filters[i].resonance);
+		filter_gain[i] = std::make_unique<Haruhi::v06::ControllerProxy> (part_ports->filter_gain[i].get(), &part_params->voice.filters[i].gain);
+		filter_attenuation[i] = std::make_unique<Haruhi::v06::ControllerProxy> (part_ports->filter_attenuation[i].get(), &part_params->voice.filters[i].attenuation);
 	}
 
 	// Operators:
 	for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
-		operator_detune[i] = std::make_unique<Haruhi::ControllerProxy> (part_ports->operator_detune[i].get(), &part_params->operators[i].detune);
+		operator_detune[i] = std::make_unique<Haruhi::v06::ControllerProxy> (part_ports->operator_detune[i].get(), &part_params->operators[i].detune);
 
 	// Operator matrix:
 	fm_matrix.resize (Params::Part::OperatorsNumber + 1);
@@ -181,8 +181,8 @@ Part::PartControllerProxies::PartControllerProxies (PartManager* part_manager, P
 		am_matrix[o].resize (Params::Part::OperatorsNumber);
 		for (unsigned int i = 0; i < Params::Part::OperatorsNumber; ++i)
 		{
-			fm_matrix[o][i] = std::make_unique<Haruhi::ControllerProxy> (part_ports->fm_matrix[o][i].get(), &part_params->fm_matrix[o][i]);
-			am_matrix[o][i] = std::make_unique<Haruhi::ControllerProxy> (part_ports->am_matrix[o][i].get(), &part_params->am_matrix[o][i]);
+			fm_matrix[o][i] = std::make_unique<Haruhi::v06::ControllerProxy> (part_ports->fm_matrix[o][i].get(), &part_params->fm_matrix[o][i]);
+			am_matrix[o][i] = std::make_unique<Haruhi::v06::ControllerProxy> (part_ports->am_matrix[o][i].get(), &part_params->am_matrix[o][i]);
 		}
 	}
 }

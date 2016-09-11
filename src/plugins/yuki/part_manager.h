@@ -101,10 +101,10 @@ class PartManager:
 
 	  public:
 		// Part:
-		Haruhi::ControllerProxy volume;
-		Haruhi::ControllerProxy panorama;
-		Haruhi::ControllerProxy detune;
-		Haruhi::ControllerProxy stereo_width;
+		Haruhi::v06::ControllerProxy volume;
+		Haruhi::v06::ControllerProxy panorama;
+		Haruhi::v06::ControllerProxy detune;
+		Haruhi::v06::ControllerProxy stereo_width;
 	};
 
   public:

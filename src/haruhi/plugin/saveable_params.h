@@ -30,7 +30,7 @@
 	klass();																					\
 	virtual ~klass() = default;																	\
 	protected:																					\
-	void get_params (Haruhi::BaseParam const**, std::size_t max_entries) const;					\
+	void get_params (Haruhi::v06::BasicParam const**, std::size_t max_entries) const;			\
 	public:
 
 #define HARUHI_CONTROLLER_PARAM(name, min, max, deflt, centerval, denominator)					\
@@ -67,7 +67,7 @@
 
 #define HARUHI_DEFINE_SAVEABLE_PARAMS(klass)													\
 	void																						\
-	Params::klass::get_params (Haruhi::BaseParam const** tab, std::size_t max_entries) const	\
+	Params::klass::get_params (Haruhi::v06::BasicParam const** tab, std::size_t max_entries) const \
 	{																							\
 		std::size_t pos = 0;
 
@@ -86,7 +86,7 @@ template<class SubClass>
 	class SaveableParams: public SaveableState
 	{
 	  public:
-		typedef BaseParam SubClass::* MemberBaseParamPtr;
+		typedef v06::BasicParam SubClass::* MemberBaseParamPtr;
 
 	  public:
 		/**
@@ -114,7 +114,7 @@ template<class SubClass>
 		 * \param	max_entries Max number of entries to be stored (length of the tab array).
 		 */
 		virtual void
-		get_params (BaseParam const** tab, std::size_t max_entries) const = 0;
+		get_params (v06::BasicParam const** tab, std::size_t max_entries) const = 0;
 	};
 
 
@@ -122,7 +122,7 @@ template<class SubClass>
 	inline void
 	SaveableParams<SubClass>::sanitize()
 	{
-		BaseParam** params = reinterpret_cast<BaseParam**> (alloca (sizeof (BaseParam*) * SubClass::NUM_PARAMS));
+		v06::BasicParam** params = reinterpret_cast<v06::BasicParam**> (alloca (sizeof (v06::BasicParam*) * SubClass::NUM_PARAMS));
 		get_params (params, SubClass::NUM_PARAMS);
 		for (std::size_t i = 0; i < SubClass::NUM_PARAMS; ++i)
 			params[i]->sanitize();
@@ -133,7 +133,7 @@ template<class SubClass>
 	inline void
 	SaveableParams<SubClass>::save_state (QDomElement& parent) const
 	{
-		BaseParam const** params = reinterpret_cast<BaseParam const**> (alloca (sizeof (BaseParam*) * SubClass::NUM_PARAMS));
+		v06::BasicParam const** params = reinterpret_cast<v06::BasicParam const**> (alloca (sizeof (v06::BasicParam*) * SubClass::NUM_PARAMS));
 		get_params (params, SubClass::NUM_PARAMS);
 		for (std::size_t i = 0; i < SubClass::NUM_PARAMS; ++i)
 		{
@@ -156,13 +156,13 @@ template<class SubClass>
 			if (e.tagName() == "parameter")
 				map[e.attribute ("name", "")] = e;
 
-		BaseParam const** params = reinterpret_cast<BaseParam const**> (alloca (sizeof (BaseParam*) * SubClass::NUM_PARAMS));
+		v06::BasicParam const** params = reinterpret_cast<v06::BasicParam const**> (alloca (sizeof (v06::BasicParam*) * SubClass::NUM_PARAMS));
 		get_params (params, SubClass::NUM_PARAMS);
 		for (std::size_t i = 0; i < SubClass::NUM_PARAMS; ++i)
 		{
 			Map::iterator param_iter = map.find (params[i]->name());
 			if (param_iter != map.end())
-				const_cast<BaseParam*> (params[i])->load_state (param_iter->second);
+				const_cast<v06::BasicParam*> (params[i])->load_state (param_iter->second);
 		}
 	}
 

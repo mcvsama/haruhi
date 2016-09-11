@@ -29,13 +29,15 @@
 
 namespace Haruhi {
 
+namespace v06 {
+
 /**
  * Defines common base methods for all types of parameters.
  */
-class BaseParam: public SaveableState
+class BasicParam: public SaveableState
 {
   public:
-	virtual ~BaseParam() = default;
+	virtual ~BasicParam() = default;
 
 	/**
 	 * Return parameter unique name.
@@ -62,7 +64,7 @@ class BaseParam: public SaveableState
  * min/max and sanitization.
  */
 template<class tType>
-	class Param: public BaseParam
+	class Param: public BasicParam
 	{
 	  public:
 		typedef tType Type;
@@ -103,7 +105,7 @@ template<class tType>
 		default_value() const noexcept;
 
 		/*
-		 * BaseParam implementation
+		 * BasicParam implementation
 		 */
 
 		const char*
@@ -292,6 +294,236 @@ template<class tType>
 		set (bound<int> (parent.text().toInt(), _range));
 		sanitize();
 	}
+
+} // namespace v06
+
+
+namespace v07 {
+
+/**
+ * Defines required methods for all types of parameters.
+ */
+class BasicParam: public SaveableState
+{
+  public:
+	/**
+	 * Ctor
+	 *
+	 * \param	identifier
+	 * 			Unique identifier of the parameter. Used eg. in save-files.
+	 */
+	explicit
+	BasicParam (std::string const& identifier);
+
+	// Dtor
+	virtual ~BasicParam() = default;
+
+	/**
+	 * Return parameter unique identifier.
+	 */
+	virtual std::string const&
+	identifier() const noexcept;
+
+	/**
+	 * Resets parameter to default value.
+	 */
+	virtual void
+	reset() = 0;
+
+	/**
+	 * Enforces value to be between [minimum, maximum].
+	 */
+	virtual void
+	sanitize() = 0;
+
+  private:
+	std::string	_identifier;
+};
+
+
+/**
+ * Represent atomic parameter.
+ *
+ * \param	pValueType
+ * 			Type of the internal parameter, usually int or bool.
+ * 			Since it's used with atomic operations, it's necessary that it's a basic type that fit into CPU register.
+ */
+template<class pValueType>
+	class Param: public BasicParam
+	{
+	  public:
+		typedef pValueType	ValueType;
+
+	  public:
+		/**
+		 * Ctor
+		 *
+		 * \param	identifier
+		 *			BasicParam's identifier.
+		 * \param	initial_value
+		 *			Initial value for the parameter.
+		 */
+		explicit
+		Param (std::string const& identifier, ValueType initial_value = ValueType());
+
+		// Copy ctor
+		Param (Param const& other) noexcept;
+
+		/**
+		 * Copy operator. Copies all information, including param's identifier, to be consistent with copy constructor.
+		 */
+		Param const&
+		operator= (Param const& other) noexcept;
+
+		/**
+		 * Call set (new_value).
+		 *
+		 * \threadsafe
+		 */
+		void
+		operator= (ValueType new_value) noexcept;
+
+		/**
+		 * Atomically get parameter's value.
+		 *
+		 * \threadsafe
+		 */
+		ValueType
+		get() const noexcept;
+
+		/**
+		 * Atomically assign new value to the parameter.
+		 *
+		 * \threadsafe
+		 */
+		void
+		set (ValueType new_value) noexcept;
+
+		/*
+		 * BasicParam implementation
+		 */
+
+		void
+		reset() override;
+
+		void
+		sanitize() override;
+
+		/*
+		 * SaveableState implementation
+		 */
+
+		void
+		save_state (QDomElement& parent) const override;
+
+		void
+		load_state (QDomElement const& parent) override;
+
+	  public:
+		/**
+		 * Emitted when parameter has changed:
+		 */
+		Signal::Emiter0 on_change;
+
+		/**
+		 * Emitted after on_change when parameter has changed.
+		 * New value is given as parameter.
+		 */
+		Signal::Emiter1<ValueType> on_change_with_value;
+
+	  private:
+		Atomic<ValueType>	_value;
+	};
+
+
+inline
+BasicParam::BasicParam (std::string const& identifier):
+	_identifier (identifier)
+{ }
+
+
+inline std::string const&
+BasicParam::identifier() const noexcept
+{
+	return _identifier;
+}
+
+
+template<class T>
+	inline
+	Param<T>::Param (std::string const& identifier, ValueType value):
+		BasicParam (identifier),
+		_value (value)
+	{ }
+
+
+template<class T>
+	inline
+	Param<T>::Param (Param const& other) noexcept:
+		BasicParam (other.identifier()),
+		_value (other.get())
+	{ }
+
+
+template<class T>
+	inline Param<T> const&
+	Param<T>::operator= (Param<T> const& other) noexcept
+	{
+		auto new_value = other.get();
+		BasicParam::operator= (other);
+		set (new_value);
+		return *this;
+	}
+
+
+template<class T>
+	inline void
+	Param<T>::operator= (ValueType new_value) noexcept
+	{
+		set (new_value);
+	}
+
+
+template<class T>
+	inline typename Param<T>::ValueType
+	Param<T>::get() const noexcept
+	{
+		return _value.load (std::memory_order_relaxed);
+	}
+
+
+template<class T>
+	inline void
+	Param<T>::set (ValueType new_value) noexcept
+	{
+		_value.store (new_value, std::memory_order_relaxed);
+		on_change();
+		on_change_with_value (new_value);
+	}
+
+
+#if 0
+template<class T>
+	inline void
+	Param<T>::reset() override;
+
+
+template<class T>
+	inline void
+	Param<T>::sanitize() override;
+
+
+template<class T>
+	inline void
+	Param<T>::save_state (QDomElement& parent) const override;
+
+
+template<class T>
+	inline void
+	Param<T>::load_state (QDomElement const& parent) override;
+#endif
+
+} // namespace v07
 
 } // namespace Haruhi
 

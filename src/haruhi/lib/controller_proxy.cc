@@ -24,6 +24,7 @@
 
 
 namespace Haruhi {
+namespace v06 {
 
 ControllerProxy::ControllerProxy (EventPort* event_port, ControllerParam* param):
 	_param (param),
@@ -73,4 +74,5 @@ ControllerProxy::process_events()
 	}
 }
 
+} // namespace v06
 } // namespace Haruhi

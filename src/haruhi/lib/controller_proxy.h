@@ -27,6 +27,7 @@
 
 
 namespace Haruhi {
+namespace v06 {
 
 /**
  * Proxy between event port, ui widget and controller parameter.
@@ -207,6 +208,7 @@ ControllerProxy::param_changed()
 		_widget->schedule_for_update();
 }
 
+} // namespace v06
 } // namespace Haruhi
 
 #endif

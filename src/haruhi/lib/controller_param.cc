@@ -23,6 +23,7 @@
 
 
 namespace Haruhi {
+namespace v06 {
 
 ControllerParam::Adapter::Adapter (Range<int> limit, int center_value) noexcept:
 	curve (0.0f),
@@ -111,4 +112,5 @@ ControllerParam::sanitize()
 	_adapter.user_limit.set_max (bound (_adapter.user_limit.max(), _adapter.user_limit.min(), maximum()));
 }
 
+} // namespace v06
 } // namespace Haruhi

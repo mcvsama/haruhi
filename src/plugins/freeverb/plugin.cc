@@ -45,10 +45,10 @@ Plugin::Plugin (std::string const& urn, std::string const& title, int id, QWidge
 	_out[0]				= std::make_unique<Haruhi::AudioPort> (this, "Out 1", Haruhi::Port::Output);
 	_out[1]				= std::make_unique<Haruhi::AudioPort> (this, "Out 2", Haruhi::Port::Output);
 
-	_param_drywet		= std::make_unique<Haruhi::ControllerParam> (Range<int> { 0, 1000 }, 200, 0, 1000, "dry-wet", Range<float> { 0.0, 1.0 }, 2, 1);
-	_param_room_size	= std::make_unique<Haruhi::ControllerParam> (Range<int> { 0, 1000 }, 0, 0, 1000, "room-size", Range<float> { 0.0, 1.0 }, 2, 1);
-	_param_width		= std::make_unique<Haruhi::ControllerParam> (Range<int> { 0, 1000 }, 0, 0, 1000, "width", Range<float> { 0.0, 1.0 }, 2, 1);
-	_param_damping		= std::make_unique<Haruhi::ControllerParam> (Range<int> { 0, 1000 }, 0, 0, 1000, "damping", Range<float> { 0.0, 1.0 }, 2, 1);
+	_param_drywet		= std::make_unique<Haruhi::v06::ControllerParam> (Range<int> { 0, 1000 }, 200, 0, 1000, "dry-wet", Range<float> { 0.0, 1.0 }, 2, 1);
+	_param_room_size	= std::make_unique<Haruhi::v06::ControllerParam> (Range<int> { 0, 1000 }, 0, 0, 1000, "room-size", Range<float> { 0.0, 1.0 }, 2, 1);
+	_param_width		= std::make_unique<Haruhi::v06::ControllerParam> (Range<int> { 0, 1000 }, 0, 0, 1000, "width", Range<float> { 0.0, 1.0 }, 2, 1);
+	_param_damping		= std::make_unique<Haruhi::v06::ControllerParam> (Range<int> { 0, 1000 }, 0, 0, 1000, "damping", Range<float> { 0.0, 1.0 }, 2, 1);
 
 	_knob_drywet		= std::make_unique<Haruhi::Knob> (this, _port_drywet.get(), _param_drywet.get(), "Dry/wet");
 	_knob_room_size		= std::make_unique<Haruhi::Knob> (this, _port_room_size.get(), _param_room_size.get(), "Room size");

@@ -225,7 +225,7 @@ class Part:
 	class PartControllerProxies: private Noncopyable
 	{
 	  public:
-		typedef std::vector<std::vector<Unique<Haruhi::ControllerProxy>>> MatrixControllerProxies;
+		typedef std::vector<std::vector<Unique<Haruhi::v06::ControllerProxy>>> MatrixControllerProxies;
 
 	  public:
 		PartControllerProxies (PartManager*, PartPorts*, Params::Part*);
@@ -248,41 +248,41 @@ class Part:
 
 	  public:
 		// Part:
-		Haruhi::ControllerProxy			volume;
-		Haruhi::ControllerProxy			portamento_time;
-		Haruhi::ControllerProxy			phase;
-		Haruhi::ControllerProxy			noise_level;
-		Haruhi::ControllerProxy			wave_shape;
-		Haruhi::ControllerProxy			modulator_amplitude;
-		Haruhi::ControllerProxy			modulator_index;
-		Haruhi::ControllerProxy			modulator_shape;
+		Haruhi::v06::ControllerProxy			volume;
+		Haruhi::v06::ControllerProxy			portamento_time;
+		Haruhi::v06::ControllerProxy			phase;
+		Haruhi::v06::ControllerProxy			noise_level;
+		Haruhi::v06::ControllerProxy			wave_shape;
+		Haruhi::v06::ControllerProxy			modulator_amplitude;
+		Haruhi::v06::ControllerProxy			modulator_index;
+		Haruhi::v06::ControllerProxy			modulator_shape;
 
 		// Voice:
-		Haruhi::ControllerProxy			amplitude;
-		Haruhi::ControllerProxy			frequency;
-		Haruhi::ControllerProxy			panorama;
-		Haruhi::ControllerProxy			detune;
-		Haruhi::ControllerProxy			pitchbend;
-		Haruhi::ControllerProxy			velocity_sens;
-		Haruhi::ControllerProxy			unison_index;
-		Haruhi::ControllerProxy			unison_spread;
-		Haruhi::ControllerProxy			unison_init;
-		Haruhi::ControllerProxy			unison_noise;
-		Haruhi::ControllerProxy			unison_vibrato_level;
-		Haruhi::ControllerProxy			unison_vibrato_frequency;
+		Haruhi::v06::ControllerProxy			amplitude;
+		Haruhi::v06::ControllerProxy			frequency;
+		Haruhi::v06::ControllerProxy			panorama;
+		Haruhi::v06::ControllerProxy			detune;
+		Haruhi::v06::ControllerProxy			pitchbend;
+		Haruhi::v06::ControllerProxy			velocity_sens;
+		Haruhi::v06::ControllerProxy			unison_index;
+		Haruhi::v06::ControllerProxy			unison_spread;
+		Haruhi::v06::ControllerProxy			unison_init;
+		Haruhi::v06::ControllerProxy			unison_noise;
+		Haruhi::v06::ControllerProxy			unison_vibrato_level;
+		Haruhi::v06::ControllerProxy			unison_vibrato_frequency;
 
 		// Filters:
-		Unique<Haruhi::ControllerProxy>	filter_frequency[Params::Voice::FiltersNumber];
-		Unique<Haruhi::ControllerProxy>	filter_resonance[Params::Voice::FiltersNumber];
-		Unique<Haruhi::ControllerProxy>	filter_gain[Params::Voice::FiltersNumber];
-		Unique<Haruhi::ControllerProxy>	filter_attenuation[Params::Voice::FiltersNumber];
+		Unique<Haruhi::v06::ControllerProxy>	filter_frequency[Params::Voice::FiltersNumber];
+		Unique<Haruhi::v06::ControllerProxy>	filter_resonance[Params::Voice::FiltersNumber];
+		Unique<Haruhi::v06::ControllerProxy>	filter_gain[Params::Voice::FiltersNumber];
+		Unique<Haruhi::v06::ControllerProxy>	filter_attenuation[Params::Voice::FiltersNumber];
 
 		// Operators:
-		Unique<Haruhi::ControllerProxy>	operator_detune[Params::Part::OperatorsNumber];
+		Unique<Haruhi::v06::ControllerProxy>	operator_detune[Params::Part::OperatorsNumber];
 
 		// Modulator matrix:
-		MatrixControllerProxies			fm_matrix;
-		MatrixControllerProxies			am_matrix;
+		MatrixControllerProxies					fm_matrix;
+		MatrixControllerProxies					am_matrix;
 
 	  private:
 		PartManager* _part_manager;

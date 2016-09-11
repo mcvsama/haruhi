@@ -40,14 +40,14 @@ struct Params
 		HARUHI_CONTROLLER_PARAM (Detune,					-1000000,	+1000000,	       0,	       0,	+1000000)
 		HARUHI_CONTROLLER_PARAM (StereoWidth,				-1000000,	+1000000,	+1000000,	       0,	+1000000)
 
-		Haruhi::ControllerParam volume;
-		Haruhi::ControllerParam panorama;
-		Haruhi::ControllerParam detune;
-		Haruhi::ControllerParam stereo_width;
+		Haruhi::v06::ControllerParam volume;
+		Haruhi::v06::ControllerParam panorama;
+		Haruhi::v06::ControllerParam detune;
+		Haruhi::v06::ControllerParam stereo_width;
 
-		Haruhi::Param<int> enabled;
-		Haruhi::Param<unsigned int> polyphony;
-		Haruhi::Param<unsigned int> oversampling;
+		Haruhi::v06::Param<int> enabled;
+		Haruhi::v06::Param<unsigned int> polyphony;
+		Haruhi::v06::Param<unsigned int> oversampling;
 
 		static const std::size_t NUM_PARAMS = 7;
 	};
@@ -57,8 +57,8 @@ struct Params
 	 */
 	struct Filter: public Haruhi::SaveableParams<Filter>
 	{
-		typedef Haruhi::ControllerParam Filter::* ControllerParamPtr;
-		typedef Haruhi::Param<int> Filter::* IntParamPtr;
+		typedef Haruhi::v06::ControllerParam Filter::* ControllerParamPtr;
+		typedef Haruhi::v06::Param<int> Filter::* IntParamPtr;
 
 		HARUHI_SAVEABLE_PARAMS_STANDARD_METHODS (Filter)
 
@@ -67,15 +67,15 @@ struct Params
 		HARUHI_CONTROLLER_PARAM (Gain,						       0,	+2000000,	       0,	       0,	 +100000)
 		HARUHI_CONTROLLER_PARAM (Attenuation,				       0,	+1000000,	+1000000,	       0,	+1000000)
 
-		Haruhi::ControllerParam frequency;
-		Haruhi::ControllerParam resonance;
-		Haruhi::ControllerParam gain;
-		Haruhi::ControllerParam attenuation;
+		Haruhi::v06::ControllerParam frequency;
+		Haruhi::v06::ControllerParam resonance;
+		Haruhi::v06::ControllerParam gain;
+		Haruhi::v06::ControllerParam attenuation;
 
-		Haruhi::Param<int> enabled;
-		Haruhi::Param<int> type;
-		Haruhi::Param<int> stages;
-		Haruhi::Param<int> limiter_enabled;
+		Haruhi::v06::Param<int> enabled;
+		Haruhi::v06::Param<int> type;
+		Haruhi::v06::Param<int> stages;
+		Haruhi::v06::Param<int> limiter_enabled;
 
 		static const std::size_t NUM_PARAMS = 8;
 	};
@@ -90,11 +90,11 @@ struct Params
 		HARUHI_CONTROLLER_PARAM (Detune,					-1200000,	+1200000,	       0,	       0,	 +100000)
 		HARUHI_CONTROLLER_PARAM (Phase,						-1000000,	+1000000,	       0,	       0,	+1000000)
 
-		Haruhi::ControllerParam detune;
+		Haruhi::v06::ControllerParam detune;
 
-		Haruhi::Param<unsigned int> frequency_numerator;
-		Haruhi::Param<unsigned int> frequency_denominator;
-		Haruhi::Param<int> octave;
+		Haruhi::v06::Param<unsigned int> frequency_numerator;
+		Haruhi::v06::Param<unsigned int> frequency_denominator;
+		Haruhi::v06::Param<int> octave;
 
 		static const std::size_t NUM_PARAMS = 4;
 	};
@@ -104,7 +104,7 @@ struct Params
 	 */
 	struct Voice: public Haruhi::SaveableParams<Voice>
 	{
-		typedef Haruhi::ControllerParam Voice::* ControllerParamPtr;
+		typedef Haruhi::v06::ControllerParam Voice::* ControllerParamPtr;
 
 		HARUHI_SAVEABLE_PARAMS_STANDARD_METHODS (Voice)
 
@@ -123,18 +123,18 @@ struct Params
 
 		static const std::size_t FiltersNumber = 2;
 
-		Haruhi::ControllerParam amplitude;
-		Haruhi::ControllerParam frequency;
-		Haruhi::ControllerParam panorama;
-		Haruhi::ControllerParam detune;
-		Haruhi::ControllerParam pitchbend;
-		Haruhi::ControllerParam velocity_sens;
-		Haruhi::ControllerParam unison_index;
-		Haruhi::ControllerParam unison_spread;
-		Haruhi::ControllerParam unison_init;
-		Haruhi::ControllerParam unison_noise;
-		Haruhi::ControllerParam unison_vibrato_level;
-		Haruhi::ControllerParam unison_vibrato_frequency;
+		Haruhi::v06::ControllerParam amplitude;
+		Haruhi::v06::ControllerParam frequency;
+		Haruhi::v06::ControllerParam panorama;
+		Haruhi::v06::ControllerParam detune;
+		Haruhi::v06::ControllerParam pitchbend;
+		Haruhi::v06::ControllerParam velocity_sens;
+		Haruhi::v06::ControllerParam unison_index;
+		Haruhi::v06::ControllerParam unison_spread;
+		Haruhi::v06::ControllerParam unison_init;
+		Haruhi::v06::ControllerParam unison_noise;
+		Haruhi::v06::ControllerParam unison_vibrato_level;
+		Haruhi::v06::ControllerParam unison_vibrato_frequency;
 
 		static const std::size_t NUM_PARAMS = 12;
 
@@ -165,36 +165,36 @@ struct Params
 		static const std::size_t HarmonicsNumber = Haruhi::DSP::HarmonicsWave::HarmonicsNumber;
 		static const std::size_t OperatorsNumber = 3;
 
-		Haruhi::ControllerParam volume;
-		Haruhi::ControllerParam portamento_time;
-		Haruhi::ControllerParam phase;
-		Haruhi::ControllerParam noise_level;
-		Haruhi::ControllerParam wave_shape;
-		Haruhi::ControllerParam modulator_amplitude;
-		Haruhi::ControllerParam modulator_index;
-		Haruhi::ControllerParam modulator_shape;
-		Haruhi::ControllerParam harmonics[HarmonicsNumber];
-		Haruhi::ControllerParam harmonic_phases[HarmonicsNumber];
-		Haruhi::ControllerParam fm_matrix[4][3];
-		Haruhi::ControllerParam am_matrix[4][3];
+		Haruhi::v06::ControllerParam volume;
+		Haruhi::v06::ControllerParam portamento_time;
+		Haruhi::v06::ControllerParam phase;
+		Haruhi::v06::ControllerParam noise_level;
+		Haruhi::v06::ControllerParam wave_shape;
+		Haruhi::v06::ControllerParam modulator_amplitude;
+		Haruhi::v06::ControllerParam modulator_index;
+		Haruhi::v06::ControllerParam modulator_shape;
+		Haruhi::v06::ControllerParam harmonics[HarmonicsNumber];
+		Haruhi::v06::ControllerParam harmonic_phases[HarmonicsNumber];
+		Haruhi::v06::ControllerParam fm_matrix[4][3];
+		Haruhi::v06::ControllerParam am_matrix[4][3];
 
-		Haruhi::Param<int> part_enabled;
-		Haruhi::Param<int> modulator_enabled;
-		Haruhi::Param<int> wave_enabled;
-		Haruhi::Param<int> noise_enabled;
-		Haruhi::Param<int> frequency_mod_range;
-		Haruhi::Param<int> pitchbend_enabled;
-		Haruhi::Param<int> pitchbend_up_semitones;
-		Haruhi::Param<int> pitchbend_down_semitones;
-		Haruhi::Param<int> transposition_semitones;
-		Haruhi::Param<int> const_portamento_time;
-		Haruhi::Param<int> unison_stereo;
-		Haruhi::Param<int> pseudo_stereo;
-		Haruhi::Param<unsigned int> wave_type;
-		Haruhi::Param<unsigned int> modulator_type;
-		Haruhi::Param<unsigned int> modulator_wave_type;
-		Haruhi::Param<unsigned int> auto_center;
-		Haruhi::Param<unsigned int> filter_configuration;
+		Haruhi::v06::Param<int> part_enabled;
+		Haruhi::v06::Param<int> modulator_enabled;
+		Haruhi::v06::Param<int> wave_enabled;
+		Haruhi::v06::Param<int> noise_enabled;
+		Haruhi::v06::Param<int> frequency_mod_range;
+		Haruhi::v06::Param<int> pitchbend_enabled;
+		Haruhi::v06::Param<int> pitchbend_up_semitones;
+		Haruhi::v06::Param<int> pitchbend_down_semitones;
+		Haruhi::v06::Param<int> transposition_semitones;
+		Haruhi::v06::Param<int> const_portamento_time;
+		Haruhi::v06::Param<int> unison_stereo;
+		Haruhi::v06::Param<int> pseudo_stereo;
+		Haruhi::v06::Param<unsigned int> wave_type;
+		Haruhi::v06::Param<unsigned int> modulator_type;
+		Haruhi::v06::Param<unsigned int> modulator_wave_type;
+		Haruhi::v06::Param<unsigned int> auto_center;
+		Haruhi::v06::Param<unsigned int> filter_configuration;
 
 		static const std::size_t NUM_PARAMS = 25 + HarmonicsNumber + HarmonicsNumber + 24;
 

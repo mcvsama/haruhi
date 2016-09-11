@@ -40,28 +40,28 @@ class UnitBay;
  * that will read controlled param and update itself according to its value.
  */
 class Controller:
-	public ControllerProxy::Widget,
+	public v06::ControllerProxy::Widget,
 	public Signal::Receiver
 {
   public:
 	/**
 	 * Create a Controller with its own ControllerProxy inside.
 	 */
-	Controller (EventPort* event_port, ControllerParam* controller_param);
+	Controller (EventPort* event_port, v06::ControllerParam* controller_param);
 
 	/**
 	 * Create a Controller with external ControllerProxy.
 	 * There can be only one Controller per ControllerProxy.
 	 * Remember that the Controller MUST be destroyed first, before ControllerProxy.
 	 */
-	Controller (ControllerProxy* controller_proxy);
+	Controller (v06::ControllerProxy* controller_proxy);
 
 	virtual ~Controller();
 
 	/**
 	 * Returns associated ControllerParam.
 	 */
-	ControllerParam*
+	v06::ControllerParam*
 	param() const noexcept;
 
 	/**
@@ -86,7 +86,7 @@ class Controller:
 	/**
 	 * Return ControllerProxy owned by this Controller.
 	 */
-	ControllerProxy*
+	v06::ControllerProxy*
 	controller_proxy() noexcept;
 
 	/**
@@ -129,10 +129,10 @@ class Controller:
 	learned_connection (EventBackend::EventTypes, EventPort*);
 
   private:
-	ControllerProxy*	_controller_proxy		= nullptr;
-	bool				_own_controller_proxy	= false;
-	UnitBay*			_unit_bay				= nullptr;
-	Atomic<bool>		_learning;
+	v06::ControllerProxy*	_controller_proxy		= nullptr;
+	bool					_own_controller_proxy	= false;
+	UnitBay*				_unit_bay				= nullptr;
+	Atomic<bool>			_learning;
 
   public:
 	/**
@@ -146,7 +146,7 @@ class Controller:
 };
 
 
-inline ControllerParam*
+inline v06::ControllerParam*
 Controller::param() const noexcept
 {
 	return _controller_proxy->param();
@@ -174,7 +174,7 @@ Controller::unit_bay() const noexcept
 }
 
 
-inline ControllerProxy*
+inline v06::ControllerProxy*
 Controller::controller_proxy() noexcept
 {
 	return _controller_proxy;
