@@ -57,7 +57,7 @@ class Backend: public Unit
 	 * Argument says whether backend is now online.
 	 * Always emitted from UI thread.
 	 */
-	Signal::Emiter1<bool> on_state_change;
+	Signal::Emiter<bool> on_state_change;
 };
 
 } // namespace Haruhi

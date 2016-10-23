@@ -91,7 +91,7 @@ class Model: public SaveableState
 
   public:
 	// Emitted when model_changed() is called:
-	Signal::Emiter0	on_change;
+	Signal::Emiter<> on_change;
 
   private:
 	Devices _devices;

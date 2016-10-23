@@ -31,24 +31,24 @@ namespace Signal {
 
 namespace Private {
 
-	class ConnectionBase;
+	class DefaultConnectionBase;
 
 
 	class SignalBase
 	{
 	  public:
-		virtual void disconnect (ConnectionBase*) = 0;
+		virtual void disconnect (DefaultConnectionBase*) = 0;
 	};
 
 
-	class ConnectionBase
+	class DefaultConnectionBase
 	{
 	  public:
-		ConnectionBase (SignalBase* signal) noexcept:
+		DefaultConnectionBase (SignalBase* signal) noexcept:
 			_signal (signal)
 		{ }
 
-		virtual ~ConnectionBase() noexcept = default;
+		virtual ~DefaultConnectionBase() noexcept = default;
 
 		SignalBase*
 		signal() const noexcept
@@ -61,34 +61,19 @@ namespace Private {
 	};
 
 
-	typedef std::list<ConnectionBase*> Connections;
+	typedef std::list<DefaultConnectionBase*> Connections;
 
 } // namespace Private
 
 
-class Emiter0;
-template<class> class Emiter1;
-template<class, class> class Emiter2;
-template<class, class, class> class Emiter3;
-template<class, class, class, class> class Emiter4;
-template<class, class, class, class, class> class Emiter5;
-template<class, class, class, class, class, class> class Emiter6;
-template<class, class, class, class, class, class, class> class Emiter7;
-template<class, class, class, class, class, class, class, class> class Emiter8;
-template<class, class, class, class, class, class, class, class, class> class Emiter9;
+template<class ...Argument>
+	class Emiter;
+
 
 class Receiver
 {
-	friend class Emiter0;
-	template<class> friend class Emiter1;
-	template<class, class> friend class Emiter2;
-	template<class, class, class> friend class Emiter3;
-	template<class, class, class, class> friend class Emiter4;
-	template<class, class, class, class, class> friend class Emiter5;
-	template<class, class, class, class, class, class> friend class Emiter6;
-	template<class, class, class, class, class, class, class> friend class Emiter7;
-	template<class, class, class, class, class, class, class, class> friend class Emiter8;
-	template<class, class, class, class, class, class, class, class, class> friend class Emiter9;
+	template<class ...Argument>
+		friend class Emiter;
 
   public:
 	virtual ~Receiver()
@@ -118,196 +103,19 @@ class Receiver
 	Private::Connections _connections;
 };
 
-} // namespace Signal
 
-
-/*
- * Instantiate signals
- */
-
-
-#define EMITER_INSTANTIATE
-
-
-#define EMITER_CLASS Emiter0
-#define EMITER_PARAMETERS_LIST
-#define EMITER_PARAMETER_TYPES_LIST
-#define EMITER_ARGUMENTS_LIST
-
-#include "signal.h"
-
-#undef EMITER_CLASS
-#undef EMITER_CLASS_TEMPLATE_PARAMETERS
-#undef EMITER_PARAMETERS_LIST
-#undef EMITER_PARAMETER_TYPES_LIST
-#undef EMITER_ARGUMENTS_LIST
-
-
-#define EMITER_CLASS Emiter1
-#define EMITER_CLASS_TEMPLATE_PARAMETERS class A1
-#define EMITER_PARAMETERS_LIST A1 a1
-#define EMITER_PARAMETER_TYPES_LIST A1
-#define EMITER_ARGUMENTS_LIST a1
-
-#include "signal.h"
-
-#undef EMITER_CLASS
-#undef EMITER_CLASS_TEMPLATE_PARAMETERS
-#undef EMITER_PARAMETERS_LIST
-#undef EMITER_PARAMETER_TYPES_LIST
-#undef EMITER_ARGUMENTS_LIST
-
-
-#define EMITER_CLASS Emiter2
-#define EMITER_CLASS_TEMPLATE_PARAMETERS class A1, class A2
-#define EMITER_PARAMETERS_LIST A1 a1, A2 a2
-#define EMITER_PARAMETER_TYPES_LIST A1, A2
-#define EMITER_ARGUMENTS_LIST a1, a2
-
-#include "signal.h"
-
-#undef EMITER_CLASS
-#undef EMITER_CLASS_TEMPLATE_PARAMETERS
-#undef EMITER_PARAMETERS_LIST
-#undef EMITER_PARAMETER_TYPES_LIST
-#undef EMITER_ARGUMENTS_LIST
-
-
-#define EMITER_CLASS Emiter3
-#define EMITER_CLASS_TEMPLATE_PARAMETERS class A1, class A2, class A3
-#define EMITER_PARAMETERS_LIST A1 a1, A2 a2, A3 a3
-#define EMITER_PARAMETER_TYPES_LIST A1, A2, A3
-#define EMITER_ARGUMENTS_LIST a1, a2, a3
-
-#include "signal.h"
-
-#undef EMITER_CLASS
-#undef EMITER_CLASS_TEMPLATE_PARAMETERS
-#undef EMITER_PARAMETERS_LIST
-#undef EMITER_PARAMETER_TYPES_LIST
-#undef EMITER_ARGUMENTS_LIST
-
-
-#define EMITER_CLASS Emiter4
-#define EMITER_CLASS_TEMPLATE_PARAMETERS class A1, class A2, class A3, class A4
-#define EMITER_PARAMETERS_LIST A1 a1, A2 a2, A3 a3, A4 a4
-#define EMITER_PARAMETER_TYPES_LIST A1, A2, A3, A4
-#define EMITER_ARGUMENTS_LIST a1, a2, a3, a4
-
-#include "signal.h"
-
-#undef EMITER_CLASS
-#undef EMITER_CLASS_TEMPLATE_PARAMETERS
-#undef EMITER_PARAMETERS_LIST
-#undef EMITER_PARAMETER_TYPES_LIST
-#undef EMITER_ARGUMENTS_LIST
-
-
-#define EMITER_CLASS Emiter5
-#define EMITER_CLASS_TEMPLATE_PARAMETERS class A1, class A2, class A3, class A4, class A5
-#define EMITER_PARAMETERS_LIST A1 a1, A2 a2, A3 a3, A4 a4, A5 a5
-#define EMITER_PARAMETER_TYPES_LIST A1, A2, A3, A4, A5
-#define EMITER_ARGUMENTS_LIST a1, a2, a3, a4, a5
-
-#include "signal.h"
-
-#undef EMITER_CLASS
-#undef EMITER_CLASS_TEMPLATE_PARAMETERS
-#undef EMITER_PARAMETERS_LIST
-#undef EMITER_PARAMETER_TYPES_LIST
-#undef EMITER_ARGUMENTS_LIST
-
-
-#define EMITER_CLASS Emiter6
-#define EMITER_CLASS_TEMPLATE_PARAMETERS class A1, class A2, class A3, class A4, class A5, class A6
-#define EMITER_PARAMETERS_LIST A1 a1, A2 a2, A3 a3, A4 a4, A5 a5, A6 a6
-#define EMITER_PARAMETER_TYPES_LIST A1, A2, A3, A4, A5, A6
-#define EMITER_ARGUMENTS_LIST a1, a2, a3, a4, a5, a6
-
-#include "signal.h"
-
-#undef EMITER_CLASS
-#undef EMITER_CLASS_TEMPLATE_PARAMETERS
-#undef EMITER_PARAMETERS_LIST
-#undef EMITER_PARAMETER_TYPES_LIST
-#undef EMITER_ARGUMENTS_LIST
-
-
-#define EMITER_CLASS Emiter7
-#define EMITER_CLASS_TEMPLATE_PARAMETERS class A1, class A2, class A3, class A4, class A5, class A6, class A7
-#define EMITER_PARAMETERS_LIST A1 a1, A2 a2, A3 a3, A4 a4, A5 a5, A6 a6, A7 a7
-#define EMITER_PARAMETER_TYPES_LIST A1, A2, A3, A4, A5, A6, A7
-#define EMITER_ARGUMENTS_LIST a1, a2, a3, a4, a5, a6, a7
-
-#include "signal.h"
-
-#undef EMITER_CLASS
-#undef EMITER_CLASS_TEMPLATE_PARAMETERS
-#undef EMITER_PARAMETERS_LIST
-#undef EMITER_PARAMETER_TYPES_LIST
-#undef EMITER_ARGUMENTS_LIST
-
-
-#define EMITER_CLASS Emiter8
-#define EMITER_CLASS_TEMPLATE_PARAMETERS class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8
-#define EMITER_PARAMETERS_LIST A1 a1, A2 a2, A3 a3, A4 a4, A5 a5, A6 a6, A7 a7, A8 a8
-#define EMITER_PARAMETER_TYPES_LIST A1, A2, A3, A4, A5, A6, A7, A8
-#define EMITER_ARGUMENTS_LIST a1, a2, a3, a4, a5, a6, a7, a8
-
-#include "signal.h"
-
-#undef EMITER_CLASS
-#undef EMITER_CLASS_TEMPLATE_PARAMETERS
-#undef EMITER_PARAMETERS_LIST
-#undef EMITER_PARAMETER_TYPES_LIST
-#undef EMITER_ARGUMENTS_LIST
-
-
-#define EMITER_CLASS Emiter9
-#define EMITER_CLASS_TEMPLATE_PARAMETERS class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class A9
-#define EMITER_PARAMETERS_LIST A1 a1, A2 a2, A3 a3, A4 a4, A5 a5, A6 a6, A7 a7, A8 a8, A9 a9
-#define EMITER_PARAMETER_TYPES_LIST A1, A2, A3, A4, A5, A6, A7, A8, A9
-#define EMITER_ARGUMENTS_LIST a1, a2, a3, a4, a5, a6, a7, a8, a9
-
-#include "signal.h"
-
-#undef EMITER_CLASS
-#undef EMITER_CLASS_TEMPLATE_PARAMETERS
-#undef EMITER_PARAMETERS_LIST
-#undef EMITER_PARAMETER_TYPES_LIST
-#undef EMITER_ARGUMENTS_LIST
-
-
-#undef EMITER_INSTANTIATE
-
-
-#else
-
-
-#ifdef EMITER_INSTANTIATE
-
-namespace Signal {
-
-#ifdef EMITER_CLASS_TEMPLATE_PARAMETERS
-#define EMITER_TEMPLATE_SIGNATURE template<EMITER_CLASS_TEMPLATE_PARAMETERS>
-#define EMITER_TYPENAME typename
-#else
-#define EMITER_TEMPLATE_SIGNATURE
-#define EMITER_TYPENAME
-#endif
-
-EMITER_TEMPLATE_SIGNATURE
-	class EMITER_CLASS: public Private::SignalBase
+template<class ...Argument>
+	class Emiter: public Private::SignalBase
 	{
-		class ConnectionBase: public Private::ConnectionBase
+		class ConnectionBase: public Private::DefaultConnectionBase
 		{
 		  public:
 			ConnectionBase (SignalBase* signal, Receiver* receiver) noexcept:
-				Private::ConnectionBase (signal),
+				Private::DefaultConnectionBase (signal),
 				_base_r (receiver)
 			{ }
 
-			virtual void call (EMITER_PARAMETERS_LIST) = 0;
+			virtual void call (Argument	...arg) = 0;
 
 			Receiver*
 			receiver() const noexcept
@@ -322,7 +130,7 @@ EMITER_TEMPLATE_SIGNATURE
 		template<class Receiver>
 			class Connection: public ConnectionBase
 			{
-				typedef void (Receiver::*Method)(EMITER_PARAMETERS_LIST);
+				typedef void (Receiver::*Method)(Argument ...arg);
 
 			  public:
 				Connection (SignalBase* signal, Receiver* r, Method m) noexcept:
@@ -332,9 +140,9 @@ EMITER_TEMPLATE_SIGNATURE
 				{ }
 
 				void
-				call (EMITER_PARAMETERS_LIST) override
+				call (Argument ...arg) override
 				{
-					(_r->*_m)(EMITER_ARGUMENTS_LIST);
+					(_r->*_m)(arg...);
 				}
 
 				bool
@@ -351,7 +159,7 @@ EMITER_TEMPLATE_SIGNATURE
 		template<class Receiver>
 			class BoostFunctionConnection: public ConnectionBase
 			{
-				typedef boost::function<void (EMITER_PARAMETER_TYPES_LIST)> Callback;
+				typedef boost::function<void (Argument...)> Callback;
 
 			  public:
 				BoostFunctionConnection (SignalBase* signal, Callback c) noexcept:
@@ -359,9 +167,9 @@ EMITER_TEMPLATE_SIGNATURE
 				{ }
 
 				void
-				call (EMITER_PARAMETERS_LIST) override
+				call (Argument ...arg) override
 				{
-					_c (EMITER_ARGUMENTS_LIST);
+					_c (arg...);
 				}
 
 			  private:
@@ -371,19 +179,20 @@ EMITER_TEMPLATE_SIGNATURE
 		typedef std::list<ConnectionBase*> Connections;
 
 	  public:
-		virtual ~EMITER_CLASS() noexcept
+		virtual ~Emiter() noexcept
 		{
 			for (ConnectionBase* c: _connections)
 			{
 				c->receiver()->_connections.remove (c);
 				delete c;
 			}
+
 			_connections.clear();
 		}
 
 		template<class Receiver>
 			void
-			connect (Receiver* receiver, void (Receiver::*method)(EMITER_PARAMETER_TYPES_LIST))
+			connect (Receiver* receiver, void (Receiver::*method)(Argument...))
 			{
 				auto connection = new Connection<Receiver> (this, receiver, method);
 				_connections.push_back (connection);
@@ -392,15 +201,14 @@ EMITER_TEMPLATE_SIGNATURE
 
 		template<class Receiver>
 			void
-			connect (boost::function<void (EMITER_PARAMETER_TYPES_LIST)> const& function)
+			connect (boost::function<void (Argument...)> const& function)
 			{
-				auto connection = new BoostFunctionConnection<Receiver> (this, function);
-				_connections.push_back (connection);
+				_connections.push_back (new BoostFunctionConnection<Receiver> (this, function));
 			}
 
 		template<class Receiver>
 			void
-			disconnect (Receiver* receiver, void (Receiver::*method)(EMITER_PARAMETER_TYPES_LIST)) noexcept
+			disconnect (Receiver* receiver, void (Receiver::*method)(Argument...)) noexcept
 			{
 				for (ConnectionBase* c: _connections)
 				{
@@ -416,13 +224,13 @@ EMITER_TEMPLATE_SIGNATURE
 			}
 
 		void
-		operator() (EMITER_PARAMETERS_LIST)
+		operator() (Argument ...arg)
 		{
-			for (ConnectionBase* c: _connections)
-				c->call (EMITER_ARGUMENTS_LIST);
+			for (auto& c: _connections)
+				c->call (arg...);
 		}
 
-		EMITER_TYPENAME Connections::size_type
+		auto
 		connections_number() const noexcept
 		{
 			return _connections.size();
@@ -430,13 +238,15 @@ EMITER_TEMPLATE_SIGNATURE
 
 	  protected:
 		void
-		disconnect (Private::ConnectionBase* connection) noexcept override
+		disconnect (Private::DefaultConnectionBase* connection) noexcept override
 		{
-			EMITER_TYPENAME Connections::iterator i = std::find (_connections.begin(), _connections.end(), connection);
+			typename Connections::iterator i = std::find (_connections.begin(), _connections.end(), connection);
+
 			if (i != _connections.end())
 			{
 				(*i)->receiver()->_connections.remove (connection);
 				delete *i;
+
 				_connections.erase (i);
 			}
 		}
@@ -446,11 +256,6 @@ EMITER_TEMPLATE_SIGNATURE
 	};
 
 } // namespace Signal
-
-#undef EMITER_TEMPLATE_SIGNATURE
-#undef EMITER_TYPENAME
-
-#endif
 
 #endif
 

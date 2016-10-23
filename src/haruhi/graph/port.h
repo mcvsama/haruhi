@@ -310,7 +310,7 @@ class Port:
 	 *
 	 * It is not defined from within what thread this signal will be emitted.
 	 */
-	Signal::Emiter2<EventBackend::EventTypes, EventPort*> learned_connection_signal;
+	Signal::Emiter<EventBackend::EventTypes, EventPort*> learned_connection_signal;
 
   private:
 	Unit*			_unit;

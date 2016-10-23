@@ -131,13 +131,13 @@ template<class tType>
 		/**
 		 * Emitted when parameter has changed:
 		 */
-		Signal::Emiter0 on_change;
+		Signal::Emiter<> on_change;
 
 		/**
 		 * Emitted after on_change when parameter has changed.
 		 * New value is given as parameter.
 		 */
-		Signal::Emiter1<Type> on_change_with_value;
+		Signal::Emiter<Type> on_change_with_value;
 
 	  private:
 		Range<Type>		_range;
@@ -423,13 +423,13 @@ template<class pValueType>
 		/**
 		 * Emitted when parameter has changed:
 		 */
-		Signal::Emiter0 on_change;
+		Signal::Emiter<> on_change;
 
 		/**
 		 * Emitted after on_change when parameter has changed.
 		 * New value is given as parameter.
 		 */
-		Signal::Emiter1<ValueType> on_change_with_value;
+		Signal::Emiter<ValueType> on_change_with_value;
 
 	  private:
 		Atomic<ValueType>	_value;

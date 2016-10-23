@@ -158,13 +158,13 @@ class Backend:
 	 * \param	device Device to be saved as template.
 	 * \thread	UI thread
 	 */
-	Signal::Emiter1<DevicesManager::Device const&> device_saved_as_template;
+	Signal::Emiter<DevicesManager::Device const&> device_saved_as_template;
 
 	/**
 	 * Emitted on each event from transport.
 	 * \thread	Engine thread
 	 */
-	Signal::Emiter1<MIDI::Event const&> on_event;
+	Signal::Emiter<MIDI::Event const&> on_event;
 
   private slots:
 	/**

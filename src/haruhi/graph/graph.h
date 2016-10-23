@@ -212,16 +212,16 @@ class Graph: public RecursiveMutex
   public:
 	// Signals.
 	// It is not defined from within what thread these signals will be emitted.
-	Signal::Emiter1<Unit*>			unit_registered;
-	Signal::Emiter1<Unit*>			unit_unregistered;
-	Signal::Emiter1<Unit*>			unit_retitled;
+	Signal::Emiter<Unit*>			unit_registered;
+	Signal::Emiter<Unit*>			unit_unregistered;
+	Signal::Emiter<Unit*>			unit_retitled;
 	// port_renamed is called also when port's comment is changed:
-	Signal::Emiter1<Port*>			port_renamed;
-	Signal::Emiter2<Port*, Port*>	port_connected_to;
-	Signal::Emiter2<Port*, Port*>	port_disconnected_from;
-	Signal::Emiter2<Port*, Unit*>	port_registered;
-	Signal::Emiter2<Port*, Unit*>	port_unregistered;
-	Signal::Emiter1<PortGroup*>		port_group_renamed;
+	Signal::Emiter<Port*>			port_renamed;
+	Signal::Emiter<Port*, Port*>	port_connected_to;
+	Signal::Emiter<Port*, Port*>	port_disconnected_from;
+	Signal::Emiter<Port*, Unit*>	port_registered;
+	Signal::Emiter<Port*, Unit*>	port_unregistered;
+	Signal::Emiter<PortGroup*>		port_group_renamed;
 
   private:
 	// Set of all registered units:

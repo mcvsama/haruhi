@@ -231,13 +231,13 @@ class PartManager:
 	get_graph_lock() const;
 
   public:
-	Signal::Emiter1<Part*>	part_added;
-	Signal::Emiter1<Part*>	part_removed;
+	Signal::Emiter<Part*>	part_added;
+	Signal::Emiter<Part*>	part_removed;
 
 	/**
 	 * Emited when Part ID has changed.
 	 */
-	Signal::Emiter1<Part*>	part_updated;
+	Signal::Emiter<Part*>	part_updated;
 
   private:
 	Params::Main			_main_params;
