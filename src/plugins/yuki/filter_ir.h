@@ -184,7 +184,7 @@ inline void
 FilterImpulseResponse::set_frequency (Sample frequency) noexcept
 {
 	// Limit frequency to 32Hz…23.99kHz for fs=48kHz
-	frequency = bound (frequency, 0.0006666666f, 0.4997916666f);
+	frequency = clamped (frequency, 0.0006666666f, 0.4997916666f);
 	if (_frequency != frequency)
 	{
 		_frequency = frequency;

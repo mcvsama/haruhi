@@ -91,11 +91,11 @@ ControllerParam::load_state (QDomElement const& element)
 	_adapter.user_limit.set_min (0);
 	_adapter.user_limit.set_max (1);
 	if (element.hasAttribute ("curve"))
-		_adapter.curve = bound (element.attribute ("curve").toFloat(), -1.0f, 1.0f);
+		_adapter.curve = clamped (element.attribute ("curve").toFloat(), -1.0f, 1.0f);
 	if (element.hasAttribute ("user-limit-min"))
-		_adapter.user_limit.set_min (bound (element.attribute ("user-limit-min").toInt(), _adapter.hard_limit.min(), _adapter.hard_limit.max()));
+		_adapter.user_limit.set_min (clamped (element.attribute ("user-limit-min").toInt(), _adapter.hard_limit.min(), _adapter.hard_limit.max()));
 	if (element.hasAttribute ("user-limit-max"))
-		_adapter.user_limit.set_max (bound (element.attribute ("user-limit-max").toInt(), _adapter.hard_limit.min(), _adapter.hard_limit.max()));
+		_adapter.user_limit.set_max (clamped (element.attribute ("user-limit-max").toInt(), _adapter.hard_limit.min(), _adapter.hard_limit.max()));
 	Param<int>::load_state (element);
 	sanitize();
 }
@@ -105,11 +105,11 @@ void
 ControllerParam::sanitize()
 {
 	Param<int>::sanitize();
-	limit_value (_adapter.curve, -1.0f, +1.0f);
-	_adapter.hard_limit.set_min (bound (_adapter.hard_limit.min(), range()));
-	_adapter.hard_limit.set_max (bound (_adapter.hard_limit.max(), _adapter.hard_limit.min(), maximum()));
-	_adapter.user_limit.set_min (bound (_adapter.user_limit.min(), range()));
-	_adapter.user_limit.set_max (bound (_adapter.user_limit.max(), _adapter.user_limit.min(), maximum()));
+	clamp (_adapter.curve, -1.0f, +1.0f);
+	_adapter.hard_limit.set_min (clamped (_adapter.hard_limit.min(), range()));
+	_adapter.hard_limit.set_max (clamped (_adapter.hard_limit.max(), _adapter.hard_limit.min(), maximum()));
+	_adapter.user_limit.set_min (clamped (_adapter.user_limit.min(), range()));
+	_adapter.user_limit.set_max (clamped (_adapter.user_limit.max(), _adapter.user_limit.min(), maximum()));
 }
 
 } // namespace v06

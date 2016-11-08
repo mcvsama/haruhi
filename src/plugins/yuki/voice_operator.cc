@@ -37,7 +37,7 @@ VoiceOperator::fill (Haruhi::AudioBuffer* output, Haruhi::AudioBuffer* fm_output
 	// Oscillate:
 	for (std::size_t i = 0; i < output->size(); ++i)
 	{
-		f = bound (fs[i] * _detune, 0.0f, 0.5f);
+		f = clamped (fs[i] * _detune, 0.0f, 0.5f);
 		p = mod1 (p + f);
 		(*fm_output)[i] = Haruhi::DSP::base_sin<5, Haruhi::Sample> (p * 2.0f - 1.0f);
 	}

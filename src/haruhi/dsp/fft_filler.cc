@@ -88,7 +88,7 @@ FFTFiller::fill (Wavetable* wavetable, unsigned int samples)
 		int range = (int)samples * t.first; // t->first is max_frequency
 
 		int samples_left = 1.0f / (2.0f * t.first);
-		range = bound (range, 0, static_cast<int> (samples));
+		range = clamped (range, 0, static_cast<int> (samples));
 
 		// Clear some frequencies:
 		for (unsigned int i = samples_left + 1; i <= samples - samples_left; ++i)

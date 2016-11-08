@@ -314,10 +314,10 @@ Session::Parameters::save_state (QDomElement& element) const
 void
 Session::Parameters::limit_values()
 {
-	limit_value (tuning, -50, 50);
-	limit_value (transpose, -60, 60);
-	limit_value (tempo, 20.0f, 400.0f);
-	limit_value (master_volume, static_cast<int> (MeterPanel::MinVolume), static_cast<int> (MeterPanel::MaxVolume));
+	clamp (tuning, -50, 50);
+	clamp (transpose, -60, 60);
+	clamp (tempo, 20.0f, 400.0f);
+	clamp (master_volume, static_cast<int> (MeterPanel::MinVolume), static_cast<int> (MeterPanel::MaxVolume));
 }
 
 

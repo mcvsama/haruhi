@@ -44,8 +44,8 @@ HaruhiSettings::load_state (QDomElement const& element)
 			_level_meter_fps = e.text().toInt();
 	}
 
-	limit_value (_engine_thread_priority, 1, 99);
-	limit_value (_level_meter_fps, 10, 50);
+	clamp (_engine_thread_priority, 1, 99);
+	clamp (_level_meter_fps, 10, 50);
 }
 
 

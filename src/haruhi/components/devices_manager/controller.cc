@@ -226,7 +226,7 @@ Controller::handle_event (MIDI::Event const& midi_event, Device& device, EventBu
 					value = 127 - value;
 				if (key_pressure_filter && (key_pressure_channel == 0 || key_pressure_channel == midi_event.key_pressure.channel + 1))
 				{
-					unsigned int key = bound (static_cast<unsigned int> (midi_event.key_pressure.note), 0u, 127u);
+					unsigned int key = clamped (static_cast<unsigned int> (midi_event.key_pressure.note), 0u, 127u);
 					// KeyPressure before NoteOn? A buggy device:
 					if (device._voice_ids[key] == OmniVoice)
 						break;
@@ -417,7 +417,7 @@ Controller::controller_smoothing_setup (Time t, float target, Time min_ms, Time 
 {
 	double dt = sample_rate * 1_us * (t - _controller_smoother.prev_timestamp).us();
 	_controller_smoother.target = target;
-	_controller_smoother.smoother.set_samples (bound (dt, min_ms * sample_rate, max_ms * sample_rate));
+	_controller_smoother.smoother.set_samples (clamped (dt, min_ms * sample_rate, max_ms * sample_rate));
 	_controller_smoother.prev_timestamp = t;
 }
 
@@ -427,7 +427,7 @@ Controller::channel_pressure_smoothing_setup (Time t, float target, Time min_ms,
 {
 	double dt = sample_rate * 1_us * (t - _channel_pressure_smoother.prev_timestamp).us();
 	_channel_pressure_smoother.target = target;
-	_channel_pressure_smoother.smoother.set_samples (bound (dt, min_ms * sample_rate, max_ms * sample_rate));
+	_channel_pressure_smoother.smoother.set_samples (clamped (dt, min_ms * sample_rate, max_ms * sample_rate));
 	_channel_pressure_smoother.prev_timestamp = t;
 }
 
@@ -437,7 +437,7 @@ Controller::key_pressure_smoothing_setup (unsigned int key, Time t, float target
 {
 	double dt = sample_rate * 1_us * (t - _key_pressure_smoother[key].prev_timestamp).us();
 	_key_pressure_smoother[key].target = target;
-	_key_pressure_smoother[key].smoother.set_samples (bound (dt, min_ms * sample_rate, max_ms * sample_rate));
+	_key_pressure_smoother[key].smoother.set_samples (clamped (dt, min_ms * sample_rate, max_ms * sample_rate));
 	_key_pressure_smoother[key].prev_timestamp = t;
 }
 
