@@ -365,6 +365,7 @@ SRC_HEADERS += haruhi/utility/hertz.h
 SRC_HEADERS += haruhi/utility/id_allocator.h
 SRC_HEADERS += haruhi/utility/lexical_cast.h
 SRC_HEADERS += haruhi/utility/literals.h
+SRC_HEADERS += haruhi/utility/log_scale.h
 SRC_HEADERS += haruhi/utility/lookup_pow.h
 SRC_HEADERS += haruhi/utility/memory.h
 SRC_HEADERS += haruhi/utility/mutex.h
