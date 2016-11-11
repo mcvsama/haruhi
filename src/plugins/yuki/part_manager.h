@@ -235,7 +235,7 @@ class PartManager:
 	Signal::Emiter<Part*>	part_removed;
 
 	/**
-	 * Emited when Part ID has changed.
+	 * Emitted when Part ID has changed.
 	 */
 	Signal::Emiter<Part*>	part_updated;
 
