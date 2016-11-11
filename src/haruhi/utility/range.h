@@ -37,6 +37,9 @@ template<class tValueType>
 		constexpr
 		Range (Range const& other) noexcept;
 
+		/**
+		 * Covariance-enabling operator.
+		 */
 		template<class OtherType>
 			constexpr
 			operator Range<OtherType>() const noexcept
@@ -50,10 +53,10 @@ template<class tValueType>
 		constexpr ValueType
 		max() const noexcept;
 
-		void
+		constexpr void
 		set_min (ValueType min) noexcept;
 
-		void
+		constexpr void
 		set_max (ValueType max) noexcept;
 
 		/**
@@ -61,6 +64,12 @@ template<class tValueType>
 		 */
 		constexpr ValueType
 		extent() const noexcept;
+
+		/**
+		 * Return true if given value is included in the range.
+		 */
+		constexpr bool
+		includes (ValueType x) const noexcept;
 
 		/**
 		 * Swap minimum and maximum values.
@@ -97,25 +106,23 @@ template<class T>
 
 
 template<class T>
-	constexpr
-	typename Range<T>::ValueType
-	Range<T>::min() const noexcept
+	constexpr auto
+	Range<T>::min() const noexcept -> ValueType
 	{
 		return _min;
 	}
 
 
 template<class T>
-	constexpr
-	typename Range<T>::ValueType
-	Range<T>::max() const noexcept
+	constexpr auto
+	Range<T>::max() const noexcept -> ValueType
 	{
 		return _max;
 	}
 
 
 template<class T>
-	void
+	constexpr void
 	Range<T>::set_min (ValueType min) noexcept
 	{
 		_min = min;
@@ -123,7 +130,7 @@ template<class T>
 
 
 template<class T>
-	void
+	constexpr void
 	Range<T>::set_max (ValueType max) noexcept
 	{
 		_max = max;
@@ -131,16 +138,23 @@ template<class T>
 
 
 template<class T>
-	constexpr
-	typename Range<T>::ValueType
-	Range<T>::extent() const noexcept
+	constexpr auto
+	Range<T>::extent() const noexcept -> ValueType
 	{
 		return _max - _min;
 	}
 
 
 template<class T>
-	void
+	constexpr bool
+	Range<T>::includes (ValueType x) const noexcept
+	{
+		return min() <= x && x <= max();
+	}
+
+
+template<class T>
+	inline void
 	Range<T>::flip()
 	{
 		std::swap (_min, _max);
