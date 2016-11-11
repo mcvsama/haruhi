@@ -17,6 +17,10 @@
 // Standard:
 #include <cstddef>
 #include <string>
+#include <memory>
+
+// Lib:
+#include <boost/format.hpp>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -26,106 +30,173 @@
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/range.h>
 
+// Local:
+#include "param_v06.h"
+
 
 namespace Haruhi {
 
-namespace v06 {
+namespace v07 {
 
 /**
- * Defines common base methods for all types of parameters.
+ * Defines internal resolution of 'continuous' parameters. Used by _pf operator.
  */
-class BasicParam: public SaveableState
+constexpr int64_t kParamFloatDenominator = 1'000'000'000;
+
+
+/**
+ * floats/doubles can't be passed as template parameters, but integers can. We don't need float/doubles for parameters,
+ * really, we can use fixed-point values or something alike. _pf returns x * kParamFloatDenominator which can be later
+ * divided by kParamFloatDenominator to get floating-point value.
+ *
+ * Eg. usage: ParamSomething<0.5_pf, 1.0_pf>.
+ */
+constexpr int64_t operator"" _pf (long double x)
+{
+	return x * kParamFloatDenominator;
+}
+
+
+/**
+ * UI traits for continuous parameter
+ * (parameter name, shown range, format, unit suffix, etc).
+ */
+class FloatParamUITraits
 {
   public:
-	virtual ~BasicParam() = default;
+	// Ctor
+	FloatParamUITraits (std::string name, boost::format format, std::string suffix);
 
-	/**
-	 * Return parameter unique name.
-	 */
-	virtual const char*
-	name() const noexcept = 0;
-
-	/**
-	 * Resets parameter to default value.
-	 */
-	virtual void
-	reset() = 0;
-
-	/**
-	 * Enforces value to be between [minimum, maximum].
-	 */
-	virtual void
-	sanitize() = 0;
+  private:
+	std::string		_name;
+	boost::format	_format;
+	std::string		_suffix;
 };
 
 
 /**
- * General type parameter supporting
- * min/max and sanitization.
+ * UI traits for enum-type parameter
+ * (list of available enumeration names, parameter name).
  */
-template<class tType>
-	class Param: public BasicParam
+class EnumParamUITraits
+{
+	// TODO
+};
+
+
+/**
+ * UI traits for bool-type parameter
+ * (essentially the parameter name).
+ */
+class BoolParamUITraits
+{
+	// TODO
+};
+
+
+/**
+ * User-configurable settings for an continuous parameter.
+ */
+class FloatParamSettings
+{
+  public:
+	float			curve		= 0.0;
+	Range<int64_t>	user_range	= { 0, 0 };
+};
+
+
+// Forward:
+template<class pParamValue>
+	class FloatParam;
+
+// Forward:
+template<class pParamValue>
+	class EnumParam;
+
+// Forward:
+template<class pParamValue>
+	class BoolParam;
+
+
+/**
+ * Float parameter value. Contains only the value and a reference to Settings object.
+ * Use for each voice in polyphonic synthesizer.
+ *
+ * \param	MinimumValue
+ *			Minimum allowed value for parameter. Use operator""_pf (eg. 0.5_pf);
+ * \param	MaximumValue
+ *			Maximum allowed value for parameter. Use operator""_pf.
+ * \param	DefaultValue
+ *			Default value for the parameter, also used when reset() is called. Use operator""_pf.
+ * \param	NeutralValue
+ *			"Neutral" value for parameters, needed to correctly apply user-defined sensitivity curve
+ *			for the parameter. Use operator""_pf.
+ */
+template<int64_t MinimumValue, int64_t MaximumValue, int64_t DefaultValue, int64_t NeutralValue>
+	class FloatParamValue
 	{
 	  public:
-		typedef tType Type;
+		typedef int64_t	Value;
 
 	  public:
-		constexpr
-		Param (const char* name = "") noexcept;
+		// Ctor
+		FloatParamValue (std::shared_ptr<FloatParamSettings>);
 
-		constexpr
-		Param (Range<Type> range, Type default_value, const char* name) noexcept;
+		// Ctor
+		FloatParamValue (FloatParam<FloatParamValue> const&);
 
-		Param (Param const& other) noexcept;
+		// Ctor
+		FloatParamValue (FloatParamValue const&);
 
-		Param&
-		operator= (Param const& other) noexcept;
+		// =
+		FloatParamValue const&
+		operator= (FloatParam<FloatParamValue> const&);
 
-		operator Type() const noexcept;
+		// =
+		FloatParamValue const&
+		operator= (FloatParamValue const&);
 
-		void
-		operator= (Type const& value);
-
-		Type
-		get() const noexcept;
-
-		void
-		set (Type const& value);
-
-		Type
-		minimum() const noexcept;
-
-		Type
-		maximum() const noexcept;
-
-		Range<Type> const&
-		range() const noexcept;
-
-		Type
-		default_value() const noexcept;
-
-		/*
-		 * BasicParam implementation
+		/**
+		 * Atomically get parameter's value.
+		 *
+		 * \threadsafe
 		 */
+		Value
+		internal_get() const noexcept;
 
-		const char*
-		name() const noexcept override;
-
-		void
-		reset() override;
-
-		void
-		sanitize() override;
-
-		/*
-		 * SaveableState implementation
+		/**
+		 * Atomically assign new value to the parameter.
+		 *
+		 * \threadsafe
+		 *		If on_change and on_change_with_value are also threadsafe.
 		 */
-
 		void
-		save_state (QDomElement& parent) const override;
+		internal_set (Value new_value);
 
-		void
-		load_state (QDomElement const& parent) override;
+	  public:
+		/**
+		 * Return allowed range for this parameter.
+		 */
+		static constexpr Range<Value>
+		value_range();
+
+		/**
+		 * Return default value, set after reset().
+		 */
+		static constexpr Value
+		default_value();
+
+		/**
+		 * Return neutral value (used for user-defined curves).
+		 */
+		static constexpr Value
+		neutral_value();
+
+		/**
+		 * Sanitize input value - limit it to value_range().
+		 */
+		static constexpr Value
+		sanitize (Value value);
 
 	  public:
 		/**
@@ -137,171 +208,189 @@ template<class tType>
 		 * Emitted after on_change when parameter has changed.
 		 * New value is given as parameter.
 		 */
-		Signal::Emiter<Type> on_change_with_value;
+		Signal::Emiter<Value> on_change_with_value;
 
 	  private:
-		Range<Type>		_range;
-		Type			_default_value;
-		Atomic<Type>	_value;
-		std::string		_name;
+		std::atomic<Value>					_value		{ DefaultValue };
+		std::atomic<float>					_modulator	{ 0.0 };
+		std::shared_ptr<FloatParamSettings>	_settings;
+
+		static_assert (value_range().includes (default_value()), "DefaultValue outside declared range");
+		static_assert (value_range().includes (neutral_value()), "NeutralValue outside declared range");
 	};
 
 
-template<class tType>
-	inline constexpr
-	Param<tType>::Param (const char* name) noexcept:
-		_range (0, 0),
-		_default_value (0),
-		_value (0),
-		_name (name)
-	{ }
-
-
-template<class tType>
-	inline constexpr
-	Param<tType>::Param (Range<Type> range, Type default_value, const char* name) noexcept:
-		_range (range),
-		_default_value (default_value),
-		_value (default_value),
-		_name (name)
-	{ }
-
-
-template<class tType>
-	inline
-	Param<tType>::Param (Param const& other) noexcept
+/**
+ * Enumerated parameter value. Contains only the value and a reference to Settings object.
+ * Use for each voice in polyphonic synthesizer.
+ *
+ * \param	MinimumValue
+ *			Minimum allowed value for parameter.
+ * \param	MaximumValue
+ *			Maximum allowed value for parameter.
+ * \param	DefaultValue
+ *			Default value for the parameter, also used when reset() is called. Use operator""_pf.
+ */
+template<int64_t MinimumValue, int64_t MaximumValue, int64_t DefaultValue>
+	class EnumParamValue
 	{
-		operator= (other);
-	}
+	  public:
+		typedef int64_t	Value;
 
+	  public:
+		// Ctor
+		EnumParamValue();
 
-template<class tType>
-	inline Param<tType>&
-	Param<tType>::operator= (Param const& other) noexcept
-	{
-		_range = other._range;
-		_default_value = other._default_value;
-		_value.store (other._value.load());
-		_name = other._name;
-		on_change();
-		on_change_with_value (_value.load());
-		return *this;
-	}
+		// Ctor
+		EnumParamValue (EnumParam<EnumParamValue> const&);
 
+		// Ctor
+		EnumParamValue (EnumParamValue const&);
 
-template<class tType>
-	inline
-	Param<tType>::operator Type() const noexcept
-	{
-		return get();
-	}
+		// =
+		EnumParamValue const&
+		operator= (EnumParam<EnumParamValue> const&);
 
+		// =
+		EnumParamValue const&
+		operator= (EnumParamValue const&);
 
-template<class tType>
-	inline void
-	Param<tType>::operator= (Type const& value)
-	{
-		set (value);
-	}
+		/**
+		 * Atomically get parameter's value.
+		 *
+		 * \threadsafe
+		 */
+		Value
+		internal_get() const noexcept;
 
+		/**
+		 * Atomically assign new value to the parameter.
+		 *
+		 * \threadsafe
+		 *		If on_change and on_change_with_value are also threadsafe.
+		 */
+		void
+		internal_set (Value new_value);
 
-template<class tType>
-	inline tType
-	Param<tType>::get() const noexcept
-	{
-		return _value.load();
-	}
+	  public:
+		/**
+		 * Return allowed range for this parameter.
+		 */
+		static constexpr Range<Value>
+		value_range();
 
+		/**
+		 * Return default value, set after reset().
+		 */
+		static constexpr Value
+		default_value();
 
-template<class tType>
-	inline void
-	Param<tType>::set (Type const& value)
-	{
-		_value.store (value);
-		on_change();
-		on_change_with_value (value);
-	}
+		/**
+		 * Sanitize input value - limit it to value_range().
+		 */
+		static constexpr Value
+		sanitize (Value value);
 
+	  public:
+		/**
+		 * Emitted when parameter has changed:
+		 */
+		Signal::Emiter<> on_change;
 
-template<class tType>
-	inline tType
-	Param<tType>::minimum() const noexcept
-	{
-		return _range.min();
-	}
+		/**
+		 * Emitted after on_change when parameter has changed.
+		 * New value is given as parameter.
+		 */
+		Signal::Emiter<Value> on_change_with_value;
 
+	  private:
+		std::atomic<Value> _value { DefaultValue };
 
-template<class tType>
-	inline tType
-	Param<tType>::maximum() const noexcept
-	{
-		return _range.max();
-	}
+		static_assert (value_range().includes (default_value()), "DefaultValue outside declared range");
+	};
 
-
-template<class tType>
-	inline Range<tType> const&
-	Param<tType>::range() const noexcept
-	{
-		return _range;
-	}
-
-
-template<class tType>
-	inline tType
-	Param<tType>::default_value() const noexcept
-	{
-		return _default_value;
-	}
-
-
-template<class tType>
-	inline const char*
-	Param<tType>::name() const noexcept
-	{
-		return _name.c_str();
-	}
-
-
-template<class tType>
-	inline void
-	Param<tType>::reset()
-	{
-		set (_default_value);
-	}
-
-
-template<class tType>
-	inline void
-	Param<tType>::sanitize()
-	{
-		set (bound (get(), _range));
-	}
-
-
-template<class tType>
-	inline void
-	Param<tType>::save_state (QDomElement& parent) const
-	{
-		parent.appendChild (parent.ownerDocument().createTextNode (QString::number (get())));
-	}
-
-
-template<class tType>
-	inline void
-	Param<tType>::load_state (QDomElement const& parent)
-	{
-		set (bound<int> (parent.text().toInt(), _range));
-		sanitize();
-	}
-
-} // namespace v06
-
-
-namespace v07 {
 
 /**
- * Defines required methods for all types of parameters.
+ * Boolean parameter value. Contains only the value and a reference to Settings object.
+ * Use for each voice in polyphonic synthesizer.
+ *
+ * \param	DefaultValue
+ *			Default value for the parameter, also used when reset() is called. Use operator""_pf.
+ */
+template<bool DefaultValue>
+	class BoolParamValue
+	{
+	  public:
+		typedef bool Value;
+
+	  public:
+		// Ctor
+		BoolParamValue();
+
+		// Ctor
+		BoolParamValue (BoolParam<BoolParamValue> const&);
+
+		// Ctor
+		BoolParamValue (BoolParamValue const&);
+
+		// =
+		BoolParamValue const&
+		operator= (BoolParam<BoolParamValue> const&);
+
+		// =
+		BoolParamValue const&
+		operator= (BoolParamValue const&);
+
+		/**
+		 * Atomically get parameter's value.
+		 *
+		 * \threadsafe
+		 */
+		Value
+		internal_get() const noexcept;
+
+		/**
+		 * Atomically assign new value to the parameter.
+		 *
+		 * \threadsafe
+		 *		If on_change and on_change_with_value are also threadsafe.
+		 */
+		void
+		internal_set (Value new_value);
+
+	  public:
+		/**
+		 * Return default value, set after reset().
+		 */
+		static constexpr Value
+		default_value();
+
+		/**
+		 * Sanitize input value - limit it to value_range().
+		 */
+		static constexpr Value
+		sanitize (Value value);
+
+	  public:
+		/**
+		 * Emitted when parameter has changed:
+		 */
+		Signal::Emiter<> on_change;
+
+		/**
+		 * Emitted after on_change when parameter has changed.
+		 * New value is given as parameter.
+		 */
+		Signal::Emiter<Value> on_change_with_value;
+
+	  private:
+		std::atomic<Value> _value { DefaultValue };
+	};
+
+
+/**
+ * Common base for *Param objects.
+ * *Param object is ready to receive values from Event objects. Applies user settings (limits, curve, etc).
  */
 class BasicParam: public SaveableState
 {
@@ -310,10 +399,10 @@ class BasicParam: public SaveableState
 	 * Ctor
 	 *
 	 * \param	identifier
-	 * 			Unique identifier of the parameter. Used eg. in save-files.
+	 *			Unique identifier of the parameter. Used eg. in save-files.
 	 */
 	explicit
-	BasicParam (std::string const& identifier);
+	BasicParam (std::string identifier);
 
 	// Dtor
 	virtual ~BasicParam() = default;
@@ -321,20 +410,14 @@ class BasicParam: public SaveableState
 	/**
 	 * Return parameter unique identifier.
 	 */
-	virtual std::string const&
+	std::string const&
 	identifier() const noexcept;
 
 	/**
-	 * Resets parameter to default value.
+	 * Reset to default value.
 	 */
 	virtual void
 	reset() = 0;
-
-	/**
-	 * Enforces value to be between [minimum, maximum].
-	 */
-	virtual void
-	sanitize() = 0;
 
   private:
 	std::string	_identifier;
@@ -342,75 +425,74 @@ class BasicParam: public SaveableState
 
 
 /**
- * Represent atomic parameter.
+ * Monophonic continuous parameter (volume, phase, panorama, amplitude, level, etc).
  *
- * \param	pValueType
- * 			Type of the internal parameter, usually int or bool.
- * 			Since it's used with atomic operations, it's necessary that it's a basic type that fit into CPU register.
+ * Corresponding UI widget would be a knob or a slider.
+ *
+ * \param	ParamValue
+ *			Concrete ParamValue type.
  */
-template<class pValueType>
-	class Param: public BasicParam
+template<class pParamValue>
+	class FloatParam: public BasicParam
 	{
+		friend pParamValue;
+
 	  public:
-		typedef pValueType	ValueType;
+		typedef pParamValue	ParamValue;
 
 	  public:
 		/**
 		 * Ctor
 		 *
 		 * \param	identifier
-		 *			BasicParam's identifier.
-		 * \param	initial_value
-		 *			Initial value for the parameter.
+		 *			Param's identifier.
 		 */
-		explicit
-		Param (std::string const& identifier, ValueType initial_value = ValueType());
+		FloatParam (std::string identifier, FloatParamUITraits ui_traits);
 
-		// Copy ctor
-		Param (Param const& other) noexcept;
+		// Prevent copying
+		FloatParam (FloatParam const&) = delete;
+
+		// Prevent copying
+		FloatParam&
+		operator= (FloatParam const&) = delete;
 
 		/**
-		 * Copy operator. Copies all information, including param's identifier, to be consistent with copy constructor.
+		 * Return reference to FloatParamValue for this param.
 		 */
-		Param const&
-		operator= (Param const& other) noexcept;
+		ParamValue const&
+		param_value() const;
 
 		/**
-		 * Call set (new_value).
-		 *
-		 * \threadsafe
+		 * Return reference to FloatParamValue for this param.
+		 */
+		ParamValue&
+		param_value();
+
+		/**
+		 * Get user-settings for this parameter.
+		 */
+		FloatParamSettings const&
+		settings() const;
+
+		/**
+		 * Set new user-settings for this parameter.
 		 */
 		void
-		operator= (ValueType new_value) noexcept;
-
-		/**
-		 * Atomically get parameter's value.
-		 *
-		 * \threadsafe
-		 */
-		ValueType
-		get() const noexcept;
-
-		/**
-		 * Atomically assign new value to the parameter.
-		 *
-		 * \threadsafe
-		 */
-		void
-		set (ValueType new_value) noexcept;
+		set_settings (FloatParamSettings const&);
 
 		/*
-		 * BasicParam implementation
+		 * BasicParam
 		 */
 
+		/**
+		 * \threadsafe
+		 *		If on_change and on_change_with_value are also threadsafe.
+		 */
 		void
 		reset() override;
 
-		void
-		sanitize() override;
-
 		/*
-		 * SaveableState implementation
+		 * SaveableState
 		 */
 
 		void
@@ -419,25 +501,450 @@ template<class pValueType>
 		void
 		load_state (QDomElement const& parent) override;
 
-	  public:
-		/**
-		 * Emitted when parameter has changed:
-		 */
-		Signal::Emiter<> on_change;
-
-		/**
-		 * Emitted after on_change when parameter has changed.
-		 * New value is given as parameter.
-		 */
-		Signal::Emiter<ValueType> on_change_with_value;
-
 	  private:
-		Atomic<ValueType>	_value;
+		std::shared_ptr<FloatParamSettings>	_settings;
+		ParamValue							_param_value;
+		FloatParamUITraits					_param_ui_traits;
 	};
 
 
+/**
+ * Monophonic enumerated parameter (wave type, modulation index, etc).
+ *
+ * Corresponding UI widget would be a combo-box, but a knob or a slider with discrete steps is an option, too.
+ *
+ * \param	ParamValue
+ *			Concrete ParamValue type.
+ */
+template<class pParamValue>
+	class EnumParam: public BasicParam
+	{
+		friend pParamValue;
+
+	  public:
+		typedef pParamValue	ParamValue;
+
+	  public:
+		/**
+		 * Ctor
+		 *
+		 * \param	identifier
+		 *			Param's identifier.
+		 */
+		EnumParam (std::string identifier, EnumParamUITraits ui_traits);
+
+		// Prevent copying
+		EnumParam (EnumParam const&) = delete;
+
+		// Prevent copying
+		EnumParam&
+		operator= (EnumParam const&) = delete;
+
+		/**
+		 * Return reference to EnumParamValue for this param.
+		 */
+		ParamValue const&
+		param_value() const;
+
+		/**
+		 * Return reference to EnumParamValue for this param.
+		 */
+		ParamValue&
+		param_value();
+
+		/*
+		 * BasicParam
+		 */
+
+		/**
+		 * \threadsafe
+		 *		If on_change and on_change_with_value are also threadsafe.
+		 */
+		void
+		reset() override;
+
+		/*
+		 * SaveableState
+		 */
+
+		void
+		save_state (QDomElement& parent) const override
+		{
+			// TODO out to param.cc
+			parent.appendChild (parent.ownerDocument().createTextNode (QString::number (_param_value.internal_get())));
+			// TODO settings
+		}
+
+		void
+		load_state (QDomElement const& parent) override
+		{
+			// TODO out to param.cc
+			_param_value.internal_set (parent.text().toLongLong());
+			// TODO settings
+		}
+
+	  private:
+		ParamValue _param_value;
+	};
+
+
+/**
+ * Monophonic boolean parameter (wave type, modulation index, etc).
+ *
+ * Corresponding UI widget would be a button.
+ *
+ * \param	ParamValue
+ *			Concrete ParamValue type.
+ */
+template<class pParamValue>
+	class BoolParam: public BasicParam
+	{
+		friend pParamValue;
+
+	  public:
+		typedef pParamValue	ParamValue;
+
+	  public:
+		/**
+		 * Ctor
+		 *
+		 * \param	identifier
+		 *			Param's identifier.
+		 */
+		BoolParam (std::string identifier, BoolParamUITraits ui_traits);
+
+		// Prevent copying
+		BoolParam (BoolParam const&) = delete;
+
+		// Prevent copying
+		BoolParam&
+		operator= (BoolParam const&) = delete;
+
+		/**
+		 * Return reference to BoolParamValue for this param.
+		 */
+		ParamValue const&
+		param_value() const;
+
+		/**
+		 * Return reference to BoolParamValue for this param.
+		 */
+		ParamValue&
+		param_value();
+
+		/*
+		 * BasicParam
+		 */
+
+		/**
+		 * \threadsafe
+		 *		If on_change and on_change_with_value are also threadsafe.
+		 */
+		void
+		reset() override;
+
+		/*
+		 * SaveableState
+		 */
+
+		void
+		save_state (QDomElement& parent) const override
+		{
+			// TODO out to param.cc
+			parent.appendChild (parent.ownerDocument().createTextNode (QString::number (!!_param_value.internal_get())));
+			// TODO settings
+		}
+
+		void
+		load_state (QDomElement const& parent) override
+		{
+			// TODO out to param.cc
+			_param_value.internal_set (!!parent.text().toLongLong());
+			// TODO settings
+		}
+
+	  private:
+		ParamValue _param_value;
+	};
+
+
+/*
+ * Shorthands
+ */
+
+
+template<int64_t MinimumValue, int64_t MaximumValue, int64_t DefaultValue, int64_t NeutralValue>
+	using FloatParamS = FloatParam<FloatParamValue<MinimumValue, MaximumValue, DefaultValue, NeutralValue>>;
+
+template<int64_t MinimumValue, int64_t MaximumValue, int64_t DefaultValue>
+	using EnumParamS = EnumParam<EnumParamValue<MinimumValue, MaximumValue, DefaultValue>>;
+
+template<int64_t DefaultValue>
+	using BoolParamS = BoolParam<BoolParamValue<DefaultValue>>;
+
+
 inline
-BasicParam::BasicParam (std::string const& identifier):
+FloatParamUITraits::FloatParamUITraits (std::string name, boost::format format, std::string suffix):
+	_name (name),
+	_format (format),
+	_suffix (suffix)
+{ }
+
+
+template<int64_t M, int64_t X, int64_t D, int64_t N>
+	inline
+	FloatParamValue<M, X, D, N>::FloatParamValue (std::shared_ptr<FloatParamSettings> settings):
+		_settings (settings)
+	{ }
+
+
+template<int64_t M, int64_t X, int64_t D, int64_t N>
+	inline
+	FloatParamValue<M, X, D, N>::FloatParamValue (FloatParam<FloatParamValue> const& param):
+		_value (param._value.load()),
+		_modulator (param._modulator.load()),
+		_settings (param._settings)
+	{ }
+
+
+template<int64_t M, int64_t X, int64_t D, int64_t N>
+	inline
+	FloatParamValue<M, X, D, N>::FloatParamValue (FloatParamValue const& other):
+		_value (other._value.load()),
+		_modulator (other._modulator.load()),
+		_settings (other._settings)
+	{ }
+
+
+template<int64_t M, int64_t X, int64_t D, int64_t N>
+	inline FloatParamValue<M, X, D, N> const&
+	FloatParamValue<M, X, D, N>::operator= (FloatParam<FloatParamValue> const& param)
+	{
+		_value = param._value.load();
+		_modulator = param._modulator.load();
+		_settings = param._settings;
+		return *this;
+	}
+
+
+template<int64_t M, int64_t X, int64_t D, int64_t N>
+	inline FloatParamValue<M, X, D, N> const&
+	FloatParamValue<M, X, D, N>::operator= (FloatParamValue const& other)
+	{
+		_value = other._value.load();
+		_modulator = other._modulator.load();
+		_settings = other._settings;
+		return *this;
+	}
+
+
+template<int64_t M, int64_t X, int64_t D, int64_t N>
+	inline auto
+	FloatParamValue<M, X, D, N>::internal_get() const noexcept -> Value
+	{
+		return _value.load (std::memory_order_relaxed);
+	}
+
+
+template<int64_t M, int64_t X, int64_t D, int64_t N>
+	inline void
+	FloatParamValue<M, X, D, N>::internal_set (Value new_value)
+	{
+		new_value = sanitize (new_value);
+		_value.store (new_value, std::memory_order_relaxed);
+		on_change();
+		on_change_with_value (new_value);
+	}
+
+
+template<int64_t M, int64_t X, int64_t D, int64_t N>
+	constexpr auto
+	FloatParamValue<M, X, D, N>::value_range() -> Range<Value>
+	{
+		return { M, X };
+	}
+
+
+template<int64_t M, int64_t X, int64_t D, int64_t N>
+	constexpr auto
+	FloatParamValue<M, X, D, N>::default_value() -> Value
+	{
+		return D;
+	}
+
+
+template<int64_t M, int64_t X, int64_t D, int64_t N>
+	constexpr auto
+	FloatParamValue<M, X, D, N>::neutral_value() -> Value
+	{
+		return N;
+	}
+
+
+template<int64_t M, int64_t X, int64_t D, int64_t N>
+	constexpr auto
+	FloatParamValue<M, X, D, N>::sanitize (Value value) -> Value
+	{
+		return clamped (value, value_range());
+	}
+
+
+template<int64_t M, int64_t X, int64_t D>
+	inline
+	EnumParamValue<M, X, D>::EnumParamValue()
+	{ }
+
+
+template<int64_t M, int64_t X, int64_t D>
+	inline
+	EnumParamValue<M, X, D>::EnumParamValue (EnumParam<EnumParamValue> const& param):
+		_value (param._value.load())
+	{ }
+
+
+template<int64_t M, int64_t X, int64_t D>
+	inline
+	EnumParamValue<M, X, D>::EnumParamValue (EnumParamValue const& other):
+		_value (other._value.load())
+	{ }
+
+
+template<int64_t M, int64_t X, int64_t D>
+	inline EnumParamValue<M, X, D> const&
+	EnumParamValue<M, X, D>::operator= (EnumParam<EnumParamValue> const& param)
+	{
+		_value = param._value.load();
+		return *this;
+	}
+
+
+template<int64_t M, int64_t X, int64_t D>
+	inline EnumParamValue<M, X, D> const&
+	EnumParamValue<M, X, D>::operator= (EnumParamValue const& other)
+	{
+		_value = other._value.load();
+		return *this;
+	}
+
+
+template<int64_t M, int64_t X, int64_t D>
+	inline auto
+	EnumParamValue<M, X, D>::internal_get() const noexcept -> Value
+	{
+		return _value.load (std::memory_order_relaxed);
+	}
+
+
+template<int64_t M, int64_t X, int64_t D>
+	inline void
+	EnumParamValue<M, X, D>::internal_set (Value new_value)
+	{
+		new_value = sanitize (new_value);
+		_value.store (new_value, std::memory_order_relaxed);
+		on_change();
+		on_change_with_value (new_value);
+	}
+
+
+template<int64_t M, int64_t X, int64_t D>
+	constexpr auto
+	EnumParamValue<M, X, D>::value_range() -> Range<Value>
+	{
+		return { M, X };
+	}
+
+
+template<int64_t M, int64_t X, int64_t D>
+	constexpr auto
+	EnumParamValue<M, X, D>::default_value() -> Value
+	{
+		return D;
+	}
+
+
+template<int64_t M, int64_t X, int64_t D>
+	constexpr auto
+	EnumParamValue<M, X, D>::sanitize (Value value) -> Value
+	{
+		return clamped (value, value_range());
+	}
+
+
+template<bool D>
+	inline
+	BoolParamValue<D>::BoolParamValue()
+	{ }
+
+
+template<bool D>
+	inline
+	BoolParamValue<D>::BoolParamValue (BoolParam<BoolParamValue> const& param):
+		_value (param._value.load())
+	{ }
+
+
+template<bool D>
+	inline
+	BoolParamValue<D>::BoolParamValue (BoolParamValue const& other):
+		_value (other._value.load())
+	{ }
+
+
+template<bool D>
+	inline BoolParamValue<D> const&
+	BoolParamValue<D>::operator= (BoolParam<BoolParamValue> const& param)
+	{
+		_value = param._value.load();
+		return *this;
+	}
+
+
+template<bool D>
+	inline BoolParamValue<D> const&
+	BoolParamValue<D>::operator= (BoolParamValue const& other)
+	{
+		_value = other._value.load();
+		return *this;
+	}
+
+
+template<bool D>
+	inline auto
+	BoolParamValue<D>::internal_get() const noexcept -> Value
+	{
+		return _value.load (std::memory_order_relaxed);
+	}
+
+
+template<bool D>
+	inline void
+	BoolParamValue<D>::internal_set (Value new_value)
+	{
+		new_value = sanitize (new_value);
+		_value.store (new_value, std::memory_order_relaxed);
+		on_change();
+		on_change_with_value (new_value);
+	}
+
+
+template<bool D>
+	constexpr auto
+	BoolParamValue<D>::default_value() -> Value
+	{
+		return D;
+	}
+
+
+template<bool D>
+	constexpr auto
+	BoolParamValue<D>::sanitize (Value value) -> Value
+	{
+		return !!value;
+	}
+
+
+inline
+BasicParam::BasicParam (std::string identifier):
 	_identifier (identifier)
 { }
 
@@ -449,79 +956,72 @@ BasicParam::identifier() const noexcept
 }
 
 
-template<class T>
+template<class P>
 	inline
-	Param<T>::Param (std::string const& identifier, ValueType value):
+	FloatParam<P>::FloatParam (std::string identifier, FloatParamUITraits ui_traits):
 		BasicParam (identifier),
-		_value (value)
+		_settings (std::make_shared<FloatParamSettings>()),
+		_param_value (_settings),
+		_param_ui_traits (ui_traits)
 	{ }
 
 
-template<class T>
-	inline
-	Param<T>::Param (Param const& other) noexcept:
-		BasicParam (other.identifier()),
-		_value (other.get())
-	{ }
-
-
-template<class T>
-	inline Param<T> const&
-	Param<T>::operator= (Param<T> const& other) noexcept
+template<class P>
+	inline auto
+	FloatParam<P>::param_value() const -> ParamValue const&
 	{
-		auto new_value = other.get();
-		BasicParam::operator= (other);
-		set (new_value);
-		return *this;
+		return _param_value;
 	}
 
 
-template<class T>
-	inline void
-	Param<T>::operator= (ValueType new_value) noexcept
+template<class P>
+	inline auto
+	FloatParam<P>::param_value() -> ParamValue&
 	{
-		set (new_value);
+		return _param_value;
 	}
 
 
-template<class T>
-	inline typename Param<T>::ValueType
-	Param<T>::get() const noexcept
+template<class P>
+	inline FloatParamSettings const&
+	FloatParam<P>::settings() const
 	{
-		return _value.load (std::memory_order_relaxed);
+		return *_settings.get();
 	}
 
 
-template<class T>
+template<class P>
 	inline void
-	Param<T>::set (ValueType new_value) noexcept
+	FloatParam<P>::set_settings (FloatParamSettings const& settings)
 	{
-		_value.store (new_value, std::memory_order_relaxed);
-		on_change();
-		on_change_with_value (new_value);
+		_settings = std::make_shared<FloatParamSettings> (settings);
 	}
 
 
-#if 0
-template<class T>
+template<class P>
 	inline void
-	Param<T>::reset() override;
+	FloatParam<P>::reset()
+	{
+		_param_value.internal_set (ParamValue::default_value());
+	}
 
 
-template<class T>
+template<class P>
 	inline void
-	Param<T>::sanitize() override;
+	FloatParam<P>::save_state (QDomElement& parent) const
+	{
+		parent.appendChild (parent.ownerDocument().createTextNode (QString::number (_param_value.internal_get())));
+		// TODO settings
+	}
 
 
-template<class T>
+template<class P>
 	inline void
-	Param<T>::save_state (QDomElement& parent) const override;
-
-
-template<class T>
-	inline void
-	Param<T>::load_state (QDomElement const& parent) override;
-#endif
+	FloatParam<P>::load_state (QDomElement const& parent)
+	{
+		_param_value.internal_set (parent.text().toLongLong());
+		// TODO settings
+	}
 
 } // namespace v07
 
