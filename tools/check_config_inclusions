@@ -2,10 +2,6 @@
 
 require 'find'
 
-def ifdef path
-	path.gsub('/', '__').gsub('.', '_').upcase
-end
-
 def check file
 	skip = %w[
 		haruhi/config/all.h

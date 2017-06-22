@@ -377,7 +377,6 @@ SessionLoader::auto_add_devices()
 void
 SessionLoader::add_selected_device()
 {
-	// TODO boost::any?
 	QVariant var = _devices_combobox->itemData (_devices_combobox->currentIndex());
 	add_device (*reinterpret_cast<DevicesManager::Device*> (var.value<void*>()));
 }
