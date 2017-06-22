@@ -315,7 +315,7 @@ template<class Callback>
 	Mutex::synchronize (Callback function) const noexcept (noexcept (function()))
 	{
 		lock();
-		if (noexcept (function()))
+		if constexpr (noexcept (function()))
 		{
 			function();
 			unlock();
