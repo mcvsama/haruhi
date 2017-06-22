@@ -254,7 +254,7 @@ Backend::peak_levels (LevelsMap& levels)
 
 	for (auto& p: _outputs)
 	{
-		Sample register max = 0.0f;
+		Sample max = 0.0f;
 		AudioPort* port = p.second->port();
 		AudioBuffer* buf = port->buffer();
 

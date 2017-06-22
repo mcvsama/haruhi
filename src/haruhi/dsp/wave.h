@@ -82,11 +82,11 @@ class Wave: private Noncopyable
 	 *			frequency (in range [0..1]). If you want to get highest possible
 	 *			bandwidth, pass 0.0.
 	 * \param	sample
-	 * 			Sample number for mutating waves. When generating a buffer of samples,
-	 * 			pass sample index as this argument.
+	 *			Sample number for mutating waves. When generating a buffer of samples,
+	 *			pass sample index as this argument.
 	 */
 	virtual Sample
-	operator() (Sample register phase, Sample frequency, std::size_t sample) const noexcept = 0;
+	operator() (Sample phase, Sample frequency, std::size_t sample) const noexcept = 0;
 
 	/**
 	 * Compute average wave energy.

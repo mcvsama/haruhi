@@ -58,10 +58,10 @@ class HarmonicsWave: public Wave
 	 * Returns sample from base function with added harmonics.
 	 * \param	phase is the phase in range [0, 1].
 	 * \param	frequency is the base frequency of the signal this sample will
-	 * 			be used in (this is for limiting bandwidth).
+	 *			be used in (this is for limiting bandwidth).
 	 */
 	Sample
-	operator() (Sample register phase, Sample frequency, std::size_t) const noexcept override;
+	operator() (Sample phase, Sample frequency, std::size_t) const noexcept override;
 
 	/**
 	 * Gets given harmonic.

@@ -39,14 +39,14 @@ namespace DSP {
 
 template<unsigned int series, class Sample>
 	inline Sample
-	base_sin (Sample register x) noexcept
+	base_sin (Sample x) noexcept
 	{
 		static_assert (series == 5 || series == 6 || series == 7, "invalid argument 'series' - should be 5, 6 or 7");
 
 		if (x > 0.5)		x = +1.0 - x;
 		else if (x < -0.5)	x = -1.0 - x;
 		x *= M_PI;
-		Sample const register xx = x * x;
+		Sample const xx = x * x;
 		if (series == 5)
 			return x * (xx * (xx * (xx * (xx * (1.0f/362880.0f) - (1.0f/5040.0f)) + (1.0f/120.0f)) - (1.0f/6.0f)) + 1.0f);
 		else if (series == 6)
@@ -312,7 +312,7 @@ namespace SeriesFunctions {
  */
 template<unsigned int series, class Sample>
 	inline Sample
-	base_sin (Sample register x, Sample base_frequency, Sample fmin, Sample fmax) noexcept
+	base_sin (Sample x, Sample base_frequency, Sample fmin, Sample fmax) noexcept
 	{
 		if (base_frequency >= fmin)
 			return DSP::base_sin<series> (x);
@@ -335,15 +335,15 @@ template<unsigned int series, class Sample>
  */
 template<class Sample>
 	inline Sample
-	triangle (Sample register x, Sample base_frequency, Sample fmin, Sample fmax) noexcept
+	triangle (Sample x, Sample base_frequency, Sample fmin, Sample fmax) noexcept
 	{
-		Sample register y = 0;
+		Sample y = 0;
 
 		const int n = static_cast<int> (std::floor (0.5f * fmax / base_frequency));
 		const int a = static_cast<int> (std::ceil (0.5f * fmin / base_frequency));
 
 		float sgn = (a % 2) ? -1.0 : 1.0;
-		for (int register k = std::max (1, a); k <= n; ++k)
+		for (int k = std::max (1, a); k <= n; ++k)
 		{
 			float z = std::fmod ((2 * k - 1) * (x + 1.f), 2.f) - 1.f;
 			y += sgn * DSP::base_sin<5> (z) / pow2<Sample> (2 * k - 1);
@@ -369,14 +369,14 @@ template<class Sample>
  */
 template<class Sample>
 	inline Sample
-	square (Sample register x, Sample base_frequency, Sample fmin, Sample fmax) noexcept
+	square (Sample x, Sample base_frequency, Sample fmin, Sample fmax) noexcept
 	{
-		Sample register y = 0;
+		Sample y = 0;
 
 		const int n = static_cast<int> (std::floor (0.5f * fmax / base_frequency));
 		const int a = static_cast<int> (std::ceil (0.5f * fmin / base_frequency));
 
-		for (int register k = std::max (1, a); k <= n; ++k)
+		for (int k = std::max (1, a); k <= n; ++k)
 			y += DSP::base_sin<5> (std::fmod ((2 * k - 1) * (x + 1.0f), 2.0f) - 1.0f) / static_cast<Sample> (2 * k - 1);
 
 		return y * 4.0f / M_PI;
@@ -398,14 +398,14 @@ template<class Sample>
  */
 template<class Sample>
 	inline Sample
-	sawtooth (Sample register x, Sample base_frequency, Sample fmin, Sample fmax) noexcept
+	sawtooth (Sample x, Sample base_frequency, Sample fmin, Sample fmax) noexcept
 	{
-		Sample register y = 0;
+		Sample y = 0;
 
 		const int n = static_cast<int> (std::floor (fmax / base_frequency));
 		const int a = static_cast<int> (std::ceil (fmin / base_frequency));
 
-		for (int register k = std::max (1, a); k <= n; ++k)
+		for (int k = std::max (1, a); k <= n; ++k)
 			y += DSP::base_sin<5> (std::fmod (k * (x + 1.0f), 2.0f) - 1.0f) / static_cast<Sample> (k);
 
 		return y * M_2_PI;

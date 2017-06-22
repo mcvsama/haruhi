@@ -77,7 +77,7 @@ CrossingWave::reset() noexcept
 
 
 Sample
-CrossingWave::operator() (Sample register phase, Sample frequency, std::size_t sample) const noexcept
+CrossingWave::operator() (Sample phase, Sample frequency, std::size_t sample) const noexcept
 {
 	if (_current_sample < _transition_samples)
 	{

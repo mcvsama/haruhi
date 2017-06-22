@@ -188,7 +188,7 @@ template<unsigned int O, int R>
 	Filter<O, R>::advance_fir (Sample* x) noexcept
 	{
 		Sample (&b)[Order] = _impulse_response->b;
-		Sample register sum = 0.0;
+		Sample sum = 0.0;
 		for (int i = 0; i < static_cast<int> (Order); ++i)
 			sum += b[i] * x[-i];
 		return sum;
@@ -201,7 +201,7 @@ template<unsigned int O, int R>
 	{
 		Sample (&a)[Order] = _impulse_response->a;
 		Sample (&b)[Order] = _impulse_response->b;
-		Sample register sum = 0.0;
+		Sample sum = 0.0;
 		for (int i = 0; i < static_cast<int> (Order); ++i)
 			sum += b[i] * x[-i] - a[i] * y[-i];
 		return sum;
@@ -213,7 +213,7 @@ template<unsigned int O, int R>
 	Filter<O, R>::mixed_advance_fir (Sample* x, int position) noexcept
 	{
 		Sample (&b)[Order] = _impulse_response->b;
-		Sample register sum = 0.0;
+		Sample sum = 0.0;
 		for (int i = 0; i < static_cast<int> (Order); ++i)
 			sum += b[i] * (i > position ? _px[i-1-position] : x[-i]);
 		return sum;
@@ -226,7 +226,7 @@ template<unsigned int O, int R>
 	{
 		Sample (&a)[Order] = _impulse_response->a;
 		Sample (&b)[Order] = _impulse_response->b;
-		Sample register sum = 0.0;
+		Sample sum = 0.0;
 		for (int i = 0; i < static_cast<int> (Order); ++i)
 			sum += b[i] * (i > position ? _px[i-1-position] : x[-i]) - a[i] * (i > position ? _py[i-1-position] : y[-i]);
 		return sum;

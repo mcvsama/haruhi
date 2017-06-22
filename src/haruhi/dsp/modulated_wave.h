@@ -69,12 +69,12 @@ class ModulatedWave: public Wave
 	 * Returns sample from base function modulated with modulator.
 	 * \param	phase is the phase in range [-1, 1].
 	 * \param	frequency is the base frequency of the signal this sample will
-	 * 			be used in (this is for limiting bandwidth).
+	 *			be used in (this is for limiting bandwidth).
 	 * \param	sample
 	 *			Sample index when generating a run of samples.
 	 */
 	Sample
-	operator() (Sample register phase, Sample frequency, std::size_t sample) const noexcept override;
+	operator() (Sample phase, Sample frequency, std::size_t sample) const noexcept override;
 
   private:
 	Sample

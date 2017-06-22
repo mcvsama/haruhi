@@ -79,7 +79,7 @@ class CrossingWave: public Wave
 	 * Returns function's sample.
 	 */
 	Sample
-	operator() (Sample register phase, Sample frequency, std::size_t sample) const noexcept override;
+	operator() (Sample phase, Sample frequency, std::size_t sample) const noexcept override;
 
   private:
 	State		_state				= NotStarted;

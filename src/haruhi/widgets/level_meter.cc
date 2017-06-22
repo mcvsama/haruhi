@@ -84,7 +84,7 @@ void
 LevelMeter::process (Sample* begin, Sample* end)
 {
 	// Find maximum:
-	Sample register max = 0;
+	Sample max = 0;
 	for (Sample* s = begin; s != end; ++s)
 		if (std::abs (*s) > max)
 			max = std::abs (*s);

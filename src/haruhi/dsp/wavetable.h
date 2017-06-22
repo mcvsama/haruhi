@@ -66,7 +66,7 @@ class Wavetable
 		operator= (WaveAdapter const& other);
 
 		Sample
-		operator() (Sample register phase, Sample frequency, std::size_t sample) const noexcept override;
+		operator() (Sample phase, Sample frequency, std::size_t sample) const noexcept override;
 
 	  private:
 		Wavetable* _wavetable;
@@ -106,7 +106,7 @@ class Wavetable
 	 * 0 and 0.5. Otherwise behavior of this method is undefined.
 	 */
 	Sample
-	operator() (Sample register phase, Sample frequency) const noexcept;
+	operator() (Sample phase, Sample frequency) const noexcept;
 
   private:
 	/**
