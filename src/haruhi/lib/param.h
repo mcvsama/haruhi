@@ -44,6 +44,8 @@ namespace v07 {
 constexpr int64_t kParamFloatDenominator = 1'000'000'000;
 
 
+namespace param_literals {
+
 /**
  * floats/doubles can't be passed as template parameters, but integers can. We don't need float/doubles for parameters,
  * really, we can use fixed-point values or something alike. _pf returns x * kParamFloatDenominator which can be later
@@ -55,6 +57,8 @@ constexpr int64_t operator"" _pf (long double x)
 {
 	return x * kParamFloatDenominator;
 }
+
+} // namespace param_literals
 
 
 /**
@@ -107,15 +111,15 @@ class FloatParamSettings
 
 // Forward:
 template<class pParamValue>
-	class FloatParam;
+	class GenericFloatParam;
 
 // Forward:
 template<class pParamValue>
-	class EnumParam;
+	class GenericEnumParam;
 
 // Forward:
 template<class pParamValue>
-	class BoolParam;
+	class GenericBoolParam;
 
 
 /**
@@ -143,14 +147,14 @@ template<int64_t MinimumValue, int64_t MaximumValue, int64_t DefaultValue, int64
 		FloatParamValue (std::shared_ptr<FloatParamSettings>);
 
 		// Ctor
-		FloatParamValue (FloatParam<FloatParamValue> const&);
+		FloatParamValue (GenericFloatParam<FloatParamValue> const&);
 
 		// Ctor
 		FloatParamValue (FloatParamValue const&);
 
 		// =
 		FloatParamValue const&
-		operator= (FloatParam<FloatParamValue> const&);
+		operator= (GenericFloatParam<FloatParamValue> const&);
 
 		// =
 		FloatParamValue const&
@@ -242,14 +246,14 @@ template<int64_t MinimumValue, int64_t MaximumValue, int64_t DefaultValue>
 		EnumParamValue();
 
 		// Ctor
-		EnumParamValue (EnumParam<EnumParamValue> const&);
+		EnumParamValue (GenericEnumParam<EnumParamValue> const&);
 
 		// Ctor
 		EnumParamValue (EnumParamValue const&);
 
 		// =
 		EnumParamValue const&
-		operator= (EnumParam<EnumParamValue> const&);
+		operator= (GenericEnumParam<EnumParamValue> const&);
 
 		// =
 		EnumParamValue const&
@@ -328,14 +332,14 @@ template<bool DefaultValue>
 		BoolParamValue();
 
 		// Ctor
-		BoolParamValue (BoolParam<BoolParamValue> const&);
+		BoolParamValue (GenericBoolParam<BoolParamValue> const&);
 
 		// Ctor
 		BoolParamValue (BoolParamValue const&);
 
 		// =
 		BoolParamValue const&
-		operator= (BoolParam<BoolParamValue> const&);
+		operator= (GenericBoolParam<BoolParamValue> const&);
 
 		// =
 		BoolParamValue const&
@@ -433,7 +437,7 @@ class BasicParam: public SaveableState
  *			Concrete ParamValue type.
  */
 template<class pParamValue>
-	class FloatParam: public BasicParam
+	class GenericFloatParam: public BasicParam
 	{
 		friend pParamValue;
 
@@ -447,14 +451,14 @@ template<class pParamValue>
 		 * \param	identifier
 		 *			Param's identifier.
 		 */
-		FloatParam (std::string identifier, FloatParamUITraits ui_traits);
+		GenericFloatParam (std::string identifier, FloatParamUITraits ui_traits);
 
 		// Prevent copying
-		FloatParam (FloatParam const&) = delete;
+		GenericFloatParam (GenericFloatParam const&) = delete;
 
 		// Prevent copying
-		FloatParam&
-		operator= (FloatParam const&) = delete;
+		GenericFloatParam&
+		operator= (GenericFloatParam const&) = delete;
 
 		/**
 		 * Return reference to FloatParamValue for this param.
@@ -517,7 +521,7 @@ template<class pParamValue>
  *			Concrete ParamValue type.
  */
 template<class pParamValue>
-	class EnumParam: public BasicParam
+	class GenericEnumParam: public BasicParam
 	{
 		friend pParamValue;
 
@@ -531,14 +535,14 @@ template<class pParamValue>
 		 * \param	identifier
 		 *			Param's identifier.
 		 */
-		EnumParam (std::string identifier, EnumParamUITraits ui_traits);
+		GenericEnumParam (std::string identifier, EnumParamUITraits ui_traits);
 
 		// Prevent copying
-		EnumParam (EnumParam const&) = delete;
+		GenericEnumParam (GenericEnumParam const&) = delete;
 
 		// Prevent copying
-		EnumParam&
-		operator= (EnumParam const&) = delete;
+		GenericEnumParam&
+		operator= (GenericEnumParam const&) = delete;
 
 		/**
 		 * Return reference to EnumParamValue for this param.
@@ -597,7 +601,7 @@ template<class pParamValue>
  *			Concrete ParamValue type.
  */
 template<class pParamValue>
-	class BoolParam: public BasicParam
+	class GenericBoolParam: public BasicParam
 	{
 		friend pParamValue;
 
@@ -611,14 +615,14 @@ template<class pParamValue>
 		 * \param	identifier
 		 *			Param's identifier.
 		 */
-		BoolParam (std::string identifier, BoolParamUITraits ui_traits);
+		GenericBoolParam (std::string identifier, BoolParamUITraits ui_traits);
 
 		// Prevent copying
-		BoolParam (BoolParam const&) = delete;
+		GenericBoolParam (GenericBoolParam const&) = delete;
 
 		// Prevent copying
-		BoolParam&
-		operator= (BoolParam const&) = delete;
+		GenericBoolParam&
+		operator= (GenericBoolParam const&) = delete;
 
 		/**
 		 * Return reference to BoolParamValue for this param.
@@ -674,13 +678,13 @@ template<class pParamValue>
 
 
 template<int64_t MinimumValue, int64_t MaximumValue, int64_t DefaultValue, int64_t NeutralValue>
-	using FloatParamS = FloatParam<FloatParamValue<MinimumValue, MaximumValue, DefaultValue, NeutralValue>>;
+	using FloatParam = GenericFloatParam<FloatParamValue<MinimumValue, MaximumValue, DefaultValue, NeutralValue>>;
 
 template<int64_t MinimumValue, int64_t MaximumValue, int64_t DefaultValue>
-	using EnumParamS = EnumParam<EnumParamValue<MinimumValue, MaximumValue, DefaultValue>>;
+	using EnumParam = GenericEnumParam<EnumParamValue<MinimumValue, MaximumValue, DefaultValue>>;
 
 template<int64_t DefaultValue>
-	using BoolParamS = BoolParam<BoolParamValue<DefaultValue>>;
+	using BoolParam = GenericBoolParam<BoolParamValue<DefaultValue>>;
 
 
 inline
@@ -700,7 +704,7 @@ template<int64_t M, int64_t X, int64_t D, int64_t N>
 
 template<int64_t M, int64_t X, int64_t D, int64_t N>
 	inline
-	FloatParamValue<M, X, D, N>::FloatParamValue (FloatParam<FloatParamValue> const& param):
+	FloatParamValue<M, X, D, N>::FloatParamValue (GenericFloatParam<FloatParamValue> const& param):
 		_value (param._value.load()),
 		_modulator (param._modulator.load()),
 		_settings (param._settings)
@@ -718,7 +722,7 @@ template<int64_t M, int64_t X, int64_t D, int64_t N>
 
 template<int64_t M, int64_t X, int64_t D, int64_t N>
 	inline FloatParamValue<M, X, D, N> const&
-	FloatParamValue<M, X, D, N>::operator= (FloatParam<FloatParamValue> const& param)
+	FloatParamValue<M, X, D, N>::operator= (GenericFloatParam<FloatParamValue> const& param)
 	{
 		_value = param._value.load();
 		_modulator = param._modulator.load();
@@ -797,7 +801,7 @@ template<int64_t M, int64_t X, int64_t D>
 
 template<int64_t M, int64_t X, int64_t D>
 	inline
-	EnumParamValue<M, X, D>::EnumParamValue (EnumParam<EnumParamValue> const& param):
+	EnumParamValue<M, X, D>::EnumParamValue (GenericEnumParam<EnumParamValue> const& param):
 		_value (param._value.load())
 	{ }
 
@@ -811,7 +815,7 @@ template<int64_t M, int64_t X, int64_t D>
 
 template<int64_t M, int64_t X, int64_t D>
 	inline EnumParamValue<M, X, D> const&
-	EnumParamValue<M, X, D>::operator= (EnumParam<EnumParamValue> const& param)
+	EnumParamValue<M, X, D>::operator= (GenericEnumParam<EnumParamValue> const& param)
 	{
 		_value = param._value.load();
 		return *this;
@@ -878,7 +882,7 @@ template<bool D>
 
 template<bool D>
 	inline
-	BoolParamValue<D>::BoolParamValue (BoolParam<BoolParamValue> const& param):
+	BoolParamValue<D>::BoolParamValue (GenericBoolParam<BoolParamValue> const& param):
 		_value (param._value.load())
 	{ }
 
@@ -892,7 +896,7 @@ template<bool D>
 
 template<bool D>
 	inline BoolParamValue<D> const&
-	BoolParamValue<D>::operator= (BoolParam<BoolParamValue> const& param)
+	BoolParamValue<D>::operator= (GenericBoolParam<BoolParamValue> const& param)
 	{
 		_value = param._value.load();
 		return *this;
@@ -958,7 +962,7 @@ BasicParam::identifier() const noexcept
 
 template<class P>
 	inline
-	FloatParam<P>::FloatParam (std::string identifier, FloatParamUITraits ui_traits):
+	GenericFloatParam<P>::GenericFloatParam (std::string identifier, FloatParamUITraits ui_traits):
 		BasicParam (identifier),
 		_settings (std::make_shared<FloatParamSettings>()),
 		_param_value (_settings),
@@ -968,7 +972,7 @@ template<class P>
 
 template<class P>
 	inline auto
-	FloatParam<P>::param_value() const -> ParamValue const&
+	GenericFloatParam<P>::param_value() const -> ParamValue const&
 	{
 		return _param_value;
 	}
@@ -976,7 +980,7 @@ template<class P>
 
 template<class P>
 	inline auto
-	FloatParam<P>::param_value() -> ParamValue&
+	GenericFloatParam<P>::param_value() -> ParamValue&
 	{
 		return _param_value;
 	}
@@ -984,7 +988,7 @@ template<class P>
 
 template<class P>
 	inline FloatParamSettings const&
-	FloatParam<P>::settings() const
+	GenericFloatParam<P>::settings() const
 	{
 		return *_settings.get();
 	}
@@ -992,7 +996,7 @@ template<class P>
 
 template<class P>
 	inline void
-	FloatParam<P>::set_settings (FloatParamSettings const& settings)
+	GenericFloatParam<P>::set_settings (FloatParamSettings const& settings)
 	{
 		_settings = std::make_shared<FloatParamSettings> (settings);
 	}
@@ -1000,7 +1004,7 @@ template<class P>
 
 template<class P>
 	inline void
-	FloatParam<P>::reset()
+	GenericFloatParam<P>::reset()
 	{
 		_param_value.internal_set (ParamValue::default_value());
 	}
@@ -1008,7 +1012,7 @@ template<class P>
 
 template<class P>
 	inline void
-	FloatParam<P>::save_state (QDomElement& parent) const
+	GenericFloatParam<P>::save_state (QDomElement& parent) const
 	{
 		parent.appendChild (parent.ownerDocument().createTextNode (QString::number (_param_value.internal_get())));
 		// TODO settings
@@ -1017,7 +1021,7 @@ template<class P>
 
 template<class P>
 	inline void
-	FloatParam<P>::load_state (QDomElement const& parent)
+	GenericFloatParam<P>::load_state (QDomElement const& parent)
 	{
 		_param_value.internal_set (parent.text().toLongLong());
 		// TODO settings
