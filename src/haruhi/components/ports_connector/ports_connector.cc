@@ -23,6 +23,7 @@
 #include <memory>
 #include <list>
 #include <map>
+#include <functional>
 
 // Qt:
 #include <QPushButton>
@@ -32,9 +33,6 @@
 #include <QMenu>
 #include <QHeaderView>
 #include <QLayout>
-
-// Lib:
-#include <boost/bind/bind.hpp>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -292,14 +290,14 @@ PortsConnector::remove_unit (Unit* unit)
 void
 PortsConnector::unit_registered (Unit*)
 {
-	_call_outs.push_back (Services::call_out (boost::bind (&PortsConnector::graph_changed, this)));
+	_call_outs.push_back (Services::call_out (std::bind (&PortsConnector::graph_changed, this)));
 }
 
 
 void
 PortsConnector::unit_unregistered (Unit* unit)
 {
-	_call_outs.push_back (Services::call_out (boost::bind (&PortsConnector::graph_changed, this)));
+	_call_outs.push_back (Services::call_out (std::bind (&PortsConnector::graph_changed, this)));
 	if (_external_units.find (unit) != _external_units.end())
 		_external_units.erase (unit);
 }
@@ -308,49 +306,49 @@ PortsConnector::unit_unregistered (Unit* unit)
 void
 PortsConnector::unit_retitled (Unit*)
 {
-	_call_outs.push_back (Services::call_out (boost::bind (&PortsConnector::graph_changed, this)));
+	_call_outs.push_back (Services::call_out (std::bind (&PortsConnector::graph_changed, this)));
 }
 
 
 void
 PortsConnector::port_renamed (Port*)
 {
-	_call_outs.push_back (Services::call_out (boost::bind (&PortsConnector::graph_changed, this)));
+	_call_outs.push_back (Services::call_out (std::bind (&PortsConnector::graph_changed, this)));
 }
 
 
 void
 PortsConnector::port_connected_to (Port*, Port*)
 {
-	_call_outs.push_back (Services::call_out (boost::bind (&PortsConnector::graph_changed, this)));
+	_call_outs.push_back (Services::call_out (std::bind (&PortsConnector::graph_changed, this)));
 }
 
 
 void
 PortsConnector::port_disconnected_from (Port*, Port*)
 {
-	_call_outs.push_back (Services::call_out (boost::bind (&PortsConnector::graph_changed, this)));
+	_call_outs.push_back (Services::call_out (std::bind (&PortsConnector::graph_changed, this)));
 }
 
 
 void
 PortsConnector::port_registered (Port*, Unit*)
 {
-	_call_outs.push_back (Services::call_out (boost::bind (&PortsConnector::graph_changed, this)));
+	_call_outs.push_back (Services::call_out (std::bind (&PortsConnector::graph_changed, this)));
 }
 
 
 void
 PortsConnector::port_unregistered (Port*, Unit*)
 {
-	_call_outs.push_back (Services::call_out (boost::bind (&PortsConnector::graph_changed, this)));
+	_call_outs.push_back (Services::call_out (std::bind (&PortsConnector::graph_changed, this)));
 }
 
 
 void
 PortsConnector::port_group_renamed (PortGroup*)
 {
-	_call_outs.push_back (Services::call_out (boost::bind (&PortsConnector::graph_changed, this)));
+	_call_outs.push_back (Services::call_out (std::bind (&PortsConnector::graph_changed, this)));
 }
 
 

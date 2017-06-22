@@ -14,9 +14,7 @@
 // Standard:
 #include <cstddef>
 #include <utility>
-
-// Lib:
-#include <boost/bind.hpp>
+#include <functional>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -62,7 +60,7 @@ Part::UpdateWavetableWorkUnit::execute()
 	Unique<DSP::Wave> wave = _part->final_wave();
 
 	DSP::FFTFiller filler (wave.get(), true, 0.000001f);
-	filler.set_cancel_predicate (boost::bind (&UpdateWavetableWorkUnit::is_cancelled, this));
+	filler.set_cancel_predicate (std::bind (&UpdateWavetableWorkUnit::is_cancelled, this));
 	filler.fill (_wavetable, 4096);
 
 	if (!filler.was_interrupted())

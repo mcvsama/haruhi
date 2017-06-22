@@ -13,13 +13,11 @@
 
 // Standard:
 #include <cstddef>
+#include <functional>
 
 // Qt:
 #include <QStackedWidget>
 #include <QLayout>
-
-// Lib:
-#include <boost/bind.hpp>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -270,7 +268,7 @@ PartManagerWidget::params_to_widgets()
 void
 PartManagerWidget::post_params_to_widgets()
 {
-	Haruhi::Services::call_out (boost::bind (&PartManagerWidget::params_to_widgets, this));
+	Haruhi::Services::call_out (std::bind (&PartManagerWidget::params_to_widgets, this));
 }
 
 

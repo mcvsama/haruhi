@@ -13,13 +13,11 @@
 
 // Standard:
 #include <cstddef>
+#include <functional>
 
 // Qt:
 #include <QLayout>
 #include <QGroupBox>
-
-// Lib:
-#include <boost/bind.hpp>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -241,7 +239,7 @@ void
 FilterWidget::post_params_to_widgets()
 {
 	update_impulse_response();
-	Haruhi::Services::call_out (boost::bind (&FilterWidget::params_to_widgets, this));
+	Haruhi::Services::call_out (std::bind (&FilterWidget::params_to_widgets, this));
 }
 
 } // namespace Yuki

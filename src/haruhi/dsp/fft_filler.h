@@ -18,9 +18,7 @@
 #include <cstddef>
 #include <cmath>
 #include <vector>
-
-// Lib:
-#include <boost/function.hpp>
+#include <functional>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -54,7 +52,7 @@ class FFTFiller: public Wavetable::Filler
 	 * since it will be called many times during the fill.
 	 */
 	void
-	set_cancel_predicate (boost::function<bool()> cancel_predicate) noexcept;
+	set_cancel_predicate (std::function<bool()> cancel_predicate) noexcept;
 
 	/**
 	 * Fill the wavetable.
@@ -86,13 +84,13 @@ class FFTFiller: public Wavetable::Filler
 	Wave*					_wave;
 	bool					_autoscale;
 	Sample					_scale_epsilon;
-	boost::function<bool()>	_cancel_predicate;
+	std::function<bool()>	_cancel_predicate;
 	bool					_was_interrupted;
 };
 
 
 inline void
-FFTFiller::set_cancel_predicate (boost::function<bool()> cancel_predicate) noexcept
+FFTFiller::set_cancel_predicate (std::function<bool()> cancel_predicate) noexcept
 {
 	_cancel_predicate = cancel_predicate;
 }

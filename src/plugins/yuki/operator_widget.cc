@@ -13,6 +13,7 @@
 
 // Standard:
 #include <cstddef>
+#include <functional>
 
 // Qt:
 #include <QWidget>
@@ -20,9 +21,6 @@
 #include <QLabel>
 #include <QGridLayout>
 #include <QGroupBox>
-
-// Lib:
-#include <boost/bind.hpp>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -138,7 +136,7 @@ OperatorWidget::params_to_widgets()
 void
 OperatorWidget::post_params_to_widgets()
 {
-	Haruhi::Services::call_out (boost::bind (&OperatorWidget::params_to_widgets, this));
+	Haruhi::Services::call_out (std::bind (&OperatorWidget::params_to_widgets, this));
 }
 
 } // namespace Yuki

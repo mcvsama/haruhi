@@ -13,12 +13,10 @@
 
 // Standard:
 #include <cstddef>
+#include <functional>
 
 // Qt:
 #include <QLayout>
-
-// Lib:
-#include <boost/bind.hpp>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -202,14 +200,14 @@ PartWidget::update_wave_plots()
 void
 PartWidget::post_update_wave_plots()
 {
-	Haruhi::Services::call_out (boost::bind (&PartWidget::update_wave_plots, this));
+	Haruhi::Services::call_out (std::bind (&PartWidget::update_wave_plots, this));
 }
 
 
 void
 PartWidget::post_params_to_widgets()
 {
-	Haruhi::Services::call_out (boost::bind (&PartWidget::params_to_widgets, this));
+	Haruhi::Services::call_out (std::bind (&PartWidget::params_to_widgets, this));
 }
 
 } // namespace Yuki

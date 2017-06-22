@@ -20,9 +20,6 @@
 #include <map>
 #include <set>
 
-// Lib:
-#include <boost/function.hpp>
-
 // Qt:
 #include <QWidget>
 #include <QSplitter>

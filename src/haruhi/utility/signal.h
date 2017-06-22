@@ -20,9 +20,6 @@
 #include <algorithm>
 #include <list>
 
-// Lib:
-#include <boost/function.hpp>
-
 // Haruhi:
 #include <haruhi/config/all.h>
 
@@ -159,7 +156,7 @@ template<class ...Argument>
 		template<class Receiver>
 			class BoostFunctionConnection: public ConnectionBase
 			{
-				typedef boost::function<void (Argument...)> Callback;
+				typedef std::function<void (Argument...)> Callback;
 
 			  public:
 				BoostFunctionConnection (SignalBase* signal, Callback c) noexcept:
@@ -201,7 +198,7 @@ template<class ...Argument>
 
 		template<class Receiver>
 			void
-			connect (boost::function<void (Argument...)> const& function)
+			connect (std::function<void (Argument...)> const& function)
 			{
 				_connections.push_back (new BoostFunctionConnection<Receiver> (this, function));
 			}

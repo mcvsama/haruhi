@@ -14,9 +14,7 @@
 // Standard:
 #include <cstddef>
 #include <algorithm>
-
-// Lib:
-#include <boost/bind.hpp>
+#include <functional>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -360,7 +358,7 @@ PartManager::load_state (QDomElement const& element)
 void
 PartManager::oversampling_updated()
 {
-	Haruhi::Services::call_out (boost::bind (&PartManager::set_oversampling, this, _main_params.oversampling.get()));
+	Haruhi::Services::call_out (std::bind (&PartManager::set_oversampling, this, _main_params.oversampling.get()));
 }
 
 
