@@ -368,8 +368,8 @@ Backend::handle_event_for_learnables (MIDI::Event const& event, EventPort* port)
 		learned |= (l->second & Keyboard) && (event.type == MIDI::Event::NoteOn || event.type == MIDI::Event::NoteOff);
 		learned |= (l->second & Controller) && event.type == MIDI::Event::Controller;
 		learned |= (l->second & Pitchbend) && event.type == MIDI::Event::Pitchbend;
-		learned |= (l->second & ChannelPressure) && event.type == MIDI::Event::ChannelPressure;
-		learned |= (l->second & KeyPressure) && event.type == MIDI::Event::KeyPressure;
+		learned |= (l->second & MonoPressure) && event.type == MIDI::Event::MonoPressure;
+		learned |= (l->second & PolyPressure) && event.type == MIDI::Event::PolyPressure;
 
 		if (learned)
 		{

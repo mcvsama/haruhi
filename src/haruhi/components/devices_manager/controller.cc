@@ -92,14 +92,14 @@ Controller::learn_from_event (MIDI::Event const& event)
 			pitchbend_channel = event.pitchbend.channel + 1;
 			return true;
 
-		case MIDI::Event::ChannelPressure:
+		case MIDI::Event::MonoPressure:
 			reset_filters();
 			channel_pressure_filter = true;
 			channel_pressure_invert = false;
 			channel_pressure_channel = event.channel_pressure.channel + 1;
 			return true;
 
-		case MIDI::Event::KeyPressure:
+		case MIDI::Event::PolyPressure:
 			reset_filters();
 			key_pressure_filter = true;
 			key_pressure_invert = false;
@@ -203,7 +203,7 @@ Controller::handle_event (MIDI::Event const& midi_event, Device& device, EventBu
 			}
 			break;
 
-		case MIDI::Event::ChannelPressure:
+		case MIDI::Event::MonoPressure:
 			{
 				int value = midi_event.channel_pressure.value;
 				if (channel_pressure_invert)
@@ -219,7 +219,7 @@ Controller::handle_event (MIDI::Event const& midi_event, Device& device, EventBu
 			}
 			break;
 
-		case MIDI::Event::KeyPressure:
+		case MIDI::Event::PolyPressure:
 			{
 				int value = midi_event.key_pressure.value;
 				if (key_pressure_invert)
@@ -227,7 +227,7 @@ Controller::handle_event (MIDI::Event const& midi_event, Device& device, EventBu
 				if (key_pressure_filter && (key_pressure_channel == 0 || key_pressure_channel == midi_event.key_pressure.channel + 1))
 				{
 					unsigned int key = clamped (static_cast<unsigned int> (midi_event.key_pressure.note), 0u, 127u);
-					// KeyPressure before NoteOn? A buggy device:
+					// PolyPressure before NoteOn? A buggy device:
 					if (device._voice_ids[key] == OmniVoice)
 						break;
 					float const fvalue = value / 127.0f;

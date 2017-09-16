@@ -76,8 +76,8 @@ struct Event
 		NoteOff,
 		Controller,
 		Pitchbend,
-		ChannelPressure,
-		KeyPressure,
+		MonoPressure,
+		PolyPressure,
 	};
 
 	typedef uint64_t ID;

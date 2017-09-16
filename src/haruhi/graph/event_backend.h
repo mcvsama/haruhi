@@ -44,8 +44,8 @@ class EventTeacher
 		Keyboard			= 1 << 0,
 		Controller			= 1 << 1,
 		Pitchbend			= 1 << 2,
-		ChannelPressure		= 1 << 3,
-		KeyPressure			= 1 << 4,
+		MonoPressure		= 1 << 3,
+		PolyPressure		= 1 << 4,
 	};
 
 	typedef uint32_t EventTypes;

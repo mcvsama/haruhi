@@ -276,13 +276,13 @@ AlsaTransport::map_alsa_to_internal (MIDI::Event& midi, ::snd_seq_event_t* event
 			break;
 
 		case SND_SEQ_EVENT_CHANPRESS:
-			midi.type = MIDI::Event::ChannelPressure;
+			midi.type = MIDI::Event::MonoPressure;
 			midi.channel_pressure.channel = event->data.control.channel;
 			midi.channel_pressure.value = event->data.control.value;
 			break;
 
 		case SND_SEQ_EVENT_KEYPRESS:
-			midi.type = MIDI::Event::KeyPressure;
+			midi.type = MIDI::Event::PolyPressure;
 			midi.key_pressure.channel = event->data.note.channel;
 			midi.key_pressure.note = event->data.note.note;
 			midi.key_pressure.value = event->data.note.velocity;
