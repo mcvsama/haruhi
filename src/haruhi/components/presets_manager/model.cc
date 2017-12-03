@@ -142,12 +142,15 @@ Model::load_state()
 	{
 		QString path = directory() + "/" + p;
 		QFile file (path);
+
 		if (!file.open (QFile::ReadOnly))
 			continue;
+
 		QDomDocument doc;
+
 		if (!doc.setContent (&file, true))
 			continue;
-		Package package;
+
 		if (doc.documentElement().tagName() == "haruhi-presets")
 		{
 			Package package;
