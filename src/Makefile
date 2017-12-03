@@ -33,7 +33,7 @@ HARUHI_FEATURES	:= HARUHI_IEEE754
 
 CXX				= g++
 DEPCC			= $(CXX)
-CXXFLAGS		+= -fPIC -O4 -g -c -std=c++17 -Wall -Wall -Wextra -Wunused  -Wunused-function -Wunused-label -Wnoexcept -fstrict-aliasing -Wstrict-aliasing=3 -fnothrow-opt -pedantic-errors
+CXXFLAGS		+= -fPIC -O4 -g -c -std=c++17 -Wall -Wall -Wextra -Wunused  -Wunused-function -Wunused-label -Wnoexcept -fstrict-aliasing -Wstrict-aliasing=3 -fnothrow-opt -pedantic-errors -Wshadow-compatible-local
 CXXFLAGS		+= -pthread -rdynamic -I.
 CXXFLAGS		+= -finline -march=native -mtune=native -falign-functions=4 -mpreferred-stack-boundary=4 -funroll-loops -mfpmath=sse,387 -msse4.1 -fomit-frame-pointer
 CXXFLAGS		+= -I$(QT_INCLUDE_PATH)
