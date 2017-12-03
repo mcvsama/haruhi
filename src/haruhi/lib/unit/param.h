@@ -11,8 +11,8 @@
  * Visit http://www.gnu.org/licenses/gpl-3.0.html for more information on licensing.
  */
 
-#ifndef HARUHI__LIB__PARAM_H__INCLUDED
-#define HARUHI__LIB__PARAM_H__INCLUDED
+#ifndef HARUHI__LIB__UNIT__PARAM_H__INCLUDED
+#define HARUHI__LIB__UNIT__PARAM_H__INCLUDED
 
 // Standard:
 #include <cstddef>
@@ -29,9 +29,6 @@
 #include <haruhi/utility/signal.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/range.h>
-
-// Local:
-#include "param_v06.h"
 
 
 namespace Haruhi {

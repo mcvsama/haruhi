@@ -20,7 +20,7 @@
 
 // Haruhi:
 #include <haruhi/config/all.h>
-#include <haruhi/lib/param.h>
+#include <haruhi/lib/param_v06.h>
 #include <haruhi/utility/saveable_state.h>
 #include <haruhi/utility/qdom.h>
 

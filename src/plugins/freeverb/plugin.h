@@ -99,7 +99,7 @@ class Plugin:
 	 * of values used for mixing dry and wet sounds.
 	 *
 	 * \param	param
-	 * 			Value of dry-wet param to use.
+	 *			Value of dry-wet param to use.
 	 */
 	void
 	prepare_drywet_buffer (Haruhi::AudioBuffer*, float param);

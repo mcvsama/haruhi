@@ -287,13 +287,17 @@ SRC_SOURCES += haruhi/graph/port.cc
 SRC_SOURCES += haruhi/graph/port_group.cc
 SRC_SOURCES += haruhi/graph/unit.cc
 
+######## /lib/unit ########
+
+SRC_HEADERS += haruhi/lib/unit/param.h
+SRC_HEADERS += haruhi/lib/unit/param_governor.h
+
 ######## /lib ########
 
 SRC_HEADERS += haruhi/lib/controller.h
 SRC_HEADERS += haruhi/lib/controller_param.h
 SRC_HEADERS += haruhi/lib/controller_proxy.h
 SRC_HEADERS += haruhi/lib/midi.h
-SRC_HEADERS += haruhi/lib/param.h
 
 SRC_SOURCES += haruhi/lib/controller.cc
 SRC_SOURCES += haruhi/lib/controller_param.cc

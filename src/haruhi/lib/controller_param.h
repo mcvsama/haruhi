@@ -21,7 +21,7 @@
 #include <haruhi/config/all.h>
 #include <haruhi/utility/atomic.h>
 #include <haruhi/utility/range.h>
-#include <haruhi/lib/param.h>
+#include <haruhi/lib/param_v06.h>
 
 
 namespace Haruhi {
