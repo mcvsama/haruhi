@@ -29,7 +29,7 @@
 #endif
 
 
-inline constexpr float
+constexpr float
 renormalize (float value, float a1, float b1, float a2, float b2) noexcept
 {
 	return b1 == a1
@@ -38,14 +38,14 @@ renormalize (float value, float a1, float b1, float a2, float b2) noexcept
 }
 
 
-inline constexpr float
+constexpr float
 renormalize (float value, Range<float> range1, Range<float> range2) noexcept
 {
 	return renormalize (value, range1.min(), range1.max(), range2.min(), range2.max());
 }
 
 
-inline constexpr int
+constexpr int
 cut (int value) noexcept
 {
 	return (value > 255)
@@ -65,7 +65,7 @@ undenormalize (float& sample) noexcept
 
 
 template<class Value>
-	inline constexpr Value
+	constexpr Value
 	ifnan (Value const& test, Value val) noexcept
 	{
 		return std::isnan (test)
@@ -94,7 +94,7 @@ template<class Value>
 
 
 template<class Value>
-	inline constexpr Value
+	constexpr Value
 	clamped (Value value, Value min, Value max) noexcept
 	{
 		return value < min
@@ -106,7 +106,7 @@ template<class Value>
 
 
 template<class Value>
-	inline constexpr Value
+	constexpr Value
 	clamped (Value value, Range<Value> range) noexcept
 	{
 		return clamped (value, range.min(), range.max());
@@ -114,7 +114,7 @@ template<class Value>
 
 
 template<class Value>
-	inline constexpr Value
+	constexpr Value
 	pow2 (Value v) noexcept
 	{
 		return v * v;
@@ -229,7 +229,7 @@ mod1 (float v) noexcept
  * Returns attenuation factor from given number of decibels.
  * \param	db Attenuation value (-inf..0), eg. -3 means -3dB.
  */
-inline constexpr float
+constexpr float
 attenuate_db (float db) noexcept
 {
 	return std::pow (10.0f, db / 20.0f);
@@ -240,7 +240,7 @@ attenuate_db (float db) noexcept
  * Stop condition function for get_offset_array(). See below.
  */
 template<class T, std::size_t N, std::size_t I>
-	inline constexpr std::array<T, N>
+	constexpr std::array<T, N>
 	get_offset_array (std::array<T, N> input, T offset, std::false_type)
 	{
 		std::get<I> (input) += offset;
@@ -253,7 +253,7 @@ template<class T, std::size_t N, std::size_t I>
  * Recursive modifier of array for get_offset_array(). See below.
  */
 template<class T, std::size_t N, std::size_t I>
-	inline constexpr std::array<T, N>
+	constexpr std::array<T, N>
 	get_offset_array (std::array<T, N> input, T offset, std::true_type)
 	{
 		std::get<I> (input) += offset;
@@ -266,7 +266,7 @@ template<class T, std::size_t N, std::size_t I>
  * Return new array with all values modified by adding the offset argument.
  */
 template<class T, std::size_t N>
-	inline constexpr std::array<T, N>
+	constexpr std::array<T, N>
 	get_offset_array (std::array<T, N> input, T offset)
 	{
 		return get_offset_array<T, N, N - 1> (input, offset, std::integral_constant<bool, N - 1 >= 2>());

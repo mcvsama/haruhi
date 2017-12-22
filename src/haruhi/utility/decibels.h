@@ -71,40 +71,40 @@ class Decibels
 };
 
 
-inline constexpr
+constexpr
 Decibels::Decibels (float decibels) noexcept:
 	_decibels (decibels)
 { }
 
 
-inline constexpr
+constexpr
 Decibels::Decibels (Decibels const& other) noexcept:
 	_decibels (other._decibels)
 { }
 
 
-inline constexpr
+constexpr
 Decibels::operator float() noexcept
 {
 	return to_f();
 }
 
 
-inline constexpr Decibels
+constexpr Decibels
 Decibels::operator-() noexcept
 {
 	return Decibels (1.0 / _decibels);
 }
 
 
-inline constexpr float
+constexpr float
 Decibels::factor() const noexcept
 {
 	return std::pow (10.0f, _decibels / 10.0f);
 }
 
 
-inline constexpr float
+constexpr float
 Decibels::to_f() const noexcept
 {
 	return _decibels;
@@ -112,7 +112,7 @@ Decibels::to_f() const noexcept
 
 
 // FIXME: GCC bug <http://gcc.gnu.org/bugzilla/show_bug.cgi?id=53473> - remove "(false)" when this is fixed.
-inline constexpr Decibels
+constexpr Decibels
 Decibels::from_factor (float multiplication_factor) noexcept
 {
 	return Decibels (10.0f * std::log10 (multiplication_factor));
@@ -124,14 +124,14 @@ Decibels::from_factor (float multiplication_factor) noexcept
  */
 
 
-inline constexpr Decibels
+constexpr Decibels
 operator"" _dB (long double decibels)
 {
 	return Decibels (decibels);
 }
 
 
-inline constexpr Decibels
+constexpr Decibels
 operator"" _dB (unsigned long long decibels)
 {
 	return Decibels (static_cast<float> (decibels));
@@ -142,7 +142,7 @@ operator"" _dB (unsigned long long decibels)
  * Adjust numeric value by @decibels decibels.
  */
 template<class Numeric>
-	inline constexpr Numeric
+	constexpr Numeric
 	operator+ (Numeric value, Decibels decibels) noexcept
 	{
 		return value * decibels.factor();
@@ -153,7 +153,7 @@ template<class Numeric>
  * Adjust numeric value by -@decibels decibels.
  */
 template<class Numeric>
-	inline constexpr Numeric
+	constexpr Numeric
 	operator- (Numeric value, Decibels decibels) noexcept
 	{
 		return value * (-decibels).factor();

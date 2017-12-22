@@ -148,7 +148,7 @@ template<class tType>
 
 
 template<class tType>
-	inline constexpr
+	constexpr
 	Param<tType>::Param (const char* name) noexcept:
 		_range (0, 0),
 		_default_value (0),
@@ -158,7 +158,7 @@ template<class tType>
 
 
 template<class tType>
-	inline constexpr
+	constexpr
 	Param<tType>::Param (Range<Type> range, Type default_value, const char* name) noexcept:
 		_range (range),
 		_default_value (default_value),
