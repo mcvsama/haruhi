@@ -108,12 +108,6 @@ class Services
 	lo_priority_work_performer();
 
 	/**
-	 * Return number of detected processor cores.
-	 */
-	static unsigned int
-	detected_cores();
-
-	/**
 	 * Return vector of compiled-in feature names.
 	 */
 	static std::vector<const char*>
@@ -157,7 +151,6 @@ class Services
   private:
 	static Unique<WorkPerformer>		_hi_priority_work_performer;
 	static Unique<WorkPerformer>		_lo_priority_work_performer;
-	static signed int					_detected_cores;
 	static Unique<CallOutDispatcher>	_call_out_dispatcher;
 };
 

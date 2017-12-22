@@ -16,6 +16,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <thread>
 #include <vector>
 #include <experimental/optional>
 
@@ -35,7 +36,6 @@ namespace Haruhi {
 
 Unique<WorkPerformer>		Services::_hi_priority_work_performer;
 Unique<WorkPerformer>		Services::_lo_priority_work_performer;
-signed int					Services::_detected_cores = -1;
 Unique<CallOutDispatcher>	Services::_call_out_dispatcher;
 
 
@@ -53,8 +53,8 @@ CallOutDispatcher::customEvent (QEvent* event)
 void
 Services::initialize()
 {
-	_hi_priority_work_performer = std::make_unique<WorkPerformer> (detected_cores());
-	_lo_priority_work_performer = std::make_unique<WorkPerformer> (detected_cores());
+	_hi_priority_work_performer = std::make_unique<WorkPerformer> (std::thread::hardware_concurrency());
+	_lo_priority_work_performer = std::make_unique<WorkPerformer> (std::thread::hardware_concurrency());
 	_call_out_dispatcher = std::make_unique<CallOutDispatcher>();
 }
 
@@ -65,28 +65,6 @@ Services::deinitialize()
 	_hi_priority_work_performer.reset();
 	_lo_priority_work_performer.reset();
 	_call_out_dispatcher.reset();
-}
-
-
-unsigned int
-Services::detected_cores()
-{
-	if (_detected_cores != -1)
-		return _detected_cores;
-
-	_detected_cores = 0;
-	std::ifstream cpuinfo ("/proc/cpuinfo");
-	std::string line;
-	while (cpuinfo.good())
-	{
-		std::getline (cpuinfo, line);
-		std::istringstream s (line);
-		std::string name, colon;
-		s >> name >> colon;
-		if (name == "processor" && colon == ":")
-			++_detected_cores;
-	}
-	return _detected_cores;
 }
 
 
