@@ -104,7 +104,7 @@ class Part:
 		 * with cancel() method.
 		 */
 		bool
-		is_cancelled() const noexcept;
+		is_cancelled() const;
 
 	  private:
 		Part*					_part;
@@ -576,7 +576,7 @@ template<class ParamPtr>
 
 
 inline bool
-Part::UpdateWavetableWorkUnit::is_cancelled() const noexcept
+Part::UpdateWavetableWorkUnit::is_cancelled() const
 {
 	return _is_cancelled.load();
 }
