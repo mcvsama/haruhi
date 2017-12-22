@@ -35,10 +35,10 @@ struct Params
 	{
 		HARUHI_SAVEABLE_PARAMS_STANDARD_METHODS (Main)
 
-		HARUHI_CONTROLLER_PARAM (Volume,					       0,	+1000000,	 +938445,	       0,	+1000000) // Default: -1.5dB/20*log_10/exp
-		HARUHI_CONTROLLER_PARAM (Panorama,					-1000000,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (Detune,					-1000000,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (StereoWidth,				-1000000,	+1000000,	+1000000,	       0,	+1000000)
+		HARUHI_CONTROLLER_PARAM (Volume,					         0,	+1'000'000,	+1'000'000 - 1.5_dB,	+1'000'000,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (Panorama,					-1'000'000,	+1'000'000,	                  0,	         0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (Detune,					-1'000'000,	+1'000'000,	                  0,	         0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (StereoWidth,				-1'000'000,	+1'000'000,	         +1'000'000,	         0,	+1'000'000)
 
 		Haruhi::v06::ControllerParam volume;
 		Haruhi::v06::ControllerParam panorama;
@@ -62,10 +62,10 @@ struct Params
 
 		HARUHI_SAVEABLE_PARAMS_STANDARD_METHODS (Filter)
 
-		HARUHI_CONTROLLER_PARAM (Frequency,					       0,	+2400000,	 +100000,	       0,	 +100000)
-		HARUHI_CONTROLLER_PARAM (Resonance,					       0,	+1000000,	 +100000,	       0,	 +100000)
-		HARUHI_CONTROLLER_PARAM (Gain,						       0,	+2000000,	       0,	       0,	 +100000)
-		HARUHI_CONTROLLER_PARAM (Attenuation,				       0,	+1000000,	+1000000,	       0,	+1000000)
+		HARUHI_CONTROLLER_PARAM (Frequency,					       0,	+2'400'000,	  +100'000,	       0,	  +100'000)
+		HARUHI_CONTROLLER_PARAM (Resonance,					       0,	+1'000'000,	  +100'000,	       0,	  +100'000)
+		HARUHI_CONTROLLER_PARAM (Gain,						       0,	+2'000'000,	         0,	       0,	  +100'000)
+		HARUHI_CONTROLLER_PARAM (Attenuation,				       0,	+1'000'000,	+1'000'000,	       0,	+1'000'000)
 
 		Haruhi::v06::ControllerParam frequency;
 		Haruhi::v06::ControllerParam resonance;
@@ -87,8 +87,8 @@ struct Params
 	{
 		HARUHI_SAVEABLE_PARAMS_STANDARD_METHODS (Operator)
 
-		HARUHI_CONTROLLER_PARAM (Detune,					-1200000,	+1200000,	       0,	       0,	 +100000)
-		HARUHI_CONTROLLER_PARAM (Phase,						-1000000,	+1000000,	       0,	       0,	+1000000)
+		HARUHI_CONTROLLER_PARAM (Detune,					-1'200'000,	+1'200'000,	       0,	       0,	  +100'000)
+		HARUHI_CONTROLLER_PARAM (Phase,						-1'000'000,	+1'000'000,	       0,	       0,	+1'000'000)
 
 		Haruhi::v06::ControllerParam detune;
 
@@ -108,18 +108,18 @@ struct Params
 
 		HARUHI_SAVEABLE_PARAMS_STANDARD_METHODS (Voice)
 
-		HARUHI_CONTROLLER_PARAM (Amplitude,					       0,	+1000000,	+1000000,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (Frequency,					-1000000,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (Panorama,					-1000000,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (Detune,					-1000000,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (Pitchbend,					-1000000,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (VelocitySens,				-1000000,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (UnisonIndex,				      +1,	     +10,	      +1,	      +1,	      +1)
-		HARUHI_CONTROLLER_PARAM (UnisonSpread,				       0,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (UnisonInit,				-1000000,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (UnisonNoise,				       0,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (UnisonVibratoLevel,		       0,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (UnisonVibratoFrequency,	       0,	+1000000,	 +200000,	       0,	 +100000)
+		HARUHI_CONTROLLER_PARAM (Amplitude,					         0,	+1'000'000,	+1'000'000,	       0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (Frequency,					-1'000'000,	+1'000'000,	         0,	       0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (Panorama,					-1'000'000,	+1'000'000,	         0,	       0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (Detune,					-1'000'000,	+1'000'000,	         0,	       0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (Pitchbend,					-1'000'000,	+1'000'000,	         0,	       0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (VelocitySens,				-1'000'000,	+1'000'000,	         0,	       0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (UnisonIndex,				        +1,	       +10,	        +1,	      +1,	        +1)
+		HARUHI_CONTROLLER_PARAM (UnisonSpread,				         0,	+1'000'000,	         0,	       0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (UnisonInit,				-1'000'000,	+1'000'000,	         0,	       0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (UnisonNoise,				         0,	+1'000'000,	         0,	       0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (UnisonVibratoLevel,		         0,	+1'000'000,	         0,	       0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (UnisonVibratoFrequency,	         0,	+1'000'000,	  +200'000,	       0,	  +100'000)
 
 		static const std::size_t FiltersNumber = 2;
 
@@ -149,18 +149,18 @@ struct Params
 	{
 		HARUHI_SAVEABLE_PARAMS_STANDARD_METHODS (Part)
 
-		HARUHI_CONTROLLER_PARAM (Volume,					       0,	+1000000,	 +938445,	       0,	+1000000) // Default: -1.5dB/20*log_10/exp
-		HARUHI_CONTROLLER_PARAM (PortamentoTime,			       0,	+1000000,	       0,	       0,	 +100000)
-		HARUHI_CONTROLLER_PARAM (Phase,						-1000000,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (NoiseLevel,				       0,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (WaveShape,					       0,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (ModulatorAmplitude,		       0,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (ModulatorIndex,			      +1,	     +32,	      +1,	      +1,	      +1)
-		HARUHI_CONTROLLER_PARAM (ModulatorShape,			       0,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (Harmonic,					-1000000,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (HarmonicPhase,				-1000000,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (AmplitudeMod,				-1000000,	+1000000,	       0,	       0,	+1000000)
-		HARUHI_CONTROLLER_PARAM (FrequencyMod,				-1000000,	+1000000,	       0,	       0,	 +100000)
+		HARUHI_CONTROLLER_PARAM (Volume,					         0,	+1'000'000,	+1'000'000 - 1.5_dB,	       0,	+1'000'000) // Default: -1.5dB/20*log_10/exp
+		HARUHI_CONTROLLER_PARAM (PortamentoTime,			         0,	+1'000'000,	                  0,	       0,	  +100'000)
+		HARUHI_CONTROLLER_PARAM (Phase,						-1'000'000,	+1'000'000,	                  0,	       0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (NoiseLevel,				         0,	+1'000'000,	                  0,	       0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (WaveShape,					         0,	+1'000'000,	                  0,	       0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (ModulatorAmplitude,		         0,	+1'000'000,	                  0,	       0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (ModulatorIndex,			        +1,	       +32,	                 +1,	      +1,	        +1)
+		HARUHI_CONTROLLER_PARAM (ModulatorShape,			         0,	+1'000'000,	                  0,	       0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (Harmonic,					-1'000'000,	+1'000'000,	                  0,	       0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (HarmonicPhase,				-1'000'000,	+1'000'000,	                  0,	       0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (AmplitudeMod,				-1'000'000,	+1'000'000,	                  0,	       0,	+1'000'000)
+		HARUHI_CONTROLLER_PARAM (FrequencyMod,				-1'000'000,	+1'000'000,	                  0,	       0,	  +100'000)
 
 		static const std::size_t HarmonicsNumber = Haruhi::DSP::HarmonicsWave::HarmonicsNumber;
 		static const std::size_t OperatorsNumber = 3;
