@@ -15,6 +15,7 @@
 #define HARUHI__UTILITY__DECIBELS_H__INCLUDED
 
 // Standard:
+#include <cmath>
 #include <cstddef>
 #include <stdexcept>
 
@@ -93,14 +94,14 @@ Decibels::operator float() noexcept
 constexpr Decibels
 Decibels::operator-() noexcept
 {
-	return Decibels (1.0 / _decibels);
+	return Decibels (-_decibels);
 }
 
 
 constexpr float
 Decibels::factor() const noexcept
 {
-	return std::pow (10.0f, _decibels / 10.0f);
+	return std::pow (10.0f, _decibels / 20.0f);
 }
 
 
