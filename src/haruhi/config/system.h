@@ -55,6 +55,13 @@ operator<< (std::ostream& os, signed char i)
 
 using namespace ostream_fixes;
 
+namespace std {
+
+// Missing in GCC 7.2
+// TODO remove when GCC is fixed.
+static constexpr std::size_t hardware_destructive_interference_size = 64;
+
+} // namespace std
 
 inline void
 assert_function (bool expression, const char* message = nullptr) noexcept

@@ -20,9 +20,6 @@
 // Haruhi:
 #include <haruhi/config/all.h>
 
-// Local:
-#include "decibels.h"
-
 
 typedef float Amplitude;
 

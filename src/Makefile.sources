@@ -360,7 +360,6 @@ SRC_HEADERS += haruhi/utility/atomic.h
 SRC_HEADERS += haruhi/utility/backtrace.h
 SRC_HEADERS += haruhi/utility/condition.h
 SRC_HEADERS += haruhi/utility/confusion.h
-SRC_HEADERS += haruhi/utility/decibels.h
 SRC_HEADERS += haruhi/utility/exception.h
 SRC_HEADERS += haruhi/utility/fast_pow.h
 SRC_HEADERS += haruhi/utility/filesystem.h

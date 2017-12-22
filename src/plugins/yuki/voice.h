@@ -35,8 +35,8 @@
 
 namespace Yuki {
 
-alignas (std::hardware_destructive_interference_size)
-class Voice
+class alignas (std::hardware_destructive_interference_size)
+Voice
 {
   public:
 	enum State { Voicing, Dropped, Finished };
@@ -45,8 +45,8 @@ class Voice
 	 * Shared buffers for each thread of the RT work performer.
 	 * Used by Voices that are being synthesized.
 	 */
-	alignas (std::hardware_destructive_interference_size)
-	struct SharedResources
+	struct alignas (std::hardware_destructive_interference_size)
+	SharedResources
 	{
 		void
 		graph_updated (Frequency sample_rate, std::size_t buffer_size);
