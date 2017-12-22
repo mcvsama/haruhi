@@ -16,6 +16,7 @@
 
 // Standard:
 #include <cstddef>
+#include <new>
 #include <set>
 
 // Haruhi:
@@ -34,6 +35,7 @@
 
 namespace Yuki {
 
+alignas (std::hardware_destructive_interference_size)
 class Voice
 {
   public:
@@ -43,6 +45,7 @@ class Voice
 	 * Shared buffers for each thread of the RT work performer.
 	 * Used by Voices that are being synthesized.
 	 */
+	alignas (std::hardware_destructive_interference_size)
 	struct SharedResources
 	{
 		void
