@@ -22,6 +22,7 @@
 #include <haruhi/lib/controller_param.h>
 #include <haruhi/lib/param.h>
 #include <haruhi/plugin/saveable_params.h>
+#include <haruhi/utility/log_scale.h>
 
 
 namespace Yuki {
