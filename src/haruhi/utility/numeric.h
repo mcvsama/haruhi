@@ -75,7 +75,7 @@ template<class Value>
 
 
 template<class Value>
-	inline void
+	constexpr void
 	clamp (Value& value, Value min, Value max) noexcept
 	{
 		if (value < min)
@@ -86,7 +86,7 @@ template<class Value>
 
 
 template<class Value>
-	inline void
+	constexpr void
 	clamp (Value& value, Range<Value> range) noexcept
 	{
 		clamp (value, range.min(), range.max());
