@@ -133,16 +133,20 @@ EnvelopePlot::paintEvent (QPaintEvent* paint_event)
 			int sum_samples = 0;
 			int sustain_sample = 0;
 			float sustain_value = 0.0f;
-			unsigned int i = 0;
-			for (DSP::Envelope::Point& p: points)
+
 			{
-				if (_envelope.load()->sustain_point() == i)
+				unsigned int i = 0;
+
+				for (DSP::Envelope::Point& p: points)
 				{
-					sustain_sample = sum_samples;
-					sustain_value = p.value;
+					if (_envelope.load()->sustain_point() == i)
+					{
+						sustain_sample = sum_samples;
+						sustain_value = p.value;
+					}
+					sum_samples += p.samples;
+					++i;
 				}
-				sum_samples += p.samples;
-				++i;
 			}
 
 			// Compute shape:

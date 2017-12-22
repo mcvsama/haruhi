@@ -88,13 +88,18 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 	title_button->setFlat (true);
 	title_button->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 	title_button->setMenu (_menu.get());
-	QPalette p = title_button->palette();
-	p.setColor (QPalette::Button, QColor (0x00, 0x2A, 0x5B));
-	p.setColor (QPalette::ButtonText, QColor (0xff, 0xff, 0xff));
-	title_button->setPalette (p);
-	QFont font (QApplication::font());
-	font.setWeight (QFont::Black);
-	title_button->setFont (font);
+
+	{
+		QPalette p = title_button->palette();
+		p.setColor (QPalette::Button, QColor (0x00, 0x2A, 0x5B));
+		p.setColor (QPalette::ButtonText, QColor (0xff, 0xff, 0xff));
+		title_button->setPalette (p);
+	}
+	{
+		QFont font (QApplication::font());
+		font.setWeight (QFont::Black);
+		title_button->setFont (font);
+	}
 
 	// HasPresets?
 	if (plugin_is_has_presets)
@@ -134,10 +139,12 @@ PluginTab::PluginTab (Patch* patch, QWidget* parent, Plugin* plugin):
 		QObject::connect (_favorite_button.get(), SIGNAL (toggled (bool)), this, SLOT (favorited (bool)));
 	}
 
-	p = bar->palette();
-	p.setColor (QPalette::Window, QColor (0x00, 0x2A, 0x5B));
-	p.setColor (QPalette::WindowText, Qt::white);
-	bar->setPalette (p);
+	{
+		auto p = bar->palette();
+		p.setColor (QPalette::Window, QColor (0x00, 0x2A, 0x5B));
+		p.setColor (QPalette::WindowText, Qt::white);
+		bar->setPalette (p);
+	}
 	bar->setAutoFillBackground (true);
 
 	_plugin_container = std::make_unique<QWidget> (this);

@@ -312,9 +312,11 @@ PartManager::save_state (QDomElement& element) const
 	auto graph_lock = get_graph_lock();
 	auto lock = _parts_mutex.get_lock();
 
-	QDomElement e = element.ownerDocument().createElement ("main");
-	_main_params.save_state (e);
-	element.appendChild (e);
+	{
+		QDomElement e = element.ownerDocument().createElement ("main");
+		_main_params.save_state (e);
+		element.appendChild (e);
+	}
 
 	for (Part* p: _parts)
 	{
