@@ -59,7 +59,7 @@ class Voice
 
 		Haruhi::AudioBuffer	amplitude_buf;
 		Haruhi::AudioBuffer	frequency_buf;
-		Haruhi::AudioBuffer fm_buf;
+		Haruhi::AudioBuffer	fm_buf;
 		Haruhi::AudioBuffer	tmp_buf[6];
 
 	  private:

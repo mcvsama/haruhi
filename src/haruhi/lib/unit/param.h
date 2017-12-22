@@ -32,7 +32,6 @@
 
 
 namespace Haruhi {
-
 namespace v07 {
 
 /**
@@ -1025,7 +1024,6 @@ template<class P>
 	}
 
 } // namespace v07
-
 } // namespace Haruhi
 
 #endif
