@@ -12,8 +12,9 @@
  */
 
 // Standard:
-#include <cstddef>
 #include <algorithm>
+#include <cstddef>
+#include <iterator>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -227,13 +228,13 @@ VoiceManager::wait_for_render()
 		Haruhi::AudioBuffer* s2 = &_output_2_oversampled;
 		Haruhi::AudioBuffer* t2 = &_output_2_filtered;
 
-		for (std::size_t i = 0; i < countof (_antialiasing_filter_1); ++i)
+		for (std::size_t i = 0; i < std::size (_antialiasing_filter_1); ++i)
 		{
 			_antialiasing_filter_1[i].transform (s1->begin(), s1->end(), t1->begin());
 			std::swap (s1, t1);
 		}
 
-		for (std::size_t i = 0; i < countof (_antialiasing_filter_1); ++i)
+		for (std::size_t i = 0; i < std::size (_antialiasing_filter_1); ++i)
 		{
 			_antialiasing_filter_2[i].transform (s2->begin(), s2->end(), t2->begin());
 			std::swap (s2, t2);

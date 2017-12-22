@@ -13,6 +13,7 @@
 
 // Standard:
 #include <cstddef>
+#include <iterator>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -30,8 +31,8 @@ VoiceModulator::VoiceModulator (Params::Part* part_params, std::size_t buffer_si
 	_part_params (part_params),
 	_buffer_size (buffer_size)
 {
-	assert (countof (_operator_output) == countof (_operator_fm_output));
-	assert (countof (_operator_output) == countof (_operator));
+	assert (std::size (_operator_output) == std::size (_operator_fm_output));
+	assert (std::size (_operator_output) == std::size (_operator));
 
 	resize_buffers();
 }

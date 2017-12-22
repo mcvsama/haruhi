@@ -170,7 +170,7 @@ Settings::save()
 	if (::rename ((_settings_file + "~").toUtf8(), _settings_file.toUtf8()) == -1)
 	{
 		char buf[256];
-		strerror_r (errno, buf, countof (buf));
+		strerror_r (errno, buf, std::size (buf));
 		throw Exception (QString ("could not save settings file: %1").arg (buf).toUtf8());
 	}
 }

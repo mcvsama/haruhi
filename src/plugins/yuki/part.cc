@@ -13,8 +13,9 @@
 
 // Standard:
 #include <cstddef>
-#include <utility>
+#include <iterator>
 #include <functional>
+#include <utility>
 
 // Haruhi:
 #include <haruhi/config/all.h>
@@ -329,9 +330,9 @@ Part::Part (PartManager* part_manager, WorkPerformer* work_performer, Params::Ma
 	UPDATE_WAVETABLE_ON_CHANGE (modulator_index);
 	UPDATE_WAVETABLE_ON_CHANGE (modulator_shape);
 	UPDATE_WAVETABLE_ON_CHANGE (auto_center);
-	for (std::size_t i = 0; i < countof (_part_params.harmonics); ++i)
+	for (std::size_t i = 0; i < std::size (_part_params.harmonics); ++i)
 		UPDATE_WAVETABLE_ON_CHANGE (harmonics[i]);
-	for (std::size_t i = 0; i < countof (_part_params.harmonic_phases); ++i)
+	for (std::size_t i = 0; i < std::size (_part_params.harmonic_phases); ++i)
 		UPDATE_WAVETABLE_ON_CHANGE (harmonic_phases[i]);
 #undef UPDATE_WAVETABLE_ON_CHANGE
 

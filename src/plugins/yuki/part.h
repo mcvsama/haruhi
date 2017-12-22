@@ -16,6 +16,7 @@
 
 // Standard:
 #include <cstddef>
+#include <iterator>
 #include <list>
 
 // Haruhi:
@@ -613,14 +614,14 @@ Part::proxies() noexcept
 inline DSP::ParametricWave*
 Part::base_wave() const noexcept
 {
-	return _base_waves[clamped (_part_params.wave_type.get(), 0u, static_cast<unsigned int> (countof (_base_waves) - 1))].get();
+	return _base_waves[clamped (_part_params.wave_type.get(), 0u, static_cast<unsigned int> (std::size (_base_waves) - 1))].get();
 }
 
 
 inline DSP::ParametricWave*
 Part::modulator_wave() const noexcept
 {
-	return _modulator_waves[clamped (_part_params.modulator_wave_type.get(), 0u, static_cast<unsigned int> (countof (_modulator_waves) - 1))].get();
+	return _modulator_waves[clamped (_part_params.modulator_wave_type.get(), 0u, static_cast<unsigned int> (std::size (_modulator_waves) - 1))].get();
 }
 
 } // namespace Yuki

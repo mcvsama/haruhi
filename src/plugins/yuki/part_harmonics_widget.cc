@@ -13,6 +13,7 @@
 
 // Standard:
 #include <cstddef>
+#include <iterator>
 
 // Qt:
 #include <QLayout>
@@ -215,9 +216,9 @@ PartHarmonicsWidget::widgets_to_wave_params()
 	auto pp = _part->part_params();
 
 	// Update params that are not controller by knobs:
-	for (std::size_t i = 0; i < countof (pp->harmonics); ++i)
+	for (std::size_t i = 0; i < std::size (pp->harmonics); ++i)
 		pp->harmonics[i].set (_harmonics_sliders[i]->value());
-	for (std::size_t i = 0; i < countof (pp->harmonic_phases); ++i)
+	for (std::size_t i = 0; i < std::size (pp->harmonic_phases); ++i)
 		pp->harmonic_phases[i].set (_harmonic_phases_sliders[i]->value());
 }
 
@@ -238,9 +239,9 @@ PartHarmonicsWidget::params_to_widgets()
 {
 	auto pp = _part->part_params();
 
-	for (std::size_t i = 0; i < countof (pp->harmonics); ++i)
+	for (std::size_t i = 0; i < std::size (pp->harmonics); ++i)
 		_harmonics_sliders[i]->setValue (pp->harmonics[i]);
-	for (std::size_t i = 0; i < countof (pp->harmonic_phases); ++i)
+	for (std::size_t i = 0; i < std::size (pp->harmonic_phases); ++i)
 		_harmonic_phases_sliders[i]->setValue (pp->harmonic_phases[i]);
 }
 
