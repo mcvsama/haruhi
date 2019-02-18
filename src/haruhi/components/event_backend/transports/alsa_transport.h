@@ -96,7 +96,7 @@ class AlsaTransport: public Transport
 	friend class AlsaPort;
 
   private:
-	typedef std::map<int, AlsaPort*> Ports;
+	using Ports = std::map<int, std::unique_ptr<AlsaPort>>;
 
   public:
 	AlsaTransport (Backend* backend);

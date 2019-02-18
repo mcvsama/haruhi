@@ -166,18 +166,20 @@ AlsaTransport::connected() const
 AlsaTransport::Port*
 AlsaTransport::create_input (std::string const& port_name)
 {
-	AlsaPort* port = new AlsaPort (this, AlsaPort::Input, port_name);
-	_ports[port->alsa_port()] = port;
-	return port;
+	auto port = std::make_unique<AlsaPort> (this, AlsaPort::Input, port_name);
+	auto raw_ptr = port.get();
+	_ports[port->alsa_port()] = std::move (port);
+	return raw_ptr;
 }
 
 
 AlsaTransport::Port*
 AlsaTransport::create_output (std::string const& port_name)
 {
-	AlsaPort* port = new AlsaPort (this, AlsaPort::Output, port_name);
-	_ports[port->alsa_port()] = port;
-	return port;
+	auto port = std::make_unique<AlsaPort> (this, AlsaPort::Output, port_name);
+	auto raw_ptr = port.get();
+	_ports[port->alsa_port()] = std::move (port);
+	return raw_ptr;
 }
 
 
@@ -185,7 +187,6 @@ void
 AlsaTransport::destroy_port (Port* port)
 {
 	_ports.erase (static_cast<AlsaPort*> (port)->alsa_port());
-	delete port;
 }
 
 
