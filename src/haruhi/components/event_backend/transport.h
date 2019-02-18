@@ -43,8 +43,7 @@ class Transport
 	  public:
 		Port (Transport* transport);
 
-		// FIXME change to "= default" in new GCC.
-		virtual ~Port() { }
+		virtual ~Port() = default;
 
 		virtual void
 		rename (std::string const&) = 0;
@@ -70,8 +69,7 @@ class Transport
   public:
 	Transport (Backend* backend);
 
-	// FIXME change to "= default" in new GCC.
-	virtual ~Transport() { }
+	virtual ~Transport() = default;
 
 	Backend*
 	backend() const;
